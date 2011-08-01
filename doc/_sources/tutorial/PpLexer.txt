@@ -1,0 +1,259 @@
+
+****************
+PpLexer Tutorial
+****************
+
+The PpLexer module represetents the user side view of pre-processing. This
+tutorial shows you how to get going.
+
+
+Setting Up
+==========
+
+Files to Pre-Process
+--------------------
+
+First let's get some demonstration code to pre-process. You can find this
+at *cpip/demo/* and the directory structure looks like this::
+
+    \---demo
+        |   cpip.py
+        |
+        \---proj
+            +---src
+            |       main.cpp
+            |
+            +---sys
+            |       system.h
+            |
+            \---usr
+                    user.h
+
+In *proj/* is some source code that includes files from *usr/* and *sys/*. 
+This tutorial will take you through writing cpip.py to use PpLexer to
+pre-process them.
+
+First lets have a look at the source code that we are preprocessing.
+It is a pretty trivial variation of a common them, but beware,
+pre-processing directives abound!
+
+The file *demo/proj/src/main.cpp* looks like this:
+
+.. literalinclude:: demo/proj/src/main.cpp
+
+That includes a file *user.h* that can be found at *demo/proj/usr/user.h*:
+
+.. literalinclude:: demo/proj/usr/user.h
+
+In turn that includes a file *system.h* that can be found at
+*demo/proj/sys/system.h*:
+
+.. literalinclude:: demo/proj/sys/system.h
+
+Clearly since the system is mandating language support and the user
+is specifying French as their language of choice then you would not
+expect this to write out "Hello World", or would you?
+
+Well you are in the hands of the pre-processor and that is what
+CPIP knows all about. First we need to create a :class:`PpLexer`.
+
+Creating a PpLexer
+------------------
+
+This is the template that we will use for the tutorial, it just takes a
+single argument from the command line ``sys.argv[1]``:
+
+.. literalinclude:: demo/cpip_00.py
+
+Of course this doesn't do much yet, invoking it just gives::
+
+    $ python cpip.py proj/src/main.cpp
+    Processing: proj/src/main.cpp
+
+We now need to import and create and :class:`PpLexer.PpLexer` object, and this
+takes at least two arguments; firstly the file to pre-process, the secondly an
+*include handler*. The latter is need because the C/C++ standards do not
+specify how an ``#include`` directive is to be processed as that is
+as an implementation issue. So we need to provide an defined implementation
+of something that can find ``#include'd`` files.
+
+CPIP provides several such implementations in the module
+:mod:`IncludeHandler` and the one that does what, I guess,
+most developers expect from a pre-processor is
+:class:`IncludeHandler.CppIncludeStdOs`. This class takes at least two
+arguments; a list of search paths to the user include directories and a list of
+search paths to the system include directories. With this we can construct a
+:class:`PpLexer` object so our code now looks like this:
+
+.. literalinclude:: demo/cpip_01.py
+
+This still doesn't do much yet, invoking it just gives::
+
+    $ python cpip.py proj/src/main.cpp
+    Processing: proj/src/main.cpp
+
+But, in the absence of error, shows that we can construct a
+:class:`PpLexer`.
+
+Put the PpLexer to Work
+=======================
+To get :class:`PpLexer` to do something, we need to make the call
+to :func:`PpLexer.PpTokens()`. This function is a generator of preprocessing *tokens*.
+
+Lets just print them out with this code:
+
+.. literalinclude:: demo/cpip_02.py
+
+Invoking it now gives::
+
+    $ python cpip.py proj/src/main.cpp
+    Processing: proj/src/main.cpp
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    ...
+    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="main", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="char", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="argv", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=",", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="argc", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="{", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="printf", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=""Bonjour tout le monde\n"", tt=string-literal, line=False, prev=False, ?=False)
+    PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="return", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="1", tt=pp-number, line=False, prev=False, ?=False)
+    PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="}", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+
+The PpLexer is yielding PpToken objects that are interesting in
+themselves because they not only have content but the type of content
+(whitespace, punctuation, literals etc.). A simplification is to change the
+code to print out the token *value* by changing a line in the code from::
+
+    print tok
+
+To::
+
+    print tok.t
+
+To give:
+
+.. literalinclude:: demo/cpip_03.out.txt
+
+It is definately pre-processed and although the output is correct it is
+rather verbose because of all the whitespace generated by the pre-processing
+(newlines are always the consequence of pre-processing directives).
+
+We can clean this whitespace up very simply by invoking
+:func:`PpTokens.ppTokens()` with a suitable argument to reduce spurious
+whitespace thus: ``myLex.ppTokens(minWs=True)``. This minimises the whitespace
+runs to a single space or newline. Our code now
+looks like this:
+
+.. literalinclude:: demo/cpip_04.py
+
+Invoking it now gives:
+
+.. literalinclude:: demo/cpip_04.out.txt
+
+This is exactly the result that one would expect from pre-processing the
+original source code.
+
+And now for something Completely Different
+==========================================
+So far, so boring because any pre-processor can do the same, PpLexer
+can do far more than this.
+PpLexer keeps track of a large amount of significant pre-processing
+information and that is available to you through the :class:`PpLexer` APIs.
+
+For a moment lets remove the ``minWs=True`` from ``myLex.ppTokens()``
+so that we can inspect the state of the PpLexer at every token (rather
+than skipping whitespace tokens that might represent pre-processing
+directives).
+
+File Include Stack
+------------------
+Changing the code to this shows the ``include`` file
+hierarchy every step of the way::
+
+    for tok in myLex.ppTokens():
+        print myLex.fileStack
+
+Gives the following output::
+
+    $ python cpip.py proj/src/main.cpp
+    Processing: proj/src/main.cpp
+    ['proj/src/main.cpp', 'proj/usr/user.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h']
+    ['proj/src/main.cpp', 'proj/usr/user.h']
+    ['proj/src/main.cpp']
+    ...
+
+Conditional State
+-----------------
+
+Changing the code to this::
+
+    for tok in myLex.ppTokens(condLevel=1):
+        print myLex.condState
+
+Produces this output:
+
+.. literalinclude:: demo/cpip_05.out.txt
+
+
+
+
+Summary
+=======
+
+There are several ways that you can inspect pre-processing with PpLexer:
+
+* Supplying arguments to :func:``PpLexer.ppTokens()`` with arguments such as ``minWs`` or ``incCond``.
+* Accessing the state of each token as it is generated such as ``tok.tt`` or ``tok.isCond``.
+* Accessing the state of PpLexer as each token as it is generated or once all tokens have been generated such as PpLexer.condState.
+* Creating PpLexer with a user specified behaviour. This is the subject of the next section.
+
+Advanced PpLexer Options
+========================
+
+Pre-includes
+------------
+
+Diagnostic
+----------
+
+Pragma
+------
+
+
+
+
+
+
+
