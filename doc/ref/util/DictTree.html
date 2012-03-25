@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DictTree &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Utilities" href="../util/index.html" />
+    <link rel="next" title="ListGen" href="../util/ListGen.html" />
+    <link rel="prev" title="BufGen" href="../util/BufGen.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/ListGen.html" title="ListGen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../util/BufGen.html" title="BufGen"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" accesskey="U">CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dicttree">
+<h1>DictTree<a class="headerlink" href="#dicttree" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.util.DictTree"></span><p>A dictionary that takes a list of hashables as a key and behaves like a tree.</p>
+<dl class="class">
+<dt id="cpip.util.DictTree.DictTree">
+<em class="property">class </em><tt class="descclassname">cpip.util.DictTree.</tt><tt class="descname">DictTree</tt><big>(</big><em>valIterable=None</em><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary that takes a list of hashables as a key and behaves like a tree</p>
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTree.add">
+<tt class="descname">add</tt><big>(</big><em>k</em>, <em>v</em><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTree.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a key/value. k is a list of hashables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTree.depth">
+<tt class="descname">depth</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTree.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the maximum tree depth as an integer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTree.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTree.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of keys where each key is a list of hashables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTree.remove">
+<tt class="descname">remove</tt><big>(</big><em>k</em>, <em>v=None</em><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTree.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a key/value. k is a list of hashables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTree.value">
+<tt class="descname">value</tt><big>(</big><em>k</em><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTree.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Value corresponding to a key or None. k is a list of hashables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTree.values">
+<tt class="descname">values</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTree.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of all values.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.util.DictTree.DictTreeHtmlTable">
+<em class="property">class </em><tt class="descclassname">cpip.util.DictTree.</tt><tt class="descname">DictTreeHtmlTable</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTreeHtmlTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sub-class of DictTree that helps writing HTML row/col span tables
+Suppose we have a tree like this:</p>
+<div class="highlight-python"><pre>                        |- AAA
+                        |
+                |- AA --|- AAB
+                |       |
+                |       |- AAC
+        |- A ---|
+Root ---|       |- AB
+        |       |
+        |       |- AC ---- ACA
+        |
+        |- B
+        |
+        |- C ---- CA ---- CAA</pre>
+</div>
+<p>And we want to represent the tree like this when laid out as
+an HTML table:</p>
+<div class="highlight-python"><pre>|-----------------------|
+| A     | AA    | AAA   |
+|       |       |-------|
+|       |       | AAB   |
+|       |       |-------|
+|       |       | AAC   |
+|       |---------------|
+|       | AB            |
+|       |---------------|
+|       | AC    | ACA   |
+|-----------------------|
+| B                     |
+|-----------------------|
+| C     | CA    | CAA   |
+|-----------------------|</pre>
+</div>
+<p>In this example the tree is loaded branch by branch thus:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">myTree</span> <span class="o">=</span> <span class="n">DictTreeHtmlTable</span><span class="p">()</span>
+<span class="n">myTree</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;AA&#39;</span><span class="p">,</span> <span class="s">&#39;AAA&#39;</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">myTree</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;AA&#39;</span><span class="p">,</span> <span class="s">&#39;AAB&#39;</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">myTree</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;AA&#39;</span><span class="p">,</span> <span class="s">&#39;AAC&#39;</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">myTree</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;AB&#39;</span><span class="p">,),</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">myTree</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&#39;A&#39;</span><span class="p">,</span> <span class="s">&#39;AC&#39;</span><span class="p">,</span> <span class="s">&#39;ACA&#39;</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">myTree</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&#39;B&#39;</span><span class="p">,),</span> <span class="bp">None</span><span class="p">)</span>
+<span class="n">myTree</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="s">&#39;C&#39;</span><span class="p">,</span> <span class="s">&#39;CA&#39;</span><span class="p">,</span> <span class="s">&#39;CAA&#39;</span><span class="p">),</span> <span class="bp">None</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The HTML code generator can be used like this:</p>
+<div class="highlight-python"><pre># Write: &lt;table border="2" width="100%"&gt;
+for anEvent in myTree.genColRowEvents():
+    if anEvent == myTree.ROW_OPEN:
+        # Write out the '&lt;tr&gt;' element
+    elif anEvent == myTree.ROW_CLOSE:
+        # Write out the '&lt;/tr&gt;' element
+    else:
+        k, v, r, c = anEvent
+        # Write '&lt;td rowspan="%d" colspan="%d"&gt;%s&lt;/td&gt;' % (r, c, v)
+# Write: &lt;/table&gt;</pre>
+</div>
+<p>And the HTML code will look like this:</p>
+<div class="highlight-python"><pre>&lt;table border="2" width="100%"&gt;
+    &lt;tr valign="top"&gt;
+        &lt;td rowspan="5"&gt;A&lt;/td&gt;
+        &lt;td rowspan="3"&gt;AA&lt;/td&gt;
+        &lt;td&gt;AAA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr valign="top"&gt;
+        &lt;td&gt;AAB&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr valign="top"&gt;
+        &lt;td&gt;AAC&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr valign="top"&gt;
+        &lt;td colspan="2"&gt;AB&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr valign="top"&gt;
+        &lt;td&gt;AC&lt;/td&gt;
+        &lt;td&gt;ACA&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr valign="top"&gt;
+        &lt;td colspan="3"&gt;B&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr valign="top"&gt;
+        &lt;td&gt;C&lt;/td&gt;
+        &lt;td&gt;CA&lt;/td&gt;
+        &lt;td&gt;CAA&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;</pre>
+</div>
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTreeHtmlTable.genColRowEvents">
+<tt class="descname">genColRowEvents</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTreeHtmlTable.genColRowEvents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a set of events that are quadruples.
+(key_branch, value, rowspan_int, colspan_int)
+The branch is a list of keys the from the branch of the tree.
+The rowspan and colspan are both integers.
+At the start of the a &lt;tr&gt; there will be a ROW_OPEN
+and at row end (&lt;/tr&gt; a ROW_CLOSE will be yielded</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.DictTree.DictTreeHtmlTable.setColRowSpan">
+<tt class="descname">setColRowSpan</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTreeHtmlTable.setColRowSpan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Top level call that sets colspan and rowspan attributes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.util.DictTree.ExceptionDictTree">
+<em class="property">exception </em><tt class="descclassname">cpip.util.DictTree.</tt><tt class="descname">ExceptionDictTree</tt><a class="headerlink" href="#cpip.util.DictTree.ExceptionDictTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when handling a DictTree object.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../util/BufGen.html"
+                        title="previous chapter">BufGen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../util/ListGen.html"
+                        title="next chapter">ListGen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/util/DictTree.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/ListGen.html" title="ListGen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../util/BufGen.html" title="BufGen"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" >CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

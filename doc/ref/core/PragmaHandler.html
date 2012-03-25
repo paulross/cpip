@@ -1,0 +1,194 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PragmaHandler &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="CPIP Utilities" href="../util/index.html" />
+    <link rel="prev" title="PpWhitespace" href="../core/PpWhitespace.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/index.html" title="CPIP Utilities"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpWhitespace.html" title="PpWhitespace"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.PragmaHandler">
+<span id="pragmahandler"></span><span id="cpip-ref-pragmahandler"></span><h1>PragmaHandler<a class="headerlink" href="#module-cpip.core.PragmaHandler" title="Permalink to this headline">¶</a></h1>
+<dl class="exception">
+<dt id="cpip.core.PragmaHandler.ExceptionPragmaHandler">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PragmaHandler.</tt><tt class="descname">ExceptionPragmaHandler</tt><a class="headerlink" href="#cpip.core.PragmaHandler.ExceptionPragmaHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple specialisation of an exception class for the PragmaHandler.
+If raised this will cause the PpLexer to register undefined behaviour.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PragmaHandler.ExceptionPragmaHandlerStopParsing">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PragmaHandler.</tt><tt class="descname">ExceptionPragmaHandlerStopParsing</tt><a class="headerlink" href="#cpip.core.PragmaHandler.ExceptionPragmaHandlerStopParsing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for the PragmaHandler to stop parsing token stream.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerABC">
+<em class="property">class </em><tt class="descclassname">cpip.core.PragmaHandler.</tt><tt class="descname">PragmaHandlerABC</tt><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerABC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract base class for a pragma handler.</p>
+<dl class="method">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerABC.pragma">
+<tt class="descname">pragma</tt><big>(</big><em>theTokS</em><big>)</big><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerABC.pragma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a list of PpTokens, processes then and should return a newline
+terminated string that will be preprocessed in the current environment.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerABC.replaceTokens">
+<tt class="descname">replaceTokens</tt><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerABC.replaceTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>An boolean attribute that says whether the supplied tokens should
+be macro replaced before being passed to self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerNull">
+<em class="property">class </em><tt class="descclassname">cpip.core.PragmaHandler.</tt><tt class="descname">PragmaHandlerNull</tt><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerNull" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pragma handler that does nothing.</p>
+<dl class="method">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerNull.pragma">
+<tt class="descname">pragma</tt><big>(</big><em>theTokS</em><big>)</big><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerNull.pragma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Consume and return.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerNull.replaceTokens">
+<tt class="descname">replaceTokens</tt><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerNull.replaceTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tokens do not require macro replacement.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerSTDC">
+<em class="property">class </em><tt class="descclassname">cpip.core.PragmaHandler.</tt><tt class="descname">PragmaHandlerSTDC</tt><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for a pragma handler that implements ISO/IEC 9899:1999 (E)
+6.10.5 Error directive para. 2.</p>
+<dl class="method">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerSTDC.pragma">
+<tt class="descname">pragma</tt><big>(</big><em>theTokS</em><big>)</big><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC.pragma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inject a macro declaration into the environment.
+See ISO/IEC 9899:1999 (E) 6.10.5 Error directive para. 2.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerSTDC.replaceTokens">
+<tt class="descname">replaceTokens</tt><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC.replaceTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>STDC lines do not require macro replacement.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/PpWhitespace.html"
+                        title="previous chapter">PpWhitespace</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../util/index.html"
+                        title="next chapter">CPIP Utilities</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/PragmaHandler.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/index.html" title="CPIP Utilities"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpWhitespace.html" title="PpWhitespace"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

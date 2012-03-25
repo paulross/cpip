@@ -203,12 +203,12 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
         'Courier' : {
                         'size'          : 10,
                         'lenFactor'     : 0.8,
-                        'heightFactor'  : 1.5,
+                        'heightFactor'  : 1.5*1.5,
             },
         'monospace' : {
                         'size'          : 10,
                         'lenFactor'     : 0.7,
-                        'heightFactor'  : 1.2,
+                        'heightFactor'  : 1.2*1.5,
             },
         }
     NAMESPACE_XLINK = 'http://www.w3.org/1999/xlink'

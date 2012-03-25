@@ -1,0 +1,275 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CppDiagnostic &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="FileIncludeGraph" href="../core/FileIncludeGraph.html" />
+    <link rel="prev" title="CppCond" href="../core/CppCond.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/FileIncludeGraph.html" title="FileIncludeGraph"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/CppCond.html" title="CppCond"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.CppDiagnostic">
+<span id="cppdiagnostic"></span><span id="cpip-ref-cppdiagnostic"></span><h1>CppDiagnostic<a class="headerlink" href="#module-cpip.core.CppDiagnostic" title="Permalink to this headline">¶</a></h1>
+<p>Describes how a preprocessor class behaves under abnormal conditions.</p>
+<dl class="exception">
+<dt id="cpip.core.CppDiagnostic.ExceptionCppDiagnostic">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppDiagnostic.</tt><tt class="descname">ExceptionCppDiagnostic</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.ExceptionCppDiagnostic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for representing CppDiagnostic.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppDiagnostic.</tt><tt class="descname">ExceptionCppDiagnosticPartialTokenStream</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for representing partial remaining tokens.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppDiagnostic.ExceptionCppDiagnosticUndefined">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppDiagnostic.</tt><tt class="descname">ExceptionCppDiagnosticUndefined</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.ExceptionCppDiagnosticUndefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for representing undefined behaviour.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticKeepGoing">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppDiagnostic.</tt><tt class="descname">PreprocessDiagnosticKeepGoing</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticKeepGoing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sub-class that does not raise exceptions.</p>
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticKeepGoing.partialTokenStream">
+<tt class="descname">partialTokenStream</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticKeepGoing.partialTokenStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an partial token stream exists (e.g. an unclosed comment).</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticKeepGoing.undefined">
+<tt class="descname">undefined</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticKeepGoing.undefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an &#8216;undefined&#8217; event happens.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticRaiseOnError">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppDiagnostic.</tt><tt class="descname">PreprocessDiagnosticRaiseOnError</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticRaiseOnError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sub-class that raises an exception on a #&#8217;error directive.
+TODO: We really should return a value here so that the caller can
+decide if they need to raise an Exception after reporting the error.</p>
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticRaiseOnError.error">
+<tt class="descname">error</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticRaiseOnError.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an error event happens.
+msg - The main message.
+theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppDiagnostic.</tt><tt class="descname">PreprocessDiagnosticStd</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Describes how a preprocessor class behaves under abnormal conditions.</p>
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.debug">
+<tt class="descname">debug</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports a debug message.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.error">
+<tt class="descname">error</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an error event happens.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.eventList">
+<tt class="descname">eventList</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.eventList" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of events in the order that they appear.
+An event is a pair of strings: (type, message)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.handleUnclosedComment">
+<tt class="descname">handleUnclosedComment</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.handleUnclosedComment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an unclosed comment is seen at EOF.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.implementationDefined">
+<tt class="descname">implementationDefined</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.implementationDefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an &#8216;implementation defined&#8217; event happens.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.isDebug">
+<tt class="descname">isDebug</tt><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.isDebug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether a call to debug() will result in any log output.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.partialTokenStream">
+<tt class="descname">partialTokenStream</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.partialTokenStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an partial token stream exists (e.g. an unclosed comment).</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.undefined">
+<tt class="descname">undefined</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.undefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an &#8216;undefined&#8217; event happens.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.unspecified">
+<tt class="descname">unspecified</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.unspecified" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when unspecified behaviour is happening.
+For example order of evaluation of &#8216;#&#8217; and &#8216;##&#8217;.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppDiagnostic.PreprocessDiagnosticStd.warning">
+<tt class="descname">warning</tt><big>(</big><em>msg</em>, <em>theLoc=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppDiagnostic.PreprocessDiagnosticStd.warning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reports when an warning event happens.</p>
+<p>msg - The main message, a string.</p>
+<p>theLoc - the file locator e.g. FileLocation.FileLineCol.
+If present it must have: (fileId, lineNum colNum) attributes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/CppCond.html"
+                        title="previous chapter">CppCond</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/FileIncludeGraph.html"
+                        title="next chapter">FileIncludeGraph</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/CppDiagnostic.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/FileIncludeGraph.html" title="FileIncludeGraph"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/CppCond.html" title="CppCond"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

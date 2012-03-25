@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/include/linux/blk_types.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/include/linux/blk_types.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="k">/*
+<a name="2"><span class="line">       2: </span></a> * Block data types and constants.  Directly include this file only to
+<a name="3"><span class="line">       3: </span></a> * break include dependency loop.
+<a name="4"><span class="line">       4: </span></a> */</span>
+<a name="5"><span class="line">       5: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#__LINUX_BLK_TYPES_H_0"><span class="b">__LINUX_BLK_TYPES_H</span></a>
+<a name="6"><span class="line">       6: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__LINUX_BLK_TYPES_H_0"><span class="b">__LINUX_BLK_TYPES_H</span></a>
+<a name="7"><span class="line">       7: </span></a>
+<a name="8"><span class="line">       8: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#ZQ09ORklHX0JMT0NLX3Rlc3Rub3RkZWY_"><span class="b">CONFIG_BLOCK</span></a>
+<a name="9"><span class="line">       9: </span></a>
+<a name="10"><span class="line">      10: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="11"><span class="line">      11: </span></a>
+<a name="12"><span class="line">      12: </span></a><span class="m">struct</span> <span class="b">bio_set</span><span class="f">;</span>
+<a name="13"><span class="line">      13: </span></a><span class="m">struct</span> <span class="b">bio</span><span class="f">;</span>
+<a name="14"><span class="line">      14: </span></a><span class="m">struct</span> <span class="b">bio_integrity_payload</span><span class="f">;</span>
+<a name="15"><span class="line">      15: </span></a><span class="m">struct</span> <span class="b">page</span><span class="f">;</span>
+<a name="16"><span class="line">      16: </span></a><span class="m">struct</span> <span class="b">block_device</span><span class="f">;</span>
+<a name="17"><span class="line">      17: </span></a><span class="m">typedef</span> <span class="m">void</span> <span class="f">(</span><span class="b">bio_end_io_t</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">bio</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="18"><span class="line">      18: </span></a><span class="m">typedef</span> <span class="m">void</span> <span class="f">(</span><span class="b">bio_destructor_t</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">bio</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="19"><span class="line">      19: </span></a>
+<a name="20"><span class="line">      20: </span></a><span class="k">/*
+<a name="21"><span class="line">      21: </span></a> * was unsigned short, but we might as well be ready for &gt; 64kB I/O pages
+<a name="22"><span class="line">      22: </span></a> */</span>
+<a name="23"><span class="line">      23: </span></a><span class="m">struct</span> <span class="b">bio_vec</span> <span class="f">{</span>
+<a name="24"><span class="line">      24: </span></a>    <span class="m">struct</span> <span class="b">page</span>    <span class="f">*</span><span class="b">bv_page</span><span class="f">;</span>
+<a name="25"><span class="line">      25: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>    <span class="b">bv_len</span><span class="f">;</span>
+<a name="26"><span class="line">      26: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>    <span class="b">bv_offset</span><span class="f">;</span>
+<a name="27"><span class="line">      27: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="28"><span class="line">      28: </span></a>
+<a name="29"><span class="line">      29: </span></a><span class="k">/*
+<a name="30"><span class="line">      30: </span></a> * main unit of I/O for the block layer and lower layers (ie drivers and
+<a name="31"><span class="line">      31: </span></a> * stacking drivers)
+<a name="32"><span class="line">      32: </span></a> */</span>
+<a name="33"><span class="line">      33: </span></a><span class="m">struct</span> <span class="b">bio</span> <span class="f">{</span>
+<a name="34"><span class="line">      34: </span></a>    <span class="b">sector_t</span>        <span class="b">bi_sector</span><span class="f">;</span>    <span class="k">/* device address in 512 byte
+<a name="35"><span class="line">      35: </span></a>                           sectors */</span>
+<a name="36"><span class="line">      36: </span></a>    <span class="m">struct</span> <span class="b">bio</span>        <span class="f">*</span><span class="b">bi_next</span><span class="f">;</span>    <span class="k">/* request queue link */</span>
+<a name="37"><span class="line">      37: </span></a>    <span class="m">struct</span> <span class="b">block_device</span>    <span class="f">*</span><span class="b">bi_bdev</span><span class="f">;</span>
+<a name="38"><span class="line">      38: </span></a>    <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">bi_flags</span><span class="f">;</span>    <span class="k">/* status, command, etc */</span>
+<a name="39"><span class="line">      39: </span></a>    <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">bi_rw</span><span class="f">;</span>        <span class="k">/* bottom bits READ/WRITE,
+<a name="40"><span class="line">      40: </span></a>                         * top bits priority
+<a name="41"><span class="line">      41: </span></a>                         */</span>
+<a name="42"><span class="line">      42: </span></a>
+<a name="43"><span class="line">      43: </span></a>    <span class="m">unsigned</span> <span class="m">short</span>        <span class="b">bi_vcnt</span><span class="f">;</span>    <span class="k">/* how many bio_vec&apos;s */</span>
+<a name="44"><span class="line">      44: </span></a>    <span class="m">unsigned</span> <span class="m">short</span>        <span class="b">bi_idx</span><span class="f">;</span>        <span class="k">/* current index into bvl_vec */</span>
+<a name="45"><span class="line">      45: </span></a>
+<a name="46"><span class="line">      46: </span></a>    <span class="k">/* Number of segments in this BIO after
+<a name="47"><span class="line">      47: </span></a>     * physical address coalescing is performed.
+<a name="48"><span class="line">      48: </span></a>     */</span>
+<a name="49"><span class="line">      49: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">bi_phys_segments</span><span class="f">;</span>
+<a name="50"><span class="line">      50: </span></a>
+<a name="51"><span class="line">      51: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">bi_size</span><span class="f">;</span>    <span class="k">/* residual I/O count */</span>
+<a name="52"><span class="line">      52: </span></a>
+<a name="53"><span class="line">      53: </span></a>    <span class="k">/*
+<a name="54"><span class="line">      54: </span></a>     * To keep track of the max segment size, we account for the
+<a name="55"><span class="line">      55: </span></a>     * sizes of the first and last mergeable segments in this bio.
+<a name="56"><span class="line">      56: </span></a>     */</span>
+<a name="57"><span class="line">      57: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">bi_seg_front_size</span><span class="f">;</span>
+<a name="58"><span class="line">      58: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">bi_seg_back_size</span><span class="f">;</span>
+<a name="59"><span class="line">      59: </span></a>
+<a name="60"><span class="line">      60: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">bi_max_vecs</span><span class="f">;</span>    <span class="k">/* max bvl_vecs we can hold */</span>
+<a name="61"><span class="line">      61: </span></a>
+<a name="62"><span class="line">      62: </span></a>    <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">bi_comp_cpu</span><span class="f">;</span>    <span class="k">/* completion CPU */</span>
+<a name="63"><span class="line">      63: </span></a>
+<a name="64"><span class="line">      64: </span></a>    <span class="b">atomic_t</span>        <span class="b">bi_cnt</span><span class="f">;</span>        <span class="k">/* pin count */</span>
+<a name="65"><span class="line">      65: </span></a>
+<a name="66"><span class="line">      66: </span></a>    <span class="m">struct</span> <span class="b">bio_vec</span>        <span class="f">*</span><span class="b">bi_io_vec</span><span class="f">;</span>    <span class="k">/* the actual vec list */</span>
+<a name="67"><span class="line">      67: </span></a>
+<a name="68"><span class="line">      68: </span></a>    <span class="b">bio_end_io_t</span>        <span class="f">*</span><span class="b">bi_end_io</span><span class="f">;</span>
+<a name="69"><span class="line">      69: </span></a>
+<a name="70"><span class="line">      70: </span></a>    <span class="m">void</span>            <span class="f">*</span><span class="b">bi_private</span><span class="f">;</span>
+<a name="71"><span class="line">      71: </span></a><span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros.html#ZQ09ORklHX0JMS19ERVZfSU5URUdSSVRZX3Rlc3Rub3RkZWY_"><span class="b">CONFIG_BLK_DEV_INTEGRITY</span></a><span class="f">)</span>
+<a name="72"><span class="line">      72: </span></a>    <span class="m">struct</span> <span class="b">bio_integrity_payload</span> <span class="f">*</span><span class="b">bi_integrity</span><span class="f">;</span>  <span class="k">/* data integrity */</span>
+<a name="73"><span class="line">      73: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="74"><span class="line">      74: </span></a>
+<a name="75"><span class="line">      75: </span></a>    <span class="b">bio_destructor_t</span>    <span class="f">*</span><span class="b">bi_destructor</span><span class="f">;</span>    <span class="k">/* destructor */</span>
+<a name="76"><span class="line">      76: </span></a>
+<a name="77"><span class="line">      77: </span></a>    <span class="k">/*
+<a name="78"><span class="line">      78: </span></a>     * We can inline a number of vecs at the end of the bio, to avoid
+<a name="79"><span class="line">      79: </span></a>     * double allocations for a small number of bio_vecs. This member
+<a name="80"><span class="line">      80: </span></a>     * MUST obviously be kept at the very end of the bio.
+<a name="81"><span class="line">      81: </span></a>     */</span>
+<a name="82"><span class="line">      82: </span></a>    <span class="m">struct</span> <span class="b">bio_vec</span>        <span class="b">bi_inline_vecs</span><span class="f">[</span><span class="c">0</span><span class="f">]</span><span class="f">;</span>
+<a name="83"><span class="line">      83: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="84"><span class="line">      84: </span></a>
+<a name="85"><span class="line">      85: </span></a><span class="k">/*
+<a name="86"><span class="line">      86: </span></a> * bio flags
+<a name="87"><span class="line">      87: </span></a> */</span>
+<a name="88"><span class="line">      88: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_UPTODATE</span>    <span class="c">0</span>    <span class="k">/* ok after I/O completion */</span>
+<a name="89"><span class="line">      89: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_RW_BLOCK</span>    <span class="c">1</span>    <span class="k">/* RW_AHEAD set, and read/write would block */</span>
+<a name="90"><span class="line">      90: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_EOF</span>        <span class="c">2</span>    <span class="k">/* out-out-bounds error */</span>
+<a name="91"><span class="line">      91: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_SEG_VALID</span>    <span class="c">3</span>    <span class="k">/* bi_phys_segments valid */</span>
+<a name="92"><span class="line">      92: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_CLONED</span>    <span class="c">4</span>    <span class="k">/* doesn&apos;t own data */</span>
+<a name="93"><span class="line">      93: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_BOUNCED</span>    <span class="c">5</span>    <span class="k">/* bio is a bounce bio */</span>
+<a name="94"><span class="line">      94: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_USER_MAPPED</span> <span class="c">6</span>    <span class="k">/* contains user pages */</span>
+<a name="95"><span class="line">      95: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_EOPNOTSUPP</span>    <span class="c">7</span>    <span class="k">/* not supported */</span>
+<a name="96"><span class="line">      96: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_CPU_AFFINE</span>    <span class="c">8</span>    <span class="k">/* complete bio on same CPU as submitted */</span>
+<a name="97"><span class="line">      97: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_NULL_MAPPED</span> <span class="c">9</span>    <span class="k">/* contains invalid user pages */</span>
+<a name="98"><span class="line">      98: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_FS_INTEGRITY</span> <span class="c">10</span>    <span class="k">/* fs owns integrity data, not block layer */</span>
+<a name="99"><span class="line">      99: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_QUIET</span>    <span class="c">11</span>    <span class="k">/* Make BIO Quiet */</span>
+<a name="100"><span class="line">     100: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_MAPPED_INTEGRITY</span> <span class="c">12</span><span class="k">/* integrity metadata has been remapped */</span>
+<a name="101"><span class="line">     101: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">bio_flagged</span><span class="f">(</span><span class="b">bio</span><span class="f">,</span> <span class="b">flag</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="b">bio</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">bi_flags</span> <span class="f">&amp;</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="f">(</span><span class="b">flag</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="102"><span class="line">     102: </span></a>
+<a name="103"><span class="line">     103: </span></a><span class="k">/*
+<a name="104"><span class="line">     104: </span></a> * top 4 bits of bio flags indicate the pool this bio came from
+<a name="105"><span class="line">     105: </span></a> */</span>
+<a name="106"><span class="line">     106: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_POOL_BITS</span>        <span class="f">(</span><span class="c">4</span><span class="f">)</span>
+<a name="107"><span class="line">     107: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_POOL_NONE</span>        <span class="f">(</span><span class="f">(</span><span class="c">1UL</span> <span class="f">&lt;&lt;</span> <span class="b">BIO_POOL_BITS</span><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">)</span>
+<a name="108"><span class="line">     108: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_POOL_OFFSET</span>        <span class="f">(</span><a href="cpu.c_macros.html#BITS_PER_LONG_0"><span class="b">BITS_PER_LONG</span></a> <span class="f">-</span> <span class="b">BIO_POOL_BITS</span><span class="f">)</span>
+<a name="109"><span class="line">     109: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_POOL_MASK</span>        <span class="f">(</span><span class="c">1UL</span> <span class="f">&lt;&lt;</span> <span class="b">BIO_POOL_OFFSET</span><span class="f">)</span>
+<a name="110"><span class="line">     110: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">BIO_POOL_IDX</span><span class="f">(</span><span class="b">bio</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="b">bio</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">bi_flags</span> <span class="f">&gt;&gt;</span> <span class="b">BIO_POOL_OFFSET</span><span class="f">)</span>
+<a name="111"><span class="line">     111: </span></a>
+<a name="112"><span class="line">     112: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_BLOCK */</span>
+<a name="113"><span class="line">     113: </span></a>
+<a name="114"><span class="line">     114: </span></a><span class="k">/*
+<a name="115"><span class="line">     115: </span></a> * Request flags.  For use in the cmd_flags field of struct request, and in
+<a name="116"><span class="line">     116: </span></a> * bi_rw of struct bio.  Note that some flags are only valid in either one.
+<a name="117"><span class="line">     117: </span></a> */</span>
+<a name="118"><span class="line">     118: </span></a><span class="m">enum</span> <span class="b">rq_flag_bits</span> <span class="f">{</span>
+<a name="119"><span class="line">     119: </span></a>    <span class="k">/* common flags */</span>
+<a name="120"><span class="line">     120: </span></a>    <span class="b">__REQ_WRITE</span><span class="f">,</span>        <span class="k">/* not set, read. set, write */</span>
+<a name="121"><span class="line">     121: </span></a>    <span class="b">__REQ_FAILFAST_DEV</span><span class="f">,</span>    <span class="k">/* no driver retries of device errors */</span>
+<a name="122"><span class="line">     122: </span></a>    <span class="b">__REQ_FAILFAST_TRANSPORT</span><span class="f">,</span> <span class="k">/* no driver retries of transport errors */</span>
+<a name="123"><span class="line">     123: </span></a>    <span class="b">__REQ_FAILFAST_DRIVER</span><span class="f">,</span>    <span class="k">/* no driver retries of driver errors */</span>
+<a name="124"><span class="line">     124: </span></a>
+<a name="125"><span class="line">     125: </span></a>    <span class="b">__REQ_SYNC</span><span class="f">,</span>        <span class="k">/* request is sync (sync write or read) */</span>
+<a name="126"><span class="line">     126: </span></a>    <span class="b">__REQ_META</span><span class="f">,</span>        <span class="k">/* metadata io request */</span>
+<a name="127"><span class="line">     127: </span></a>    <span class="b">__REQ_DISCARD</span><span class="f">,</span>        <span class="k">/* request to discard sectors */</span>
+<a name="128"><span class="line">     128: </span></a>    <span class="b">__REQ_NOIDLE</span><span class="f">,</span>        <span class="k">/* don&apos;t anticipate more IO after this one */</span>
+<a name="129"><span class="line">     129: </span></a>
+<a name="130"><span class="line">     130: </span></a>    <span class="k">/* bio only flags */</span>
+<a name="131"><span class="line">     131: </span></a>    <span class="b">__REQ_UNPLUG</span><span class="f">,</span>        <span class="k">/* unplug the immediately after submission */</span>
+<a name="132"><span class="line">     132: </span></a>    <span class="b">__REQ_RAHEAD</span><span class="f">,</span>        <span class="k">/* read ahead, can fail anytime */</span>
+<a name="133"><span class="line">     133: </span></a>    <span class="b">__REQ_THROTTLED</span><span class="f">,</span>    <span class="k">/* This bio has already been subjected to
+<a name="134"><span class="line">     134: </span></a>                 * throttling rules. Don&apos;t do it again. */</span>
+<a name="135"><span class="line">     135: </span></a>
+<a name="136"><span class="line">     136: </span></a>    <span class="k">/* request only flags */</span>
+<a name="137"><span class="line">     137: </span></a>    <span class="b">__REQ_SORTED</span><span class="f">,</span>        <span class="k">/* elevator knows about this request */</span>
+<a name="138"><span class="line">     138: </span></a>    <span class="b">__REQ_SOFTBARRIER</span><span class="f">,</span>    <span class="k">/* may not be passed by ioscheduler */</span>
+<a name="139"><span class="line">     139: </span></a>    <span class="b">__REQ_FUA</span><span class="f">,</span>        <span class="k">/* forced unit access */</span>
+<a name="140"><span class="line">     140: </span></a>    <span class="b">__REQ_NOMERGE</span><span class="f">,</span>        <span class="k">/* don&apos;t touch this for merging */</span>
+<a name="141"><span class="line">     141: </span></a>    <span class="b">__REQ_STARTED</span><span class="f">,</span>        <span class="k">/* drive already may have started this one */</span>
+<a name="142"><span class="line">     142: </span></a>    <span class="b">__REQ_DONTPREP</span><span class="f">,</span>        <span class="k">/* don&apos;t call prep for this one */</span>
+<a name="143"><span class="line">     143: </span></a>    <span class="b">__REQ_QUEUED</span><span class="f">,</span>        <span class="k">/* uses queueing */</span>
+<a name="144"><span class="line">     144: </span></a>    <span class="b">__REQ_ELVPRIV</span><span class="f">,</span>        <span class="k">/* elevator private data attached */</span>
+<a name="145"><span class="line">     145: </span></a>    <span class="b">__REQ_FAILED</span><span class="f">,</span>        <span class="k">/* set if the request failed */</span>
+<a name="146"><span class="line">     146: </span></a>    <span class="b">__REQ_QUIET</span><span class="f">,</span>        <span class="k">/* don&apos;t worry about errors */</span>
+<a name="147"><span class="line">     147: </span></a>    <span class="b">__REQ_PREEMPT</span><span class="f">,</span>        <span class="k">/* set for &quot;ide_preempt&quot; requests */</span>
+<a name="148"><span class="line">     148: </span></a>    <span class="b">__REQ_ALLOCED</span><span class="f">,</span>        <span class="k">/* request came from our alloc pool */</span>
+<a name="149"><span class="line">     149: </span></a>    <span class="b">__REQ_COPY_USER</span><span class="f">,</span>    <span class="k">/* contains copies of user pages */</span>
+<a name="150"><span class="line">     150: </span></a>    <span class="b">__REQ_FLUSH</span><span class="f">,</span>        <span class="k">/* request for cache flush */</span>
+<a name="151"><span class="line">     151: </span></a>    <span class="b">__REQ_IO_STAT</span><span class="f">,</span>        <span class="k">/* account I/O stat */</span>
+<a name="152"><span class="line">     152: </span></a>    <span class="b">__REQ_MIXED_MERGE</span><span class="f">,</span>    <span class="k">/* merge of different types, fail separately */</span>
+<a name="153"><span class="line">     153: </span></a>    <span class="b">__REQ_SECURE</span><span class="f">,</span>        <span class="k">/* secure discard (used with __REQ_DISCARD) */</span>
+<a name="154"><span class="line">     154: </span></a>    <span class="b">__REQ_NR_BITS</span><span class="f">,</span>        <span class="k">/* stops here */</span>
+<a name="155"><span class="line">     155: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="156"><span class="line">     156: </span></a>
+<a name="157"><span class="line">     157: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_WRITE_0"><span class="b">REQ_WRITE</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_WRITE</span><span class="f">)</span>
+<a name="158"><span class="line">     158: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_FAILFAST_DEV_0"><span class="b">REQ_FAILFAST_DEV</span></a>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_FAILFAST_DEV</span><span class="f">)</span>
+<a name="159"><span class="line">     159: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_FAILFAST_TRANSPORT_0"><span class="b">REQ_FAILFAST_TRANSPORT</span></a>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_FAILFAST_TRANSPORT</span><span class="f">)</span>
+<a name="160"><span class="line">     160: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_FAILFAST_DRIVER_0"><span class="b">REQ_FAILFAST_DRIVER</span></a>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_FAILFAST_DRIVER</span><span class="f">)</span>
+<a name="161"><span class="line">     161: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_SYNC_0"><span class="b">REQ_SYNC</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_SYNC</span><span class="f">)</span>
+<a name="162"><span class="line">     162: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_META_0"><span class="b">REQ_META</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_META</span><span class="f">)</span>
+<a name="163"><span class="line">     163: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_DISCARD_0"><span class="b">REQ_DISCARD</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_DISCARD</span><span class="f">)</span>
+<a name="164"><span class="line">     164: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_NOIDLE_0"><span class="b">REQ_NOIDLE</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_NOIDLE</span><span class="f">)</span>
+<a name="165"><span class="line">     165: </span></a>
+<a name="166"><span class="line">     166: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_FAILFAST_MASK_0"><span class="b">REQ_FAILFAST_MASK</span></a> \
+<a name="167"><span class="line">     167: </span></a>    <span class="f">(</span><a href="cpu.c_macros.html#REQ_FAILFAST_DEV_0"><span class="b">REQ_FAILFAST_DEV</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_FAILFAST_TRANSPORT_0"><span class="b">REQ_FAILFAST_TRANSPORT</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_FAILFAST_DRIVER_0"><span class="b">REQ_FAILFAST_DRIVER</span></a><span class="f">)</span>
+<a name="168"><span class="line">     168: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_COMMON_MASK_0"><span class="b">REQ_COMMON_MASK</span></a> \
+<a name="169"><span class="line">     169: </span></a>    <span class="f">(</span><a href="cpu.c_macros.html#REQ_WRITE_0"><span class="b">REQ_WRITE</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_FAILFAST_MASK_0"><span class="b">REQ_FAILFAST_MASK</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_SYNC_0"><span class="b">REQ_SYNC</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_META_0"><span class="b">REQ_META</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_DISCARD_0"><span class="b">REQ_DISCARD</span></a> <span class="f">|</span> \
+<a name="170"><span class="line">     170: </span></a>     <a href="cpu.c_macros.html#REQ_NOIDLE_0"><span class="b">REQ_NOIDLE</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_FLUSH_0"><span class="b">REQ_FLUSH</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#REQ_FUA_0"><span class="b">REQ_FUA</span></a><span class="f">)</span>
+<a name="171"><span class="line">     171: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_CLONE_MASK_0"><span class="b">REQ_CLONE_MASK</span></a>        <a href="cpu.c_macros.html#REQ_COMMON_MASK_0"><span class="b">REQ_COMMON_MASK</span></a>
+<a name="172"><span class="line">     172: </span></a>
+<a name="173"><span class="line">     173: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_UNPLUG_0"><span class="b">REQ_UNPLUG</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_UNPLUG</span><span class="f">)</span>
+<a name="174"><span class="line">     174: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_RAHEAD_0"><span class="b">REQ_RAHEAD</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_RAHEAD</span><span class="f">)</span>
+<a name="175"><span class="line">     175: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_THROTTLED_0"><span class="b">REQ_THROTTLED</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_THROTTLED</span><span class="f">)</span>
+<a name="176"><span class="line">     176: </span></a>
+<a name="177"><span class="line">     177: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_SORTED_0"><span class="b">REQ_SORTED</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_SORTED</span><span class="f">)</span>
+<a name="178"><span class="line">     178: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_SOFTBARRIER_0"><span class="b">REQ_SOFTBARRIER</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_SOFTBARRIER</span><span class="f">)</span>
+<a name="179"><span class="line">     179: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_FUA_0"><span class="b">REQ_FUA</span></a>            <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_FUA</span><span class="f">)</span>
+<a name="180"><span class="line">     180: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_NOMERGE_0"><span class="b">REQ_NOMERGE</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_NOMERGE</span><span class="f">)</span>
+<a name="181"><span class="line">     181: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_STARTED_0"><span class="b">REQ_STARTED</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_STARTED</span><span class="f">)</span>
+<a name="182"><span class="line">     182: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_DONTPREP_0"><span class="b">REQ_DONTPREP</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_DONTPREP</span><span class="f">)</span>
+<a name="183"><span class="line">     183: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_QUEUED_0"><span class="b">REQ_QUEUED</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_QUEUED</span><span class="f">)</span>
+<a name="184"><span class="line">     184: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_ELVPRIV_0"><span class="b">REQ_ELVPRIV</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_ELVPRIV</span><span class="f">)</span>
+<a name="185"><span class="line">     185: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_FAILED_0"><span class="b">REQ_FAILED</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_FAILED</span><span class="f">)</span>
+<a name="186"><span class="line">     186: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_QUIET_0"><span class="b">REQ_QUIET</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_QUIET</span><span class="f">)</span>
+<a name="187"><span class="line">     187: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_PREEMPT_0"><span class="b">REQ_PREEMPT</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_PREEMPT</span><span class="f">)</span>
+<a name="188"><span class="line">     188: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_ALLOCED_0"><span class="b">REQ_ALLOCED</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_ALLOCED</span><span class="f">)</span>
+<a name="189"><span class="line">     189: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_COPY_USER_0"><span class="b">REQ_COPY_USER</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_COPY_USER</span><span class="f">)</span>
+<a name="190"><span class="line">     190: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_FLUSH_0"><span class="b">REQ_FLUSH</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_FLUSH</span><span class="f">)</span>
+<a name="191"><span class="line">     191: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_IO_STAT_0"><span class="b">REQ_IO_STAT</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_IO_STAT</span><span class="f">)</span>
+<a name="192"><span class="line">     192: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_MIXED_MERGE_0"><span class="b">REQ_MIXED_MERGE</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_MIXED_MERGE</span><span class="f">)</span>
+<a name="193"><span class="line">     193: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#REQ_SECURE_0"><span class="b">REQ_SECURE</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">__REQ_SECURE</span><span class="f">)</span>
+<a name="194"><span class="line">     194: </span></a>
+<a name="195"><span class="line">     195: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* __LINUX_BLK_TYPES_H */</span>
+<a name="196"><span class="line">     196: </span></a></pre>
+  </body>
+</html>

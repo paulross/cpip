@@ -1,0 +1,17 @@
+.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
+.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+
+***********************************
+CPIP Utilities
+***********************************
+
+.. toctree::
+	:maxdepth: 2
+
+	BufGen
+	DictTree
+	ListGen
+	MatrixRep
+	MaxMunchGen
+	StrTree
+	XmlWrite

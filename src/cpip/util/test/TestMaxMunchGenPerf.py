@@ -24,16 +24,12 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import sys
-import os
+#import os
 import unittest
 import time
 import logging
 import string
-
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 from cpip import ExceptionCpip
 from cpip.util import MaxMunchGen
@@ -72,9 +68,9 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         i = 0
         r = None
         try:
-            aChar = theGen.next()
+            aChar = next(theGen)
             if aChar == '\\' \
-            and theGen.next() == '\n':
+            and next(theGen) == '\n':
                 r = ''
                 i = 2
                 self._cntrAddNewLinesAfterCont += 1
@@ -90,7 +86,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         i = 0
         r = None
         try:
-            myChr = theGen.next()
+            myChr = next(theGen)
             if myChr not in self.SOURCE_CHARACTER_SET:
                 i = 1
                 myOrd = ord(myChr)
@@ -110,10 +106,10 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         i = 0
         r = None
         try:
-            if theGen.next() == '?' \
-            and theGen.next() == '?':
+            if next(theGen) == '?' \
+            and next(theGen) == '?':
                 try:
-                    r = self.TRIGRAPH_TABLE[theGen.next()]
+                    r = self.TRIGRAPH_TABLE[next(theGen)]
                     i = self.TRIGRAPH_SIZE
                 except KeyError:
                     pass
@@ -134,7 +130,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
 #                    break
 #                i += 1
 #===============================================================================
-            while theGen.next() in self.LEX_WHITESPACE:
+            while next(theGen) in self.LEX_WHITESPACE:
                 i += 1
         except StopIteration:
             pass
@@ -152,7 +148,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
 #                    break
 #                i += 1
 #===============================================================================
-            if theGen.next() not in self.LEX_WHITESPACE:
+            if next(theGen) not in self.LEX_WHITESPACE:
                 i = 1
         except StopIteration:
             pass
@@ -162,15 +158,15 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         i = 0
         r = None
         try:
-            aChar = theGen.next()
+            aChar = next(theGen)
             if aChar == '/' \
-            and theGen.next() == '*':
+            and next(theGen) == '*':
                 r = ' '
                 i = 2
                 while 1:
-                    if theGen.next() == '*':
+                    if next(theGen) == '*':
                         i += 1
-                        if theGen.next() == '/':
+                        if next(theGen) == '/':
                             i += 1
                             break
                     else:
@@ -186,13 +182,13 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         i = 0
         r = None
         try:
-            aChar = theGen.next()
+            aChar = next(theGen)
             if aChar == '/' \
-            and theGen.next() == '/':
+            and next(theGen) == '/':
                 r = ' '
                 i = 2
                 while 1:
-                    if theGen.next() == '\n':
+                    if next(theGen) == '\n':
                         #i += 1
                         break
                     i += 1                        
@@ -363,7 +359,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines:    1"""
         myPStr = '??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)'
         myLStr = '#define arraycheck(a,b) a[b] || b[a]'
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
@@ -375,7 +371,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines:  128"""
         myPStr = '??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n' * 128
         myLStr = '#define arraycheck(a,b) a[b] || b[a]\n' * 128
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
@@ -387,7 +383,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines: 1024"""
         myPStr = '??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n' * 1024
         myLStr = '#define arraycheck(a,b) a[b] || b[a]\n' * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
@@ -399,7 +395,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines:    1"""
         myPStr = ' ' * 80 + '\n'
         myLStr = myPStr
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
@@ -412,7 +408,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         myPStr = (' ' * 80 + '\n') * 128
         #print myPStr
         myLStr = myPStr
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
@@ -424,7 +420,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
         myLStr = myPStr
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
@@ -436,7 +432,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_00(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph.: whitespace, lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
         for c in self._file.read():
@@ -445,7 +441,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_01(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph0: whitespace, lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
         for aVal in self.genPhase0():
@@ -454,7 +450,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_02(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph1: whitespace, lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
         for aVal in self.genPhase1():
@@ -463,7 +459,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_03(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph2: whitespace, lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
         for aVal in self.genPhase2():
@@ -472,7 +468,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_04(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph3: whitespace, lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
         for aVal in self.genPhase3():
@@ -481,7 +477,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_05(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph_: whitespace, lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
         for aVal in self.genPhase_():
@@ -500,7 +496,7 @@ class TestMaximalMunchSimulPpTokeniser_Profile(TestMaximalMunchSimulPpTokeniserB
     def test_00(self):
         """TestMaximalMunchSimulPpTokeniser_Profile.test_00: MaxMunch.anyToken(), lines: 1024"""
         myPStr = (' ' * 80 + '\n') * 1024
-        self._file = StringIO.StringIO(myPStr)
+        self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
         for aVal in self.genPhase_():
@@ -523,7 +519,7 @@ class TestMaximalMunchProfileNumbers(unittest.TestCase):
         i = 0
         try:
             while 1:
-                c = theGen.next()
+                c = next(theGen)
                 if c == ' ':
                     break
                 elif c in theSet:
@@ -548,7 +544,7 @@ class TestMaximalMunchProfileNumbers(unittest.TestCase):
         """TestMaximalMunchProfileNumbers.test_00: dec, oct and hex digit runs * 1024"""
         myLine = '%s %s %s\n' % (string.octdigits, string.digits, string.hexdigits)
         myPStr = myLine * 4 * 1024
-        myFile = StringIO.StringIO(myPStr)
+        myFile = io.StringIO(myPStr)
 
         myBg = MaxMunchGen.MaxMunchGen(
                     self._gen(myFile),
@@ -569,9 +565,9 @@ class NullClass(unittest.TestCase):
 def unitTest(theVerbosity=2):
     """Execute unit tests."""
     suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMaximalMunchSimulPpTokeniser_00))
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMaximalMunchSimulPpTokeniser_01))
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMaximalMunchSimulPpTokeniser_Profile))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMaximalMunchSimulPpTokeniser_00))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMaximalMunchSimulPpTokeniser_01))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMaximalMunchSimulPpTokeniser_Profile))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMaximalMunchProfileNumbers))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
@@ -582,8 +578,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestMaxMunchGen.py - A module that tests PpToken module.
+    print("""TestMaxMunchGen.py - A module that tests PpToken module.
 Usage:
 python TestMaxMunchGen.py [-lh --help]
 
@@ -599,20 +594,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestMaxMunchGen.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestMaxMunchGen.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -623,7 +618,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -633,8 +628,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

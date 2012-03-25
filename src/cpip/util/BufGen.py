@@ -51,7 +51,7 @@ class BufGen(object):
             raise IndexError('BufGen index out of range')
         try:
             while len(self._buf) <= key:
-                self._buf.append(self._gen.next())
+                self._buf.append(next(self._gen))
         except StopIteration:
             raise IndexError('BufGen index out of range')
         if len(self._buf) > key:
@@ -69,7 +69,7 @@ class BufGen(object):
         i = 0
         while 1:
             if len(self._buf) <= i:
-                self._buf.append(self._gen.next())
+                self._buf.append(next(self._gen))
             yield self._buf[i]
             i +=1
     

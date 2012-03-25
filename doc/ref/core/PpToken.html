@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PpToken &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="PpTokenCount" href="../core/PpTokenCount.html" />
+    <link rel="prev" title="PpLexer" href="../core/PpLexer.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpTokenCount.html" title="PpTokenCount"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpLexer.html" title="PpLexer"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.PpToken">
+<span id="pptoken"></span><span id="cpip-ref-pptoken"></span><h1>PpToken<a class="headerlink" href="#module-cpip.core.PpToken" title="Permalink to this headline">¶</a></h1>
+<p>Represents a preprocessing Token in C/C++ source code.</p>
+<dl class="exception">
+<dt id="cpip.core.PpToken.ExceptionCpipToken">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">ExceptionCpipToken</tt><a class="headerlink" href="#cpip.core.PpToken.ExceptionCpipToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by PpToken.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpToken.ExceptionCpipTokenIllegalMerge">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">ExceptionCpipTokenIllegalMerge</tt><a class="headerlink" href="#cpip.core.PpToken.ExceptionCpipTokenIllegalMerge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by PpToken when merge() is called illegally.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpToken.ExceptionCpipTokenIllegalOperation">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">ExceptionCpipTokenIllegalOperation</tt><a class="headerlink" href="#cpip.core.PpToken.ExceptionCpipTokenIllegalOperation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by PpToken when an illegal operation is performed.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpToken.ExceptionCpipTokenReopenForExpansion">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">ExceptionCpipTokenReopenForExpansion</tt><a class="headerlink" href="#cpip.core.PpToken.ExceptionCpipTokenReopenForExpansion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by PpToken when a non-expandable token is
+made available for expansion.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpToken.ExceptionCpipTokenUnknownType">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">ExceptionCpipTokenUnknownType</tt><a class="headerlink" href="#cpip.core.PpToken.ExceptionCpipTokenUnknownType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used by PpToken when the token type is out of range.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.PpToken.PpToken">
+<em class="property">class </em><tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">PpToken</tt><big>(</big><em>t</em>, <em>tt</em>, <em>lineNum=0</em>, <em>colNum=0</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds a preprocessor token, its type and whether the token can
+be replaced.</p>
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.canReplace">
+<tt class="descname">canReplace</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.canReplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag to control whether this token is eligible for replacement</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.colNum">
+<tt class="descname">colNum</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.colNum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the column number of the start of the token as an integer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.evalConstExpr">
+<tt class="descname">evalConstExpr</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.evalConstExpr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an string value suitable for eval&#8217;ing in a constant expression.
+For numbers this removes such tiresome trivia as &#8216;u&#8217;, &#8216;L&#8217; etc. For others
+it replaces &#8216;&amp;&amp;&#8217; with &#8216;and&#8217; and so on.
+See ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4
+i.e. section 16.1-4
+And: ISO/IEC 9899:1999 (E) 6.10.1 Conditional inclusion sub-section 3
+i.e. section 6.10.1-3</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.getPrevWs">
+<tt class="descname">getPrevWs</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.getPrevWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the flag that records prior whitespace.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.getReplace">
+<tt class="descname">getReplace</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.getReplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the flag that controls whether this can be replaced.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.isCond">
+<tt class="descname">isCond</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.isCond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag that if True indicates that the token appeared within a
+section that was conditionally compiled. This is False on construction
+and can only be set True by setIsCond()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.isIdentifier">
+<tt class="descname">isIdentifier</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.isIdentifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the token type is &#8216;identifier&#8217;.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.isUnCond">
+<tt class="descname">isUnCond</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.isUnCond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag that if True indicates that the token appeared within a
+section that was un-conditionally compiled. This is the negation of
+isCond.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.isWs">
+<tt class="descname">isWs</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.isWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the token type is &#8216;whitespace&#8217;.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.lineNum">
+<tt class="descname">lineNum</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.lineNum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the line number of the start of the token as an integer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.merge">
+<tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will merge by appending the other token if possible.
+Failure will raise a ExceptionCpipTokenIllegalMerge if
+the token types are different.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.prevWs">
+<tt class="descname">prevWs</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.prevWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag to indicate whether this token is preceded by whitespace</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.replaceNewLine">
+<tt class="descname">replaceNewLine</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.replaceNewLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace any newline with a single whitespace character in-place.
+See: C ISO/IEC 9899:1999(E) 6.10-3 and C++ ISO/IEC 14882:1998(E) 16.3-9
+This will raise a ExceptionCpipTokenIllegalOperation if I am not
+a whitespace token.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.setIsCond">
+<tt class="descname">setIsCond</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.setIsCond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets self._isCond to be True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.setPrevWs">
+<tt class="descname">setPrevWs</tt><big>(</big><em>val</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.setPrevWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the flag that records prior whitespace.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.setReplace">
+<tt class="descname">setReplace</tt><big>(</big><em>val</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.setReplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setter, will raise if I am not an identifier or val is True and
+if I am otherwise not expandable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.shrinkWs">
+<tt class="descname">shrinkWs</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.shrinkWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace all whitespace with a single &#8216; &#8216;
+This will raise a ExceptionCpipTokenIllegalOperation if I am not
+a whitespace token.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpToken.PpToken.subst">
+<tt class="descname">subst</tt><big>(</big><em>t</em>, <em>tt</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.subst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Substitutes token value and type.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.t">
+<tt class="descname">t</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.t" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the token as a string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.tokEnumToktype">
+<tt class="descname">tokEnumToktype</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.tokEnumToktype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the token and the enumerated token type as a tuple.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.tokToktype">
+<tt class="descname">tokToktype</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.tokToktype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the token and the token type (as a string) as a tuple.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpToken.PpToken.tt">
+<tt class="descname">tt</tt><a class="headerlink" href="#cpip.core.PpToken.PpToken.tt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the token type as a string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.core.PpToken.tokensStr">
+<tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">tokensStr</tt><big>(</big><em>theTokens</em>, <em>shortForm=True</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.tokensStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of tokens this returns them as a string.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/PpLexer.html"
+                        title="previous chapter">PpLexer</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/PpTokenCount.html"
+                        title="next chapter">PpTokenCount</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/PpToken.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpTokenCount.html" title="PpTokenCount"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpLexer.html" title="PpLexer"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

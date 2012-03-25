@@ -25,7 +25,7 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-import BufGen
+from . import BufGen
 from cpip import ExceptionCpip
 
 class ExceptionMaxMunchGen(ExceptionCpip):
@@ -37,7 +37,7 @@ def anyToken(theGen):
     This can be used as the last registered function to ensure that the token
     stream is read to completion. The kind returned is None."""
     try:
-        theGen.next()
+        next(theGen)
     except StopIteration:
         return 0, None, None
     return 1, None, None

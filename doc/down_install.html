@@ -1,0 +1,213 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installing CPIP &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="index.html" />
+    <link rel="next" title="CPIPMain.py Examples" href="examples/examples.html" />
+    <link rel="prev" title="CPIP Introduction" href="intro.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/examples.html" title="CPIPMain.py Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="CPIP Introduction"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">CPIP 0.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="installing-cpip">
+<h1>Installing CPIP<a class="headerlink" href="#installing-cpip" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>For cpip will need to have installed (with links):</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.python.org">Python</a></li>
+</ul>
+<p>Thats it!</p>
+<p>CPIP has been tested with Python 2.6, 2.7 and 3.2</p>
+</div>
+<div class="section" id="download">
+<h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
+<p>cpip&#8217;s project page is at <a class="reference external" href="http://sourceforge.net/projects/cpip/">http://sourceforge.net/projects/cpip/</a> <a class="footnote-reference" href="#id2" id="id1">[1]</a>. From there you can either download an archive from the files section or pull the latest source from the repository.</p>
+<p>In any case you will unzip or clone/pull to a <em>directory</em> of your choice on your machine referred to hereon as <tt class="file docutils literal"><em><span class="pre">&lt;cpip&gt;</span></em></tt>.</p>
+<div class="section" id="from-a-release">
+<h3>From a Release<a class="headerlink" href="#from-a-release" title="Permalink to this headline">¶</a></h3>
+<p>Releases are made irregularly and they are on the <a class="reference external" href="http://sourceforge.net/projects/cpip/files/">downloads page</a>. Select the release that you want and unpack the file to your directory <tt class="file docutils literal"><em><span class="pre">&lt;cpip&gt;</span></em></tt></p>
+</div>
+<div class="section" id="from-the-hg-repo">
+<h3>From the Hg Repo<a class="headerlink" href="#from-the-hg-repo" title="Permalink to this headline">¶</a></h3>
+<p>The Mercurial repository has the most up-to-date code, get it with:</p>
+<div class="highlight-python"><pre>$ mkdir &lt;cpip&gt;
+$ cd &lt;cpip&gt;
+$ hg clone http://hg.code.sf.net/p/cpip/code-0 .</pre>
+</div>
+</div>
+</div>
+<div class="section" id="installing-and-testing">
+<h2>Installing and Testing<a class="headerlink" href="#installing-and-testing" title="Permalink to this headline">¶</a></h2>
+<p>Follow this to test that your installation of CPIP works.</p>
+<div class="section" id="installing">
+<h3>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="setting-the-environment">
+<h4>Setting the Environment<a class="headerlink" href="#setting-the-environment" title="Permalink to this headline">¶</a></h4>
+<p>Put <tt class="file docutils literal"><em><span class="pre">&lt;cpip&gt;</span></em></tt> on your <tt class="docutils literal"><span class="pre">$PYTHONPATH</span></tt></p>
+</div>
+</div>
+<div class="section" id="testing">
+<h3>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h3>
+<p>To make sure that cpip can be imported from your <tt class="docutils literal"><span class="pre">$PYTHONPATH</span></tt> do this:</p>
+<div class="highlight-python"><pre>$ python3
+Python 3.2 (r32:88452, Feb 20 2011, 11:12:31)
+[GCC 4.2.1 (Apple Inc. build 5664)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import cpip
+&gt;&gt;&gt; dir(cpip)
+['CPIP_VERSION', 'ExceptionCpip', 'RELEASE_NOTES', '__all__', '__author__', '__builtins__', '__cached__', '__date__', '__doc__', '__file__', '__name__', '__package__', '__path__', '__rights__', '__version__']
+&gt;&gt;&gt; cpip.CPIP_VERSION
+(0, 8, 1)
+&gt;&gt;&gt;</pre>
+</div>
+<div class="section" id="unit-testing">
+<h4>Unit Testing<a class="headerlink" href="#unit-testing" title="Permalink to this headline">¶</a></h4>
+<p>To run all the unit tests in the core:</p>
+<div class="highlight-python"><pre>$ cd &lt;cpip&gt;/core
+$ python3 test/UnitTest.py</pre>
+</div>
+</div>
+<div class="section" id="testing-the-demo-code">
+<h4>Testing the Demo Code<a class="headerlink" href="#testing-the-demo-code" title="Permalink to this headline">¶</a></h4>
+<p>See the <a class="reference internal" href="tutorial/PpLexer.html#cpip-tutorial-pplexer"><em>PpLexer Tutorial</em></a> for an example of running a CPIP <tt class="docutils literal"><span class="pre">PpLexer</span></tt> on the demonstation code. This gives the core CPIP software a good workout.</p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Our home page that has, among other things, this <em>very fine documentation</em> is at <a class="reference external" href="http://cpip.sourceforge.net">http://cpip.sourceforge.net</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing CPIP</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#download">Download</a><ul>
+<li><a class="reference internal" href="#from-a-release">From a Release</a></li>
+<li><a class="reference internal" href="#from-the-hg-repo">From the Hg Repo</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installing-and-testing">Installing and Testing</a><ul>
+<li><a class="reference internal" href="#installing">Installing</a><ul>
+<li><a class="reference internal" href="#setting-the-environment">Setting the Environment</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing">Testing</a><ul>
+<li><a class="reference internal" href="#unit-testing">Unit Testing</a></li>
+<li><a class="reference internal" href="#testing-the-demo-code">Testing the Demo Code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="intro.html"
+                        title="previous chapter">CPIP Introduction</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="examples/examples.html"
+                        title="next chapter"><tt class="file docutils literal docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/down_install.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="examples/examples.html" title="CPIPMain.py Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="intro.html" title="CPIP Introduction"
+             >previous</a> |</li>
+        <li><a href="index.html">CPIP 0.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

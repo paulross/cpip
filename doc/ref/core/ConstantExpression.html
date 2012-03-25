@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ConstantExpression &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="CppCond" href="../core/CppCond.html" />
+    <link rel="prev" title="CPIP Core" href="../core/index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/CppCond.html" title="CppCond"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/index.html" title="CPIP Core"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.ConstantExpression">
+<span id="constantexpression"></span><span id="cpip-ref-constantexpression"></span><h1>ConstantExpression<a class="headerlink" href="#module-cpip.core.ConstantExpression" title="Permalink to this headline">¶</a></h1>
+<p>Handles the Python interpretation of a constant-expression.
+See ISO/IEC 14882:1998(E)</p>
+<dl class="class">
+<dt id="cpip.core.ConstantExpression.ConstantExpression">
+<em class="property">class </em><tt class="descclassname">cpip.core.ConstantExpression.</tt><tt class="descname">ConstantExpression</tt><big>(</big><em>theTokTypeS</em><big>)</big><a class="headerlink" href="#cpip.core.ConstantExpression.ConstantExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that interpret a stream of preprocessing tokens (class PpToken)
+and evaluate it as a constant expression.</p>
+<dl class="method">
+<dt id="cpip.core.ConstantExpression.ConstantExpression.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.ConstantExpression.ConstantExpression.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the constant expression and returns 0 or 1.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.ConstantExpression.ConstantExpression.translateTokensToString">
+<tt class="descname">translateTokensToString</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.ConstantExpression.ConstantExpression.translateTokensToString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string to be evaluated as a constant-expression.
+ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4
+i.e. 16.1-4</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.ConstantExpression.ExceptionConditionalExpression">
+<em class="property">exception </em><tt class="descclassname">cpip.core.ConstantExpression.</tt><tt class="descname">ExceptionConditionalExpression</tt><a class="headerlink" href="#cpip.core.ConstantExpression.ExceptionConditionalExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when conditional expression e.g. ... ? ... : ... fails to evaluate.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.ConstantExpression.ExceptionConditionalExpressionInit">
+<em class="property">exception </em><tt class="descclassname">cpip.core.ConstantExpression.</tt><tt class="descname">ExceptionConditionalExpressionInit</tt><a class="headerlink" href="#cpip.core.ConstantExpression.ExceptionConditionalExpressionInit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when initialising a ConstantExpression class.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.ConstantExpression.ExceptionConstantExpression">
+<em class="property">exception </em><tt class="descclassname">cpip.core.ConstantExpression.</tt><tt class="descname">ExceptionConstantExpression</tt><a class="headerlink" href="#cpip.core.ConstantExpression.ExceptionConstantExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple specialisation of an exception class for the ConstantExpression classes.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.ConstantExpression.ExceptionEvaluateExpression">
+<em class="property">exception </em><tt class="descclassname">cpip.core.ConstantExpression.</tt><tt class="descname">ExceptionEvaluateExpression</tt><a class="headerlink" href="#cpip.core.ConstantExpression.ExceptionEvaluateExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when conditional expression e.g. 1 &lt; 2 fails to evaluate.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/index.html"
+                        title="previous chapter">CPIP Core</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/CppCond.html"
+                        title="next chapter">CppCond</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/ConstantExpression.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/CppCond.html" title="CppCond"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/index.html" title="CPIP Core"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

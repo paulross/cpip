@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/arch/x86/include/asm/page.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/arch/x86/include/asm/page.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#_ASM_X86_PAGE_H_0"><span class="b">_ASM_X86_PAGE_H</span></a>
+<a name="2"><span class="line">       2: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#_ASM_X86_PAGE_H_0"><span class="b">_ASM_X86_PAGE_H</span></a>
+<a name="3"><span class="line">       3: </span></a>
+<a name="4"><span class="line">       4: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5"><span class="line">       5: </span></a>
+<a name="6"><span class="line">       6: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#__KERNEL___0"><span class="b">__KERNEL__</span></a>
+<a name="7"><span class="line">       7: </span></a>
+<a name="8"><span class="line">       8: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">page_types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="9"><span class="line">       9: </span></a>
+<a name="10"><span class="line">      10: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#ZQ09ORklHX1g4Nl82NF90ZXN0bm90ZGVm"><span class="b">CONFIG_X86_64</span></a>
+<a name="11"><span class="line">      11: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">page_64</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="12"><span class="line">      12: </span></a><span class="f">#</span><span class="n">else</span>
+<a name="13"><span class="line">      13: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">page_32</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="14"><span class="line">      14: </span></a><span class="f">#</span><span class="n">endif</span>    <span class="k">/* CONFIG_X86_64 */</span>
+<a name="15"><span class="line">      15: </span></a>
+<a name="16"><span class="line">      16: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#ZX19BU1NFTUJMWV9fX3Rlc3Rub3RkZWY_"><span class="b">__ASSEMBLY__</span></a>
+<a name="17"><span class="line">      17: </span></a>
+<a name="18"><span class="line">      18: </span></a><span class="m">struct</span> <span class="b">page</span><span class="f">;</span>
+<a name="19"><span class="line">      19: </span></a>
+<a name="20"><span class="line">      20: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">clear_user_page</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="b">page</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">vaddr</span><span class="f">,</span>
+<a name="21"><span class="line">      21: </span></a>                   <span class="m">struct</span> <span class="b">page</span> <span class="f">*</span><span class="b">pg</span><span class="f">)</span>
+<a name="22"><span class="line">      22: </span></a><span class="f">{</span>
+<a name="23"><span class="line">      23: </span></a>    <span class="b">clear_page</span><span class="f">(</span><span class="b">page</span><span class="f">)</span><span class="f">;</span>
+<a name="24"><span class="line">      24: </span></a><span class="f">}</span>
+<a name="25"><span class="line">      25: </span></a>
+<a name="26"><span class="line">      26: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">copy_user_page</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="b">to</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">from</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">vaddr</span><span class="f">,</span>
+<a name="27"><span class="line">      27: </span></a>                  <span class="m">struct</span> <span class="b">page</span> <span class="f">*</span><span class="b">topage</span><span class="f">)</span>
+<a name="28"><span class="line">      28: </span></a><span class="f">{</span>
+<a name="29"><span class="line">      29: </span></a>    <span class="b">copy_page</span><span class="f">(</span><span class="b">to</span><span class="f">,</span> <span class="b">from</span><span class="f">)</span><span class="f">;</span>
+<a name="30"><span class="line">      30: </span></a><span class="f">}</span>
+<a name="31"><span class="line">      31: </span></a>
+<a name="32"><span class="line">      32: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__alloc_zeroed_user_highpage(movableflags,vma,vaddr)_0"><span class="b">__alloc_zeroed_user_highpage</span></a><span class="f">(</span><span class="b">movableflags</span><span class="f">,</span> <span class="b">vma</span><span class="f">,</span> <span class="b">vaddr</span><span class="f">)</span> \
+<a name="33"><span class="line">      33: </span></a>    <a href="cpu.c_macros.html#alloc_page_vma(gfp_mask,vma,addr)_0"><span class="b">alloc_page_vma</span></a><span class="f">(</span><a href="cpu.c_macros.html#GFP_HIGHUSER_0"><span class="b">GFP_HIGHUSER</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#__GFP_ZERO_0"><span class="b">__GFP_ZERO</span></a> <span class="f">|</span> <span class="b">movableflags</span><span class="f">,</span> <span class="b">vma</span><span class="f">,</span> <span class="b">vaddr</span><span class="f">)</span>
+<a name="34"><span class="line">      34: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE_0"><span class="b">__HAVE_ARCH_ALLOC_ZEROED_USER_HIGHPAGE</span></a>
+<a name="35"><span class="line">      35: </span></a>
+<a name="36"><span class="line">      36: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__pa(x)_0"><span class="b">__pa</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>        <a href="cpu.c_macros.html#__phys_addr(x)_0"><span class="b">__phys_addr</span></a><span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">x</span><span class="f">)</span><span class="f">)</span>
+<a name="37"><span class="line">      37: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__pa_nodebug(x)_0"><span class="b">__pa_nodebug</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>    <a href="cpu.c_macros.html#__phys_addr_nodebug(x)_0"><span class="b">__phys_addr_nodebug</span></a><span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">x</span><span class="f">)</span><span class="f">)</span>
+<a name="38"><span class="line">      38: </span></a><span class="k">/* __pa_symbol should be used for C visible symbols.
+<a name="39"><span class="line">      39: </span></a>   This seems to be the official gcc blessed way to do such arithmetic. */</span>
+<a name="40"><span class="line">      40: </span></a><span class="k">/*
+<a name="41"><span class="line">      41: </span></a> * We need __phys_reloc_hide() here because gcc may assume that there is no
+<a name="42"><span class="line">      42: </span></a> * overflow during __pa() calculation and can optimize it unexpectedly.
+<a name="43"><span class="line">      43: </span></a> * Newer versions of gcc provide -fno-strict-overflow switch to handle this
+<a name="44"><span class="line">      44: </span></a> * case properly. Once all supported versions of gcc understand it, we can
+<a name="45"><span class="line">      45: </span></a> * remove this Voodoo magic stuff. (i.e. once gcc3.x is deprecated)
+<a name="46"><span class="line">      46: </span></a> */</span>
+<a name="47"><span class="line">      47: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__pa_symbol(x)_0"><span class="b">__pa_symbol</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>    <a href="cpu.c_macros.html#__pa(x)_0"><span class="b">__pa</span></a><span class="f">(</span><a href="cpu.c_macros.html#__phys_reloc_hide(x)_0"><span class="b">__phys_reloc_hide</span></a><span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">x</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="48"><span class="line">      48: </span></a>
+<a name="49"><span class="line">      49: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__va(x)_0"><span class="b">__va</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>            <span class="f">(</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">x</span><span class="f">)</span><span class="f">+</span><a href="cpu.c_macros.html#PAGE_OFFSET_0"><span class="b">PAGE_OFFSET</span></a><span class="f">)</span><span class="f">)</span>
+<a name="50"><span class="line">      50: </span></a>
+<a name="51"><span class="line">      51: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__boot_va(x)_0"><span class="b">__boot_va</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>        <a href="cpu.c_macros.html#__va(x)_0"><span class="b">__va</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>
+<a name="52"><span class="line">      52: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__boot_pa(x)_0"><span class="b">__boot_pa</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>        <a href="cpu.c_macros.html#__pa(x)_0"><span class="b">__pa</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>
+<a name="53"><span class="line">      53: </span></a>
+<a name="54"><span class="line">      54: </span></a><span class="k">/*
+<a name="55"><span class="line">      55: </span></a> * virt_to_page(kaddr) returns a valid pointer if and only if
+<a name="56"><span class="line">      56: </span></a> * virt_addr_valid(kaddr) returns true.
+<a name="57"><span class="line">      57: </span></a> */</span>
+<a name="58"><span class="line">      58: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#virt_to_page(kaddr)_0"><span class="b">virt_to_page</span></a><span class="f">(</span><span class="b">kaddr</span><span class="f">)</span>    <a href="cpu.c_macros.html#pfn_to_page_0"><span class="b">pfn_to_page</span></a><span class="f">(</span><a href="cpu.c_macros.html#__pa(x)_0"><span class="b">__pa</span></a><span class="f">(</span><span class="b">kaddr</span><span class="f">)</span> <span class="f">&gt;&gt;</span> <a href="cpu.c_macros.html#PAGE_SHIFT_0"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="59"><span class="line">      59: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#pfn_to_kaddr(pfn)_0"><span class="b">pfn_to_kaddr</span></a><span class="f">(</span><span class="b">pfn</span><span class="f">)</span>      <a href="cpu.c_macros.html#__va(x)_0"><span class="b">__va</span></a><span class="f">(</span><span class="f">(</span><span class="b">pfn</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros.html#PAGE_SHIFT_0"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="60"><span class="line">      60: </span></a><span class="m">extern</span> <span class="m">bool</span> <span class="b">__virt_addr_valid</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">kaddr</span><span class="f">)</span><span class="f">;</span>
+<a name="61"><span class="line">      61: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#virt_addr_valid(kaddr)_0"><span class="b">virt_addr_valid</span></a><span class="f">(</span><span class="b">kaddr</span><span class="f">)</span>    <span class="b">__virt_addr_valid</span><span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span> <span class="f">(</span><span class="b">kaddr</span><span class="f">)</span><span class="f">)</span>
+<a name="62"><span class="line">      62: </span></a>
+<a name="63"><span class="line">      63: </span></a><span class="f">#</span><span class="n">endif</span>    <span class="k">/* __ASSEMBLY__ */</span>
+<a name="64"><span class="line">      64: </span></a>
+<a name="65"><span class="line">      65: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">-</span><span class="b">generic</span><span class="f">/</span><span class="b">memory_model</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="66"><span class="line">      66: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">-</span><span class="b">generic</span><span class="f">/</span><span class="b">getorder</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="67"><span class="line">      67: </span></a>
+<a name="68"><span class="line">      68: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__HAVE_ARCH_GATE_AREA_0"><span class="b">__HAVE_ARCH_GATE_AREA</span></a> <span class="c">1</span>
+<a name="69"><span class="line">      69: </span></a>
+<a name="70"><span class="line">      70: </span></a><span class="f">#</span><span class="n">endif</span>    <span class="k">/* __KERNEL__ */</span>
+<a name="71"><span class="line">      71: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* _ASM_X86_PAGE_H */</span>
+<a name="72"><span class="line">      72: </span></a></pre>
+  </body>
+</html>

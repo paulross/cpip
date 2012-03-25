@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/arch/x86/include/asm/current.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/arch/x86/include/asm/current.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#_ASM_X86_CURRENT_H_0"><span class="b">_ASM_X86_CURRENT_H</span></a>
+<a name="2"><span class="line">       2: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#_ASM_X86_CURRENT_H_0"><span class="b">_ASM_X86_CURRENT_H</span></a>
+<a name="3"><span class="line">       3: </span></a>
+<a name="4"><span class="line">       4: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">compiler</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5"><span class="line">       5: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">percpu</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6"><span class="line">       6: </span></a>
+<a name="7"><span class="line">       7: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#ZX19BU1NFTUJMWV9fX3Rlc3Rub3RkZWY_"><span class="b">__ASSEMBLY__</span></a>
+<a name="8"><span class="line">       8: </span></a><span class="m">struct</span> <span class="b">task_struct</span><span class="f">;</span>
+<a name="9"><span class="line">       9: </span></a>
+<a name="10"><span class="line">      10: </span></a><a href="cpu.c_macros.html#DECLARE_PER_CPU(type,name)_0"><span class="b">DECLARE_PER_CPU</span></a><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="f">,</span> <span class="b">current_task</span><span class="f">)</span><span class="f">;</span>
+<a name="11"><span class="line">      11: </span></a>
+<a name="12"><span class="line">      12: </span></a><span class="m">static</span> <a href="cpu.c_macros.html#__always_inline_0"><span class="b">__always_inline</span></a> <span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="b">get_current</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="13"><span class="line">      13: </span></a><span class="f">{</span>
+<a name="14"><span class="line">      14: </span></a>    <span class="m">return</span> <a href="cpu.c_macros.html#percpu_read_stable(var)_0"><span class="b">percpu_read_stable</span></a><span class="f">(</span><span class="b">current_task</span><span class="f">)</span><span class="f">;</span>
+<a name="15"><span class="line">      15: </span></a><span class="f">}</span>
+<a name="16"><span class="line">      16: </span></a>
+<a name="17"><span class="line">      17: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#current_0"><span class="b">current</span></a> <span class="b">get_current</span><span class="f">(</span><span class="f">)</span>
+<a name="18"><span class="line">      18: </span></a>
+<a name="19"><span class="line">      19: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* __ASSEMBLY__ */</span>
+<a name="20"><span class="line">      20: </span></a>
+<a name="21"><span class="line">      21: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* _ASM_X86_CURRENT_H */</span>
+<a name="22"><span class="line">      22: </span></a></pre>
+  </body>
+</html>

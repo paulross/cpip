@@ -39,7 +39,7 @@ class StrGen(object):
     def __init__(self, theStr):
         self._str = theStr
         
-    def next(self):
+    def __next__(self):
         i = 0
         while i < len(self._str):
             yield self._str[i]
@@ -52,7 +52,7 @@ class TestBufGen(unittest.TestCase):
     def test_00(self):
         """Test simple string buffer generation."""
         myStrGen = StrGen('abc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         myGen = myBg.gen()
         for a in myGen:
             pass
@@ -66,7 +66,7 @@ class TestBufGen(unittest.TestCase):
     def test_01(self):
         """Tests exceeding available slice size."""
         myStrGen = StrGen('abc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         for a in myBg.gen():
             pass
             #print a
@@ -88,7 +88,7 @@ class TestBufGenReplace(unittest.TestCase):
     def test_00(self):
         """TestBufGenReplace: Test simple string replacement "aaabbbccc" - > "aaaBBBccc"."""
         myStrGen = StrGen('aaabbbccc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         myGen = myBg.gen()
         for a in myGen:
             pass
@@ -108,7 +108,7 @@ class TestBufGenReplace(unittest.TestCase):
     def test_01(self):
         """TestBufGenReplace: Test simple string replacement "aaabbbccc" - > "aaaccc"."""
         myStrGen = StrGen('aaabbbccc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         myGen = myBg.gen()
         for a in myGen:
             pass
@@ -126,7 +126,7 @@ class TestBufGenReplace(unittest.TestCase):
     def test_02(self):
         """TestBufGenReplace: Test simple string replacement "aaaccc" - > "aaaBBBccc"."""
         myStrGen = StrGen('aaaccc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         myGen = myBg.gen()
         for a in myGen:
             pass
@@ -146,7 +146,7 @@ class TestBufGenReplace(unittest.TestCase):
     def test_03(self):
         """TestBufGenReplace: Test simple string replacement exceeds limits."""
         myStrGen = StrGen('aaaccc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         myGen = myBg.gen()
         for a in myGen:
             pass
@@ -168,7 +168,7 @@ class TestBufGenIndex(unittest.TestCase):
     def test_00(self):
         """Test simple string buffer indexing."""
         myStrGen = StrGen('abc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         # Index into it provoking the generator
         self.assertEquals('a', myBg[0])
         self.assertEquals("BufGen: ['a']", str(myBg))
@@ -183,7 +183,7 @@ class TestBufGenIndex(unittest.TestCase):
     def test_01(self):
         """Test string buffer indexing out of range."""
         myStrGen = StrGen('abc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         try:
             myBg[-1]
             self.fail('IndexError not raised.')
@@ -207,7 +207,7 @@ class TestBufGenIndex(unittest.TestCase):
     def test_02(self):
         """Test string buffer use of len() fails."""
         myStrGen = StrGen('abc')
-        myBg = BufGen.BufGen(myStrGen.next())
+        myBg = BufGen.BufGen(next(myStrGen))
         try:
             len(myBg)
             self.fail('TypeError not raised.')
@@ -232,8 +232,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestBufGen.py - A module that tests PpToken module.
+    print("""TestBufGen.py - A module that tests PpToken module.
 Usage:
 python TestBufGen.py [-lh --help]
 
@@ -249,20 +248,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestBufGen.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestBufGen.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -273,7 +272,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -283,8 +282,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

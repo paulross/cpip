@@ -1,0 +1,260 @@
+.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
+.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+
+.. Description of CPIP command line tools
+
+###################################
+Command Line Tools
+###################################
+
+CPIP has a number of tools run from the command line that can analyse source code. The main one is :file:`CPIPMain.py`
+
+***********************************
+CPIPMain
+***********************************
+
+:file:`CPIPMain.py` acts very much like a normal pre-processor but, instead of writing out a Translation Unit as test it emits a host of HTML and SVG pages about each file to be pre-processed. Here are :ref:`cpip-examples-real`.
+
+Usage
+=======================
+
+::
+
+    Usage: CPIPMain.py [options] files...
+    Preprocess the files.
+    
+    Options:
+      --version             show program's version number and exit
+      -h, --help            show this help message and exit
+      -c                    Add conditionally included files to the plots.
+                            [default: False]
+      -d DUMP, --dump=DUMP  Dump output, additive. Can be: C - Conditional
+                            compilation graph. F - File names encountered and
+                            their count. I - Include graph. M - Macro environment.
+                            T - Token count. R - Macro dependencies as an input to
+                            DOT. [default: []]
+      --heap                Profile memory usage. [default: False]
+      -j JOBS, --jobs=JOBS  Max processes when multiprocessing. Zero uses number
+                            of native CPUs [8] [default: 0]
+      -k                    Keep going. [default: False]
+      -l LOGLEVEL, --loglevel=LOGLEVEL
+                            Log Level (debug=10, info=20, warning=30, error=40,
+                            critical=50) [default: 30]
+      -n                    Nervous mode (do no harm). [default: False]
+      -o OUTPUT, --output=OUTPUT
+                            Output directory. [default: out]
+      -p                    Ignore pragma statements. [default: False]
+      -I INCUSR, --usr=INCUSR
+                            Add user include search path. [default: []]
+      -J INCSYS, --sys=INCSYS
+                            Add system include search path. [default: []]
+      -P PREINC, --pre=PREINC
+                            Add pre-include file path. [default: []]
+      -D DEFINES, --define=DEFINES
+                            Add macro definitions of the form name<=definition>.
+                            These are introduced into the environment before any
+                            pre-include. [default: []]
+    Usage: CPIPMain.py [options] files...
+    Preprocess the files.
+
+.. note::
+    
+    Multiprocessing: The pre-processor, and information derived from it, can only be run as a single process but writing individual source files can take advantage of multiple processes. As the latter constitutes the bulk of the time :file:`CPIPMain.py` takes then using the ``-j`` option on multi-processor machines can save a lot of time.
+
+Options
+----------------
+
++--------------------------------------+---------------------------------------------------------------------------------+
+| Option                               | Description                                                                     |
++======================================+=================================================================================+
+| ``--version``                        | Show program's version number and exit                                          |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-h, --help``                       | Show this help message and exit.                                                |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-c``                               | Even if a file is conditionally included then add it to the plot.               |
+|                                      | This is experimental so use it at your own risk! [default False]                |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-d DUMP, --dump=DUMP``             | Dump various outputs to stdout (see below). [default: []]                       |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``--heap``                           | Profile memory usage (requires ``guppy`` to be installed). [default: False]     |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-j JOBS, --jobs=JOBS``             | Max processes when multiprocessing. Zero uses number of native CPUs [8].        |
+|                                      | -1 disables multiprocessing. [default: -1]                                      |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-k``                               | Keep going as far as sensible. [default: False]                                 |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-l LOGLEVEL, --loglevel=LOGLEVEL`` | Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: 30]  |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-n``                               | Nervous mode (do no harm). [default: False]                                     |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-o OUTPUT, --output=OUTPUT``       | Output directory [default: "out"]                                               |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-p``                               | Ignore pragma statements. [default: False]                                      |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-I INCUSR, --usr=INCUSR``          | Add user include search path (additive). [default: []]                          |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-J INCSYS, --sys=INCSYS``          | Add system include search path (additive). [default: []]                        |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-P PREINC, --pre=PREINC``          | Add pre-include file, this will be included before any header (additive).       |
+|                                      | [default: []]                                                                   |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-D DEFINES, --define=DEFINES``     | Add macro definitions of the form name<=definition>. These are introduced into  |
+|                                      | the environment before any pre-include. [default: []]                           |
++--------------------------------------+---------------------------------------------------------------------------------+
+
+The `-d` option can be repeated to generate multiple text outputs on stdout:
+
++--------------------------------------+---------------------------------------------------------------------------------+
+| Output                               | Description                                                                     |
++======================================+=================================================================================+
+| ``-d C``                             | Conditional compilation graph.                                                  |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-d F``                             | File names encountered and their count.                                         |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-d I``                             | Include graph.                                                                  |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-d M``                             | Macro environment.                                                              |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-d T``                             | Token count.                                                                    |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-d R``                             | Macro dependencies as an input to DOT.                                          |
++--------------------------------------+---------------------------------------------------------------------------------+
+
+Examples of these are shown below :ref:`cmdline.CPIPMain.dump`.
+
+Arguments
+----------------
+
+One or more paths of file(s) to be preprocessed.
+
+Examples
+=======================
+
+Here is a simple example of processing the demo code that is in the ``PpLexer`` tutorial here: :ref:`pplexer.tutorial.files`.
+
+Here we set:
+
+* ``l 20`` sets logging to ``INFO``
+* ``-o`` sets the output to :file:`../../demo/output_00/`
+* ``-J`` is used to set a single system include as :file:`../../demo/sys/`
+* ``-I`` is used to set a single user include as :file:`../../demo/usr/`
+
+We are processing :file:`../../demo/src/main.cpp` and stdout is something like this::
+
+    $ python3 CPIPMain.py -l 20 -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp 
+    2012-03-20 07:41:38,655 INFO     TU in HTML:
+    2012-03-20 07:41:38,655 INFO       ../../demo/output_00/main.cpp.html
+    2012-03-20 07:41:38,664 INFO     Processing TU done.
+    2012-03-20 07:41:38,665 INFO     Macro history to:
+    2012-03-20 07:41:38,665 INFO       ../../demo/output_00/main.cpp_macros.html
+    2012-03-20 07:41:38,668 INFO     Include graph (SVG) to:
+    2012-03-20 07:41:38,668 INFO       ../../demo/output_00/main.cpp.include.svg
+    2012-03-20 07:41:38,679 INFO     Writing include graph (TEXT) to:
+    2012-03-20 07:41:38,679 INFO       ../../demo/output_00/main.cpp.include.svg
+    2012-03-20 07:41:38,679 INFO     Writing include graph (DOT) to:
+    2012-03-20 07:41:38,679 INFO       ../../demo/output_00/main.cpp.include.svg
+    2012-03-20 07:41:38,679 INFO     Creating include Graph for DOT...
+    2012-03-20 07:41:38,692 INFO     dot returned 0
+    2012-03-20 07:41:38,693 INFO     Creating include Graph for DOT done.
+    2012-03-20 07:41:38,693 INFO     Conditional compilation graph in HTML:
+    2012-03-20 07:41:38,693 INFO       ../../demo/output_00/main.cpp.ccg.html
+    2012-03-20 07:41:38,698 INFO     Done: ../../demo/src/main.cpp
+    2012-03-20 07:41:38,698 INFO     ITU in HTML: ...\main.cpp
+    2012-03-20 07:41:38,708 INFO     ITU in HTML: ...\system.h
+    2012-03-20 07:41:38,711 INFO     ITU in HTML: ...\user.h
+    2012-03-20 07:41:38,716 INFO     All done.
+    CPU time =    0.051 (S)
+    Bye, bye!
+
+In the output directory will be the HTML and SVG results.
+
+.. _cmdline.CPIPMain.dump:
+
+Using ``-d`` Option
+------------------------
+
+All these are using the following command where ``?`` is replace with a letter::
+
+    $ python3 CPIPMain.py -d? -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp
+
+Multiple outputs are obtained with, for example, ``-dC -dF``
+
+``-d`` C
+^^^^^^^^^^^^^^^^^^^^^^
+
+Conditional compilation graph::
+
+    ---------------------- Conditional Compilation Graph ----------------------
+    #ifndef __USER_H__ /* True "../../demo/usr/user.h" 1 0 */
+        #ifndef __SYSTEM_H__ /* True "../../demo/sys/system.h" 1 4 */
+        #endif /* True "../../demo/sys/system.h" 6 13 */
+    #endif /* True "../../demo/usr/user.h" 7 20 */
+    #if defined(LANG_SUPPORT) && defined(FRENCH) /* True "../../demo/src/main.cpp" 5 69 */
+    #elif defined(LANG_SUPPORT) && defined(AUSTRALIAN) /* False "../../demo/src/main.cpp" 7 110 */
+    #else /* False "../../demo/src/main.cpp" 9 117 */
+    #endif /* False "../../demo/src/main.cpp" 11 124 */
+    -------------------- END Conditional Compilation Graph --------------------
+
+``-d`` F
+^^^^^^^^^^^^^^^^^^^^^^
+
+Files encountered and how many times processed::
+
+    ------------------------ Count of files encountered -----------------------
+       1  ../../demo/src/main.cpp
+       1  ../../demo/sys/system.h
+       1  ../../demo/usr/user.h
+    ---------------------- END Count of files encountered ---------------------
+
+``-d`` I
+^^^^^^^^^^^^^^^^^^^^^^
+
+The include graph::
+
+    ------------------------------ Include Graph ------------------------------
+    ../../demo/src/main.cpp [43, 21]:  True "" ""
+    000002: #include ../../demo/usr/user.h
+            ../../demo/usr/user.h [10, 6]:  True "" "['"user.h"', 'CP=None', 'usr=../../demo/usr/']"
+            000004: #include ../../demo/sys/system.h
+                    ../../demo/sys/system.h [10, 6]:  True "!def __USER_H__" "['<system.h>', 'sys=../../demo/sys/']"
+    ---------------------------- END Include Graph ----------------------------
+
+``-d`` M
+^^^^^^^^^^^^^^^^^^^^^^
+
+The macro environment and history::
+
+    ---------------------- Macro Environment and History ----------------------
+    Macro Environment:
+    #define FRENCH /* ../../demo/usr/user.h#5 Ref: 1 True */
+    #define LANG_SUPPORT /* ../../demo/sys/system.h#4 Ref: 2 True */
+    #define __SYSTEM_H__ /* ../../demo/sys/system.h#2 Ref: 0 True */
+    #define __USER_H__ /* ../../demo/usr/user.h#2 Ref: 0 True */
+    
+    Macro History (referenced macros only):
+    In scope:
+    #define FRENCH /* ../../demo/usr/user.h#5 Ref: 1 True */
+        ../../demo/src/main.cpp 5 38
+    #define LANG_SUPPORT /* ../../demo/sys/system.h#4 Ref: 2 True */
+        ../../demo/src/main.cpp 5 13
+        ../../demo/src/main.cpp 7 15
+    -------------------- END Macro Environment and History --------------------
+
+``-d`` T
+^^^^^^^^^^^^^^^^^^^^^^
+
+The token count::
+
+    ------------------------------- Token count -------------------------------
+           0  header-name
+           8  identifier
+           1  pp-number
+           0  character-literal
+           1  string-literal
+          11  preprocessing-op-or-punc
+           0  non-whitespace
+          11  whitespace
+           0  concat
+          32  TOTAL
+    ----------------------------- END Token count -----------------------------
+

@@ -27,10 +27,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 #import logging
 import difflib
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 from cpip.core import PpToken
 from cpip.core import PpTokeniser
@@ -42,27 +39,39 @@ import unittest
 
 class TestCpipBase(unittest.TestCase):
     """Base class for CPIP test classes."""
+    
+    def _extendPair(self, a, b):
+        """Expands shorter list with None to longer list."""
+        dLen = len(a) - len(b)
+        if dLen > 0:
+            # a > b
+            b.extend([None,] * dLen)
+        elif dLen < 0:
+            # a < b
+            a.extend([None,] * -dLen)
+        return a, b
 
     def _printDiff(self, actual, expected):
         """Prints out the differences between two lists of PpTokens."""
+        actual, expected = self._extendPair(actual, expected)
         if actual != expected:
-            print
+            print()
             self.pprintReplacementList(actual)
             i = 0
-            print 'Diff: actual -> expected'
+            print('Diff: actual -> expected')
             #m = map(None, actual, expected)
             for t, e in map(None, actual, expected):
                 if t is not None and e is not None:
                     if t != e:
-                        print '%d: %s, != %s' \
+                        print('%d: %s, != %s' \
                                           % (i,
                                              self.__stringiseToken(t),
-                                             self.__stringiseToken(e))
+                                             self.__stringiseToken(e)))
                 else:
-                    print '%d: %s, != %s' \
+                    print('%d: %s, != %s' \
                                       % (i,
                                          self.__stringiseToken(t),
-                                         self.__stringiseToken(e))
+                                         self.__stringiseToken(e)))
                 i += 1
 
     def __stringiseToken(self, theTtt):
@@ -74,17 +83,17 @@ class TestCpipBase(unittest.TestCase):
         i = 0
         for aTtt in theList:
             # PpTokeniser.NAME_ENUM['preprocessing-op-or-punc']),
-            print '%2d: %s,' \
-                % (i, self.__stringiseToken(aTtt))
+            print('%2d: %s,' \
+                % (i, self.__stringiseToken(aTtt)))
             i += 1
-        print 'As string:'
-        print PpToken.tokensStr(theList)
+        print('As string:')
+        print(PpToken.tokensStr(theList))
 
     def stringToTokens(self, theString):
         """Returns a list of preprocessing tokens from a string. This can be
         used to test against expected values."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(theString)
+            theFileObj=io.StringIO(theString)
             )
         return [t_tt for t_tt in myCpp.next()]
 
@@ -97,7 +106,7 @@ class TestCpipBase(unittest.TestCase):
         """Pretty prints the list as PpToken constructors."""
         for aTtt in theList:
             # PpTokeniser.NAME_ENUM['preprocessing-op-or-punc']),
-            print 'PpToken.PpToken(\'%s\', \'%s\'),' % (aTtt.t.replace('\n', '\\n'), aTtt.tt)
+            print('PpToken.PpToken(\'%s\', \'%s\'),' % (aTtt.t.replace('\n', '\\n'), aTtt.tt))
 
     def listStrDiff(self, a, b):
         retList = ['String diff using difflib:']
@@ -109,6 +118,6 @@ class TestCpipBase(unittest.TestCase):
     
     def printStrDiff(self, a, b):
         """Prints the differences between two strings."""
-        print ' Diff start '.center(75, '-')
-        print '\n'.join(self.listStrDiff(a, b))
-        print ' Diff end '.center(75, '-')
+        print(' Diff start '.center(75, '-'))
+        print('\n'.join(self.listStrDiff(a, b)))
+        print(' Diff end '.center(75, '-'))

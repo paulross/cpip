@@ -85,7 +85,7 @@ from TestPpDefine import TestPpDefine
 # Section: Unit tests.
 ######################
 import unittest
-import StringIO
+import io
 # Define unit test classes
 
 
@@ -95,7 +95,7 @@ class TestMacroEnv(TestPpDefine):
     def _checkMacroEnv(self, theGen, theEnv, expectedIdentifiers, testNOTHING=True):
         """Checks constructed environment is correct."""
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, theGen.next)
+        self.assertRaises(StopIteration, theGen.__next__)
         self.assertEqual(len(expectedIdentifiers), len(theEnv))
         for anName in expectedIdentifiers:
             self.assertEqual(
@@ -136,7 +136,7 @@ class MacroEnvInit(TestMacroEnv):
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'f.h', 1)
@@ -166,7 +166,7 @@ EGGS 2
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'f.h', 1)
@@ -205,7 +205,7 @@ EGGS 2
         myStr = """
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -221,7 +221,7 @@ EGGS 2
         myMap = MacroEnv.MacroEnv()
         myStr = """"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -242,7 +242,7 @@ class MacroEnvDefined(TestMacroEnv):
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'f.h', 1)
@@ -272,7 +272,7 @@ EGGS 2
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'f.h', 1)
@@ -282,7 +282,7 @@ EGGS 2
         self.assertEqual("""#define EGGS 2 /* f.h#2 Ref: 1 True */
 #define SPAM 1 /* f.h#1 Ref: 1 True */""", str(myMap))
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""
+            theFileObj=io.StringIO("""
 1
 "something"
 'c'
@@ -307,7 +307,7 @@ class MacroEnvSimpleReplaceObject(TestMacroEnv):
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -330,7 +330,7 @@ EGGS 2
                 myGen)
             )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM and EGGS')
+            theFileObj=io.StringIO('SPAM and EGGS')
             )
         repList = []
         myGen = myCpp.next()
@@ -357,7 +357,7 @@ EGGS 2
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -380,7 +380,7 @@ EGGS 2
                 myGen)
             )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM==EGGS')
+            theFileObj=io.StringIO('SPAM==EGGS')
             )
         repList = []
         myGen = myCpp.next()
@@ -411,7 +411,7 @@ EGGS 2
 #SPAM // 2 and eggs and 2
 #"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -449,7 +449,7 @@ EGGS 2
                 )
             )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM hold the EGGS')
+            theFileObj=io.StringIO('SPAM hold the EGGS')
             )
         repList = []
         myGen = myCpp.next()
@@ -491,7 +491,7 @@ EGGS 2
 #SPAM // 2 2
 #"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -517,7 +517,7 @@ CHIPS frites
 SALT sel
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -526,7 +526,7 @@ SALT sel
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['SPAM', 'EGGS', 'CHIPS', 'SALT',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('Anyone for SPAM?')
+            theFileObj=io.StringIO('Anyone for SPAM?')
             )
         repList = []
         myGen = myCpp.next()
@@ -561,7 +561,7 @@ SALT sel
             )
         # This is another way of doing things
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('Anyone for frites or sel?+frites or sel??')
+            theFileObj=io.StringIO('Anyone for frites or sel?+frites or sel??')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -577,13 +577,13 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myStr = """FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC(12);')
+            theFileObj=io.StringIO('FUNC(12);')
             )
         repList = []
         myGen = myCpp.next()
@@ -605,13 +605,13 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myStr = """FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC')
+            theFileObj=io.StringIO('FUNC')
             )
         repList = []
         myGen = myCpp.next()
@@ -639,13 +639,13 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myStr = """FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC ;')
+            theFileObj=io.StringIO('FUNC ;')
             )
         repList = []
         myGen = myCpp.next()
@@ -666,13 +666,13 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myStr = """FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC FUNC(7);')
+            theFileObj=io.StringIO('FUNC FUNC(7);')
             )
         repList = []
         myGen = myCpp.next()
@@ -705,13 +705,13 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myStr = """FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC(12) plus FUNC minus FUNC(1);')
+            theFileObj=io.StringIO('FUNC(12) plus FUNC minus FUNC(1);')
             )
         repList = []
         myGen = myCpp.next()
@@ -749,13 +749,13 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myStr = """INC(f) <f>
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['INC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('INC(spam.h);')
+            theFileObj=io.StringIO('INC(spam.h);')
             )
         repList = []
         myGen = myCpp.next()
@@ -790,13 +790,13 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myStr = """INC(f) # f
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['INC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('INC(spam.h);')
+            theFileObj=io.StringIO('INC(spam.h);')
             )
         repList = []
         myGen = myCpp.next()
@@ -830,14 +830,14 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
 g(a) a(2)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'g',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('g(x);\nf(y)')
+            theFileObj=io.StringIO('g(x);\nf(y)')
             )
         repList = []
         myGen = myCpp.next()
@@ -846,7 +846,7 @@ g(a) a(2)
             repList += myReplacements
         #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('x(2);\ny+y')
+            theFileObj=io.StringIO('x(2);\ny+y')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -860,14 +860,14 @@ g(a) a(2)
 g(a) a(2)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'g',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('g(f);')
+            theFileObj=io.StringIO('g(f);')
             )
         myMap.debugMarker = 'MacroEnvSimpleReplaceFunction.testDefineMapSimpleReplaceFunction_03()'
         repList = []
@@ -877,7 +877,7 @@ g(a) a(2)
             repList += myReplacements
         #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('2+2;')
+            theFileObj=io.StringIO('2+2;')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -963,7 +963,7 @@ SPAM
         myMap = MacroEnv.MacroEnv()
         myStr = """SPAM SPAM\n"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -991,7 +991,7 @@ SPAM
 EGGS SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -1033,7 +1033,7 @@ EGGS CHIPS
 CHIPS SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -1086,7 +1086,7 @@ CHIPS BEANS
 BEANS SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -1143,7 +1143,7 @@ EGGS SPAM
 CHIPS SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -1184,7 +1184,7 @@ in_between(a) mkstr(a)
 join(c, d) in_between(c hash_hash d)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         # Load the four macro definitions
@@ -1194,7 +1194,7 @@ join(c, d) in_between(c hash_hash d)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['hash_hash', 'mkstr', 'in_between', 'join',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('join(x,y)')
+            theFileObj=io.StringIO('join(x,y)')
             )
         repList = []
         myGen = myCpp.next()
@@ -1224,14 +1224,14 @@ join(c, d) in_between(c hash_hash d)
         myStr = """TABSIZE 100
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         # Load the one macro definition
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['TABSIZE',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('int table[TABSIZE];')
+            theFileObj=io.StringIO('int table[TABSIZE];')
             )
         repList = []
         myGen = myCpp.next()
@@ -1258,13 +1258,13 @@ join(c, d) in_between(c hash_hash d)
         myStr = """max(a, b) ((a) > (b) ? (a) : (b))
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['max',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('max(x,y)')
+            theFileObj=io.StringIO('max(x,y)')
             )
         repList = []
         myGen = myCpp.next()
@@ -1295,7 +1295,7 @@ g f
 h g(~
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1304,7 +1304,7 @@ h g(~
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'h',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""h 5)""")
+            theFileObj=io.StringIO("""h 5)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1335,7 +1335,7 @@ h g(~
         # Or, from cpp:
         myResultString = """f(2 * (~ 5))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1350,7 +1350,7 @@ f(a) f(x * (a))
 z z[0]
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1359,7 +1359,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(f(z))""")
+            theFileObj=io.StringIO("""f(f(z))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1399,7 +1399,7 @@ z z[0]
         # Or, from cpp:
         myResultString = """f(2 * (f(2 * (z[0]))))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1414,7 +1414,7 @@ f(a) f(x * (a))
 z z[0]
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1423,7 +1423,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(z)""")
+            theFileObj=io.StringIO("""f(z)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1451,7 +1451,7 @@ z z[0]
         # Or, from cpp:
         myResultString = """f(2 * (z[0]))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1469,7 +1469,7 @@ f(a) f(x * (a))
 z z[0]
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1494,7 +1494,7 @@ z z[0]
         #print '%-20s  %-32s  %s' % ('Source', 'Got', 'Should have got')
         for c, r in myCppResult:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(c)
+                theFileObj=io.StringIO(c)
                 )
             repList = []
             myGen = myCpp.next()
@@ -1520,7 +1520,7 @@ g f
 t(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1550,7 +1550,7 @@ t(a) a
         #print '%-20s  %-40s  %s' % ('Source', 'Got', 'Should have got')
         for c, r in myCppResult:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(c)
+                theFileObj=io.StringIO(c)
                 )
             #print '\n'.join([str(x) for x in myCpp.next()])
             #myCpp = PpTokeniser.PpTokeniser(
@@ -1586,7 +1586,7 @@ f(f)(2)     // b f(2)
 u(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1607,7 +1607,7 @@ u(a) a
         #print '%-20s  %-40s  %s' % ('Source', 'Got', 'Should have got')
         for c, r in myCppResult:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(c)
+                theFileObj=io.StringIO(c)
                 )
             #print '\n'.join([str(x) for x in myCpp.next()])
             #myCpp = PpTokeniser.PpTokeniser(
@@ -1633,7 +1633,7 @@ f(f)(2)     // b f(2)
         myStr = """f(x) b x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1650,7 +1650,7 @@ f(f)(2)     // b f(2)
         #print '%-20s  %-40s  %s' % ('Source', 'Got', 'Should have got')
         for c, r in myCppResult:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(c)
+                theFileObj=io.StringIO(c)
                 )
             #print '\n'.join([str(x) for x in myCpp.next()])
             #myCpp = PpTokeniser.PpTokeniser(
@@ -1680,7 +1680,7 @@ x 2  )
 y(a) a+1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         # Load the macro definitions
@@ -1688,7 +1688,7 @@ y(a) a+1
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['x', 'y',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('x 2  )')
+            theFileObj=io.StringIO('x 2  )')
             )
         repList = []
         myGen = myCpp.next()
@@ -1709,7 +1709,7 @@ y(a) a+1
             )
         # Or:
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('2+1')
+            theFileObj=io.StringIO('2+1')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1724,7 +1724,7 @@ g f
 h g(~
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1733,7 +1733,7 @@ h g(~
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'g', 'h',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""h 5)""")
+            theFileObj=io.StringIO("""h 5)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1763,7 +1763,7 @@ h g(~
         # Or, from cpp:
         myResultString = """f(2 * (~ 5))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1779,7 +1779,7 @@ g f
 h g(~
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1788,7 +1788,7 @@ h g(~
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'h',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""h 5)""")
+            theFileObj=io.StringIO("""h 5)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1814,7 +1814,7 @@ h g(~
         # Or, from cpp:
         myResultString = """f(2 * (~ 5))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1834,7 +1834,7 @@ f(a) f(x * (a))
 z z[0]
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1843,7 +1843,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(z)""")
+            theFileObj=io.StringIO("""f(z)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1888,7 +1888,7 @@ f(a) f(x * (a))
 z z[0]
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1897,7 +1897,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(f(z))""")
+            theFileObj=io.StringIO("""f(f(z))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1935,7 +1935,7 @@ z z[0]
         # Or, from cpp:
         myResultString = """f(2 * (f(2 * (z[0]))))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1950,7 +1950,7 @@ z z[0]
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -1960,7 +1960,7 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('x\n')
+                theFileObj=io.StringIO('x\n')
             ).next(),
             '',
             1,
@@ -1979,14 +1979,14 @@ r(x,y) x ## y
 str(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         for i in range(11):
             myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'z', 'h', 'm', 'w', 't', 'p', 'q', 'r', 'str',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(y+1) + f(f(z))""")# % t(t(g)(0) + t)(1);""")
+            theFileObj=io.StringIO("""f(y+1) + f(f(z))""")# % t(t(g)(0) + t)(1);""")
             )
         repList = []
         myGen = myCpp.next()
@@ -2042,7 +2042,7 @@ str(x) # x
         # Or:
         myResultString = """f(2 * (y+1)) + f(2 * (f(2 * (z[0]))))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -2058,7 +2058,7 @@ g f
 t(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -2067,7 +2067,7 @@ t(a) a
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 't'])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""t(g(0))""")
+            theFileObj=io.StringIO("""t(g(0))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -2095,7 +2095,7 @@ t(a) a
         # Or:
         myResultString = """f(2 * (0))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -2120,7 +2120,7 @@ g f
 t(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -2144,7 +2144,7 @@ t(a) a
         myMap.debugMarker = 'SpecialClass.testDefineMapReplace_03_04()'
         for tIn, tExp in myResultPairs:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(tIn)
+                theFileObj=io.StringIO(tIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -2166,7 +2166,7 @@ t(a) a
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -2176,7 +2176,7 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('x\n')
+                theFileObj=io.StringIO('x\n')
             ).next(),
             'a.h',
             i+1,
@@ -2195,7 +2195,7 @@ r(x,y) x ## y
 str(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         for i in range(11):
@@ -2213,7 +2213,7 @@ int i[] = { 1, 23, 4, 5,  };
 char c[2][6] = { "hello", "" };
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(strOriginal)
+            theFileObj=io.StringIO(strOriginal)
             )
         repList = []
         myGen = myCpp.next()
@@ -2409,7 +2409,7 @@ char c[2][6] = { "hello", "" };
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -2419,7 +2419,7 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('x\n')
+                theFileObj=io.StringIO('x\n')
             ).next(),
             'a.h',
             i+1,
@@ -2438,7 +2438,7 @@ r(x,y) x ## y
 str(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         for i in range(11):
@@ -2451,7 +2451,7 @@ p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(strOriginal)
+            theFileObj=io.StringIO(strOriginal)
             )
         repList = []
         myGen = myCpp.next()
@@ -2487,7 +2487,7 @@ char c[2][6] = { str(hello), str() };
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -2497,7 +2497,7 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('x\n')
+                theFileObj=io.StringIO('x\n')
             ).next(),
             'a.h',
             i+1,
@@ -2516,7 +2516,7 @@ r(x,y) x ## y
 str(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         for i in range(11):
@@ -2529,7 +2529,7 @@ p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(strOriginal)
+            theFileObj=io.StringIO(strOriginal)
             )
         repList = []
         myGen = myCpp.next()
@@ -2605,7 +2605,7 @@ HIGHLOW "hello"
 LOW LOW ", world"
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -2625,7 +2625,7 @@ LOW LOW ", world"
         """TestExample4.test_00() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [0]"""
 
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO("""debug(1, 2);
 """)
             )
         repList = []
@@ -2669,7 +2669,7 @@ LOW LOW ", world"
     def test_01(self):
         """TestExample4.test_01() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [1]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
+            theFileObj=io.StringIO("""fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 """)
             )
         # Should convert to:
@@ -2708,7 +2708,7 @@ LOW LOW ", world"
     def test_02(self):
         """TestExample4.test_02() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [2]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""#include xstr(INCFILE(2).h)
+            theFileObj=io.StringIO("""#include xstr(INCFILE(2).h)
 """)
             )
         # Should convert to:
@@ -2740,7 +2740,7 @@ LOW LOW ", world"
     def test_03(self):
         """TestExample4.test_03() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [3]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""glue(HIGH, LOW);
+            theFileObj=io.StringIO("""glue(HIGH, LOW);
 """)
             )
         # Should convert to:
@@ -2769,7 +2769,7 @@ LOW LOW ", world"
     def test_04(self):
         """TestExample4.test_04() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [4]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""xglue(HIGH, LOW)
+            theFileObj=io.StringIO("""xglue(HIGH, LOW)
 """)
             )
         # Should convert to:
@@ -2799,7 +2799,7 @@ LOW LOW ", world"
     def test_10(self):
         """TestExample4.test_10() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO("""debug(1, 2);
 fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 #include xstr(INCFILE(2).h)
 glue(HIGH, LOW);
@@ -2879,7 +2879,7 @@ xglue(HIGH, LOW)
     def test_11(self):
         """TestExample4.test_10() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 with str(MacroEnv)"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO("""debug(1, 2);
 fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 #include xstr(INCFILE(2).h)
 glue(HIGH, LOW);
@@ -2909,7 +2909,7 @@ xglue(HIGH, LOW)
     def test_12(self):
         """TestExample4.test_10() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 with str(genMacros)"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO("""debug(1, 2);
 fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 #include xstr(INCFILE(2).h)
 glue(HIGH, LOW);
@@ -2957,7 +2957,7 @@ int j[] = { 123, 45, 67, 89,
         myStr = """t(x,y,z) x ## y ## z
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -2976,7 +2976,7 @@ int j[] = { 123, 45, 67, 89,
     def test_00(self):
         """TestExample5.test_00() - ISO/IEC 9899:1999 (E) 6.10.3.5-7 EXAMPLE 5 [0]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
+            theFileObj=io.StringIO("""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
 t(10,,), t(,11,), t(,,12), t(,,) };
 """)
             )
@@ -3035,7 +3035,7 @@ t(10,,), t(,11,), t(,,12), t(,,) };
     def test_01(self):
         """TestExample5.test_00() - ISO/IEC 9899:1999 (E) 6.10.3.5-7 EXAMPLE 5 [0] with str(MacroEnv)"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
+            theFileObj=io.StringIO("""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
 t(10,,), t(,11,), t(,,12), t(,,) };
 """)
             )
@@ -3062,7 +3062,7 @@ g f
 t(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3080,7 +3080,7 @@ x 4
 f(a) f(x+a)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3094,15 +3094,15 @@ f(a) f(x+a)
         """MacroEnv.MacroEnv._replaceFunctionStyleMacro() - low level 'f(7)'"""
         myMap = self._genMap_01()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("f(7)")
+            theFileObj=io.StringIO("f(7)")
             )
         myGen = myCpp.next()
-        myArgTokType = myGen.next()
+        myArgTokType = next(myGen)
         #print 'Argument t_tt:', myArgTokType
         #mySeenSet = set()
         myReplacements = myMap.replace(myArgTokType, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #self.pprintReplacementList(myReplacements)
         expectedTokens = [
             PpToken.PpToken('f',       'identifier'),
@@ -3119,14 +3119,14 @@ f(a) f(x+a)
         """MacroEnv.MacroEnv._replaceFunctionStyleMacro() - low level 'f(z)'"""
         myMap = self._genMap_01()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("f(z)")
+            theFileObj=io.StringIO("f(z)")
             )
         myGen = myCpp.next()
-        myArgTokType = myGen.next()
+        myArgTokType = next(myGen)
         #print 'Argument t_tt:', myArgTokType
         myReplacements = myMap.replace(myArgTokType, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #self.pprintReplacementList(myReplacements)
         expectedTokens = [
             PpToken.PpToken('f',       'identifier'),
@@ -3157,7 +3157,7 @@ f(a) f(x+a)
         myStr = """foo(x) bar x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3167,14 +3167,14 @@ f(a) f(x+a)
         # Check that all tokens have been consumed
         self._checkMacroEnv(myGen, myMap, ['foo',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("foo(foo) (2)")
+            theFileObj=io.StringIO("foo(foo) (2)")
             )
         myGen = myCpp.next()
         myReplacements = []
         for myArgTokType in myGen:
             myReplacements += myMap.replace(myArgTokType, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #self.pprintReplacementList(myReplacements)
         expectedTokens = [
             PpToken.PpToken('bar',     'identifier'),
@@ -3199,7 +3199,7 @@ f(a) f(x+a)
 z z[0]
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3207,7 +3207,7 @@ z z[0]
             myMap.define(myGen, '', 1)
             i += 1
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(3, len(myMap))
         return myMap
 
@@ -3215,7 +3215,7 @@ z z[0]
         """testRecursiveFunctionLike_00: f(z) -> f(4+z[0])"""
         myMap = self._genMap_00()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(z)""")
+            theFileObj=io.StringIO("""f(z)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3241,7 +3241,7 @@ z z[0]
         # Or, from cpp:
         myResultString = """f(4+z[0])"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -3252,7 +3252,7 @@ z z[0]
         """testRecursiveFunctionLike_01: f(f(z)) -> f(4 +f(4 +z[0]))"""
         myMap = self._genMap_00()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(f(z))""")
+            theFileObj=io.StringIO("""f(f(z))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3283,11 +3283,10 @@ z z[0]
         # Or, from cpp:
         myResultString = """f(4+f(4+z[0]))"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myResultString)
+            theFileObj=io.StringIO(myResultString)
             )
-        for a, b in map(None,
-                        [t_tt for t_tt in myCpp.next()],
-                        repList):
+        aS, bS = self._extendPair([t_tt for t_tt in myCpp.next()], repList)
+        for a, b in zip(aS, bS):
             self.assertEqual(a, b)
         #self.assertEqual(
         #    [t_tt for t_tt in myCpp.next()],
@@ -3305,14 +3304,14 @@ class MacroEnvFuncReexamine(TestMacroEnv):
 g(a) a(2)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'g',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('g(f);')
+            theFileObj=io.StringIO('g(f);')
             )
         myMap.debugMarker = 'MacroEnvFuncReexamine.testDefineFunction_00()'
         repList = []
@@ -3344,7 +3343,7 @@ g f
 t(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3368,7 +3367,7 @@ t(a) a
         myMap.debugMarker = 'MacroEnvFuncReexamine.testDefineFunction_00()'
         for tIn, tExp in myResultPairs:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(tIn)
+                theFileObj=io.StringIO(tIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -3393,7 +3392,7 @@ class TestExample3(TestMacroEnv):
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3403,7 +3402,7 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('x\n')
+                theFileObj=io.StringIO('x\n')
             ).next(),
             '',
             1,
@@ -3422,7 +3421,7 @@ r(x,y) x ## y
 str(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         for i in range(11):
@@ -3434,7 +3433,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_01() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 1"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+            theFileObj=io.StringIO("""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
 """)
             )
         repList = []
@@ -3463,7 +3462,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_02() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 2"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""g(x+(3,4)-w) | h 5) & m(f)^m(m);
+            theFileObj=io.StringIO("""g(x+(3,4)-w) | h 5) & m(f)^m(m);
 """)
             )
         repList = []
@@ -3492,7 +3491,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_03() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 3"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
+            theFileObj=io.StringIO("""p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 """)
             )
         repList = []
@@ -3521,7 +3520,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_04() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 4"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""char c[2][6] = { str(hello), str() };""")
+            theFileObj=io.StringIO("""char c[2][6] = { str(hello), str() };""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3548,7 +3547,7 @@ str(x) # x
         """TestExample3.testTestExample3_str_x() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 str(x)"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""str()""")
+            theFileObj=io.StringIO("""str()""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3575,7 +3574,7 @@ str(x) # x
         """TestExample3.testTestExample3() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+            theFileObj=io.StringIO("""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
 g(x+(3,4)-w) | h 5) & m(f)^m(m);
 p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };""")
@@ -3610,13 +3609,13 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testObjectLikeRedefinition_00(): #defines then redefines an object like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO('OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['OBJ',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ    1    +    2    \n')
+            theFileObj=io.StringIO('OBJ    1    +    2    \n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -3626,17 +3625,17 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testObjectLikeRedefinition_01(): #defines then redefines an object like macro incorrectly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO('OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['OBJ',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ 1+2\n')
+            theFileObj=io.StringIO('OBJ 1+2\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
-            MacroEnv.ExceptionMacroEnvInvalidCmp,
+            MacroEnv.ExceptionMacroEnvInvalidRedefinition,
             myMap.define,
             myGen,
             '',
@@ -3648,13 +3647,13 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testFunctionLikeRedefinition_00(): #defines then redefines an function like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC_LIKE(a) ( a )\n')
+            theFileObj=io.StringIO('FUNC_LIKE(a) ( a )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC_LIKE',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC_LIKE( a )( /* note the white space */ a /* other stuff on this line */ )\n')
+            theFileObj=io.StringIO('FUNC_LIKE( a )( /* note the white space */ a /* other stuff on this line */ )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -3664,17 +3663,17 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testFunctionLikeRedefinition_01(): #defines then redefines an function like macro incorrectly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC_LIKE(a) ( a )\n')
+            theFileObj=io.StringIO('FUNC_LIKE(a) ( a )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC_LIKE',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC_LIKE(b) ( b )\n')
+            theFileObj=io.StringIO('FUNC_LIKE(b) ( b )\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
-            MacroEnv.ExceptionMacroEnvInvalidCmp,
+            MacroEnv.ExceptionMacroEnvInvalidRedefinition,
             myMap.define,
             myGen,
             '',
@@ -3688,7 +3687,7 @@ class TestMacroUndef(TestMacroEnv):
         """TestMacroUndef.testObjectLikeUndef_00(): #defines then undefs an object like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO('OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'obj.h', 1)
@@ -3698,7 +3697,7 @@ class TestMacroUndef(TestMacroEnv):
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=StringIO.StringIO('NOTHING\n')
+                    theFileObj=io.StringIO('NOTHING\n')
                 ).next(),
                 '',
                 1,
@@ -3709,7 +3708,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef something that is there
         myMap.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=StringIO.StringIO('OBJ\n')
+                    theFileObj=io.StringIO('OBJ\n')
                 ).next(),
                 'obj.h',
                 1
@@ -3732,7 +3731,7 @@ class TestMacroUndef(TestMacroEnv):
         """TestMacroUndef.testObjectLikeUndef_01(): #defines then undefs an object like macro and invokes genMacros()."""
         myEnv = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO('OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'obj.h', 1)
@@ -3740,7 +3739,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef something that is not there
         myEnv.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('NOTHING\n')
+                theFileObj=io.StringIO('NOTHING\n')
             ).next(),
             '',
             1,
@@ -3750,7 +3749,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef something that is there
         myEnv.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=StringIO.StringIO('OBJ\n')
+                    theFileObj=io.StringIO('OBJ\n')
                 ).next(),
                 'obj.h',
                 2,
@@ -3758,7 +3757,7 @@ class TestMacroUndef(TestMacroEnv):
         self._checkMacroEnv(myGen, myEnv, [])
         # Redefine it
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ 3 + 4\n')
+            theFileObj=io.StringIO('OBJ 3 + 4\n')
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'obj.h', 3)
@@ -3782,7 +3781,7 @@ class TestMacroUndef(TestMacroEnv):
         """TestMacroUndef.testFunctionLikeUndef_00(): #defines then undefs an function like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FUNC_LIKE(a) ( a )\n')
+            theFileObj=io.StringIO('FUNC_LIKE(a) ( a )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'F.h', 1)
@@ -3792,7 +3791,7 @@ class TestMacroUndef(TestMacroEnv):
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=StringIO.StringIO('NOTHING\n')
+                    theFileObj=io.StringIO('NOTHING\n')
                 ).next(),
                 '',
                 1,
@@ -3802,7 +3801,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef it
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('FUNC_LIKE\n')
+                theFileObj=io.StringIO('FUNC_LIKE\n')
             ).next(),
             'F.h',
             2,
@@ -3832,7 +3831,7 @@ class TestFromCppInternals(TestMacroEnv):
         myStr = """foo(x) bar x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3841,7 +3840,7 @@ class TestFromCppInternals(TestMacroEnv):
             i += 1
         self._checkMacroEnv(myGen, myMap, ['foo',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""foo(foo) (2)""")
+            theFileObj=io.StringIO("""foo(foo) (2)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3877,7 +3876,7 @@ EMPTY
 f(x) =x=
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3886,7 +3885,7 @@ f(x) =x=
             i += 1
         self._checkMacroEnv(myGen, myMap, ['PLUS', 'EMPTY', 'f'])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""+PLUS -EMPTY- PLUS+ f(=)""")
+            theFileObj=io.StringIO("""+PLUS -EMPTY- PLUS+ f(=)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3915,7 +3914,7 @@ f(x) =x=
         myStr = """add(x, y, z) x + y +z
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3924,7 +3923,7 @@ f(x) =x=
             i += 1
         self._checkMacroEnv(myGen, myMap, ['add',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""sum = add (1,2, 3);""")
+            theFileObj=io.StringIO("""sum = add (1,2, 3);""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3955,7 +3954,7 @@ f(x) =x=
 bar baz
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -3964,7 +3963,7 @@ bar baz
             i += 1
         self._checkMacroEnv(myGen, myMap, ['foo', 'bar',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""[foo]""")
+            theFileObj=io.StringIO("""[foo]""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3998,7 +3997,7 @@ bar EMPTY baz
 EMPTY
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4007,7 +4006,7 @@ EMPTY
             i += 1
         self._checkMacroEnv(myGen, myMap, ['foo', 'bar', 'EMPTY'])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""[foo] EMPTY;""")
+            theFileObj=io.StringIO("""[foo] EMPTY;""")
             )
         repList = []
         myGen = myCpp.next()
@@ -4048,7 +4047,7 @@ LO " earth"
 f(a) f(a)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4094,7 +4093,7 @@ f(a) f(a)
         #print
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -4133,7 +4132,7 @@ LO " earth"
 f(a) f(a)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4154,7 +4153,7 @@ f(a) f(a)
         #print
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -4184,7 +4183,7 @@ f(a) f(a)
 g f
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4202,7 +4201,7 @@ g f
         #print
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -4233,7 +4232,7 @@ f(2)(9)
 g f
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4252,7 +4251,7 @@ g f
         #print
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -4303,7 +4302,7 @@ Becomes:
         myStr = """s(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4323,7 +4322,7 @@ Becomes:
         #print
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -4358,7 +4357,7 @@ Becomes:
         myStr = """s(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4378,7 +4377,7 @@ Becomes:
         #print
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -4407,7 +4406,7 @@ s(@)
         myStr = """s(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4425,7 +4424,7 @@ s(@)
             )
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -4479,7 +4478,7 @@ class TestPredefinedInCtor(TestMacroEnv):
         myStr = """defined
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -4501,7 +4500,7 @@ class TestPredefinedInCtor(TestMacroEnv):
             '__cplusplus'   : '1\n',
         }
         myMap = MacroEnv.MacroEnv(enableTrace=True, stdPredefMacros=myPredef)
-        for aName in myPredef.keys():
+        for aName in list(myPredef.keys()):
             self.assertEqual(
                 True,
                 myMap.mightReplace(
@@ -4521,7 +4520,7 @@ class TestPredefinedInCtor(TestMacroEnv):
             '__cplusplus \n',
             ):
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(aMacro)
+                theFileObj=io.StringIO(aMacro)
                 )
             myGen = myCpp.next()
             self.assertRaises(
@@ -4541,7 +4540,7 @@ class TestPredefined__FILE__(TestMacroEnv):
         """TestPredefined__FILE__.test_00 - redefining __FILE__ fails when using define()."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('%s\n' % self._macroName)
+            theFileObj=io.StringIO('%s\n' % self._macroName)
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -4577,7 +4576,7 @@ class TestPredefined__LINE__(TestMacroEnv):
         """TestPredefined__LINE__.test_00 - redefining __LINE__ fails when using define()."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('%s\n' % self._macroName)
+            theFileObj=io.StringIO('%s\n' % self._macroName)
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -4613,7 +4612,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         myStr = """REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -4629,7 +4628,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         myStr = """REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -4650,7 +4649,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         myStr = """REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -4668,7 +4667,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         myStr = """REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -4688,7 +4687,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         myStr = """REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -4706,7 +4705,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         myStr = """REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -4720,7 +4719,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         # Now undef it
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO('REFCOUNT\n')
+                theFileObj=io.StringIO('REFCOUNT\n')
             ).next(),
             '',
             1,
@@ -4735,7 +4734,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         myStr = """REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -4760,7 +4759,7 @@ HIGHLOW "hello"
 LOW LOW ", world"
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4789,7 +4788,7 @@ LOW LOW ", world"
 #define xglue(a,b) glue(a, b) /* #1 Ref: 1 True */""", str(myEnv))
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""glue(HIGH, LOW);
+            theFileObj=io.StringIO("""glue(HIGH, LOW);
 xglue(HIGH, LOW)
 """)
             )
@@ -4842,7 +4841,7 @@ BEANS 4+CHIPS
 PEAS Not on the menu
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -4851,7 +4850,7 @@ PEAS Not on the menu
             i += 1
         # Do some undef'ing
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""SPAM
+            theFileObj=io.StringIO("""SPAM
 EGGS
 PEAS
 """)
@@ -4863,7 +4862,7 @@ PEAS
             i += 1
         # Do some defining
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""SPAM 1
+            theFileObj=io.StringIO("""SPAM 1
 EGGS 2+SPAM
 """)
             )
@@ -4893,7 +4892,7 @@ EGGS 2+SPAM
 #define SPAM 1 /* #100 Ref: 1 True */""", str(myEnv))
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""SPAM
+            theFileObj=io.StringIO("""SPAM
 EGGS
 CHIPS
 BEANS
@@ -4962,7 +4961,7 @@ class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
         myStr = """DEF 1 + 2
  """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'a.h', 11)
@@ -4977,11 +4976,11 @@ class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
         # Now try a bad redefinition
         myStr = 'DEF 1+2\n'
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         self.assertRaises(
-            MacroEnv.ExceptionMacroEnvInvalidCmp,
+            MacroEnv.ExceptionMacroEnvInvalidRedefinition,
             myMap.define,
             myGen,
             'b.h',
@@ -4990,7 +4989,7 @@ class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
         # Now try a good redefinition from different file and line
         myStr = 'DEF   1   /*   Some  comment   */    +     2    \n'
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'c.h', 112)
@@ -5035,13 +5034,13 @@ class SpecialParsingOverRun(TestMacroEnv):
         myStr = """INC 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['INC',])
         myTuPp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('INC == 1\n')
+            theFileObj=io.StringIO('INC == 1\n')
             )
         myGen = myTuPp.next()
         result = []
@@ -5086,14 +5085,14 @@ class MacroEnvCppInternals(TestMacroEnv):
         myStr = """f(x) x x
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'a.h', 1)
         self._checkMacroEnv(myGen, myEnv, ['f',])
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""f (1
+            theFileObj=io.StringIO("""f (1
 #undef f
 #define f 2
 f)
@@ -5184,7 +5183,7 @@ f)
 call_with_1(x) x(1)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'a.h', 1)
@@ -5192,7 +5191,7 @@ call_with_1(x) x(1)
         self._checkMacroEnv(myGen, myEnv, ['twice', 'call_with_1',])
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""call_with_1 (twice)
+            theFileObj=io.StringIO("""call_with_1 (twice)
 """)
             )
         repList = []
@@ -5230,14 +5229,14 @@ call_with_1(x) x(1)
         myStr = """strange(file) fprintf (file, "%s %d",
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'a.h', 1)
         self._checkMacroEnv(myGen, myEnv, ['strange',])
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("""strange(stderr) p, 35)
+            theFileObj=io.StringIO("""strange(stderr) p, 35)
 """)
             )
         repList = []
@@ -5277,13 +5276,13 @@ class VariableArgumentMacros(TestMacroEnv):
         myStr = """showlist(...) puts(#__VA_ARGS__)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['showlist',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('showlist(The first, second, and third items.);')
+            theFileObj=io.StringIO('showlist(The first, second, and third items.);')
             )
         repList = []
         myGen = myCpp.next()
@@ -5308,7 +5307,7 @@ class MacroHistory(TestMacroEnv):
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
@@ -5342,7 +5341,7 @@ SPAM
 SPAM 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
@@ -5382,7 +5381,7 @@ SPAM
 SPAM 4
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
@@ -5423,7 +5422,7 @@ In scope:
 SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
@@ -5471,7 +5470,7 @@ SPAM
 SPAM 2
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
@@ -5534,7 +5533,7 @@ In scope:
         myStr = """SPAM 1
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
@@ -5623,7 +5622,7 @@ class TestLinux(TestMacroEnv):
 __stringify(x...)    __stringify_1(x)
 """
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(myStr)
+            theFileObj=io.StringIO(myStr)
             )
         myGen = myCpp.next()
         i = 0
@@ -5642,7 +5641,7 @@ __stringify(x...)    __stringify_1(x)
             )
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(myIn)
+                theFileObj=io.StringIO(myIn)
                 )
             repList = []
             myGen = myCpp.next()
@@ -5735,8 +5734,7 @@ def unitTest(theVerbosity=2):
 
 
 def usage():
-    print \
-"""TestPpDefine.py - Tests the PpDefine module.
+    print("""TestPpDefine.py - Tests the PpDefine module.
 Usage:
 python TestPpDefine.py [-hl: --help]
 
@@ -5750,22 +5748,22 @@ Options:
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
-    print 'TestPpDefine.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestPpDefine.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
-    print 'Command line:'
-    print ' '.join(sys.argv)
-    print
+    print('Command line:')
+    print(' '.join(sys.argv))
+    print()
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
-    except getopt.GetoptError, myErr:
+    except getopt.GetoptError as myErr:
         usage()
-        print 'ERROR: Invalid option: %s' % str(myErr)
+        print('ERROR: Invalid option: %s' % str(myErr))
         sys.exit(1)
     logLevel = logging.WARNING
     for o, a in opts:
@@ -5776,7 +5774,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments[%d]!' % len(args)
+        print('ERROR: Wrong number of arguments[%d]!' % len(args))
         sys.exit(1)
     clkStart = time.clock()
     # Initialise logging etc.
@@ -5786,8 +5784,8 @@ def main():
                     stream=sys.stdout)
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

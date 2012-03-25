@@ -28,7 +28,7 @@ import os
 import unittest
 import time
 import logging
-import StringIO
+import io
 import pprint
 
 from cpip.core import PpTokeniser, FileLocation, CppDiagnostic, PpToken  
@@ -41,20 +41,20 @@ class TestPpTokeniserBase(unittest.TestCase):
     """Base class for test classes that provides common functionality."""
     def _printDiff(self, actual, expected):
         if actual != expected:
-            print
+            print()
             i = 0
             for t, e in map(None, actual, expected):
                 if t is not None and e is not None:
                     if t != e:
-                        print '%d: %s, != %s' \
+                        print('%d: %s, != %s' \
                                           % (i,
                                              self.__stringiseToken(t),
-                                             self.__stringiseToken(e))
+                                             self.__stringiseToken(e)))
                 else:
-                    print '%d: %s, != %s' \
+                    print('%d: %s, != %s' \
                                       % (i,
                                          self.__stringiseToken(t),
-                                         self.__stringiseToken(e))
+                                         self.__stringiseToken(e)))
                 i += 1
 
     def __stringiseToken(self, theTtt):
@@ -1011,50 +1011,50 @@ class TestLexPhases_0(TestPpTokeniserBase):
 
     def testPhase_0_Empty(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 0, empty file, no new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(''))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(''))
         # Successes
         self.assertEqual([], myObj.lexPhases_0())
 
     def testPhase_0_EmptyWithEof(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 0, single new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('\n'))
         # Successes
         self.assertEqual(['\n',], myObj.lexPhases_0())
 
     def testPhase_0_OneString(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 0, one line, no new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('asd'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('asd'))
         # Successes
         self.assertEqual(['asd',], myObj.lexPhases_0())
 
     def testPhase_0_OneLine(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 0, one line, has new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('asd\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('asd\n'))
         # Successes
         self.assertEqual(['asd\n',], myObj.lexPhases_0())
 
     def testPhase_0_MultiLine_00(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 0, multi-line, has new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('asd\n\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('asd\n\n'))
         # Successes
         self.assertEqual(['asd\n', '\n'], myObj.lexPhases_0())
 
     def testPhase_0_MultiLine_01(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 0, multi-line, no ending new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('abc\ndef'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('abc\ndef'))
         # Successes
         self.assertEqual(['abc\n', 'def'], myObj.lexPhases_0())
 
     def testPhase_0_MultiLine_02(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 0, multi-line, has ending new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('abc\ndef\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('abc\ndef\n'))
         self.assertEqual(['abc\n', 'def\n'], myObj.lexPhases_0())
 
 class TestLexPhases_1(TestPpTokeniserBase):
     """Tests the phase zero and phase one."""
     def testPhase_1_00_ConvertCharSet(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, lex.charset expansion."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(''))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(''))
         myL = ['',]
         myObj._convertToLexCharset(myL)
         self.assertEqual([''], myL)
@@ -1066,19 +1066,19 @@ class TestLexPhases_1(TestPpTokeniserBase):
         myObj._convertToLexCharset(myL)
         self.assertEqual(['ab\\u00A9c'], myL)
         # Copyright symbol
-        myL = [u'\u0065',]
+        myL = ['\u0065',]
         myObj._convertToLexCharset(myL)
         self.assertEqual(['e'], myL)
-        myL = [u'\uFFFF',]
+        myL = ['\uFFFF',]
         myObj._convertToLexCharset(myL)
         self.assertEqual(['\\uFFFF'], myL)
-        myL = [u'\uffff',]
+        myL = ['\uffff',]
         myObj._convertToLexCharset(myL)
         self.assertEqual(['\\uFFFF'], myL)
 
     def testPhase_1_01_ConvertCharSet(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, lex.charset expansion, misc."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(''))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(''))
         myTokS = ['@',]
         myObj._convertToLexCharset(myTokS)
         self.assertEqual(['@'], myTokS)
@@ -1091,7 +1091,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_Empty(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, empty file, no new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(''))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(''))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual([], myPh_0)
         myStrTokS = [Str for Str in myObj.genLexPhase1(myPh_0)]
@@ -1099,7 +1099,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_EmptyWithEof(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, single new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('\n'))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['\n'], myPh_0)
         myStrTokS = [Str.str for Str in myObj.genLexPhase1(myPh_0)]
@@ -1107,7 +1107,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_OneString(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, one line, no new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('asd'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('asd'))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['asd',], myPh_0)
         myStrTokS = [Str.str for Str in myObj.genLexPhase1(myPh_0)]
@@ -1115,7 +1115,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_OneLine(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, one line, has new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('asd\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('asd\n'))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['asd\n',], myPh_0)
         myStrTokS = [Str.str for Str in myObj.genLexPhase1(myPh_0)]
@@ -1123,7 +1123,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_MultiLine_00(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, multi-line, has new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('asd\n\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('asd\n\n'))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['asd\n', '\n'], myPh_0)
         myStrTokS = [Str.str for Str in myObj.genLexPhase1(myPh_0)]
@@ -1131,7 +1131,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_MultiLine_01(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, multi-line, no ending new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('abc\ndef'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('abc\ndef'))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['abc\n', 'def'], myPh_0)
         myStrTokS = [Str.str for Str in myObj.genLexPhase1(myPh_0)]
@@ -1139,7 +1139,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_MultiLine_02(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, multi-line, has ending new-line."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('abc\ndef\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('abc\ndef\n'))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['abc\n', 'def\n'], myPh_0)
         myStrTokS = [Str.str for Str in myObj.genLexPhase1(myPh_0)]
@@ -1147,7 +1147,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
 
     def testPhase_1_Trigraph_Single_00(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, trigraph, single "??="."""
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('??=\n'))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('??=\n'))
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['??=\n',], myPh_0)
         myStrTokS = [s for s in myObj.genLexPhase1(myPh_0)]
@@ -1185,7 +1185,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
             ('??!', '|'),
             ('??-', '~'),
             ):
-            myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO('%s\n' % t))
+            myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO('%s\n' % t))
             myPh_0 = myObj.lexPhases_0()
             self.assertEqual(['%s\n' % t,], myPh_0)
             myStrTokS = [s for s in myObj.genLexPhase1(myPh_0)]
@@ -1213,7 +1213,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
     def testPhase_1_Trigraph_Double_00(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, trigraph, double 00."""
         myObj = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('??=??(\n')
+            theFileObj=io.StringIO('??=??(\n')
             )
         myPh_0 = myObj.lexPhases_0()
         self.assertEqual(['??=??(\n',], myPh_0)
@@ -1250,7 +1250,7 @@ class TestLexPhases_1(TestPpTokeniserBase):
     def testPhase_1_Trigraph_Multi_09(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 1, trigraph, multi 09."""
         myObj = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(
+            theFileObj=io.StringIO(
                 '??=??(??<??/??)??>??\'??!??-\n'
                 )
             )
@@ -1569,7 +1569,7 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #
         myGen = myObj.genLexPptokenAndSeqWs('/* */\n')
         myToks = [t for t in myGen]
@@ -1581,7 +1581,7 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #
         myGen = myObj.genLexPptokenAndSeqWs('if /* */ (  )\n')
         myToks = [t for t in myGen]
@@ -1599,7 +1599,7 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCommentReplacementC_unclosed(self):
         """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement, C style but unclosed."""
@@ -1624,7 +1624,7 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #
         myGen = myObj.genLexPptokenAndSeqWs('if // (  )\n')
         myToks = [t for t in myGen]
@@ -1638,12 +1638,12 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #
         myGen = myObj.genLexPptokenAndSeqWs('//')
         self.assertRaises(
             CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream,
-            myGen.next
+            myGen.__next__
             )
         #myToks = [t for t in myGen]
         ##print '\n', myToks
@@ -1653,7 +1653,7 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         #self._printDiff(myToks, eToks)
         #self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCommentReplacementMixed(self):
         """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement, mixed."""
@@ -1667,7 +1667,7 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #
         myGen = myObj.genLexPptokenAndSeqWs('// /**/\n')
         myToks = [t for t in myGen]
@@ -1679,7 +1679,7 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testControlLineDefine_00(self):
         """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Sect 16 control-line "define" [00]."""
@@ -1919,27 +1919,27 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
     def testInitLexPhase123(self):
         """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - phase 1, 2, 3 processing."""
         myStr = '#include "spam.h"\n'
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(myStr))
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(myStr))
         myObj.initLexPhase12()
         self.assertEqual(myObj._transPhaseTwo, myStr)
 
     def testNextGenertor_01(self):
         """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - token and token type generation."""
         myStr = '#include "spam.h"\n'
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(myStr))
-        myTokTypeGen = myObj.next()
-        myTokType = myTokTypeGen.next()
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(myStr))
+        myTokTypeGen = next(myObj)
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('#',           'preprocessing-op-or-punc'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('include',     'identifier'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(' ',           'whitespace'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('"spam.h"',    'string-literal'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('\n',          'whitespace'))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myTokTypeGen.next)
+        self.assertRaises(StopIteration, myTokTypeGen.__next__)
 
 class TestGenerateLexPpTokensUnget(TestPpTokeniserBase):
     """Generates a preprocessing token stream using unget(0 to push token back on to the stream."""
@@ -1947,86 +1947,86 @@ class TestGenerateLexPpTokensUnget(TestPpTokeniserBase):
     def testNextGenertorSend_00(self):
         """Token generation with send()."""
         myStr = '#include "spam.h"\n'
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(myStr))
-        myTokTypeGen = myObj.next()
-        myTokType = myTokTypeGen.next()
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(myStr))
+        myTokTypeGen = next(myObj)
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('#',           'preprocessing-op-or-punc'))
         myTokTypeGen.send(myTokType)
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('#',           'preprocessing-op-or-punc'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('include',     'identifier'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(' ',           'whitespace'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('"spam.h"',    'string-literal'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('\n',          'whitespace'))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myTokTypeGen.next)
+        self.assertRaises(StopIteration, myTokTypeGen.__next__)
 
     def testNextGenertorSend_01(self):
         """Token generation with send(), simulates "F F (123)" ignoring first F and pushing back the second F."""
         myStr = 'F F (123)\n'
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(myStr))
-        myTokTypeGen = myObj.next()
-        myTokType = myTokTypeGen.next()
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(myStr))
+        myTokTypeGen = next(myObj)
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('F',        'identifier'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(' ',           'whitespace'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('F',        'identifier'))
         # Not a LPAREN so push it back
         myTokTypeGen.send(myTokType)
         # Now get next token, it should have been pushed back
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('F',        'identifier'))
         # Carry on
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(' ',           'whitespace'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('(',           'preprocessing-op-or-punc'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('123',         'pp-number'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(')',           'preprocessing-op-or-punc'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('\n',          'whitespace'))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myTokTypeGen.next)
+        self.assertRaises(StopIteration, myTokTypeGen.__next__)
 
     def testNextGenertorSend_03(self):
         """Token generation with send(), simulates "F(123) F abc" pushing back "abc" when no LPAREN found for second F."""
         myStr = 'F(123) F abc\n'
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(myStr))
-        myTokTypeGen = myObj.next()
-        myTokType = myTokTypeGen.next()
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(myStr))
+        myTokTypeGen = next(myObj)
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('F',        'identifier'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('(',           'preprocessing-op-or-punc'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('123',         'pp-number'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(')',           'preprocessing-op-or-punc'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(' ',           'whitespace'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('F',        'identifier'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken(' ',           'whitespace'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         #print str(myTokType)
         self.assertEqual(myTokType, PpToken.PpToken('abc',         'identifier'))
         # 'abc' not a LPAREN so push it back
         myTokTypeGen.send(PpToken.PpToken('abc',        'identifier'))
         # This represents subsequent processing
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         #print str(myTokType)
         self.assertEqual(myTokType, PpToken.PpToken('abc',         'identifier'))
-        myTokType = myTokTypeGen.next()
+        myTokType = next(myTokTypeGen)
         self.assertEqual(myTokType, PpToken.PpToken('\n',          'whitespace'))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myTokTypeGen.next)
+        self.assertRaises(StopIteration, myTokTypeGen.__next__)
 
 class TestHeaderReconstuction(TestPpTokeniserBase):
     """Tests generating a token stream then re-interpreting it as a header-name."""
@@ -2037,7 +2037,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#include "foo"\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('include',     'identifier'),
@@ -2065,7 +2065,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('# include "foo"\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken(' ',           'whitespace'),
@@ -2095,7 +2095,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include "foo"\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2125,7 +2125,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include "foo"abc\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2157,7 +2157,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include "foo"\nabc\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2191,7 +2191,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include "foo" \nabc\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2226,7 +2226,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#include "inc/src.h"\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('include',     'identifier'),
@@ -2256,7 +2256,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#include "fo\no"\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('include',     'identifier'),
@@ -2283,7 +2283,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#include <foo>\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('include',     'identifier'),
@@ -2313,7 +2313,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('# include <foo>\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken(' ',           'whitespace'),
@@ -2345,7 +2345,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include <foo>\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2377,7 +2377,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include <foo>abc\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2411,7 +2411,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include <foo>\nabc\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2447,7 +2447,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#  include <foo> \nabc\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('  ',          'whitespace'),
@@ -2485,7 +2485,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#include <inc/src.h>\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('include',     'identifier'),
@@ -2521,7 +2521,7 @@ class TestHeaderReconstuction(TestPpTokeniserBase):
         myGen = myObj.genLexPptokenAndSeqWs('#include <fo\no>\n')
         myToks = [t for t in myGen]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         eToks = [
                 PpToken.PpToken('#',           'preprocessing-op-or-punc'),
                 PpToken.PpToken('include',     'identifier'),
@@ -2555,7 +2555,7 @@ class TestMisc(TestPpTokeniserBase):#TestGenerateLexPpTokens):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
 class TestPpTokeniserFileLocator(TestPpTokeniserBase):
     def test_00(self):
@@ -2567,8 +2567,8 @@ A function definition
 #define F(x) f(x)
 
 """
-        myObj = PpTokeniser.PpTokeniser(theFileObj=StringIO.StringIO(myStr))
-        myTokTypeGen = myObj.next()
+        myObj = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(myStr))
+        myTokTypeGen = next(myObj)
         actToks = []
         for t in myTokTypeGen:
             #print '%2d %2d %s' % (t.lineNum, t.colNum, t)
@@ -2598,7 +2598,7 @@ A function definition
                  (5, 18, '\n\n')
                  ]
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myTokTypeGen.next)
+        self.assertRaises(StopIteration, myTokTypeGen.__next__)
         self.assertEqual(actToks, eToks)
         #print
         #print myObj.fileLocator
@@ -2645,8 +2645,7 @@ def unitTest(theVerbosity=2):
 #################
 
 def usage():
-    print \
-"""TestPpTokeniser.py - Tests the PpTokeniser source code
+    print("""TestPpTokeniser.py - Tests the PpTokeniser source code
     according to ISO/IEC 14882:1998(E).
 Usage:
 python TestPpTokeniser.py [-h --help]
@@ -2663,19 +2662,19 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
-    print 'Pp.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('Pp.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -2692,12 +2691,12 @@ def main():
     clkStart = time.clock()
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

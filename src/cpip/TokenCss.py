@@ -283,7 +283,7 @@ def writeCssToDir(theDir):
         if not os.path.exists(theDir):
             os.makedirs(theDir)
         open(os.path.join(theDir, TT_CSS_FILE), 'w').write(TT_CSS_STRING)
-    except IOError, err:
+    except IOError as err:
         raise ExceptionTokenCss('writeCssToDir(): %s' % str(err))
 
 def writeCssForFile(theFile):

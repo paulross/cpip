@@ -48,10 +48,15 @@ than new-line is retained or replaced by one space character is
 implementation-defined.
 
 TODO: Do phases 0,1,2 as generators i.e. not in memory?
+
 TODO: Check coverage with a complete but minimal example of every token
+
 TODO: remove self._cppTokType and have it as a return value?
+
 TODO: Remove commented out code.
+
 TODO: Performance of phase 1 processing.
+
 TODO: rename next() as genPpTokens()?
 
 TODO: Perf rewrite slice functions to take an integer argument of where in the
@@ -65,7 +70,7 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 # TODO: 'C' keywords
-# ISO/IEC 9899:1999 (E) 6.4.1 Keywords
+#: ISO/IEC 9899:1999 (E) 6.4.1 Keywords
 """auto
 break
 case
@@ -108,10 +113,10 @@ _Imaginary
 #Removed to stop logging holding up the performance
 #import logging
 from cpip import ExceptionCpip
-import FileLocation
-import CppDiagnostic
-import PpWhitespace
-import PpToken
+from cpip.core import FileLocation
+from cpip.core import CppDiagnostic
+from cpip.core import PpWhitespace
+from cpip.core import PpToken
 from cpip.util import StrTree, MatrixRep
 
 ######################################################################
@@ -119,6 +124,7 @@ from cpip.util import StrTree, MatrixRep
 ######################################################################
 LEN_SOURCE_CHARACTER_SET = 96
 COMMENT_REPLACEMENT = ' '
+
 DIGRAPH_TABLE = {
     '<%'        : '{',
     'and'       : '&&',
@@ -138,6 +144,7 @@ DIGRAPH_TABLE = {
     '%:%:'      : '##',
     'bitand'    : '&',
 }
+
 TRIGRAPH_TABLE = {
     '='       : '#',
     '('       :  '[',
@@ -149,8 +156,9 @@ TRIGRAPH_TABLE = {
     '!'       : '|',
     '-'       : '~',
 }
-# Note: This is doubled
+#: Note: This is redoubled
 TRIGRAPH_PREFIX = '?'
+#: Well it is a Trigraph
 TRIGRAPH_SIZE = 3
 # Preprocess character sets
 CHAR_SET_MAP = {
@@ -267,24 +275,28 @@ CHAR_SET_MAP = {
 #================================================================
 # Section: Derived information that is based on ISO/IEC 9899:1999
 #================================================================
-# This adds whitespace information to internal map
+#: This adds whitespace information to internal map
 CHAR_SET_MAP['lex.charset']['whitespace'] = PpWhitespace.LEX_WHITESPACE
+
 assert(len(CHAR_SET_MAP['lex.charset']['whitespace']) == PpWhitespace.LEN_WHITESPACE_CHARACTER_SET)
 assert(len(CHAR_SET_MAP['lex.charset']['source character set']
         - CHAR_SET_MAP['lex.charset']['whitespace']) == \
         (LEN_SOURCE_CHARACTER_SET - PpWhitespace.LEN_WHITESPACE_CHARACTER_SET))
+
 # This derived information is really just an optimisation when checking
-# h-char and q-char values
+
+#: h-char values
 CHAR_SET_MAP['lex.header']['h-char'] = CHAR_SET_MAP['lex.charset']['source character set'] \
                                         - CHAR_SET_MAP['lex.header']['h-char_omit']
+#: q-char values
 CHAR_SET_MAP['lex.header']['q-char'] = CHAR_SET_MAP['lex.charset']['source character set'] \
                                         - CHAR_SET_MAP['lex.header']['q-char_omit']
 
-# Allowable character literals, see:
-# ISO/IEC 14882:2003(E) 2.13.2 Character literals [lex.ccon]
+#: Allowable character literals, see:
+#: ISO/IEC 14882:2003(E) 2.13.2 Character literals [lex.ccon]
 CHAR_SET_MAP['lex.ccon']['c-char'] = CHAR_SET_MAP['lex.charset']['source character set'] \
                                             - CHAR_SET_MAP['lex.ccon']['c-con_omit']
-# Add '@', '`' and '$'
+#: Add '@', '`' and '$'
 CHAR_SET_MAP['lex.ccon']['c-char'] |= set([chr(o) for o in CHAR_SET_MAP['lex.charset']['ucn ordinals'] ])
 
 # Allowable string literals, see:
@@ -381,24 +393,25 @@ class PpTokeniser(object):
     The buffer-like object should not be side-affected by the _slice...()
     function regardless of the return value.
     
-    So a _slice...() function pattern is:
-    def _slice...(self, theBuf, theOfs):
-        i = theOfs
-        try:
-            # Only access theBuf with [i] so that __getitem__() is called
-            ...theBuf[i]...
-            # Success as the absence of an IndexError!
-            # So return the length of objects that pass
-            # First test and set for type of slice found
-            if i > theOfs:
-                assert(self._cppTokType is None), '_cppTokType was %s now %s' % (self._cppTokType, ...)
-                self._cppTokType = ...
-            # NOTE: Return size of slice not the index of the end of the slice
-            return i - theOfs
-        except IndexError:
-            pass
-        # Here either return 0 on IndexError or i-theOfs
-        return ...
+    So a _slice...() function pattern is::
+    
+        def _slice...(self, theBuf, theOfs):
+            i = theOfs
+            try:
+                # Only access theBuf with [i] so that __getitem__() is called
+                ...theBuf[i]...
+                # Success as the absence of an IndexError!
+                # So return the length of objects that pass
+                # First test and set for type of slice found
+                if i > theOfs:
+                    assert(self._cppTokType is None), '_cppTokType was %s now %s' % (self._cppTokType, ...)
+                    self._cppTokType = ...
+                # NOTE: Return size of slice not the index of the end of the slice
+                return i - theOfs
+            except IndexError:
+                pass
+            # Here either return 0 on IndexError or i-theOfs
+            return ...
     
     NOTE: Functions starting with __slice... do not trap the IndexError, the
     caller must do that.
@@ -484,7 +497,7 @@ class PpTokeniser(object):
         try:
             self._rewindFile()
             return self._file.readlines()
-        except Exception, err:
+        except Exception as err:
             raise ExceptionCpipTokeniser(str(err))
 
     def _convertToLexCharset(self, theLineS):
@@ -634,7 +647,7 @@ class PpTokeniser(object):
             while i <= (len(aLine) - TRIGRAPH_SIZE):
                 if aLine[i] == TRIGRAPH_PREFIX \
                 and aLine[i+1] == TRIGRAPH_PREFIX \
-                and TRIGRAPH_TABLE.has_key(aLine[i+2]):
+                and aLine[i+2] in TRIGRAPH_TABLE:
                     # Trigraph replacement
                     myMr.addLineColRep(
                                 lineNum,

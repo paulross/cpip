@@ -31,12 +31,9 @@ import sys
 import unittest
 import time
 import logging
-import pprint
+#import pprint
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 #try:
 #    from xml.etree import cElementTree as etree
@@ -82,7 +79,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
         """TestItuToHtmlLowLevel.test_01(): Empty string, no processing."""
         myInput = ""
         myOutput = ""
-        myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(''))
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(''))
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
         #print o
@@ -95,7 +92,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
     
     def test_02(self):
         """TestItuToHtmlLowLevel.test_02(): _translatePhase_1() with empty string."""
-        myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(''))
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(''))
         myIth._translatePhase_1()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
@@ -154,7 +151,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
         ]
         for s, eto, ety, cs in myTestData:
             #print 's:', s
-            myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(s))
+            myIth = ItuToHtml.ItuToHtml(io.StringIO(s))
             myIth._translatePhase_1()
             myMps = myIth.multiPassString
             o = [c for c in myMps.genChars()]
@@ -182,7 +179,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlPhase3.test_01(): Empty string."""
-        myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(''))
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(''))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
@@ -197,7 +194,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     def test_02(self):
         """TestItuToHtmlPhase3.test_02(): Macro."""
         myStr = '#define OBJ_LIKE /* white space */ (1-1) /* other */\n'
-        myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(myStr))
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(myStr))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         # Now test
@@ -256,7 +253,7 @@ g(x+(3,4)-w) | h 5) & m
 p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };
 """
-        myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(myStr))
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(myStr))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         wordS = [w for w in myMps.genWords()]
@@ -587,7 +584,7 @@ void main()
     cout << "Welcome to C++ Programming" << endl;
 }
 """
-        myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(myStr))
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -651,7 +648,7 @@ int o = 0123;
 int h = 0xABC;
 const char* s = "Hello world";
 """
-        myIth = ItuToHtml.ItuToHtml(StringIO.StringIO(myStr))
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -744,8 +741,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestItuToHtml.py - A module that tests ItuToHtml module.
+    print("""TestItuToHtml.py - A module that tests ItuToHtml module.
 Usage:
 python TestItuToHtml.py [-lh --help]
 
@@ -761,20 +757,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestItuToHtml.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestItuToHtml.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -785,7 +781,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -795,8 +791,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

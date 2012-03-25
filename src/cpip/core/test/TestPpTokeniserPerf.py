@@ -30,9 +30,9 @@ import os
 import unittest
 import pprint
 try:
-    import cStringIO as StringIO
+    import io as StringIO
 except ImportError:
-    import StringIO
+    import io
 import subprocess
 
 from cpip.core import PpTokeniser
@@ -43,7 +43,7 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
     def retPpTokeniser(self, theContent):
         """Returns a PpTokeniser object with the supplied content."""
         return PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(theContent)
+                theFileObj=io.StringIO(theContent)
                 )
 
     def runTokGen(self, thePpTok, incWs=True):
@@ -51,9 +51,9 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         (tokens, time_in_seconds_as_a_float)."""
         myTimStart = time.clock()
         if incWs:
-            myToks = [t for t in thePpTok.next()]
+            myToks = [t for t in next(thePpTok)]
         else:
-            myToks = [t for t in thePpTok.next() if not t.isWs()]
+            myToks = [t for t in next(thePpTok) if not t.isWs()]
         myTime = time.clock() - myTimStart
         myCntr = len(myToks)
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
@@ -64,7 +64,7 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         (number_of_tokens, time_in_seconds_as_a_float)."""
         myCntr = 0
         myTimStart = time.clock()
-        for t in thePpTok.next():
+        for t in next(thePpTok):
             myCntr += 1
         myTime = time.clock() - myTimStart
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
@@ -582,7 +582,7 @@ class TestPpTokeniserIsInCharSet(TestPpTokeniserPerfBase):
     def setUp(self):
         self._txt = ''.join([chr(x) for x in range(256)])
         self._txtChrSet = """abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_{}[]#()<>%:;.?*+-/^&|~!=,\\"'\t\v\f\n """
-        self._ordS = range(9,13)+range(32,36)+range(37,64)+range(65,96)+range(97,127)
+        self._ordS = list(range(9,13))+list(range(32,36))+list(range(37,64))+list(range(65,96))+list(range(97,127))
         
     def isInCharSet(self, c):
         # This takes ~4x as long
@@ -719,12 +719,12 @@ class TestPpTokeniserRealCode(TestPpTokeniserPerfBase):
     def test_00(self):
         """Test the time taken to process a 'real' code in test/PerfRealCode."""
         for aName in os.listdir(self.REAL_PATH):
-            print "Testing '%s'" % aName
+            print("Testing '%s'" % aName)
             myStr = open(os.path.join(self.REAL_PATH, aName)).read()
             myByteCount = len(myStr)
             myPp = self.retPpTokeniser(myStr)
             tS, tim = self.runTokGen(myPp)
-            print 'kB/S= %0.1f' % (myByteCount/(1024*tim))
+            print('kB/S= %0.1f' % (myByteCount/(1024*tim)))
             pprint.pprint(self.retTokHistogram(tS))
 
 class Special(TestPpTokeniserPerfBase):
@@ -753,8 +753,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestPpLexerLimits.py - A module that tests the implementation limits of
+    print("""TestPpLexerLimits.py - A module that tests the implementation limits of
 the PpLexer module.
 Usage:
 python TestPpLexerLimits.py [-lh --help]
@@ -771,20 +770,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestPpLexer.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestPpLexer.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -795,7 +794,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -805,8 +804,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

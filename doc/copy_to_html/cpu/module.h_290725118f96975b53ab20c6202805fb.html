@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/include/asm-generic/module.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/include/asm-generic/module.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#__ASM_GENERIC_MODULE_H_0"><span class="b">__ASM_GENERIC_MODULE_H</span></a>
+<a name="2"><span class="line">       2: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__ASM_GENERIC_MODULE_H_0"><span class="b">__ASM_GENERIC_MODULE_H</span></a>
+<a name="3"><span class="line">       3: </span></a>
+<a name="4"><span class="line">       4: </span></a><span class="k">/*
+<a name="5"><span class="line">       5: </span></a> * Many architectures just need a simple module
+<a name="6"><span class="line">       6: </span></a> * loader without arch specific data.
+<a name="7"><span class="line">       7: </span></a> */</span>
+<a name="8"><span class="line">       8: </span></a><span class="m">struct</span> <span class="b">mod_arch_specific</span>
+<a name="9"><span class="line">       9: </span></a><span class="f">{</span>
+<a name="10"><span class="line">      10: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="11"><span class="line">      11: </span></a>
+<a name="12"><span class="line">      12: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#ZQ09ORklHXzY0QklUX3Rlc3Rub3RkZWY_"><span class="b">CONFIG_64BIT</span></a>
+<a name="13"><span class="line">      13: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#Elf_Shdr_0"><span class="b">Elf_Shdr</span></a> <span class="b">Elf64_Shdr</span>
+<a name="14"><span class="line">      14: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#Elf_Sym_0"><span class="b">Elf_Sym</span></a> <span class="b">Elf64_Sym</span>
+<a name="15"><span class="line">      15: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#Elf_Ehdr_0"><span class="b">Elf_Ehdr</span></a> <span class="b">Elf64_Ehdr</span>
+<a name="16"><span class="line">      16: </span></a><span class="f">#</span><span class="n">else</span>
+<a name="17"><span class="line">      17: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#Elf_Shdr_0"><span class="b">Elf_Shdr</span></a> <span class="b">Elf32_Shdr</span>
+<a name="18"><span class="line">      18: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#Elf_Sym_0"><span class="b">Elf_Sym</span></a> <span class="b">Elf32_Sym</span>
+<a name="19"><span class="line">      19: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#Elf_Ehdr_0"><span class="b">Elf_Ehdr</span></a> <span class="b">Elf32_Ehdr</span>
+<a name="20"><span class="line">      20: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="21"><span class="line">      21: </span></a>
+<a name="22"><span class="line">      22: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* __ASM_GENERIC_MODULE_H */</span>
+<a name="23"><span class="line">      23: </span></a></pre>
+  </body>
+</html>

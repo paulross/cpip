@@ -23,21 +23,18 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-import os
+#import os
 import sys
 import time
 import logging
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 from cpip.core import PpToken
 from cpip.core import PpTokeniser
 from cpip.core import PpDefine
 from cpip.core import FileLocation
 
-import TestBase
+from cpip.core.test import TestBase
 ######################
 # Section: Unit tests.
 ######################
@@ -97,7 +94,7 @@ class TestPpDefine(TestBase.TestCpipBase):
     def _retCheckedMacro(self, theStr, isObj, numToks, name, idS, rS):
         """Creates and checks a macro and returns it."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(theStr)
+            theFileObj=io.StringIO(theStr)
             )
         myGen = myCpp.next()
         MY_SPOOF_FILE = 'Some kind of thing that might not be a file on the file system'
@@ -113,7 +110,7 @@ class TestPpDefine(TestBase.TestCpipBase):
         self.assertEqual(retDef.fileId, MY_SPOOF_FILE)
         self.assertEqual(retDef.line, MY_LINE)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         return retDef
     
 class TestPpDefineInit(TestPpDefine):
@@ -125,7 +122,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitObject_00(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO\n')
+            theFileObj=io.StringIO('FOO\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -135,13 +132,13 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertFalse(myCppDef.expandArguments)
 
     def testInitObject_00_00(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO  \\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO  \n')
+            theFileObj=io.StringIO('FOO  \n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -151,12 +148,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_00_01(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO\\n  abc'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO  \n  abc')
+            theFileObj=io.StringIO('FOO  \n  abc')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -166,14 +163,14 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         #print 'TRACE_MACRO:\n"%s"' % myCppDef
-        self.assertEqual(PpToken.PpToken('abc', 'identifier'), myGen.next())
+        self.assertEqual(PpToken.PpToken('abc', 'identifier'), next(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_01(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO\\n#define BAR\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO\n#define BAR\n')
+            theFileObj=io.StringIO('FOO\n#define BAR\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -194,12 +191,12 @@ class TestPpDefineInit(TestPpDefine):
             [x for x in myGen],
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_02(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO 42\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO 42\n')
+            theFileObj=io.StringIO('FOO 42\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -209,12 +206,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['42',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_03(self):
         """PpDefine.__init__(): OK from object type macro: <#define> '   FOO\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('   FOO\n')
+            theFileObj=io.StringIO('   FOO\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -224,12 +221,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_04(self):
         """PpDefine.__init__(): OK from object type macro: <#define> '   FOO    \\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('   FOO    \n')
+            theFileObj=io.StringIO('   FOO    \n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -239,12 +236,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_05(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO a b c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO a b c\n')
+            theFileObj=io.StringIO('FOO a b c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -254,12 +251,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['a', ' ', 'b', ' ', 'c',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_06(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO a b c   \\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO a b c   \n')
+            theFileObj=io.StringIO('FOO a b c   \n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -269,12 +266,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['a', ' ', 'b', ' ', 'c',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_07(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO a b c \\nName'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO a b c \nName')
+            theFileObj=io.StringIO('FOO a b c \nName')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -290,12 +287,12 @@ class TestPpDefineInit(TestPpDefine):
             [x for x in myGen],
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_08(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'DOUBLE_SHARP spam ## eggs\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('DOUBLE_SHARP spam ## eggs\n')
+            theFileObj=io.StringIO('DOUBLE_SHARP spam ## eggs\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -316,13 +313,13 @@ class TestPpDefineInit(TestPpDefine):
             myCppDef.replacementTokens,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     # Failures
     def testInitObject_Fail_00(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> '\\n' (non-directive)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('\n')
+            theFileObj=io.StringIO('\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -333,12 +330,12 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_01(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> '' (no newline and empty)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('')
+            theFileObj=io.StringIO('')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -349,12 +346,12 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_02(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> 'EGGS' (no newline)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('EGGS')
+            theFileObj=io.StringIO('EGGS')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -365,7 +362,7 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_03(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> 'PLUS+\\n'.
@@ -373,7 +370,7 @@ class TestPpDefineInit(TestPpDefine):
         src.h:1:13: warning: ISO C requires whitespace after the macro name"""
         logging.debug('testInitObject_Fail_03()')
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('PLUS+\n')
+            theFileObj=io.StringIO('PLUS+\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -387,7 +384,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitObject_Fail_04(self):
         """PpDefine.__init__(): ISO/IEC 14882:1998(E) 16-2 bad whitespace in object type macro: <#define> 'SPAM\\v\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM\v\n')
+            theFileObj=io.StringIO('SPAM\v\n')
             )
         myGen = myCpp.next()
         #myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -402,7 +399,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitObject_Fail_05(self):
         """PpDefine.__init__(): ISO/IEC 14882:1998(E) 16-2 bad whitespace in object type macro: <#define> 'SPAM\\f\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM\f\n')
+            theFileObj=io.StringIO('SPAM\f\n')
             )
         myGen = myCpp.next()
         #myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -414,7 +411,7 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM\f EGGS\n')
+            theFileObj=io.StringIO('SPAM\f EGGS\n')
             )
         myGen = myCpp.next()
         #myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -429,7 +426,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitObject_Fail_06(self):
         """PpDefine.__init__(): ISO/IEC 14882:1998(E) 16.3.3-1 bad '##' in object type macro: <#define> 'DOUBLE_SHARP ##\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('DOUBLE_SHARP ##\n')
+            theFileObj=io.StringIO('DOUBLE_SHARP ##\n')
             )
         myGen = myCpp.next()
         #myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -444,7 +441,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitObject_Fail_07(self):
         """PpDefine.__init__(): ISO/IEC 14882:1998(E) 16.3.3-1 bad leading '##' in object type macro: <#define> 'DOUBLE_SHARP ## spam\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('DOUBLE_SHARP ## spam\n')
+            theFileObj=io.StringIO('DOUBLE_SHARP ## spam\n')
             )
         myGen = myCpp.next()
         #myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -459,7 +456,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitObject_Fail_08(self):
         """PpDefine.__init__(): ISO/IEC 14882:1998(E) 16.3.3-1 bad trailing '##' in object type macro: <#define> 'DOUBLE_SHARP spam ##\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('DOUBLE_SHARP spam ##\n')
+            theFileObj=io.StringIO('DOUBLE_SHARP spam ##\n')
             )
         myGen = myCpp.next()
         #myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -474,7 +471,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitObject_Fail_09(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> '123' (no identifier, pp-number)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('123')
+            theFileObj=io.StringIO('123')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -485,12 +482,12 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_10(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> '123 456\\n' (no identifier, pp-number)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('123 456\n')
+            theFileObj=io.StringIO('123 456\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -501,12 +498,12 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_11(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> '?\\n' (no identifier, preprocessing-op-or-punc)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('?\n')
+            theFileObj=io.StringIO('?\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -517,12 +514,12 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_12(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> '"string"\\n' (no identifier, string-literal)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('"string"\n')
+            theFileObj=io.StringIO('"string"\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -533,12 +530,12 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_13(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> "'c'\\n" (no identifier, character-literal)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO("'c'\n")
+            theFileObj=io.StringIO("'c'\n")
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -549,12 +546,12 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitObject_Fail_14(self):
         """PpDefine.__init__(): Bad from object type macro: <#define> '<string>\\n' (no identifier, header-name)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('<string>\n')
+            theFileObj=io.StringIO('<string>\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -565,17 +562,17 @@ class TestPpDefineInit(TestPpDefine):
             1,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testObject_String_00(self):
         """PpDefine.__str__(): OK from object type macro: <#define> 'FOO 42\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO    a +b  \n')
+            theFileObj=io.StringIO('FOO    a +b  \n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'foo.h', 17)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(7, myCppDef.tokensConsumed)
         self.assertEqual(True, myCppDef.isObjectTypeMacro)
         self.assertEqual('FOO', myCppDef.identifier)
@@ -586,12 +583,12 @@ class TestPpDefineInit(TestPpDefine):
     def testObject_String_01(self):
         """PpDefine.__str__(): OK from object type macro: <#define> 'FOO 42\\n' when #undef'd."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO    a +b  \n')
+            theFileObj=io.StringIO('FOO    a +b  \n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'foo.h', 17)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(7, myCppDef.tokensConsumed)
         self.assertEqual(True, myCppDef.isObjectTypeMacro)
         self.assertEqual('FOO', myCppDef.identifier)
@@ -611,7 +608,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_00(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'FOO(a,b,c)\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c)\n')
+            theFileObj=io.StringIO('FOO(a,b,c)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -621,13 +618,13 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertTrue(myCppDef.expandArguments)
 
     def testInitFunction_03(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'FOO(  a  ,  b ,c)\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(  a  ,  b ,c)\n')
+            theFileObj=io.StringIO('FOO(  a  ,  b ,c)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -637,12 +634,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitFunction_05(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a+b+c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a+b+c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -652,12 +649,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b', '+', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitFunction_06(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'SPAM()\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM()\n')
+            theFileObj=io.StringIO('SPAM()\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -667,12 +664,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual([], myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitFunction_07(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'SPAM()1+2\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM()1+2\n')
+            theFileObj=io.StringIO('SPAM()1+2\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -682,12 +679,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual([], myCppDef.parameters)
         self.assertEqual(['1', '+', '2'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitFunction_08(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'SPAM(a,b,c) a + b - c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a,b,c) a + b - c\n')
+            theFileObj=io.StringIO('SPAM(a,b,c) a + b - c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -697,12 +694,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c'], myCppDef.parameters)
         self.assertEqual(['a', ' ', '+', ' ', 'b', ' ', '-', ' ', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitFunction_09(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'SPAM(a,b,c) a ## b ## c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a,b,c) a ## b ## c\n')
+            theFileObj=io.StringIO('SPAM(a,b,c) a ## b ## c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -712,13 +709,13 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c'], myCppDef.parameters)
         self.assertEqual(['a', ' ', '##', ' ', 'b', ' ', '##', ' ', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertFalse(myCppDef.expandArguments)
 
     def testInitFunction_10(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'SPAM(a,b,c) # a # b # c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a,b,c) # a # b # c\n')
+            theFileObj=io.StringIO('SPAM(a,b,c) # a # b # c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -728,18 +725,18 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c'], myCppDef.parameters)
         self.assertEqual(['#', ' ', 'a', ' ', '#', ' ', 'b', ' ', '#', ' ', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertFalse(myCppDef.expandArguments)
 
     def testInitFunction_11(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'SPAM(a,b) ab a b\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a,b) ab a b\n')
+            theFileObj=io.StringIO('SPAM(a,b) ab a b\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(False, myCppDef.isObjectTypeMacro)
         self.assertEqual(13, myCppDef.tokensConsumed)
         self.assertEqual('SPAM', myCppDef.identifier)
@@ -759,12 +756,12 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_12(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'INC(a) <a>\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('INC(a) <a>\n')
+            theFileObj=io.StringIO('INC(a) <a>\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(False, myCppDef.isObjectTypeMacro)
         self.assertEqual(9, myCppDef.tokensConsumed)
         self.assertEqual('INC', myCppDef.identifier)
@@ -784,12 +781,12 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_13(self):
         """PpDefine.__init__(): OK from function type macro: <#define> 'INC(a) # a\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('INC(a) # a\n')
+            theFileObj=io.StringIO('INC(a) # a\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(False, myCppDef.isObjectTypeMacro)
         self.assertEqual(9, myCppDef.tokensConsumed)
         self.assertEqual('INC', myCppDef.identifier)
@@ -810,7 +807,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_50(self):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'FOO(a,b,c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c\n')
+            theFileObj=io.StringIO('FOO(a,b,c\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -824,7 +821,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_51(self):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'FOO(a,(b,c)\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,(b,c)\n')
+            theFileObj=io.StringIO('FOO(a,(b,c)\n')
             )
         myGen = myCpp.next()
         #PpDefine.PpDefine(myGen, '', 1)
@@ -839,7 +836,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_52(self):
         """PpDefine.__init__(): OK from attempted function type macro: <#define> 'FOO (a,b,c)\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO (a,b,c)\n')
+            theFileObj=io.StringIO('FOO (a,b,c)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -849,12 +846,12 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['(', 'a', ',', 'b', ',', 'c', ')'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testInitFunction_53(self):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'FOO(a,a)\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,a)\n')
+            theFileObj=io.StringIO('FOO(a,a)\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -868,7 +865,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_54(self):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'SPAM(a,b,c) # x # b # c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a,b,c) # x # b # c\n')
+            theFileObj=io.StringIO('SPAM(a,b,c) # x # b # c\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -882,7 +879,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_55(self):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'SPAM(a,b,c) # a # y # c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a,b,c) # a # y # c\n')
+            theFileObj=io.StringIO('SPAM(a,b,c) # a # y # c\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -896,7 +893,7 @@ class TestPpDefineInit(TestPpDefine):
     def testInitFunction_56(self):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'SPAM(a,b,c) # a # b # z\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a,b,c) # a # b # z\n')
+            theFileObj=io.StringIO('SPAM(a,b,c) # a # b # z\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -911,7 +908,7 @@ class TestPpDefineInit(TestPpDefine):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'FOO((a,b,c))\\n'.
         See note on PpDefine._ctorFunctionMacro() about the standard vs cpp.exe"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO((a,b,c))\n')
+            theFileObj=io.StringIO('FOO((a,b,c))\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -926,7 +923,7 @@ class TestPpDefineInit(TestPpDefine):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'FOO((a),(b),(c))\\n'.
         See note on PpDefine._ctorFunctionMacro() about the standard vs cpp.exe"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO((a),(b),(c))\n')
+            theFileObj=io.StringIO('FOO((a),(b),(c))\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -941,7 +938,7 @@ class TestPpDefineInit(TestPpDefine):
         """PpDefine.__init__(): Bad from function type macro: <#define> 'FOO(a,(,)b)\\n'.
         See note on PpDefine._ctorFunctionMacro() about the standard vs cpp.exe"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,(,)b)\n')
+            theFileObj=io.StringIO('FOO(a,(,)b)\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -955,7 +952,7 @@ class TestPpDefineInit(TestPpDefine):
     def testFunction_String_00(self):
         """PpDefine.__str__(): OK from function type macro: <#define> 'SPAM(a,b,c) # a # b # c\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a  ,  b  ,  c  )    # a  #  b # c   \n')
+            theFileObj=io.StringIO('SPAM(a  ,  b  ,  c  )    # a  #  b # c   \n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 11)
@@ -965,13 +962,13 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c'], myCppDef.parameters)
         self.assertEqual(['#', ' ', 'a', '  ', '#', '  ', 'b', ' ', '#', ' ', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('#define SPAM(a,b,c) # a # b # c /* spam.h#11 Ref: 0 True */', str(myCppDef))
 
     def testFunction_String_01(self):
         """PpDefine.__str__(): OK from function type macro: <#define> 'SPAM(a,b,c) # a # b # c\\n' when #undef'd."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM(a  ,  b  ,  c  )    # a  #  b # c   \n')
+            theFileObj=io.StringIO('SPAM(a  ,  b  ,  c  )    # a  #  b # c   \n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 11)
@@ -981,7 +978,7 @@ class TestPpDefineInit(TestPpDefine):
         self.assertEqual(['a', 'b', 'c'], myCppDef.parameters)
         self.assertEqual(['#', ' ', 'a', '  ', '#', '  ', 'b', ' ', '#', ' ', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('#define SPAM(a,b,c) # a # b # c /* spam.h#11 Ref: 0 True */', str(myCppDef))
         myCppDef.undef('spam.h', 27)
         self.assertEqual('#define SPAM(a,b,c) # a # b # c /* spam.h#11 Ref: 0 False spam.h#27 */', str(myCppDef))
@@ -999,8 +996,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefB = self._retCheckedMacro('FOO\n', True, 2, 'FOO', None, [])
         self.assertEqual(True, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(True, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(0, cmp(myDefA, myDefB))
-        self.assertEqual(0, cmp(myDefB, myDefA))
+        self.assertEqual(0, myDefA.isSame(myDefB))
+        self.assertEqual(0, myDefB.isSame(myDefA))
         self.assertEqual(myDefA, myDefB)
 
     def testDefine_01(self):
@@ -1009,8 +1006,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefB = self._retCheckedMacro('FOO   1  \n', True, 4, 'FOO', None, ['1'])
         self.assertEqual(True, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(True, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(0, cmp(myDefA, myDefB))
-        self.assertEqual(0, cmp(myDefB, myDefA))
+        self.assertEqual(0, myDefA.isSame(myDefB))
+        self.assertEqual(0, myDefB.isSame(myDefA))
         self.assertEqual(myDefA, myDefB)
 
     def testDefine_02(self):
@@ -1019,8 +1016,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefB = self._retCheckedMacro('FOO   1+2  \n', True, 6, 'FOO', None, ['1', '+', '2'])
         self.assertEqual(True, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(True, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(0, cmp(myDefA, myDefB))
-        self.assertEqual(0, cmp(myDefB, myDefA))
+        self.assertEqual(0, myDefA.isSame(myDefB))
+        self.assertEqual(0, myDefB.isSame(myDefA))
         self.assertEqual(myDefA, myDefB)
 
     def testDefine_03(self):
@@ -1043,8 +1040,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
             )
         self.assertEqual(True, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(True, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(0, cmp(myDefA, myDefB))
-        self.assertEqual(0, cmp(myDefB, myDefA))
+        self.assertEqual(0, myDefA.isSame(myDefB))
+        self.assertEqual(0, myDefB.isSame(myDefA))
         self.assertEqual(myDefA, myDefB)
 
     def testRedefine_10(self):
@@ -1065,8 +1062,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
                                        )
         self.assertEqual(True, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(True, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(0, cmp(myDefA, myDefB))
-        self.assertEqual(0, cmp(myDefB, myDefA))
+        self.assertEqual(0, myDefA.isSame(myDefB))
+        self.assertEqual(0, myDefB.isSame(myDefA))
         self.assertEqual(myDefA, myDefB)
 
     def testRedefine_11(self):
@@ -1087,8 +1084,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
                                        )
         self.assertEqual(False, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(False, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(1, cmp(myDefA, myDefB))
-        self.assertEqual(1, cmp(myDefB, myDefA))
+        self.assertEqual(1, myDefA.isSame(myDefB))
+        self.assertEqual(1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testRedefine_12(self):
@@ -1111,8 +1108,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
             )
         self.assertEqual(True, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(True, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(0, cmp(myDefA, myDefB))
-        self.assertEqual(0, cmp(myDefB, myDefA))
+        self.assertEqual(0, myDefA.isSame(myDefB))
+        self.assertEqual(0, myDefB.isSame(myDefA))
         self.assertEqual(myDefA, myDefB)
 
     def testRedefine_13(self):
@@ -1135,8 +1132,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
             )
         self.assertEqual(False, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(False, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(1, cmp(myDefA, myDefB))
-        self.assertEqual(1, cmp(myDefB, myDefA))
+        self.assertEqual(1, myDefA.isSame(myDefB))
+        self.assertEqual(1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testRedefine_14(self):
@@ -1159,8 +1156,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
             )
         self.assertEqual(False, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(False, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(1, cmp(myDefA, myDefB))
-        self.assertEqual(1, cmp(myDefB, myDefA))
+        self.assertEqual(1, myDefA.isSame(myDefB))
+        self.assertEqual(1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testRedefine_15(self):
@@ -1183,8 +1180,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
             )
         self.assertEqual(False, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(False, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(1, cmp(myDefA, myDefB))
-        self.assertEqual(1, cmp(myDefB, myDefA))
+        self.assertEqual(1, myDefA.isSame(myDefB))
+        self.assertEqual(1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testRedefine_16(self):
@@ -1208,8 +1205,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
             )
         self.assertEqual(False, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(False, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(1, cmp(myDefA, myDefB))
-        self.assertEqual(1, cmp(myDefB, myDefA))
+        self.assertEqual(1, myDefA.isSame(myDefB))
+        self.assertEqual(1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testRedefine_17(self):
@@ -1233,8 +1230,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
             )
         self.assertEqual(False, myDefA.isValidRefefinition(myDefB))
         self.assertEqual(False, myDefB.isValidRefefinition(myDefA))
-        self.assertEqual(1, cmp(myDefA, myDefB))
-        self.assertEqual(1, cmp(myDefB, myDefA))
+        self.assertEqual(1, myDefA.isSame(myDefB))
+        self.assertEqual(1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testDefine_18(self):
@@ -1244,8 +1241,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefB = self._retCheckedMacro('FOO\n', True, 2, 'FOO', None, [])
         self.assertRaises(PpDefine.ExceptionCpipDefine, myDefA.isValidRefefinition, myDefB)
         self.assertRaises(PpDefine.ExceptionCpipDefine, myDefB.isValidRefefinition, myDefA)
-        self.assertRaises(PpDefine.ExceptionCpipDefine, cmp, myDefA, myDefB)
-        self.assertRaises(PpDefine.ExceptionCpipDefine, cmp, myDefB, myDefA)
+        self.assertRaises(PpDefine.ExceptionCpipDefine, myDefA.isSame, myDefB)
+        self.assertRaises(PpDefine.ExceptionCpipDefine, myDefB.isSame, myDefA)
         try:
             self.assertEqual(myDefA, myDefB)
             self.fail('PpDefine.ExceptionCpipDefine not raised on equality.')
@@ -1259,8 +1256,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefB.undef('', 1)
         self.assertRaises(PpDefine.ExceptionCpipDefine, myDefA.isValidRefefinition, myDefB)
         self.assertRaises(PpDefine.ExceptionCpipDefine, myDefB.isValidRefefinition, myDefA)
-        self.assertRaises(PpDefine.ExceptionCpipDefine, cmp, myDefA, myDefB)
-        self.assertRaises(PpDefine.ExceptionCpipDefine, cmp, myDefB, myDefA)
+        self.assertRaises(PpDefine.ExceptionCpipDefine, myDefA.isSame, myDefB)
+        self.assertRaises(PpDefine.ExceptionCpipDefine, myDefB.isSame, myDefA)
         try:
             self.assertEqual(myDefA, myDefB)
             self.fail('PpDefine.ExceptionCpipDefine not raised on equality.')
@@ -1272,8 +1269,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefA = self._retCheckedMacro('SPAM\n', True, 2, 'SPAM', None, [])
         myDefB = self._retCheckedMacro('EGGS\n', True, 2, 'EGGS', None, [])
         self.assertRaises(PpDefine.ExceptionCpipDefineInvalidCmp, myDefA.isValidRefefinition, myDefB)
-        self.assertEqual(-1, cmp(myDefA, myDefB))
-        self.assertEqual(-1, cmp(myDefB, myDefA))
+        self.assertEqual(-1, myDefA.isSame(myDefB))
+        self.assertEqual(-1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testDefine_cmp_01(self):
@@ -1281,8 +1278,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefA = self._retCheckedMacro('SPAM 1\n', True, 4, 'SPAM', None, ['1',])
         myDefB = self._retCheckedMacro('EGGS 1\n', True, 4, 'EGGS', None, ['1',])
         self.assertRaises(PpDefine.ExceptionCpipDefineInvalidCmp, myDefA.isValidRefefinition, myDefB)
-        self.assertEqual(-1, cmp(myDefA, myDefB))
-        self.assertEqual(-1, cmp(myDefB, myDefA))
+        self.assertEqual(-1, myDefA.isSame(myDefB))
+        self.assertEqual(-1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testDefine_cmp_10(self):
@@ -1290,8 +1287,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefA = self._retCheckedMacro('SPAM(a)\n', False, 5, 'SPAM', ['a',], [])
         myDefB = self._retCheckedMacro('EGGS(a)\n', False, 5, 'EGGS', ['a',], [])
         self.assertRaises(PpDefine.ExceptionCpipDefineInvalidCmp, myDefA.isValidRefefinition, myDefB)
-        self.assertEqual(-1, cmp(myDefA, myDefB))
-        self.assertEqual(-1, cmp(myDefB, myDefA))
+        self.assertEqual(-1, myDefA.isSame(myDefB))
+        self.assertEqual(-1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
     def testDefine_cmp_11(self):
@@ -1299,8 +1296,8 @@ class TestPpDefineRedefineAndCmp(TestPpDefine):
         myDefA = self._retCheckedMacro('SPAM(a) (a)\n', False, 9, 'SPAM', ['a',], ['(', 'a', ')'])
         myDefB = self._retCheckedMacro('EGGS(a) (a)\n', False, 9, 'EGGS', ['a',], ['(', 'a', ')'])
         self.assertRaises(PpDefine.ExceptionCpipDefineInvalidCmp, myDefA.isValidRefefinition, myDefB)
-        self.assertEqual(-1, cmp(myDefA, myDefB))
-        self.assertEqual(-1, cmp(myDefB, myDefA))
+        self.assertEqual(-1, myDefA.isSame(myDefB))
+        self.assertEqual(-1, myDefB.isSame(myDefA))
         self.assertNotEqual(myDefA, myDefB)
 
 class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
@@ -1309,7 +1306,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
     def testConsumeFunctionPreamble_00(self):
         """PpDefine.consumeFunctionPreamble() when well formed."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c)\n')
+            theFileObj=io.StringIO('FOO(a,b,c)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -1319,24 +1316,24 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Now try various preambles
         # Good ones first
         for aStr in ['(', ' (', '  (', '   (', '\t(', '\n(', ' \t\n (']:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(aStr)
+                theFileObj=io.StringIO(aStr)
                 )
             myGen = myCpp.next()
             myResult = myCppDef.consumeFunctionPreamble(myGen)
             # Check that all tokens have been consumed
-            self.assertRaises(StopIteration, myGen.next)
+            self.assertRaises(StopIteration, myGen.__next__)
             # Check the result
             self.assertEqual(None, myResult)
 
     def testConsumeFunctionPreamble_01(self):
         """PpDefine.consumeFunctionPreamble() when ill-formed."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c)\n')
+            theFileObj=io.StringIO('FOO(a,b,c)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -1346,15 +1343,15 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # No tokens
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('')
+            theFileObj=io.StringIO('')
             )
         myGen = myCpp.next()
         myResult = myCppDef.consumeFunctionPreamble(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the result
         self.assertEqual(
                 [
@@ -1363,12 +1360,12 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             )
         # Single whitespace
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' ')
+            theFileObj=io.StringIO(' ')
             )
         myGen = myCpp.next()
         myResult = myCppDef.consumeFunctionPreamble(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the result
         self.assertEqual(
                 [
@@ -1379,7 +1376,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         # RPAREN, this should return an empty list
         # but leave the RPAREN on the generator
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(')')
+            theFileObj=io.StringIO(')')
             )
         myGen = myCpp.next()
         myResult = myCppDef.consumeFunctionPreamble(myGen)
@@ -1388,10 +1385,10 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         # Get the token and check
         self.assertEqual(
                 PpToken.PpToken(')', 'preprocessing-op-or-punc'),
-                myGen.next(),
+                next(myGen),
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCppretArgumentListTokens_00(self):
         """PpDefine.retArgumentListTokens() - All arguments."""
@@ -1410,7 +1407,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1426,7 +1423,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCppretArgumentListTokens_01(self):
         """PpDefine.retArgumentListTokens() - Missing leading argument."""
@@ -1440,7 +1437,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',2,3)')
+            theFileObj=io.StringIO(',2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1454,7 +1451,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCppretArgumentListTokens_02(self):
         """PpDefine.retArgumentListTokens() - Missing trailing argument."""
@@ -1468,7 +1465,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,)')
+            theFileObj=io.StringIO('1,2,)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1482,7 +1479,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCppretArgumentListTokens_03(self):
         """PpDefine.retArgumentListTokens() - Missing middle argument."""
@@ -1496,7 +1493,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,,3)')
+            theFileObj=io.StringIO('1,,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1510,7 +1507,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCppretArgumentListTokens_04(self):
         """PpDefine.retArgumentListTokens() - Missing all arguments."""
@@ -1524,7 +1521,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',,)')
+            theFileObj=io.StringIO(',,)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1534,7 +1531,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCppretArgumentListTokens_05(self):
         """PpDefine.retArgumentListTokens() - #define f(a) a \\n and invoke f(t(g)(0) + t)."""
@@ -1554,7 +1551,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('t(g)(0) + t)')
+            theFileObj=io.StringIO('t(g)(0) + t)')
             )
         myGen = myCpp.next()
         myExpectedArgTokens = [
@@ -1574,7 +1571,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         myActualArgTokens = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(myExpectedArgTokens, myActualArgTokens)
 
     def testCppretArgumentListTokens_06(self):
@@ -1597,7 +1594,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1(,)2,3)')
+            theFileObj=io.StringIO('1(,)2,3)')
             )
         myGen = myCpp.next()
         myExpectedArgTokens = [
@@ -1614,7 +1611,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         myActualArgTokens = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(myExpectedArgTokens, myActualArgTokens)
 
     def testCppretArgumentListTokens_07(self):
@@ -1635,13 +1632,13 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(')')
+            theFileObj=io.StringIO(')')
             )
         myGen = myCpp.next()
         myExpectedArgTokens = [None,]
         myActualArgTokens = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(myExpectedArgTokens, myActualArgTokens)
 
     def testCppretArgumentListTokens_08(self):
@@ -1661,7 +1658,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' 1,2 ,3 )')
+            theFileObj=io.StringIO(' 1,2 ,3 )')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1677,7 +1674,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testCpp_retReplacementMap_00(self):
         """PpDefine._retReplacementMap() - All arguments."""
@@ -1696,7 +1693,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1713,7 +1710,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -1743,7 +1740,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',2,3)')
+            theFileObj=io.StringIO(',2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1758,7 +1755,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -1786,7 +1783,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,)')
+            theFileObj=io.StringIO('1,2,)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1801,7 +1798,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -1827,7 +1824,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,,3)')
+            theFileObj=io.StringIO('1,,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1842,7 +1839,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -1868,7 +1865,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',,)')
+            theFileObj=io.StringIO(',,)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1879,7 +1876,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -1908,7 +1905,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('A,B)')
+            theFileObj=io.StringIO('A,B)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1922,7 +1919,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -1961,7 +1958,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('A,B,C)')
+            theFileObj=io.StringIO('A,B,C)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -1978,7 +1975,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -2019,7 +2016,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('A,,C)')
+            theFileObj=io.StringIO('A,,C)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2036,7 +2033,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #print 'TRACE: myArgTokens:', myArgTokens
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -2076,7 +2073,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',,C)')
+            theFileObj=io.StringIO(',,C)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2089,7 +2086,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -2126,7 +2123,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',,)')
+            theFileObj=io.StringIO(',,)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2137,7 +2134,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -2171,7 +2168,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('A,,)')
+            theFileObj=io.StringIO('A,,)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2184,7 +2181,7 @@ class TestPpDefineFunctionLikeLowLevel(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         self.assertEqual(
                     {
@@ -2217,7 +2214,7 @@ class TestPpDefineFunctionLikeBadArguments(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(')')
+            theFileObj=io.StringIO(')')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2243,7 +2240,7 @@ class TestPpDefineFunctionLikeBadArguments(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1)')
+            theFileObj=io.StringIO('1)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2269,7 +2266,7 @@ class TestPpDefineFunctionLikeBadArguments(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2)')
+            theFileObj=io.StringIO('1,2)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2295,7 +2292,7 @@ class TestPpDefineFunctionLikeBadArguments(TestPpDefine):
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3,4)')
+            theFileObj=io.StringIO('1,2,3,4)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -2351,7 +2348,7 @@ END_F_2
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(')')
+            theFileObj=io.StringIO(')')
             )
         myGen = myCpp.next()
         myExpArgTokens = []
@@ -2360,7 +2357,7 @@ END_F_2
         # print 'TRACE:', myArgTokens
         self.assertEquals(myExpArgTokens, myArgTokens)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
         myReplaceToks = myCppDef.replaceArgumentList(myArgTokens)
         #self.pprintReplacementList(myReplaceToks)
@@ -2383,7 +2380,7 @@ END_F_2
                             ['|', '-', '|'],
                         )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1)')
+            theFileObj=io.StringIO('1)')
             )
         myGen = myCpp.next()
         myExpArgTokens = [
@@ -2408,7 +2405,7 @@ END_F_2
                             ['|', '-', '|'],
                         )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2)')
+            theFileObj=io.StringIO('1,2)')
             )
         myGen = myCpp.next()
         myExpArgTokens = [
@@ -2437,7 +2434,7 @@ END_F_2
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(')')
+            theFileObj=io.StringIO(')')
             )
         myGen = myCpp.next()
         myExpArgTokens = [
@@ -2448,7 +2445,7 @@ END_F_2
         #print 'TRACE:', myArgTokens
         self.assertEquals(myExpArgTokens, myArgTokens)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
         #print 'TRACE: ', myReplaceMap 
         myReplaceToks = myCppDef.replaceArgumentList(myArgTokens)
@@ -2475,7 +2472,7 @@ END_F_2
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1)')
+            theFileObj=io.StringIO('1)')
             )
         myGen = myCpp.next()
         myExpArgTokens = [
@@ -2488,7 +2485,7 @@ END_F_2
         # print 'TRACE:', myArgTokens
         self.assertEquals(myExpArgTokens, myArgTokens)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         #myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
         myReplaceToks = myCppDef.replaceArgumentList(myArgTokens)
         #self.pprintReplacementList(myReplaceToks)
@@ -2515,7 +2512,7 @@ END_F_2
                         )
         # Missing leading argument
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2)')
+            theFileObj=io.StringIO('1,2)')
             )
         myGen = myCpp.next()
         myExpArgTokens = [
@@ -2597,7 +2594,7 @@ END_F_2"""
         #print 'TRACE:  parameters:', myCppDef.parameters
         for inToks, expArgToks, expRepMap, expReprToks in myArgsExpToksAndReplMap:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(inToks)
+                theFileObj=io.StringIO(inToks)
                 )
             myGen = myCpp.next()
             if expArgToks is None:
@@ -2611,7 +2608,7 @@ END_F_2"""
                 #print 'TRACE: myArgTokens:', myArgTokens
                 self.assertEquals(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
-                self.assertRaises(StopIteration, myGen.next)
+                self.assertRaises(StopIteration, myGen.__next__)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
                 self.assertEquals(expRepMap, myReplaceMap)
@@ -2671,7 +2668,7 @@ END_F_2"""
         for inToks, expArgToks, expRepMap, expReprToks in myArgsExpToksAndReplMap:
             #print 'TRACE:  inToks:', inToks
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(inToks)
+                theFileObj=io.StringIO(inToks)
                 )
             myGen = myCpp.next()
             if expArgToks is None:
@@ -2685,7 +2682,7 @@ END_F_2"""
                 #print 'TRACE: myArgTokens:', myArgTokens
                 self.assertEquals(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
-                self.assertRaises(StopIteration, myGen.next)
+                self.assertRaises(StopIteration, myGen.__next__)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
                 self.assertEquals(expRepMap, myReplaceMap)
@@ -2769,7 +2766,7 @@ END_F_2"""
         for inToks, expArgToks, expRepMap, expReprToks in myArgsExpToksAndReplMap:
             #print 'TRACE:  inToks:', inToks
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(inToks)
+                theFileObj=io.StringIO(inToks)
                 )
             myGen = myCpp.next()
             if expArgToks is None:
@@ -2783,7 +2780,7 @@ END_F_2"""
                 #print 'TRACE: myArgTokens:', myArgTokens
                 self.assertEquals(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
-                self.assertRaises(StopIteration, myGen.next)
+                self.assertRaises(StopIteration, myGen.__next__)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
                 self.assertEquals(expRepMap, myReplaceMap)
@@ -2851,13 +2848,13 @@ END_F_2"""
         for inToks, errMsg in myToksList:
             #print 'TRACE:  inToks:', inToks
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(inToks)
+                theFileObj=io.StringIO(inToks)
                 )
             myGen = myCpp.next()
             try:
                 myCppDef.retArgumentListTokens(myGen)
                 self.fail('PpDefine.ExceptionCpipDefineBadArguments not raised')
-            except PpDefine.ExceptionCpipDefineBadArguments, err:
+            except PpDefine.ExceptionCpipDefineBadArguments as err:
                 self.assertEquals(errMsg, str(err))
                 
 
@@ -2866,7 +2863,7 @@ class TestConcatFunctionLikeMacro(TestPpDefine):
     def testCppConcat_Function_00(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.3 The ## operator [cpp.concat]: #define r(x,y) x ## y called with r(4,) etc.."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('r(x,y) x ## y\n')
+            theFileObj=io.StringIO('r(x,y) x ## y\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -2876,7 +2873,7 @@ class TestConcatFunctionLikeMacro(TestPpDefine):
         self.assertEqual(['x', 'y'], myCppDef.parameters)
         self.assertEqual(['x', ' ', '##', ' ', 'y'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Go through r(2,3), r(4,), r(,5), r(,)
         #
         myInOut = (
@@ -2890,12 +2887,12 @@ class TestConcatFunctionLikeMacro(TestPpDefine):
             #print 'strIn', strIn
             #print 'strOut', strOut
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(strIn)
+                theFileObj=io.StringIO(strIn)
                 )
             myGen = myCpp.next()
             myArgList = myCppDef.retArgumentListTokens(myGen)
             # Check that all tokens have been consumed
-            self.assertRaises(StopIteration, myGen.next)
+            self.assertRaises(StopIteration, myGen.__next__)
             #myReplaceMap = myCppDef._retReplacementMap(myArgList)
             myReplaceToks = myCppDef.replaceArgumentList(myArgList)
             #self.pprintReplacementList(myReplacementS)
@@ -2909,7 +2906,7 @@ class TestPpDefineCppStringize(TestPpDefine):
     def testCppStringizeFunction_00(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.2 The # operator [cpp.stringize]: checking PpDefine._cppStringize()."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a) # a\n')
+            theFileObj=io.StringIO('FOO(a) # a\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -2919,7 +2916,7 @@ class TestPpDefineCppStringize(TestPpDefine):
         self.assertEqual(['a',], myCppDef.parameters)
         self.assertEqual(['#', ' ', 'a'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check internal functions
         #
         # Empty token list
@@ -3027,7 +3024,7 @@ class TestPpDefineCppStringize(TestPpDefine):
     def testCppStringizeFunction_01(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.2 The # operator [cpp.stringize]: <#define> 'FOO(a) # a\\n' called with (123)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a) # a\n')
+            theFileObj=io.StringIO('FOO(a) # a\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3037,10 +3034,10 @@ class TestPpDefineCppStringize(TestPpDefine):
         self.assertEqual(['a',], myCppDef.parameters)
         self.assertEqual(['#', ' ', 'a'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(123)')
+            theFileObj=io.StringIO('(123)')
             )
         myGen = myCpp.next()
         # We simulate here what PpDefine.MacroReplacementEnv must do for function style
@@ -3050,7 +3047,7 @@ class TestPpDefineCppStringize(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3072,7 +3069,7 @@ class TestPpDefineCppStringize(TestPpDefine):
     def testCppStringizeFunction_02(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.2 The # operator [cpp.stringize]: <#define> 'FOO(a) # a\\n' called with (1(,)23)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a) # a\n')
+            theFileObj=io.StringIO('FOO(a) # a\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3082,10 +3079,10 @@ class TestPpDefineCppStringize(TestPpDefine):
         self.assertEqual(['a',], myCppDef.parameters)
         self.assertEqual(['#', ' ', 'a'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1(,)23)')
+            theFileObj=io.StringIO('(1(,)23)')
             )
         myGen = myCpp.next()
         # We simulate here what PpDefine.MacroReplacementEnv must do for function style
@@ -3095,7 +3092,7 @@ class TestPpDefineCppStringize(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3119,7 +3116,7 @@ class TestPpDefineCppStringize(TestPpDefine):
     def testCppStringizeFunction_03(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.2 The # operator [cpp.stringize]: <#define> 'FOO(a) # a\\n' called with (c d e)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a) # a\n')
+            theFileObj=io.StringIO('FOO(a) # a\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3129,10 +3126,10 @@ class TestPpDefineCppStringize(TestPpDefine):
         self.assertEqual(['a',], myCppDef.parameters)
         self.assertEqual(['#', ' ', 'a'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(c d e)')
+            theFileObj=io.StringIO('(c d e)')
             )
         myGen = myCpp.next()
         # We simulate here what PpDefine.MacroReplacementEnv must do for function style
@@ -3142,7 +3139,7 @@ class TestPpDefineCppStringize(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3169,7 +3166,7 @@ class TestPpDefineCppConcat(TestPpDefine):
     def testCppConcat_Object_00(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.3 The ## operator [cpp.concat]: PpDefine._objectLikeReplacement() 00."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('CONCAT a ## b\n')
+            theFileObj=io.StringIO('CONCAT a ## b\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3179,7 +3176,7 @@ class TestPpDefineCppConcat(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['a', ' ', '##', ' ', 'b'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check internal functions
         #
         # Resulting tokens
@@ -3191,7 +3188,7 @@ class TestPpDefineCppConcat(TestPpDefine):
     def testCppConcat_Object_01(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.3 The ## operator [cpp.concat]: PpDefine._objectLikeReplacement() 01."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('CONCAT a ## b ## c\n')
+            theFileObj=io.StringIO('CONCAT a ## b ## c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3201,7 +3198,7 @@ class TestPpDefineCppConcat(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['a', ' ', '##', ' ', 'b', ' ', '##', ' ', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check internal functions
         #
         # Resulting tokens
@@ -3213,7 +3210,7 @@ class TestPpDefineCppConcat(TestPpDefine):
     def testCppConcat_Object_02(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.3 The ## operator [cpp.concat]: PpDefine._objectLikeReplacement() 02."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('hash_hash # ## #\n')
+            theFileObj=io.StringIO('hash_hash # ## #\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3223,7 +3220,7 @@ class TestPpDefineCppConcat(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['#', ' ', '##', ' ', '#',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check internal functions
         #
         # Resulting tokens
@@ -3237,7 +3234,7 @@ class TestPpDefineCppConcat(TestPpDefine):
     def testCppConcat_Object_03(self):
         """PpDefine: ISO/IEC ISO/IEC 14882:1998(E) 16.3.3 The ## operator [cpp.concat]: PpDefine._objectLikeReplacement() 03."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('CONCAT 1 ## A\n')
+            theFileObj=io.StringIO('CONCAT 1 ## A\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3247,7 +3244,7 @@ class TestPpDefineCppConcat(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['1', ' ', '##', ' ', 'A',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check internal functions
         #
         # Resulting tokens
@@ -3265,7 +3262,7 @@ class TestPpDefineReplaceObjectStyle(TestPpDefine):
     def testReplaceObject_00(self):
         """PpDefine: Replacement OK from object type macro: <#define> 'FOO 1+2+3\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO 1+2+3\n')
+            theFileObj=io.StringIO('FOO 1+2+3\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3285,7 +3282,7 @@ class TestPpDefineReplaceObjectStyle(TestPpDefine):
             myCppDef.replacementTokens,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myReplacements = myCppDef.replaceObjectStyleMacro()
         self.assertEqual(
@@ -3302,7 +3299,7 @@ class TestPpDefineReplaceObjectStyle(TestPpDefine):
     def testReplaceObject_01(self):
         """PpDefine: Replacement OK from object type macro: <#define> 'FOO FOO\\n'."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO FOO\n')
+            theFileObj=io.StringIO('FOO FOO\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3318,7 +3315,7 @@ class TestPpDefineReplaceObjectStyle(TestPpDefine):
             myCppDef.replacementTokens,
             )
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myReplacements = myCppDef.replaceObjectStyleMacro()
         self.assertEqual(
@@ -3338,7 +3335,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_00(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c)\\n' called with FOO(1,2,3)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c)\n')
+            theFileObj=io.StringIO('FOO(a,b,c)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3348,10 +3345,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,2,3)')
+            theFileObj=io.StringIO('(1,2,3)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3359,7 +3356,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3379,7 +3376,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_01(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' called with FOO(1,2,3)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a+b+c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a+b+c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3389,10 +3386,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b', '+', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,2,3)')
+            theFileObj=io.StringIO('(1,2,3)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3400,7 +3397,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3429,7 +3426,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_02(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' called with FOO(,2,3)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a+b+c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a+b+c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3439,10 +3436,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b', '+', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(,2,3)')
+            theFileObj=io.StringIO('(,2,3)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3450,7 +3447,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 myCppDef.PLACEMARKER,
@@ -3477,7 +3474,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_03(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' called with FOO(1,,3)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a+b+c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a+b+c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3487,10 +3484,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b', '+', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,,3)')
+            theFileObj=io.StringIO('(1,,3)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3498,7 +3495,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3524,7 +3521,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_04(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' called with FOO(1,2,)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a+b+c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a+b+c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3534,10 +3531,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b', '+', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,2,)')
+            theFileObj=io.StringIO('(1,2,)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3545,7 +3542,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3576,7 +3573,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Gives
         # + +++ +++
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a++b++c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a++b++c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3586,10 +3583,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '++', 'b', '++', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(+,+,+)')
+            theFileObj=io.StringIO('(+,+,+)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3597,7 +3594,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3626,7 +3623,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_06(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'p() int\\n' called with p()."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('p() int\n')
+            theFileObj=io.StringIO('p() int\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3637,10 +3634,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual([], myCppDef.parameters)
         self.assertEqual(['int'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('()')
+            theFileObj=io.StringIO('()')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3648,7 +3645,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = []
         self.assertEqual(myExpectedArgTokens, myArgS)
@@ -3663,7 +3660,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_07(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'q(x) x\\n' called with q()."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('q(x) x\n')
+            theFileObj=io.StringIO('q(x) x\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3673,10 +3670,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['x'], myCppDef.parameters)
         self.assertEqual(['x'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('()')
+            theFileObj=io.StringIO('()')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3684,7 +3681,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [myCppDef.PLACEMARKER,]
         self.assertEqual(myExpectedArgTokens, myArgS)
@@ -3697,7 +3694,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_08(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'r(x,y) x ## y\\n' called with r(2,3)"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('r(x,y) x ## y\n')
+            theFileObj=io.StringIO('r(x,y) x ## y\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3707,10 +3704,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['x', 'y'], myCppDef.parameters)
         self.assertEqual(['x', ' ', '##', ' ', 'y'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(2,3)')
+            theFileObj=io.StringIO('(2,3)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3718,7 +3715,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3741,7 +3738,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_09(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'f(a) a+a\\n' called with f(\\n1\\n) C: 6.10.3-10, C++: 16.3-9."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('f(a) a+a\n')
+            theFileObj=io.StringIO('f(a) a+a\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3751,10 +3748,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'a'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(\n1\n)')
+            theFileObj=io.StringIO('(\n1\n)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3762,7 +3759,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3790,7 +3787,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_10(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'f(a,b) a+b\\n' called with f(\\n1\\n,\\n2) C: 6.10.3-10, C++: 16.3-9."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('f(a,b) a+b\n')
+            theFileObj=io.StringIO('f(a,b) a+b\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3800,10 +3797,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(\n1\n,\n2\n)')
+            theFileObj=io.StringIO('(\n1\n,\n2\n)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3811,7 +3808,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -3837,7 +3834,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     def testReplaceFunction_50(self):
         """PpDefine: Replace bad from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' with FOO(1,2)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a+b+c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a+b+c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3847,10 +3844,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b', '+', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,2)')
+            theFileObj=io.StringIO('(1,2)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3858,12 +3855,12 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         self.assertRaises(PpDefine.ExceptionCpipDefineBadArguments, myCppDef.retArgumentListTokens, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testReplaceFunction_51(self):
         """PpDefine: Replace bad from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' with FOO(1,2,3,4)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO(a,b,c) a+b+c\n')
+            theFileObj=io.StringIO('FOO(a,b,c) a+b+c\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3873,10 +3870,10 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertEqual(['a', 'b', 'c',], myCppDef.parameters)
         self.assertEqual(['a', '+', 'b', '+', 'c'], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,2,3,4)')
+            theFileObj=io.StringIO('(1,2,3,4)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -3884,7 +3881,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         # Now consume the arguments
         self.assertRaises(PpDefine.ExceptionCpipDefineBadArguments, myCppDef.retArgumentListTokens, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
 class TestPpDefineExample5(TestPpDefine):
     """ISO/IEC 9899:1999 (E) 6.10.3.5-7 EXAMPLE 5
@@ -3896,7 +3893,7 @@ t(10,,), t(,11,), t(,,12), t(,,) };
     def testExample5_00(self):
         """ISO/IEC 9899:1999 (E) 6.10.3.5-7 EXAMPLE 5."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('t(x,y,z) x ## y ## z\n')
+            theFileObj=io.StringIO('t(x,y,z) x ## y ## z\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -3908,7 +3905,7 @@ t(10,,), t(,11,), t(,,12), t(,,) };
             ['x', ' ', '##', ' ', 'y', ' ', '##', ' ', 'z'],
             myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myInOut = (
             ('(1,2,3)',     '123'),
             ('(,4,5)',      '45'),
@@ -3923,7 +3920,7 @@ t(10,,), t(,11,), t(,,12), t(,,) };
         for aIn, aOut in myInOut:
             # Replacement
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(aIn)
+                theFileObj=io.StringIO(aIn)
                 )
             myGen = myCpp.next()
             # First consume the preamble i.e. LPAREN
@@ -3931,7 +3928,7 @@ t(10,,), t(,11,), t(,,12), t(,,) };
             # Now consume the arguments
             myArgS = myCppDef.retArgumentListTokens(myGen)
             # Check that all tokens have been consumed
-            self.assertRaises(StopIteration, myGen.next)
+            self.assertRaises(StopIteration, myGen.__next__)
             myReplaceToks = myCppDef.replaceArgumentList(myArgS)
             myExpectedReplTokens = self.stringToTokens(aOut)
             self._printDiff(myReplaceToks, myExpectedReplTokens)
@@ -3943,7 +3940,7 @@ class TestPpDefineFileLine(TestPpDefine):
     def testInitObject_00(self):
         """PpDefine.__init__(): OK from object type macro: <#define> 'FOO\\n' and accessing file and line number."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FOO\n')
+            theFileObj=io.StringIO('FOO\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'foo.h', 21)
@@ -3953,14 +3950,14 @@ class TestPpDefineFileLine(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('foo.h', myCppDef.fileId)
         self.assertEqual(21, myCppDef.line)
 
     def testInitFail_00(self):
         """PpDefine.__init__(): Bad from object macro on line 0."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM\n')
+            theFileObj=io.StringIO('SPAM\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -3977,7 +3974,7 @@ class TestPpDefineRefCount(TestPpDefine):
     def testInitObject_00(self):
         """PpDefine.incRefCount(): OK from object type macro: <#define> 'SPAM\\n' incrementing and accessing the reference count."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM 1\n')
+            theFileObj=io.StringIO('SPAM 1\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -3987,7 +3984,7 @@ class TestPpDefineRefCount(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['1',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4002,7 +3999,7 @@ class TestPpDefineRefCount(TestPpDefine):
     def testInitObject_01(self):
         """PpDefine.incRefCount(): fails for #undef'd object like macro."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM 1\n')
+            theFileObj=io.StringIO('SPAM 1\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -4012,7 +4009,7 @@ class TestPpDefineRefCount(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['1',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4027,7 +4024,7 @@ class TestPpDefineRefCount(TestPpDefine):
     def testInitObject_02(self):
         """PpDefine.incRefCount(): Using FileLineCol update."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM 1\n')
+            theFileObj=io.StringIO('SPAM 1\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -4037,7 +4034,7 @@ class TestPpDefineRefCount(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['1',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4064,7 +4061,7 @@ class TestPpDefineUndef(TestPpDefine):
     def testUndef_00(self):
         """TestPpDefineUndef.testUndef_00(): Simple #undef."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM 1\n')
+            theFileObj=io.StringIO('SPAM 1\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -4074,7 +4071,7 @@ class TestPpDefineUndef(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['1',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4087,7 +4084,7 @@ class TestPpDefineUndef(TestPpDefine):
     def testUndef_01(self):
         """TestPpDefineUndef.testUndef_01(): double #undef fails."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM 1\n')
+            theFileObj=io.StringIO('SPAM 1\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -4097,7 +4094,7 @@ class TestPpDefineUndef(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['1',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4111,7 +4108,7 @@ class TestPpDefineUndef(TestPpDefine):
     def testUndef_02(self):
         """TestPpDefineUndef.testUndef_02(): #undef on bad line fails."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('SPAM 1\n')
+            theFileObj=io.StringIO('SPAM 1\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -4121,7 +4118,7 @@ class TestPpDefineUndef(TestPpDefine):
         self.assertEqual(None, myCppDef.parameters)
         self.assertEqual(['1',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4143,7 +4140,7 @@ class TestPpDefineVariadic(TestPpDefine):
     def testVariadicCtor_00(self):
         """TestPpDefineVariadic.testVariadicCtor_00(): Simple ctor."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FV(...) __VA_ARGS__\n')
+            theFileObj=io.StringIO('FV(...) __VA_ARGS__\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -4153,7 +4150,7 @@ class TestPpDefineVariadic(TestPpDefine):
         self.assertEqual(['...',], myCppDef.parameters)
         self.assertEqual(['__VA_ARGS__',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4166,27 +4163,27 @@ class TestPpDefineVariadic(TestPpDefine):
     def testVariadicCtor_01(self):
         """TestPpDefineVariadic.testVariadicCtor_01(): Failure with ctor with spurious trailing arguments."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FV(...,a,b) __VA_ARGS__\n')
+            theFileObj=io.StringIO('FV(...,a,b) __VA_ARGS__\n')
             )
         myGen = myCpp.next()
         self.assertRaises(PpDefine.ExceptionCpipDefineInit, PpDefine.PpDefine, myGen, 'spam.h', 7)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
     
     def testVariadicCtor_02(self):
         """TestPpDefineVariadic.testVariadicCtor_02(): Failure with function like ctor with __VA_ARGS__ but no ..."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FV(a,b) __VA_ARGS__\n')
+            theFileObj=io.StringIO('FV(a,b) __VA_ARGS__\n')
             )
         myGen = myCpp.next()
         self.assertRaises(PpDefine.ExceptionCpipDefineInit, PpDefine.PpDefine, myGen, 'spam.h', 7)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
     
     def testVariadicCtor_03(self):
         """TestPpDefineVariadic.testVariadicCtor_02(): #define showlist(...) puts(#__VA_ARGS__)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('showlist(...) puts(#__VA_ARGS__)\n')
+            theFileObj=io.StringIO('showlist(...) puts(#__VA_ARGS__)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, 'spam.h', 7)
@@ -4196,7 +4193,7 @@ class TestPpDefineVariadic(TestPpDefine):
         self.assertEqual(['...',], myCppDef.parameters)
         self.assertEqual(['puts', '(', '#', '__VA_ARGS__', ')',], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual('spam.h', myCppDef.fileId)
         self.assertEqual(7, myCppDef.line)
         self.assertEqual(0, myCppDef.refCount)
@@ -4254,12 +4251,12 @@ class TestPpDefineVariadic(TestPpDefine):
     def testVariadicCtor_Obj_00(self):
         """TestPpDefineVariadic.testVariadicCtor_Obj_00(): Failure with object like macro that has __VA_ARGS__."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('OBJ __VA_ARGS__\n')
+            theFileObj=io.StringIO('OBJ __VA_ARGS__\n')
             )
         myGen = myCpp.next()
         self.assertRaises(PpDefine.ExceptionCpipDefineInit, PpDefine.PpDefine, myGen, 'spam.h', 7)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testVariadicArgumentListTokens_00(self):
         """TestPpDefineVariadic.testVariadicArgumentListTokens_00() - All arguments."""
@@ -4278,7 +4275,7 @@ class TestPpDefineVariadic(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4294,7 +4291,7 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testVariadicArgumentListTokens_01(self):
         """TestPpDefineVariadic.testVariadicArgumentListTokens_01() - No arguments."""
@@ -4313,7 +4310,7 @@ class TestPpDefineVariadic(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(')')
+            theFileObj=io.StringIO(')')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4321,7 +4318,7 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
     
     def testVariadicArgumentListTokens_02(self):
         """TestPpDefineVariadic.testVariadicArgumentListTokens_02() - #define F1(a,...) A a B __VA_ARGS__ C\\n - missing arguments."""
@@ -4336,7 +4333,7 @@ class TestPpDefineVariadic(TestPpDefine):
         # Note that for function style macros the LPAREN is consumed
         # before retArgumentListTokens() is called.
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(')')
+            theFileObj=io.StringIO(')')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4344,9 +4341,9 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',)')
+            theFileObj=io.StringIO(',)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4355,9 +4352,9 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(',,)')
+            theFileObj=io.StringIO(',,)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4367,7 +4364,7 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
     
     def testVariadicArgumentListTokens_03(self):
         """TestPpDefineVariadic.testVariadicArgumentListTokens_03() - #define F1(a,...) A a B __VA_ARGS__ C\\n - has arguments."""
@@ -4382,7 +4379,7 @@ class TestPpDefineVariadic(TestPpDefine):
         # Note that for function style macros the LPAREN is consumed
         # before retArgumentListTokens() is called.
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1)')
+            theFileObj=io.StringIO('1)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4392,9 +4389,9 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2)')
+            theFileObj=io.StringIO('1,2)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4407,9 +4404,9 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4425,7 +4422,7 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
     
     def testVariadic_retReplacementMap_00(self):
         """TestPpDefineVariadic.testVariadic_retReplacementMap_00() - FV(...) __VA_ARGS__\\n."""
@@ -4444,7 +4441,7 @@ class TestPpDefineVariadic(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4461,7 +4458,7 @@ class TestPpDefineVariadic(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         #print
         #print myReplaceMap
@@ -4494,7 +4491,7 @@ class TestPpDefineVariadic(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4511,7 +4508,7 @@ class TestPpDefineVariadic(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         #print
         #print myReplaceMap
@@ -4545,7 +4542,7 @@ class TestPpDefineVariadic(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4562,7 +4559,7 @@ class TestPpDefineVariadic(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         #print
         #print myReplaceMap
@@ -4597,7 +4594,7 @@ class TestPpDefineVariadic(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2,3)')
+            theFileObj=io.StringIO('1,2,3)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4614,7 +4611,7 @@ class TestPpDefineVariadic(TestPpDefine):
         myArgList = myCppDef.retArgumentListTokens(myGen)
         self.assertEqual(myArgTokens, myArgList)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgList)
         #print
         #print myReplaceMap
@@ -4649,7 +4646,7 @@ class TestPpDefineVariadic(TestPpDefine):
         #
         # Simple argument list
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('1,2)')
+            theFileObj=io.StringIO('1,2)')
             )
         myGen = myCpp.next()
         myArgTokens = [
@@ -4662,7 +4659,7 @@ class TestPpDefineVariadic(TestPpDefine):
             ]
         self.assertEqual(myArgTokens, myCppDef.retArgumentListTokens(myGen))
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
         #print
         #print myReplaceMap
@@ -4680,7 +4677,7 @@ class TestPpDefineVariadic(TestPpDefine):
     def testReplaceVariadic_00(self):
         """TestPpDefineVariadic.testReplaceVariadic_00(): 'FV(...)\\n' called with FV(1,2,3)."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('FV(...)\n')
+            theFileObj=io.StringIO('FV(...)\n')
             )
         myGen = myCpp.next()
         myCppDef = PpDefine.PpDefine(myGen, '', 1)
@@ -4690,10 +4687,10 @@ class TestPpDefineVariadic(TestPpDefine):
         self.assertEqual(['...',], myCppDef.parameters)
         self.assertEqual([], myCppDef.replacements)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,2,3)')
+            theFileObj=io.StringIO('(1,2,3)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -4701,7 +4698,7 @@ class TestPpDefineVariadic(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -4730,7 +4727,7 @@ class TestPpDefineVariadic(TestPpDefine):
                         )
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(1,2,3)')
+            theFileObj=io.StringIO('(1,2,3)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -4738,7 +4735,7 @@ class TestPpDefineVariadic(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -4774,7 +4771,7 @@ class TestPpDefineVariadic(TestPpDefine):
                         )
         # Replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO('(The first, second, and third items.)')
+            theFileObj=io.StringIO('(The first, second, and third items.)')
             )
         myGen = myCpp.next()
         # First consume the preamble i.e. LPAREN
@@ -4782,7 +4779,7 @@ class TestPpDefineVariadic(TestPpDefine):
         # Now consume the arguments
         myArgS = myCppDef.retArgumentListTokens(myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         # Check the arguments
         myExpectedArgTokens = [
                 [
@@ -4980,12 +4977,12 @@ F0(,,,)         // |-| ,,, EOL
             )
         for args, expArgToks, expMap, expRepl in myArgsExpToksAndReplMap:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(args)
+                theFileObj=io.StringIO(args)
                 )
             myGen = myCpp.next()
             myArgTokens = myCppDef.retArgumentListTokens(myGen)
             # Check that all tokens have been consumed
-            self.assertRaises(StopIteration, myGen.next)
+            self.assertRaises(StopIteration, myGen.__next__)
             #print
             #print 'TRACE: args:', args
             #print 'TRACE: toks:', myArgTokens
@@ -5052,12 +5049,12 @@ F0(,,,)         // |-| ,,, EOL
             )
         for args, expArgToks, expMap, expRepl in myArgsExpToksAndReplMap:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(args)
+                theFileObj=io.StringIO(args)
                 )
             myGen = myCpp.next()
             myArgTokens = myCppDef.retArgumentListTokens(myGen)
             # Check that all tokens have been consumed
-            self.assertRaises(StopIteration, myGen.next)
+            self.assertRaises(StopIteration, myGen.__next__)
             #print
             #print 'TRACE: args:', args
             #print 'TRACE: toks:', myArgTokens
@@ -5281,12 +5278,12 @@ F1(,,,)         // | | ,, EOL
             )
         for args, expArgToks, expMap, expRepl in myArgsExpToksAndReplMap:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(args)
+                theFileObj=io.StringIO(args)
                 )
             myGen = myCpp.next()
             myArgTokens = myCppDef.retArgumentListTokens(myGen)
             # Check that all tokens have been consumed
-            self.assertRaises(StopIteration, myGen.next)
+            self.assertRaises(StopIteration, myGen.__next__)
             #print
             #print 'TRACE: args:', args
             #print 'TRACE: toks:', myArgTokens
@@ -5544,7 +5541,7 @@ F_2_END
             )
         for inToks, expArgToks, expRepMap, expReprToks in myArgsExpToksAndReplMap:
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(inToks)
+                theFileObj=io.StringIO(inToks)
                 )
             myGen = myCpp.next()
             if expArgToks is None:
@@ -5560,7 +5557,7 @@ F_2_END
                 #print 'TRACE:         exp:', expArgToks
                 self.assertEquals(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
-                self.assertRaises(StopIteration, myGen.next)
+                self.assertRaises(StopIteration, myGen.__next__)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
                 self.assertEquals(expRepMap, myReplaceMap)
@@ -5832,7 +5829,7 @@ F_3_END
             #print
             #print 'TRACE:      inToks:', inToks
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(inToks)
+                theFileObj=io.StringIO(inToks)
                 )
             myGen = myCpp.next()
             if expArgToks is None:
@@ -5847,7 +5844,7 @@ F_3_END
                 #print 'TRACE:         exp:', expArgToks
                 self.assertEquals(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
-                self.assertRaises(StopIteration, myGen.next)
+                self.assertRaises(StopIteration, myGen.__next__)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
                 self.assertEquals(expRepMap, myReplaceMap)
@@ -5926,8 +5923,7 @@ def unitTest(theVerbosity=2):
 
 
 def usage():
-    print \
-"""TestPpDefine.py - Tests the PpDefine module.
+    print("""TestPpDefine.py - Tests the PpDefine module.
 Usage:
 python TestPpDefine.py [-hl: --help]
 
@@ -5941,22 +5937,22 @@ Options:
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
-    print 'TestPpDefine.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestPpDefine.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
-    print 'Command line:'
-    print ' '.join(sys.argv)
-    print
+    print('Command line:')
+    print(' '.join(sys.argv))
+    print()
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
-    except getopt.GetoptError, myErr:
+    except getopt.GetoptError as myErr:
         usage()
-        print 'ERROR: Invalid option: %s' % str(myErr)
+        print('ERROR: Invalid option: %s' % str(myErr))
         sys.exit(1)
     logLevel = logging.WARNING
     for o, a in opts:
@@ -5967,7 +5963,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments[%d]!' % len(args)
+        print('ERROR: Wrong number of arguments[%d]!' % len(args))
         sys.exit(1)
     clkStart = time.clock()
     # Initialise logging etc.
@@ -5977,8 +5973,8 @@ def main():
                     stream=sys.stdout)
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PpLexer Tutorial &mdash; CPIP v0.8.0 documentation</title>
+    <title>PpLexer Tutorial &mdash; CPIP 0.8.0 documentation</title>
+    
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPIP v0.8.0 documentation" href="../index.html" />
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../index.html" />
     <link rel="up" title="CPIP Tutorials" href="index.html" />
     <link rel="next" title="FileIncludeGraph Tutorial" href="FileIncGraph.html" />
     <link rel="prev" title="CPIP Tutorials" href="index.html" /> 
@@ -43,7 +46,7 @@
         <li class="right" >
           <a href="index.html" title="CPIP Tutorials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPIP v0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">CPIP Tutorials</a> &raquo;</li> 
       </ul>
     </div>  
@@ -54,68 +57,67 @@
           <div class="body">
             
   <div class="section" id="pplexer-tutorial">
-<h1>PpLexer Tutorial<a class="headerlink" href="#pplexer-tutorial" title="Permalink to this headline">¶</a></h1>
-<p>The PpLexer module represetents the user side view of pre-processing. This
-tutorial shows you how to get going.</p>
+<span id="cpip-tutorial-pplexer"></span><h1>PpLexer Tutorial<a class="headerlink" href="#pplexer-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>The PpLexer module represents the user side view of pre-processing. This tutorial shows you how to get going.</p>
 <div class="section" id="setting-up">
 <h2>Setting Up<a class="headerlink" href="#setting-up" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="files-to-pre-process">
-<h3>Files to Pre-Process<a class="headerlink" href="#files-to-pre-process" title="Permalink to this headline">¶</a></h3>
+<span id="pplexer-tutorial-files"></span><h3>Files to Pre-Process<a class="headerlink" href="#files-to-pre-process" title="Permalink to this headline">¶</a></h3>
 <p>First let&#8217;s get some demonstration code to pre-process. You can find this
 at <em>cpip/demo/</em> and the directory structure looks like this:</p>
-<div class="highlight-python"><pre>\---demo
+<div class="highlight-python"><pre>\---demo/
     |   cpip.py
     |
-    \---proj
-        +---src
+    \---proj/
+        +---src/
         |       main.cpp
         |
-        +---sys
+        +---sys/
         |       system.h
         |
-        \---usr
+        \---usr/
                 user.h</pre>
 </div>
-<p>In <em>proj/</em> is some source code that includes files from <em>usr/</em> and <em>sys/</em>.
+<p>In <tt class="file docutils literal"><span class="pre">proj/</span></tt> is some source code that includes files from <tt class="file docutils literal"><span class="pre">usr/</span></tt> and <tt class="file docutils literal"><span class="pre">sys/</span></tt>.
 This tutorial will take you through writing cpip.py to use PpLexer to
 pre-process them.</p>
 <p>First lets have a look at the source code that we are preprocessing.
 It is a pretty trivial variation of a common them, but beware,
 pre-processing directives abound!</p>
-<p>The file <em>demo/proj/src/main.cpp</em> looks like this:</p>
-<div class="highlight-python"><pre>#include "user.h"
+<p>The file <tt class="file docutils literal"><span class="pre">demo/proj/src/main.cpp</span></tt> looks like this:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#include &quot;user.h&quot;</span>
 
-int main(char **argv, int argc)
-{
-#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)
-    printf("Bonjour tout le monde\n");
-#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)
-    printf("Wotcha\n");
-#else
-    printf("Hello world\n");
-#endif
-    return 1;
-}
-</pre>
-</div>
-<p>That includes a file <em>user.h</em> that can be found at <em>demo/proj/usr/user.h</em>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#ifndef __USER_H__</span>
-<span class="c">#define __USER_H__</span>
-
-<span class="c">#include &lt;system.h&gt;</span>
-<span class="c">#define FRENCH</span>
-
-<span class="c">#endif // __USER_H__</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">,</span> <span class="kt">int</span> <span class="n">argc</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="cp">#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Bonjour tout le monde</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="cp">#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Wotcha</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="cp">#else</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello world</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="cp">#endif</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>In turn that includes a file <em>system.h</em> that can be found at
+<p>That includes a file <tt class="file docutils literal"><span class="pre">user.h</span></tt> that can be found at <tt class="file docutils literal"><span class="pre">demo/proj/usr/user.h</span></tt>:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#ifndef __USER_H__</span>
+<span class="cp">#define __USER_H__</span>
+
+<span class="cp">#include &lt;system.h&gt;</span>
+<span class="cp">#define FRENCH</span>
+
+<span class="cp">#endif </span><span class="c1">// __USER_H__</span>
+</pre></div>
+</div>
+<p>In turn that includes a file <tt class="file docutils literal"><span class="pre">system.h</span></tt> that can be found at
 <em>demo/proj/sys/system.h</em>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#ifndef __SYSTEM_H__</span>
-<span class="c">#define __SYSTEM_H__</span>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#ifndef __SYSTEM_H__</span>
+<span class="cp">#define __SYSTEM_H__</span>
 
-<span class="c">#define LANG_SUPPORT</span>
+<span class="cp">#define LANG_SUPPORT</span>
 
-<span class="c">#endif // __SYSTEM_H__</span>
+<span class="cp">#endif </span><span class="c1">// __SYSTEM_H__</span>
 </pre></div>
 </div>
 <p>Clearly since the system is mandating language support and the user
@@ -128,18 +130,18 @@ CPIP knows all about. First we need to create a <tt class="xref py py-class docu
 <h3>Creating a PpLexer<a class="headerlink" href="#creating-a-pplexer" title="Permalink to this headline">¶</a></h3>
 <p>This is the template that we will use for the tutorial, it just takes a
 single argument from the command line <tt class="docutils literal"><span class="pre">sys.argv[1]</span></tt>:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<div class="highlight-c"><pre>import sys
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="c"># Your code here</span>
+def main():
+    print('Processing:', sys.argv[1])
+    # Your code here
 
-<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</pre></div>
+if __name__ == "__main__":
+    main()
+</pre>
 </div>
 <p>Of course this doesn&#8217;t do much yet, invoking it just gives:</p>
-<div class="highlight-python"><pre>$ python cpip.py proj/src/main.cpp
+<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
 Processing: proj/src/main.cpp</pre>
 </div>
 <p>We now need to import and create and <tt class="xref py py-class docutils literal"><span class="pre">PpLexer.PpLexer</span></tt> object, and this
@@ -159,19 +161,19 @@ search paths to the system include directories. With this we can construct a
 <span class="kn">from</span> <span class="nn">cpip.core</span> <span class="kn">import</span> <span class="n">PpLexer</span><span class="p">,</span> <span class="n">IncludeHandler</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="n">myH</span> <span class="o">=</span> <span class="n">IncludeHandler</span><span class="o">.</span><span class="n">CppIncludeStdOs</span><span class="p">(</span>
-        <span class="n">theUsrDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/usr&#39;</span><span class="p">,],</span>
-        <span class="n">theSysDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/sys&#39;</span><span class="p">,],</span>
-        <span class="p">)</span>
-    <span class="n">myLex</span> <span class="o">=</span> <span class="n">PpLexer</span><span class="o">.</span><span class="n">PpLexer</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">myH</span><span class="p">)</span>
-
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="hll">    <span class="n">myH</span> <span class="o">=</span> <span class="n">IncludeHandler</span><span class="o">.</span><span class="n">CppIncludeStdOs</span><span class="p">(</span>
+</span><span class="hll">        <span class="n">theUsrDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/usr&#39;</span><span class="p">,],</span>
+</span><span class="hll">        <span class="n">theSysDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/sys&#39;</span><span class="p">,],</span>
+</span><span class="hll">        <span class="p">)</span>
+</span><span class="hll">    <span class="n">myLex</span> <span class="o">=</span> <span class="n">PpLexer</span><span class="o">.</span><span class="n">PpLexer</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">myH</span><span class="p">)</span>
+</span>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>This still doesn&#8217;t do much yet, invoking it just gives:</p>
-<div class="highlight-python"><pre>$ python cpip.py proj/src/main.cpp
+<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
 Processing: proj/src/main.cpp</pre>
 </div>
 <p>But, in the absence of error, shows that we can construct a
@@ -187,21 +189,21 @@ to <tt class="xref py py-func docutils literal"><span class="pre">PpLexer.PpToke
 <span class="kn">from</span> <span class="nn">cpip.core</span> <span class="kn">import</span> <span class="n">PpLexer</span><span class="p">,</span> <span class="n">IncludeHandler</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">myH</span> <span class="o">=</span> <span class="n">IncludeHandler</span><span class="o">.</span><span class="n">CppIncludeStdOs</span><span class="p">(</span>
         <span class="n">theUsrDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/usr&#39;</span><span class="p">,],</span>
         <span class="n">theSysDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/sys&#39;</span><span class="p">,],</span>
         <span class="p">)</span>
     <span class="n">myLex</span> <span class="o">=</span> <span class="n">PpLexer</span><span class="o">.</span><span class="n">PpLexer</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">myH</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">myLex</span><span class="o">.</span><span class="n">ppTokens</span><span class="p">():</span>
-        <span class="k">print</span> <span class="n">tok</span>
-
+<span class="hll">    <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">myLex</span><span class="o">.</span><span class="n">ppTokens</span><span class="p">():</span>
+</span><span class="hll">        <span class="k">print</span><span class="p">(</span><span class="n">tok</span><span class="p">)</span>
+</span>
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Invoking it now gives:</p>
-<div class="highlight-python"><pre>$ python cpip.py proj/src/main.cpp
+<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
 Processing: proj/src/main.cpp
 PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
 ...
@@ -243,15 +245,15 @@ PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)</pre>
 themselves because they not only have content but the type of content
 (whitespace, punctuation, literals etc.). A simplification is to change the
 code to print out the token <em>value</em> by changing a line in the code from:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">tok</span>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">print</span> <span class="n">tok</span>
 </pre></div>
 </div>
 <p>To:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">print</span> <span class="n">tok</span><span class="o">.</span><span class="n">t</span>
+<div class="highlight-c"><div class="highlight"><pre><span class="n">print</span> <span class="n">tok</span><span class="p">.</span><span class="n">t</span>
 </pre></div>
 </div>
 <p>To give:</p>
-<div class="highlight-python"><pre>Processing: proj/src/main.cpp
+<div class="highlight-c"><div class="highlight"><pre><span class="nl">Processing:</span> <span class="n">proj</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="p">.</span><span class="n">cpp</span>
 
 
 
@@ -262,14 +264,14 @@ code to print out the token <em>value</em> by changing a line in the code from:<
 
 
 
-int   main ( char   * * argv ,   int   argc ) 
-{ 
+<span class="kt">int</span>   <span class="n">main</span> <span class="p">(</span> <span class="kt">char</span>   <span class="o">*</span> <span class="o">*</span> <span class="n">argv</span> <span class="p">,</span>   <span class="kt">int</span>   <span class="n">argc</span> <span class="p">)</span> 
+<span class="p">{</span> 
 
-printf ( "Bonjour tout le monde\n" ) ; 
+<span class="n">printf</span> <span class="p">(</span> <span class="s">&quot;Bonjour tout le monde</span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">)</span> <span class="p">;</span> 
 
-return   1 ; 
-} 
-</pre>
+<span class="k">return</span>   <span class="mi">1</span> <span class="p">;</span> 
+<span class="p">}</span> 
+</pre></div>
 </div>
 <p>It is definately pre-processed and although the output is correct it is
 rather verbose because of all the whitespace generated by the pre-processing
@@ -283,28 +285,28 @@ looks like this:</p>
 <span class="kn">from</span> <span class="nn">cpip.core</span> <span class="kn">import</span> <span class="n">PpLexer</span><span class="p">,</span> <span class="n">IncludeHandler</span>
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="k">print</span> <span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">myH</span> <span class="o">=</span> <span class="n">IncludeHandler</span><span class="o">.</span><span class="n">CppIncludeStdOs</span><span class="p">(</span>
         <span class="n">theUsrDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/usr&#39;</span><span class="p">,],</span>
         <span class="n">theSysDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/sys&#39;</span><span class="p">,],</span>
         <span class="p">)</span>
     <span class="n">myLex</span> <span class="o">=</span> <span class="n">PpLexer</span><span class="o">.</span><span class="n">PpLexer</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">myH</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">myLex</span><span class="o">.</span><span class="n">ppTokens</span><span class="p">(</span><span class="n">minWs</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
-        <span class="k">print</span> <span class="n">tok</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+<span class="hll">    <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">myLex</span><span class="o">.</span><span class="n">ppTokens</span><span class="p">(</span><span class="n">minWs</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+</span>        <span class="k">print</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s">&#39; &#39;</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Invoking it now gives:</p>
-<div class="highlight-python"><pre>Processing: proj/src/main.cpp
+<div class="highlight-c"><div class="highlight"><pre><span class="nl">Processing:</span> <span class="n">proj</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">main</span><span class="p">.</span><span class="n">cpp</span>
 
-int   main ( char   * * argv ,   int   argc ) 
-{ 
-printf ( "Bonjour tout le monde\n" ) ; 
-return   1 ; 
-} 
-</pre>
+<span class="kt">int</span>   <span class="n">main</span> <span class="p">(</span> <span class="kt">char</span>   <span class="o">*</span> <span class="o">*</span> <span class="n">argv</span> <span class="p">,</span>   <span class="kt">int</span>   <span class="n">argc</span> <span class="p">)</span> 
+<span class="p">{</span> 
+<span class="n">printf</span> <span class="p">(</span> <span class="s">&quot;Bonjour tout le monde</span><span class="se">\n</span><span class="s">&quot;</span> <span class="p">)</span> <span class="p">;</span> 
+<span class="k">return</span>   <span class="mi">1</span> <span class="p">;</span> 
+<span class="p">}</span> 
+</pre></div>
 </div>
 <p>This is exactly the result that one would expect from pre-processing the
 original source code.</p>
@@ -323,12 +325,12 @@ directives).</p>
 <h3>File Include Stack<a class="headerlink" href="#file-include-stack" title="Permalink to this headline">¶</a></h3>
 <p>Changing the code to this shows the <tt class="docutils literal"><span class="pre">include</span></tt> file
 hierarchy every step of the way:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">myLex</span><span class="o">.</span><span class="n">ppTokens</span><span class="p">():</span>
-    <span class="k">print</span> <span class="n">myLex</span><span class="o">.</span><span class="n">fileStack</span>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">for</span> <span class="n">tok</span> <span class="n">in</span> <span class="n">myLex</span><span class="p">.</span><span class="n">ppTokens</span><span class="p">()</span><span class="o">:</span>
+    <span class="n">print</span> <span class="n">myLex</span><span class="p">.</span><span class="n">fileStack</span>
 </pre></div>
 </div>
 <p>Gives the following output:</p>
-<div class="highlight-python"><pre>$ python cpip.py proj/src/main.cpp
+<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
 Processing: proj/src/main.cpp
 ['proj/src/main.cpp', 'proj/usr/user.h']
 ['proj/src/main.cpp', 'proj/usr/user.h']
@@ -346,12 +348,12 @@ Processing: proj/src/main.cpp
 <div class="section" id="conditional-state">
 <h3>Conditional State<a class="headerlink" href="#conditional-state" title="Permalink to this headline">¶</a></h3>
 <p>Changing the code to this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">myLex</span><span class="o">.</span><span class="n">ppTokens</span><span class="p">(</span><span class="n">condLevel</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="k">print</span> <span class="n">myLex</span><span class="o">.</span><span class="n">condState</span>
+<div class="highlight-c"><div class="highlight"><pre><span class="k">for</span> <span class="n">tok</span> <span class="n">in</span> <span class="n">myLex</span><span class="p">.</span><span class="n">ppTokens</span><span class="p">(</span><span class="n">condLevel</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">:</span>
+    <span class="n">print</span> <span class="n">myLex</span><span class="p">.</span><span class="n">condState</span>
 </pre></div>
 </div>
 <p>Produces this output:</p>
-<div class="highlight-python"><pre>Processing: proj/src/main.cpp
+<div class="highlight-c"><pre>Processing: proj/src/main.cpp
 (True, '')
 ...
 (True, '')
@@ -380,26 +382,271 @@ Processing: proj/src/main.cpp
 </div>
 </div>
 </div>
+<div class="section" id="state-of-the-pplexer-after-pre-processing">
+<h2>State of the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> After Pre-processing<a class="headerlink" href="#state-of-the-pplexer-after-pre-processing" title="Permalink to this headline">¶</a></h2>
+<p>A more common use case is to query the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> after processing the file. The following code example will:</p>
+<ul class="simple">
+<li>Capture all tokens as a Translation Unit and write it out with minimal whitespace [lines 11-16].</li>
+<li>Print out a text representation of the file include graph [lines 18-21].</li>
+<li>Print out a text representation of the conditional compilation graph [lines 23-26].</li>
+<li>Print out a text representation of the macro environment as it exists at the end of processing the Translation Unit [lines 28-31].</li>
+<li>Print out a text representation of the macro history for all macros, whether referenced or not, as it exists at the end of processing the Translation Unit [lines 33-36].</li>
+</ul>
+<p>Here is the code, named <tt class="file docutils literal"><span class="pre">cpip_07.py</span></tt>:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">cpip.core</span> <span class="kn">import</span> <span class="n">PpLexer</span><span class="p">,</span> <span class="n">IncludeHandler</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;Processing:&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">myH</span> <span class="o">=</span> <span class="n">IncludeHandler</span><span class="o">.</span><span class="n">CppIncludeStdOs</span><span class="p">(</span>
+        <span class="n">theUsrDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/usr&#39;</span><span class="p">,],</span>
+        <span class="n">theSysDirs</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;proj/sys&#39;</span><span class="p">,],</span>
+        <span class="p">)</span>
+    <span class="n">myLex</span> <span class="o">=</span> <span class="n">PpLexer</span><span class="o">.</span><span class="n">PpLexer</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">myH</span><span class="p">)</span>
+    <span class="n">tu</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">t</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">myLex</span><span class="o">.</span><span class="n">ppTokens</span><span class="p">(</span><span class="n">minWs</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+    
+    <span class="k">print</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Translation Unit &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">tu</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Translation Unit END &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    
+    <span class="k">print</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; File Include Graph &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">myLex</span><span class="o">.</span><span class="n">fileIncludeGraphRoot</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; File Include Graph END &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    
+    <span class="k">print</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Conditional Compilation Graph &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">myLex</span><span class="o">.</span><span class="n">condCompGraph</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Conditional Compilation Graph END &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    
+    <span class="k">print</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Macro Environment &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">myLex</span><span class="o">.</span><span class="n">macroEnvironment</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Macro Environment END &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    
+    <span class="k">print</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Macro History &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">myLex</span><span class="o">.</span><span class="n">macroEnvironment</span><span class="o">.</span><span class="n">macroHistory</span><span class="p">(</span><span class="n">incEnv</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">onlyRef</span><span class="o">=</span><span class="bp">False</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39; Macro History END &#39;</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="mi">75</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">))</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+<p>Invoking this code thus:</p>
+<div class="highlight-c"><pre>$ python3 cpip_07.py ../src/main.cpp</pre>
+</div>
+<p>Gives this output:</p>
+<div class="highlight-c"><pre>Processing: ../src/main.cpp
+============================= Translation Unit ============================
+
+int main(char **argv, int argc)
+{
+printf("Bonjour tout le monde\n");
+return 1;
+}
+
+=========================== Translation Unit END ==========================
+
+============================ File Include Graph ===========================
+../src/main.cpp [43, 21]:  True "" ""
+000002: #include ../usr/user.h
+        ../usr/user.h [10, 6]:  True "" "['"user.h"', 'CP=None', 'usr=../usr']"
+        000004: #include ../sys/system.h
+                ../sys/system.h [10, 6]:  True "!def __USER_H__" "['&lt;system.h&gt;', 'sys=../sys']"
+========================== File Include Graph END =========================
+
+====================== Conditional Compilation Graph ======================
+#ifndef __USER_H__ /* True "../usr/user.h" 1 0 */
+    #ifndef __SYSTEM_H__ /* True "../sys/system.h" 1 4 */
+    #endif /* True "../sys/system.h" 6 13 */
+#endif /* True "../usr/user.h" 7 20 */
+#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH) /* True "../src/main.cpp" 5 69 */
+#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN) /* False "../src/main.cpp" 7 110 */
+#else /* False "../src/main.cpp" 9 117 */
+#endif /* False "../src/main.cpp" 11 124 */
+==================== Conditional Compilation Graph END ====================
+
+============================ Macro Environment ============================
+#define FRENCH /* ../usr/user.h#5 Ref: 1 True */
+#define LANG_SUPPORT /* ../sys/system.h#4 Ref: 2 True */
+#define __SYSTEM_H__ /* ../sys/system.h#2 Ref: 0 True */
+#define __USER_H__ /* ../usr/user.h#2 Ref: 0 True */
+========================== Macro Environment END ==========================
+
+============================== Macro History ==============================
+Macro History (all macros):
+In scope:
+#define FRENCH /* ../usr/user.h#5 Ref: 1 True */
+    ../src/main.cpp 5 38
+#define LANG_SUPPORT /* ../sys/system.h#4 Ref: 2 True */
+    ../src/main.cpp 5 13
+    ../src/main.cpp 7 15
+#define __SYSTEM_H__ /* ../sys/system.h#2 Ref: 0 True */
+#define __USER_H__ /* ../usr/user.h#2 Ref: 0 True */
+============================ Macro History END ============================
+</pre>
+</div>
+<p>This is simple to the point of crude as the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> supplies a far richer data seam than just text.</p>
+<p>File Include Graph interface is described here: <a class="reference internal" href="FileIncGraph.html#cpip-tutorial-fileincludegraph"><em>FileIncludeGraph Tutorial</em></a></p>
+</div>
 <div class="section" id="summary">
 <h2>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>There are several ways that you can inspect pre-processing with PpLexer:</p>
 <ul class="simple">
-<li>Supplying arguments to :func:<tt class="docutils literal"><span class="pre">PpLexer.ppTokens()</span></tt> with arguments such as <tt class="docutils literal"><span class="pre">minWs</span></tt> or <tt class="docutils literal"><span class="pre">incCond</span></tt>.</li>
+<li>Supplying arguments to <tt class="docutils literal"><span class="pre">PpLexer.ppTokens()</span></tt> with arguments such as <tt class="docutils literal"><span class="pre">minWs</span></tt> or <tt class="docutils literal"><span class="pre">incCond</span></tt>.</li>
 <li>Accessing the state of each token as it is generated such as <tt class="docutils literal"><span class="pre">tok.tt</span></tt> or <tt class="docutils literal"><span class="pre">tok.isCond</span></tt>.</li>
 <li>Accessing the state of PpLexer as each token as it is generated or once all tokens have been generated such as PpLexer.condState.</li>
 <li>Creating PpLexer with a user specified behaviour. This is the subject of the next section.</li>
 </ul>
 </div>
-<div class="section" id="advanced-pplexer-options">
-<h2>Advanced PpLexer Options<a class="headerlink" href="#advanced-pplexer-options" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="advanced-pplexer-construction">
+<h2>Advanced PpLexer Construction<a class="headerlink" href="#advanced-pplexer-construction" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">PpLexer</span></tt> constructor allows you to change the behaviour of pre-processing is a number of ways, effectively these are hooks into pre-processing that can:</p>
+<ul class="simple">
+<li>Varying how <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;d files are inserted into the Translation Unit.</li>
+<li>Pre-including header files.</li>
+<li>Changing the behaviour of <tt class="docutils literal"><span class="pre">PpLexer</span></tt> in unusual circumstances (errors etc.).</li>
+<li>Handling <tt class="docutils literal"><span class="pre">#pragma</span></tt> statements, in this way various compilers can be imitated.</li>
+</ul>
+<div class="section" id="include-handler">
+<h3>Include Handler<a class="headerlink" href="#include-handler" title="Permalink to this headline">¶</a></h3>
+<p>When an <tt class="docutils literal"><span class="pre">#include</span></tt> directive is encountered a compliant implementation is required to search for and insert into the Translation Unit the content referenced by the payload of the <tt class="docutils literal"><span class="pre">#include</span></tt> directive.</p>
+<p>The standard does not specify <em>how</em> this should be accomplished. In CPIP the <em>how</em> is achieved by an implementation of an <tt class="docutils literal"><span class="pre">cpip.core.IncludeHandler</span></tt>.</p>
+<div class="section" id="an-aside">
+<h4>An Aside<a class="headerlink" href="#an-aside" title="Permalink to this headline">¶</a></h4>
+<p>It is entirely acceptable within the standard to have an <tt class="docutils literal"><span class="pre">#include</span></tt> system that does not rely on a file system at all. Perhaps it might rely on a database like this:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#include &quot;SQL:spam.eggs#1284&quot;</span>
+</pre></div>
+</div>
+<p>An include handler could take that payload and recover the content from some database rather than the local file system.</p>
+<p>Or, more prosaically, an include mechanism such as this:</p>
+<div class="highlight-c"><div class="highlight"><pre><span class="cp">#include &quot;http::</span><span class="c1">//some.url.org/spam/eggs#1284&quot;</span>
+</pre></div>
+</div>
+<p>That leads to a fairly obvious way of managing that <tt class="docutils literal"><span class="pre">#include</span></tt> payload.</p>
+</div>
+<div class="section" id="implementation">
+<h4>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h4>
+<p>If you want to create a new include mechanism then you should sub-class the base class <tt class="docutils literal"><span class="pre">cpip.core.IncludeHandler.CppIncludeStd</span></tt>.</p>
+<p>Sub-classing this requires implementing the following methods :</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">def</span> <span class="pre">initialTu(self,</span> <span class="pre">theTuIdentifier):</span></tt></dt>
+<dd><p class="first">Given an Translation Unit Identifier this should return a
+class FilePathOrigin or None for the initial translation unit.
+As a precaution this should include code to check that the stack
+of current places is empty.
+For example:</p>
+<div class="last highlight-c"><pre>if len(self._cpStack) != 0:
+    raise ExceptionCppInclude('setTu() with CP stack: %s' % self._cpStack)</pre>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">def</span> <span class="pre">_searchFile(self,</span> <span class="pre">theCharSeq,</span> <span class="pre">theSearchPath):</span></tt></dt>
+<dd><p class="first last">Given an HcharSeq/Qcharseq and a searchpath this should return a class <tt class="docutils literal"><span class="pre">FilePathOrigin</span></tt> or None.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>As examples there are a couple of reference implementations in <tt class="file docutils literal"><span class="pre">cpip.core.IncludeHandler</span></tt>:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">CppIncludeStdOs</span></tt> - An implementation that behaves as most developers think the <tt class="docutils literal"><span class="pre">#include</span></tt> mechanism works.</li>
+<li><tt class="docutils literal"><span class="pre">CppIncludeStringIO</span></tt> - An implementation that recovers content from a dictionary of in-memory files. This is used a lot within CPIP for unit testing.</li>
+</ul>
+</div>
+</div>
 <div class="section" id="pre-includes">
 <h3>Pre-includes<a class="headerlink" href="#pre-includes" title="Permalink to this headline">¶</a></h3>
+<p>The PpLexer can be supplied with an ordered list of file like objects that are pre-include files. These are processed in order before the ITU is processed. Macro redefinition rules apply.</p>
+<p>For example <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> can take a list of user defined macros on the command line. It then creates a list with a single pre-include file thus:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">cpip.core</span> <span class="kn">import</span> <span class="n">PpLexer</span>
+
+<span class="c"># defines is a list thus:</span>
+<span class="c"># [&#39;spam(x)=x+4&#39;, &#39;eggs&#39;,]</span>
+
+<span class="n">myStr</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;#define &#39;</span><span class="o">+</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">defines</span><span class="p">])</span><span class="o">+</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+<span class="n">myPreIncFiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">myStr</span><span class="p">),</span> <span class="p">]</span>
+<span class="c"># Create other constructor information here...</span>
+<span class="n">myLexer</span> <span class="o">=</span> <span class="n">PpLexer</span><span class="o">.</span><span class="n">PpLexer</span><span class="p">(</span>
+            <span class="n">anItu</span><span class="p">,</span> <span class="c"># File to pre-process</span>
+            <span class="n">myIncH</span><span class="p">,</span> <span class="c"># Include handler</span>
+            <span class="n">preIncFiles</span><span class="o">=</span><span class="n">myPreIncFiles</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="diagnostic">
 <h3>Diagnostic<a class="headerlink" href="#diagnostic" title="Permalink to this headline">¶</a></h3>
+<p>You can pass in to <tt class="docutils literal"><span class="pre">PpLexer</span></tt> a diagnostic object, this controls how the lexer responds to various conditions such as warning error etc. The default is for the lexer to create a <tt class="xref py py-class docutils literal"><span class="pre">CppDiagnostic.PreprocessDiagnosticStd</span></tt>.</p>
+<p>If you want to create your own then sub-class the <tt class="docutils literal"><span class="pre">PreprocessDiagnosticStd</span></tt> class in the module <a class="reference internal" href="../ref/core/CppDiagnostic.html#cpip-ref-cppdiagnostic"><em>CppDiagnostic</em></a>.</p>
+<p>Sub-classing <tt class="docutils literal"><span class="pre">PreprocessDiagnosticStd</span></tt> allows you to override any of the following that might be called by the <tt class="docutils literal"><span class="pre">PpLexer</span></tt>:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">undefined(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports when an &#8216;undefined&#8217; event happens.</li>
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">partialTokenStream(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports when an partial token stream exists (e.g. an unclosed comment).</li>
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">implementationDefined(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports when an &#8216;implementation defined&#8217; event happens.</li>
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">error(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports when an error event happens.</li>
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">warning(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports when an warning event happens.</li>
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">handleUnclosedComment(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports when an unclosed comment is seen at EOF.</li>
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">unspecified(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports when unspecified behaviour is happening, For example order of evaluation of &#8216;#&#8217; and &#8216;##&#8217;.</li>
+<li><tt class="docutils literal"><span class="pre">def</span> <span class="pre">debug(self,</span> <span class="pre">msg,</span> <span class="pre">theLoc=None):</span></tt> Reports a debug message.</li>
+</ul>
+<p>There are a couple of implementations in the <a class="reference internal" href="../ref/core/CppDiagnostic.html#cpip-ref-cppdiagnostic"><em>CppDiagnostic</em></a> module that may be of interest:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">PreprocessDiagnosticKeepGoing</span></tt>: Sub-class that does not raise exceptions.</li>
+<li><tt class="docutils literal"><span class="pre">PreprocessDiagnosticRaiseOnError</span></tt>: Sub-class that raises an exception on a #&#8217;error directive.</li>
+</ul>
 </div>
 <div class="section" id="pragma">
 <h3>Pragma<a class="headerlink" href="#pragma" title="Permalink to this headline">¶</a></h3>
+<p>You can pass in a specialised handler for <tt class="docutils literal"><span class="pre">#pragma</span></tt> statements [default: None]. This shall sub-class <tt class="docutils literal"><span class="pre">PragmaHandlerABC</span></tt> and can implement:</p>
+<ul class="simple">
+<li>The boolean attribute <tt class="docutils literal"><span class="pre">replaceTokens</span></tt> is to be implemented. If True then the tokens following the <tt class="docutils literal"><span class="pre">#pragma</span></tt> statement will be be macro replaced by the PpLexer using the current macro environment before being passed to this pragma handler.</li>
+<li>A method <tt class="docutils literal"><span class="pre">def</span> <span class="pre">pragma(self,</span> <span class="pre">theTokS):</span></tt> that takes a non-zero length list of <tt class="docutils literal"><span class="pre">PpTokens</span></tt> the last of which will be a newline token. Any token this method returns will be yielded as part of the Translation Unit (and thus subject to macro replacement for example).</li>
+</ul>
+<p>Have a look at the core module <a class="reference internal" href="../ref/core/PragmaHandler.html#cpip-ref-pragmahandler"><em>PragmaHandler</em></a> for some example implementations.</p>
 </div>
 </div>
 </div>
@@ -424,8 +671,14 @@ Processing: proj/src/main.cpp
 <li><a class="reference internal" href="#conditional-state">Conditional State</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#state-of-the-pplexer-after-pre-processing">State of the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> After Pre-processing</a></li>
 <li><a class="reference internal" href="#summary">Summary</a></li>
-<li><a class="reference internal" href="#advanced-pplexer-options">Advanced PpLexer Options</a><ul>
+<li><a class="reference internal" href="#advanced-pplexer-construction">Advanced PpLexer Construction</a><ul>
+<li><a class="reference internal" href="#include-handler">Include Handler</a><ul>
+<li><a class="reference internal" href="#an-aside">An Aside</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#pre-includes">Pre-includes</a></li>
 <li><a class="reference internal" href="#diagnostic">Diagnostic</a></li>
 <li><a class="reference internal" href="#pragma">Pragma</a></li>
@@ -449,7 +702,7 @@ Processing: proj/src/main.cpp
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -478,13 +731,13 @@ Processing: proj/src/main.cpp
         <li class="right" >
           <a href="index.html" title="CPIP Tutorials"
              >previous</a> |</li>
-        <li><a href="../index.html">CPIP v0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
           <li><a href="index.html" >CPIP Tutorials</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -19,15 +19,17 @@
 # Paul Ross: cpipdev@googlemail.com
 
 """Bounding Boxes
-==============
-Legend for the drawing below:
-**** - Self sigma BB.
-~~~~ - Self pad box
-#### - Self width and depth.
-.... - All children
-++++ - Child[n] sigma BB.
+=========================
 
-i.e. For a child its ++++ is equivalent to my ****.
+Legend for the drawing below: ::
+
+    **** - Self sigma BB.
+    ~~~~ - Self pad box
+    #### - Self width and depth.
+    .... - All children
+    ++++ - Child[n] sigma BB.
+
+i.e. For a child its ``++++`` is equivalent to my ``****``.
 
 D      - Self datum point.
 S      - Self plot datum point.
@@ -43,13 +45,14 @@ Box .... has depth of max(Boxes(++++).width) and
 width max(Box(~~~~), sum(Boxes(++++).depth)). 
 
 Each instance of class knows about the following:
-Boxes:
-**** - Self sigma BB as computed Dim() objects: self.bbSigmaDepth and
-        self.bbSigmaWidth. Or as computed Box() object self.bbSigma
-~~~~ - As computed Dim() objects: self.bbSelfWidth, self.bbSelfDepth
-#### - Self width and depth as Dim() objects: self.width and self.depth
-.... - All children as a Box() object: self.bbChildren
-And padding between ~~~~ and .... as Dim() object self.bbSpaceChildren
+Boxes: ::
+
+* ``****`` - Self sigma BB as computed Dim() objects: self.bbSigmaDepth and self.bbSigmaWidth. Or as computed Box() object self.bbSigma
+* ``~~~~`` - As computed Dim() objects: self.bbSelfWidth, self.bbSelfDepth
+* ``####`` - Self width and depth as Dim() objects: self.width and self.depth
+* ``....`` - All children as a Box() object: self.bbChildren
+
+And padding between ``~~~~`` and ``....`` as Dim() object self.bbSpaceChildren
 
 i.e. not ++++ - Child[n] sigma BB. That the caller knows about its children.
 
@@ -58,69 +61,69 @@ Given D each instance of this class knows:
 S, Pl, Pt, P[0] to P[N-1], x[0], tdc (only).
 
 In the following diagrams where lines are adjacent that means that there is no
-spacing between them.
+spacing between them. ::
 
--|-----> x increases
- |
- |
-\/
-y increases
+    -|-----> x increases
+     |
+     |
+    \/
+    y increases
+    
+    D ***************************************************************************
+    *                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                     *
+    *                ~                                    ~                     *
+    *                ~    S ### Pl ###tdc### Pt ######    ~                     *
+    *                ~    #                          #    ~                     *
+    *                ~    #                          #    ~                     *
+    *                ~    #                          #    ~                     *
+    *                ~    #                          #    ~                     *
+    *                ~    ## P[0] ## P[c] ## P[C-1] ##    ~                     *
+    *                ~                                    ~                     *
+    *                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                     *
+    *                                        |                                  *
+    *                                        |= self._bbSpaceChildren           *
+    *                                        |                                  *
+    *...........................................................................*
+    *.x[0] + pl[0] + pt[0] +x[c] + pl[c] + pt[c] ++++++++++++x[C-1]+pl/pt[C-1]+.*
+    *.+                    ++                               ++                +.*
+    *.+                    ++                               ++                +.*
+    *.+++++++++++++++++++++++                               ++                +.*
+    *.                      +                               ++                +.*
+    *.                      +                               +++++++++++++++++++.*
+    *.                      +                               +                  .*
+    *.                      +++++++++++++++++++++++++++++++++                  .*
+    *...........................................................................*
+    *****************************************************************************
 
-D ***************************************************************************
-*                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                     *
-*                ~                                    ~                     *
-*                ~    S ### Pl ###tdc### Pt ######    ~                     *
-*                ~    #                          #    ~                     *
-*                ~    #                          #    ~                     *
-*                ~    #                          #    ~                     *
-*                ~    #                          #    ~                     *
-*                ~    ## P[0] ## P[c] ## P[C-1] ##    ~                     *
-*                ~                                    ~                     *
-*                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                     *
-*                                        |                                  *
-*                                        |= self._bbSpaceChildren           *
-*                                        |                                  *
-*...........................................................................*
-*.x[0] + pl[0] + pt[0] +x[c] + pl[c] + pt[c] ++++++++++++x[C-1]+pl/pt[C-1]+.*
-*.+                    ++                               ++                +.*
-*.+                    ++                               ++                +.*
-*.+++++++++++++++++++++++                               ++                +.*
-*.                      +                               ++                +.*
-*.                      +                               +++++++++++++++++++.*
-*.                      +                               +                  .*
-*.                      +++++++++++++++++++++++++++++++++                  .*
-*...........................................................................*
-*****************************************************************************
-
-Note: .... can be narrower than ~~~~
+Note: ``....`` can be narrower than ``~~~~``
 
 Verticies
 =========
 
-The following show root at the left. Linking parent to child:
+The following show root at the left. Linking parent to child: ::
 
-                    PC_land    PC_stop
-                     |            |
-                     x>>>>>>>>>>>>x
-                    /
-                   /
-    x>>>>>>>>>>>>x/
-    |            |
-PC_roll        PC_to
+                        PC_land    PC_stop
+                         |            |
+                         x>>>>>>>>>>>>x
+                        /
+                       /
+        x>>>>>>>>>>>>x/
+        |            |
+    PC_roll        PC_to
 
 PC_roll and PC_to are determined by the parent.
 PC_land and PC_stop are determined by the child.
 
-And child to parent:
+And child to parent: ::
 
-CP_stop     CP_land
-    |          |
-    x<<<<<<<<<<x\
-                 \
-                  \
-                   x<<<<<<<<<<<<x
-                   |            |
-                CP_to        CP_roll
+    CP_stop     CP_land
+        |          |
+        x<<<<<<<<<<x\
+                     \
+                      \
+                       x<<<<<<<<<<<<x
+                       |            |
+                    CP_to        CP_roll
 
 CP_roll and CP_to are determined by the child.
 CP_land and CP_stop are determined by the parent.
@@ -131,7 +134,7 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-import Coord
+from . import Coord
 
 
 from cpip import ExceptionCpip
@@ -304,7 +307,7 @@ class PlotNodeBbox(object):
     def bbSigmaWidth(self):
         """The depth of self+children as a Coord.Dim() or None in the case that
         I don't exist and I have no children.
-        i.e. the width of box ****"""
+        i.e. the width of box ``****``"""
         if self.width is None:
             # Don't leave space to plot me...
             return self.bbChildrenWidth
@@ -316,7 +319,7 @@ class PlotNodeBbox(object):
     def bbSigmaDepth(self):
         """The depth of self+children as a Coord.Dim() or None in the case that
         I don't exist and I have no children.
-        i.e. the depth of box ****"""
+        i.e. the depth of box ``****``"""
         if self.depth is None:
             # Don't leave space to plot me...
             return self.bbChildrenDepth

@@ -196,10 +196,8 @@ class TestCppCondLowLevel(unittest.TestCase):
         # self.assertEqual(True, myObj) evaluates to:
         # AssertionError: True != <__main__.CppCond object at 0x00989F10>
         # So we fall back on this test:
-        if not myObj:
-            self.assertEqual(True, True)
-        else:
-            self.assertEqual(True, False)
+        if myObj:
+            self.fail('CppCond object is True!')
 
     def testExceptionRaising(self):
         """Construct an empty CppCond, test exception conditions."""
@@ -1514,8 +1512,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestCppCond.py - A module that tests PpToken module.
+    print("""TestCppCond.py - A module that tests PpToken module.
 Usage:
 python PpToken.py [-lh --help]
 
@@ -1531,20 +1528,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestCppCond.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestCppCond.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -1555,7 +1552,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -1565,8 +1562,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

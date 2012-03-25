@@ -28,7 +28,7 @@ paulross@L071183 /cygdrive/d/wip/small_projects/PlotTree/src/python
 $ python c:/Python26/Lib/site-packages/coverage.py -x test/TestCoord.py
 """
 
-import os
+#import os
 import sys
 import logging
 #import StringIO
@@ -47,11 +47,9 @@ class TestCoordDim(unittest.TestCase):
 
     def testUnitRange(self):
         """Tests the units are in range."""
-        supportedUnits = Coord.units()
-        supportedUnits.sort()
         self.assertEqual(
-            supportedUnits,
-            [None, 'cm', 'in', 'mm', 'pc', 'pt', 'px'],
+            set(Coord.units()),
+            set([None, 'cm', 'in', 'mm', 'pc', 'pt', 'px']),
             )
 
     def testConstructor(self):
@@ -152,14 +150,14 @@ class TestCoordDim(unittest.TestCase):
         myObj_1 = Coord.Dim(72, 'px')
         #print myObj_0 == myObj_1
         self.assertEqual(myObj_0, myObj_1)
-        self.assertEqual(cmp(myObj_0, myObj_1), 0)
+        self.assertTrue(myObj_0 == myObj_1)
 
     def testCmp_01(self):
         """Dim() cmp() [01]."""
         myObj_0 = Coord.Dim(1, 'in')
         myObj_1 = Coord.Dim(1, 'in')
         self.assertEqual(myObj_0, myObj_1)
-        self.assertEqual(cmp(myObj_0, myObj_1), 0)
+        self.assertTrue(myObj_0 == myObj_1)
 
     def testCmp_02(self):
         """Dim() cmp() [02]."""
@@ -240,7 +238,8 @@ class TestCoordPoint(unittest.TestCase):
             Coord.Dim(72, 'px'),
             Coord.Dim(12, 'pc'),
             )
-        self.assertEqual(cmp(myPt_0, myPt_1), 0)
+        self.assertEqual(myPt_0, myPt_1)
+        self.assertTrue(myPt_0 == myPt_1)
 
     def testCmp_01(self):
         """Pt() cmp() is -1 for x."""
@@ -252,7 +251,7 @@ class TestCoordPoint(unittest.TestCase):
             Coord.Dim(73, 'px'),
             Coord.Dim(12, 'pc'),
             )
-        self.assertEqual(cmp(myPt_0, myPt_1), -1)
+        self.assertTrue(myPt_0 < myPt_1)
 
     def testCmp_02(self):
         """Pt() cmp() is +1 for x."""
@@ -264,7 +263,7 @@ class TestCoordPoint(unittest.TestCase):
             Coord.Dim(71, 'px'),
             Coord.Dim(12, 'pc'),
             )
-        self.assertEqual(cmp(myPt_0, myPt_1), 1)
+        self.assertTrue(myPt_0 > myPt_1)
 
     def testCmp_03(self):
         """Pt() cmp() is -1 for y."""
@@ -276,7 +275,7 @@ class TestCoordPoint(unittest.TestCase):
             Coord.Dim(72, 'px'),
             Coord.Dim(13, 'pc'),
             )
-        self.assertEqual(cmp(myPt_0, myPt_1), -1)
+        self.assertTrue(myPt_0 < myPt_1)
 
     def testCmp_04(self):
         """Pt() cmp() is +1 for y."""
@@ -288,7 +287,7 @@ class TestCoordPoint(unittest.TestCase):
             Coord.Dim(72, 'px'),
             Coord.Dim(11, 'pc'),
             )
-        self.assertEqual(cmp(myPt_0, myPt_1), 1)
+        self.assertTrue(myPt_0 > myPt_1)
 
     def testConvert_00(self):
         """Pt() convert() [00]."""
@@ -302,7 +301,8 @@ class TestCoordPoint(unittest.TestCase):
             )
         myPt_1 = myPt_1.convert('in')
         #print myPt_1
-        self.assertEqual(cmp(myPt_0, myPt_1), 0)
+        self.assertEqual(myPt_0, myPt_1)
+        self.assertTrue(myPt_0 == myPt_1)
         
     def testConvert_01(self):
         """Pt() convert() [01]."""
@@ -317,7 +317,7 @@ class TestCoordPoint(unittest.TestCase):
         myPt_0 = myPt_0.convert('px')
         #print myPt_1
         self.assertEqual(myPt_0, myPt_1)
-        self.assertEqual(cmp(myPt_0, myPt_1), 0)
+        self.assertTrue(myPt_0 == myPt_1)
         
 #===============================================================================
 #        myObj = Coord.Dim(72, 'px')
@@ -341,8 +341,7 @@ def unitTest(theVerbosity=2):
 ##################
 
 def usage():
-    print \
-"""TestCoord.py - Tests the Coord module.
+    print("""TestCoord.py - Tests the Coord module.
 Usage:
 python TestCoord.py [-hl: --help]
 
@@ -356,23 +355,23 @@ Options:
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
-    print 'TestCoord.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestCoord.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     import time
-    print 'Command line:'
-    print ' '.join(sys.argv)
-    print
+    print('Command line:')
+    print(' '.join(sys.argv))
+    print()
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
-    except getopt.GetoptError, myErr:
+    except getopt.GetoptError as myErr:
         usage()
-        print 'ERROR: Invalid option: %s' % str(myErr)
+        print('ERROR: Invalid option: %s' % str(myErr))
         sys.exit(1)
     logLevel = logging.WARNING
     for o, a in opts:
@@ -383,7 +382,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments[%d]!' % len(args)
+        print('ERROR: Wrong number of arguments[%d]!' % len(args))
         sys.exit(1)
     clkStart = time.clock()
     # Initialise logging etc.
@@ -393,8 +392,8 @@ def main():
                     stream=sys.stdout)
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

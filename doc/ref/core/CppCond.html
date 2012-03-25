@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CppCond &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="CppDiagnostic" href="../core/CppDiagnostic.html" />
+    <link rel="prev" title="ConstantExpression" href="../core/ConstantExpression.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/CppDiagnostic.html" title="CppDiagnostic"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/ConstantExpression.html" title="ConstantExpression"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.CppCond">
+<span id="cppcond"></span><span id="cpip-ref-cppcond"></span><h1>CppCond<a class="headerlink" href="#module-cpip.core.CppCond" title="Permalink to this headline">¶</a></h1>
+<p>Provides a state stack of booleans to facilitate conditional compilation as:
+ISO/IEC 9899:1999(E) section 6.10.1 (&#8216;C&#8217;) and  ISO/IEC 14882:1998(E) section 16.1 (&#8216;C++&#8217;) [cpp.cond]</p>
+<p>This does not interpret any semantics of either standard but instead provides
+a state class that callers that do interpret the language semantics can use.</p>
+<p>In particular this provides state change operations that might be triggered by
+the following six pre-processing directives:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#if constant-expression new-line group opt</span>
+<span class="c">#ifdef identifier new-line group opt</span>
+<span class="c">#ifndef identifier new-line group opt</span>
+<span class="c">#elif constant-expression new-line group opt</span>
+<span class="c">#else new-line group opt</span>
+<span class="c">#endif new-line</span>
+</pre></div>
+</div>
+<p>In this module a single CppCond object has a stack of ConditionalState objects.
+The latter has both a boolean state and an &#8216;explanation&#8217; of that state at any
+point in the translation.
+The latter is represented by a list of string representations of either
+constant-expression or identifier tokens.</p>
+<p>The stack i.e. CppCond can also be queried for its net boolean state and its
+net &#8216;explanation&#8217;.</p>
+<p>Basic boolean stack operations</p>
+<div class="highlight-python"><pre>Directive   Argument                Stack, s, boolean operation
+---------   --------                -----------------------
+#if         constant-expression     s.push(bool)
+#ifdef      identifier              s.push(bool)
+#ifndef     identifier              s.push(!bool)
+#elif       constant-expression     s.pop(), s.push(bool)
+#else       N/A                     Either s.push(!s.pop()) or s.flip()
+#endif      N/A                     s.pop()</pre>
+</div>
+<p>Basic boolean &#8216;explanation&#8217; string operations:
+NOTE: The &#8216;!&#8217; prefix is parameterised as TOKEN_NEGATION so that any subsequent
+processing can recognise &#8216;!!&#8217; as &#8216;&#8217; and &#8216;!!!&#8217; as &#8216;!&#8217;.</p>
+<div class="highlight-python"><pre>Directive   Argument                Matrix, m, strings
+---------   --------                ------------------
+#if         constant-expression     m.push(['%s' % tokens,])
+#ifdef      identifier              m.push(['(defined %s)' % identifier)])
+#ifndef     identifier              m.push(['!(defined %s)' % identifier)])
+#elif       constant-expression     m[-1].push('!%s' % m[-1].pop()),
+                                    m[-1].push(['%s' % tokens,])
+                                    Note: Here we flip the existing state via
+                                    a push(!pop())) then push the additional
+                                    condition so that we have multiple
+                                    contitions that are and'd together.
+#else       N/A                     m[-1].push('!%s' % m[-1].pop())
+                                    Note: This is the negation of the sum of
+                                    the previous #if, #elif statements.
+#endif      N/A                     m.pop()</pre>
+</div>
+<p>Note: The above does not include error checking such as pop() from
+an empty stack.</p>
+<p>Stringifying the matrix m:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">flatList</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">aList</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
+    <span class="k">assert</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">aList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">aList</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c"># Add parenthesis so that when flatList is flattened then booleans are</span>
+        <span class="c"># correctly protected.</span>
+        <span class="n">flatList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;(</span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="s">&#39; &amp;&amp; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">aList</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">flatList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aList</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="k">return</span> <span class="s">&#39; &amp;&amp; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flatList</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This returns for something like m is: <tt class="docutils literal"><span class="pre">[['a</span> <span class="pre">&lt;</span> <span class="pre">0',],</span> <span class="pre">['!b',</span> <span class="pre">'c</span> <span class="pre">&gt;</span> <span class="pre">45'],</span> <span class="pre">['d</span> <span class="pre">&lt;</span> <span class="pre">27',],]</span></tt></p>
+<p>Then this gives: <tt class="docutils literal"><span class="pre">&quot;a</span> <span class="pre">&lt;</span> <span class="pre">0</span> <span class="pre">&amp;&amp;</span> <span class="pre">(!b</span> <span class="pre">&amp;&amp;</span> <span class="pre">c</span> <span class="pre">&gt;</span> <span class="pre">45)</span> <span class="pre">&amp;&amp;</span> <span class="pre">d</span> <span class="pre">&lt;</span> <span class="pre">27&quot;</span></tt></p>
+<p>CppCondGraph adds file/line tracing so that we know where the conditional
+state was set.
+This would mean the PpLexer adding a FileLineCol as a argument to
+oIf() etc. Then this gets passed to ConditionalState.__init__().
+Also instead of a PpLexer passing str(CppCond) it passes deepcopy of CppCond.
+There will be a performance hit here, might it be significant?</p>
+<dl class="class">
+<dt id="cpip.core.CppCond.ConditionalState">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">ConditionalState</tt><big>(</big><em>theState</em>, <em>theIdOrCondExpr</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.ConditionalState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Holds a single conditional state.</p>
+<dl class="method">
+<dt id="cpip.core.CppCond.ConditionalState.constExprStr">
+<tt class="descname">constExprStr</tt><big>(</big><em>invert=False</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.ConditionalState.constExprStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns self as a string which is the concatenation of constant-expressions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.ConditionalState.flip">
+<tt class="descname">flip</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.CppCond.ConditionalState.flip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverts the boolean such as for #else directive.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.ConditionalState.flipAndAdd">
+<tt class="descname">flipAndAdd</tt><big>(</big><em>theBool</em>, <em>theConstExpr</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.ConditionalState.flipAndAdd" title="Permalink to this definition">¶</a></dt>
+<dd><p>This handles an #elif command on this item in the stack.
+This flips the state (if theBool is True) and negates the last
+expression on the condition list then appends theConstExpr
+onto the condition list.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.ConditionalState.negateLastState">
+<tt class="descname">negateLastState</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.CppCond.ConditionalState.negateLastState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inverts the state of the last item on the stack.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.CppCond.ConditionalState.state">
+<tt class="descname">state</tt><a class="headerlink" href="#cpip.core.CppCond.ConditionalState.state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns boolean state of self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.CppCond.CppCond">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">CppCond</tt><a class="headerlink" href="#cpip.core.CppCond.CppCond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a state stack to handle conditional compilation.
+This could be used by an implementation of conditional inclusion e.g.
+ISO/IEC 14882:1998(E) section 16.1 Conditional inclusion [cpp.cond]
+Essentially this class provides a state machine that can be created altered
+and queried.
+The APIs available to the caller correspond to the if-section part of the
+the applicable standard (i.e. #if #elif etc). Most APIs take two arguments;</p>
+<dl class="docutils">
+<dt>theBool</dt>
+<dd>Is a boolean that is the result of the callers evaluation of a
+constant-expression.</dd>
+<dt>theIce</dt>
+<dd>A string that represents the identifier or constant-expression
+in a way that the caller sees fit (i.e. this is not evaluated
+locally in any way).
+Combinations of such strings _are_ merged by use of boolean
+logic (&#8216;!&#8217;) and <tt class="docutils literal"><span class="pre">LPAREN</span></tt> and <tt class="docutils literal"><span class="pre">RPAREN</span></tt>.</dd>
+</dl>
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.close">
+<tt class="descname">close</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalisation, may raise ExceptionCppCond is stack non-empty.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.isTrue">
+<tt class="descname">isTrue</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.isTrue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if all of the states in the stack are True, False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.oElif">
+<tt class="descname">oElif</tt><big>(</big><em>theBool</em>, <em>theConstExpr</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.oElif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#elif</span></tt>.</p>
+<p><em>theBool</em> Is a boolean that is the result of the callers evaluation of a
+constant-expression.</p>
+<p><em>theConstExpr</em> A string that represents the identifier or
+constant-expression in a way that the caller sees fit (i.e. this is not
+evaluated locally in any way).
+Combinations of such strings _are_ merged by use of boolean
+logic (&#8216;!&#8217;) and <tt class="docutils literal"><span class="pre">LPAREN</span></tt> and <tt class="docutils literal"><span class="pre">RPAREN</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.oElse">
+<tt class="descname">oElse</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.oElse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#else</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.oEndif">
+<tt class="descname">oEndif</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.oEndif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#endif</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.oIf">
+<tt class="descname">oIf</tt><big>(</big><em>theBool</em>, <em>theConstExpr</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.oIf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#if</span></tt>.</p>
+<p><em>theBool</em> Is a boolean that is the result of the callers evaluation of a
+constant-expression.</p>
+<p><em>theConstExpr</em> A string that represents the identifier or
+constant-expression in a way that the caller sees fit (i.e. this is not
+evaluated locally in any way).
+Combinations of such strings _are_ merged by use of boolean
+logic (&#8216;!&#8217;) and <tt class="docutils literal"><span class="pre">LPAREN</span></tt> and <tt class="docutils literal"><span class="pre">RPAREN</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.oIfdef">
+<tt class="descname">oIfdef</tt><big>(</big><em>theBool</em>, <em>theConstExpr</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.oIfdef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#ifdef</span></tt>.</p>
+<p><em>theBool</em> Is a boolean that is the result of the callers evaluation of a
+constant-expression.</p>
+<p><em>theConstExpr</em> A string that represents the identifier or
+constant-expression in a way that the caller sees fit (i.e. this is not
+evaluated locally in any way).
+Combinations of such strings _are_ merged by use of boolean
+logic (&#8216;!&#8217;) and <tt class="docutils literal"><span class="pre">LPAREN</span></tt> and <tt class="docutils literal"><span class="pre">RPAREN</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCond.oIfndef">
+<tt class="descname">oIfndef</tt><big>(</big><em>theBool</em>, <em>theConstExpr</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCond.oIfndef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#ifndef</span></tt>.</p>
+<p><em>theBool</em> Is a boolean that is the result of the callers evaluation of a
+constant-expression.</p>
+<p><em>theConstExpr</em> A string that represents the identifier or
+constant-expression in a way that the caller sees fit (i.e. this is not
+evaluated locally in any way).
+Combinations of such strings _are_ merged by use of boolean
+logic (&#8216;!&#8217;) and <tt class="docutils literal"><span class="pre">LPAREN</span></tt> and <tt class="docutils literal"><span class="pre">RPAREN</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.CppCond.CppCond.stackDepth">
+<tt class="descname">stackDepth</tt><a class="headerlink" href="#cpip.core.CppCond.CppCond.stackDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the depth of the conditional stack as an integer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.CppCond.CppCondGraph">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">CppCondGraph</tt><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a graph of conditional preprocessing directives.</p>
+<dl class="attribute">
+<dt id="cpip.core.CppCond.CppCondGraph.isComplete">
+<tt class="descname">isComplete</tt><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.isComplete" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the last if-section, if present is completed with an #endif.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraph.oElif">
+<tt class="descname">oElif</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.oElif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#elif</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraph.oElse">
+<tt class="descname">oElse</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.oElse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#else</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraph.oEndif">
+<tt class="descname">oEndif</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.oEndif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#endif</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraph.oIf">
+<tt class="descname">oIf</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.oIf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#if</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraph.oIfdef">
+<tt class="descname">oIfdef</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.oIfdef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#ifdef</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraph.oIfndef">
+<tt class="descname">oIfndef</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.oIfndef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#ifndef</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraph.visit">
+<tt class="descname">visit</tt><big>(</big><em>theVisitor</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraph.visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a visitor object and pass it around giving it each
+CppCondGraphNode object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.CppCond.CppCondGraphNode">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">CppCondGraphNode</tt><big>(</big><em>theCppDirective</em>, <em>theFileLineCol</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theConstExpr=None</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for all nodes in the CppCondGraph.</p>
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.canAccept">
+<tt class="descname">canAccept</tt><big>(</big><em>theCppD</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.canAccept" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if I can accept a Preprocessing Directive; theCppD.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.oElif">
+<tt class="descname">oElif</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.oElif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#elif</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.oElse">
+<tt class="descname">oElse</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.oElse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#else</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.oEndif">
+<tt class="descname">oEndif</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.oEndif" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#endif</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.oIf">
+<tt class="descname">oIf</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.oIf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#if</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.oIfdef">
+<tt class="descname">oIfdef</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.oIfdef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#ifdef</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.oIfndef">
+<tt class="descname">oIfndef</tt><big>(</big><em>theFlc</em>, <em>theTuIdx</em>, <em>theBool</em>, <em>theCe</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.oIfndef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deal with the result of a <tt class="docutils literal"><span class="pre">#ifndef</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.retStrList">
+<tt class="descname">retStrList</tt><big>(</big><em>theDepth</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.retStrList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of string representation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphNode.visit">
+<tt class="descname">visit</tt><big>(</big><em>theVisitor</em>, <em>theDepth</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphNode.visit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a visitor object make the pre/post calls.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.CppCond.CppCondGraphVisitorBase">
+<em class="property">class </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">CppCondGraphVisitorBase</tt><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphVisitorBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for a CppCondGraph visitor object.</p>
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphVisitorBase.visitPost">
+<tt class="descname">visitPost</tt><big>(</big><em>theCcgNode</em>, <em>theDepth</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphVisitorBase.visitPost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post-traversal call with a CppCondGraphNode and the integer depth in
+the tree.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.CppCond.CppCondGraphVisitorBase.visitPre">
+<tt class="descname">visitPre</tt><big>(</big><em>theCcgNode</em>, <em>theDepth</em><big>)</big><a class="headerlink" href="#cpip.core.CppCond.CppCondGraphVisitorBase.visitPre" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-traversal call with a CppCondGraphNode and the integer depth in
+the tree.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppCond.ExceptionCppCond">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">ExceptionCppCond</tt><a class="headerlink" href="#cpip.core.CppCond.ExceptionCppCond" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple specialisation of an exception class for the CppCond.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppCond.ExceptionCppCondGraph">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">ExceptionCppCondGraph</tt><a class="headerlink" href="#cpip.core.CppCond.ExceptionCppCondGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple specialisation of an exception class for the CppCondGraph.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppCond.ExceptionCppCondGraphElif">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">ExceptionCppCondGraphElif</tt><a class="headerlink" href="#cpip.core.CppCond.ExceptionCppCondGraphElif" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the CppCondGraph sees an #elif preprocessing directive in the wrong sequence.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppCond.ExceptionCppCondGraphElse">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">ExceptionCppCondGraphElse</tt><a class="headerlink" href="#cpip.core.CppCond.ExceptionCppCondGraphElse" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the CppCondGraph sees an #endif preprocessing directive in the wrong sequence.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppCond.ExceptionCppCondGraphIfSection">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">ExceptionCppCondGraphIfSection</tt><a class="headerlink" href="#cpip.core.CppCond.ExceptionCppCondGraphIfSection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for a CppCondGraphIfSection.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.CppCond.ExceptionCppCondGraphNode">
+<em class="property">exception </em><tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">ExceptionCppCondGraphNode</tt><a class="headerlink" href="#cpip.core.CppCond.ExceptionCppCondGraphNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the CppCondGraphNode sees an preprocessing directive in the wrong sequence.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.CppCond.StateConstExprFileLine">
+<tt class="descclassname">cpip.core.CppCond.</tt><tt class="descname">StateConstExprFileLine</tt><a class="headerlink" href="#cpip.core.CppCond.StateConstExprFileLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">StateConstExprLoc</span></tt></p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/ConstantExpression.html"
+                        title="previous chapter">ConstantExpression</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/CppDiagnostic.html"
+                        title="next chapter">CppDiagnostic</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/CppCond.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/CppDiagnostic.html" title="CppDiagnostic"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/ConstantExpression.html" title="ConstantExpression"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

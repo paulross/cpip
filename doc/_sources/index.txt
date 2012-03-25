@@ -3,17 +3,31 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to cpip's documentation!
-================================
+Welcome to CPIP
+======================
+
+CPIP is a C/C++ pre-processor implemented in Python.
+
+Instead of regard pre-processing as a just a dirty job that just has to be done as quickly as possible CPIP aims to record every detail of preprocessing CPIP help debugging difficult problems involving preprocessing.
+
+As well CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on (see :ref:`cpip-examples`).
 
 Contents:
 
 .. toctree::
-   :maxdepth: 2
-   
-   tutorial/index
-   
-   reference
+    :maxdepth: 3
+    
+    intro
+    
+    down_install
+    
+    examples/examples
+
+    cmd_line_tools/index
+
+    tutorial/index
+    
+    ref/index
 
 Indices and tables
 ==================

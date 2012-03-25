@@ -54,7 +54,7 @@ class StrTree(object):
     def add(self, s):
         """Add a string."""
         if s:
-            if not self._ir.has_key(s[0]):
+            if s[0] not in self._ir:
                 self._ir[s[0]] = StrTree()
             self._ir[s[0]].add(s[1:])
         else:

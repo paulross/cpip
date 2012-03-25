@@ -32,7 +32,7 @@ import types
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip.util import DictTree
-import TokenCss
+from cpip import TokenCss
 
 # Anchors
 # Each macro in the table has the ID #macro_name
@@ -85,7 +85,7 @@ def _writeTableOfMacros(theS, theEnv, theHtmlPath):
     retVal = {}
     # Write table of all macros
     myMacroMap = theEnv.macroHistoryMap()
-    myMacroNameS = myMacroMap.keys() 
+    myMacroNameS = list(myMacroMap.keys()) 
     if len(myMacroNameS) == 0:
         return retVal
     myMacroNameS.sort()
@@ -129,7 +129,7 @@ def writeTrMacro(theS, theHtmlPath, theMacro, theIntOccurence, theStartLetter, r
             writeTdMacro(theS, theMacro, theStartLetter, theIntOccurence)
         else:
             writeTdMacro(theS, theMacro, '', theIntOccurence)
-        if not retMap.has_key(theMacro.identifier):
+        if theMacro.identifier not in retMap:
             # Add to the return value
             retMap[theMacro.identifier] = '%s#%s' \
                 % (
@@ -544,7 +544,7 @@ def processMacroHistoryToHtml(theLex, theHtmlPath, theItu, theIndexPath):
     # Now update the return link map with
     # theEnv.macroNotDefinedDependencyNames()
     for anId in myEnv.macroNotDefinedDependencyNames():
-        if not retVal.has_key(anId):
+        if anId not in retVal:
             retVal[anId] = '%s#%s' \
                     % (
                         os.path.basename(theHtmlPath),
@@ -653,7 +653,7 @@ def unitTest(theVerbosity=2):
 
 def main():
     usage = "usage: %prog [options] file"
-    print 'Cmd: %s' % ' '.join(sys.argv)
+    print('Cmd: %s' % ' '.join(sys.argv))
     optParser = OptionParser(usage, version='%prog ' + __version__)
     optParser.add_option(
             "-l", "--loglevel",

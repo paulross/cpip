@@ -1,0 +1,185 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/include/linux/percpu_counter.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/include/linux/percpu_counter.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#_LINUX_PERCPU_COUNTER_H_0"><span class="b">_LINUX_PERCPU_COUNTER_H</span></a>
+<a name="2"><span class="line">       2: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#_LINUX_PERCPU_COUNTER_H_0"><span class="b">_LINUX_PERCPU_COUNTER_H</span></a>
+<a name="3"><span class="line">       3: </span></a><span class="k">/*
+<a name="4"><span class="line">       4: </span></a> * A simple &quot;approximate counter&quot; for use in ext2 and ext3 superblocks.
+<a name="5"><span class="line">       5: </span></a> *
+<a name="6"><span class="line">       6: </span></a> * WARNING: these things are HUGE.  4 kbytes per counter on 32-way P4.
+<a name="7"><span class="line">       7: </span></a> */</span>
+<a name="8"><span class="line">       8: </span></a>
+<a name="9"><span class="line">       9: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">spinlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="10"><span class="line">      10: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">smp</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="11"><span class="line">      11: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">list</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="12"><span class="line">      12: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">threads</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="13"><span class="line">      13: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">percpu</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="14"><span class="line">      14: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="15"><span class="line">      15: </span></a>
+<a name="16"><span class="line">      16: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#ZQ09ORklHX1NNUF90ZXN0bm90ZGVm"><span class="b">CONFIG_SMP</span></a>
+<a name="17"><span class="line">      17: </span></a>
+<a name="18"><span class="line">      18: </span></a><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">{</span>
+<a name="19"><span class="line">      19: </span></a>    <span class="b">spinlock_t</span> <span class="b">lock</span><span class="f">;</span>
+<a name="20"><span class="line">      20: </span></a>    <span class="b">s64</span> <span class="b">count</span><span class="f">;</span>
+<a name="21"><span class="line">      21: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#ZQ09ORklHX0hPVFBMVUdfQ1BVX3Rlc3Rub3RkZWY_"><span class="b">CONFIG_HOTPLUG_CPU</span></a>
+<a name="22"><span class="line">      22: </span></a>    <span class="m">struct</span> <span class="b">list_head</span> <span class="b">list</span><span class="f">;</span>    <span class="k">/* All percpu_counters are on a list */</span>
+<a name="23"><span class="line">      23: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="24"><span class="line">      24: </span></a>    <span class="b">s32</span> <a href="cpu.c_macros.html#__percpu_0"><span class="b">__percpu</span></a> <span class="f">*</span><span class="b">counters</span><span class="f">;</span>
+<a name="25"><span class="line">      25: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="26"><span class="line">      26: </span></a>
+<a name="27"><span class="line">      27: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">percpu_counter_batch</span><span class="f">;</span>
+<a name="28"><span class="line">      28: </span></a>
+<a name="29"><span class="line">      29: </span></a><span class="m">int</span> <span class="b">__percpu_counter_init</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">,</span>
+<a name="30"><span class="line">      30: </span></a>              <span class="m">struct</span> <span class="b">lock_class_key</span> <span class="f">*</span><span class="b">key</span><span class="f">)</span><span class="f">;</span>
+<a name="31"><span class="line">      31: </span></a>
+<a name="32"><span class="line">      32: </span></a><span class="f">#</span><span class="n">define</span> <span class="b">percpu_counter_init</span><span class="f">(</span><span class="b">fbc</span><span class="f">,</span> <span class="b">value</span><span class="f">)</span>                    \
+<a name="33"><span class="line">      33: </span></a>    <span class="f">(</span><span class="f">{</span>                                \
+<a name="34"><span class="line">      34: </span></a>        <span class="m">static</span> <span class="m">struct</span> <span class="b">lock_class_key</span> <span class="b">__key</span><span class="f">;</span>            \
+<a name="35"><span class="line">      35: </span></a>                                    \
+<a name="36"><span class="line">      36: </span></a>        <span class="b">__percpu_counter_init</span><span class="f">(</span><span class="b">fbc</span><span class="f">,</span> <span class="b">value</span><span class="f">,</span> <span class="f">&amp;</span><span class="b">__key</span><span class="f">)</span><span class="f">;</span>        \
+<a name="37"><span class="line">      37: </span></a>    <span class="f">}</span><span class="f">)</span>
+<a name="38"><span class="line">      38: </span></a>
+<a name="39"><span class="line">      39: </span></a><span class="m">void</span> <span class="b">percpu_counter_destroy</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span><span class="f">;</span>
+<a name="40"><span class="line">      40: </span></a><span class="m">void</span> <span class="b">percpu_counter_set</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">)</span><span class="f">;</span>
+<a name="41"><span class="line">      41: </span></a><span class="m">void</span> <span class="b">__percpu_counter_add</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">,</span> <span class="b">s32</span> <span class="b">batch</span><span class="f">)</span><span class="f">;</span>
+<a name="42"><span class="line">      42: </span></a><span class="b">s64</span> <span class="b">__percpu_counter_sum</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span><span class="f">;</span>
+<a name="43"><span class="line">      43: </span></a><span class="m">int</span> <span class="b">percpu_counter_compare</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">rhs</span><span class="f">)</span><span class="f">;</span>
+<a name="44"><span class="line">      44: </span></a>
+<a name="45"><span class="line">      45: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">percpu_counter_add</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">)</span>
+<a name="46"><span class="line">      46: </span></a><span class="f">{</span>
+<a name="47"><span class="line">      47: </span></a>    <span class="b">__percpu_counter_add</span><span class="f">(</span><span class="b">fbc</span><span class="f">,</span> <span class="b">amount</span><span class="f">,</span> <span class="b">percpu_counter_batch</span><span class="f">)</span><span class="f">;</span>
+<a name="48"><span class="line">      48: </span></a><span class="f">}</span>
+<a name="49"><span class="line">      49: </span></a>
+<a name="50"><span class="line">      50: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_sum_positive</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="51"><span class="line">      51: </span></a><span class="f">{</span>
+<a name="52"><span class="line">      52: </span></a>    <span class="b">s64</span> <span class="b">ret</span> <span class="f">=</span> <span class="b">__percpu_counter_sum</span><span class="f">(</span><span class="b">fbc</span><span class="f">)</span><span class="f">;</span>
+<a name="53"><span class="line">      53: </span></a>    <span class="m">return</span> <span class="b">ret</span> <span class="f">&lt;</span> <span class="c">0</span> <span class="f">?</span> <span class="c">0</span> <span class="f">:</span> <span class="b">ret</span><span class="f">;</span>
+<a name="54"><span class="line">      54: </span></a><span class="f">}</span>
+<a name="55"><span class="line">      55: </span></a>
+<a name="56"><span class="line">      56: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_sum</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="57"><span class="line">      57: </span></a><span class="f">{</span>
+<a name="58"><span class="line">      58: </span></a>    <span class="m">return</span> <span class="b">__percpu_counter_sum</span><span class="f">(</span><span class="b">fbc</span><span class="f">)</span><span class="f">;</span>
+<a name="59"><span class="line">      59: </span></a><span class="f">}</span>
+<a name="60"><span class="line">      60: </span></a>
+<a name="61"><span class="line">      61: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_read</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="62"><span class="line">      62: </span></a><span class="f">{</span>
+<a name="63"><span class="line">      63: </span></a>    <span class="m">return</span> <span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span><span class="f">;</span>
+<a name="64"><span class="line">      64: </span></a><span class="f">}</span>
+<a name="65"><span class="line">      65: </span></a>
+<a name="66"><span class="line">      66: </span></a><span class="k">/*
+<a name="67"><span class="line">      67: </span></a> * It is possible for the percpu_counter_read() to return a small negative
+<a name="68"><span class="line">      68: </span></a> * number for some counter which should never be negative.
+<a name="69"><span class="line">      69: </span></a> *
+<a name="70"><span class="line">      70: </span></a> */</span>
+<a name="71"><span class="line">      71: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_read_positive</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="72"><span class="line">      72: </span></a><span class="f">{</span>
+<a name="73"><span class="line">      73: </span></a>    <span class="b">s64</span> <span class="b">ret</span> <span class="f">=</span> <span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span><span class="f">;</span>
+<a name="74"><span class="line">      74: </span></a>
+<a name="75"><span class="line">      75: </span></a>    <a href="cpu.c_macros.html#barrier()_0"><span class="b">barrier</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>        <span class="k">/* Prevent reloads of fbc-&gt;count */</span>
+<a name="76"><span class="line">      76: </span></a>    <span class="m">if</span> <span class="f">(</span><span class="b">ret</span> <span class="f">&gt;=</span> <span class="c">0</span><span class="f">)</span>
+<a name="77"><span class="line">      77: </span></a>        <span class="m">return</span> <span class="b">ret</span><span class="f">;</span>
+<a name="78"><span class="line">      78: </span></a>    <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="79"><span class="line">      79: </span></a><span class="f">}</span>
+<a name="80"><span class="line">      80: </span></a>
+<a name="81"><span class="line">      81: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">percpu_counter_initialized</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="82"><span class="line">      82: </span></a><span class="f">{</span>
+<a name="83"><span class="line">      83: </span></a>    <span class="m">return</span> <span class="f">(</span><span class="b">fbc</span><span class="f">-&gt;</span><span class="b">counters</span> <span class="f">!=</span> <a href="cpu.c_macros.html#NULL_0"><span class="b">NULL</span></a><span class="f">)</span><span class="f">;</span>
+<a name="84"><span class="line">      84: </span></a><span class="f">}</span>
+<a name="85"><span class="line">      85: </span></a>
+<a name="86"><span class="line">      86: </span></a><span class="f">#</span><span class="n">else</span>
+<a name="87"><span class="line">      87: </span></a>
+<a name="88"><span class="line">      88: </span></a><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">{</span>
+<a name="89"><span class="line">      89: </span></a>    <span class="b">s64</span> <span class="b">count</span><span class="f">;</span>
+<a name="90"><span class="line">      90: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="91"><span class="line">      91: </span></a>
+<a name="92"><span class="line">      92: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">percpu_counter_init</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">)</span>
+<a name="93"><span class="line">      93: </span></a><span class="f">{</span>
+<a name="94"><span class="line">      94: </span></a>    <span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span> <span class="f">=</span> <span class="b">amount</span><span class="f">;</span>
+<a name="95"><span class="line">      95: </span></a>    <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="96"><span class="line">      96: </span></a><span class="f">}</span>
+<a name="97"><span class="line">      97: </span></a>
+<a name="98"><span class="line">      98: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">percpu_counter_destroy</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="99"><span class="line">      99: </span></a><span class="f">{</span>
+<a name="100"><span class="line">     100: </span></a><span class="f">}</span>
+<a name="101"><span class="line">     101: </span></a>
+<a name="102"><span class="line">     102: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">percpu_counter_set</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">)</span>
+<a name="103"><span class="line">     103: </span></a><span class="f">{</span>
+<a name="104"><span class="line">     104: </span></a>    <span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span> <span class="f">=</span> <span class="b">amount</span><span class="f">;</span>
+<a name="105"><span class="line">     105: </span></a><span class="f">}</span>
+<a name="106"><span class="line">     106: </span></a>
+<a name="107"><span class="line">     107: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">percpu_counter_compare</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">rhs</span><span class="f">)</span>
+<a name="108"><span class="line">     108: </span></a><span class="f">{</span>
+<a name="109"><span class="line">     109: </span></a>    <span class="m">if</span> <span class="f">(</span><span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span> <span class="f">&gt;</span> <span class="b">rhs</span><span class="f">)</span>
+<a name="110"><span class="line">     110: </span></a>        <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="111"><span class="line">     111: </span></a>    <span class="m">else</span> <span class="m">if</span> <span class="f">(</span><span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span> <span class="f">&lt;</span> <span class="b">rhs</span><span class="f">)</span>
+<a name="112"><span class="line">     112: </span></a>        <span class="m">return</span> <span class="f">-</span><span class="c">1</span><span class="f">;</span>
+<a name="113"><span class="line">     113: </span></a>    <span class="m">else</span>
+<a name="114"><span class="line">     114: </span></a>        <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="115"><span class="line">     115: </span></a><span class="f">}</span>
+<a name="116"><span class="line">     116: </span></a>
+<a name="117"><span class="line">     117: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span>
+<a name="118"><span class="line">     118: </span></a><span class="b">percpu_counter_add</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">)</span>
+<a name="119"><span class="line">     119: </span></a><span class="f">{</span>
+<a name="120"><span class="line">     120: </span></a>    <a href="cpu.c_macros.html#preempt_disable()_0"><span class="b">preempt_disable</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="121"><span class="line">     121: </span></a>    <span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span> <span class="f">+=</span> <span class="b">amount</span><span class="f">;</span>
+<a name="122"><span class="line">     122: </span></a>    <a href="cpu.c_macros.html#preempt_enable()_0"><span class="b">preempt_enable</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="123"><span class="line">     123: </span></a><span class="f">}</span>
+<a name="124"><span class="line">     124: </span></a>
+<a name="125"><span class="line">     125: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span>
+<a name="126"><span class="line">     126: </span></a><span class="b">__percpu_counter_add</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">,</span> <span class="b">s32</span> <span class="b">batch</span><span class="f">)</span>
+<a name="127"><span class="line">     127: </span></a><span class="f">{</span>
+<a name="128"><span class="line">     128: </span></a>    <span class="b">percpu_counter_add</span><span class="f">(</span><span class="b">fbc</span><span class="f">,</span> <span class="b">amount</span><span class="f">)</span><span class="f">;</span>
+<a name="129"><span class="line">     129: </span></a><span class="f">}</span>
+<a name="130"><span class="line">     130: </span></a>
+<a name="131"><span class="line">     131: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_read</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="132"><span class="line">     132: </span></a><span class="f">{</span>
+<a name="133"><span class="line">     133: </span></a>    <span class="m">return</span> <span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span><span class="f">;</span>
+<a name="134"><span class="line">     134: </span></a><span class="f">}</span>
+<a name="135"><span class="line">     135: </span></a>
+<a name="136"><span class="line">     136: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_read_positive</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="137"><span class="line">     137: </span></a><span class="f">{</span>
+<a name="138"><span class="line">     138: </span></a>    <span class="m">return</span> <span class="b">fbc</span><span class="f">-&gt;</span><span class="b">count</span><span class="f">;</span>
+<a name="139"><span class="line">     139: </span></a><span class="f">}</span>
+<a name="140"><span class="line">     140: </span></a>
+<a name="141"><span class="line">     141: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_sum_positive</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="142"><span class="line">     142: </span></a><span class="f">{</span>
+<a name="143"><span class="line">     143: </span></a>    <span class="m">return</span> <span class="b">percpu_counter_read_positive</span><span class="f">(</span><span class="b">fbc</span><span class="f">)</span><span class="f">;</span>
+<a name="144"><span class="line">     144: </span></a><span class="f">}</span>
+<a name="145"><span class="line">     145: </span></a>
+<a name="146"><span class="line">     146: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">percpu_counter_sum</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="147"><span class="line">     147: </span></a><span class="f">{</span>
+<a name="148"><span class="line">     148: </span></a>    <span class="m">return</span> <span class="b">percpu_counter_read</span><span class="f">(</span><span class="b">fbc</span><span class="f">)</span><span class="f">;</span>
+<a name="149"><span class="line">     149: </span></a><span class="f">}</span>
+<a name="150"><span class="line">     150: </span></a>
+<a name="151"><span class="line">     151: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">percpu_counter_initialized</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="152"><span class="line">     152: </span></a><span class="f">{</span>
+<a name="153"><span class="line">     153: </span></a>    <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="154"><span class="line">     154: </span></a><span class="f">}</span>
+<a name="155"><span class="line">     155: </span></a>
+<a name="156"><span class="line">     156: </span></a><span class="f">#</span><span class="n">endif</span>    <span class="k">/* CONFIG_SMP */</span>
+<a name="157"><span class="line">     157: </span></a>
+<a name="158"><span class="line">     158: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">percpu_counter_inc</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="159"><span class="line">     159: </span></a><span class="f">{</span>
+<a name="160"><span class="line">     160: </span></a>    <span class="b">percpu_counter_add</span><span class="f">(</span><span class="b">fbc</span><span class="f">,</span> <span class="c">1</span><span class="f">)</span><span class="f">;</span>
+<a name="161"><span class="line">     161: </span></a><span class="f">}</span>
+<a name="162"><span class="line">     162: </span></a>
+<a name="163"><span class="line">     163: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">percpu_counter_dec</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">)</span>
+<a name="164"><span class="line">     164: </span></a><span class="f">{</span>
+<a name="165"><span class="line">     165: </span></a>    <span class="b">percpu_counter_add</span><span class="f">(</span><span class="b">fbc</span><span class="f">,</span> <span class="f">-</span><span class="c">1</span><span class="f">)</span><span class="f">;</span>
+<a name="166"><span class="line">     166: </span></a><span class="f">}</span>
+<a name="167"><span class="line">     167: </span></a>
+<a name="168"><span class="line">     168: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">percpu_counter_sub</span><span class="f">(</span><span class="m">struct</span> <span class="b">percpu_counter</span> <span class="f">*</span><span class="b">fbc</span><span class="f">,</span> <span class="b">s64</span> <span class="b">amount</span><span class="f">)</span>
+<a name="169"><span class="line">     169: </span></a><span class="f">{</span>
+<a name="170"><span class="line">     170: </span></a>    <span class="b">percpu_counter_add</span><span class="f">(</span><span class="b">fbc</span><span class="f">,</span> <span class="f">-</span><span class="b">amount</span><span class="f">)</span><span class="f">;</span>
+<a name="171"><span class="line">     171: </span></a><span class="f">}</span>
+<a name="172"><span class="line">     172: </span></a>
+<a name="173"><span class="line">     173: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_PERCPU_COUNTER_H */</span>
+<a name="174"><span class="line">     174: </span></a></pre>
+  </body>
+</html>

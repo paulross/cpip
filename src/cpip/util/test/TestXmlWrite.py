@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Part of TotalDepth: Petrophysical data processing and presentation
+# Copyright (C) 1999-2012 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,21 +17,18 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # 
 # Paul Ross: cpipdev@googlemail.com
-
 __author__  = 'Paul Ross'
-__date__    = '2011-07-10'
+__date__    = '2009-09-15'
 __version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__rights__  = 'Copyright (c) Paul Ross'
+
+"""Treats XmlWrite."""
 
 import os
 import sys
 import time
 import logging
-
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 from cpip.util import XmlWrite
 
@@ -44,7 +41,7 @@ class TestXmlWrite(unittest.TestCase):
     """Tests XmlWrite."""
     def test_00(self):
         """TestXmlWrite.test_00(): construction."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF):
             pass
         #print
@@ -53,7 +50,7 @@ class TestXmlWrite(unittest.TestCase):
         
     def test_01(self):
         """TestXmlWrite.test_01(): simple elements."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
                 with XmlWrite.Element(xS, 'A', {'attr_1' : '1'}):
@@ -68,7 +65,7 @@ class TestXmlWrite(unittest.TestCase):
        
     def test_02(self):
         """TestXmlWrite.test_02(): mixed content."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
                 with XmlWrite.Element(xS, 'A', {'attr_1' : '1'}):
@@ -83,7 +80,7 @@ class TestXmlWrite(unittest.TestCase):
        
     def test_03(self):
         """TestXmlWrite.test_03(): processing instruction."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
                 with XmlWrite.Element(xS, 'A', {'attr_1' : '1'}):
@@ -98,7 +95,7 @@ class TestXmlWrite(unittest.TestCase):
         
     def test_04(self):
         """TestXmlWrite.test_04(): raise on endElement when empty."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF) as xS:
             pass
         #print
@@ -107,7 +104,7 @@ class TestXmlWrite(unittest.TestCase):
         
     def test_05(self):
         """TestXmlWrite.test_05(): raise on endElement missmatch."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
                 self.assertRaises(XmlWrite.ExceptionXmlEndElement, xS.endElement, 'NotRoot')
@@ -123,31 +120,33 @@ class TestXmlWrite(unittest.TestCase):
                        
     def test_06(self):
         """TestXmlWrite.test_06(): encoded text in 'latin-1'."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF, 'latin-1') as xS:
             with XmlWrite.Element(xS, 'Root'):
                 with XmlWrite.Element(xS, 'A'):
                     xS.characters("""<&>"'""")
                 with XmlWrite.Element(xS, 'A'):
-                    xS.characters('%s' % unichr(147))
+                    xS.characters('%s' % chr(147))
                 with XmlWrite.Element(xS, 'A'):
-                    xS.characters(unichr(65))
+                    xS.characters(chr(65))
                 with XmlWrite.Element(xS, 'A'):
-                    xS.characters(unichr(128))
-        #print
-        #print myF.getvalue()
-        self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="latin-1"?>
+                    xS.characters(chr(128))
+#        print()
+#        print(myF.getvalue())
+        self.assertEqual("""<?xml version='1.0' encoding="latin-1"?>
 <Root>
   <A>&lt;&amp;&gt;&quot;&apos;</A>
   <A>&#147;</A>
   <A>A</A>
   <A>&#128;</A>
 </Root>
-""")
+""",
+            myF.getvalue(),
+        )
        
     def test_07(self):
         """TestXmlWrite.test_07(): comments."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
                 xS.comment(' a comment ')
@@ -160,7 +159,7 @@ class TestXmlWrite(unittest.TestCase):
        
     def test_08(self):
         """TestXmlWrite.test_08(): raise during write."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         try:
             with XmlWrite.XmlStream(myF) as xS:
                 with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
@@ -169,12 +168,12 @@ class TestXmlWrite(unittest.TestCase):
                         xS._elemStk.pop()
                         xS._elemStk.append('F')
                         raise Exception('Some exception')
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
         else:
-            print 'No exception raised'
-        print
-        print myF.getvalue()
+            print('No exception raised')
+#        print()
+#        print(myF.getvalue())
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <Root version="12.0">
   <E attr_1="1"/>
@@ -187,19 +186,19 @@ class TestXhtmlWrite(unittest.TestCase):
     """Tests TestXhtmlWrite."""
     def test_00(self):
         """TestXhtmlWrite.test_00(): construction."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF):
             pass
-        print
-        print myF.getvalue()
+#        print()
+#        print(myF.getvalue())
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"/>
 """)
         
-    def test_00(self):
-        """TestXhtmlWrite.test_00(): simple example."""
-        myF = StringIO.StringIO()
+    def test_01(self):
+        """TestXhtmlWrite.test_01(): simple example."""
+        myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'head'):
                 with XmlWrite.Element(xS, 'title'):
@@ -226,7 +225,7 @@ class TestXhtmlWrite(unittest.TestCase):
         
     def test_charactersWithBr_00(self):
         """TestXhtmlWrite.test_00(): simple example."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'head'):
                 pass
@@ -274,8 +273,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestXmlWrite.py - A module that tests StrTree module.
+    print("""TestXmlWrite.py - A module that tests StrTree module.
 Usage:
 python TestXmlWrite.py [-lh --help]
 
@@ -291,20 +289,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestXmlWrite.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestXmlWrite.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -315,7 +313,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -325,8 +323,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

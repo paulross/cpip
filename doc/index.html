@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to cpip’s documentation! &mdash; CPIP v0.8.0 documentation</title>
+    <title>Welcome to CPIP &mdash; CPIP 0.8.0 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="CPIP v0.8.0 documentation" href="#" />
-    <link rel="next" title="CPIP Tutorials" href="tutorial/index.html" /> 
+    <link rel="top" title="CPIP 0.8.0 documentation" href="#" />
+    <link rel="next" title="CPIP Introduction" href="intro.html" /> 
   </head>
   <body>
     <div class="related">
@@ -36,9 +39,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tutorial/index.html" title="CPIP Tutorials"
+          <a href="intro.html" title="CPIP Introduction"
              accesskey="N">next</a> |</li>
-        <li><a href="#">CPIP v0.8.0 documentation</a> &raquo;</li> 
+        <li><a href="#">CPIP 0.8.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -47,24 +50,112 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-cpip-s-documentation">
-<h1>Welcome to cpip&#8217;s documentation!<a class="headerlink" href="#welcome-to-cpip-s-documentation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="welcome-to-cpip">
+<h1>Welcome to CPIP<a class="headerlink" href="#welcome-to-cpip" title="Permalink to this headline">¶</a></h1>
+<p>CPIP is a C/C++ pre-processor implemented in Python.</p>
+<p>Instead of regard pre-processing as a just a dirty job that just has to be done as quickly as possible CPIP aims to record every detail of preprocessing CPIP help debugging difficult problems involving preprocessing.</p>
+<p>As well CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on (see <a class="reference internal" href="examples/examples.html#cpip-examples"><em>CPIPMain.py Examples</em></a>).</p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">CPIP Tutorials</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tutorial/PpLexer.html">PpLexer Tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial/FileIncGraph.html">FileIncludeGraph Tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#tutorials">Tutorials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tutorial/index.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">CPIP Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#pre-processing-c-c">Pre-processing C/C++</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#file-inclusion">File Inclusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#conditional-compilation">Conditional Compilation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="intro.html#macro-replacement">Macro Replacement</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">CPIP Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#todo-2008-11-21">TODO: 2008-11-21</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#bounding-boxes">Bounding Boxes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#verticies">Verticies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#transfoming-sizes-and-positions">Transfoming sizes and positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="reference.html#incrementing-child-positions">Incrementing child positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#cpip-and-pre-processing">CPIP and Pre-processing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="down_install.html">Installing CPIP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="down_install.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="down_install.html#download">Download</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="down_install.html#from-a-release">From a Release</a></li>
+<li class="toctree-l3"><a class="reference internal" href="down_install.html#from-the-hg-repo">From the Hg Repo</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="down_install.html#installing-and-testing">Installing and Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="down_install.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="down_install.html#testing">Testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples/examples.html"><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/examples.html#screenshots">Screenshots</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/examples.html#home-page">Home Page</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/examples.html#file-specific-pages">File Specific Pages</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="examples/examples.html#some-real-examples">Some Real Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="examples/examples.html#symbian-os">Symbian OS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/examples.html#the-linux-kernel">The Linux Kernel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_line_tools/index.html">Command Line Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_line_tools/index.html#cpipmain">CPIPMain</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cmd_line_tools/index.html#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cmd_line_tools/index.html#examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/index.html">CPIP Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/PpLexer.html">PpLexer Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/PpLexer.html#setting-up">Setting Up</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/PpLexer.html#put-the-pplexer-to-work">Put the PpLexer to Work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/PpLexer.html#and-now-for-something-completely-different">And now for something Completely Different</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/PpLexer.html#state-of-the-pplexer-after-pre-processing">State of the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> After Pre-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/PpLexer.html#summary">Summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/PpLexer.html#advanced-pplexer-construction">Advanced PpLexer Construction</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial/FileIncGraph.html">FileIncludeGraph Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/FileIncGraph.html#creating-a-fileincludegraph">Creating a FileIncludeGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/FileIncGraph.html#fileincludegraph-structure">FileIncludeGraph Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/FileIncGraph.html#a-file-graph-visitor">A File Graph Visitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tutorial/FileIncGraph.html#creating-a-bespoke-tree-from-a-fileincludegraph">Creating a Bespoke Tree From a FileIncludeGraph</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ref/index.html">CPIP Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ref/core/index.html">CPIP Core</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/ConstantExpression.html">ConstantExpression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/CppCond.html">CppCond</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/CppDiagnostic.html">CppDiagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/FileIncludeGraph.html">FileIncludeGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/IncludeHandler.html">IncludeHandler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/MacroEnv.html">MacroEnv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/PpDefine.html">PpDefine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/PpLexer.html">PpLexer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/PpToken.html">PpToken</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/PpTokenCount.html">PpTokenCount</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/PpTokeniser.html">PpTokeniser</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/PpWhitespace.html">PpWhitespace</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/PragmaHandler.html">PragmaHandler</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ref/util/index.html">CPIP Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/BufGen.html">BufGen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/DictTree.html">DictTree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/ListGen.html">ListGen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/MatrixRep.html">MatrixRep</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/MaxMunchGen.html">MaxMunchGen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/StrTree.html">StrTree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/XmlWrite.html">XmlWrite</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ref/plot/index.html">CPIP Plot</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ref/plot/Coord.html">Coord</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/plot/PlotNode.html">PlotNode</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/plot/SVGWriter.html">SVGWriter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/plot/TreePlotTransform.html">TreePlotTransform</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -87,15 +178,15 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to cpip&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#">Welcome to CPIP</a><ul>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="tutorial/index.html"
-                        title="next chapter">CPIP Tutorials</a></p>
+  <p class="topless"><a href="intro.html"
+                        title="next chapter">CPIP Introduction</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -104,7 +195,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -128,14 +219,14 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tutorial/index.html" title="CPIP Tutorials"
+          <a href="intro.html" title="CPIP Introduction"
              >next</a> |</li>
-        <li><a href="#">CPIP v0.8.0 documentation</a> &raquo;</li> 
+        <li><a href="#">CPIP 0.8.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

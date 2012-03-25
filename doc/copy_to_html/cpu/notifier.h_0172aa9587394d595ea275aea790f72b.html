@@ -1,0 +1,293 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/include/linux/notifier.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/include/linux/notifier.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="k">/*
+<a name="2"><span class="line">       2: </span></a> *    Routines to manage notifier chains for passing status changes to any
+<a name="3"><span class="line">       3: </span></a> *    interested routines. We need this instead of hard coded call lists so
+<a name="4"><span class="line">       4: </span></a> *    that modules can poke their nose into the innards. The network devices
+<a name="5"><span class="line">       5: </span></a> *    needed them so here they are for the rest of you.
+<a name="6"><span class="line">       6: </span></a> *
+<a name="7"><span class="line">       7: </span></a> *                Alan Cox &lt;Alan.Cox@linux.org&gt;
+<a name="8"><span class="line">       8: </span></a> */</span>
+<a name="9"><span class="line">       9: </span></a> 
+<a name="10"><span class="line">      10: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#_LINUX_NOTIFIER_H_0"><span class="b">_LINUX_NOTIFIER_H</span></a>
+<a name="11"><span class="line">      11: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#_LINUX_NOTIFIER_H_0"><span class="b">_LINUX_NOTIFIER_H</span></a>
+<a name="12"><span class="line">      12: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">errno</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="13"><span class="line">      13: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">mutex</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="14"><span class="line">      14: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">rwsem</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="15"><span class="line">      15: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">srcu</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="16"><span class="line">      16: </span></a>
+<a name="17"><span class="line">      17: </span></a><span class="k">/*
+<a name="18"><span class="line">      18: </span></a> * Notifier chains are of four types:
+<a name="19"><span class="line">      19: </span></a> *
+<a name="20"><span class="line">      20: </span></a> *    Atomic notifier chains: Chain callbacks run in interrupt/atomic
+<a name="21"><span class="line">      21: </span></a> *        context. Callouts are not allowed to block.
+<a name="22"><span class="line">      22: </span></a> *    Blocking notifier chains: Chain callbacks run in process context.
+<a name="23"><span class="line">      23: </span></a> *        Callouts are allowed to block.
+<a name="24"><span class="line">      24: </span></a> *    Raw notifier chains: There are no restrictions on callbacks,
+<a name="25"><span class="line">      25: </span></a> *        registration, or unregistration.  All locking and protection
+<a name="26"><span class="line">      26: </span></a> *        must be provided by the caller.
+<a name="27"><span class="line">      27: </span></a> *    SRCU notifier chains: A variant of blocking notifier chains, with
+<a name="28"><span class="line">      28: </span></a> *        the same restrictions.
+<a name="29"><span class="line">      29: </span></a> *
+<a name="30"><span class="line">      30: </span></a> * atomic_notifier_chain_register() may be called from an atomic context,
+<a name="31"><span class="line">      31: </span></a> * but blocking_notifier_chain_register() and srcu_notifier_chain_register()
+<a name="32"><span class="line">      32: </span></a> * must be called from a process context.  Ditto for the corresponding
+<a name="33"><span class="line">      33: </span></a> * _unregister() routines.
+<a name="34"><span class="line">      34: </span></a> *
+<a name="35"><span class="line">      35: </span></a> * atomic_notifier_chain_unregister(), blocking_notifier_chain_unregister(),
+<a name="36"><span class="line">      36: </span></a> * and srcu_notifier_chain_unregister() _must not_ be called from within
+<a name="37"><span class="line">      37: </span></a> * the call chain.
+<a name="38"><span class="line">      38: </span></a> *
+<a name="39"><span class="line">      39: </span></a> * SRCU notifier chains are an alternative form of blocking notifier chains.
+<a name="40"><span class="line">      40: </span></a> * They use SRCU (Sleepable Read-Copy Update) instead of rw-semaphores for
+<a name="41"><span class="line">      41: </span></a> * protection of the chain links.  This means there is _very_ low overhead
+<a name="42"><span class="line">      42: </span></a> * in srcu_notifier_call_chain(): no cache bounces and no memory barriers.
+<a name="43"><span class="line">      43: </span></a> * As compensation, srcu_notifier_chain_unregister() is rather expensive.
+<a name="44"><span class="line">      44: </span></a> * SRCU notifier chains should be used when the chain will be called very
+<a name="45"><span class="line">      45: </span></a> * often but notifier_blocks will seldom be removed.  Also, SRCU notifier
+<a name="46"><span class="line">      46: </span></a> * chains are slightly more difficult to use because they require special
+<a name="47"><span class="line">      47: </span></a> * runtime initialization.
+<a name="48"><span class="line">      48: </span></a> */</span>
+<a name="49"><span class="line">      49: </span></a>
+<a name="50"><span class="line">      50: </span></a><span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">{</span>
+<a name="51"><span class="line">      51: </span></a>    <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">notifier_call</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="52"><span class="line">      52: </span></a>    <span class="m">struct</span> <span class="b">notifier_block</span> <a href="cpu.c_macros.html#__rcu_0"><span class="b">__rcu</span></a> <span class="f">*</span><span class="b">next</span><span class="f">;</span>
+<a name="53"><span class="line">      53: </span></a>    <span class="m">int</span> <span class="b">priority</span><span class="f">;</span>
+<a name="54"><span class="line">      54: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="55"><span class="line">      55: </span></a>
+<a name="56"><span class="line">      56: </span></a><span class="m">struct</span> <span class="b">atomic_notifier_head</span> <span class="f">{</span>
+<a name="57"><span class="line">      57: </span></a>    <span class="b">spinlock_t</span> <span class="b">lock</span><span class="f">;</span>
+<a name="58"><span class="line">      58: </span></a>    <span class="m">struct</span> <span class="b">notifier_block</span> <a href="cpu.c_macros.html#__rcu_0"><span class="b">__rcu</span></a> <span class="f">*</span><span class="b">head</span><span class="f">;</span>
+<a name="59"><span class="line">      59: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="60"><span class="line">      60: </span></a>
+<a name="61"><span class="line">      61: </span></a><span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="f">{</span>
+<a name="62"><span class="line">      62: </span></a>    <span class="m">struct</span> <span class="b">rw_semaphore</span> <span class="b">rwsem</span><span class="f">;</span>
+<a name="63"><span class="line">      63: </span></a>    <span class="m">struct</span> <span class="b">notifier_block</span> <a href="cpu.c_macros.html#__rcu_0"><span class="b">__rcu</span></a> <span class="f">*</span><span class="b">head</span><span class="f">;</span>
+<a name="64"><span class="line">      64: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="65"><span class="line">      65: </span></a>
+<a name="66"><span class="line">      66: </span></a><span class="m">struct</span> <span class="b">raw_notifier_head</span> <span class="f">{</span>
+<a name="67"><span class="line">      67: </span></a>    <span class="m">struct</span> <span class="b">notifier_block</span> <a href="cpu.c_macros.html#__rcu_0"><span class="b">__rcu</span></a> <span class="f">*</span><span class="b">head</span><span class="f">;</span>
+<a name="68"><span class="line">      68: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="69"><span class="line">      69: </span></a>
+<a name="70"><span class="line">      70: </span></a><span class="m">struct</span> <span class="b">srcu_notifier_head</span> <span class="f">{</span>
+<a name="71"><span class="line">      71: </span></a>    <span class="m">struct</span> <span class="b">mutex</span> <span class="b">mutex</span><span class="f">;</span>
+<a name="72"><span class="line">      72: </span></a>    <span class="m">struct</span> <span class="b">srcu_struct</span> <span class="b">srcu</span><span class="f">;</span>
+<a name="73"><span class="line">      73: </span></a>    <span class="m">struct</span> <span class="b">notifier_block</span> <a href="cpu.c_macros.html#__rcu_0"><span class="b">__rcu</span></a> <span class="f">*</span><span class="b">head</span><span class="f">;</span>
+<a name="74"><span class="line">      74: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="75"><span class="line">      75: </span></a>
+<a name="76"><span class="line">      76: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#ATOMIC_INIT_NOTIFIER_HEAD(name)_0"><span class="b">ATOMIC_INIT_NOTIFIER_HEAD</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span>    \
+<a name="77"><span class="line">      77: </span></a>        <a href="cpu.c_macros.html#spin_lock_init(_lock)_0"><span class="b">spin_lock_init</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">lock</span><span class="f">)</span><span class="f">;</span>    \
+<a name="78"><span class="line">      78: </span></a>        <span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">head</span> <span class="f">=</span> <a href="cpu.c_macros.html#NULL_0"><span class="b">NULL</span></a><span class="f">;</span>        \
+<a name="79"><span class="line">      79: </span></a>    <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="80"><span class="line">      80: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#BLOCKING_INIT_NOTIFIER_HEAD(name)_0"><span class="b">BLOCKING_INIT_NOTIFIER_HEAD</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span>    \
+<a name="81"><span class="line">      81: </span></a>        <a href="cpu.c_macros.html#init_rwsem(sem)_0"><span class="b">init_rwsem</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">rwsem</span><span class="f">)</span><span class="f">;</span>    \
+<a name="82"><span class="line">      82: </span></a>        <span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">head</span> <span class="f">=</span> <a href="cpu.c_macros.html#NULL_0"><span class="b">NULL</span></a><span class="f">;</span>        \
+<a name="83"><span class="line">      83: </span></a>    <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="84"><span class="line">      84: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#RAW_INIT_NOTIFIER_HEAD(name)_0"><span class="b">RAW_INIT_NOTIFIER_HEAD</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span>    \
+<a name="85"><span class="line">      85: </span></a>        <span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">head</span> <span class="f">=</span> <a href="cpu.c_macros.html#NULL_0"><span class="b">NULL</span></a><span class="f">;</span>        \
+<a name="86"><span class="line">      86: </span></a>    <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="87"><span class="line">      87: </span></a>
+<a name="88"><span class="line">      88: </span></a><span class="k">/* srcu_notifier_heads must be initialized and cleaned up dynamically */</span>
+<a name="89"><span class="line">      89: </span></a><span class="m">extern</span> <span class="m">void</span> <span class="b">srcu_init_notifier_head</span><span class="f">(</span><span class="m">struct</span> <span class="b">srcu_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">)</span><span class="f">;</span>
+<a name="90"><span class="line">      90: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#srcu_cleanup_notifier_head(name)_0"><span class="b">srcu_cleanup_notifier_head</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>    \
+<a name="91"><span class="line">      91: </span></a>        <span class="b">cleanup_srcu_struct</span><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">srcu</span><span class="f">)</span><span class="f">;</span>
+<a name="92"><span class="line">      92: </span></a>
+<a name="93"><span class="line">      93: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#ATOMIC_NOTIFIER_INIT(name)_0"><span class="b">ATOMIC_NOTIFIER_INIT</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span> <span class="f">{</span>                \
+<a name="94"><span class="line">      94: </span></a>        <span class="f">.</span><span class="b">lock</span> <span class="f">=</span> <a href="cpu.c_macros.html#__SPIN_LOCK_UNLOCKED(lockname)_0"><span class="b">__SPIN_LOCK_UNLOCKED</span></a><span class="f">(</span><span class="b">name</span><span class="f">.</span><span class="b">lock</span><span class="f">)</span><span class="f">,</span>    \
+<a name="95"><span class="line">      95: </span></a>        <span class="f">.</span><span class="b">head</span> <span class="f">=</span> <a href="cpu.c_macros.html#NULL_0"><span class="b">NULL</span></a> <span class="f">}</span>
+<a name="96"><span class="line">      96: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#BLOCKING_NOTIFIER_INIT(name)_0"><span class="b">BLOCKING_NOTIFIER_INIT</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span> <span class="f">{</span>                \
+<a name="97"><span class="line">      97: </span></a>        <span class="f">.</span><span class="b">rwsem</span> <span class="f">=</span> <a href="cpu.c_macros.html#__RWSEM_INITIALIZER(name)_0"><span class="b">__RWSEM_INITIALIZER</span></a><span class="f">(</span><span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">.</span><span class="b">rwsem</span><span class="f">)</span><span class="f">,</span>    \
+<a name="98"><span class="line">      98: </span></a>        <span class="f">.</span><span class="b">head</span> <span class="f">=</span> <a href="cpu.c_macros.html#NULL_0"><span class="b">NULL</span></a> <span class="f">}</span>
+<a name="99"><span class="line">      99: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#RAW_NOTIFIER_INIT(name)_0"><span class="b">RAW_NOTIFIER_INIT</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>    <span class="f">{</span>                \
+<a name="100"><span class="line">     100: </span></a>        <span class="f">.</span><span class="b">head</span> <span class="f">=</span> <a href="cpu.c_macros.html#NULL_0"><span class="b">NULL</span></a> <span class="f">}</span>
+<a name="101"><span class="line">     101: </span></a><span class="k">/* srcu_notifier_heads cannot be initialized statically */</span>
+<a name="102"><span class="line">     102: </span></a>
+<a name="103"><span class="line">     103: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#ATOMIC_NOTIFIER_HEAD(name)_0"><span class="b">ATOMIC_NOTIFIER_HEAD</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>                \
+<a name="104"><span class="line">     104: </span></a>    <span class="m">struct</span> <span class="b">atomic_notifier_head</span> <span class="b">name</span> <span class="f">=</span>            \
+<a name="105"><span class="line">     105: </span></a>        <a href="cpu.c_macros.html#ATOMIC_NOTIFIER_INIT(name)_0"><span class="b">ATOMIC_NOTIFIER_INIT</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>
+<a name="106"><span class="line">     106: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#BLOCKING_NOTIFIER_HEAD(name)_0"><span class="b">BLOCKING_NOTIFIER_HEAD</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>                \
+<a name="107"><span class="line">     107: </span></a>    <span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="b">name</span> <span class="f">=</span>            \
+<a name="108"><span class="line">     108: </span></a>        <a href="cpu.c_macros.html#BLOCKING_NOTIFIER_INIT(name)_0"><span class="b">BLOCKING_NOTIFIER_INIT</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>
+<a name="109"><span class="line">     109: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#RAW_NOTIFIER_HEAD(name)_0"><span class="b">RAW_NOTIFIER_HEAD</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>                    \
+<a name="110"><span class="line">     110: </span></a>    <span class="m">struct</span> <span class="b">raw_notifier_head</span> <span class="b">name</span> <span class="f">=</span>                \
+<a name="111"><span class="line">     111: </span></a>        <a href="cpu.c_macros.html#RAW_NOTIFIER_INIT(name)_0"><span class="b">RAW_NOTIFIER_INIT</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>
+<a name="112"><span class="line">     112: </span></a>
+<a name="113"><span class="line">     113: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#__KERNEL___0"><span class="b">__KERNEL__</span></a>
+<a name="114"><span class="line">     114: </span></a>
+<a name="115"><span class="line">     115: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">atomic_notifier_chain_register</span><span class="f">(</span><span class="m">struct</span> <span class="b">atomic_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="116"><span class="line">     116: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="117"><span class="line">     117: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">blocking_notifier_chain_register</span><span class="f">(</span><span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="118"><span class="line">     118: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="119"><span class="line">     119: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">raw_notifier_chain_register</span><span class="f">(</span><span class="m">struct</span> <span class="b">raw_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="120"><span class="line">     120: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="121"><span class="line">     121: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">srcu_notifier_chain_register</span><span class="f">(</span><span class="m">struct</span> <span class="b">srcu_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="122"><span class="line">     122: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="123"><span class="line">     123: </span></a>
+<a name="124"><span class="line">     124: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">blocking_notifier_chain_cond_register</span><span class="f">(</span>
+<a name="125"><span class="line">     125: </span></a>        <span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="126"><span class="line">     126: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="127"><span class="line">     127: </span></a>
+<a name="128"><span class="line">     128: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">atomic_notifier_chain_unregister</span><span class="f">(</span><span class="m">struct</span> <span class="b">atomic_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="129"><span class="line">     129: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="130"><span class="line">     130: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">blocking_notifier_chain_unregister</span><span class="f">(</span><span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="131"><span class="line">     131: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="132"><span class="line">     132: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">raw_notifier_chain_unregister</span><span class="f">(</span><span class="m">struct</span> <span class="b">raw_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="133"><span class="line">     133: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="134"><span class="line">     134: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">srcu_notifier_chain_unregister</span><span class="f">(</span><span class="m">struct</span> <span class="b">srcu_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="135"><span class="line">     135: </span></a>        <span class="m">struct</span> <span class="b">notifier_block</span> <span class="f">*</span><span class="b">nb</span><span class="f">)</span><span class="f">;</span>
+<a name="136"><span class="line">     136: </span></a>
+<a name="137"><span class="line">     137: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">atomic_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">atomic_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="138"><span class="line">     138: </span></a>        <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">)</span><span class="f">;</span>
+<a name="139"><span class="line">     139: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">__atomic_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">atomic_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="140"><span class="line">     140: </span></a>    <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_to_call</span><span class="f">,</span> <span class="m">int</span> <span class="f">*</span><span class="b">nr_calls</span><span class="f">)</span><span class="f">;</span>
+<a name="141"><span class="line">     141: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">blocking_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="142"><span class="line">     142: </span></a>        <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">)</span><span class="f">;</span>
+<a name="143"><span class="line">     143: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">__blocking_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="144"><span class="line">     144: </span></a>    <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_to_call</span><span class="f">,</span> <span class="m">int</span> <span class="f">*</span><span class="b">nr_calls</span><span class="f">)</span><span class="f">;</span>
+<a name="145"><span class="line">     145: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">raw_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">raw_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="146"><span class="line">     146: </span></a>        <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">)</span><span class="f">;</span>
+<a name="147"><span class="line">     147: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">__raw_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">raw_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="148"><span class="line">     148: </span></a>    <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_to_call</span><span class="f">,</span> <span class="m">int</span> <span class="f">*</span><span class="b">nr_calls</span><span class="f">)</span><span class="f">;</span>
+<a name="149"><span class="line">     149: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">srcu_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">srcu_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="150"><span class="line">     150: </span></a>        <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">)</span><span class="f">;</span>
+<a name="151"><span class="line">     151: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">__srcu_notifier_call_chain</span><span class="f">(</span><span class="m">struct</span> <span class="b">srcu_notifier_head</span> <span class="f">*</span><span class="b">nh</span><span class="f">,</span>
+<a name="152"><span class="line">     152: </span></a>    <span class="m">unsigned</span> <span class="m">long</span> <span class="b">val</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">v</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_to_call</span><span class="f">,</span> <span class="m">int</span> <span class="f">*</span><span class="b">nr_calls</span><span class="f">)</span><span class="f">;</span>
+<a name="153"><span class="line">     153: </span></a>
+<a name="154"><span class="line">     154: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NOTIFY_DONE_0"><span class="b">NOTIFY_DONE</span></a>        <span class="c">0x0000</span>        <span class="k">/* Don&apos;t care */</span>
+<a name="155"><span class="line">     155: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NOTIFY_OK_0"><span class="b">NOTIFY_OK</span></a>        <span class="c">0x0001</span>        <span class="k">/* Suits me */</span>
+<a name="156"><span class="line">     156: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NOTIFY_STOP_MASK_0"><span class="b">NOTIFY_STOP_MASK</span></a>    <span class="c">0x8000</span>        <span class="k">/* Don&apos;t call further */</span>
+<a name="157"><span class="line">     157: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NOTIFY_BAD_0"><span class="b">NOTIFY_BAD</span></a>        <span class="f">(</span><a href="cpu.c_macros.html#NOTIFY_STOP_MASK_0"><span class="b">NOTIFY_STOP_MASK</span></a><span class="f">|</span><span class="c">0x0002</span><span class="f">)</span>
+<a name="158"><span class="line">     158: </span></a>                        <span class="k">/* Bad/Veto action */</span>
+<a name="159"><span class="line">     159: </span></a><span class="k">/*
+<a name="160"><span class="line">     160: </span></a> * Clean way to return from the notifier and stop further calls.
+<a name="161"><span class="line">     161: </span></a> */</span>
+<a name="162"><span class="line">     162: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NOTIFY_STOP_0"><span class="b">NOTIFY_STOP</span></a>        <span class="f">(</span><a href="cpu.c_macros.html#NOTIFY_OK_0"><span class="b">NOTIFY_OK</span></a><span class="f">|</span><a href="cpu.c_macros.html#NOTIFY_STOP_MASK_0"><span class="b">NOTIFY_STOP_MASK</span></a><span class="f">)</span>
+<a name="163"><span class="line">     163: </span></a>
+<a name="164"><span class="line">     164: </span></a><span class="k">/* Encapsulate (negative) errno value (in particular, NOTIFY_BAD &lt;=&gt; EPERM). */</span>
+<a name="165"><span class="line">     165: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">notifier_from_errno</span><span class="f">(</span><span class="m">int</span> <span class="b">err</span><span class="f">)</span>
+<a name="166"><span class="line">     166: </span></a><span class="f">{</span>
+<a name="167"><span class="line">     167: </span></a>    <span class="m">if</span> <span class="f">(</span><span class="b">err</span><span class="f">)</span>
+<a name="168"><span class="line">     168: </span></a>        <span class="m">return</span> <a href="cpu.c_macros.html#NOTIFY_STOP_MASK_0"><span class="b">NOTIFY_STOP_MASK</span></a> <span class="f">|</span> <span class="f">(</span><a href="cpu.c_macros.html#NOTIFY_OK_0"><span class="b">NOTIFY_OK</span></a> <span class="f">-</span> <span class="b">err</span><span class="f">)</span><span class="f">;</span>
+<a name="169"><span class="line">     169: </span></a>
+<a name="170"><span class="line">     170: </span></a>    <span class="m">return</span> <a href="cpu.c_macros.html#NOTIFY_OK_0"><span class="b">NOTIFY_OK</span></a><span class="f">;</span>
+<a name="171"><span class="line">     171: </span></a><span class="f">}</span>
+<a name="172"><span class="line">     172: </span></a>
+<a name="173"><span class="line">     173: </span></a><span class="k">/* Restore (negative) errno value from notify return value. */</span>
+<a name="174"><span class="line">     174: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">notifier_to_errno</span><span class="f">(</span><span class="m">int</span> <span class="b">ret</span><span class="f">)</span>
+<a name="175"><span class="line">     175: </span></a><span class="f">{</span>
+<a name="176"><span class="line">     176: </span></a>    <span class="b">ret</span> <span class="f">&amp;=</span> <span class="f">~</span><a href="cpu.c_macros.html#NOTIFY_STOP_MASK_0"><span class="b">NOTIFY_STOP_MASK</span></a><span class="f">;</span>
+<a name="177"><span class="line">     177: </span></a>    <span class="m">return</span> <span class="b">ret</span> <span class="f">&gt;</span> <a href="cpu.c_macros.html#NOTIFY_OK_0"><span class="b">NOTIFY_OK</span></a> <span class="f">?</span> <a href="cpu.c_macros.html#NOTIFY_OK_0"><span class="b">NOTIFY_OK</span></a> <span class="f">-</span> <span class="b">ret</span> <span class="f">:</span> <span class="c">0</span><span class="f">;</span>
+<a name="178"><span class="line">     178: </span></a><span class="f">}</span>
+<a name="179"><span class="line">     179: </span></a>
+<a name="180"><span class="line">     180: </span></a><span class="k">/*
+<a name="181"><span class="line">     181: </span></a> *    Declared notifiers so far. I can imagine quite a few more chains
+<a name="182"><span class="line">     182: </span></a> *    over time (eg laptop power reset chains, reboot chain (to clean 
+<a name="183"><span class="line">     183: </span></a> *    device units up), device [un]mount chain, module load/unload chain,
+<a name="184"><span class="line">     184: </span></a> *    low memory chain, screenblank chain (for plug in modular screenblankers) 
+<a name="185"><span class="line">     185: </span></a> *    VC switch chains (for loadable kernel svgalib VC switch helpers) etc...
+<a name="186"><span class="line">     186: </span></a> */</span>
+<a name="187"><span class="line">     187: </span></a> 
+<a name="188"><span class="line">     188: </span></a><span class="k">/* netdevice notifier chain. Please remember to update the rtnetlink
+<a name="189"><span class="line">     189: </span></a> * notification exclusion list in rtnetlink_event() when adding new
+<a name="190"><span class="line">     190: </span></a> * types.
+<a name="191"><span class="line">     191: </span></a> */</span>
+<a name="192"><span class="line">     192: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_UP_0"><span class="b">NETDEV_UP</span></a>    <span class="c">0x0001</span>    <span class="k">/* For now you can&apos;t veto a device up/down */</span>
+<a name="193"><span class="line">     193: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_DOWN_0"><span class="b">NETDEV_DOWN</span></a>    <span class="c">0x0002</span>
+<a name="194"><span class="line">     194: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_REBOOT_0"><span class="b">NETDEV_REBOOT</span></a>    <span class="c">0x0003</span>    <span class="k">/* Tell a protocol stack a network interface
+<a name="195"><span class="line">     195: </span></a>                   detected a hardware crash and restarted
+<a name="196"><span class="line">     196: </span></a>                   - we can use this eg to kick tcp sessions
+<a name="197"><span class="line">     197: </span></a>                   once done */</span>
+<a name="198"><span class="line">     198: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_CHANGE_0"><span class="b">NETDEV_CHANGE</span></a>    <span class="c">0x0004</span>    <span class="k">/* Notify device state change */</span>
+<a name="199"><span class="line">     199: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_REGISTER_0"><span class="b">NETDEV_REGISTER</span></a> <span class="c">0x0005</span>
+<a name="200"><span class="line">     200: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_UNREGISTER_0"><span class="b">NETDEV_UNREGISTER</span></a>    <span class="c">0x0006</span>
+<a name="201"><span class="line">     201: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_CHANGEMTU_0"><span class="b">NETDEV_CHANGEMTU</span></a>    <span class="c">0x0007</span>
+<a name="202"><span class="line">     202: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_CHANGEADDR_0"><span class="b">NETDEV_CHANGEADDR</span></a>    <span class="c">0x0008</span>
+<a name="203"><span class="line">     203: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_GOING_DOWN_0"><span class="b">NETDEV_GOING_DOWN</span></a>    <span class="c">0x0009</span>
+<a name="204"><span class="line">     204: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_CHANGENAME_0"><span class="b">NETDEV_CHANGENAME</span></a>    <span class="c">0x000A</span>
+<a name="205"><span class="line">     205: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_FEAT_CHANGE_0"><span class="b">NETDEV_FEAT_CHANGE</span></a>    <span class="c">0x000B</span>
+<a name="206"><span class="line">     206: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_BONDING_FAILOVER_0"><span class="b">NETDEV_BONDING_FAILOVER</span></a> <span class="c">0x000C</span>
+<a name="207"><span class="line">     207: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_PRE_UP_0"><span class="b">NETDEV_PRE_UP</span></a>        <span class="c">0x000D</span>
+<a name="208"><span class="line">     208: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_PRE_TYPE_CHANGE_0"><span class="b">NETDEV_PRE_TYPE_CHANGE</span></a>    <span class="c">0x000E</span>
+<a name="209"><span class="line">     209: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_POST_TYPE_CHANGE_0"><span class="b">NETDEV_POST_TYPE_CHANGE</span></a>    <span class="c">0x000F</span>
+<a name="210"><span class="line">     210: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_POST_INIT_0"><span class="b">NETDEV_POST_INIT</span></a>    <span class="c">0x0010</span>
+<a name="211"><span class="line">     211: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_UNREGISTER_BATCH_0"><span class="b">NETDEV_UNREGISTER_BATCH</span></a> <span class="c">0x0011</span>
+<a name="212"><span class="line">     212: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_BONDING_DESLAVE_0"><span class="b">NETDEV_BONDING_DESLAVE</span></a>  <span class="c">0x0012</span>
+<a name="213"><span class="line">     213: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETDEV_NOTIFY_PEERS_0"><span class="b">NETDEV_NOTIFY_PEERS</span></a>    <span class="c">0x0013</span>
+<a name="214"><span class="line">     214: </span></a>
+<a name="215"><span class="line">     215: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SYS_DOWN_0"><span class="b">SYS_DOWN</span></a>    <span class="c">0x0001</span>    <span class="k">/* Notify of system down */</span>
+<a name="216"><span class="line">     216: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SYS_RESTART_0"><span class="b">SYS_RESTART</span></a>    <a href="cpu.c_macros.html#SYS_DOWN_0"><span class="b">SYS_DOWN</span></a>
+<a name="217"><span class="line">     217: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SYS_HALT_0"><span class="b">SYS_HALT</span></a>    <span class="c">0x0002</span>    <span class="k">/* Notify of system halt */</span>
+<a name="218"><span class="line">     218: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SYS_POWER_OFF_0"><span class="b">SYS_POWER_OFF</span></a>    <span class="c">0x0003</span>    <span class="k">/* Notify of system power off */</span>
+<a name="219"><span class="line">     219: </span></a>
+<a name="220"><span class="line">     220: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NETLINK_URELEASE_0"><span class="b">NETLINK_URELEASE</span></a>    <span class="c">0x0001</span>    <span class="k">/* Unicast netlink socket released */</span>
+<a name="221"><span class="line">     221: </span></a>
+<a name="222"><span class="line">     222: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_ONLINE_0"><span class="b">CPU_ONLINE</span></a>        <span class="c">0x0002</span> <span class="k">/* CPU (unsigned)v is up */</span>
+<a name="223"><span class="line">     223: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_UP_PREPARE_0"><span class="b">CPU_UP_PREPARE</span></a>        <span class="c">0x0003</span> <span class="k">/* CPU (unsigned)v coming up */</span>
+<a name="224"><span class="line">     224: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_UP_CANCELED_0"><span class="b">CPU_UP_CANCELED</span></a>        <span class="c">0x0004</span> <span class="k">/* CPU (unsigned)v NOT coming up */</span>
+<a name="225"><span class="line">     225: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DOWN_PREPARE_0"><span class="b">CPU_DOWN_PREPARE</span></a>    <span class="c">0x0005</span> <span class="k">/* CPU (unsigned)v going down */</span>
+<a name="226"><span class="line">     226: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DOWN_FAILED_0"><span class="b">CPU_DOWN_FAILED</span></a>        <span class="c">0x0006</span> <span class="k">/* CPU (unsigned)v NOT going down */</span>
+<a name="227"><span class="line">     227: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DEAD_0"><span class="b">CPU_DEAD</span></a>        <span class="c">0x0007</span> <span class="k">/* CPU (unsigned)v dead */</span>
+<a name="228"><span class="line">     228: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DYING_0"><span class="b">CPU_DYING</span></a>        <span class="c">0x0008</span> <span class="k">/* CPU (unsigned)v not running any task,
+<a name="229"><span class="line">     229: </span></a>                    * not handling interrupts, soon dead.
+<a name="230"><span class="line">     230: </span></a>                    * Called on the dying cpu, interrupts
+<a name="231"><span class="line">     231: </span></a>                    * are already disabled. Must not
+<a name="232"><span class="line">     232: </span></a>                    * sleep, must not fail */</span>
+<a name="233"><span class="line">     233: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_POST_DEAD_0"><span class="b">CPU_POST_DEAD</span></a>        <span class="c">0x0009</span> <span class="k">/* CPU (unsigned)v dead, cpu_hotplug
+<a name="234"><span class="line">     234: </span></a>                    * lock is dropped */</span>
+<a name="235"><span class="line">     235: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_STARTING_0"><span class="b">CPU_STARTING</span></a>        <span class="c">0x000A</span> <span class="k">/* CPU (unsigned)v soon running.
+<a name="236"><span class="line">     236: </span></a>                    * Called on the new cpu, just before
+<a name="237"><span class="line">     237: </span></a>                    * enabling interrupts. Must not sleep,
+<a name="238"><span class="line">     238: </span></a>                    * must not fail */</span>
+<a name="239"><span class="line">     239: </span></a>
+<a name="240"><span class="line">     240: </span></a><span class="k">/* Used for CPU hotplug events occuring while tasks are frozen due to a suspend
+<a name="241"><span class="line">     241: </span></a> * operation in progress
+<a name="242"><span class="line">     242: </span></a> */</span>
+<a name="243"><span class="line">     243: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a>    <span class="c">0x0010</span>
+<a name="244"><span class="line">     244: </span></a>
+<a name="245"><span class="line">     245: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_ONLINE_FROZEN_0"><span class="b">CPU_ONLINE_FROZEN</span></a>    <span class="f">(</span><a href="cpu.c_macros.html#CPU_ONLINE_0"><span class="b">CPU_ONLINE</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="246"><span class="line">     246: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_UP_PREPARE_FROZEN_0"><span class="b">CPU_UP_PREPARE_FROZEN</span></a>    <span class="f">(</span><a href="cpu.c_macros.html#CPU_UP_PREPARE_0"><span class="b">CPU_UP_PREPARE</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="247"><span class="line">     247: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_UP_CANCELED_FROZEN_0"><span class="b">CPU_UP_CANCELED_FROZEN</span></a>    <span class="f">(</span><a href="cpu.c_macros.html#CPU_UP_CANCELED_0"><span class="b">CPU_UP_CANCELED</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="248"><span class="line">     248: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DOWN_PREPARE_FROZEN_0"><span class="b">CPU_DOWN_PREPARE_FROZEN</span></a>    <span class="f">(</span><a href="cpu.c_macros.html#CPU_DOWN_PREPARE_0"><span class="b">CPU_DOWN_PREPARE</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="249"><span class="line">     249: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DOWN_FAILED_FROZEN_0"><span class="b">CPU_DOWN_FAILED_FROZEN</span></a>    <span class="f">(</span><a href="cpu.c_macros.html#CPU_DOWN_FAILED_0"><span class="b">CPU_DOWN_FAILED</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="250"><span class="line">     250: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DEAD_FROZEN_0"><span class="b">CPU_DEAD_FROZEN</span></a>        <span class="f">(</span><a href="cpu.c_macros.html#CPU_DEAD_0"><span class="b">CPU_DEAD</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="251"><span class="line">     251: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_DYING_FROZEN_0"><span class="b">CPU_DYING_FROZEN</span></a>    <span class="f">(</span><a href="cpu.c_macros.html#CPU_DYING_0"><span class="b">CPU_DYING</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="252"><span class="line">     252: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CPU_STARTING_FROZEN_0"><span class="b">CPU_STARTING_FROZEN</span></a>    <span class="f">(</span><a href="cpu.c_macros.html#CPU_STARTING_0"><span class="b">CPU_STARTING</span></a> <span class="f">|</span> <a href="cpu.c_macros.html#CPU_TASKS_FROZEN_0"><span class="b">CPU_TASKS_FROZEN</span></a><span class="f">)</span>
+<a name="253"><span class="line">     253: </span></a>
+<a name="254"><span class="line">     254: </span></a><span class="k">/* Hibernation and suspend events */</span>
+<a name="255"><span class="line">     255: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PM_HIBERNATION_PREPARE_0"><span class="b">PM_HIBERNATION_PREPARE</span></a>    <span class="c">0x0001</span> <span class="k">/* Going to hibernate */</span>
+<a name="256"><span class="line">     256: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PM_POST_HIBERNATION_0"><span class="b">PM_POST_HIBERNATION</span></a>    <span class="c">0x0002</span> <span class="k">/* Hibernation finished */</span>
+<a name="257"><span class="line">     257: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PM_SUSPEND_PREPARE_0"><span class="b">PM_SUSPEND_PREPARE</span></a>    <span class="c">0x0003</span> <span class="k">/* Going to suspend the system */</span>
+<a name="258"><span class="line">     258: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PM_POST_SUSPEND_0"><span class="b">PM_POST_SUSPEND</span></a>        <span class="c">0x0004</span> <span class="k">/* Suspend finished */</span>
+<a name="259"><span class="line">     259: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PM_RESTORE_PREPARE_0"><span class="b">PM_RESTORE_PREPARE</span></a>    <span class="c">0x0005</span> <span class="k">/* Going to restore a saved image */</span>
+<a name="260"><span class="line">     260: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PM_POST_RESTORE_0"><span class="b">PM_POST_RESTORE</span></a>        <span class="c">0x0006</span> <span class="k">/* Restore failed */</span>
+<a name="261"><span class="line">     261: </span></a>
+<a name="262"><span class="line">     262: </span></a><span class="k">/* Console keyboard events.
+<a name="263"><span class="line">     263: </span></a> * Note: KBD_KEYCODE is always sent before KBD_UNBOUND_KEYCODE, KBD_UNICODE and
+<a name="264"><span class="line">     264: </span></a> * KBD_KEYSYM. */</span>
+<a name="265"><span class="line">     265: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#KBD_KEYCODE_0"><span class="b">KBD_KEYCODE</span></a>        <span class="c">0x0001</span> <span class="k">/* Keyboard keycode, called before any other */</span>
+<a name="266"><span class="line">     266: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#KBD_UNBOUND_KEYCODE_0"><span class="b">KBD_UNBOUND_KEYCODE</span></a>    <span class="c">0x0002</span> <span class="k">/* Keyboard keycode which is not bound to any other */</span>
+<a name="267"><span class="line">     267: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#KBD_UNICODE_0"><span class="b">KBD_UNICODE</span></a>        <span class="c">0x0003</span> <span class="k">/* Keyboard unicode */</span>
+<a name="268"><span class="line">     268: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#KBD_KEYSYM_0"><span class="b">KBD_KEYSYM</span></a>        <span class="c">0x0004</span> <span class="k">/* Keyboard keysym */</span>
+<a name="269"><span class="line">     269: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#KBD_POST_KEYSYM_0"><span class="b">KBD_POST_KEYSYM</span></a>        <span class="c">0x0005</span> <span class="k">/* Called after keyboard keysym interpretation */</span>
+<a name="270"><span class="line">     270: </span></a>
+<a name="271"><span class="line">     271: </span></a><span class="m">extern</span> <span class="m">struct</span> <span class="b">blocking_notifier_head</span> <span class="b">reboot_notifier_list</span><span class="f">;</span>
+<a name="272"><span class="line">     272: </span></a>
+<a name="273"><span class="line">     273: </span></a><span class="k">/* Virtual Terminal events. */</span>
+<a name="274"><span class="line">     274: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#VT_ALLOCATE_0"><span class="b">VT_ALLOCATE</span></a>        <span class="c">0x0001</span> <span class="k">/* Console got allocated */</span>
+<a name="275"><span class="line">     275: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#VT_DEALLOCATE_0"><span class="b">VT_DEALLOCATE</span></a>        <span class="c">0x0002</span> <span class="k">/* Console will be deallocated */</span>
+<a name="276"><span class="line">     276: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#VT_WRITE_0"><span class="b">VT_WRITE</span></a>        <span class="c">0x0003</span> <span class="k">/* A char got output */</span>
+<a name="277"><span class="line">     277: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#VT_UPDATE_0"><span class="b">VT_UPDATE</span></a>        <span class="c">0x0004</span> <span class="k">/* A bigger update occurred */</span>
+<a name="278"><span class="line">     278: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#VT_PREWRITE_0"><span class="b">VT_PREWRITE</span></a>        <span class="c">0x0005</span> <span class="k">/* A char is about to be written to the console */</span>
+<a name="279"><span class="line">     279: </span></a>
+<a name="280"><span class="line">     280: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* __KERNEL__ */</span>
+<a name="281"><span class="line">     281: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_NOTIFIER_H */</span>
+<a name="282"><span class="line">     282: </span></a></pre>
+  </body>
+</html>

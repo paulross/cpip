@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TreePlotTransform &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Plot" href="../plot/index.html" />
+    <link rel="prev" title="SVGWriter" href="../plot/SVGWriter.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/SVGWriter.html" title="SVGWriter"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../plot/index.html" accesskey="U">CPIP Plot</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="treeplottransform">
+<h1>TreePlotTransform<a class="headerlink" href="#treeplottransform" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.plot.TreePlotTransform"></span><p>Provides a means of re-interpreting the coordinate system when plotting
+trees so that the the tree root can be top/left/bottom/right and the child
+order plotted anti-clockwise or clockwise.</p>
+<p>This can convert &#8216;logical&#8217; positions into &#8216;physical&#8217; positions. Where a
+&#8216;logical&#8217; position is one with the root of the tree at the top and the
+child nodes in left-to-right (i.e. anti-clockwise) order.
+A &#8216;physical&#8217; position is a plot-able position where the root of the tree is
+top/left/bottom or right and the child nodes are in anti-clockwise or
+clockwise order.</p>
+<div class="section" id="transfoming-sizes-and-positions">
+<h2>Transfoming sizes and positions<a class="headerlink" href="#transfoming-sizes-and-positions" title="Permalink to this headline">¶</a></h2>
+<p>If the first suffix is &#8216;l&#8217; this is the &#8220;logical&#8221; coordinate system.                                
+If the first suffix is &#8216;p&#8217; this is the &#8220;physical&#8221; coordinate system.</p>
+<p>Then:</p>
+<div class="highlight-python"><pre>C    The canvas dimension, Cpw is "Canvas physical width"                            
+W    Width dimension, physical and logical.                            
+D    Depth dimension, physical and logical.                            
+B    Box datum position ("top-left"), physical and logical, x and y.                            
+P    Arbitrary point, physical and logical, x and y.                            </pre>
+</div>
+<p>So this &#8220;logical view&#8221; of the tree graph (&#8216;top&#8217; and &#8216;-&#8216;):
+i.e. Root(s) is a top and children are written in an anti-clockwise.</p>
+<div class="highlight-python"><pre> ---&gt; x
+ |
+ \/
+ y
+
+&lt;------------------------ Clw ------------------------&gt;
+|                                  To Parent
+|                                     |
+|             Blx, Bly --&gt;*************************
+|                         *                  |    *
+Cld                       *                 Dl    *
+|                         *&lt;-------- Wl -----|---&gt;*
+|                         *                  |    *
+|       Plx, Ply -&gt;.      *                  |    *
+|                         *************************
+|                             |        |       |
+|                        To C[0]  To C[c]   To C[C-1]</pre>
+</div>
+<p>Or:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="10%" />
+<col width="5%" />
+<col width="5%" />
+<col width="3%" />
+<col width="3%" />
+<col width="22%" />
+<col width="22%" />
+<col width="16%" />
+<col width="14%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Origin</th>
+<th class="head">Cpw</th>
+<th class="head">Cpd</th>
+<th class="head">Wp</th>
+<th class="head">Dp</th>
+<th class="head">Bpx</th>
+<th class="head">Bpy</th>
+<th class="head">Ppx</th>
+<th class="head">Ppy</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>top</td>
+<td>Clw</td>
+<td>Cld</td>
+<td>Wl</td>
+<td>Dl</td>
+<td>Blx</td>
+<td>Bly</td>
+<td>Plx</td>
+<td>Ply</td>
+</tr>
+<tr class="row-odd"><td>left</td>
+<td>Cld</td>
+<td>Clw</td>
+<td>Dl</td>
+<td>Wl</td>
+<td>Bly</td>
+<td>(Clw-Plx-Wl)</td>
+<td>Ply</td>
+<td>Clw-Plx</td>
+</tr>
+<tr class="row-even"><td>bottom</td>
+<td>Clw</td>
+<td>Cld</td>
+<td>Wl</td>
+<td>Dl</td>
+<td>(Clw-Plx-Wl)</td>
+<td>(Cld-Ply-Dl)</td>
+<td>Clw-Plx</td>
+<td>Cld-Ply</td>
+</tr>
+<tr class="row-odd"><td>right</td>
+<td>Cld</td>
+<td>Clw</td>
+<td>Dl</td>
+<td>Wl</td>
+<td>(Cld-Ply-Dl)</td>
+<td>Blx</td>
+<td>Cld-Ply</td>
+<td>Plx</td>
+</tr>
+</tbody>
+</table>
+<p>Note the diagonal top-right to bottom-left transference between each pair of
+columns. That is because with each successive line we are doing a 90 degree
+rotation (anti-clockwise) plus a +ve y translation by Clw (top-&gt;left or 
+bottom-&gt;right) or Cld (left-&gt;bottom or right-&gt;top).</p>
+</div>
+<div class="section" id="incrementing-child-positions">
+<h2>Incrementing child positions<a class="headerlink" href="#incrementing-child-positions" title="Permalink to this headline">¶</a></h2>
+<p>Moving from one child to another is done in the following combinations:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="43%" />
+<col width="29%" />
+<col width="29%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Origin</th>
+<th class="head">&#8216;-&#8216;</th>
+<th class="head">&#8216;+&#8217;</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>top</td>
+<td>right</td>
+<td>left</td>
+</tr>
+<tr class="row-odd"><td>left</td>
+<td>up</td>
+<td>down</td>
+</tr>
+<tr class="row-even"><td>bottom</td>
+<td>left</td>
+<td>right</td>
+</tr>
+<tr class="row-odd"><td>right</td>
+<td>down</td>
+<td>up</td>
+</tr>
+</tbody>
+</table>
+<dl class="exception">
+<dt id="cpip.plot.TreePlotTransform.ExceptionTreePlotTransform">
+<em class="property">exception </em><tt class="descclassname">cpip.plot.TreePlotTransform.</tt><tt class="descname">ExceptionTreePlotTransform</tt><a class="headerlink" href="#cpip.plot.TreePlotTransform.ExceptionTreePlotTransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for TreePlotTransform.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.plot.TreePlotTransform.ExceptionTreePlotTransformRangeCtor">
+<em class="property">exception </em><tt class="descclassname">cpip.plot.TreePlotTransform.</tt><tt class="descname">ExceptionTreePlotTransformRangeCtor</tt><a class="headerlink" href="#cpip.plot.TreePlotTransform.ExceptionTreePlotTransformRangeCtor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for out of range input on construction.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform">
+<em class="property">class </em><tt class="descclassname">cpip.plot.TreePlotTransform.</tt><tt class="descname">TreePlotTransform</tt><big>(</big><em>theLogicalCanvas</em>, <em>rootPos='top'</em>, <em>sweepDir='-'</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a means of re-interpreting the coordinate system when plotting trees.</p>
+<p>rootPosition = frozenset([&#8216;top&#8217;, &#8216;bottom&#8217;, &#8216;left&#8217;, &#8216;right&#8217;])
+default: &#8216;top&#8217;</p>
+<p>sweepDirection = frozenset([&#8216;+&#8217;, &#8216;-&#8216;])
+default: &#8216;-&#8216;</p>
+<p>Has functionality for interpreting width/depth to actual postions
+given rootPostion.</p>
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.bdcL">
+<tt class="descname">bdcL</tt><big>(</big><em>theBlxy</em>, <em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.bdcL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical datum (logical top left) and a logical box this
+returns logical bottom dead centre of a box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.bdcP">
+<tt class="descname">bdcP</tt><big>(</big><em>theBlxy</em>, <em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.bdcP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical datum (logical top left) and a logical box this
+returns physical bottom dead centre of a box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.boxDatumP">
+<tt class="descname">boxDatumP</tt><big>(</big><em>theBlxy</em>, <em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.boxDatumP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical point and logical box this returns a physical
+point that is the box datum (&#8220;upper left&#8221;).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.boxP">
+<tt class="descname">boxP</tt><big>(</big><em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.boxP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical box this returns a Coord.Box that describes the physical box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.canvasP">
+<tt class="descname">canvasP</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.canvasP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Coord.Box that describes the physical canvass.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.genRootPos">
+<tt class="descname">genRootPos</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.genRootPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield all possible root positions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.genSweepDir">
+<tt class="descname">genSweepDir</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.genSweepDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yield all possible root positions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.incPhysicalChildPos">
+<tt class="descname">incPhysicalChildPos</tt><big>(</big><em>thePt</em>, <em>theDim</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.incPhysicalChildPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a child physical datum point and a distance to next child this
+returns the next childs physical datum point.
+TODO: Remove this as redundant?</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.nextdcL">
+<tt class="descname">nextdcL</tt><big>(</big><em>theBlxy</em>, <em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.nextdcL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical datum (logical top left) and a logical box this
+returns logical &#8216;next&#8217; dead centre of a box.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.positiveSweepDir">
+<tt class="descname">positiveSweepDir</tt><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.positiveSweepDir" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if positive sweep, false otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.postIncChildLogicalPos">
+<tt class="descname">postIncChildLogicalPos</tt><big>(</big><em>thePt</em>, <em>theBox</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.postIncChildLogicalPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Post-incrempents the child logical datum point (&#8216;top-left&#8217;) given
+the child logical datum point and the child.bbSigma.
+Returns a Coord.Pt().
+This takes into account the sweep direction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.preIncChildLogicalPos">
+<tt class="descname">preIncChildLogicalPos</tt><big>(</big><em>thePt</em>, <em>theBox</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.preIncChildLogicalPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-incrempents the child logical datum point (&#8216;top-left&#8217;) given
+the child logical datum point and the child.bbSigma.
+Returns a Coord.Pt().
+This takes into account the sweep direction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.prevdcL">
+<tt class="descname">prevdcL</tt><big>(</big><em>theBlxy</em>, <em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.prevdcL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical datum (logical top left) and a logical box this
+returns logical &#8216;previous&#8217; dead centre of a box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.pt">
+<tt class="descname">pt</tt><big>(</big><em>thePt</em>, <em>units=None</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.pt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an arbitrary logical point as a Coord.Pt(), this returns the
+physical point as a Coord.Pt().
+If units is supplied then the return value will be in those units.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.startChildrenLogicalPos">
+<tt class="descname">startChildrenLogicalPos</tt><big>(</big><em>thePt</em>, <em>theBox</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.startChildrenLogicalPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the starting child logical datum point (&#8216;top-left&#8217;) given
+the children logical datum point and the children.bbSigma.
+Returns a Coord.Pt().
+This takes into account the sweep direction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.tdcL">
+<tt class="descname">tdcL</tt><big>(</big><em>theBlxy</em>, <em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.tdcL" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical datum (logical top left) and a logical box this
+returns logical top dead centre of a box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.TreePlotTransform.TreePlotTransform.tdcP">
+<tt class="descname">tdcP</tt><big>(</big><em>theBlxy</em>, <em>theBl</em><big>)</big><a class="headerlink" href="#cpip.plot.TreePlotTransform.TreePlotTransform.tdcP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a logical datum (logical top left) and a logical box this
+returns physical top dead centre of a box.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">TreePlotTransform</a><ul>
+<li><a class="reference internal" href="#transfoming-sizes-and-positions">Transfoming sizes and positions</a></li>
+<li><a class="reference internal" href="#incrementing-child-positions">Incrementing child positions</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../plot/SVGWriter.html"
+                        title="previous chapter">SVGWriter</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/plot/TreePlotTransform.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/SVGWriter.html" title="SVGWriter"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../plot/index.html" >CPIP Plot</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

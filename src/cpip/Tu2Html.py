@@ -38,7 +38,7 @@ import logging
 from cpip.core import PpTokenCount
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
-import TokenCss
+from cpip import TokenCss
 
 FILE_SHIFT_ACTIONS = ('Starting', 'Holding', 'Back in', 'Ending')
 FILE_SHIFT_ACTION_WIDTH = max([len(a) for a in FILE_SHIFT_ACTIONS])

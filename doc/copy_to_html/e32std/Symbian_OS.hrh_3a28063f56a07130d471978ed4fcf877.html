@@ -1,0 +1,2099 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: S:\epoc32\include\variant\Symbian_OS.hrh</title>
+  </head>
+  <body>
+    <h1>File: S:\epoc32\include\variant\Symbian_OS.hrh</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="l">// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).</span>
+<a name="2"><span class="line">       2: </span></a><span class="l">// All rights reserved.</span>
+<a name="3"><span class="line">       3: </span></a><span class="l">// This component and the accompanying materials are made available</span>
+<a name="4"><span class="line">       4: </span></a><span class="l">// under the terms of &quot;Eclipse Public License v1.0&quot;</span>
+<a name="5"><span class="line">       5: </span></a><span class="l">// which accompanies this distribution, and is available</span>
+<a name="6"><span class="line">       6: </span></a><span class="l">// at the URL &quot;http://www.eclipse.org/legal/epl-v10.html&quot;.</span>
+<a name="7"><span class="line">       7: </span></a><span class="l">//</span>
+<a name="8"><span class="line">       8: </span></a><span class="l">// Initial Contributors:</span>
+<a name="9"><span class="line">       9: </span></a><span class="l">// Nokia Corporation - initial contribution.</span>
+<a name="10"><span class="line">      10: </span></a><span class="l">//</span>
+<a name="11"><span class="line">      11: </span></a><span class="l">// Contributors:</span>
+<a name="12"><span class="line">      12: </span></a><span class="l">//</span>
+<a name="13"><span class="line">      13: </span></a><span class="l">// Description:</span>
+<a name="14"><span class="line">      14: </span></a><span class="l">// Symbian_OS.hrh</span>
+<a name="15"><span class="line">      15: </span></a><span class="l">// Configuration options for Symbian OS</span>
+<a name="16"><span class="line">      16: </span></a><span class="l">// This file is managed by the Master Codeline Forum</span>
+<a name="17"><span class="line">      17: </span></a>
+<a name="18"><span class="line">      18: </span></a><span class="k">/** This include is for PREQ2621 */</span>
+<a name="19"><span class="line">      19: </span></a><span class="f">#</span><span class="n">include</span> <span class="e">&quot;platform_paths.hrh&quot;</span>
+<a name="20"><span class="line">      20: </span></a>
+<a name="21"><span class="line">      21: </span></a><span class="l">// SYMBIAN_JAVA_NOT_INCLUDED</span>
+<a name="22"><span class="line">      22: </span></a><span class="l">// For Sphinx and later versions, J2ME will no longer be included in the </span>
+<a name="23"><span class="line">      23: </span></a><span class="l">// build.  </span>
+<a name="24"><span class="line">      24: </span></a><span class="l">// This #define supports PREQ1791</span>
+<a name="25"><span class="line">      25: </span></a><span class="l">// </span>
+<a name="26"><span class="line">      26: </span></a><span class="l">//</span>
+<a name="27"><span class="line">      27: </span></a>
+<a name="28"><span class="line">      28: </span></a><span class="k">/**
+<a name="29"><span class="line">      29: </span></a> @publishedPartner
+<a name="30"><span class="line">      30: </span></a> @released
+<a name="31"><span class="line">      31: </span></a>*/</span>
+<a name="32"><span class="line">      32: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_JAVA_NOT_INCLUDED_0"><span class="b">SYMBIAN_JAVA_NOT_INCLUDED</span></a>
+<a name="33"><span class="line">      33: </span></a>   
+<a name="34"><span class="line">      34: </span></a><span class="k">/**
+<a name="35"><span class="line">      35: </span></a>@publishedPartner
+<a name="36"><span class="line">      36: </span></a>@released
+<a name="37"><span class="line">      37: </span></a>
+<a name="38"><span class="line">      38: </span></a>SYMBIAN_HCI_API_V2
+<a name="39"><span class="line">      39: </span></a>                    
+<a name="40"><span class="line">      40: </span></a>If SYMBIAN_HCI_API_V2 is defined then the HCI APIs provided in PREQ750 
+<a name="41"><span class="line">      41: </span></a>(Bluetooth HCI improvements) will be required for use by a version 2 
+<a name="42"><span class="line">      42: </span></a>Bluetooth Stack and a version 2 HCI. These APIs are neither binary nor 
+<a name="43"><span class="line">      43: </span></a>source compatible with the previous version 1 HCI APIs. Both the original 
+<a name="44"><span class="line">      44: </span></a>version 1  Bluetooth stack and HCI, and the new version 2 Bluetooth stack 
+<a name="45"><span class="line">      45: </span></a>and HCI will be built, but both rombuild and the emulator will be 
+<a name="46"><span class="line">      46: </span></a>configured to use the version 2 binaries. The version 2 HCI will support 
+<a name="47"><span class="line">      47: </span></a>all commands and events listed in Bluetooth v2.0 specification.
+<a name="48"><span class="line">      48: </span></a>
+<a name="49"><span class="line">      49: </span></a>If SYMBIAN_HCI_API_V2 is not defined then only the version 1 Bluetooth 
+<a name="50"><span class="line">      50: </span></a>stack and HCI will be built and used by rombuild and the emulator.
+<a name="51"><span class="line">      51: </span></a>The version 1 HCI supports most but NOT all commands and events listed 
+<a name="52"><span class="line">      52: </span></a>in Bluetooth v2.0 specification.
+<a name="53"><span class="line">      53: </span></a>
+<a name="54"><span class="line">      54: </span></a>See BR1613 for more information.
+<a name="55"><span class="line">      55: </span></a>*/</span>
+<a name="56"><span class="line">      56: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_HCI_API_V2_0"><span class="b">SYMBIAN_HCI_API_V2</span></a>
+<a name="57"><span class="line">      57: </span></a>
+<a name="58"><span class="line">      58: </span></a><span class="k">/**
+<a name="59"><span class="line">      59: </span></a>@publishedAll
+<a name="60"><span class="line">      60: </span></a>@released
+<a name="61"><span class="line">      61: </span></a>
+<a name="62"><span class="line">      62: </span></a>__WATCHER_API_V2__
+<a name="63"><span class="line">      63: </span></a>
+<a name="64"><span class="line">      64: </span></a>If __WATCHER_API_V2__ is defined then the 
+<a name="65"><span class="line">      65: </span></a>watcher framework supports ECOM watcher plugins.
+<a name="66"><span class="line">      66: </span></a>*/</span>
+<a name="67"><span class="line">      67: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__WATCHER_API_V2___0"><span class="b">__WATCHER_API_V2__</span></a>
+<a name="68"><span class="line">      68: </span></a>
+<a name="69"><span class="line">      69: </span></a><span class="k">/**
+<a name="70"><span class="line">      70: </span></a>@publishedAll
+<a name="71"><span class="line">      71: </span></a>@released
+<a name="72"><span class="line">      72: </span></a>
+<a name="73"><span class="line">      73: </span></a>__HIDE_WATCHER_API_V1__
+<a name="74"><span class="line">      74: </span></a>
+<a name="75"><span class="line">      75: </span></a>Hides support APIs for loading non-ECOM watcher plugins. Non-ECOM watcher 
+<a name="76"><span class="line">      76: </span></a>plugins are still loaded. The associated define __REMOVE_WATCHER_API_V1__
+<a name="77"><span class="line">      77: </span></a>removes the implementation of the support APIs.
+<a name="78"><span class="line">      78: </span></a>
+<a name="79"><span class="line">      79: </span></a>Assumes that __WATCHER_API_V2__ has been defined.
+<a name="80"><span class="line">      80: </span></a>*/</span>
+<a name="81"><span class="line">      81: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__HIDE_WATCHER_API_V1___0"><span class="b">__HIDE_WATCHER_API_V1__</span></a>
+<a name="82"><span class="line">      82: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__REMOVE_WATCHER_API_V1___0"><span class="b">__REMOVE_WATCHER_API_V1__</span></a>
+<a name="83"><span class="line">      83: </span></a>
+<a name="84"><span class="line">      84: </span></a><span class="k">/**
+<a name="85"><span class="line">      85: </span></a>SYMBIAN_TIMEZONE_SUPPORT_V1
+<a name="86"><span class="line">      86: </span></a>
+<a name="87"><span class="line">      87: </span></a>@publishedAll
+<a name="88"><span class="line">      88: </span></a>@released
+<a name="89"><span class="line">      89: </span></a>
+<a name="90"><span class="line">      90: </span></a>When SYMBIAN_TIMEZONE_SUPPORT_V1 is defined the App-services TzClient.dll 
+<a name="91"><span class="line">      91: </span></a>module (and accompanying import library) is made available for client 
+<a name="92"><span class="line">      92: </span></a>application use.
+<a name="93"><span class="line">      93: </span></a>
+<a name="94"><span class="line">      94: </span></a>This #define supports PREQ663
+<a name="95"><span class="line">      95: </span></a>*/</span>
+<a name="96"><span class="line">      96: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_TIMEZONE_SUPPORT_V1_0"><span class="b">SYMBIAN_TIMEZONE_SUPPORT_V1</span></a>
+<a name="97"><span class="line">      97: </span></a>
+<a name="98"><span class="line">      98: </span></a><span class="k">/** 
+<a name="99"><span class="line">      99: </span></a>@publishedAll
+<a name="100"><span class="line">     100: </span></a>@released
+<a name="101"><span class="line">     101: </span></a>
+<a name="102"><span class="line">     102: </span></a>SYMBIAN_ENABLE_MMF_MULTISCREEN_SUPPORT
+<a name="103"><span class="line">     103: </span></a>
+<a name="104"><span class="line">     104: </span></a>If SYMBIAN_ENABLE_MMF_MULTISCREEN_SUPPORT is defined then 
+<a name="105"><span class="line">     105: </span></a>the Multimedia Framework (MMF) can support video playback on 
+<a name="106"><span class="line">     106: </span></a>a secondary display. The default screen will be the screen 
+<a name="107"><span class="line">     107: </span></a>number in the cone environment.
+<a name="108"><span class="line">     108: </span></a>
+<a name="109"><span class="line">     109: </span></a>@see CVideoPlayerUtility
+<a name="110"><span class="line">     110: </span></a>*/</span>
+<a name="111"><span class="line">     111: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ENABLE_MMF_MULTISCREEN_SUPPORT_0"><span class="b">SYMBIAN_ENABLE_MMF_MULTISCREEN_SUPPORT</span></a>
+<a name="112"><span class="line">     112: </span></a>
+<a name="113"><span class="line">     113: </span></a><span class="k">/**
+<a name="114"><span class="line">     114: </span></a>@publishedAll
+<a name="115"><span class="line">     115: </span></a>@released
+<a name="116"><span class="line">     116: </span></a>
+<a name="117"><span class="line">     117: </span></a>SYMBIAN_EXTENDED_COMPOSITE_FILESYSTEM
+<a name="118"><span class="line">     118: </span></a>
+<a name="119"><span class="line">     119: </span></a>If  SYMBIAN_EXTENDED_COMPOSITE_FILESYSTEM is defined, the Composite
+<a name="120"><span class="line">     120: </span></a>File System allows more than one ROFS partition to be included in
+<a name="121"><span class="line">     121: </span></a>the composite Z: drive.
+<a name="122"><span class="line">     122: </span></a>
+<a name="123"><span class="line">     123: </span></a>This #define supports PREQ1085
+<a name="124"><span class="line">     124: </span></a>*/</span>
+<a name="125"><span class="line">     125: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_EXTENDED_COMPOSITE_FILESYSTEM_0"><span class="b">SYMBIAN_EXTENDED_COMPOSITE_FILESYSTEM</span></a>
+<a name="126"><span class="line">     126: </span></a>
+<a name="127"><span class="line">     127: </span></a><span class="k">/**
+<a name="128"><span class="line">     128: </span></a>@publishedPartner
+<a name="129"><span class="line">     129: </span></a>@released
+<a name="130"><span class="line">     130: </span></a>
+<a name="131"><span class="line">     131: </span></a>__SECURE_BIN__
+<a name="132"><span class="line">     132: </span></a>
+<a name="133"><span class="line">     133: </span></a>When __SECURE_BIN__ is defined, executable files stored as
+<a name="134"><span class="line">     134: </span></a>&quot;data&quot; in the XIP ROM are assumed to be in their data-caged 
+<a name="135"><span class="line">     135: </span></a>locations. The presence of this #define does not imply that 
+<a name="136"><span class="line">     136: </span></a>data-caging is enforced, and does not imply that binaries have 
+<a name="137"><span class="line">     137: </span></a>been relocated to sys\bin.
+<a name="138"><span class="line">     138: </span></a>
+<a name="139"><span class="line">     139: </span></a>This #define supports PREQ537 &quot;Platform security - file system layout&quot;.
+<a name="140"><span class="line">     140: </span></a>*/</span>
+<a name="141"><span class="line">     141: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__SECURE_BIN___0"><span class="b">__SECURE_BIN__</span></a>
+<a name="142"><span class="line">     142: </span></a>
+<a name="143"><span class="line">     143: </span></a><span class="k">/**
+<a name="144"><span class="line">     144: </span></a>@publishedAll
+<a name="145"><span class="line">     145: </span></a>@released
+<a name="146"><span class="line">     146: </span></a>
+<a name="147"><span class="line">     147: </span></a>SYMBIAN_COREAPPS_API_V2
+<a name="148"><span class="line">     148: </span></a>
+<a name="149"><span class="line">     149: </span></a>If SYMBIAN_COREAPPS_API_V2 is defined then new functionality is available within 
+<a name="150"><span class="line">     150: </span></a>the Core Apps sub-system (Contacts Model, Agenda Model and World Server) to 
+<a name="151"><span class="line">     151: </span></a>support a platform secured OS.
+<a name="152"><span class="line">     152: </span></a>*/</span>
+<a name="153"><span class="line">     153: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_COREAPPS_API_V2_0"><span class="b">SYMBIAN_COREAPPS_API_V2</span></a>
+<a name="154"><span class="line">     154: </span></a>
+<a name="155"><span class="line">     155: </span></a><span class="k">/**
+<a name="156"><span class="line">     156: </span></a>@publishedPartner
+<a name="157"><span class="line">     157: </span></a>@released
+<a name="158"><span class="line">     158: </span></a>
+<a name="159"><span class="line">     159: </span></a>SYMBIAN_APPARC_APPINFO_CACHE
+<a name="160"><span class="line">     160: </span></a>
+<a name="161"><span class="line">     161: </span></a>If SYMBIAN_APPARC_APPINFO_CACHE is defined then apparc creates 
+<a name="162"><span class="line">     162: </span></a>a file of application information on the first boot, which is 
+<a name="163"><span class="line">     163: </span></a>used during subsequent boots for application information.
+<a name="164"><span class="line">     164: </span></a>*/</span>
+<a name="165"><span class="line">     165: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_APPARC_APPINFO_CACHE_0"><span class="b">SYMBIAN_APPARC_APPINFO_CACHE</span></a>
+<a name="166"><span class="line">     166: </span></a>
+<a name="167"><span class="line">     167: </span></a><span class="k">/**
+<a name="168"><span class="line">     168: </span></a>@publishedPartner
+<a name="169"><span class="line">     169: </span></a>@released
+<a name="170"><span class="line">     170: </span></a>
+<a name="171"><span class="line">     171: </span></a>SYMBIAN_NETWORKING_IPSEC_IKE_V2
+<a name="172"><span class="line">     172: </span></a>
+<a name="173"><span class="line">     173: </span></a>If SYMBIAN_NETWORKING_IPSEC_IKE_V2 is defined, IPSEC will 
+<a name="174"><span class="line">     174: </span></a>be able to support Internet Key Exchange version 2 in 
+<a name="175"><span class="line">     175: </span></a>addition to IKE v1. This involves a change in the size of 
+<a name="176"><span class="line">     176: </span></a>the TPfkeyMsgBase class - see BR1736.1.
+<a name="177"><span class="line">     177: </span></a>
+<a name="178"><span class="line">     178: </span></a>Actual support for IKE v2 will depend on the provision 
+<a name="179"><span class="line">     179: </span></a>of a suitable plugin to the Key Management Daemon.
+<a name="180"><span class="line">     180: </span></a>
+<a name="181"><span class="line">     181: </span></a>This #define supports PREQ1223.
+<a name="182"><span class="line">     182: </span></a>*/</span>
+<a name="183"><span class="line">     183: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_IPSEC_IKE_V2_0"><span class="b">SYMBIAN_NETWORKING_IPSEC_IKE_V2</span></a>
+<a name="184"><span class="line">     184: </span></a>
+<a name="185"><span class="line">     185: </span></a><span class="k">/**
+<a name="186"><span class="line">     186: </span></a>@publishedPartner
+<a name="187"><span class="line">     187: </span></a>@released
+<a name="188"><span class="line">     188: </span></a>
+<a name="189"><span class="line">     189: </span></a>SYMBIAN_UIKON_UNIFICATION
+<a name="190"><span class="line">     190: </span></a>
+<a name="191"><span class="line">     191: </span></a>When SYMBIAN_UIKON_UNIFICATION is defined, the existing 
+<a name="192"><span class="line">     192: </span></a>CEikSrvAppUiBase class is replaced with a customisable class
+<a name="193"><span class="line">     193: </span></a>provided by the System GUI. 
+<a name="194"><span class="line">     194: </span></a>
+<a name="195"><span class="line">     195: </span></a>This #define supports PREQ819 and PREQ826
+<a name="196"><span class="line">     196: </span></a>*/</span>
+<a name="197"><span class="line">     197: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_UIKON_UNIFICATION_0"><span class="b">SYMBIAN_UIKON_UNIFICATION</span></a>
+<a name="198"><span class="line">     198: </span></a>
+<a name="199"><span class="line">     199: </span></a><span class="k">/**
+<a name="200"><span class="line">     200: </span></a>@publishedAll
+<a name="201"><span class="line">     201: </span></a>@released
+<a name="202"><span class="line">     202: </span></a>
+<a name="203"><span class="line">     203: </span></a>__SECURITY_PLATSEC_ARCH__
+<a name="204"><span class="line">     204: </span></a>
+<a name="205"><span class="line">     205: </span></a>If this macro is defined, then platform security aware security services 
+<a name="206"><span class="line">     206: </span></a>APIs will be present.  This includes architectural changes to several 
+<a name="207"><span class="line">     207: </span></a>components.
+<a name="208"><span class="line">     208: </span></a>
+<a name="209"><span class="line">     209: </span></a>If this macro is not defined, the original version (since 8.0) of the 
+<a name="210"><span class="line">     210: </span></a>security services APIs will be present. 
+<a name="211"><span class="line">     211: </span></a>
+<a name="212"><span class="line">     212: </span></a>The following components are affected:
+<a name="213"><span class="line">     213: </span></a>  cryptotokens
+<a name="214"><span class="line">     214: </span></a>  certman
+<a name="215"><span class="line">     215: </span></a>  filetokens
+<a name="216"><span class="line">     216: </span></a>
+<a name="217"><span class="line">     217: </span></a>*/</span>
+<a name="218"><span class="line">     218: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__SECURITY_PLATSEC_ARCH___0"><span class="b">__SECURITY_PLATSEC_ARCH__</span></a>
+<a name="219"><span class="line">     219: </span></a>
+<a name="220"><span class="line">     220: </span></a><span class="k">/**
+<a name="221"><span class="line">     221: </span></a>SYMBIAN_ECAM_CHUNKAPI
+<a name="222"><span class="line">     222: </span></a>
+<a name="223"><span class="line">     223: </span></a>@publishedAll
+<a name="224"><span class="line">     224: </span></a>@released
+<a name="225"><span class="line">     225: </span></a>
+<a name="226"><span class="line">     226: </span></a>Specifies that an extended API will be used in the multimedia 
+<a name="227"><span class="line">     227: </span></a>camera interface. This has a v2 observer which allows camera data 
+<a name="228"><span class="line">     228: </span></a>to be returned without buffer copy, and also allows clients to set 
+<a name="229"><span class="line">     229: </span></a>camera access priority
+<a name="230"><span class="line">     230: </span></a>
+<a name="231"><span class="line">     231: </span></a>@see CCamera
+<a name="232"><span class="line">     232: </span></a>@see MCameraObserver2
+<a name="233"><span class="line">     233: </span></a>
+<a name="234"><span class="line">     234: </span></a>This #define supports PREQ799.
+<a name="235"><span class="line">     235: </span></a>*/</span>
+<a name="236"><span class="line">     236: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ECAM_CHUNKAPI_0"><span class="b">SYMBIAN_ECAM_CHUNKAPI</span></a>
+<a name="237"><span class="line">     237: </span></a>
+<a name="238"><span class="line">     238: </span></a><span class="k">/**
+<a name="239"><span class="line">     239: </span></a>@publishedAll
+<a name="240"><span class="line">     240: </span></a>@released
+<a name="241"><span class="line">     241: </span></a>
+<a name="242"><span class="line">     242: </span></a>SYMBIAN_SECURE_ECOM
+<a name="243"><span class="line">     243: </span></a>
+<a name="244"><span class="line">     244: </span></a>When SYMBIAN_SECURE_ECOM is not defined, ECOM plugins are discovered by 
+<a name="245"><span class="line">     245: </span></a>searching for DLLs in System\libs\plugins, and inferring the name of 
+<a name="246"><span class="line">     246: </span></a>the resource file from the UID3 of the DLL.
+<a name="247"><span class="line">     247: </span></a>
+<a name="248"><span class="line">     248: </span></a>When SYMBIAN_SECURE_ECOM is defined, ECOM plugins will also be discovered
+<a name="249"><span class="line">     249: </span></a>by searching for resource files in \Resource\Plugins, and inferring the
+<a name="250"><span class="line">     250: </span></a>name of the DLL from the name of the resource file. When platform security
+<a name="251"><span class="line">     251: </span></a>is fully enforced, only this new style of discovery will work.
+<a name="252"><span class="line">     252: </span></a>*/</span>
+<a name="253"><span class="line">     253: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SECURE_ECOM_0"><span class="b">SYMBIAN_SECURE_ECOM</span></a>
+<a name="254"><span class="line">     254: </span></a>
+<a name="255"><span class="line">     255: </span></a><span class="k">/**
+<a name="256"><span class="line">     256: </span></a>@publishedAll
+<a name="257"><span class="line">     257: </span></a>@released
+<a name="258"><span class="line">     258: </span></a>
+<a name="259"><span class="line">     259: </span></a>SYMBIAN_INETPROTUTILS_RFC3986
+<a name="260"><span class="line">     260: </span></a>
+<a name="261"><span class="line">     261: </span></a>Description:
+<a name="262"><span class="line">     262: </span></a>If SYMBIAN_INETPROTUTILS_RFC3986 is defined, the Internet 
+<a name="263"><span class="line">     263: </span></a>Protocol Utility Library supports RFC 3986, which increases 
+<a name="264"><span class="line">     264: </span></a>the set of reserved characters.
+<a name="265"><span class="line">     265: </span></a>
+<a name="266"><span class="line">     266: </span></a>@see EscapeUtils::IsExcludedChar
+<a name="267"><span class="line">     267: </span></a>
+<a name="268"><span class="line">     268: </span></a>This #define implements BR2009.
+<a name="269"><span class="line">     269: </span></a>*/</span>
+<a name="270"><span class="line">     270: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_INETPROTUTILS_RFC3986_0"><span class="b">SYMBIAN_INETPROTUTILS_RFC3986</span></a>
+<a name="271"><span class="line">     271: </span></a>
+<a name="272"><span class="line">     272: </span></a><span class="k">/**
+<a name="273"><span class="line">     273: </span></a>@publishedPartner
+<a name="274"><span class="line">     274: </span></a>@released
+<a name="275"><span class="line">     275: </span></a>
+<a name="276"><span class="line">     276: </span></a>SYMBIAN_FONT_METRICS_V2 
+<a name="277"><span class="line">     277: </span></a>
+<a name="278"><span class="line">     278: </span></a>If this is defined, then classes which derive from COpenFont (usually 
+<a name="279"><span class="line">     279: </span></a>these are part of a font rasterizer implementation) must set the 
+<a name="280"><span class="line">     280: </span></a>protected member variables:
+<a name="281"><span class="line">     281: </span></a>iFontAscentOfCapitals
+<a name="282"><span class="line">     282: </span></a>iFontAscentIncAccents
+<a name="283"><span class="line">     283: </span></a>iFontDescent
+<a name="284"><span class="line">     284: </span></a>iFontLineGap
+<a name="285"><span class="line">     285: </span></a>to appropriate values during the creation of a font. 
+<a name="286"><span class="line">     286: </span></a>If this macro is not defined then these member variables do not exist.
+<a name="287"><span class="line">     287: </span></a>
+<a name="288"><span class="line">     288: </span></a>@see COpenFont
+<a name="289"><span class="line">     289: </span></a>*/</span>
+<a name="290"><span class="line">     290: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_FONT_METRICS_V2_0"><span class="b">SYMBIAN_FONT_METRICS_V2</span></a>
+<a name="291"><span class="line">     291: </span></a>
+<a name="292"><span class="line">     292: </span></a><span class="k">/**
+<a name="293"><span class="line">     293: </span></a>@publishedAll
+<a name="294"><span class="line">     294: </span></a>@released
+<a name="295"><span class="line">     295: </span></a>
+<a name="296"><span class="line">     296: </span></a>__OBEX_USER_DEFINED_HEADERS__
+<a name="297"><span class="line">     297: </span></a>
+<a name="298"><span class="line">     298: </span></a>If __OBEX_USER_DEFINED_HEADERS__ is defined then the new API support for extended Headers will be available.
+<a name="299"><span class="line">     299: </span></a>This new support includes USER DEFINED HEADERS and the COUNT header.
+<a name="300"><span class="line">     300: </span></a>If this functionality is compiled out then the old API is available as before.
+<a name="301"><span class="line">     301: </span></a>For more information on see documents shown below.
+<a name="302"><span class="line">     302: </span></a>
+<a name="303"><span class="line">     303: </span></a>@see SGL.GT171.097 - Obex Header Extension how to
+<a name="304"><span class="line">     304: </span></a>@see SGL.GT171.095 - Obex Extension Design Document
+<a name="305"><span class="line">     305: </span></a>*/</span>
+<a name="306"><span class="line">     306: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__OBEX_USER_DEFINED_HEADERS___0"><span class="b">__OBEX_USER_DEFINED_HEADERS__</span></a>
+<a name="307"><span class="line">     307: </span></a>
+<a name="308"><span class="line">     308: </span></a><span class="k">/**
+<a name="309"><span class="line">     309: </span></a>@publishedPartner
+<a name="310"><span class="line">     310: </span></a>@released
+<a name="311"><span class="line">     311: </span></a>
+<a name="312"><span class="line">     312: </span></a>SYMBIAN_CENTREP_NOC
+<a name="313"><span class="line">     313: </span></a>
+<a name="314"><span class="line">     314: </span></a>If SYMBIAN_CENTREP_NOC is defined, the Central Repository 
+<a name="315"><span class="line">     315: </span></a>includes Notify-Only Client Optimization. This will cause 
+<a name="316"><span class="line">     316: </span></a>repositories to be unloaded after a timeout even if the 
+<a name="317"><span class="line">     317: </span></a>connection is still open.
+<a name="318"><span class="line">     318: </span></a>
+<a name="319"><span class="line">     319: </span></a>This #define supports PREQ1228. 
+<a name="320"><span class="line">     320: </span></a>*/</span>
+<a name="321"><span class="line">     321: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CENTREP_NOC_0"><span class="b">SYMBIAN_CENTREP_NOC</span></a>
+<a name="322"><span class="line">     322: </span></a>
+<a name="323"><span class="line">     323: </span></a><span class="k">/**
+<a name="324"><span class="line">     324: </span></a>@publishedPartner
+<a name="325"><span class="line">     325: </span></a>@released
+<a name="326"><span class="line">     326: </span></a>@since 8.1
+<a name="327"><span class="line">     327: </span></a>
+<a name="328"><span class="line">     328: </span></a>SYMBIAN_BLUETOOTH_REQUIRES_HCI_FLUSH_COMPLETE_EVENT 
+<a name="329"><span class="line">     329: </span></a>
+<a name="330"><span class="line">     330: </span></a>If this is defined, the MHCIEventObserver class must implement
+<a name="331"><span class="line">     331: </span></a>the FlushCompleteEvent virtual function, which will be used by 
+<a name="332"><span class="line">     332: </span></a>the link manager to send Flush Complete events up to the stack. 
+<a name="333"><span class="line">     333: </span></a>If this macro is not defined, Flush Complete events will be discarded.
+<a name="334"><span class="line">     334: </span></a>
+<a name="335"><span class="line">     335: </span></a>@see MHCIEventObserver
+<a name="336"><span class="line">     336: </span></a>@see CHCIFacade
+<a name="337"><span class="line">     337: </span></a>*/</span>
+<a name="338"><span class="line">     338: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_BLUETOOTH_REQUIRES_HCI_FLUSH_COMPLETE_EVENT_0"><span class="b">SYMBIAN_BLUETOOTH_REQUIRES_HCI_FLUSH_COMPLETE_EVENT</span></a>
+<a name="339"><span class="line">     339: </span></a>
+<a name="340"><span class="line">     340: </span></a><span class="k">/**
+<a name="341"><span class="line">     341: </span></a>@publishedAll
+<a name="342"><span class="line">     342: </span></a>@released
+<a name="343"><span class="line">     343: </span></a>
+<a name="344"><span class="line">     344: </span></a>SYMBIAN_MULTIMEDIA_CODEC_API
+<a name="345"><span class="line">     345: </span></a>
+<a name="346"><span class="line">     346: </span></a>If SYMBIAN_MULTIMEDIA_CODEC_API is defined then support is 
+<a name="347"><span class="line">     347: </span></a>available for PREQ1024 delivered Processing Unit or 
+<a name="348"><span class="line">     348: </span></a>OpenMAX based codecs and Multimedia hardware devices.
+<a name="349"><span class="line">     349: </span></a>*/</span>
+<a name="350"><span class="line">     350: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MULTIMEDIA_CODEC_API_0"><span class="b">SYMBIAN_MULTIMEDIA_CODEC_API</span></a>
+<a name="351"><span class="line">     351: </span></a><span class="k">/** 
+<a name="352"><span class="line">     352: </span></a>@publishedAll
+<a name="353"><span class="line">     353: </span></a>@released
+<a name="354"><span class="line">     354: </span></a>
+<a name="355"><span class="line">     355: </span></a>
+<a name="356"><span class="line">     356: </span></a>SYMBIAN_MULTIMEDIA_SUBTITLE_SUPPORT 
+<a name="357"><span class="line">     357: </span></a>
+<a name="358"><span class="line">     358: </span></a>Provides support control the presentation of subtitle and closed captioning text
+<a name="359"><span class="line">     359: </span></a>from video playback controllers in the Multimedia Framework as part of @see CVideoPlayerUtility2.
+<a name="360"><span class="line">     360: </span></a>Note that this support is dependent on the following being present in ROM: 
+<a name="361"><span class="line">     361: </span></a>- GCE version of Graphics (migration component)
+<a name="362"><span class="line">     362: </span></a>- GCE version of Videorender (optional component).
+<a name="363"><span class="line">     363: </span></a>- The Subtitle plugin (optional component). 
+<a name="364"><span class="line">     364: </span></a>
+<a name="365"><span class="line">     365: </span></a>This #define supports PREQ1939 
+<a name="366"><span class="line">     366: </span></a>*/</span> 
+<a name="367"><span class="line">     367: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MULTIMEDIA_SUBTITLE_SUPPORT_0"><span class="b">SYMBIAN_MULTIMEDIA_SUBTITLE_SUPPORT</span></a>
+<a name="368"><span class="line">     368: </span></a>
+<a name="369"><span class="line">     369: </span></a><span class="k">/**
+<a name="370"><span class="line">     370: </span></a>@publishedAll
+<a name="371"><span class="line">     371: </span></a>@released
+<a name="372"><span class="line">     372: </span></a>
+<a name="373"><span class="line">     373: </span></a>__MESSAGING_API_V2__
+<a name="374"><span class="line">     374: </span></a>
+<a name="375"><span class="line">     375: </span></a>If __MESSAGING_API_V2__ is defined then new functionality 
+<a name="376"><span class="line">     376: </span></a>is available within the Messaging sub-system to support a 
+<a name="377"><span class="line">     377: </span></a>platform secured OS, e.g. the Attachment API.
+<a name="378"><span class="line">     378: </span></a>*/</span>
+<a name="379"><span class="line">     379: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__MESSAGING_API_V2___0"><span class="b">__MESSAGING_API_V2__</span></a>
+<a name="380"><span class="line">     380: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__HIDE_MESSAGING_API_V1___0"><span class="b">__HIDE_MESSAGING_API_V1__</span></a>
+<a name="381"><span class="line">     381: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__REMOVE_MESSAGING_API_V1___0"><span class="b">__REMOVE_MESSAGING_API_V1__</span></a>
+<a name="382"><span class="line">     382: </span></a>
+<a name="383"><span class="line">     383: </span></a><span class="k">/**
+<a name="384"><span class="line">     384: </span></a>@publishedPartner
+<a name="385"><span class="line">     385: </span></a>@released
+<a name="386"><span class="line">     386: </span></a>
+<a name="387"><span class="line">     387: </span></a>SYMBIAN_BOOKMARK_DATABASE
+<a name="388"><span class="line">     388: </span></a>
+<a name="389"><span class="line">     389: </span></a>The Bookmark Database is an API used to provide system-wide 
+<a name="390"><span class="line">     390: </span></a>storage and management functionality for URI bookmarks. 
+<a name="391"><span class="line">     391: </span></a>If defined, this macro indicates that the Bookmark Database 
+<a name="392"><span class="line">     392: </span></a>API is present in the platform.
+<a name="393"><span class="line">     393: </span></a>*/</span>
+<a name="394"><span class="line">     394: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_BOOKMARK_DATABASE_0"><span class="b">SYMBIAN_BOOKMARK_DATABASE</span></a>
+<a name="395"><span class="line">     395: </span></a>
+<a name="396"><span class="line">     396: </span></a><span class="k">/**
+<a name="397"><span class="line">     397: </span></a>@publishedPartner
+<a name="398"><span class="line">     398: </span></a>@released
+<a name="399"><span class="line">     399: </span></a>
+<a name="400"><span class="line">     400: </span></a>SYMBIAN_NETWORKING_UMTSR5
+<a name="401"><span class="line">     401: </span></a>
+<a name="402"><span class="line">     402: </span></a>If SYMBIAN_NETWORKING_UMTSR5 is defined support for the QoS 
+<a name="403"><span class="line">     403: </span></a>and IMS parameters introduced by Release 5 of the 3GPP 
+<a name="404"><span class="line">     404: </span></a>specification will be enabled. This involves a BC break in 
+<a name="405"><span class="line">     405: </span></a>TContextConfig - see BR1582.1 for details.
+<a name="406"><span class="line">     406: </span></a>
+<a name="407"><span class="line">     407: </span></a>@see TContextConfig
+<a name="408"><span class="line">     408: </span></a>
+<a name="409"><span class="line">     409: </span></a>This #define supports PREQ192 and PREQ635.
+<a name="410"><span class="line">     410: </span></a>*/</span>
+<a name="411"><span class="line">     411: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_UMTSR5_0"><span class="b">SYMBIAN_NETWORKING_UMTSR5</span></a>
+<a name="412"><span class="line">     412: </span></a>
+<a name="413"><span class="line">     413: </span></a><span class="k">/**
+<a name="414"><span class="line">     414: </span></a>@publishedPartner
+<a name="415"><span class="line">     415: </span></a>@released
+<a name="416"><span class="line">     416: </span></a>
+<a name="417"><span class="line">     417: </span></a>SYMBIAN_NETWORKING_3GPPDEFAULTQOS
+<a name="418"><span class="line">     418: </span></a>
+<a name="419"><span class="line">     419: </span></a>If SYMBIAN_NETWORKING_3GPPDEFAULTQOS is defined, support 
+<a name="420"><span class="line">     420: </span></a>for QoS modification on the default PDP context will be 
+<a name="421"><span class="line">     421: </span></a>enabled via the RSubconnection API.
+<a name="422"><span class="line">     422: </span></a>
+<a name="423"><span class="line">     423: </span></a>This #define supports PREQ870.
+<a name="424"><span class="line">     424: </span></a>*/</span>
+<a name="425"><span class="line">     425: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_3GPPDEFAULTQOS_0"><span class="b">SYMBIAN_NETWORKING_3GPPDEFAULTQOS</span></a>
+<a name="426"><span class="line">     426: </span></a>
+<a name="427"><span class="line">     427: </span></a>
+<a name="428"><span class="line">     428: </span></a><span class="k">/**
+<a name="429"><span class="line">     429: </span></a>SYMBIAN_STAGED_SYSTEM_STARTUP
+<a name="430"><span class="line">     430: </span></a>
+<a name="431"><span class="line">     431: </span></a>@publishedPartner
+<a name="432"><span class="line">     432: </span></a>@released
+<a name="433"><span class="line">     433: </span></a>
+<a name="434"><span class="line">     434: </span></a>When SYMBIAN_STAGED_SYSTEM_STARTUP is defined, the staged 
+<a name="435"><span class="line">     435: </span></a>start-up architecture has been introduced into the OS and 
+<a name="436"><span class="line">     436: </span></a>&apos;Start-up State Aware&apos; components can make use of the 
+<a name="437"><span class="line">     437: </span></a>architecture.
+<a name="438"><span class="line">     438: </span></a>
+<a name="439"><span class="line">     439: </span></a>This #define supports PREQ 810.
+<a name="440"><span class="line">     440: </span></a>*/</span>
+<a name="441"><span class="line">     441: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_STAGED_SYSTEM_STARTUP_0"><span class="b">SYMBIAN_STAGED_SYSTEM_STARTUP</span></a>
+<a name="442"><span class="line">     442: </span></a>
+<a name="443"><span class="line">     443: </span></a><span class="k">/**
+<a name="444"><span class="line">     444: </span></a>@publishedAll
+<a name="445"><span class="line">     445: </span></a>@released
+<a name="446"><span class="line">     446: </span></a>
+<a name="447"><span class="line">     447: </span></a>__HIDE_IPC_V1__
+<a name="448"><span class="line">     448: </span></a>
+<a name="449"><span class="line">     449: </span></a>If __HIDE_IPC_V1__ is defined then the deprecated insecure IPC APIs will be removed from various Symbian OS header files. Classes affected include CSession, CServer, RMessage and RMessageptr.
+<a name="450"><span class="line">     450: </span></a>
+<a name="451"><span class="line">     451: </span></a>For more information see the document listed below.
+<a name="452"><span class="line">     452: </span></a>
+<a name="453"><span class="line">     453: </span></a>@see SMG.SM0005.004 - Platform Security Development for Zephyr
+<a name="454"><span class="line">     454: </span></a>@see CSession
+<a name="455"><span class="line">     455: </span></a>@see CServer
+<a name="456"><span class="line">     456: </span></a>@see RMessage
+<a name="457"><span class="line">     457: </span></a>@see RMessagePtr
+<a name="458"><span class="line">     458: </span></a>*/</span>
+<a name="459"><span class="line">     459: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__HIDE_IPC_V1___0"><span class="b">__HIDE_IPC_V1__</span></a>
+<a name="460"><span class="line">     460: </span></a>
+<a name="461"><span class="line">     461: </span></a><span class="k">/**
+<a name="462"><span class="line">     462: </span></a>@publishedPartner
+<a name="463"><span class="line">     463: </span></a>@released
+<a name="464"><span class="line">     464: </span></a>
+<a name="465"><span class="line">     465: </span></a>SYMBIAN_NETWORKING_DHCPSERVER
+<a name="466"><span class="line">     466: </span></a>
+<a name="467"><span class="line">     467: </span></a>If SYMBIAN_NETWORKING_DHCPSERVER is defined, Symbian OS includes a
+<a name="468"><span class="line">     468: </span></a>simplified DHCPv4 server capable of dealing with single client.
+<a name="469"><span class="line">     469: </span></a>
+<a name="470"><span class="line">     470: </span></a>This #define provides functionality to support PREQ749.
+<a name="471"><span class="line">     471: </span></a>*/</span>
+<a name="472"><span class="line">     472: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_DHCPSERVER_0"><span class="b">SYMBIAN_NETWORKING_DHCPSERVER</span></a>
+<a name="473"><span class="line">     473: </span></a>
+<a name="474"><span class="line">     474: </span></a><span class="k">/**  
+<a name="475"><span class="line">     475: </span></a>@publishedAll 
+<a name="476"><span class="line">     476: </span></a>@released
+<a name="477"><span class="line">     477: </span></a>
+<a name="478"><span class="line">     478: </span></a>SYMBIAN_REMOVE_TRIVIAL_ENCRYPTION
+<a name="479"><span class="line">     479: </span></a>
+<a name="480"><span class="line">     480: </span></a>This macro removes the trivial encryption APIs that are exported by EUSER. 
+<a name="481"><span class="line">     481: </span></a>
+<a name="482"><span class="line">     482: </span></a>See BR1320 for more details
+<a name="483"><span class="line">     483: </span></a>
+<a name="484"><span class="line">     484: </span></a>*/</span>
+<a name="485"><span class="line">     485: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_REMOVE_TRIVIAL_ENCRYPTION_0"><span class="b">SYMBIAN_REMOVE_TRIVIAL_ENCRYPTION</span></a>
+<a name="486"><span class="line">     486: </span></a>
+<a name="487"><span class="line">     487: </span></a><span class="k">/**
+<a name="488"><span class="line">     488: </span></a>@internalTechnology
+<a name="489"><span class="line">     489: </span></a>
+<a name="490"><span class="line">     490: </span></a>SYMBIAN_WAPPUSH_WHITELIST_BLACKLIST
+<a name="491"><span class="line">     491: </span></a>
+<a name="492"><span class="line">     492: </span></a>Description:
+<a name="493"><span class="line">     493: </span></a>If SYMBIAN_WAPPUSH_WHITELIST_BLACKLIST is defined, the WAP Push
+<a name="494"><span class="line">     494: </span></a>watcher compares the origin of Push messages against URIs in a
+<a name="495"><span class="line">     495: </span></a>&quot;White list&quot; and &quot;Black list&quot;.
+<a name="496"><span class="line">     496: </span></a>
+<a name="497"><span class="line">     497: </span></a>This #define supports PREQ1505
+<a name="498"><span class="line">     498: </span></a>*/</span>
+<a name="499"><span class="line">     499: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_WAPPUSH_WHITELIST_BLACKLIST_0"><span class="b">SYMBIAN_WAPPUSH_WHITELIST_BLACKLIST</span></a>
+<a name="500"><span class="line">     500: </span></a>
+<a name="501"><span class="line">     501: </span></a><span class="k">/**
+<a name="502"><span class="line">     502: </span></a>@publishedPartner
+<a name="503"><span class="line">     503: </span></a>@released
+<a name="504"><span class="line">     504: </span></a>
+<a name="505"><span class="line">     505: </span></a>SYMBIAN_FLEXIBLE_ALARM
+<a name="506"><span class="line">     506: </span></a>
+<a name="507"><span class="line">     507: </span></a>When this macro is defined, Calendar Interim API, Alarm server and UIKON 
+<a name="508"><span class="line">     508: </span></a>Alert Server will support additional functionality.
+<a name="509"><span class="line">     509: </span></a>- Extra data can be attached to calendar alarm and allow UI app 
+<a name="510"><span class="line">     510: </span></a>to retrieve the associated data.
+<a name="511"><span class="line">     511: </span></a>- The Alarm server can send multiple expired alarms to Alert Server without 
+<a name="512"><span class="line">     512: </span></a>waiting for the previous alarm acknowledged first
+<a name="513"><span class="line">     513: </span></a>- A Resource file can be used to configure alarm play intervals and durations, 
+<a name="514"><span class="line">     514: </span></a>or to disable alarm sound control.
+<a name="515"><span class="line">     515: </span></a>
+<a name="516"><span class="line">     516: </span></a>This #define supports PREQ1118
+<a name="517"><span class="line">     517: </span></a>*/</span>
+<a name="518"><span class="line">     518: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_FLEXIBLE_ALARM_0"><span class="b">SYMBIAN_FLEXIBLE_ALARM</span></a>
+<a name="519"><span class="line">     519: </span></a>
+<a name="520"><span class="line">     520: </span></a><span class="k">/**
+<a name="521"><span class="line">     521: </span></a>@publishedPartner
+<a name="522"><span class="line">     522: </span></a>@released
+<a name="523"><span class="line">     523: </span></a>
+<a name="524"><span class="line">     524: </span></a>SYMBIAN_PKCS12
+<a name="525"><span class="line">     525: </span></a>
+<a name="526"><span class="line">     526: </span></a>If SYMBIAN_PKCS12 is defined, the PKCS#12 Key Derivation 
+<a name="527"><span class="line">     527: </span></a>Algorithm is supplied.
+<a name="528"><span class="line">     528: </span></a>
+<a name="529"><span class="line">     529: </span></a>This #define supports PREQ1054. 
+<a name="530"><span class="line">     530: </span></a>*/</span>
+<a name="531"><span class="line">     531: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_PKCS12_0"><span class="b">SYMBIAN_PKCS12</span></a>
+<a name="532"><span class="line">     532: </span></a>
+<a name="533"><span class="line">     533: </span></a><span class="k">/**
+<a name="534"><span class="line">     534: </span></a>@publishedAll
+<a name="535"><span class="line">     535: </span></a>@released
+<a name="536"><span class="line">     536: </span></a>
+<a name="537"><span class="line">     537: </span></a>SYMBIAN_MMF_AUTOPAUSE_RESUME
+<a name="538"><span class="line">     538: </span></a>
+<a name="539"><span class="line">     539: </span></a>This #define enables extra features in the MMF APIs for auto pause 
+<a name="540"><span class="line">     540: </span></a>and resume of audio streams.
+<a name="541"><span class="line">     541: </span></a>*/</span>
+<a name="542"><span class="line">     542: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MMF_AUTOPAUSE_RESUME_0"><span class="b">SYMBIAN_MMF_AUTOPAUSE_RESUME</span></a>
+<a name="543"><span class="line">     543: </span></a>
+<a name="544"><span class="line">     544: </span></a><span class="k">/**
+<a name="545"><span class="line">     545: </span></a>@publishedAll
+<a name="546"><span class="line">     546: </span></a>@released
+<a name="547"><span class="line">     547: </span></a>
+<a name="548"><span class="line">     548: </span></a>__SECURE_BACKUP__
+<a name="549"><span class="line">     549: </span></a>
+<a name="550"><span class="line">     550: </span></a>If __SECURE_BACKUP__ is defined, the Secure Backup server replaces
+<a name="551"><span class="line">     551: </span></a>the use of SCRemFs for backup and restore, changing the backup protocol.
+<a name="552"><span class="line">     552: </span></a>Applications which have private data need to provide additional backup 
+<a name="553"><span class="line">     553: </span></a>registration files, and may use Publish &amp; Subscribe to receive 
+<a name="554"><span class="line">     554: </span></a>notification of backup requests.
+<a name="555"><span class="line">     555: </span></a>
+<a name="556"><span class="line">     556: </span></a>This #define supports PREQ716 - Provide support for secure backup and 
+<a name="557"><span class="line">     557: </span></a>restore for licensee PC Connectivity software 
+<a name="558"><span class="line">     558: </span></a>*/</span>
+<a name="559"><span class="line">     559: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__SECURE_BACKUP___0"><span class="b">__SECURE_BACKUP__</span></a>
+<a name="560"><span class="line">     560: </span></a>
+<a name="561"><span class="line">     561: </span></a><span class="k">/** 
+<a name="562"><span class="line">     562: </span></a>@publishedAll
+<a name="563"><span class="line">     563: </span></a>@released
+<a name="564"><span class="line">     564: </span></a>
+<a name="565"><span class="line">     565: </span></a>SYMBIAN_NETWORKING_REMOVE_RGENERIC
+<a name="566"><span class="line">     566: </span></a>
+<a name="567"><span class="line">     567: </span></a>If this macro is defined the deprecated APIs RGenericAgent, 
+<a name="568"><span class="line">     568: </span></a>RNif, RNifMonitor and Nifman are removed. All of these APIs, 
+<a name="569"><span class="line">     569: </span></a>exported by NIFMAN, have been deprecated and replaced by 
+<a name="570"><span class="line">     570: </span></a>the RConnection API exported by ESOCK.
+<a name="571"><span class="line">     571: </span></a>
+<a name="572"><span class="line">     572: </span></a>@see Break request BR1070 
+<a name="573"><span class="line">     573: </span></a>*/</span> 
+<a name="574"><span class="line">     574: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_REMOVE_RGENERIC_0"><span class="b">SYMBIAN_NETWORKING_REMOVE_RGENERIC</span></a>
+<a name="575"><span class="line">     575: </span></a>
+<a name="576"><span class="line">     576: </span></a><span class="k">/**
+<a name="577"><span class="line">     577: </span></a>@publishedPartner
+<a name="578"><span class="line">     578: </span></a>@released 9.0
+<a name="579"><span class="line">     579: </span></a>
+<a name="580"><span class="line">     580: </span></a>SYMBIAN_NETWORKING_RSUBCONNECTION
+<a name="581"><span class="line">     581: </span></a>
+<a name="582"><span class="line">     582: </span></a>If SYMBIAN_NETWORKING_RSUBCONNECTION is defined, the RQosChannel API is
+<a name="583"><span class="line">     583: </span></a>removed, and the RSubConnection API exported by ESOCK must be used instead.
+<a name="584"><span class="line">     584: </span></a>
+<a name="585"><span class="line">     585: </span></a>This #define supports PREQ 26.
+<a name="586"><span class="line">     586: </span></a>*/</span> 
+<a name="587"><span class="line">     587: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_RSUBCONNECTION_0"><span class="b">SYMBIAN_NETWORKING_RSUBCONNECTION</span></a>
+<a name="588"><span class="line">     588: </span></a>
+<a name="589"><span class="line">     589: </span></a><span class="k">/**
+<a name="590"><span class="line">     590: </span></a>@publishedAll
+<a name="591"><span class="line">     591: </span></a>@released
+<a name="592"><span class="line">     592: </span></a>
+<a name="593"><span class="line">     593: </span></a>SYMBIAN_HIDE_COREAPPS_API_V1
+<a name="594"><span class="line">     594: </span></a>
+<a name="595"><span class="line">     595: </span></a>If SYMBIAN_HIDE_COREAPPS_API_V1 is defined then the insecure CoreApps APIs
+<a name="596"><span class="line">     596: </span></a>will be removed from various Symbian OS header files. Components affected are 
+<a name="597"><span class="line">     597: </span></a>Contacts Model, Agenda Model and World Server.
+<a name="598"><span class="line">     598: </span></a>
+<a name="599"><span class="line">     599: </span></a>The related define SYMBIAN_REMOVE_COREAPPS_API_V1 removes the underlying implementations,
+<a name="600"><span class="line">     600: </span></a>causing a binary compatibility break to match the source compatibility break.
+<a name="601"><span class="line">     601: </span></a>*/</span>
+<a name="602"><span class="line">     602: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_HIDE_COREAPPS_API_V1_0"><span class="b">SYMBIAN_HIDE_COREAPPS_API_V1</span></a>
+<a name="603"><span class="line">     603: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_REMOVE_COREAPPS_API_V1_0"><span class="b">SYMBIAN_REMOVE_COREAPPS_API_V1</span></a>
+<a name="604"><span class="line">     604: </span></a>
+<a name="605"><span class="line">     605: </span></a><span class="k">/**
+<a name="606"><span class="line">     606: </span></a>@publishedAll
+<a name="607"><span class="line">     607: </span></a>@released
+<a name="608"><span class="line">     608: </span></a>
+<a name="609"><span class="line">     609: </span></a>__UI_FRAMEWORKS_V2__
+<a name="610"><span class="line">     610: </span></a>
+<a name="611"><span class="line">     611: </span></a>If __UI_FRAMEWORKS_V2__ is defined then PlatSec aware UI Frameworks API&apos;s will be available. 
+<a name="612"><span class="line">     612: </span></a>The following frameworks will be affected:
+<a name="613"><span class="line">     613: </span></a>
+<a name="614"><span class="line">     614: </span></a>Applications 
+<a name="615"><span class="line">     615: </span></a>File Recognizers
+<a name="616"><span class="line">     616: </span></a>Data Recognizers
+<a name="617"><span class="line">     617: </span></a>Notifiers
+<a name="618"><span class="line">     618: </span></a>Control Panel Plugins
+<a name="619"><span class="line">     619: </span></a>Feps
+<a name="620"><span class="line">     620: </span></a>App-initialization (CEikLibrary)
+<a name="621"><span class="line">     621: </span></a>Converters
+<a name="622"><span class="line">     622: </span></a>Error-Resolving
+<a name="623"><span class="line">     623: </span></a>*/</span>
+<a name="624"><span class="line">     624: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__UI_FRAMEWORKS_V2___0"><span class="b">__UI_FRAMEWORKS_V2__</span></a>
+<a name="625"><span class="line">     625: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_HIDE_UI_FRAMEWORKS_V1_0"><span class="b">SYMBIAN_HIDE_UI_FRAMEWORKS_V1</span></a>
+<a name="626"><span class="line">     626: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_REMOVE_UI_FRAMEWORKS_V1_0"><span class="b">SYMBIAN_REMOVE_UI_FRAMEWORKS_V1</span></a>
+<a name="627"><span class="line">     627: </span></a>
+<a name="628"><span class="line">     628: </span></a><span class="k">/**
+<a name="629"><span class="line">     629: </span></a>@internalAll
+<a name="630"><span class="line">     630: </span></a>
+<a name="631"><span class="line">     631: </span></a>__BC_FUTURE_PROOFING__
+<a name="632"><span class="line">     632: </span></a>
+<a name="633"><span class="line">     633: </span></a>Support for the implementation of PREQ743 &quot;Introduction of interface 
+<a name="634"><span class="line">     634: </span></a>robustness patterns to support future binary compatibility&quot;.
+<a name="635"><span class="line">     635: </span></a>*/</span>
+<a name="636"><span class="line">     636: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__BC_FUTURE_PROOFING___0"><span class="b">__BC_FUTURE_PROOFING__</span></a>
+<a name="637"><span class="line">     637: </span></a>
+<a name="638"><span class="line">     638: </span></a><span class="k">/** 
+<a name="639"><span class="line">     639: </span></a>@publishedPartner 
+<a name="640"><span class="line">     640: </span></a>@released
+<a name="641"><span class="line">     641: </span></a>
+<a name="642"><span class="line">     642: </span></a>SYMBIAN_TELEPHONY_USAT5 
+<a name="643"><span class="line">     643: </span></a>
+<a name="644"><span class="line">     644: </span></a>If SYMBIAN_TELEPHONY_USAT5 is defined then support for 3GPP 
+<a name="645"><span class="line">     645: </span></a>Release 5 (U)SAT will be enabled. 
+<a name="646"><span class="line">     646: </span></a>
+<a name="647"><span class="line">     647: </span></a>@see RSat::TCallControlV5
+<a name="648"><span class="line">     648: </span></a>
+<a name="649"><span class="line">     649: </span></a>This #define supports PREQ1234.
+<a name="650"><span class="line">     650: </span></a>*/</span> 
+<a name="651"><span class="line">     651: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_TELEPHONY_USAT5_0"><span class="b">SYMBIAN_TELEPHONY_USAT5</span></a>
+<a name="652"><span class="line">     652: </span></a>
+<a name="653"><span class="line">     653: </span></a><span class="k">/**
+<a name="654"><span class="line">     654: </span></a>SYMBIAN_GENERIC_SYSTEM_STARTUP
+<a name="655"><span class="line">     655: </span></a>
+<a name="656"><span class="line">     656: </span></a>@publishedPartner
+<a name="657"><span class="line">     657: </span></a>@released
+<a name="658"><span class="line">     658: </span></a>
+<a name="659"><span class="line">     659: </span></a>This #define enables the generic start-up architecture in
+<a name="660"><span class="line">     660: </span></a>which the System Starter process is responsible for the
+<a name="661"><span class="line">     661: </span></a>controlled startup of the system. 
+<a name="662"><span class="line">     662: </span></a>
+<a name="663"><span class="line">     663: </span></a>The #define supports PREQ808 and PREQ809.
+<a name="664"><span class="line">     664: </span></a>*/</span>
+<a name="665"><span class="line">     665: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_GENERIC_SYSTEM_STARTUP_0"><span class="b">SYMBIAN_GENERIC_SYSTEM_STARTUP</span></a>
+<a name="666"><span class="line">     666: </span></a>
+<a name="667"><span class="line">     667: </span></a><span class="k">/**
+<a name="668"><span class="line">     668: </span></a>@publishedAll
+<a name="669"><span class="line">     669: </span></a>@released
+<a name="670"><span class="line">     670: </span></a>
+<a name="671"><span class="line">     671: </span></a>SYMBIAN_SECURE_PUBLISH_AND_SUBSCRIBE
+<a name="672"><span class="line">     672: </span></a>
+<a name="673"><span class="line">     673: </span></a>If this macro is defined, then the Bluetooth stack reconfigures to take
+<a name="674"><span class="line">     674: </span></a>advantage of security mechanisms in Publish and Subscribe. Any other
+<a name="675"><span class="line">     675: </span></a>components requiring reconfiguration to make use of Publish and Subscribe
+<a name="676"><span class="line">     676: </span></a>can also use this macro.
+<a name="677"><span class="line">     677: </span></a>
+<a name="678"><span class="line">     678: </span></a>*/</span>
+<a name="679"><span class="line">     679: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SECURE_PUBLISH_AND_SUBSCRIBE_0"><span class="b">SYMBIAN_SECURE_PUBLISH_AND_SUBSCRIBE</span></a>
+<a name="680"><span class="line">     680: </span></a>
+<a name="681"><span class="line">     681: </span></a><span class="k">/**
+<a name="682"><span class="line">     682: </span></a>@publishedAll
+<a name="683"><span class="line">     683: </span></a>@released
+<a name="684"><span class="line">     684: </span></a>
+<a name="685"><span class="line">     685: </span></a>SYMBIAN_SECURITY_CAF_RFILE_HANDLE
+<a name="686"><span class="line">     686: </span></a>
+<a name="687"><span class="line">     687: </span></a>If SYMBIAN_SECURITY_CAF_RFILE_HANDLE is defined then it enables the Content Access 
+<a name="688"><span class="line">     688: </span></a>Framework to read from files passed to it as an open RFile handles instead of CAF 
+<a name="689"><span class="line">     689: </span></a>opening the file itself. This allows files stored in a data caged directory to be 
+<a name="690"><span class="line">     690: </span></a>read by CAF.  
+<a name="691"><span class="line">     691: </span></a>
+<a name="692"><span class="line">     692: </span></a>*/</span>
+<a name="693"><span class="line">     693: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SECURITY_CAF_RFILE_HANDLE_0"><span class="b">SYMBIAN_SECURITY_CAF_RFILE_HANDLE</span></a>
+<a name="694"><span class="line">     694: </span></a>
+<a name="695"><span class="line">     695: </span></a><span class="k">/**
+<a name="696"><span class="line">     696: </span></a>@publishedAll
+<a name="697"><span class="line">     697: </span></a>@released
+<a name="698"><span class="line">     698: </span></a>
+<a name="699"><span class="line">     699: </span></a>__JAVACUSTOMINSTALL__
+<a name="700"><span class="line">     700: </span></a>
+<a name="701"><span class="line">     701: </span></a>If __JAVACUSTOMINSTALL__ is defined then an additional UI callback is made after MIDlet
+<a name="702"><span class="line">     702: </span></a>installation has succeeded or failed. This callback is intended for information only and the 
+<a name="703"><span class="line">     703: </span></a>information passed can be licensee customised. The intention would be that the device user
+<a name="704"><span class="line">     704: </span></a>can use this information to diagnose install problems in conjunction with network operators.
+<a name="705"><span class="line">     705: </span></a>If this #define is not present then the callback is not present and is not called.
+<a name="706"><span class="line">     706: </span></a>For more information on see documents shown below.
+<a name="707"><span class="line">     707: </span></a>
+<a name="708"><span class="line">     708: </span></a>@see SGL.GT0188.253 CDMA Java MIDlet Installer Component Design
+<a name="709"><span class="line">     709: </span></a>*/</span>
+<a name="710"><span class="line">     710: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__JAVACUSTOMINSTALL___0"><span class="b">__JAVACUSTOMINSTALL__</span></a>
+<a name="711"><span class="line">     711: </span></a>
+<a name="712"><span class="line">     712: </span></a><span class="k">/**  
+<a name="713"><span class="line">     713: </span></a>@publishedAll 
+<a name="714"><span class="line">     714: </span></a>@released
+<a name="715"><span class="line">     715: </span></a>
+<a name="716"><span class="line">     716: </span></a>SYMBIAN_MDF_API_V2 
+<a name="717"><span class="line">     717: </span></a>
+<a name="718"><span class="line">     718: </span></a>This macro selects the Symbian OS 9.x phase of development in 
+<a name="719"><span class="line">     719: </span></a>the Media Device Framework API, including changes to enable 
+<a name="720"><span class="line">     720: </span></a>MDF Video Decoder Hardware devices to support applications, 
+<a name="721"><span class="line">     721: </span></a>streaming and demux.
+<a name="722"><span class="line">     722: </span></a>
+<a name="723"><span class="line">     723: </span></a>@see CMMFVideoPlayHwDevice
+<a name="724"><span class="line">     724: </span></a>*/</span> 
+<a name="725"><span class="line">     725: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MDF_API_V2_0"><span class="b">SYMBIAN_MDF_API_V2</span></a>
+<a name="726"><span class="line">     726: </span></a>
+<a name="727"><span class="line">     727: </span></a><span class="k">/**
+<a name="728"><span class="line">     728: </span></a>@publishedPartner
+<a name="729"><span class="line">     729: </span></a>@released
+<a name="730"><span class="line">     730: </span></a>
+<a name="731"><span class="line">     731: </span></a>SYMBIAN_SMS_REL6_SUPPORT
+<a name="732"><span class="line">     732: </span></a>
+<a name="733"><span class="line">     733: </span></a>SMS Release 6 support is defined in the 3GPP specifications
+<a name="734"><span class="line">     734: </span></a>(3GPP TS 23.040 V6.5.0 and 3GPP TS 23.038 V6.1.0).
+<a name="735"><span class="line">     735: </span></a>If defined, this macro indicates that Symbian OS SMS APIs
+<a name="736"><span class="line">     736: </span></a>shall support Release 6 functionality.
+<a name="737"><span class="line">     737: </span></a>*/</span>
+<a name="738"><span class="line">     738: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SMS_REL6_SUPPORT_0"><span class="b">SYMBIAN_SMS_REL6_SUPPORT</span></a>
+<a name="739"><span class="line">     739: </span></a>
+<a name="740"><span class="line">     740: </span></a><span class="k">/**
+<a name="741"><span class="line">     741: </span></a>@publishedPartner
+<a name="742"><span class="line">     742: </span></a>@released
+<a name="743"><span class="line">     743: </span></a>
+<a name="744"><span class="line">     744: </span></a>SYMBIAN_SWI_POST_INSTALL_REVOCATION
+<a name="745"><span class="line">     745: </span></a>
+<a name="746"><span class="line">     746: </span></a>When SYMBIAN_SWI_POST_INSTALL_REVOCATION is defined, 
+<a name="747"><span class="line">     747: </span></a>support for the SWI post install revocation service is enabled.
+<a name="748"><span class="line">     748: </span></a>
+<a name="749"><span class="line">     749: </span></a>This #define supports PREQ919
+<a name="750"><span class="line">     750: </span></a>*/</span>
+<a name="751"><span class="line">     751: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SWI_POST_INSTALL_REVOCATION_0"><span class="b">SYMBIAN_SWI_POST_INSTALL_REVOCATION</span></a>
+<a name="752"><span class="line">     752: </span></a>
+<a name="753"><span class="line">     753: </span></a><span class="k">/**
+<a name="754"><span class="line">     754: </span></a>@publishedPartner
+<a name="755"><span class="line">     755: </span></a>@released
+<a name="756"><span class="line">     756: </span></a>
+<a name="757"><span class="line">     757: </span></a>SYMBIAN_TELEPHONY_IMS
+<a name="758"><span class="line">     758: </span></a>
+<a name="759"><span class="line">     759: </span></a>If SYMBIAN_TELEPHONY_IMS is defined then IMS related APIs are included 
+<a name="760"><span class="line">     760: </span></a>in Telephony components.
+<a name="761"><span class="line">     761: </span></a>
+<a name="762"><span class="line">     762: </span></a>This #define supports PREQ61.
+<a name="763"><span class="line">     763: </span></a>*/</span>
+<a name="764"><span class="line">     764: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_TELEPHONY_IMS_0"><span class="b">SYMBIAN_TELEPHONY_IMS</span></a>
+<a name="765"><span class="line">     765: </span></a>
+<a name="766"><span class="line">     766: </span></a><span class="k">/**
+<a name="767"><span class="line">     767: </span></a>@publishedPartner
+<a name="768"><span class="line">     768: </span></a>@released
+<a name="769"><span class="line">     769: </span></a>
+<a name="770"><span class="line">     770: </span></a>SYMBIAN_IGNORE_BIN_TARGETPATH
+<a name="771"><span class="line">     771: </span></a>
+<a name="772"><span class="line">     772: </span></a>When SYMBIAN_IGNORE_BIN_TARGETPATH is defined the TARGETPATH keyword in MMP files is ignored for executables. 
+<a name="773"><span class="line">     773: </span></a>Executables for the emulator instead get built to the default location.
+<a name="774"><span class="line">     774: </span></a>e.g. \epoc32\release\winscw\udeb
+<a name="775"><span class="line">     775: </span></a>*/</span>
+<a name="776"><span class="line">     776: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_IGNORE_BIN_TARGETPATH_0"><span class="b">SYMBIAN_IGNORE_BIN_TARGETPATH</span></a>
+<a name="777"><span class="line">     777: </span></a>
+<a name="778"><span class="line">     778: </span></a><span class="k">/**
+<a name="779"><span class="line">     779: </span></a>@publishedAll 
+<a name="780"><span class="line">     780: </span></a>@released
+<a name="781"><span class="line">     781: </span></a>
+<a name="782"><span class="line">     782: </span></a>SYMBIAN_COMMS_REPOSITORY
+<a name="783"><span class="line">     783: </span></a>
+<a name="784"><span class="line">     784: </span></a>Comms data is now stored in the Central Repository rather than the DBMS server.  
+<a name="785"><span class="line">     785: </span></a>A new module, CommsDat.dll, replaces Commdb.dll as the interface for comms data stored on a device. 
+<a name="786"><span class="line">     786: </span></a>CommsDat has a different API to Commdb, but provides equivalent functionality. 
+<a name="787"><span class="line">     787: </span></a>There is no longer an SQL API for access to Comms Data. 
+<a name="788"><span class="line">     788: </span></a>Commdb tools have been migrated for use with CommsDat 
+<a name="789"><span class="line">     789: </span></a>Commdb is deprecated and should not be used, though it remains as a temporary BC shim on top of CommsDat.   
+<a name="790"><span class="line">     790: </span></a>*/</span>
+<a name="791"><span class="line">     791: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_COMMS_REPOSITORY_0"><span class="b">SYMBIAN_COMMS_REPOSITORY</span></a>
+<a name="792"><span class="line">     792: </span></a>
+<a name="793"><span class="line">     793: </span></a><span class="k">/**
+<a name="794"><span class="line">     794: </span></a>@publishedAll
+<a name="795"><span class="line">     795: </span></a>@released
+<a name="796"><span class="line">     796: </span></a>
+<a name="797"><span class="line">     797: </span></a>SYMBIAN_VARIABLE_BITRATE_CODEC
+<a name="798"><span class="line">     798: </span></a>
+<a name="799"><span class="line">     799: </span></a>If SYMBIAN_VARIABLE_BITRATE_CODEC is defined then 
+<a name="800"><span class="line">     800: </span></a>CMMFSwCodecWrapper based audio hardware devices in the 
+<a name="801"><span class="line">     801: </span></a>Multimedia Framework (MMF) can support variable bitrate codecs.
+<a name="802"><span class="line">     802: </span></a>
+<a name="803"><span class="line">     803: </span></a>@see CMMFSwCodecWrapper
+<a name="804"><span class="line">     804: </span></a>*/</span>
+<a name="805"><span class="line">     805: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_VARIABLE_BITRATE_CODEC_0"><span class="b">SYMBIAN_VARIABLE_BITRATE_CODEC</span></a>
+<a name="806"><span class="line">     806: </span></a>
+<a name="807"><span class="line">     807: </span></a><span class="k">/**
+<a name="808"><span class="line">     808: </span></a>@publishedAll
+<a name="809"><span class="line">     809: </span></a>@released
+<a name="810"><span class="line">     810: </span></a>
+<a name="811"><span class="line">     811: </span></a>__SECURE_TELEPHONY__
+<a name="812"><span class="line">     812: </span></a>
+<a name="813"><span class="line">     813: </span></a>If __SECURE_TELEPHONY__ is defined, all Platform Security functionality 
+<a name="814"><span class="line">     814: </span></a>within the Telephony subsystem will be enabled.
+<a name="815"><span class="line">     815: </span></a>If __SECURE_TELEPHONY__ is not defined, no Platform Security functionality 
+<a name="816"><span class="line">     816: </span></a>within the Telephony subsystem is enabled.
+<a name="817"><span class="line">     817: </span></a>*/</span>
+<a name="818"><span class="line">     818: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__SECURE_TELEPHONY___0"><span class="b">__SECURE_TELEPHONY__</span></a>
+<a name="819"><span class="line">     819: </span></a>
+<a name="820"><span class="line">     820: </span></a><span class="k">/**
+<a name="821"><span class="line">     821: </span></a>@publishedPartner
+<a name="822"><span class="line">     822: </span></a>@released
+<a name="823"><span class="line">     823: </span></a>
+<a name="824"><span class="line">     824: </span></a>SYMBIAN_CAF_V2
+<a name="825"><span class="line">     825: </span></a>
+<a name="826"><span class="line">     826: </span></a>The SYMBIAN_CAF_V2 flag indicates the CAF API v2 is present. 
+<a name="827"><span class="line">     827: </span></a>CAF v2 supports files containing multiple content objects, which requires 
+<a name="828"><span class="line">     828: </span></a>a change of API for CAF agents: agents written for CAF v1 will not compile
+<a name="829"><span class="line">     829: </span></a>against CAF v2. See BR.1219.2 for migration information.
+<a name="830"><span class="line">     830: </span></a>
+<a name="831"><span class="line">     831: </span></a>This #define supports PREQ780.
+<a name="832"><span class="line">     832: </span></a>*/</span>
+<a name="833"><span class="line">     833: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CAF_V2_0"><span class="b">SYMBIAN_CAF_V2</span></a>
+<a name="834"><span class="line">     834: </span></a>
+<a name="835"><span class="line">     835: </span></a><span class="k">/**
+<a name="836"><span class="line">     836: </span></a>SYMBIAN_ROM_STATIC_PLUGIN_INFORMATION
+<a name="837"><span class="line">     837: </span></a>
+<a name="838"><span class="line">     838: </span></a>@publishedPartner
+<a name="839"><span class="line">     839: </span></a>@released
+<a name="840"><span class="line">     840: </span></a>
+<a name="841"><span class="line">     841: </span></a>This macro enables a consolidation phase in the ROM building 
+<a name="842"><span class="line">     842: </span></a>process to generate additional metadata for each ROM drive.  
+<a name="843"><span class="line">     843: </span></a>The metadata describes the content and structure of the ROM 
+<a name="844"><span class="line">     844: </span></a>conveniently filtered for any component that requires it.
+<a name="845"><span class="line">     845: </span></a>
+<a name="846"><span class="line">     846: </span></a>Components supply metadata with the &quot;spidata&quot; BUILDROM keyword.
+<a name="847"><span class="line">     847: </span></a>
+<a name="848"><span class="line">     848: </span></a>This macro supports PREQ806 and other requirements that 
+<a name="849"><span class="line">     849: </span></a>eliminate run-time scanning of ROM content.
+<a name="850"><span class="line">     850: </span></a>*/</span>
+<a name="851"><span class="line">     851: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ROM_STATIC_PLUGIN_INFORMATION_0"><span class="b">SYMBIAN_ROM_STATIC_PLUGIN_INFORMATION</span></a>
+<a name="852"><span class="line">     852: </span></a>
+<a name="853"><span class="line">     853: </span></a><span class="k">/**
+<a name="854"><span class="line">     854: </span></a>@publishedPartner
+<a name="855"><span class="line">     855: </span></a>@released
+<a name="856"><span class="line">     856: </span></a>
+<a name="857"><span class="line">     857: </span></a>SYMBIAN_BLUETOOTH_ESCO_ENABLED
+<a name="858"><span class="line">     858: </span></a>
+<a name="859"><span class="line">     859: </span></a>Enable support for Bluetooth eSCO synchronous links.  
+<a name="860"><span class="line">     860: </span></a>Defining this macro extends the interface to CHCIBase to support 
+<a name="861"><span class="line">     861: </span></a>the Synchronous connection commands added in Bluetooth 1.2.
+<a name="862"><span class="line">     862: </span></a>*/</span>
+<a name="863"><span class="line">     863: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_BLUETOOTH_ESCO_ENABLED_0"><span class="b">SYMBIAN_BLUETOOTH_ESCO_ENABLED</span></a>
+<a name="864"><span class="line">     864: </span></a>
+<a name="865"><span class="line">     865: </span></a><span class="k">/**
+<a name="866"><span class="line">     866: </span></a>@publishedPartner
+<a name="867"><span class="line">     867: </span></a>@released
+<a name="868"><span class="line">     868: </span></a>
+<a name="869"><span class="line">     869: </span></a>SYMBIAN_SECURE_MIDLET_INSTALL
+<a name="870"><span class="line">     870: </span></a>
+<a name="871"><span class="line">     871: </span></a>If SYMBIAN_SECURE_MIDLET_INSTALL is defined then the Java MIDlet 
+<a name="872"><span class="line">     872: </span></a>Installer supports installation under Platform Security policies, 
+<a name="873"><span class="line">     873: </span></a>using the interface published by security\JavaMIDletInstaller.
+<a name="874"><span class="line">     874: </span></a>
+<a name="875"><span class="line">     875: </span></a>If SYMBIAN_SECURE_MIDLET_INSTALL is not defined then Java MIDlet 
+<a name="876"><span class="line">     876: </span></a>installation is achieved through the security\appinst interfaces.
+<a name="877"><span class="line">     877: </span></a>*/</span>
+<a name="878"><span class="line">     878: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SECURE_MIDLET_INSTALL_0"><span class="b">SYMBIAN_SECURE_MIDLET_INSTALL</span></a>
+<a name="879"><span class="line">     879: </span></a>
+<a name="880"><span class="line">     880: </span></a><span class="k">/**
+<a name="881"><span class="line">     881: </span></a>@publishedAll
+<a name="882"><span class="line">     882: </span></a>@released
+<a name="883"><span class="line">     883: </span></a>
+<a name="884"><span class="line">     884: </span></a>SYMBIAN_UI_FRAMEWORKS_CONTROL_API_V2
+<a name="885"><span class="line">     885: </span></a>
+<a name="886"><span class="line">     886: </span></a>If SYMBIAN_UI_FRAMEWORKS_CONTROL_API_V2 is defined then 
+<a name="887"><span class="line">     887: </span></a>the following additional features will be available in CONE.
+<a name="888"><span class="line">     888: </span></a>1) Functions to set and get the background of a control.
+<a name="889"><span class="line">     889: </span></a>2) Functions to add components to a compound control in a simpler way.
+<a name="890"><span class="line">     890: </span></a>3) Hooks for the support of layout managers.
+<a name="891"><span class="line">     891: </span></a>4) A component that will provide fonts and cache them for easier use 
+<a name="892"><span class="line">     892: </span></a>   of these fonts by controls.
+<a name="893"><span class="line">     893: </span></a>
+<a name="894"><span class="line">     894: </span></a>@see CCoeControl
+<a name="895"><span class="line">     895: </span></a>*/</span>
+<a name="896"><span class="line">     896: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_UI_FRAMEWORKS_CONTROL_API_V2_0"><span class="b">SYMBIAN_UI_FRAMEWORKS_CONTROL_API_V2</span></a>
+<a name="897"><span class="line">     897: </span></a>
+<a name="898"><span class="line">     898: </span></a><span class="k">/**
+<a name="899"><span class="line">     899: </span></a>@publishedAll
+<a name="900"><span class="line">     900: </span></a>@released
+<a name="901"><span class="line">     901: </span></a>
+<a name="902"><span class="line">     902: </span></a>SYMBIAN_CNTMODEL_V2
+<a name="903"><span class="line">     903: </span></a>
+<a name="904"><span class="line">     904: </span></a>If SYMBIAN_CNTMODEL_V2 is defined, clients of the
+<a name="905"><span class="line">     905: </span></a>Contacts Model can exploit the efficiency improvements
+<a name="906"><span class="line">     906: </span></a>introduced by PREQ811, e.g. efficient use of transactions. 
+<a name="907"><span class="line">     907: </span></a>
+<a name="908"><span class="line">     908: </span></a>This #define supports PREQ811
+<a name="909"><span class="line">     909: </span></a>*/</span>
+<a name="910"><span class="line">     910: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CNTMODEL_V2_0"><span class="b">SYMBIAN_CNTMODEL_V2</span></a>
+<a name="911"><span class="line">     911: </span></a>
+<a name="912"><span class="line">     912: </span></a><span class="k">/**
+<a name="913"><span class="line">     913: </span></a>@publishedAll
+<a name="914"><span class="line">     914: </span></a>@released
+<a name="915"><span class="line">     915: </span></a>
+<a name="916"><span class="line">     916: </span></a>SYMBIAN_COREAPPS_PLUGIN_API_V2
+<a name="917"><span class="line">     917: </span></a>
+<a name="918"><span class="line">     918: </span></a>If SYMBIAN_COREAPPS_PLUGIN_API_V2 is defined then  Ecom solely is used as loading 
+<a name="919"><span class="line">     919: </span></a>mechanism.The legacy plugin loading mechanism is used otherwise.
+<a name="920"><span class="line">     920: </span></a>*/</span>
+<a name="921"><span class="line">     921: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_COREAPPS_PLUGIN_API_V2_0"><span class="b">SYMBIAN_COREAPPS_PLUGIN_API_V2</span></a>
+<a name="922"><span class="line">     922: </span></a>
+<a name="923"><span class="line">     923: </span></a><span class="k">/**
+<a name="924"><span class="line">     924: </span></a>@internalAll
+<a name="925"><span class="line">     925: </span></a>
+<a name="926"><span class="line">     926: </span></a>DO_NOT_USE_THIS_MACRO
+<a name="927"><span class="line">     927: </span></a>
+<a name="928"><span class="line">     928: </span></a>If DO_NOT_USE_THIS_MACRO is defined, assume the Cedar platform.
+<a name="929"><span class="line">     929: </span></a>If DO_NOT_USE_THIS_MACRO is not defined, assume the Beech platform.
+<a name="930"><span class="line">     930: </span></a>
+<a name="931"><span class="line">     931: </span></a>This macro was originally introduced as a stopgap measure, to
+<a name="932"><span class="line">     932: </span></a>identify differences between Symbian OS v7.0s and Symbian OS v8.0b
+<a name="933"><span class="line">     933: </span></a>which were not specifically to do with the change from Kernel
+<a name="934"><span class="line">     934: </span></a>Architecture 1 to Kernel Architecture 2.
+<a name="935"><span class="line">     935: </span></a>
+<a name="936"><span class="line">     936: </span></a>This macro will be deprecated when a suitable alternative is provided.
+<a name="937"><span class="line">     937: </span></a>*/</span>
+<a name="938"><span class="line">     938: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="e32std.h_macros.html#DO_NOT_USE_THIS_MACRO_0"><span class="b">DO_NOT_USE_THIS_MACRO</span></a>
+<a name="939"><span class="line">     939: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#DO_NOT_USE_THIS_MACRO_0"><span class="b">DO_NOT_USE_THIS_MACRO</span></a>
+<a name="940"><span class="line">     940: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="941"><span class="line">     941: </span></a>
+<a name="942"><span class="line">     942: </span></a><span class="k">/** 
+<a name="943"><span class="line">     943: </span></a>@publishedPartner
+<a name="944"><span class="line">     944: </span></a>@released
+<a name="945"><span class="line">     945: </span></a>
+<a name="946"><span class="line">     946: </span></a>SYMBIAN_C32ROOT_API_V2
+<a name="947"><span class="line">     947: </span></a>
+<a name="948"><span class="line">     948: </span></a>Strengthens the C32Root API and extends it to include 
+<a name="949"><span class="line">     949: </span></a>configuration of queue length for bindings. 
+<a name="950"><span class="line">     950: </span></a>
+<a name="951"><span class="line">     951: </span></a>This #define supports PREQ318.
+<a name="952"><span class="line">     952: </span></a>*/</span>
+<a name="953"><span class="line">     953: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_C32ROOT_API_V2_0"><span class="b">SYMBIAN_C32ROOT_API_V2</span></a>
+<a name="954"><span class="line">     954: </span></a>
+<a name="955"><span class="line">     955: </span></a><span class="k">/**
+<a name="956"><span class="line">     956: </span></a>@publishedAll
+<a name="957"><span class="line">     957: </span></a>@released
+<a name="958"><span class="line">     958: </span></a>
+<a name="959"><span class="line">     959: </span></a>__SECURE_API__
+<a name="960"><span class="line">     960: </span></a>
+<a name="961"><span class="line">     961: </span></a>Hides unsecure APIs. Many of these have been replaced by Secure variants 
+<a name="962"><span class="line">     962: </span></a>but some are no longer available in a Secure platform.
+<a name="963"><span class="line">     963: </span></a>
+<a name="964"><span class="line">     964: </span></a>e.g.
+<a name="965"><span class="line">     965: </span></a>
+<a name="966"><span class="line">     966: </span></a>@see User::RenameThread
+<a name="967"><span class="line">     967: </span></a>@see User::CommandLine
+<a name="968"><span class="line">     968: </span></a>
+<a name="969"><span class="line">     969: </span></a>*/</span>
+<a name="970"><span class="line">     970: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__SECURE_API___0"><span class="b">__SECURE_API__</span></a>
+<a name="971"><span class="line">     971: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_REMOVE_INSECURE_API_0"><span class="b">SYMBIAN_REMOVE_INSECURE_API</span></a>
+<a name="972"><span class="line">     972: </span></a>
+<a name="973"><span class="line">     973: </span></a><span class="k">/**
+<a name="974"><span class="line">     974: </span></a>@publishedAll
+<a name="975"><span class="line">     975: </span></a>@released
+<a name="976"><span class="line">     976: </span></a>
+<a name="977"><span class="line">     977: </span></a>__CNF_FORMAT_V2__
+<a name="978"><span class="line">     978: </span></a>
+<a name="979"><span class="line">     979: </span></a>If __CNF_FORMAT_V2__ is defined, assume that Epoccnf.pl generates
+<a name="980"><span class="line">     980: </span></a>files in version 2 of the CNF format, and that both versions 1
+<a name="981"><span class="line">     981: </span></a>and 2 of this file format can be read by Conarc.
+<a name="982"><span class="line">     982: </span></a>If __CNF_FORMAT_V2__ is not defined, assume that Epoccnf.pl
+<a name="983"><span class="line">     983: </span></a>generates files in version 1 of the CNF format, and that only
+<a name="984"><span class="line">     984: </span></a>version 1 of this file format can be read by Conarc.
+<a name="985"><span class="line">     985: </span></a>*/</span>
+<a name="986"><span class="line">     986: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__CNF_FORMAT_V2___0"><span class="b">__CNF_FORMAT_V2__</span></a>
+<a name="987"><span class="line">     987: </span></a>
+<a name="988"><span class="line">     988: </span></a><span class="k">/** 
+<a name="989"><span class="line">     989: </span></a>@publishedPartner 
+<a name="990"><span class="line">     990: </span></a>@released
+<a name="991"><span class="line">     991: </span></a>
+<a name="992"><span class="line">     992: </span></a>SYMBIAN_SUPPORT_LINKED_FONTS 
+<a name="993"><span class="line">     993: </span></a>
+<a name="994"><span class="line">     994: </span></a>If SYMBIAN_SUPPORT_LINKED_FONTS is defined then APIs are provided 
+<a name="995"><span class="line">     995: </span></a>to create &apos;linked&apos; font instances which combine glyph sets from 
+<a name="996"><span class="line">     996: </span></a>multiple existing font glyph sets.
+<a name="997"><span class="line">     997: </span></a>
+<a name="998"><span class="line">     998: </span></a>@see CLinkedTypefaceElement
+<a name="999"><span class="line">     999: </span></a>@see CLinkedTypefaceSpecification
+<a name="1000"><span class="line">    1000: </span></a>
+<a name="1001"><span class="line">    1001: </span></a>This #define supports PREQ1431.
+<a name="1002"><span class="line">    1002: </span></a>*/</span> 
+<a name="1003"><span class="line">    1003: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SUPPORT_LINKED_FONTS_0"><span class="b">SYMBIAN_SUPPORT_LINKED_FONTS</span></a>
+<a name="1004"><span class="line">    1004: </span></a>
+<a name="1005"><span class="line">    1005: </span></a><span class="k">/**
+<a name="1006"><span class="line">    1006: </span></a>@publishedPartner
+<a name="1007"><span class="line">    1007: </span></a>@released
+<a name="1008"><span class="line">    1008: </span></a>
+<a name="1009"><span class="line">    1009: </span></a>SYMBIAN_SECURE_DBMS
+<a name="1010"><span class="line">    1010: </span></a>
+<a name="1011"><span class="line">    1011: </span></a>When SYMBIAN_SECURE_DBMS is defined, support for secure 
+<a name="1012"><span class="line">    1012: </span></a>shared databases is enabled within DBMS.  
+<a name="1013"><span class="line">    1013: </span></a>When not defined, all secure-shared-database-specific APIs 
+<a name="1014"><span class="line">    1014: </span></a>take the form of dummy implementations which return KErrNone.
+<a name="1015"><span class="line">    1015: </span></a>*/</span>
+<a name="1016"><span class="line">    1016: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SECURE_DBMS_0"><span class="b">SYMBIAN_SECURE_DBMS</span></a>
+<a name="1017"><span class="line">    1017: </span></a>
+<a name="1018"><span class="line">    1018: </span></a><span class="k">/**
+<a name="1019"><span class="line">    1019: </span></a>@publishedAll
+<a name="1020"><span class="line">    1020: </span></a>@released
+<a name="1021"><span class="line">    1021: </span></a>
+<a name="1022"><span class="line">    1022: </span></a>SYMBIAN_ASSUME_SECURE_DATA
+<a name="1023"><span class="line">    1023: </span></a>
+<a name="1024"><span class="line">    1024: </span></a>When this macro is defined, all data files are assumed to be in their secure
+<a name="1025"><span class="line">    1025: </span></a>locations, and all code which provided backward compatibility for the
+<a name="1026"><span class="line">    1026: </span></a>insecure locations is removed. For example, ICL extended resource files
+<a name="1027"><span class="line">    1027: </span></a>will not be loaded from System\Libs\Plugins, only from \Resource\ICL.
+<a name="1028"><span class="line">    1028: </span></a>
+<a name="1029"><span class="line">    1029: </span></a>This macro only makes sense if __SECURE_DATA__ is defined.
+<a name="1030"><span class="line">    1030: </span></a>*/</span>
+<a name="1031"><span class="line">    1031: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ASSUME_SECURE_DATA_0"><span class="b">SYMBIAN_ASSUME_SECURE_DATA</span></a>
+<a name="1032"><span class="line">    1032: </span></a>
+<a name="1033"><span class="line">    1033: </span></a><span class="k">/**
+<a name="1034"><span class="line">    1034: </span></a>@publishedAll
+<a name="1035"><span class="line">    1035: </span></a>@deprecated
+<a name="1036"><span class="line">    1036: </span></a>@since 8.0
+<a name="1037"><span class="line">    1037: </span></a>
+<a name="1038"><span class="line">    1038: </span></a>__KEYSTORE_API_V2__
+<a name="1039"><span class="line">    1039: </span></a>
+<a name="1040"><span class="line">    1040: </span></a>*/</span>
+<a name="1041"><span class="line">    1041: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__KEYSTORE_API_V2___0"><span class="b">__KEYSTORE_API_V2__</span></a>
+<a name="1042"><span class="line">    1042: </span></a>
+<a name="1043"><span class="line">    1043: </span></a><span class="k">/**
+<a name="1044"><span class="line">    1044: </span></a>@publishedAll
+<a name="1045"><span class="line">    1045: </span></a>@released
+<a name="1046"><span class="line">    1046: </span></a>
+<a name="1047"><span class="line">    1047: </span></a>__SECURE_DATA__
+<a name="1048"><span class="line">    1048: </span></a>
+<a name="1049"><span class="line">    1049: </span></a>When __SECURE_DATA__ is defined, public read-only files are
+<a name="1050"><span class="line">    1050: </span></a>assumed to be in their data-caged locations. The presence of
+<a name="1051"><span class="line">    1051: </span></a>this #define does not imply that data-caging is enforced, and
+<a name="1052"><span class="line">    1052: </span></a>does not imply that binaries have been relocated to sys\bin.
+<a name="1053"><span class="line">    1053: </span></a>
+<a name="1054"><span class="line">    1054: </span></a>This #define supports PREQ537 &quot;Platform security - file system layout&quot;.
+<a name="1055"><span class="line">    1055: </span></a>*/</span>
+<a name="1056"><span class="line">    1056: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__SECURE_DATA___0"><span class="b">__SECURE_DATA__</span></a>
+<a name="1057"><span class="line">    1057: </span></a>
+<a name="1058"><span class="line">    1058: </span></a><span class="k">/**
+<a name="1059"><span class="line">    1059: </span></a>@publishedAll
+<a name="1060"><span class="line">    1060: </span></a>@released
+<a name="1061"><span class="line">    1061: </span></a>
+<a name="1062"><span class="line">    1062: </span></a>SYMBIAN_NETWORKING_PLATSEC
+<a name="1063"><span class="line">    1063: </span></a>
+<a name="1064"><span class="line">    1064: </span></a>If SYMBIAN_NETWORKING_PLATSEC is defined, additional platform security 
+<a name="1065"><span class="line">    1065: </span></a>related functionality in enabled in the Comms-Infras and Networking 
+<a name="1066"><span class="line">    1066: </span></a>subsystems (e.g. API policing).
+<a name="1067"><span class="line">    1067: </span></a>*/</span>
+<a name="1068"><span class="line">    1068: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_PLATSEC_0"><span class="b">SYMBIAN_NETWORKING_PLATSEC</span></a>
+<a name="1069"><span class="line">    1069: </span></a>
+<a name="1070"><span class="line">    1070: </span></a><span class="k">/**
+<a name="1071"><span class="line">    1071: </span></a>@publishedAll
+<a name="1072"><span class="line">    1072: </span></a>@released
+<a name="1073"><span class="line">    1073: </span></a>
+<a name="1074"><span class="line">    1074: </span></a>__CONDITIONS_SCHEDULES_VALID__
+<a name="1075"><span class="line">    1075: </span></a>
+<a name="1076"><span class="line">    1076: </span></a>If __CONDITIONS_SCHEDULES_VALID__ is defined then the Task Scheduler component 
+<a name="1077"><span class="line">    1077: </span></a>supports creating persistent schedules based on a set of conditions and a 
+<a name="1078"><span class="line">    1078: </span></a>timeout. The schedule is run when either all the conditions are met or the 
+<a name="1079"><span class="line">    1079: </span></a>timeout is reached.
+<a name="1080"><span class="line">    1080: </span></a>
+<a name="1081"><span class="line">    1081: </span></a>This functionality is part of PREQ694 - PREQ 694 - Automatic sending of SMS on
+<a name="1082"><span class="line">    1082: </span></a>network reconnection.
+<a name="1083"><span class="line">    1083: </span></a>*/</span>
+<a name="1084"><span class="line">    1084: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__CONDITIONS_SCHEDULES_VALID___0"><span class="b">__CONDITIONS_SCHEDULES_VALID__</span></a>
+<a name="1085"><span class="line">    1085: </span></a>
+<a name="1086"><span class="line">    1086: </span></a><span class="k">/**
+<a name="1087"><span class="line">    1087: </span></a>@internalComponent
+<a name="1088"><span class="line">    1088: </span></a>
+<a name="1089"><span class="line">    1089: </span></a>__LEAVE_EQUALS_THROW__
+<a name="1090"><span class="line">    1090: </span></a>
+<a name="1091"><span class="line">    1091: </span></a>If __LEAVE_EQUALS_THROW__ is defined, User::Leave() and TRAP() are 
+<a name="1092"><span class="line">    1092: </span></a>implemented in terms of C++ exceptions where the compiler supports this.
+<a name="1093"><span class="line">    1093: </span></a>If __LEAVE_EQUALS_THROW__ is not defined, the legacy Symbian exception 
+<a name="1094"><span class="line">    1094: </span></a>mechanism is used instead.
+<a name="1095"><span class="line">    1095: </span></a>
+<a name="1096"><span class="line">    1096: </span></a>Support for C++ exceptions by the compiler is indicated by the 
+<a name="1097"><span class="line">    1097: </span></a>internal macro __SUPPORT_CPP_EXCEPTIONS__ supplied by the tools.  
+<a name="1098"><span class="line">    1098: </span></a>Where this macro is not present, __LEAVE_EQUALS_THROW__ is automatically 
+<a name="1099"><span class="line">    1099: </span></a>undefined.
+<a name="1100"><span class="line">    1100: </span></a>
+<a name="1101"><span class="line">    1101: </span></a>This macro supports PREQ519 &quot;Implement User::Leave() in terms of throw()&quot;.
+<a name="1102"><span class="line">    1102: </span></a>*/</span>
+<a name="1103"><span class="line">    1103: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__LEAVE_EQUALS_THROW___0"><span class="b">__LEAVE_EQUALS_THROW__</span></a>
+<a name="1104"><span class="line">    1104: </span></a>
+<a name="1105"><span class="line">    1105: </span></a><span class="k">/**
+<a name="1106"><span class="line">    1106: </span></a>@publishedAll
+<a name="1107"><span class="line">    1107: </span></a>@released
+<a name="1108"><span class="line">    1108: </span></a>
+<a name="1109"><span class="line">    1109: </span></a>__BLUETOOTH_API_V2__
+<a name="1110"><span class="line">    1110: </span></a>
+<a name="1111"><span class="line">    1111: </span></a>If __BLUETOOTH_API_V2__ is defined assume that version 2 of the bluetooth
+<a name="1112"><span class="line">    1112: </span></a>subsystem will be built.  This is binary compatible with version 1 for all
+<a name="1113"><span class="line">    1113: </span></a>published-all APIs but is not source compatible.  Users of classes defined
+<a name="1114"><span class="line">    1114: </span></a>in BTDevice.h and BTManClient.h may need to make source changes.
+<a name="1115"><span class="line">    1115: </span></a>
+<a name="1116"><span class="line">    1116: </span></a>The BTRegistry.dll is removed, users should link instead against BTManClient.lib.
+<a name="1117"><span class="line">    1117: </span></a>The APIs provided by that DLL were classified as published-partner.
+<a name="1118"><span class="line">    1118: </span></a>
+<a name="1119"><span class="line">    1119: </span></a>@see CBTDevice
+<a name="1120"><span class="line">    1120: </span></a>@see SGL.GT172.103 - Bluetooth Compatibility Specification
+<a name="1121"><span class="line">    1121: </span></a>
+<a name="1122"><span class="line">    1122: </span></a>If __BLUETOOTH_API_V2__ is not defined then version 1 of the bluetooth subsystem
+<a name="1123"><span class="line">    1123: </span></a>will be built.
+<a name="1124"><span class="line">    1124: </span></a>
+<a name="1125"><span class="line">    1125: </span></a>*/</span>
+<a name="1126"><span class="line">    1126: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__BLUETOOTH_API_V2___0"><span class="b">__BLUETOOTH_API_V2__</span></a>
+<a name="1127"><span class="line">    1127: </span></a>
+<a name="1128"><span class="line">    1128: </span></a><span class="k">/**
+<a name="1129"><span class="line">    1129: </span></a>@publishedAll
+<a name="1130"><span class="line">    1130: </span></a>@released
+<a name="1131"><span class="line">    1131: </span></a>
+<a name="1132"><span class="line">    1132: </span></a>__BLUETOOTH_HCI_ALLOWS_AFH__
+<a name="1133"><span class="line">    1133: </span></a>
+<a name="1134"><span class="line">    1134: </span></a>If __BLUETOOTH_HCI_ALLOWS_AFH__ is defined the HCI interface will require the Adaptive Frequency Hopping CHCIBase pure virtual functions to be implemented in any derived class in Licensee produced host controller interface (HCI) code. 
+<a name="1135"><span class="line">    1135: </span></a>If this is not defined no AFH commands may be sent to the host controller, and no AFH events will be received from the host controller. 
+<a name="1136"><span class="line">    1136: </span></a>The APIs provided by the HCI DLL were classified as published-partner.
+<a name="1137"><span class="line">    1137: </span></a>
+<a name="1138"><span class="line">    1138: </span></a>@see CHCIBase
+<a name="1139"><span class="line">    1139: </span></a>@see MHCIEventObserver
+<a name="1140"><span class="line">    1140: </span></a>
+<a name="1141"><span class="line">    1141: </span></a>*/</span>
+<a name="1142"><span class="line">    1142: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__BLUETOOTH_HCI_ALLOWS_AFH___0"><span class="b">__BLUETOOTH_HCI_ALLOWS_AFH__</span></a>
+<a name="1143"><span class="line">    1143: </span></a>
+<a name="1144"><span class="line">    1144: </span></a><span class="k">/**
+<a name="1145"><span class="line">    1145: </span></a>@publishedAll
+<a name="1146"><span class="line">    1146: </span></a>@released
+<a name="1147"><span class="line">    1147: </span></a>
+<a name="1148"><span class="line">    1148: </span></a>EKA2
+<a name="1149"><span class="line">    1149: </span></a>
+<a name="1150"><span class="line">    1150: </span></a>If EKA2 is defined, assume Kernel Architecture 2.
+<a name="1151"><span class="line">    1151: </span></a>If EKA2 is not defined, assume Kernel Architecture 1
+<a name="1152"><span class="line">    1152: </span></a>
+<a name="1153"><span class="line">    1153: </span></a>Kernel Architecture 2 is a defining property of the Cedar platform.
+<a name="1154"><span class="line">    1154: </span></a>Kernel Architecture 1 is a defining property of the Beech platform.
+<a name="1155"><span class="line">    1155: </span></a>*/</span>
+<a name="1156"><span class="line">    1156: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="e32std.h_macros.html#EKA2_0"><span class="b">EKA2</span></a>
+<a name="1157"><span class="line">    1157: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#EKA2_0"><span class="b">EKA2</span></a>
+<a name="1158"><span class="line">    1158: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="1159"><span class="line">    1159: </span></a>
+<a name="1160"><span class="line">    1160: </span></a><span class="k">/**
+<a name="1161"><span class="line">    1161: </span></a>@publishedPartner
+<a name="1162"><span class="line">    1162: </span></a>@released
+<a name="1163"><span class="line">    1163: </span></a>
+<a name="1164"><span class="line">    1164: </span></a>SYMBIAN_GRAPHICS_ALPHA_SUPPORT_V1
+<a name="1165"><span class="line">    1165: </span></a>
+<a name="1166"><span class="line">    1166: </span></a>When SYMBIAN_GRAPHICS_ALPHA_SUPPORT_V1 is defined a new EColor16MA 
+<a name="1167"><span class="line">    1167: </span></a>display mode is available, having an alpha channel. The alpha support 
+<a name="1168"><span class="line">    1168: </span></a>is tailored to the needs of wserv server-side, although some alpha 
+<a name="1169"><span class="line">    1169: </span></a>support will also be available to client applications.
+<a name="1170"><span class="line">    1170: </span></a>
+<a name="1171"><span class="line">    1171: </span></a>This #define supports PREQ915.
+<a name="1172"><span class="line">    1172: </span></a>*/</span>
+<a name="1173"><span class="line">    1173: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_GRAPHICS_ALPHA_SUPPORT_V1_0"><span class="b">SYMBIAN_GRAPHICS_ALPHA_SUPPORT_V1</span></a>
+<a name="1174"><span class="line">    1174: </span></a>
+<a name="1175"><span class="line">    1175: </span></a><span class="k">/**
+<a name="1176"><span class="line">    1176: </span></a>@publishedPartner
+<a name="1177"><span class="line">    1177: </span></a>@released
+<a name="1178"><span class="line">    1178: </span></a>
+<a name="1179"><span class="line">    1179: </span></a>__SECURE_SOFTWARE_INSTALL__
+<a name="1180"><span class="line">    1180: </span></a>
+<a name="1181"><span class="line">    1181: </span></a>When __SECURE_SOFTWARE_INSTALL__ is defined, the Software
+<a name="1182"><span class="line">    1182: </span></a>Install APIs are replaced with versions appropriate to
+<a name="1183"><span class="line">    1183: </span></a>the Secure Platform.
+<a name="1184"><span class="line">    1184: </span></a>
+<a name="1185"><span class="line">    1185: </span></a>This #define supports PREQ56 &quot;Software install enhancements&quot;
+<a name="1186"><span class="line">    1186: </span></a>*/</span>
+<a name="1187"><span class="line">    1187: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#__SECURE_SOFTWARE_INSTALL___0"><span class="b">__SECURE_SOFTWARE_INSTALL__</span></a>
+<a name="1188"><span class="line">    1188: </span></a>
+<a name="1189"><span class="line">    1189: </span></a><span class="k">/**
+<a name="1190"><span class="line">    1190: </span></a>@publishedPartner
+<a name="1191"><span class="line">    1191: </span></a>@released
+<a name="1192"><span class="line">    1192: </span></a>
+<a name="1193"><span class="line">    1193: </span></a>SYMBIAN_ESOCK_V3
+<a name="1194"><span class="line">    1194: </span></a>
+<a name="1195"><span class="line">    1195: </span></a>If SYMBIAN_ESOCK_V3 is defined, the socket server allows protocol 
+<a name="1196"><span class="line">    1196: </span></a>families to run in individual threads to protect one protocol family 
+<a name="1197"><span class="line">    1197: </span></a>from the behaviour of another. The allocation of protocol families to
+<a name="1198"><span class="line">    1198: </span></a>threads is determined by a naming convention on the ESK files.
+<a name="1199"><span class="line">    1199: </span></a>
+<a name="1200"><span class="line">    1200: </span></a>This #define supports PREQ318.
+<a name="1201"><span class="line">    1201: </span></a>*/</span>
+<a name="1202"><span class="line">    1202: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ESOCK_V3_0"><span class="b">SYMBIAN_ESOCK_V3</span></a>
+<a name="1203"><span class="line">    1203: </span></a>
+<a name="1204"><span class="line">    1204: </span></a><span class="k">/**
+<a name="1205"><span class="line">    1205: </span></a>@publishedAll
+<a name="1206"><span class="line">    1206: </span></a>@released
+<a name="1207"><span class="line">    1207: </span></a>
+<a name="1208"><span class="line">    1208: </span></a>SYMBIAN_CURB_SYSTEMSERVER_PRIORITIES
+<a name="1209"><span class="line">    1209: </span></a>
+<a name="1210"><span class="line">    1210: </span></a>If SYMBIAN_CURB_SYSTEMSERVER_PRIORITIES is defined, threads at 
+<a name="1211"><span class="line">    1211: </span></a>priority SystemServer/More (i.e. process priorities EPriorityFileServer, 
+<a name="1212"><span class="line">    1212: </span></a>EPriorityWindowServer or EPrioritySupervisor with relative thread priority 
+<a name="1213"><span class="line">    1213: </span></a>EPriorityMore) are mapped to absolute priority 23, equal to the highest 
+<a name="1214"><span class="line">    1214: </span></a>priority available to normal applications. This lowers the Window Server 
+<a name="1215"><span class="line">    1215: </span></a>and File Server priorities so application threads can timeslice with them, 
+<a name="1216"><span class="line">    1216: </span></a>benefitting audio and other pseudo real-time applications.
+<a name="1217"><span class="line">    1217: </span></a>
+<a name="1218"><span class="line">    1218: </span></a>If SYMBIAN_CURB_SYSTEMSERVER_PRIORITIES is not defined, these system server 
+<a name="1219"><span class="line">    1219: </span></a>priorities remain at 24, preempting all normal user application threads.
+<a name="1220"><span class="line">    1220: </span></a>
+<a name="1221"><span class="line">    1221: </span></a>This #define supports PREQ955, and BR1821.
+<a name="1222"><span class="line">    1222: </span></a>*/</span>
+<a name="1223"><span class="line">    1223: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CURB_SYSTEMSERVER_PRIORITIES_0"><span class="b">SYMBIAN_CURB_SYSTEMSERVER_PRIORITIES</span></a>
+<a name="1224"><span class="line">    1224: </span></a>
+<a name="1225"><span class="line">    1225: </span></a><span class="k">/**
+<a name="1226"><span class="line">    1226: </span></a>@publishedAll
+<a name="1227"><span class="line">    1227: </span></a>@deprecated
+<a name="1228"><span class="line">    1228: </span></a>@since 8.0
+<a name="1229"><span class="line">    1229: </span></a>
+<a name="1230"><span class="line">    1230: </span></a>SYMBIAN_CRYPTO
+<a name="1231"><span class="line">    1231: </span></a>
+<a name="1232"><span class="line">    1232: </span></a>*/</span>
+<a name="1233"><span class="line">    1233: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CRYPTO_0"><span class="b">SYMBIAN_CRYPTO</span></a>
+<a name="1234"><span class="line">    1234: </span></a>
+<a name="1235"><span class="line">    1235: </span></a><span class="k">/**
+<a name="1236"><span class="line">    1236: </span></a>@internalAll
+<a name="1237"><span class="line">    1237: </span></a>SYMBIAN_J2ME_USE_CALENDAR
+<a name="1238"><span class="line">    1238: </span></a>                
+<a name="1239"><span class="line">    1239: </span></a>Internal macro - do not use outside Symbian code.
+<a name="1240"><span class="line">    1240: </span></a>*/</span>
+<a name="1241"><span class="line">    1241: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_J2ME_USE_CALENDAR_0"><span class="b">SYMBIAN_J2ME_USE_CALENDAR</span></a>
+<a name="1242"><span class="line">    1242: </span></a>
+<a name="1243"><span class="line">    1243: </span></a>
+<a name="1244"><span class="line">    1244: </span></a><span class="k">/**
+<a name="1245"><span class="line">    1245: </span></a>@publishedPartner
+<a name="1246"><span class="line">    1246: </span></a>@released
+<a name="1247"><span class="line">    1247: </span></a>
+<a name="1248"><span class="line">    1248: </span></a>SYMBIAN_CENREPNOTIFIERHANDLER
+<a name="1249"><span class="line">    1249: </span></a>
+<a name="1250"><span class="line">    1250: </span></a>If SYMBIAN_CENREPNOTIFIERHANDLER is defined, the Central 
+<a name="1251"><span class="line">    1251: </span></a>Repository notifier handler is present.
+<a name="1252"><span class="line">    1252: </span></a>
+<a name="1253"><span class="line">    1253: </span></a>@see CCenRepNotifyHandler
+<a name="1254"><span class="line">    1254: </span></a>@see MCenRepNotifyHandlerCallback
+<a name="1255"><span class="line">    1255: </span></a>
+<a name="1256"><span class="line">    1256: </span></a>This #define supports PREQ1802. 
+<a name="1257"><span class="line">    1257: </span></a>*/</span>
+<a name="1258"><span class="line">    1258: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CENREPNOTIFIERHANDLER_0"><span class="b">SYMBIAN_CENREPNOTIFIERHANDLER</span></a>
+<a name="1259"><span class="line">    1259: </span></a>
+<a name="1260"><span class="line">    1260: </span></a>
+<a name="1261"><span class="line">    1261: </span></a><span class="k">/**
+<a name="1262"><span class="line">    1262: </span></a>@publishedAll
+<a name="1263"><span class="line">    1263: </span></a>@released
+<a name="1264"><span class="line">    1264: </span></a>
+<a name="1265"><span class="line">    1265: </span></a>SYMBIAN_BAFL_SYSUTIL
+<a name="1266"><span class="line">    1266: </span></a> 
+<a name="1267"><span class="line">    1267: </span></a>If SYMBIAN_BAFL_SYSUTIL is defined, the bafl sysutil.dll is present, 
+<a name="1268"><span class="line">    1268: </span></a>providing APIs for obtaining system version information and 
+<a name="1269"><span class="line">    1269: </span></a>APIs for monitoring free disk space.
+<a name="1270"><span class="line">    1270: </span></a>
+<a name="1271"><span class="line">    1271: </span></a>@see SysUtil::GetSWVersion
+<a name="1272"><span class="line">    1272: </span></a>@see SysUtil::DiskSpaceBelowCriticalLevelL
+<a name="1273"><span class="line">    1273: </span></a>
+<a name="1274"><span class="line">    1274: </span></a>This #define supports PREQ1802.
+<a name="1275"><span class="line">    1275: </span></a>*/</span>
+<a name="1276"><span class="line">    1276: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_BAFL_SYSUTIL_0"><span class="b">SYMBIAN_BAFL_SYSUTIL</span></a>
+<a name="1277"><span class="line">    1277: </span></a>
+<a name="1278"><span class="line">    1278: </span></a>
+<a name="1279"><span class="line">    1279: </span></a><span class="k">/**
+<a name="1280"><span class="line">    1280: </span></a>@publishedPartner
+<a name="1281"><span class="line">    1281: </span></a>@released
+<a name="1282"><span class="line">    1282: </span></a>
+<a name="1283"><span class="line">    1283: </span></a>SYMBIAN_BAFL_ACTIVITYMGR
+<a name="1284"><span class="line">    1284: </span></a> 
+<a name="1285"><span class="line">    1285: </span></a>If SYMBIAN_BAFL_ACTIVITYMGR is defined, the bafl activitymgr.dll is 
+<a name="1286"><span class="line">    1286: </span></a>presentand provides an API that allows the client to take action at the 
+<a name="1287"><span class="line">    1287: </span></a>start and/or end of a period of user inactivity.
+<a name="1288"><span class="line">    1288: </span></a>
+<a name="1289"><span class="line">    1289: </span></a>@see CUserActivityManager::Start
+<a name="1290"><span class="line">    1290: </span></a>
+<a name="1291"><span class="line">    1291: </span></a>This #define supports PREQ1802.
+<a name="1292"><span class="line">    1292: </span></a>*/</span>
+<a name="1293"><span class="line">    1293: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_BAFL_ACTIVITYMGR_0"><span class="b">SYMBIAN_BAFL_ACTIVITYMGR</span></a>
+<a name="1294"><span class="line">    1294: </span></a>
+<a name="1295"><span class="line">    1295: </span></a>
+<a name="1296"><span class="line">    1296: </span></a><span class="k">/**
+<a name="1297"><span class="line">    1297: </span></a>@publishedPartner
+<a name="1298"><span class="line">    1298: </span></a>@released
+<a name="1299"><span class="line">    1299: </span></a>
+<a name="1300"><span class="line">    1300: </span></a>SYMBIAN_CLIENTPROV_V2
+<a name="1301"><span class="line">    1301: </span></a>
+<a name="1302"><span class="line">    1302: </span></a>If SYMBIAN_CLIENTPROV_V2 is defined then the client provisioning
+<a name="1303"><span class="line">    1303: </span></a>documents will be pushed to Inbox by default, and a new API is
+<a name="1304"><span class="line">    1304: </span></a>added to submit the documents from Inbox back to CPAgent.
+<a name="1305"><span class="line">    1305: </span></a>
+<a name="1306"><span class="line">    1306: </span></a>@see RCpMsvDocInputSession
+<a name="1307"><span class="line">    1307: </span></a>
+<a name="1308"><span class="line">    1308: </span></a>This is a source and binary compatibility break: see BR2092.
+<a name="1309"><span class="line">    1309: </span></a>
+<a name="1310"><span class="line">    1310: </span></a>This #define supports PREQ1664
+<a name="1311"><span class="line">    1311: </span></a>*/</span>
+<a name="1312"><span class="line">    1312: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CLIENTPROV_V2_0"><span class="b">SYMBIAN_CLIENTPROV_V2</span></a>
+<a name="1313"><span class="line">    1313: </span></a>
+<a name="1314"><span class="line">    1314: </span></a>
+<a name="1315"><span class="line">    1315: </span></a> <span class="k">/**
+<a name="1316"><span class="line">    1316: </span></a>@publishedPartner
+<a name="1317"><span class="line">    1317: </span></a>@released
+<a name="1318"><span class="line">    1318: </span></a>
+<a name="1319"><span class="line">    1319: </span></a>SYMBIAN_CRYPTOSPI
+<a name="1320"><span class="line">    1320: </span></a>
+<a name="1321"><span class="line">    1321: </span></a>The SYMBIAN_CRYPTOSPI flag indicates that the Crypto SPI is present.
+<a name="1322"><span class="line">    1322: </span></a>Crypto SPI (Service Provider Interface) supports licensee-pluggable 
+<a name="1323"><span class="line">    1323: </span></a>cryptographic algorithms (e.g. for enabling hardware acceleration), 
+<a name="1324"><span class="line">    1324: </span></a>and also allows for future extensibility of the cryptography 
+<a name="1325"><span class="line">    1325: </span></a>interfaces (e.g. for supporting future hashes and ciphers and 
+<a name="1326"><span class="line">    1326: </span></a>to support non-extractable private keys). 
+<a name="1327"><span class="line">    1327: </span></a>
+<a name="1328"><span class="line">    1328: </span></a>This #define supports PREQ57.
+<a name="1329"><span class="line">    1329: </span></a>*/</span>
+<a name="1330"><span class="line">    1330: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CRYPTOSPI_0"><span class="b">SYMBIAN_CRYPTOSPI</span></a>
+<a name="1331"><span class="line">    1331: </span></a>
+<a name="1332"><span class="line">    1332: </span></a>
+<a name="1333"><span class="line">    1333: </span></a><span class="k">/**
+<a name="1334"><span class="line">    1334: </span></a>@publishedPartner 
+<a name="1335"><span class="line">    1335: </span></a>@released
+<a name="1336"><span class="line">    1336: </span></a>
+<a name="1337"><span class="line">    1337: </span></a>SYMBIAN_C32_SERCOMMS_V2
+<a name="1338"><span class="line">    1338: </span></a>
+<a name="1339"><span class="line">    1339: </span></a>Description: 
+<a name="1340"><span class="line">    1340: </span></a>If SYMBIAN_C32_SERCOMMS_V2 is defined, the Comms Server allows grouped CSYs
+<a name="1341"><span class="line">    1341: </span></a>to get loaded into individual threads in order to avoid CSY blocking. 
+<a name="1342"><span class="line">    1342: </span></a>The allocation of CSYs to threads is determined by naming convention from 
+<a name="1343"><span class="line">    1343: </span></a>the configurator/INI file. 
+<a name="1344"><span class="line">    1344: </span></a>This #define supports PREQ890
+<a name="1345"><span class="line">    1345: </span></a>
+<a name="1346"><span class="line">    1346: </span></a>*/</span>
+<a name="1347"><span class="line">    1347: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_C32_SERCOMMS_V2_0"><span class="b">SYMBIAN_C32_SERCOMMS_V2</span></a>
+<a name="1348"><span class="line">    1348: </span></a>
+<a name="1349"><span class="line">    1349: </span></a>
+<a name="1350"><span class="line">    1350: </span></a><span class="k">/**
+<a name="1351"><span class="line">    1351: </span></a>@publishedPartner
+<a name="1352"><span class="line">    1352: </span></a>@released
+<a name="1353"><span class="line">    1353: </span></a>
+<a name="1354"><span class="line">    1354: </span></a>SYMBIAN_DEVMAN_BEARER_CONFIGURABLE
+<a name="1355"><span class="line">    1355: </span></a>
+<a name="1356"><span class="line">    1356: </span></a>If SYMBIAN_DEVMAN_BEARER_CONFIGURABLE is defined then the 
+<a name="1357"><span class="line">    1357: </span></a>device management support for network bearers can configured 
+<a name="1358"><span class="line">    1358: </span></a>using the resource file &apos;dmnapddf.rss&apos;
+<a name="1359"><span class="line">    1359: </span></a>
+<a name="1360"><span class="line">    1360: </span></a>This #define supports CR1011
+<a name="1361"><span class="line">    1361: </span></a>*/</span>
+<a name="1362"><span class="line">    1362: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_DEVMAN_BEARER_CONFIGURABLE_0"><span class="b">SYMBIAN_DEVMAN_BEARER_CONFIGURABLE</span></a>
+<a name="1363"><span class="line">    1363: </span></a>
+<a name="1364"><span class="line">    1364: </span></a>
+<a name="1365"><span class="line">    1365: </span></a><span class="k">/**
+<a name="1366"><span class="line">    1366: </span></a>@publishedPartner
+<a name="1367"><span class="line">    1367: </span></a>@released
+<a name="1368"><span class="line">    1368: </span></a>
+<a name="1369"><span class="line">    1369: </span></a>SYMBIAN_NETWORKING_DHCP_MSG_HEADERS
+<a name="1370"><span class="line">    1370: </span></a>
+<a name="1371"><span class="line">    1371: </span></a>If SYMBIAN_NETWORKING_DHCP_MSG_HEADERS is defined, the 
+<a name="1372"><span class="line">    1372: </span></a>Symbian OS DHCPv4 daemon supports retrieval of 
+<a name="1373"><span class="line">    1373: </span></a>DHCP message header fields and also &apos;Parameter Request List&apos; 
+<a name="1374"><span class="line">    1374: </span></a>in the DHCP request message to the remote DHCP server is 
+<a name="1375"><span class="line">    1375: </span></a>configurable.
+<a name="1376"><span class="line">    1376: </span></a>
+<a name="1377"><span class="line">    1377: </span></a>This #define supports PREQ1647 and PREQ1648
+<a name="1378"><span class="line">    1378: </span></a>*/</span>
+<a name="1379"><span class="line">    1379: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_DHCP_MSG_HEADERS_0"><span class="b">SYMBIAN_NETWORKING_DHCP_MSG_HEADERS</span></a>
+<a name="1380"><span class="line">    1380: </span></a>
+<a name="1381"><span class="line">    1381: </span></a>
+<a name="1382"><span class="line">    1382: </span></a>
+<a name="1383"><span class="line">    1383: </span></a><span class="k">/** 
+<a name="1384"><span class="line">    1384: </span></a>@publishedAll
+<a name="1385"><span class="line">    1385: </span></a>@released
+<a name="1386"><span class="line">    1386: </span></a>
+<a name="1387"><span class="line">    1387: </span></a>SYMBIAN_DRM_3RD_PARTY_PLAYBACK
+<a name="1388"><span class="line">    1388: </span></a>
+<a name="1389"><span class="line">    1389: </span></a>If SYMBIAN_DRM_3RD_PARTY_PLAYBACK is defined, the Multimedia Framework
+<a name="1390"><span class="line">    1390: </span></a>supports the playback of DRM-protected content by processes which do not 
+<a name="1391"><span class="line">    1391: </span></a>have the DRM capability.
+<a name="1392"><span class="line">    1392: </span></a>
+<a name="1393"><span class="line">    1393: </span></a>@see RMMFController
+<a name="1394"><span class="line">    1394: </span></a>
+<a name="1395"><span class="line">    1395: </span></a>This #define supports CR1058.
+<a name="1396"><span class="line">    1396: </span></a>*/</span>
+<a name="1397"><span class="line">    1397: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_DRM_3RD_PARTY_PLAYBACK_0"><span class="b">SYMBIAN_DRM_3RD_PARTY_PLAYBACK</span></a>
+<a name="1398"><span class="line">    1398: </span></a>
+<a name="1399"><span class="line">    1399: </span></a>
+<a name="1400"><span class="line">    1400: </span></a><span class="k">/**
+<a name="1401"><span class="line">    1401: </span></a>@publishedAll
+<a name="1402"><span class="line">    1402: </span></a>@released
+<a name="1403"><span class="line">    1403: </span></a>
+<a name="1404"><span class="line">    1404: </span></a>SYMBIAN_USE_MMF_RUF_RECOGNIZER
+<a name="1405"><span class="line">    1405: </span></a>
+<a name="1406"><span class="line">    1406: </span></a>If SYMBIAN_USE_MMF_RUF_RECOGNIZER is defined, the MMF recognizer is able to 
+<a name="1407"><span class="line">    1407: </span></a>recognize formats such as MPEG4, MPEG2, AAC and Divx.
+<a name="1408"><span class="line">    1408: </span></a>*/</span>
+<a name="1409"><span class="line">    1409: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_USE_MMF_RUF_RECOGNIZER_0"><span class="b">SYMBIAN_USE_MMF_RUF_RECOGNIZER</span></a>
+<a name="1410"><span class="line">    1410: </span></a>
+<a name="1411"><span class="line">    1411: </span></a>
+<a name="1412"><span class="line">    1412: </span></a><span class="k">/** 
+<a name="1413"><span class="line">    1413: </span></a>@publishedPartner 
+<a name="1414"><span class="line">    1414: </span></a>@released
+<a name="1415"><span class="line">    1415: </span></a>
+<a name="1416"><span class="line">    1416: </span></a>SYMBIAN_ENABLE_1630_JPEG_EXTENSIONS 
+<a name="1417"><span class="line">    1417: </span></a>
+<a name="1418"><span class="line">    1418: </span></a>If SYMBIAN_ENABLE_1630_JPEG_EXTENSIONS is defined, the Symbian JPEG 
+<a name="1419"><span class="line">    1419: </span></a>codec implements the PREQ1630 ICL API extensions. 
+<a name="1420"><span class="line">    1420: </span></a>
+<a name="1421"><span class="line">    1421: </span></a>@see CImageDecoder::SetClippingRectL
+<a name="1422"><span class="line">    1422: </span></a>@see CImageDecoder::GetDestinationSize
+<a name="1423"><span class="line">    1423: </span></a>@see CImageDecoder::PrepareL
+<a name="1424"><span class="line">    1424: </span></a>@see CImageDecoder::OperationL
+<a name="1425"><span class="line">    1425: </span></a>@see CImageDecoder::ScalerL
+<a name="1426"><span class="line">    1426: </span></a>@see CImageDecoder::BlockStreamerL
+<a name="1427"><span class="line">    1427: </span></a>@see CImageEncoder::PrepareL
+<a name="1428"><span class="line">    1428: </span></a>@see CImageEncoder::OperationL
+<a name="1429"><span class="line">    1429: </span></a>@see CImageEncoder::BlockStreamerL
+<a name="1430"><span class="line">    1430: </span></a>
+<a name="1431"><span class="line">    1431: </span></a>This #define supports PREQ1630. 
+<a name="1432"><span class="line">    1432: </span></a>*/</span>
+<a name="1433"><span class="line">    1433: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ENABLE_1630_JPEG_EXTENSIONS_0"><span class="b">SYMBIAN_ENABLE_1630_JPEG_EXTENSIONS</span></a>
+<a name="1434"><span class="line">    1434: </span></a>
+<a name="1435"><span class="line">    1435: </span></a><span class="k">/**
+<a name="1436"><span class="line">    1436: </span></a>@publishedPartner
+<a name="1437"><span class="line">    1437: </span></a>@released
+<a name="1438"><span class="line">    1438: </span></a>
+<a name="1439"><span class="line">    1439: </span></a>SYMBIAN_LFFS_SIBLEY_NORFLASH
+<a name="1440"><span class="line">    1440: </span></a>
+<a name="1441"><span class="line">    1441: </span></a>If SYMBIAN_LFFS_SIBLEY_NORFLASH is defined support for LFFS on 
+<a name="1442"><span class="line">    1442: </span></a>Intel Sibley NOR flash is enabled.
+<a name="1443"><span class="line">    1443: </span></a>
+<a name="1444"><span class="line">    1444: </span></a>This #define supports PREQ912 and involves a BC break in the 
+<a name="1445"><span class="line">    1445: </span></a>parameter list for DMediaDriverFlash::Caps() - see BR1680 for details.
+<a name="1446"><span class="line">    1446: </span></a>*/</span>
+<a name="1447"><span class="line">    1447: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_LFFS_SIBLEY_NORFLASH_0"><span class="b">SYMBIAN_LFFS_SIBLEY_NORFLASH</span></a>
+<a name="1448"><span class="line">    1448: </span></a>
+<a name="1449"><span class="line">    1449: </span></a> <span class="k">/** 
+<a name="1450"><span class="line">    1450: </span></a>@publishedPartner 
+<a name="1451"><span class="line">    1451: </span></a>@released
+<a name="1452"><span class="line">    1452: </span></a>
+<a name="1453"><span class="line">    1453: </span></a>SYMBIAN_LOCATION_PRIVACY_V2 
+<a name="1454"><span class="line">    1454: </span></a>
+<a name="1455"><span class="line">    1455: </span></a>If SYMBIAN_LOCATION_PRIVACY_V2 is defined, the Symbian LBS sub-system 
+<a name="1456"><span class="line">    1456: </span></a>includes support for the advanced privacy dialogs and standalone 
+<a name="1457"><span class="line">    1457: </span></a>privacy components.
+<a name="1458"><span class="line">    1458: </span></a>
+<a name="1459"><span class="line">    1459: </span></a>This #define supports PREQ1660. 
+<a name="1460"><span class="line">    1460: </span></a>*/</span>
+<a name="1461"><span class="line">    1461: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_LOCATION_PRIVACY_V2_0"><span class="b">SYMBIAN_LOCATION_PRIVACY_V2</span></a>
+<a name="1462"><span class="line">    1462: </span></a>
+<a name="1463"><span class="line">    1463: </span></a>
+<a name="1464"><span class="line">    1464: </span></a><span class="k">/** 
+<a name="1465"><span class="line">    1465: </span></a>@publishedPartner 
+<a name="1466"><span class="line">    1466: </span></a>@released
+<a name="1467"><span class="line">    1467: </span></a>
+<a name="1468"><span class="line">    1468: </span></a>SYMBIAN_MDF_SHAREDCHUNK_SOUNDDRIVER
+<a name="1469"><span class="line">    1469: </span></a>    
+<a name="1470"><span class="line">    1470: </span></a>If SYMBIAN_MDF_SHAREDCHUNK_SOUNDDRIVER is defined, the Media Device
+<a name="1471"><span class="line">    1471: </span></a>Framework (MDF) will use the RSoundSc sound driver interface.
+<a name="1472"><span class="line">    1472: </span></a>If this macro is not defined, MDF will use the older RMdaDevSound interface.
+<a name="1473"><span class="line">    1473: </span></a>
+<a name="1474"><span class="line">    1474: </span></a>BR2079 gives further details of the migration needed by customers who 
+<a name="1475"><span class="line">    1475: </span></a>are using the Symbian reference DevSound with their own implementation
+<a name="1476"><span class="line">    1476: </span></a>of RMdaDevSound.
+<a name="1477"><span class="line">    1477: </span></a>
+<a name="1478"><span class="line">    1478: </span></a>@see RMdaDevSound
+<a name="1479"><span class="line">    1479: </span></a>@see RSoundSc
+<a name="1480"><span class="line">    1480: </span></a>*/</span>
+<a name="1481"><span class="line">    1481: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MDF_SHAREDCHUNK_SOUNDDRIVER_0"><span class="b">SYMBIAN_MDF_SHAREDCHUNK_SOUNDDRIVER</span></a>
+<a name="1482"><span class="line">    1482: </span></a>
+<a name="1483"><span class="line">    1483: </span></a>
+<a name="1484"><span class="line">    1484: </span></a><span class="k">/**
+<a name="1485"><span class="line">    1485: </span></a>@publishedPartner
+<a name="1486"><span class="line">    1486: </span></a>@released
+<a name="1487"><span class="line">    1487: </span></a>
+<a name="1488"><span class="line">    1488: </span></a>SYMBIAN_MESSAGESTORE_USING_SQLDB
+<a name="1489"><span class="line">    1489: </span></a>
+<a name="1490"><span class="line">    1490: </span></a>If SYMBIAN_MESSAGESTORE_USING_SQLDB is defined then messaging server
+<a name="1491"><span class="line">    1491: </span></a>uses the SQLite database to store message index data.
+<a name="1492"><span class="line">    1492: </span></a>*/</span>
+<a name="1493"><span class="line">    1493: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MESSAGESTORE_USING_SQLDB_0"><span class="b">SYMBIAN_MESSAGESTORE_USING_SQLDB</span></a>
+<a name="1494"><span class="line">    1494: </span></a>
+<a name="1495"><span class="line">    1495: </span></a>
+<a name="1496"><span class="line">    1496: </span></a><span class="k">/**
+<a name="1497"><span class="line">    1497: </span></a>@publishedAll
+<a name="1498"><span class="line">    1498: </span></a>@released
+<a name="1499"><span class="line">    1499: </span></a>
+<a name="1500"><span class="line">    1500: </span></a>SYMBIAN_WSERV_AND_CONE_MULTIPLE_SCREENS 
+<a name="1501"><span class="line">    1501: </span></a>
+<a name="1502"><span class="line">    1502: </span></a>If SYMBIAN_WSERV_AND_CONE_MULTIPLE_SCREENS is defined, new
+<a name="1503"><span class="line">    1503: </span></a>APIs are provided in cone.lib and ws32.lib which allow 
+<a name="1504"><span class="line">    1504: </span></a>applications to draw to multiple displays simultaneously and 
+<a name="1505"><span class="line">    1505: </span></a>react to a change of the active display.
+<a name="1506"><span class="line">    1506: </span></a>
+<a name="1507"><span class="line">    1507: </span></a>This #define supports PREQ1227
+<a name="1508"><span class="line">    1508: </span></a>
+<a name="1509"><span class="line">    1509: </span></a>@see CCoeEnv::ScreenDevice
+<a name="1510"><span class="line">    1510: </span></a>@see CScreenItem
+<a name="1511"><span class="line">    1511: </span></a>*/</span>
+<a name="1512"><span class="line">    1512: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_WSERV_AND_CONE_MULTIPLE_SCREENS_0"><span class="b">SYMBIAN_WSERV_AND_CONE_MULTIPLE_SCREENS</span></a>
+<a name="1513"><span class="line">    1513: </span></a>
+<a name="1514"><span class="line">    1514: </span></a>
+<a name="1515"><span class="line">    1515: </span></a><span class="k">/** 
+<a name="1516"><span class="line">    1516: </span></a>@publishedPartner 
+<a name="1517"><span class="line">    1517: </span></a>@released
+<a name="1518"><span class="line">    1518: </span></a>
+<a name="1519"><span class="line">    1519: </span></a>SYMBIAN_POWER_RESOURCE_MANAGER_API 
+<a name="1520"><span class="line">    1520: </span></a>
+<a name="1521"><span class="line">    1521: </span></a>If SYMBIAN_POWER_RESOURCE_MANAGER_API is defined, the Power Resource 
+<a name="1522"><span class="line">    1522: </span></a>Manager is available. 
+<a name="1523"><span class="line">    1523: </span></a>
+<a name="1524"><span class="line">    1524: </span></a>@see PowerResourceManager 
+<a name="1525"><span class="line">    1525: </span></a>@see DPowerResourceController 
+<a name="1526"><span class="line">    1526: </span></a>
+<a name="1527"><span class="line">    1527: </span></a>This #define supports PREQ1398. 
+<a name="1528"><span class="line">    1528: </span></a>*/</span>
+<a name="1529"><span class="line">    1529: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_POWER_RESOURCE_MANAGER_API_0"><span class="b">SYMBIAN_POWER_RESOURCE_MANAGER_API</span></a>
+<a name="1530"><span class="line">    1530: </span></a>
+<a name="1531"><span class="line">    1531: </span></a>
+<a name="1532"><span class="line">    1532: </span></a><span class="k">/**
+<a name="1533"><span class="line">    1533: </span></a>@publishedAll
+<a name="1534"><span class="line">    1534: </span></a>@released
+<a name="1535"><span class="line">    1535: </span></a>
+<a name="1536"><span class="line">    1536: </span></a>SYMBIAN_PROCESS_MONITORING_AND_STARTUP
+<a name="1537"><span class="line">    1537: </span></a>
+<a name="1538"><span class="line">    1538: </span></a>If defined, the System Startup architecture supports dynamic startup
+<a name="1539"><span class="line">    1539: </span></a>for after market applications, and provides the SysMon process to
+<a name="1540"><span class="line">    1540: </span></a>monitor critical system processes.
+<a name="1541"><span class="line">    1541: </span></a>
+<a name="1542"><span class="line">    1542: </span></a>@see DscStore::Connect
+<a name="1543"><span class="line">    1543: </span></a>@see ERestartOS
+<a name="1544"><span class="line">    1544: </span></a>
+<a name="1545"><span class="line">    1545: </span></a>This define supports PREQ871 and PREQ1089.
+<a name="1546"><span class="line">    1546: </span></a>*/</span>
+<a name="1547"><span class="line">    1547: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_PROCESS_MONITORING_AND_STARTUP_0"><span class="b">SYMBIAN_PROCESS_MONITORING_AND_STARTUP</span></a>
+<a name="1548"><span class="line">    1548: </span></a>
+<a name="1549"><span class="line">    1549: </span></a>
+<a name="1550"><span class="line">    1550: </span></a><span class="k">/** 
+<a name="1551"><span class="line">    1551: </span></a>@publishedAll 
+<a name="1552"><span class="line">    1552: </span></a>@released
+<a name="1553"><span class="line">    1553: </span></a>
+<a name="1554"><span class="line">    1554: </span></a>SYMBIAN_TUNER_RDS_ANNOUNCEMENT 
+<a name="1555"><span class="line">    1555: </span></a>
+<a name="1556"><span class="line">    1556: </span></a>If SYMBIAN_TUNER_RDS_ANNOUNCEMENT is defined, the RDS Tuner API 
+<a name="1557"><span class="line">    1557: </span></a>is provided, allowing applications to be notified if the radio
+<a name="1558"><span class="line">    1558: </span></a>is retuned to another station in order to listen to an announcement.  
+<a name="1559"><span class="line">    1559: </span></a>
+<a name="1560"><span class="line">    1560: </span></a>@see MMMRdsTunerUtilityImpl 
+<a name="1561"><span class="line">    1561: </span></a>@see MMMRdsAnnouncementObserver2 
+<a name="1562"><span class="line">    1562: </span></a>@see CMMRdsTunerUtility 
+<a name="1563"><span class="line">    1563: </span></a>
+<a name="1564"><span class="line">    1564: </span></a>This #define supports CR1097. 
+<a name="1565"><span class="line">    1565: </span></a>*/</span>
+<a name="1566"><span class="line">    1566: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_TUNER_RDS_ANNOUNCEMENT_0"><span class="b">SYMBIAN_TUNER_RDS_ANNOUNCEMENT</span></a>
+<a name="1567"><span class="line">    1567: </span></a>
+<a name="1568"><span class="line">    1568: </span></a>
+<a name="1569"><span class="line">    1569: </span></a><span class="k">/** 
+<a name="1570"><span class="line">    1570: </span></a>@publishedAll
+<a name="1571"><span class="line">    1571: </span></a>@released
+<a name="1572"><span class="line">    1572: </span></a>
+<a name="1573"><span class="line">    1573: </span></a>SYMBIAN_USER_PROMPT_SERVICE
+<a name="1574"><span class="line">    1574: </span></a>
+<a name="1575"><span class="line">    1575: </span></a>If SYMBIAN_USER_PROMPT_SERVICE is defined, the User Prompt 
+<a name="1576"><span class="line">    1576: </span></a>Service is available, allowing system servers to prompt the 
+<a name="1577"><span class="line">    1577: </span></a>user to make a security decision about a request from a client 
+<a name="1578"><span class="line">    1578: </span></a>application, e.g. &quot;Allow application X to send an SMS message?&quot; 
+<a name="1579"><span class="line">    1579: </span></a>
+<a name="1580"><span class="line">    1580: </span></a>@see RupSubsession::Authorise 
+<a name="1581"><span class="line">    1581: </span></a>
+<a name="1582"><span class="line">    1582: </span></a>This #define is associated with PREQ1262.
+<a name="1583"><span class="line">    1583: </span></a>*/</span> 
+<a name="1584"><span class="line">    1584: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_USER_PROMPT_SERVICE_0"><span class="b">SYMBIAN_USER_PROMPT_SERVICE</span></a>
+<a name="1585"><span class="line">    1585: </span></a>
+<a name="1586"><span class="line">    1586: </span></a>
+<a name="1587"><span class="line">    1587: </span></a>
+<a name="1588"><span class="line">    1588: </span></a><span class="k">/** 
+<a name="1589"><span class="line">    1589: </span></a>@publishedPartner 
+<a name="1590"><span class="line">    1590: </span></a>@released
+<a name="1591"><span class="line">    1591: </span></a>
+<a name="1592"><span class="line">    1592: </span></a>SYMBIAN_MULTIMEDIA_MUF 
+<a name="1593"><span class="line">    1593: </span></a>
+<a name="1594"><span class="line">    1594: </span></a>If SYMBIAN_MULTIMEDIA_MUF is defined, then the PREQ1823 Multimedia 
+<a name="1595"><span class="line">    1595: </span></a>Metadata Utility Framework is delivered in to the OS.
+<a name="1596"><span class="line">    1596: </span></a>
+<a name="1597"><span class="line">    1597: </span></a>@see CMetaDataClientUtility
+<a name="1598"><span class="line">    1598: </span></a>@see CMUFParserType
+<a name="1599"><span class="line">    1599: </span></a>@see MMUFObserver
+<a name="1600"><span class="line">    1600: </span></a>@see CMetaDataFieldsArray
+<a name="1601"><span class="line">    1601: </span></a>@see CMetaDataFieldItem
+<a name="1602"><span class="line">    1602: </span></a>@see CMetaDataParser
+<a name="1603"><span class="line">    1603: </span></a>
+<a name="1604"><span class="line">    1604: </span></a>This #define supports PREQ1823. 
+<a name="1605"><span class="line">    1605: </span></a>*/</span>
+<a name="1606"><span class="line">    1606: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MULTIMEDIA_MUF_0"><span class="b">SYMBIAN_MULTIMEDIA_MUF</span></a>
+<a name="1607"><span class="line">    1607: </span></a>
+<a name="1608"><span class="line">    1608: </span></a>
+<a name="1609"><span class="line">    1609: </span></a><span class="k">/**
+<a name="1610"><span class="line">    1610: </span></a>@publishedAll
+<a name="1611"><span class="line">    1611: </span></a>@released
+<a name="1612"><span class="line">    1612: </span></a>
+<a name="1613"><span class="line">    1613: </span></a>SYMBIAN_MBUFMANAGER_V2
+<a name="1614"><span class="line">    1614: </span></a>
+<a name="1615"><span class="line">    1615: </span></a>
+<a name="1616"><span class="line">    1616: </span></a>SYMBIAN_MBUFMANAGER_V2 make several changes in 
+<a name="1617"><span class="line">    1617: </span></a>the CMBufManager including multiple sized RMBuf&apos;s.
+<a name="1618"><span class="line">    1618: </span></a>This #define supports REQ7857, REQ7860, REQ7864, REQ8585, REQ8586
+<a name="1619"><span class="line">    1619: </span></a>developed as part of PREQ1248.
+<a name="1620"><span class="line">    1620: </span></a>These changes introduces a BR-2242.
+<a name="1621"><span class="line">    1621: </span></a>*/</span>
+<a name="1622"><span class="line">    1622: </span></a><span class="f">#</span><span class="n">define</span>    <a href="e32std.h_macros.html#SYMBIAN_MBUFMANAGER_V2_0"><span class="b">SYMBIAN_MBUFMANAGER_V2</span></a>
+<a name="1623"><span class="line">    1623: </span></a>
+<a name="1624"><span class="line">    1624: </span></a>
+<a name="1625"><span class="line">    1625: </span></a><span class="k">/**
+<a name="1626"><span class="line">    1626: </span></a>@publishedPartner
+<a name="1627"><span class="line">    1627: </span></a>@released
+<a name="1628"><span class="line">    1628: </span></a>
+<a name="1629"><span class="line">    1629: </span></a>SYMBIAN_FEATURE_MANAGER
+<a name="1630"><span class="line">    1630: </span></a>
+<a name="1631"><span class="line">    1631: </span></a>If SYMBIAN_FEATURE_MANAGER is defined then the Feature Registry 
+<a name="1632"><span class="line">    1632: </span></a>functionality is implemented via the Feature Manager, with
+<a name="1633"><span class="line">    1633: </span></a>corresponding changes in the ROM building tools.
+<a name="1634"><span class="line">    1634: </span></a>
+<a name="1635"><span class="line">    1635: </span></a>This #define supports PREQ1645
+<a name="1636"><span class="line">    1636: </span></a>*/</span>
+<a name="1637"><span class="line">    1637: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_FEATURE_MANAGER_0"><span class="b">SYMBIAN_FEATURE_MANAGER</span></a>
+<a name="1638"><span class="line">    1638: </span></a>
+<a name="1639"><span class="line">    1639: </span></a>
+<a name="1640"><span class="line">    1640: </span></a><span class="k">/**
+<a name="1641"><span class="line">    1641: </span></a>@publishedAll
+<a name="1642"><span class="line">    1642: </span></a>@released
+<a name="1643"><span class="line">    1643: </span></a>
+<a name="1644"><span class="line">    1644: </span></a>SYMBIAN_BUILD_GCE
+<a name="1645"><span class="line">    1645: </span></a>
+<a name="1646"><span class="line">    1646: </span></a>If SYMBIAN_BUILD_GCE is defined, the Surface Manager and Graphics 
+<a name="1647"><span class="line">    1647: </span></a>Composition Engine APIs are available at build time.
+<a name="1648"><span class="line">    1648: </span></a>
+<a name="1649"><span class="line">    1649: </span></a>@see RWindowBase::SetBackgroundSurface
+<a name="1650"><span class="line">    1650: </span></a>@see RSurfaceManager
+<a name="1651"><span class="line">    1651: </span></a>@see RSurfaceUpdateSession
+<a name="1652"><span class="line">    1652: </span></a>
+<a name="1653"><span class="line">    1653: </span></a>Note that the Surface Manager and GCE executables are optional, 
+<a name="1654"><span class="line">    1654: </span></a>and will not be present in the ROM or the emulator unless 
+<a name="1655"><span class="line">    1655: </span></a>appropriately configured.
+<a name="1656"><span class="line">    1656: </span></a>
+<a name="1657"><span class="line">    1657: </span></a>This #define supports PREQ1007 and PREQ1019
+<a name="1658"><span class="line">    1658: </span></a>*/</span>
+<a name="1659"><span class="line">    1659: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_BUILD_GCE_0"><span class="b">SYMBIAN_BUILD_GCE</span></a>
+<a name="1660"><span class="line">    1660: </span></a>
+<a name="1661"><span class="line">    1661: </span></a>
+<a name="1662"><span class="line">    1662: </span></a><span class="k">/** 
+<a name="1663"><span class="line">    1663: </span></a>@publishedAll 
+<a name="1664"><span class="line">    1664: </span></a>@released
+<a name="1665"><span class="line">    1665: </span></a>
+<a name="1666"><span class="line">    1666: </span></a>SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY 
+<a name="1667"><span class="line">    1667: </span></a>
+<a name="1668"><span class="line">    1668: </span></a>If SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY is defined 
+<a name="1669"><span class="line">    1669: </span></a>then the comms-infras framework supports the management plane 
+<a name="1670"><span class="line">    1670: </span></a>with the RCommsManager API providing support for connection 
+<a name="1671"><span class="line">    1671: </span></a>selection, bearer mobility and other functionality.
+<a name="1672"><span class="line">    1672: </span></a>
+<a name="1673"><span class="line">    1673: </span></a>This #define supports PREQ 1060 and PREQ 399. 
+<a name="1674"><span class="line">    1674: </span></a>*/</span>
+<a name="1675"><span class="line">    1675: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY_0"><span class="b">SYMBIAN_NON_SEAMLESS_NETWORK_BEARER_MOBILITY</span></a>
+<a name="1676"><span class="line">    1676: </span></a>
+<a name="1677"><span class="line">    1677: </span></a><span class="k">/**
+<a name="1678"><span class="line">    1678: </span></a>@publishedPartner
+<a name="1679"><span class="line">    1679: </span></a>@released
+<a name="1680"><span class="line">    1680: </span></a>
+<a name="1681"><span class="line">    1681: </span></a>SYMBIAN_CAF_STREAMING
+<a name="1682"><span class="line">    1682: </span></a>
+<a name="1683"><span class="line">    1683: </span></a>If SYMBIAN_CAF_STREAMING is defined then CAF provides support for 
+<a name="1684"><span class="line">    1684: </span></a>streamed broadcast protection standards, such as DVB-H or OMA DRM BCAST.
+<a name="1685"><span class="line">    1685: </span></a>
+<a name="1686"><span class="line">    1686: </span></a>This #define supports PREQ782
+<a name="1687"><span class="line">    1687: </span></a>*/</span>
+<a name="1688"><span class="line">    1688: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CAF_STREAMING_0"><span class="b">SYMBIAN_CAF_STREAMING</span></a>
+<a name="1689"><span class="line">    1689: </span></a>
+<a name="1690"><span class="line">    1690: </span></a>
+<a name="1691"><span class="line">    1691: </span></a><span class="k">/** 
+<a name="1692"><span class="line">    1692: </span></a>@publishedPartner
+<a name="1693"><span class="line">    1693: </span></a>@released
+<a name="1694"><span class="line">    1694: </span></a>
+<a name="1695"><span class="line">    1695: </span></a>SYMBIAN_ENABLE_USB_OTG_HOST
+<a name="1696"><span class="line">    1696: </span></a>
+<a name="1697"><span class="line">    1697: </span></a>If SYMBIAN_ENABLE_USB_OTG_HOST is defined, executables related 
+<a name="1698"><span class="line">    1698: </span></a>to USB Host and USB OTG will be built in addition to the 
+<a name="1699"><span class="line">    1699: </span></a>existing support for USB Client.
+<a name="1700"><span class="line">    1700: </span></a>
+<a name="1701"><span class="line">    1701: </span></a>These additional components are necessary to enable building a 
+<a name="1702"><span class="line">    1702: </span></a>ROM incorporating USB Client, Host and OTG functionality.
+<a name="1703"><span class="line">    1703: </span></a>
+<a name="1704"><span class="line">    1704: </span></a>This #define supports PREQ1782
+<a name="1705"><span class="line">    1705: </span></a>*/</span>            
+<a name="1706"><span class="line">    1706: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ENABLE_USB_OTG_HOST_0"><span class="b">SYMBIAN_ENABLE_USB_OTG_HOST</span></a>
+<a name="1707"><span class="line">    1707: </span></a>
+<a name="1708"><span class="line">    1708: </span></a><span class="k">/** 
+<a name="1709"><span class="line">    1709: </span></a>@publishedPartner
+<a name="1710"><span class="line">    1710: </span></a>@released
+<a name="1711"><span class="line">    1711: </span></a>
+<a name="1712"><span class="line">    1712: </span></a>SYMBIAN_MULTIMEDIA_A3FDEVSOUND 
+<a name="1713"><span class="line">    1713: </span></a>
+<a name="1714"><span class="line">    1714: </span></a>If SYMBIAN_MULTIMEDIA_A3FDEVSOUND is defined, the PREQ1540 DevSound API is 
+<a name="1715"><span class="line">    1715: </span></a>present in the Advanced Audio Adaptation Framework
+<a name="1716"><span class="line">    1716: </span></a>
+<a name="1717"><span class="line">    1717: </span></a>This #define supports PREQ1540. 
+<a name="1718"><span class="line">    1718: </span></a>*/</span>
+<a name="1719"><span class="line">    1719: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MULTIMEDIA_A3FDEVSOUND_0"><span class="b">SYMBIAN_MULTIMEDIA_A3FDEVSOUND</span></a> 
+<a name="1720"><span class="line">    1720: </span></a>
+<a name="1721"><span class="line">    1721: </span></a><span class="k">/**
+<a name="1722"><span class="line">    1722: </span></a>@publishedAll
+<a name="1723"><span class="line">    1723: </span></a>@released
+<a name="1724"><span class="line">    1724: </span></a>
+<a name="1725"><span class="line">    1725: </span></a>SYMBIAN_OS_EXCLUDE_DMCPDS
+<a name="1726"><span class="line">    1726: </span></a>
+<a name="1727"><span class="line">    1727: </span></a>When this macro is enabled, OMA dataSync, Device Management and Client Provisioning protocol 
+<a name="1728"><span class="line">    1728: </span></a>implementations will be excluded.
+<a name="1729"><span class="line">    1729: </span></a>
+<a name="1730"><span class="line">    1730: </span></a>This #define supports PREQ2474.
+<a name="1731"><span class="line">    1731: </span></a>*/</span>    
+<a name="1732"><span class="line">    1732: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_OS_EXCLUDE_DMCPDS_0"><span class="b">SYMBIAN_OS_EXCLUDE_DMCPDS</span></a>
+<a name="1733"><span class="line">    1733: </span></a>
+<a name="1734"><span class="line">    1734: </span></a><span class="k">/**
+<a name="1735"><span class="line">    1735: </span></a>@publishedPartner
+<a name="1736"><span class="line">    1736: </span></a>@released
+<a name="1737"><span class="line">    1737: </span></a>
+<a name="1738"><span class="line">    1738: </span></a>SYMBIAN_USB_RNDIS
+<a name="1739"><span class="line">    1739: </span></a>        
+<a name="1740"><span class="line">    1740: </span></a>If SYMBIAN_USB_RNDIS is defined, SYMBIAN OS will provide USB Remote NDIS class (this affects Bluetooth PAN as well).
+<a name="1741"><span class="line">    1741: </span></a>
+<a name="1742"><span class="line">    1742: </span></a>This #define supports PREQ1872.
+<a name="1743"><span class="line">    1743: </span></a>*/</span>
+<a name="1744"><span class="line">    1744: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_USB_RNDIS_0"><span class="b">SYMBIAN_USB_RNDIS</span></a>
+<a name="1745"><span class="line">    1745: </span></a>
+<a name="1746"><span class="line">    1746: </span></a><span class="k">/**
+<a name="1747"><span class="line">    1747: </span></a>@internalAll
+<a name="1748"><span class="line">    1748: </span></a>@released
+<a name="1749"><span class="line">    1749: </span></a>
+<a name="1750"><span class="line">    1750: </span></a>SYMBIAN_ALARM_REPEAT_EXTENSIONS
+<a name="1751"><span class="line">    1751: </span></a>If SYMBIAN_ALARM_REPEAT_EXTENSIONS is defined then the client APIs delivered by PREQ2069 will be avilable.
+<a name="1752"><span class="line">    1752: </span></a>These APIs introduce an additional alarm repeat definition and a new alarm expiry behaviour. 
+<a name="1753"><span class="line">    1753: </span></a>
+<a name="1754"><span class="line">    1754: </span></a>#define supports PREQ2069.
+<a name="1755"><span class="line">    1755: </span></a>*/</span>
+<a name="1756"><span class="line">    1756: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ALARM_REPEAT_EXTENSIONS_0"><span class="b">SYMBIAN_ALARM_REPEAT_EXTENSIONS</span></a>
+<a name="1757"><span class="line">    1757: </span></a>
+<a name="1758"><span class="line">    1758: </span></a><span class="k">/** 
+<a name="1759"><span class="line">    1759: </span></a>@publishedPartner 
+<a name="1760"><span class="line">    1760: </span></a>
+<a name="1761"><span class="line">    1761: </span></a>SYMBIAN_BAFL_MULTIPARTPARSER 
+<a name="1762"><span class="line">    1762: </span></a>
+<a name="1763"><span class="line">    1763: </span></a>If SYMBIAN_BAFL_MULTIPARTPARSER is defined then the BAFL 
+<a name="1764"><span class="line">    1764: </span></a>component provides the MultipartParser.dll functionality. 
+<a name="1765"><span class="line">    1765: </span></a>
+<a name="1766"><span class="line">    1766: </span></a>This #define supports PREQ2051. 
+<a name="1767"><span class="line">    1767: </span></a>*/</span>
+<a name="1768"><span class="line">    1768: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_BAFL_MULTIPARTPARSER_0"><span class="b">SYMBIAN_BAFL_MULTIPARTPARSER</span></a>
+<a name="1769"><span class="line">    1769: </span></a>
+<a name="1770"><span class="line">    1770: </span></a><span class="k">/**
+<a name="1771"><span class="line">    1771: </span></a>@internalAll
+<a name="1772"><span class="line">    1772: </span></a>@released
+<a name="1773"><span class="line">    1773: </span></a>
+<a name="1774"><span class="line">    1774: </span></a>SYMBIAN_CENTREP_SUPPORT_MULTIROFS
+<a name="1775"><span class="line">    1775: </span></a>
+<a name="1776"><span class="line">    1776: </span></a>If SYMBIAN_CENTREP_SUPPORT_MULTIROFS is defined, centralrepository client
+<a name="1777"><span class="line">    1777: </span></a>will be able to define keyspaces that are composed of multiple files in different ROFS layers.
+<a name="1778"><span class="line">    1778: </span></a>
+<a name="1779"><span class="line">    1779: </span></a>This #define supports PREQ2112
+<a name="1780"><span class="line">    1780: </span></a>*/</span>
+<a name="1781"><span class="line">    1781: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_CENTREP_SUPPORT_MULTIROFS_0"><span class="b">SYMBIAN_CENTREP_SUPPORT_MULTIROFS</span></a>
+<a name="1782"><span class="line">    1782: </span></a>
+<a name="1783"><span class="line">    1783: </span></a><span class="k">/**
+<a name="1784"><span class="line">    1784: </span></a>@publishedPartner
+<a name="1785"><span class="line">    1785: </span></a>@released
+<a name="1786"><span class="line">    1786: </span></a>
+<a name="1787"><span class="line">    1787: </span></a>SYMBIAN_DNS_PROXY
+<a name="1788"><span class="line">    1788: </span></a>
+<a name="1789"><span class="line">    1789: </span></a>If SYMBIAN_DNS_PROXY is defined, SYMBIAN OS will provide DNS Proxy Service.
+<a name="1790"><span class="line">    1790: </span></a>
+<a name="1791"><span class="line">    1791: </span></a>This define supports PREQ1684.
+<a name="1792"><span class="line">    1792: </span></a>*/</span>
+<a name="1793"><span class="line">    1793: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_DNS_PROXY_0"><span class="b">SYMBIAN_DNS_PROXY</span></a>
+<a name="1794"><span class="line">    1794: </span></a>
+<a name="1795"><span class="line">    1795: </span></a><span class="k">/**
+<a name="1796"><span class="line">    1796: </span></a>@publishedPartner
+<a name="1797"><span class="line">    1797: </span></a>@released
+<a name="1798"><span class="line">    1798: </span></a>
+<a name="1799"><span class="line">    1799: </span></a>SYMBIAN_DNS_PUNYCODE
+<a name="1800"><span class="line">    1800: </span></a>
+<a name="1801"><span class="line">    1801: </span></a>If SYMBIAN_DNS_PUNYCODE is defined, this will enable punycode conversion 
+<a name="1802"><span class="line">    1802: </span></a>functionality in the system. If SYMBIAN_DNS_PUNYCODE is enabled, then the DND 
+<a name="1803"><span class="line">    1803: </span></a>can resolve the International Domain Names also. As per the requirement, application 
+<a name="1804"><span class="line">    1804: </span></a>can use this punycode conversion.
+<a name="1805"><span class="line">    1805: </span></a>
+<a name="1806"><span class="line">    1806: </span></a>This define supports PREQ2296.
+<a name="1807"><span class="line">    1807: </span></a>*/</span>
+<a name="1808"><span class="line">    1808: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_DNS_PUNYCODE_0"><span class="b">SYMBIAN_DNS_PUNYCODE</span></a>
+<a name="1809"><span class="line">    1809: </span></a>
+<a name="1810"><span class="line">    1810: </span></a><span class="k">/**
+<a name="1811"><span class="line">    1811: </span></a>@publishedAll
+<a name="1812"><span class="line">    1812: </span></a>
+<a name="1813"><span class="line">    1813: </span></a>SYMBIAN_ENABLE_64_BIT_FILE_SERVER_API
+<a name="1814"><span class="line">    1814: </span></a>
+<a name="1815"><span class="line">    1815: </span></a>Enables the File Server Client side API for large file access (file size greater than 2GB - 1).
+<a name="1816"><span class="line">    1816: </span></a>Enables the configurable part of File Server side to support large files.
+<a name="1817"><span class="line">    1817: </span></a>
+<a name="1818"><span class="line">    1818: </span></a>This #define supports PREQ1725
+<a name="1819"><span class="line">    1819: </span></a>*/</span>
+<a name="1820"><span class="line">    1820: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ENABLE_64_BIT_FILE_SERVER_API_0"><span class="b">SYMBIAN_ENABLE_64_BIT_FILE_SERVER_API</span></a>
+<a name="1821"><span class="line">    1821: </span></a>
+<a name="1822"><span class="line">    1822: </span></a><span class="k">/**
+<a name="1823"><span class="line">    1823: </span></a>@publishedPartner
+<a name="1824"><span class="line">    1824: </span></a>@released
+<a name="1825"><span class="line">    1825: </span></a>
+<a name="1826"><span class="line">    1826: </span></a>SYMBIAN_ENABLE_FAT_DIRECTORY_OPT
+<a name="1827"><span class="line">    1827: </span></a>
+<a name="1828"><span class="line">    1828: </span></a>If SYMBIAN_ENABLE_FAT_DIRECTORY_OPT is defined, a size-configurable
+<a name="1829"><span class="line">    1829: </span></a>Leaf Directory Name Caching and optimisations to file creation operations
+<a name="1830"><span class="line">    1830: </span></a>is enabled to improve performance of locating leaf directories and
+<a name="1831"><span class="line">    1831: </span></a>file creation on FAT volumes.
+<a name="1832"><span class="line">    1832: </span></a>
+<a name="1833"><span class="line">    1833: </span></a>This #define supports PREQ1885.
+<a name="1834"><span class="line">    1834: </span></a>*/</span>
+<a name="1835"><span class="line">    1835: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ENABLE_FAT_DIRECTORY_OPT_0"><span class="b">SYMBIAN_ENABLE_FAT_DIRECTORY_OPT</span></a>
+<a name="1836"><span class="line">    1836: </span></a>
+<a name="1837"><span class="line">    1837: </span></a><span class="k">/** 
+<a name="1838"><span class="line">    1838: </span></a>@publishedAll
+<a name="1839"><span class="line">    1839: </span></a>@released
+<a name="1840"><span class="line">    1840: </span></a>
+<a name="1841"><span class="line">    1841: </span></a>SYMBIAN_EUSERHL
+<a name="1842"><span class="line">    1842: </span></a>
+<a name="1843"><span class="line">    1843: </span></a>EUserHl generic usability library
+<a name="1844"><span class="line">    1844: </span></a>
+<a name="1845"><span class="line">    1845: </span></a>This #define supports PREQ2177
+<a name="1846"><span class="line">    1846: </span></a>*/</span>
+<a name="1847"><span class="line">    1847: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_EUSERHL_0"><span class="b">SYMBIAN_EUSERHL</span></a>
+<a name="1848"><span class="line">    1848: </span></a>
+<a name="1849"><span class="line">    1849: </span></a><span class="k">/**
+<a name="1850"><span class="line">    1850: </span></a>@publishedPartner
+<a name="1851"><span class="line">    1851: </span></a>SYMBIAN_LOCATION_BTGPSCONFIG
+<a name="1852"><span class="line">    1852: </span></a>
+<a name="1853"><span class="line">    1853: </span></a>Allows applications that use the LBS subsystem to automatically utilize the best Bluetooth GPS positioning source
+<a name="1854"><span class="line">    1854: </span></a>available (rather than be manually configured to a particular Bluetooth GPS device)
+<a name="1855"><span class="line">    1855: </span></a>
+<a name="1856"><span class="line">    1856: </span></a>*/</span>
+<a name="1857"><span class="line">    1857: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_LOCATION_BTGPSCONFIG_0"><span class="b">SYMBIAN_LOCATION_BTGPSCONFIG</span></a>
+<a name="1858"><span class="line">    1858: </span></a>
+<a name="1859"><span class="line">    1859: </span></a><span class="k">/**
+<a name="1860"><span class="line">    1860: </span></a>@publishedAll
+<a name="1861"><span class="line">    1861: </span></a>@released
+<a name="1862"><span class="line">    1862: </span></a>
+<a name="1863"><span class="line">    1863: </span></a>SYMBIAN_MESSAGESTORE_ENHANCED_SEARCH
+<a name="1864"><span class="line">    1864: </span></a>
+<a name="1865"><span class="line">    1865: </span></a>If SYMBIAN_MESSAGESTORE_ENHANCED_SEARCH is defined then the client 
+<a name="1866"><span class="line">    1866: </span></a>side of  messaging server provides enhanced search capabilities.
+<a name="1867"><span class="line">    1867: </span></a>*/</span>
+<a name="1868"><span class="line">    1868: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_MESSAGESTORE_ENHANCED_SEARCH_0"><span class="b">SYMBIAN_MESSAGESTORE_ENHANCED_SEARCH</span></a>
+<a name="1869"><span class="line">    1869: </span></a>
+<a name="1870"><span class="line">    1870: </span></a><span class="k">/** 
+<a name="1871"><span class="line">    1871: </span></a>@publishedPartner 
+<a name="1872"><span class="line">    1872: </span></a>@released 
+<a name="1873"><span class="line">    1873: </span></a>
+<a name="1874"><span class="line">    1874: </span></a>SYMBIAN_NETWORKING_ADDRESS_PROVISION 
+<a name="1875"><span class="line">    1875: </span></a>
+<a name="1876"><span class="line">    1876: </span></a>If SYMBIAN_NETWORKING_ADDRESS_PROVISION is defined, this will enable 
+<a name="1877"><span class="line">    1877: </span></a>the DHCP server to provide IP address to the client based on its 
+<a name="1878"><span class="line">    1878: </span></a>hardware address, this hardware address is provisioned by the 
+<a name="1879"><span class="line">    1879: </span></a>application which is loading the DHCP server. Also NAPT will 
+<a name="1880"><span class="line">    1880: </span></a>forward any packets to the uplink only if the source address is 
+<a name="1881"><span class="line">    1881: </span></a>provisioned. 
+<a name="1882"><span class="line">    1882: </span></a>
+<a name="1883"><span class="line">    1883: </span></a>This define supports PREQ1872. 
+<a name="1884"><span class="line">    1884: </span></a>*/</span>
+<a name="1885"><span class="line">    1885: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_NETWORKING_ADDRESS_PROVISION_0"><span class="b">SYMBIAN_NETWORKING_ADDRESS_PROVISION</span></a>
+<a name="1886"><span class="line">    1886: </span></a>
+<a name="1887"><span class="line">    1887: </span></a><span class="k">/**
+<a name="1888"><span class="line">    1888: </span></a>
+<a name="1889"><span class="line">    1889: </span></a>@internalComponent
+<a name="1890"><span class="line">    1890: </span></a>
+<a name="1891"><span class="line">    1891: </span></a>SYMBIAN_OE_LIBRT
+<a name="1892"><span class="line">    1892: </span></a>
+<a name="1893"><span class="line">    1893: </span></a>If SYMBIAN_OE_LIBRT is defined, the open environment component will be extended to include the 
+<a name="1894"><span class="line">    1894: </span></a>Symbian OS port of the latest version of librt (&quot;realtime&quot;) open source library. 
+<a name="1895"><span class="line">    1895: </span></a>
+<a name="1896"><span class="line">    1896: </span></a>This #define supports PREQ1974
+<a name="1897"><span class="line">    1897: </span></a>
+<a name="1898"><span class="line">    1898: </span></a>*/</span>
+<a name="1899"><span class="line">    1899: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_OE_LIBRT_0"><span class="b">SYMBIAN_OE_LIBRT</span></a>
+<a name="1900"><span class="line">    1900: </span></a>
+<a name="1901"><span class="line">    1901: </span></a><span class="k">/**
+<a name="1902"><span class="line">    1902: </span></a>
+<a name="1903"><span class="line">    1903: </span></a>@internalComponent
+<a name="1904"><span class="line">    1904: </span></a>
+<a name="1905"><span class="line">    1905: </span></a>SYMBIAN_OE_POSIX_SIGNALS
+<a name="1906"><span class="line">    1906: </span></a>
+<a name="1907"><span class="line">    1907: </span></a>If SYMBIAN_OE_POSIX_SIGNALS is enabled, the libc component will use POSIX signals emulation.
+<a name="1908"><span class="line">    1908: </span></a>
+<a name="1909"><span class="line">    1909: </span></a>This #define supports PREQ1579
+<a name="1910"><span class="line">    1910: </span></a>
+<a name="1911"><span class="line">    1911: </span></a>*/</span>
+<a name="1912"><span class="line">    1912: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_OE_POSIX_SIGNALS_0"><span class="b">SYMBIAN_OE_POSIX_SIGNALS</span></a>
+<a name="1913"><span class="line">    1913: </span></a>
+<a name="1914"><span class="line">    1914: </span></a><span class="k">/**
+<a name="1915"><span class="line">    1915: </span></a>@publishedPartner
+<a name="1916"><span class="line">    1916: </span></a>
+<a name="1917"><span class="line">    1917: </span></a>SYMBIAN_SDP_IPSEC_VOIP_SUPPORT
+<a name="1918"><span class="line">    1918: </span></a>
+<a name="1919"><span class="line">    1919: </span></a>If SYMBIAN_SDP_IPSEC_VOIP_SUPPORT is defined, then PREQ1853 APIs enable use of the cipher based MAC evaluation 
+<a name="1920"><span class="line">    1920: </span></a>and psuedo random generation algorithms (AES-XCBC-MAC-96 and AES-XCBC-PRF-128 respectively) through a new MAC
+<a name="1921"><span class="line">    1921: </span></a>interface introduced in the CryptoSpi framework.
+<a name="1922"><span class="line">    1922: </span></a>
+<a name="1923"><span class="line">    1923: </span></a>Tbis #define supports PREQ1853
+<a name="1924"><span class="line">    1924: </span></a>*/</span>
+<a name="1925"><span class="line">    1925: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SDP_IPSEC_VOIP_SUPPORT_0"><span class="b">SYMBIAN_SDP_IPSEC_VOIP_SUPPORT</span></a>
+<a name="1926"><span class="line">    1926: </span></a>
+<a name="1927"><span class="line">    1927: </span></a><span class="k">/**
+<a name="1928"><span class="line">    1928: </span></a>@internalAll
+<a name="1929"><span class="line">    1929: </span></a>@released
+<a name="1930"><span class="line">    1930: </span></a>
+<a name="1931"><span class="line">    1931: </span></a>SYMBIAN_SKIPPED_CALENDAR_ALARMS
+<a name="1932"><span class="line">    1932: </span></a>
+<a name="1933"><span class="line">    1933: </span></a>If SYMBIAN_SKIPPED_CALENDAR_ALARMS is present then the alarm server shall
+<a name="1934"><span class="line">    1934: </span></a>persist details of missed calendar alarms and clients shall be able to 
+<a name="1935"><span class="line">    1935: </span></a>retrieve the list of missed calendar alarms from the Alarm server client API.
+<a name="1936"><span class="line">    1936: </span></a>
+<a name="1937"><span class="line">    1937: </span></a>This supports PREQ2088.
+<a name="1938"><span class="line">    1938: </span></a>*/</span>
+<a name="1939"><span class="line">    1939: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SKIPPED_CALENDAR_ALARMS_0"><span class="b">SYMBIAN_SKIPPED_CALENDAR_ALARMS</span></a>
+<a name="1940"><span class="line">    1940: </span></a>
+<a name="1941"><span class="line">    1941: </span></a><span class="k">/** 
+<a name="1942"><span class="line">    1942: </span></a>@internalTechnology
+<a name="1943"><span class="line">    1943: </span></a>
+<a name="1944"><span class="line">    1944: </span></a>SYMBIAN_SSM_FLEXIBLE_MERGE 
+<a name="1945"><span class="line">    1945: </span></a>
+<a name="1946"><span class="line">    1946: </span></a>When SYMBIAN_SSM_FLEXIBLE_MERGE is enabled then flexible merging 
+<a name="1947"><span class="line">    1947: </span></a>of startup command lists based on priority is supported.
+<a name="1948"><span class="line">    1948: </span></a>
+<a name="1949"><span class="line">    1949: </span></a>This define supports PREQ1871.
+<a name="1950"><span class="line">    1950: </span></a>*/</span>
+<a name="1951"><span class="line">    1951: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SSM_FLEXIBLE_MERGE_0"><span class="b">SYMBIAN_SSM_FLEXIBLE_MERGE</span></a>
+<a name="1952"><span class="line">    1952: </span></a>
+<a name="1953"><span class="line">    1953: </span></a><span class="k">/** 
+<a name="1954"><span class="line">    1954: </span></a>@internalAll 
+<a name="1955"><span class="line">    1955: </span></a>
+<a name="1956"><span class="line">    1956: </span></a>SYMBIAN_SSM_GRACEFUL_SHUTDOWN 
+<a name="1957"><span class="line">    1957: </span></a>
+<a name="1958"><span class="line">    1958: </span></a>If SYMBIAN_SSM_GRACEFUL_SHUTDOWN is defined, this will enable
+<a name="1959"><span class="line">    1959: </span></a>Staged Shutdown of the device,    which allows definition of
+<a name="1960"><span class="line">    1960: </span></a>a policy to specify the order for notifying registered
+<a name="1961"><span class="line">    1961: </span></a>components of shutdown, allowing them to perform any necessary
+<a name="1962"><span class="line">    1962: </span></a>tasks before the device completes its shutdown.
+<a name="1963"><span class="line">    1963: </span></a>
+<a name="1964"><span class="line">    1964: </span></a>This define supports PREQ2326.
+<a name="1965"><span class="line">    1965: </span></a>*/</span>
+<a name="1966"><span class="line">    1966: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SSM_GRACEFUL_SHUTDOWN_0"><span class="b">SYMBIAN_SSM_GRACEFUL_SHUTDOWN</span></a>
+<a name="1967"><span class="line">    1967: </span></a>
+<a name="1968"><span class="line">    1968: </span></a><span class="k">/**
+<a name="1969"><span class="line">    1969: </span></a>@publishedPartner
+<a name="1970"><span class="line">    1970: </span></a>@released
+<a name="1971"><span class="line">    1971: </span></a>
+<a name="1972"><span class="line">    1972: </span></a>SYMBIAN_STRICT_EXPLICIT_SOCKET_BINDING
+<a name="1973"><span class="line">    1973: </span></a>
+<a name="1974"><span class="line">    1974: </span></a>If SYMBIAN_STRICT_EXPLICIT_SOCKET_BINDING is defined then
+<a name="1975"><span class="line">    1975: </span></a>the TCP/IP stack shall support explictly bound sockets.
+<a name="1976"><span class="line">    1976: </span></a>If a socket is explicitly bound and a packet arrives on an interface
+<a name="1977"><span class="line">    1977: </span></a>that the socket isn&apos;t bound to, then the packet should be dropped.
+<a name="1978"><span class="line">    1978: </span></a>
+<a name="1979"><span class="line">    1979: </span></a>This define supports PREQ2279.
+<a name="1980"><span class="line">    1980: </span></a>*/</span>
+<a name="1981"><span class="line">    1981: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_STRICT_EXPLICIT_SOCKET_BINDING_0"><span class="b">SYMBIAN_STRICT_EXPLICIT_SOCKET_BINDING</span></a>
+<a name="1982"><span class="line">    1982: </span></a>
+<a name="1983"><span class="line">    1983: </span></a><span class="k">/**
+<a name="1984"><span class="line">    1984: </span></a>@publishedAll
+<a name="1985"><span class="line">    1985: </span></a>
+<a name="1986"><span class="line">    1986: </span></a>SYMBIAN_SWI_RUN_ON_INSTALL_COMPLETE
+<a name="1987"><span class="line">    1987: </span></a>
+<a name="1988"><span class="line">    1988: </span></a>This new Macro will enable the support for new run option for SIS files . When executables/files inside 
+<a name="1989"><span class="line">    1989: </span></a>SIS file marked with this new run option, they will be executed at the end of the successful installation.
+<a name="1990"><span class="line">    1990: </span></a>
+<a name="1991"><span class="line">    1991: </span></a>This #define supports PREQ2264, CR1544
+<a name="1992"><span class="line">    1992: </span></a>*/</span>
+<a name="1993"><span class="line">    1993: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SWI_RUN_ON_INSTALL_COMPLETE_0"><span class="b">SYMBIAN_SWI_RUN_ON_INSTALL_COMPLETE</span></a>
+<a name="1994"><span class="line">    1994: </span></a>
+<a name="1995"><span class="line">    1995: </span></a><span class="k">/** 
+<a name="1996"><span class="line">    1996: </span></a>@publishedPartner
+<a name="1997"><span class="line">    1997: </span></a>@released
+<a name="1998"><span class="line">    1998: </span></a>
+<a name="1999"><span class="line">    1999: </span></a>SYMBIAN_SYSTEM_STATE_MANAGEMENT 
+<a name="2000"><span class="line">    2000: </span></a>
+<a name="2001"><span class="line">    2001: </span></a>If SYMBIAN_SYSTEM_STATE_MANAGEMENT is defined, this will enable 
+<a name="2002"><span class="line">    2002: </span></a>the System State Management Architecture, which supports the 
+<a name="2003"><span class="line">    2003: </span></a>concept of system states (including startup, normal operation, 
+<a name="2004"><span class="line">    2004: </span></a>shutdown, and failure) and associated behaviour, and facilitates 
+<a name="2005"><span class="line">    2005: </span></a>the transitioning between them according to licensee-defined 
+<a name="2006"><span class="line">    2006: </span></a>policies and procedures.
+<a name="2007"><span class="line">    2007: </span></a>
+<a name="2008"><span class="line">    2008: </span></a>This define supports PREQ1871.
+<a name="2009"><span class="line">    2009: </span></a>*/</span>
+<a name="2010"><span class="line">    2010: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_SYSTEM_STATE_MANAGEMENT_0"><span class="b">SYMBIAN_SYSTEM_STATE_MANAGEMENT</span></a>
+<a name="2011"><span class="line">    2011: </span></a>
+<a name="2012"><span class="line">    2012: </span></a><span class="k">/**
+<a name="2013"><span class="line">    2013: </span></a>@internalAll
+<a name="2014"><span class="line">    2014: </span></a>
+<a name="2015"><span class="line">    2015: </span></a>SYMBIAN_WRITABLE_DATA_PAGING
+<a name="2016"><span class="line">    2016: </span></a>
+<a name="2017"><span class="line">    2017: </span></a>This System Wide Define will be used to issue a warning when a rom is built that enables data paging on a 
+<a name="2018"><span class="line">    2018: </span></a>version of the OS for which data paging is not warranted.
+<a name="2019"><span class="line">    2019: </span></a>
+<a name="2020"><span class="line">    2020: </span></a>This #define supports PREQ1954
+<a name="2021"><span class="line">    2021: </span></a>*/</span>
+<a name="2022"><span class="line">    2022: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_WRITABLE_DATA_PAGING_0"><span class="b">SYMBIAN_WRITABLE_DATA_PAGING</span></a>
+<a name="2023"><span class="line">    2023: </span></a>
+<a name="2024"><span class="line">    2024: </span></a><span class="k">/**
+<a name="2025"><span class="line">    2025: </span></a>@publishedPartner
+<a name="2026"><span class="line">    2026: </span></a>@released
+<a name="2027"><span class="line">    2027: </span></a>
+<a name="2028"><span class="line">    2028: </span></a>SYMBIAN_ZERO_COPY_NETWORKING
+<a name="2029"><span class="line">    2029: </span></a>
+<a name="2030"><span class="line">    2030: </span></a>If SYMBIAN_ZERO_COPY_NETWORKING is defined the Comms Stack switches from using single memory pool overseen
+<a name="2031"><span class="line">    2031: </span></a>by MBufManager to multiple, HW specific pools. With SYMBIAN_ZERO_COPY_NETWORKING defined link-level flows
+<a name="2032"><span class="line">    2032: </span></a>can avoid copying data when communicating with the respective HW drivers.
+<a name="2033"><span class="line">    2033: </span></a>
+<a name="2034"><span class="line">    2034: </span></a>This #define supports PREQ2106.
+<a name="2035"><span class="line">    2035: </span></a>*/</span>
+<a name="2036"><span class="line">    2036: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ZERO_COPY_NETWORKING_0"><span class="b">SYMBIAN_ZERO_COPY_NETWORKING</span></a>
+<a name="2037"><span class="line">    2037: </span></a>
+<a name="2038"><span class="line">    2038: </span></a><span class="k">/** 
+<a name="2039"><span class="line">    2039: </span></a>@publishedPartner 
+<a name="2040"><span class="line">    2040: </span></a>@released
+<a name="2041"><span class="line">    2041: </span></a>
+<a name="2042"><span class="line">    2042: </span></a>SYMBIAN_ENABLE_SPLIT_HEADERS
+<a name="2043"><span class="line">    2043: </span></a>
+<a name="2044"><span class="line">    2044: </span></a>When this is not defined, header files, that have been split, #include the extra header files to disable the source break. When this is defined, the headers have been fully split and the source break is enabled.
+<a name="2045"><span class="line">    2045: </span></a>
+<a name="2046"><span class="line">    2046: </span></a>This #define supports PREQ2740 and other splitting &quot;mixed&quot; header file PREQs. 
+<a name="2047"><span class="line">    2047: </span></a>*/</span>
+<a name="2048"><span class="line">    2048: </span></a>
+<a name="2049"><span class="line">    2049: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_ENABLE_SPLIT_HEADERS_0"><span class="b">SYMBIAN_ENABLE_SPLIT_HEADERS</span></a>
+<a name="2050"><span class="line">    2050: </span></a>
+<a name="2051"><span class="line">    2051: </span></a><span class="k">/**
+<a name="2052"><span class="line">    2052: </span></a>@publishedAll
+<a name="2053"><span class="line">    2053: </span></a>@released
+<a name="2054"><span class="line">    2054: </span></a>
+<a name="2055"><span class="line">    2055: </span></a>SYMBIAN_OE_LIBSTDCPP
+<a name="2056"><span class="line">    2056: </span></a>
+<a name="2057"><span class="line">    2057: </span></a>If SYMBIAN_OE_LIBSTDCPP is defined, the open environment component will be extended to include the standard new and delete operators, and STDxxx targets will be linked against stdnew.lib for ARM builds, while other targets will be linked against scppnwdl.lib for Emulator builds.
+<a name="2058"><span class="line">    2058: </span></a>
+<a name="2059"><span class="line">    2059: </span></a>This #define supports PREQ1184
+<a name="2060"><span class="line">    2060: </span></a>*/</span>
+<a name="2061"><span class="line">    2061: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_OE_LIBSTDCPP_0"><span class="b">SYMBIAN_OE_LIBSTDCPP</span></a>
+<a name="2062"><span class="line">    2062: </span></a>
+<a name="2063"><span class="line">    2063: </span></a><span class="k">/**
+<a name="2064"><span class="line">    2064: </span></a>@publishedPartner
+<a name="2065"><span class="line">    2065: </span></a>@released
+<a name="2066"><span class="line">    2066: </span></a>
+<a name="2067"><span class="line">    2067: </span></a>SYMBIAN_E32_ATOMIC_API
+<a name="2068"><span class="line">    2068: </span></a>
+<a name="2069"><span class="line">    2069: </span></a>If SYMBIAN_E32_ATOMIC_API is defined the header file e32atomics.h is available
+<a name="2070"><span class="line">    2070: </span></a>and should be used in preference to hand-coding ARM atomic instructions.
+<a name="2071"><span class="line">    2071: </span></a>*/</span>
+<a name="2072"><span class="line">    2072: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_E32_ATOMIC_API_0"><span class="b">SYMBIAN_E32_ATOMIC_API</span></a>
+<a name="2073"><span class="line">    2073: </span></a><span class="k">/**
+<a name="2074"><span class="line">    2074: </span></a>@internalAll
+<a name="2075"><span class="line">    2075: </span></a>
+<a name="2076"><span class="line">    2076: </span></a>SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION
+<a name="2077"><span class="line">    2077: </span></a>
+<a name="2078"><span class="line">    2078: </span></a>If SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION is enabled, the Orientation Independent Windows feature is enabled.
+<a name="2079"><span class="line">    2079: </span></a>*/</span>
+<a name="2080"><span class="line">    2080: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION_0"><span class="b">SYMBIAN_GRAPHICS_FIXNATIVEORIENTATION</span></a>
+<a name="2081"><span class="line">    2081: </span></a><span class="k">/**
+<a name="2082"><span class="line">    2082: </span></a>SYMBIAN_GRAPHICS_BUILD_OPENWF_WSERV
+<a name="2083"><span class="line">    2083: </span></a>
+<a name="2084"><span class="line">    2084: </span></a>If SYMBIAN_GRAPHICS_BUILD_OPENWF_WSERV, the windowserver component is built to use the OpenWF version of NGA.
+<a name="2085"><span class="line">    2085: </span></a>*/</span>
+<a name="2086"><span class="line">    2086: </span></a><span class="f">#</span><span class="n">define</span> <a href="e32std.h_macros.html#SYMBIAN_GRAPHICS_BUILD_OPENWF_WSERV_0"><span class="b">SYMBIAN_GRAPHICS_BUILD_OPENWF_WSERV</span></a>
+<a name="2087"><span class="line">    2087: </span></a>
+<a name="2088"><span class="line">    2088: </span></a></pre>
+  </body>
+</html>

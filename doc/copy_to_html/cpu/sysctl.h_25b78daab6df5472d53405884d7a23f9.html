@@ -1,0 +1,1083 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/include/linux/sysctl.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/include/linux/sysctl.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="k">/*
+<a name="2"><span class="line">       2: </span></a> * sysctl.h: General linux system control interface
+<a name="3"><span class="line">       3: </span></a> *
+<a name="4"><span class="line">       4: </span></a> * Begun 24 March 1995, Stephen Tweedie
+<a name="5"><span class="line">       5: </span></a> *
+<a name="6"><span class="line">       6: </span></a> ****************************************************************
+<a name="7"><span class="line">       7: </span></a> ****************************************************************
+<a name="8"><span class="line">       8: </span></a> **
+<a name="9"><span class="line">       9: </span></a> **  WARNING:
+<a name="10"><span class="line">      10: </span></a> **  The values in this file are exported to user space via 
+<a name="11"><span class="line">      11: </span></a> **  the sysctl() binary interface.  Do *NOT* change the
+<a name="12"><span class="line">      12: </span></a> **  numbering of any existing values here, and do not change
+<a name="13"><span class="line">      13: </span></a> **  any numbers within any one set of values.  If you have to
+<a name="14"><span class="line">      14: </span></a> **  redefine an existing interface, use a new number for it.
+<a name="15"><span class="line">      15: </span></a> **  The kernel will then return -ENOTDIR to any application using
+<a name="16"><span class="line">      16: </span></a> **  the old binary interface.
+<a name="17"><span class="line">      17: </span></a> **
+<a name="18"><span class="line">      18: </span></a> ****************************************************************
+<a name="19"><span class="line">      19: </span></a> ****************************************************************
+<a name="20"><span class="line">      20: </span></a> */</span>
+<a name="21"><span class="line">      21: </span></a>
+<a name="22"><span class="line">      22: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#_LINUX_SYSCTL_H_0"><span class="b">_LINUX_SYSCTL_H</span></a>
+<a name="23"><span class="line">      23: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#_LINUX_SYSCTL_H_0"><span class="b">_LINUX_SYSCTL_H</span></a>
+<a name="24"><span class="line">      24: </span></a>
+<a name="25"><span class="line">      25: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">kernel</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="26"><span class="line">      26: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="27"><span class="line">      27: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">compiler</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="28"><span class="line">      28: </span></a>
+<a name="29"><span class="line">      29: </span></a><span class="m">struct</span> <span class="b">completion</span><span class="f">;</span>
+<a name="30"><span class="line">      30: </span></a>
+<a name="31"><span class="line">      31: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CTL_MAXNAME_0"><span class="b">CTL_MAXNAME</span></a> <span class="c">10</span>        <span class="k">/* how many path components do we allow in a
+<a name="32"><span class="line">      32: </span></a>                   call to sysctl?   In other words, what is
+<a name="33"><span class="line">      33: </span></a>                   the largest acceptable value for the nlen
+<a name="34"><span class="line">      34: </span></a>                   member of a struct __sysctl_args to have? */</span>
+<a name="35"><span class="line">      35: </span></a>
+<a name="36"><span class="line">      36: </span></a><span class="m">struct</span> <span class="b">__sysctl_args</span> <span class="f">{</span>
+<a name="37"><span class="line">      37: </span></a>    <span class="m">int</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="b">name</span><span class="f">;</span>
+<a name="38"><span class="line">      38: </span></a>    <span class="m">int</span> <span class="b">nlen</span><span class="f">;</span>
+<a name="39"><span class="line">      39: </span></a>    <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="b">oldval</span><span class="f">;</span>
+<a name="40"><span class="line">      40: </span></a>    <span class="b">size_t</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="b">oldlenp</span><span class="f">;</span>
+<a name="41"><span class="line">      41: </span></a>    <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="b">newval</span><span class="f">;</span>
+<a name="42"><span class="line">      42: </span></a>    <span class="b">size_t</span> <span class="b">newlen</span><span class="f">;</span>
+<a name="43"><span class="line">      43: </span></a>    <span class="m">unsigned</span> <span class="m">long</span> <span class="b">__unused</span><span class="f">[</span><span class="c">4</span><span class="f">]</span><span class="f">;</span>
+<a name="44"><span class="line">      44: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="45"><span class="line">      45: </span></a>
+<a name="46"><span class="line">      46: </span></a><span class="k">/* Define sysctl names first */</span>
+<a name="47"><span class="line">      47: </span></a>
+<a name="48"><span class="line">      48: </span></a><span class="k">/* Top-level names: */</span>
+<a name="49"><span class="line">      49: </span></a>
+<a name="50"><span class="line">      50: </span></a><span class="m">enum</span>
+<a name="51"><span class="line">      51: </span></a><span class="f">{</span>
+<a name="52"><span class="line">      52: </span></a>    <span class="b">CTL_KERN</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>        <span class="k">/* General kernel info and control */</span>
+<a name="53"><span class="line">      53: </span></a>    <span class="b">CTL_VM</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>        <span class="k">/* VM management */</span>
+<a name="54"><span class="line">      54: </span></a>    <span class="b">CTL_NET</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>        <span class="k">/* Networking */</span>
+<a name="55"><span class="line">      55: </span></a>    <span class="b">CTL_PROC</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>        <span class="k">/* removal breaks strace(1) compilation */</span>
+<a name="56"><span class="line">      56: </span></a>    <span class="b">CTL_FS</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>        <span class="k">/* Filesystems */</span>
+<a name="57"><span class="line">      57: </span></a>    <span class="b">CTL_DEBUG</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>        <span class="k">/* Debugging */</span>
+<a name="58"><span class="line">      58: </span></a>    <span class="b">CTL_DEV</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>        <span class="k">/* Devices */</span>
+<a name="59"><span class="line">      59: </span></a>    <span class="b">CTL_BUS</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>        <span class="k">/* Busses */</span>
+<a name="60"><span class="line">      60: </span></a>    <span class="b">CTL_ABI</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>        <span class="k">/* Binary emulation */</span>
+<a name="61"><span class="line">      61: </span></a>    <span class="b">CTL_CPU</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>        <span class="k">/* CPU stuff (speed scaling, etc) */</span>
+<a name="62"><span class="line">      62: </span></a>    <span class="b">CTL_ARLAN</span><span class="f">=</span><span class="c">254</span><span class="f">,</span>        <span class="k">/* arlan wireless driver */</span>
+<a name="63"><span class="line">      63: </span></a>    <span class="b">CTL_S390DBF</span><span class="f">=</span><span class="c">5677</span><span class="f">,</span>    <span class="k">/* s390 debug */</span>
+<a name="64"><span class="line">      64: </span></a>    <span class="b">CTL_SUNRPC</span><span class="f">=</span><span class="c">7249</span><span class="f">,</span>    <span class="k">/* sunrpc debug */</span>
+<a name="65"><span class="line">      65: </span></a>    <span class="b">CTL_PM</span><span class="f">=</span><span class="c">9899</span><span class="f">,</span>        <span class="k">/* frv power management */</span>
+<a name="66"><span class="line">      66: </span></a>    <span class="b">CTL_FRV</span><span class="f">=</span><span class="c">9898</span><span class="f">,</span>        <span class="k">/* frv specific sysctls */</span>
+<a name="67"><span class="line">      67: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="68"><span class="line">      68: </span></a>
+<a name="69"><span class="line">      69: </span></a><span class="k">/* CTL_BUS names: */</span>
+<a name="70"><span class="line">      70: </span></a><span class="m">enum</span>
+<a name="71"><span class="line">      71: </span></a><span class="f">{</span>
+<a name="72"><span class="line">      72: </span></a>    <span class="b">CTL_BUS_ISA</span><span class="f">=</span><span class="c">1</span>        <span class="k">/* ISA */</span>
+<a name="73"><span class="line">      73: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="74"><span class="line">      74: </span></a>
+<a name="75"><span class="line">      75: </span></a><span class="k">/* /proc/sys/fs/inotify/ */</span>
+<a name="76"><span class="line">      76: </span></a><span class="m">enum</span>
+<a name="77"><span class="line">      77: </span></a><span class="f">{</span>
+<a name="78"><span class="line">      78: </span></a>    <span class="b">INOTIFY_MAX_USER_INSTANCES</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>    <span class="k">/* max instances per user */</span>
+<a name="79"><span class="line">      79: </span></a>    <span class="b">INOTIFY_MAX_USER_WATCHES</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>    <span class="k">/* max watches per user */</span>
+<a name="80"><span class="line">      80: </span></a>    <span class="b">INOTIFY_MAX_QUEUED_EVENTS</span><span class="f">=</span><span class="c">3</span>    <span class="k">/* max queued events per instance */</span>
+<a name="81"><span class="line">      81: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="82"><span class="line">      82: </span></a>
+<a name="83"><span class="line">      83: </span></a><span class="k">/* CTL_KERN names: */</span>
+<a name="84"><span class="line">      84: </span></a><span class="m">enum</span>
+<a name="85"><span class="line">      85: </span></a><span class="f">{</span>
+<a name="86"><span class="line">      86: </span></a>    <span class="b">KERN_OSTYPE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>        <span class="k">/* string: system version */</span>
+<a name="87"><span class="line">      87: </span></a>    <span class="b">KERN_OSRELEASE</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>    <span class="k">/* string: system release */</span>
+<a name="88"><span class="line">      88: </span></a>    <span class="b">KERN_OSREV</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>        <span class="k">/* int: system revision */</span>
+<a name="89"><span class="line">      89: </span></a>    <span class="b">KERN_VERSION</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>        <span class="k">/* string: compile time info */</span>
+<a name="90"><span class="line">      90: </span></a>    <span class="b">KERN_SECUREMASK</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>    <span class="k">/* struct: maximum rights mask */</span>
+<a name="91"><span class="line">      91: </span></a>    <span class="b">KERN_PROF</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>        <span class="k">/* table: profiling information */</span>
+<a name="92"><span class="line">      92: </span></a>    <span class="b">KERN_NODENAME</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>    <span class="k">/* string: hostname */</span>
+<a name="93"><span class="line">      93: </span></a>    <span class="b">KERN_DOMAINNAME</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>    <span class="k">/* string: domainname */</span>
+<a name="94"><span class="line">      94: </span></a>
+<a name="95"><span class="line">      95: </span></a>    <span class="b">KERN_PANIC</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>        <span class="k">/* int: panic timeout */</span>
+<a name="96"><span class="line">      96: </span></a>    <span class="b">KERN_REALROOTDEV</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>    <span class="k">/* real root device to mount after initrd */</span>
+<a name="97"><span class="line">      97: </span></a>
+<a name="98"><span class="line">      98: </span></a>    <span class="b">KERN_SPARC_REBOOT</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>    <span class="k">/* reboot command on Sparc */</span>
+<a name="99"><span class="line">      99: </span></a>    <span class="b">KERN_CTLALTDEL</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>    <span class="k">/* int: allow ctl-alt-del to reboot */</span>
+<a name="100"><span class="line">     100: </span></a>    <span class="b">KERN_PRINTK</span><span class="f">=</span><span class="c">23</span><span class="f">,</span>        <span class="k">/* struct: control printk logging parameters */</span>
+<a name="101"><span class="line">     101: </span></a>    <span class="b">KERN_NAMETRANS</span><span class="f">=</span><span class="c">24</span><span class="f">,</span>    <span class="k">/* Name translation */</span>
+<a name="102"><span class="line">     102: </span></a>    <span class="b">KERN_PPC_HTABRECLAIM</span><span class="f">=</span><span class="c">25</span><span class="f">,</span> <span class="k">/* turn htab reclaimation on/off on PPC */</span>
+<a name="103"><span class="line">     103: </span></a>    <span class="b">KERN_PPC_ZEROPAGED</span><span class="f">=</span><span class="c">26</span><span class="f">,</span>    <span class="k">/* turn idle page zeroing on/off on PPC */</span>
+<a name="104"><span class="line">     104: </span></a>    <span class="b">KERN_PPC_POWERSAVE_NAP</span><span class="f">=</span><span class="c">27</span><span class="f">,</span> <span class="k">/* use nap mode for power saving */</span>
+<a name="105"><span class="line">     105: </span></a>    <span class="b">KERN_MODPROBE</span><span class="f">=</span><span class="c">28</span><span class="f">,</span>    <span class="k">/* string: modprobe path */</span>
+<a name="106"><span class="line">     106: </span></a>    <span class="b">KERN_SG_BIG_BUFF</span><span class="f">=</span><span class="c">29</span><span class="f">,</span>    <span class="k">/* int: sg driver reserved buffer size */</span>
+<a name="107"><span class="line">     107: </span></a>    <span class="b">KERN_ACCT</span><span class="f">=</span><span class="c">30</span><span class="f">,</span>        <span class="k">/* BSD process accounting parameters */</span>
+<a name="108"><span class="line">     108: </span></a>    <span class="b">KERN_PPC_L2CR</span><span class="f">=</span><span class="c">31</span><span class="f">,</span>    <span class="k">/* l2cr register on PPC */</span>
+<a name="109"><span class="line">     109: </span></a>
+<a name="110"><span class="line">     110: </span></a>    <span class="b">KERN_RTSIGNR</span><span class="f">=</span><span class="c">32</span><span class="f">,</span>    <span class="k">/* Number of rt sigs queued */</span>
+<a name="111"><span class="line">     111: </span></a>    <span class="b">KERN_RTSIGMAX</span><span class="f">=</span><span class="c">33</span><span class="f">,</span>    <span class="k">/* Max queuable */</span>
+<a name="112"><span class="line">     112: </span></a>    
+<a name="113"><span class="line">     113: </span></a>    <span class="b">KERN_SHMMAX</span><span class="f">=</span><span class="c">34</span><span class="f">,</span>         <span class="k">/* long: Maximum shared memory segment */</span>
+<a name="114"><span class="line">     114: </span></a>    <span class="b">KERN_MSGMAX</span><span class="f">=</span><span class="c">35</span><span class="f">,</span>         <span class="k">/* int: Maximum size of a messege */</span>
+<a name="115"><span class="line">     115: </span></a>    <span class="b">KERN_MSGMNB</span><span class="f">=</span><span class="c">36</span><span class="f">,</span>         <span class="k">/* int: Maximum message queue size */</span>
+<a name="116"><span class="line">     116: </span></a>    <span class="b">KERN_MSGPOOL</span><span class="f">=</span><span class="c">37</span><span class="f">,</span>        <span class="k">/* int: Maximum system message pool size */</span>
+<a name="117"><span class="line">     117: </span></a>    <span class="b">KERN_SYSRQ</span><span class="f">=</span><span class="c">38</span><span class="f">,</span>        <span class="k">/* int: Sysreq enable */</span>
+<a name="118"><span class="line">     118: </span></a>    <span class="b">KERN_MAX_THREADS</span><span class="f">=</span><span class="c">39</span><span class="f">,</span>    <span class="k">/* int: Maximum nr of threads in the system */</span>
+<a name="119"><span class="line">     119: </span></a>     <span class="b">KERN_RANDOM</span><span class="f">=</span><span class="c">40</span><span class="f">,</span>        <span class="k">/* Random driver */</span>
+<a name="120"><span class="line">     120: </span></a>     <span class="b">KERN_SHMALL</span><span class="f">=</span><span class="c">41</span><span class="f">,</span>        <span class="k">/* int: Maximum size of shared memory */</span>
+<a name="121"><span class="line">     121: </span></a>     <span class="b">KERN_MSGMNI</span><span class="f">=</span><span class="c">42</span><span class="f">,</span>        <span class="k">/* int: msg queue identifiers */</span>
+<a name="122"><span class="line">     122: </span></a>     <span class="b">KERN_SEM</span><span class="f">=</span><span class="c">43</span><span class="f">,</span>        <span class="k">/* struct: sysv semaphore limits */</span>
+<a name="123"><span class="line">     123: </span></a>     <span class="b">KERN_SPARC_STOP_A</span><span class="f">=</span><span class="c">44</span><span class="f">,</span>    <span class="k">/* int: Sparc Stop-A enable */</span>
+<a name="124"><span class="line">     124: </span></a>     <span class="b">KERN_SHMMNI</span><span class="f">=</span><span class="c">45</span><span class="f">,</span>        <span class="k">/* int: shm array identifiers */</span>
+<a name="125"><span class="line">     125: </span></a>    <span class="b">KERN_OVERFLOWUID</span><span class="f">=</span><span class="c">46</span><span class="f">,</span>    <span class="k">/* int: overflow UID */</span>
+<a name="126"><span class="line">     126: </span></a>    <span class="b">KERN_OVERFLOWGID</span><span class="f">=</span><span class="c">47</span><span class="f">,</span>    <span class="k">/* int: overflow GID */</span>
+<a name="127"><span class="line">     127: </span></a>    <span class="b">KERN_SHMPATH</span><span class="f">=</span><span class="c">48</span><span class="f">,</span>    <span class="k">/* string: path to shm fs */</span>
+<a name="128"><span class="line">     128: </span></a>    <span class="b">KERN_HOTPLUG</span><span class="f">=</span><span class="c">49</span><span class="f">,</span>    <span class="k">/* string: path to uevent helper (deprecated) */</span>
+<a name="129"><span class="line">     129: </span></a>    <span class="b">KERN_IEEE_EMULATION_WARNINGS</span><span class="f">=</span><span class="c">50</span><span class="f">,</span> <span class="k">/* int: unimplemented ieee instructions */</span>
+<a name="130"><span class="line">     130: </span></a>    <span class="b">KERN_S390_USER_DEBUG_LOGGING</span><span class="f">=</span><span class="c">51</span><span class="f">,</span>  <span class="k">/* int: dumps of user faults */</span>
+<a name="131"><span class="line">     131: </span></a>    <span class="b">KERN_CORE_USES_PID</span><span class="f">=</span><span class="c">52</span><span class="f">,</span>        <span class="k">/* int: use core or core.%pid */</span>
+<a name="132"><span class="line">     132: </span></a>    <span class="b">KERN_TAINTED</span><span class="f">=</span><span class="c">53</span><span class="f">,</span>    <span class="k">/* int: various kernel tainted flags */</span>
+<a name="133"><span class="line">     133: </span></a>    <span class="b">KERN_CADPID</span><span class="f">=</span><span class="c">54</span><span class="f">,</span>        <span class="k">/* int: PID of the process to notify on CAD */</span>
+<a name="134"><span class="line">     134: </span></a>    <span class="b">KERN_PIDMAX</span><span class="f">=</span><span class="c">55</span><span class="f">,</span>        <span class="k">/* int: PID # limit */</span>
+<a name="135"><span class="line">     135: </span></a>      <span class="b">KERN_CORE_PATTERN</span><span class="f">=</span><span class="c">56</span><span class="f">,</span>    <span class="k">/* string: pattern for core-file names */</span>
+<a name="136"><span class="line">     136: </span></a>    <span class="b">KERN_PANIC_ON_OOPS</span><span class="f">=</span><span class="c">57</span><span class="f">,</span>  <span class="k">/* int: whether we will panic on an oops */</span>
+<a name="137"><span class="line">     137: </span></a>    <span class="b">KERN_HPPA_PWRSW</span><span class="f">=</span><span class="c">58</span><span class="f">,</span>    <span class="k">/* int: hppa soft-power enable */</span>
+<a name="138"><span class="line">     138: </span></a>    <span class="b">KERN_HPPA_UNALIGNED</span><span class="f">=</span><span class="c">59</span><span class="f">,</span>    <span class="k">/* int: hppa unaligned-trap enable */</span>
+<a name="139"><span class="line">     139: </span></a>    <span class="b">KERN_PRINTK_RATELIMIT</span><span class="f">=</span><span class="c">60</span><span class="f">,</span> <span class="k">/* int: tune printk ratelimiting */</span>
+<a name="140"><span class="line">     140: </span></a>    <span class="b">KERN_PRINTK_RATELIMIT_BURST</span><span class="f">=</span><span class="c">61</span><span class="f">,</span>    <span class="k">/* int: tune printk ratelimiting */</span>
+<a name="141"><span class="line">     141: </span></a>    <span class="b">KERN_PTY</span><span class="f">=</span><span class="c">62</span><span class="f">,</span>        <span class="k">/* dir: pty driver */</span>
+<a name="142"><span class="line">     142: </span></a>    <span class="b">KERN_NGROUPS_MAX</span><span class="f">=</span><span class="c">63</span><span class="f">,</span>    <span class="k">/* int: NGROUPS_MAX */</span>
+<a name="143"><span class="line">     143: </span></a>    <span class="b">KERN_SPARC_SCONS_PWROFF</span><span class="f">=</span><span class="c">64</span><span class="f">,</span> <span class="k">/* int: serial console power-off halt */</span>
+<a name="144"><span class="line">     144: </span></a>    <span class="b">KERN_HZ_TIMER</span><span class="f">=</span><span class="c">65</span><span class="f">,</span>    <span class="k">/* int: hz timer on or off */</span>
+<a name="145"><span class="line">     145: </span></a>    <span class="b">KERN_UNKNOWN_NMI_PANIC</span><span class="f">=</span><span class="c">66</span><span class="f">,</span> <span class="k">/* int: unknown nmi panic flag */</span>
+<a name="146"><span class="line">     146: </span></a>    <span class="b">KERN_BOOTLOADER_TYPE</span><span class="f">=</span><span class="c">67</span><span class="f">,</span> <span class="k">/* int: boot loader type */</span>
+<a name="147"><span class="line">     147: </span></a>    <span class="b">KERN_RANDOMIZE</span><span class="f">=</span><span class="c">68</span><span class="f">,</span> <span class="k">/* int: randomize virtual address space */</span>
+<a name="148"><span class="line">     148: </span></a>    <span class="b">KERN_SETUID_DUMPABLE</span><span class="f">=</span><span class="c">69</span><span class="f">,</span> <span class="k">/* int: behaviour of dumps for setuid core */</span>
+<a name="149"><span class="line">     149: </span></a>    <span class="b">KERN_SPIN_RETRY</span><span class="f">=</span><span class="c">70</span><span class="f">,</span>    <span class="k">/* int: number of spinlock retries */</span>
+<a name="150"><span class="line">     150: </span></a>    <span class="b">KERN_ACPI_VIDEO_FLAGS</span><span class="f">=</span><span class="c">71</span><span class="f">,</span> <span class="k">/* int: flags for setting up video after ACPI sleep */</span>
+<a name="151"><span class="line">     151: </span></a>    <span class="b">KERN_IA64_UNALIGNED</span><span class="f">=</span><span class="c">72</span><span class="f">,</span> <span class="k">/* int: ia64 unaligned userland trap enable */</span>
+<a name="152"><span class="line">     152: </span></a>    <span class="b">KERN_COMPAT_LOG</span><span class="f">=</span><span class="c">73</span><span class="f">,</span>    <span class="k">/* int: print compat layer  messages */</span>
+<a name="153"><span class="line">     153: </span></a>    <span class="b">KERN_MAX_LOCK_DEPTH</span><span class="f">=</span><span class="c">74</span><span class="f">,</span> <span class="k">/* int: rtmutex&apos;s maximum lock depth */</span>
+<a name="154"><span class="line">     154: </span></a>    <span class="b">KERN_NMI_WATCHDOG</span><span class="f">=</span><span class="c">75</span><span class="f">,</span> <span class="k">/* int: enable/disable nmi watchdog */</span>
+<a name="155"><span class="line">     155: </span></a>    <span class="b">KERN_PANIC_ON_NMI</span><span class="f">=</span><span class="c">76</span><span class="f">,</span> <span class="k">/* int: whether we will panic on an unrecovered */</span>
+<a name="156"><span class="line">     156: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="157"><span class="line">     157: </span></a>
+<a name="158"><span class="line">     158: </span></a>
+<a name="159"><span class="line">     159: </span></a>
+<a name="160"><span class="line">     160: </span></a><span class="k">/* CTL_VM names: */</span>
+<a name="161"><span class="line">     161: </span></a><span class="m">enum</span>
+<a name="162"><span class="line">     162: </span></a><span class="f">{</span>
+<a name="163"><span class="line">     163: </span></a>    <span class="b">VM_UNUSED1</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>        <span class="k">/* was: struct: Set vm swapping control */</span>
+<a name="164"><span class="line">     164: </span></a>    <span class="b">VM_UNUSED2</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>        <span class="k">/* was; int: Linear or sqrt() swapout for hogs */</span>
+<a name="165"><span class="line">     165: </span></a>    <span class="b">VM_UNUSED3</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>        <span class="k">/* was: struct: Set free page thresholds */</span>
+<a name="166"><span class="line">     166: </span></a>    <span class="b">VM_UNUSED4</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>        <span class="k">/* Spare */</span>
+<a name="167"><span class="line">     167: </span></a>    <span class="b">VM_OVERCOMMIT_MEMORY</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>    <span class="k">/* Turn off the virtual memory safety limit */</span>
+<a name="168"><span class="line">     168: </span></a>    <span class="b">VM_UNUSED5</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>        <span class="k">/* was: struct: Set buffer memory thresholds */</span>
+<a name="169"><span class="line">     169: </span></a>    <span class="b">VM_UNUSED7</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>        <span class="k">/* was: struct: Set cache memory thresholds */</span>
+<a name="170"><span class="line">     170: </span></a>    <span class="b">VM_UNUSED8</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>        <span class="k">/* was: struct: Control kswapd behaviour */</span>
+<a name="171"><span class="line">     171: </span></a>    <span class="b">VM_UNUSED9</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>        <span class="k">/* was: struct: Set page table cache parameters */</span>
+<a name="172"><span class="line">     172: </span></a>    <span class="b">VM_PAGE_CLUSTER</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>    <span class="k">/* int: set number of pages to swap together */</span>
+<a name="173"><span class="line">     173: </span></a>    <span class="b">VM_DIRTY_BACKGROUND</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>    <span class="k">/* dirty_background_ratio */</span>
+<a name="174"><span class="line">     174: </span></a>    <span class="b">VM_DIRTY_RATIO</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>    <span class="k">/* dirty_ratio */</span>
+<a name="175"><span class="line">     175: </span></a>    <span class="b">VM_DIRTY_WB_CS</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>    <span class="k">/* dirty_writeback_centisecs */</span>
+<a name="176"><span class="line">     176: </span></a>    <span class="b">VM_DIRTY_EXPIRE_CS</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>    <span class="k">/* dirty_expire_centisecs */</span>
+<a name="177"><span class="line">     177: </span></a>    <span class="b">VM_NR_PDFLUSH_THREADS</span><span class="f">=</span><span class="c">15</span><span class="f">,</span> <span class="k">/* nr_pdflush_threads */</span>
+<a name="178"><span class="line">     178: </span></a>    <span class="b">VM_OVERCOMMIT_RATIO</span><span class="f">=</span><span class="c">16</span><span class="f">,</span> <span class="k">/* percent of RAM to allow overcommit in */</span>
+<a name="179"><span class="line">     179: </span></a>    <span class="b">VM_PAGEBUF</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>        <span class="k">/* struct: Control pagebuf parameters */</span>
+<a name="180"><span class="line">     180: </span></a>    <span class="b">VM_HUGETLB_PAGES</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>    <span class="k">/* int: Number of available Huge Pages */</span>
+<a name="181"><span class="line">     181: </span></a>    <span class="b">VM_SWAPPINESS</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>    <span class="k">/* Tendency to steal mapped memory */</span>
+<a name="182"><span class="line">     182: </span></a>    <span class="b">VM_LOWMEM_RESERVE_RATIO</span><span class="f">=</span><span class="c">20</span><span class="f">,</span><span class="k">/* reservation ratio for lower memory zones */</span>
+<a name="183"><span class="line">     183: </span></a>    <span class="b">VM_MIN_FREE_KBYTES</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>    <span class="k">/* Minimum free kilobytes to maintain */</span>
+<a name="184"><span class="line">     184: </span></a>    <span class="b">VM_MAX_MAP_COUNT</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>    <span class="k">/* int: Maximum number of mmaps/address-space */</span>
+<a name="185"><span class="line">     185: </span></a>    <span class="b">VM_LAPTOP_MODE</span><span class="f">=</span><span class="c">23</span><span class="f">,</span>    <span class="k">/* vm laptop mode */</span>
+<a name="186"><span class="line">     186: </span></a>    <span class="b">VM_BLOCK_DUMP</span><span class="f">=</span><span class="c">24</span><span class="f">,</span>    <span class="k">/* block dump mode */</span>
+<a name="187"><span class="line">     187: </span></a>    <span class="b">VM_HUGETLB_GROUP</span><span class="f">=</span><span class="c">25</span><span class="f">,</span>    <span class="k">/* permitted hugetlb group */</span>
+<a name="188"><span class="line">     188: </span></a>    <span class="b">VM_VFS_CACHE_PRESSURE</span><span class="f">=</span><span class="c">26</span><span class="f">,</span> <span class="k">/* dcache/icache reclaim pressure */</span>
+<a name="189"><span class="line">     189: </span></a>    <span class="b">VM_LEGACY_VA_LAYOUT</span><span class="f">=</span><span class="c">27</span><span class="f">,</span> <span class="k">/* legacy/compatibility virtual address space layout */</span>
+<a name="190"><span class="line">     190: </span></a>    <span class="b">VM_SWAP_TOKEN_TIMEOUT</span><span class="f">=</span><span class="c">28</span><span class="f">,</span> <span class="k">/* default time for token time out */</span>
+<a name="191"><span class="line">     191: </span></a>    <span class="b">VM_DROP_PAGECACHE</span><span class="f">=</span><span class="c">29</span><span class="f">,</span>    <span class="k">/* int: nuke lots of pagecache */</span>
+<a name="192"><span class="line">     192: </span></a>    <span class="b">VM_PERCPU_PAGELIST_FRACTION</span><span class="f">=</span><span class="c">30</span><span class="f">,</span><span class="k">/* int: fraction of pages in each percpu_pagelist */</span>
+<a name="193"><span class="line">     193: </span></a>    <span class="b">VM_ZONE_RECLAIM_MODE</span><span class="f">=</span><span class="c">31</span><span class="f">,</span> <span class="k">/* reclaim local zone memory before going off node */</span>
+<a name="194"><span class="line">     194: </span></a>    <span class="b">VM_MIN_UNMAPPED</span><span class="f">=</span><span class="c">32</span><span class="f">,</span>    <span class="k">/* Set min percent of unmapped pages */</span>
+<a name="195"><span class="line">     195: </span></a>    <span class="b">VM_PANIC_ON_OOM</span><span class="f">=</span><span class="c">33</span><span class="f">,</span>    <span class="k">/* panic at out-of-memory */</span>
+<a name="196"><span class="line">     196: </span></a>    <span class="b">VM_VDSO_ENABLED</span><span class="f">=</span><span class="c">34</span><span class="f">,</span>    <span class="k">/* map VDSO into new processes? */</span>
+<a name="197"><span class="line">     197: </span></a>    <span class="b">VM_MIN_SLAB</span><span class="f">=</span><span class="c">35</span><span class="f">,</span>         <span class="k">/* Percent pages ignored by zone reclaim */</span>
+<a name="198"><span class="line">     198: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="199"><span class="line">     199: </span></a>
+<a name="200"><span class="line">     200: </span></a>
+<a name="201"><span class="line">     201: </span></a><span class="k">/* CTL_NET names: */</span>
+<a name="202"><span class="line">     202: </span></a><span class="m">enum</span>
+<a name="203"><span class="line">     203: </span></a><span class="f">{</span>
+<a name="204"><span class="line">     204: </span></a>    <span class="b">NET_CORE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="205"><span class="line">     205: </span></a>    <span class="b">NET_ETHER</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="206"><span class="line">     206: </span></a>    <span class="b">NET_802</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="207"><span class="line">     207: </span></a>    <span class="b">NET_UNIX</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="208"><span class="line">     208: </span></a>    <span class="b">NET_IPV4</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="209"><span class="line">     209: </span></a>    <span class="b">NET_IPX</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="210"><span class="line">     210: </span></a>    <span class="b">NET_ATALK</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="211"><span class="line">     211: </span></a>    <span class="b">NET_NETROM</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="212"><span class="line">     212: </span></a>    <span class="b">NET_AX25</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="213"><span class="line">     213: </span></a>    <span class="b">NET_BRIDGE</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="214"><span class="line">     214: </span></a>    <span class="b">NET_ROSE</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="215"><span class="line">     215: </span></a>    <span class="b">NET_IPV6</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="216"><span class="line">     216: </span></a>    <span class="b">NET_X25</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="217"><span class="line">     217: </span></a>    <span class="b">NET_TR</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="218"><span class="line">     218: </span></a>    <span class="b">NET_DECNET</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="219"><span class="line">     219: </span></a>    <span class="b">NET_ECONET</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="220"><span class="line">     220: </span></a>    <span class="b">NET_SCTP</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="221"><span class="line">     221: </span></a>    <span class="b">NET_LLC</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="222"><span class="line">     222: </span></a>    <span class="b">NET_NETFILTER</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="223"><span class="line">     223: </span></a>    <span class="b">NET_DCCP</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="224"><span class="line">     224: </span></a>    <span class="b">NET_IRDA</span><span class="f">=</span><span class="c">412</span><span class="f">,</span>
+<a name="225"><span class="line">     225: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="226"><span class="line">     226: </span></a>
+<a name="227"><span class="line">     227: </span></a><span class="k">/* /proc/sys/kernel/random */</span>
+<a name="228"><span class="line">     228: </span></a><span class="m">enum</span>
+<a name="229"><span class="line">     229: </span></a><span class="f">{</span>
+<a name="230"><span class="line">     230: </span></a>    <span class="b">RANDOM_POOLSIZE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="231"><span class="line">     231: </span></a>    <span class="b">RANDOM_ENTROPY_COUNT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="232"><span class="line">     232: </span></a>    <span class="b">RANDOM_READ_THRESH</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="233"><span class="line">     233: </span></a>    <span class="b">RANDOM_WRITE_THRESH</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="234"><span class="line">     234: </span></a>    <span class="b">RANDOM_BOOT_ID</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="235"><span class="line">     235: </span></a>    <span class="b">RANDOM_UUID</span><span class="f">=</span><span class="c">6</span>
+<a name="236"><span class="line">     236: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="237"><span class="line">     237: </span></a>
+<a name="238"><span class="line">     238: </span></a><span class="k">/* /proc/sys/kernel/pty */</span>
+<a name="239"><span class="line">     239: </span></a><span class="m">enum</span>
+<a name="240"><span class="line">     240: </span></a><span class="f">{</span>
+<a name="241"><span class="line">     241: </span></a>    <span class="b">PTY_MAX</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="242"><span class="line">     242: </span></a>    <span class="b">PTY_NR</span><span class="f">=</span><span class="c">2</span>
+<a name="243"><span class="line">     243: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="244"><span class="line">     244: </span></a>
+<a name="245"><span class="line">     245: </span></a><span class="k">/* /proc/sys/bus/isa */</span>
+<a name="246"><span class="line">     246: </span></a><span class="m">enum</span>
+<a name="247"><span class="line">     247: </span></a><span class="f">{</span>
+<a name="248"><span class="line">     248: </span></a>    <span class="b">BUS_ISA_MEM_BASE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="249"><span class="line">     249: </span></a>    <span class="b">BUS_ISA_PORT_BASE</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="250"><span class="line">     250: </span></a>    <span class="b">BUS_ISA_PORT_SHIFT</span><span class="f">=</span><span class="c">3</span>
+<a name="251"><span class="line">     251: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="252"><span class="line">     252: </span></a>
+<a name="253"><span class="line">     253: </span></a><span class="k">/* /proc/sys/net/core */</span>
+<a name="254"><span class="line">     254: </span></a><span class="m">enum</span>
+<a name="255"><span class="line">     255: </span></a><span class="f">{</span>
+<a name="256"><span class="line">     256: </span></a>    <span class="b">NET_CORE_WMEM_MAX</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="257"><span class="line">     257: </span></a>    <span class="b">NET_CORE_RMEM_MAX</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="258"><span class="line">     258: </span></a>    <span class="b">NET_CORE_WMEM_DEFAULT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="259"><span class="line">     259: </span></a>    <span class="b">NET_CORE_RMEM_DEFAULT</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="260"><span class="line">     260: </span></a><span class="k">/* was    NET_CORE_DESTROY_DELAY */</span>
+<a name="261"><span class="line">     261: </span></a>    <span class="b">NET_CORE_MAX_BACKLOG</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="262"><span class="line">     262: </span></a>    <span class="b">NET_CORE_FASTROUTE</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="263"><span class="line">     263: </span></a>    <span class="b">NET_CORE_MSG_COST</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="264"><span class="line">     264: </span></a>    <span class="b">NET_CORE_MSG_BURST</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="265"><span class="line">     265: </span></a>    <span class="b">NET_CORE_OPTMEM_MAX</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="266"><span class="line">     266: </span></a>    <span class="b">NET_CORE_HOT_LIST_LENGTH</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="267"><span class="line">     267: </span></a>    <span class="b">NET_CORE_DIVERT_VERSION</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="268"><span class="line">     268: </span></a>    <span class="b">NET_CORE_NO_CONG_THRESH</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="269"><span class="line">     269: </span></a>    <span class="b">NET_CORE_NO_CONG</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="270"><span class="line">     270: </span></a>    <span class="b">NET_CORE_LO_CONG</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="271"><span class="line">     271: </span></a>    <span class="b">NET_CORE_MOD_CONG</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="272"><span class="line">     272: </span></a>    <span class="b">NET_CORE_DEV_WEIGHT</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="273"><span class="line">     273: </span></a>    <span class="b">NET_CORE_SOMAXCONN</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="274"><span class="line">     274: </span></a>    <span class="b">NET_CORE_BUDGET</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="275"><span class="line">     275: </span></a>    <span class="b">NET_CORE_AEVENT_ETIME</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="276"><span class="line">     276: </span></a>    <span class="b">NET_CORE_AEVENT_RSEQTH</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>
+<a name="277"><span class="line">     277: </span></a>    <span class="b">NET_CORE_WARNINGS</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>
+<a name="278"><span class="line">     278: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="279"><span class="line">     279: </span></a>
+<a name="280"><span class="line">     280: </span></a><span class="k">/* /proc/sys/net/ethernet */</span>
+<a name="281"><span class="line">     281: </span></a>
+<a name="282"><span class="line">     282: </span></a><span class="k">/* /proc/sys/net/802 */</span>
+<a name="283"><span class="line">     283: </span></a>
+<a name="284"><span class="line">     284: </span></a><span class="k">/* /proc/sys/net/unix */</span>
+<a name="285"><span class="line">     285: </span></a>
+<a name="286"><span class="line">     286: </span></a><span class="m">enum</span>
+<a name="287"><span class="line">     287: </span></a><span class="f">{</span>
+<a name="288"><span class="line">     288: </span></a>    <span class="b">NET_UNIX_DESTROY_DELAY</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="289"><span class="line">     289: </span></a>    <span class="b">NET_UNIX_DELETE_DELAY</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="290"><span class="line">     290: </span></a>    <span class="b">NET_UNIX_MAX_DGRAM_QLEN</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="291"><span class="line">     291: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="292"><span class="line">     292: </span></a>
+<a name="293"><span class="line">     293: </span></a><span class="k">/* /proc/sys/net/netfilter */</span>
+<a name="294"><span class="line">     294: </span></a><span class="m">enum</span>
+<a name="295"><span class="line">     295: </span></a><span class="f">{</span>
+<a name="296"><span class="line">     296: </span></a>    <span class="b">NET_NF_CONNTRACK_MAX</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="297"><span class="line">     297: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_SYN_SENT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="298"><span class="line">     298: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_SYN_RECV</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="299"><span class="line">     299: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="300"><span class="line">     300: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_FIN_WAIT</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="301"><span class="line">     301: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_CLOSE_WAIT</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="302"><span class="line">     302: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_LAST_ACK</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="303"><span class="line">     303: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_TIME_WAIT</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="304"><span class="line">     304: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_CLOSE</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="305"><span class="line">     305: </span></a>    <span class="b">NET_NF_CONNTRACK_UDP_TIMEOUT</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="306"><span class="line">     306: </span></a>    <span class="b">NET_NF_CONNTRACK_UDP_TIMEOUT_STREAM</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="307"><span class="line">     307: </span></a>    <span class="b">NET_NF_CONNTRACK_ICMP_TIMEOUT</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="308"><span class="line">     308: </span></a>    <span class="b">NET_NF_CONNTRACK_GENERIC_TIMEOUT</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="309"><span class="line">     309: </span></a>    <span class="b">NET_NF_CONNTRACK_BUCKETS</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="310"><span class="line">     310: </span></a>    <span class="b">NET_NF_CONNTRACK_LOG_INVALID</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="311"><span class="line">     311: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_TIMEOUT_MAX_RETRANS</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="312"><span class="line">     312: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_LOOSE</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="313"><span class="line">     313: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_BE_LIBERAL</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="314"><span class="line">     314: </span></a>    <span class="b">NET_NF_CONNTRACK_TCP_MAX_RETRANS</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="315"><span class="line">     315: </span></a>    <span class="b">NET_NF_CONNTRACK_SCTP_TIMEOUT_CLOSED</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="316"><span class="line">     316: </span></a>    <span class="b">NET_NF_CONNTRACK_SCTP_TIMEOUT_COOKIE_WAIT</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>
+<a name="317"><span class="line">     317: </span></a>    <span class="b">NET_NF_CONNTRACK_SCTP_TIMEOUT_COOKIE_ECHOED</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>
+<a name="318"><span class="line">     318: </span></a>    <span class="b">NET_NF_CONNTRACK_SCTP_TIMEOUT_ESTABLISHED</span><span class="f">=</span><span class="c">23</span><span class="f">,</span>
+<a name="319"><span class="line">     319: </span></a>    <span class="b">NET_NF_CONNTRACK_SCTP_TIMEOUT_SHUTDOWN_SENT</span><span class="f">=</span><span class="c">24</span><span class="f">,</span>
+<a name="320"><span class="line">     320: </span></a>    <span class="b">NET_NF_CONNTRACK_SCTP_TIMEOUT_SHUTDOWN_RECD</span><span class="f">=</span><span class="c">25</span><span class="f">,</span>
+<a name="321"><span class="line">     321: </span></a>    <span class="b">NET_NF_CONNTRACK_SCTP_TIMEOUT_SHUTDOWN_ACK_SENT</span><span class="f">=</span><span class="c">26</span><span class="f">,</span>
+<a name="322"><span class="line">     322: </span></a>    <span class="b">NET_NF_CONNTRACK_COUNT</span><span class="f">=</span><span class="c">27</span><span class="f">,</span>
+<a name="323"><span class="line">     323: </span></a>    <span class="b">NET_NF_CONNTRACK_ICMPV6_TIMEOUT</span><span class="f">=</span><span class="c">28</span><span class="f">,</span>
+<a name="324"><span class="line">     324: </span></a>    <span class="b">NET_NF_CONNTRACK_FRAG6_TIMEOUT</span><span class="f">=</span><span class="c">29</span><span class="f">,</span>
+<a name="325"><span class="line">     325: </span></a>    <span class="b">NET_NF_CONNTRACK_FRAG6_LOW_THRESH</span><span class="f">=</span><span class="c">30</span><span class="f">,</span>
+<a name="326"><span class="line">     326: </span></a>    <span class="b">NET_NF_CONNTRACK_FRAG6_HIGH_THRESH</span><span class="f">=</span><span class="c">31</span><span class="f">,</span>
+<a name="327"><span class="line">     327: </span></a>    <span class="b">NET_NF_CONNTRACK_CHECKSUM</span><span class="f">=</span><span class="c">32</span><span class="f">,</span>
+<a name="328"><span class="line">     328: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="329"><span class="line">     329: </span></a>
+<a name="330"><span class="line">     330: </span></a><span class="k">/* /proc/sys/net/ipv4 */</span>
+<a name="331"><span class="line">     331: </span></a><span class="m">enum</span>
+<a name="332"><span class="line">     332: </span></a><span class="f">{</span>
+<a name="333"><span class="line">     333: </span></a>    <span class="k">/* v2.0 compatibile variables */</span>
+<a name="334"><span class="line">     334: </span></a>    <span class="b">NET_IPV4_FORWARD</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="335"><span class="line">     335: </span></a>    <span class="b">NET_IPV4_DYNADDR</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="336"><span class="line">     336: </span></a>
+<a name="337"><span class="line">     337: </span></a>    <span class="b">NET_IPV4_CONF</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="338"><span class="line">     338: </span></a>    <span class="b">NET_IPV4_NEIGH</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="339"><span class="line">     339: </span></a>    <span class="b">NET_IPV4_ROUTE</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="340"><span class="line">     340: </span></a>    <span class="b">NET_IPV4_FIB_HASH</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="341"><span class="line">     341: </span></a>    <span class="b">NET_IPV4_NETFILTER</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="342"><span class="line">     342: </span></a>
+<a name="343"><span class="line">     343: </span></a>    <span class="b">NET_IPV4_TCP_TIMESTAMPS</span><span class="f">=</span><span class="c">33</span><span class="f">,</span>
+<a name="344"><span class="line">     344: </span></a>    <span class="b">NET_IPV4_TCP_WINDOW_SCALING</span><span class="f">=</span><span class="c">34</span><span class="f">,</span>
+<a name="345"><span class="line">     345: </span></a>    <span class="b">NET_IPV4_TCP_SACK</span><span class="f">=</span><span class="c">35</span><span class="f">,</span>
+<a name="346"><span class="line">     346: </span></a>    <span class="b">NET_IPV4_TCP_RETRANS_COLLAPSE</span><span class="f">=</span><span class="c">36</span><span class="f">,</span>
+<a name="347"><span class="line">     347: </span></a>    <span class="b">NET_IPV4_DEFAULT_TTL</span><span class="f">=</span><span class="c">37</span><span class="f">,</span>
+<a name="348"><span class="line">     348: </span></a>    <span class="b">NET_IPV4_AUTOCONFIG</span><span class="f">=</span><span class="c">38</span><span class="f">,</span>
+<a name="349"><span class="line">     349: </span></a>    <span class="b">NET_IPV4_NO_PMTU_DISC</span><span class="f">=</span><span class="c">39</span><span class="f">,</span>
+<a name="350"><span class="line">     350: </span></a>    <span class="b">NET_IPV4_TCP_SYN_RETRIES</span><span class="f">=</span><span class="c">40</span><span class="f">,</span>
+<a name="351"><span class="line">     351: </span></a>    <span class="b">NET_IPV4_IPFRAG_HIGH_THRESH</span><span class="f">=</span><span class="c">41</span><span class="f">,</span>
+<a name="352"><span class="line">     352: </span></a>    <span class="b">NET_IPV4_IPFRAG_LOW_THRESH</span><span class="f">=</span><span class="c">42</span><span class="f">,</span>
+<a name="353"><span class="line">     353: </span></a>    <span class="b">NET_IPV4_IPFRAG_TIME</span><span class="f">=</span><span class="c">43</span><span class="f">,</span>
+<a name="354"><span class="line">     354: </span></a>    <span class="b">NET_IPV4_TCP_MAX_KA_PROBES</span><span class="f">=</span><span class="c">44</span><span class="f">,</span>
+<a name="355"><span class="line">     355: </span></a>    <span class="b">NET_IPV4_TCP_KEEPALIVE_TIME</span><span class="f">=</span><span class="c">45</span><span class="f">,</span>
+<a name="356"><span class="line">     356: </span></a>    <span class="b">NET_IPV4_TCP_KEEPALIVE_PROBES</span><span class="f">=</span><span class="c">46</span><span class="f">,</span>
+<a name="357"><span class="line">     357: </span></a>    <span class="b">NET_IPV4_TCP_RETRIES1</span><span class="f">=</span><span class="c">47</span><span class="f">,</span>
+<a name="358"><span class="line">     358: </span></a>    <span class="b">NET_IPV4_TCP_RETRIES2</span><span class="f">=</span><span class="c">48</span><span class="f">,</span>
+<a name="359"><span class="line">     359: </span></a>    <span class="b">NET_IPV4_TCP_FIN_TIMEOUT</span><span class="f">=</span><span class="c">49</span><span class="f">,</span>
+<a name="360"><span class="line">     360: </span></a>    <span class="b">NET_IPV4_IP_MASQ_DEBUG</span><span class="f">=</span><span class="c">50</span><span class="f">,</span>
+<a name="361"><span class="line">     361: </span></a>    <span class="b">NET_TCP_SYNCOOKIES</span><span class="f">=</span><span class="c">51</span><span class="f">,</span>
+<a name="362"><span class="line">     362: </span></a>    <span class="b">NET_TCP_STDURG</span><span class="f">=</span><span class="c">52</span><span class="f">,</span>
+<a name="363"><span class="line">     363: </span></a>    <span class="b">NET_TCP_RFC1337</span><span class="f">=</span><span class="c">53</span><span class="f">,</span>
+<a name="364"><span class="line">     364: </span></a>    <span class="b">NET_TCP_SYN_TAILDROP</span><span class="f">=</span><span class="c">54</span><span class="f">,</span>
+<a name="365"><span class="line">     365: </span></a>    <span class="b">NET_TCP_MAX_SYN_BACKLOG</span><span class="f">=</span><span class="c">55</span><span class="f">,</span>
+<a name="366"><span class="line">     366: </span></a>    <span class="b">NET_IPV4_LOCAL_PORT_RANGE</span><span class="f">=</span><span class="c">56</span><span class="f">,</span>
+<a name="367"><span class="line">     367: </span></a>    <span class="b">NET_IPV4_ICMP_ECHO_IGNORE_ALL</span><span class="f">=</span><span class="c">57</span><span class="f">,</span>
+<a name="368"><span class="line">     368: </span></a>    <span class="b">NET_IPV4_ICMP_ECHO_IGNORE_BROADCASTS</span><span class="f">=</span><span class="c">58</span><span class="f">,</span>
+<a name="369"><span class="line">     369: </span></a>    <span class="b">NET_IPV4_ICMP_SOURCEQUENCH_RATE</span><span class="f">=</span><span class="c">59</span><span class="f">,</span>
+<a name="370"><span class="line">     370: </span></a>    <span class="b">NET_IPV4_ICMP_DESTUNREACH_RATE</span><span class="f">=</span><span class="c">60</span><span class="f">,</span>
+<a name="371"><span class="line">     371: </span></a>    <span class="b">NET_IPV4_ICMP_TIMEEXCEED_RATE</span><span class="f">=</span><span class="c">61</span><span class="f">,</span>
+<a name="372"><span class="line">     372: </span></a>    <span class="b">NET_IPV4_ICMP_PARAMPROB_RATE</span><span class="f">=</span><span class="c">62</span><span class="f">,</span>
+<a name="373"><span class="line">     373: </span></a>    <span class="b">NET_IPV4_ICMP_ECHOREPLY_RATE</span><span class="f">=</span><span class="c">63</span><span class="f">,</span>
+<a name="374"><span class="line">     374: </span></a>    <span class="b">NET_IPV4_ICMP_IGNORE_BOGUS_ERROR_RESPONSES</span><span class="f">=</span><span class="c">64</span><span class="f">,</span>
+<a name="375"><span class="line">     375: </span></a>    <span class="b">NET_IPV4_IGMP_MAX_MEMBERSHIPS</span><span class="f">=</span><span class="c">65</span><span class="f">,</span>
+<a name="376"><span class="line">     376: </span></a>    <span class="b">NET_TCP_TW_RECYCLE</span><span class="f">=</span><span class="c">66</span><span class="f">,</span>
+<a name="377"><span class="line">     377: </span></a>    <span class="b">NET_IPV4_ALWAYS_DEFRAG</span><span class="f">=</span><span class="c">67</span><span class="f">,</span>
+<a name="378"><span class="line">     378: </span></a>    <span class="b">NET_IPV4_TCP_KEEPALIVE_INTVL</span><span class="f">=</span><span class="c">68</span><span class="f">,</span>
+<a name="379"><span class="line">     379: </span></a>    <span class="b">NET_IPV4_INET_PEER_THRESHOLD</span><span class="f">=</span><span class="c">69</span><span class="f">,</span>
+<a name="380"><span class="line">     380: </span></a>    <span class="b">NET_IPV4_INET_PEER_MINTTL</span><span class="f">=</span><span class="c">70</span><span class="f">,</span>
+<a name="381"><span class="line">     381: </span></a>    <span class="b">NET_IPV4_INET_PEER_MAXTTL</span><span class="f">=</span><span class="c">71</span><span class="f">,</span>
+<a name="382"><span class="line">     382: </span></a>    <span class="b">NET_IPV4_INET_PEER_GC_MINTIME</span><span class="f">=</span><span class="c">72</span><span class="f">,</span>
+<a name="383"><span class="line">     383: </span></a>    <span class="b">NET_IPV4_INET_PEER_GC_MAXTIME</span><span class="f">=</span><span class="c">73</span><span class="f">,</span>
+<a name="384"><span class="line">     384: </span></a>    <span class="b">NET_TCP_ORPHAN_RETRIES</span><span class="f">=</span><span class="c">74</span><span class="f">,</span>
+<a name="385"><span class="line">     385: </span></a>    <span class="b">NET_TCP_ABORT_ON_OVERFLOW</span><span class="f">=</span><span class="c">75</span><span class="f">,</span>
+<a name="386"><span class="line">     386: </span></a>    <span class="b">NET_TCP_SYNACK_RETRIES</span><span class="f">=</span><span class="c">76</span><span class="f">,</span>
+<a name="387"><span class="line">     387: </span></a>    <span class="b">NET_TCP_MAX_ORPHANS</span><span class="f">=</span><span class="c">77</span><span class="f">,</span>
+<a name="388"><span class="line">     388: </span></a>    <span class="b">NET_TCP_MAX_TW_BUCKETS</span><span class="f">=</span><span class="c">78</span><span class="f">,</span>
+<a name="389"><span class="line">     389: </span></a>    <span class="b">NET_TCP_FACK</span><span class="f">=</span><span class="c">79</span><span class="f">,</span>
+<a name="390"><span class="line">     390: </span></a>    <span class="b">NET_TCP_REORDERING</span><span class="f">=</span><span class="c">80</span><span class="f">,</span>
+<a name="391"><span class="line">     391: </span></a>    <span class="b">NET_TCP_ECN</span><span class="f">=</span><span class="c">81</span><span class="f">,</span>
+<a name="392"><span class="line">     392: </span></a>    <span class="b">NET_TCP_DSACK</span><span class="f">=</span><span class="c">82</span><span class="f">,</span>
+<a name="393"><span class="line">     393: </span></a>    <span class="b">NET_TCP_MEM</span><span class="f">=</span><span class="c">83</span><span class="f">,</span>
+<a name="394"><span class="line">     394: </span></a>    <span class="b">NET_TCP_WMEM</span><span class="f">=</span><span class="c">84</span><span class="f">,</span>
+<a name="395"><span class="line">     395: </span></a>    <span class="b">NET_TCP_RMEM</span><span class="f">=</span><span class="c">85</span><span class="f">,</span>
+<a name="396"><span class="line">     396: </span></a>    <span class="b">NET_TCP_APP_WIN</span><span class="f">=</span><span class="c">86</span><span class="f">,</span>
+<a name="397"><span class="line">     397: </span></a>    <span class="b">NET_TCP_ADV_WIN_SCALE</span><span class="f">=</span><span class="c">87</span><span class="f">,</span>
+<a name="398"><span class="line">     398: </span></a>    <span class="b">NET_IPV4_NONLOCAL_BIND</span><span class="f">=</span><span class="c">88</span><span class="f">,</span>
+<a name="399"><span class="line">     399: </span></a>    <span class="b">NET_IPV4_ICMP_RATELIMIT</span><span class="f">=</span><span class="c">89</span><span class="f">,</span>
+<a name="400"><span class="line">     400: </span></a>    <span class="b">NET_IPV4_ICMP_RATEMASK</span><span class="f">=</span><span class="c">90</span><span class="f">,</span>
+<a name="401"><span class="line">     401: </span></a>    <span class="b">NET_TCP_TW_REUSE</span><span class="f">=</span><span class="c">91</span><span class="f">,</span>
+<a name="402"><span class="line">     402: </span></a>    <span class="b">NET_TCP_FRTO</span><span class="f">=</span><span class="c">92</span><span class="f">,</span>
+<a name="403"><span class="line">     403: </span></a>    <span class="b">NET_TCP_LOW_LATENCY</span><span class="f">=</span><span class="c">93</span><span class="f">,</span>
+<a name="404"><span class="line">     404: </span></a>    <span class="b">NET_IPV4_IPFRAG_SECRET_INTERVAL</span><span class="f">=</span><span class="c">94</span><span class="f">,</span>
+<a name="405"><span class="line">     405: </span></a>    <span class="b">NET_IPV4_IGMP_MAX_MSF</span><span class="f">=</span><span class="c">96</span><span class="f">,</span>
+<a name="406"><span class="line">     406: </span></a>    <span class="b">NET_TCP_NO_METRICS_SAVE</span><span class="f">=</span><span class="c">97</span><span class="f">,</span>
+<a name="407"><span class="line">     407: </span></a>    <span class="b">NET_TCP_DEFAULT_WIN_SCALE</span><span class="f">=</span><span class="c">105</span><span class="f">,</span>
+<a name="408"><span class="line">     408: </span></a>    <span class="b">NET_TCP_MODERATE_RCVBUF</span><span class="f">=</span><span class="c">106</span><span class="f">,</span>
+<a name="409"><span class="line">     409: </span></a>    <span class="b">NET_TCP_TSO_WIN_DIVISOR</span><span class="f">=</span><span class="c">107</span><span class="f">,</span>
+<a name="410"><span class="line">     410: </span></a>    <span class="b">NET_TCP_BIC_BETA</span><span class="f">=</span><span class="c">108</span><span class="f">,</span>
+<a name="411"><span class="line">     411: </span></a>    <span class="b">NET_IPV4_ICMP_ERRORS_USE_INBOUND_IFADDR</span><span class="f">=</span><span class="c">109</span><span class="f">,</span>
+<a name="412"><span class="line">     412: </span></a>    <span class="b">NET_TCP_CONG_CONTROL</span><span class="f">=</span><span class="c">110</span><span class="f">,</span>
+<a name="413"><span class="line">     413: </span></a>    <span class="b">NET_TCP_ABC</span><span class="f">=</span><span class="c">111</span><span class="f">,</span>
+<a name="414"><span class="line">     414: </span></a>    <span class="b">NET_IPV4_IPFRAG_MAX_DIST</span><span class="f">=</span><span class="c">112</span><span class="f">,</span>
+<a name="415"><span class="line">     415: </span></a>     <span class="b">NET_TCP_MTU_PROBING</span><span class="f">=</span><span class="c">113</span><span class="f">,</span>
+<a name="416"><span class="line">     416: </span></a>    <span class="b">NET_TCP_BASE_MSS</span><span class="f">=</span><span class="c">114</span><span class="f">,</span>
+<a name="417"><span class="line">     417: </span></a>    <span class="b">NET_IPV4_TCP_WORKAROUND_SIGNED_WINDOWS</span><span class="f">=</span><span class="c">115</span><span class="f">,</span>
+<a name="418"><span class="line">     418: </span></a>    <span class="b">NET_TCP_DMA_COPYBREAK</span><span class="f">=</span><span class="c">116</span><span class="f">,</span>
+<a name="419"><span class="line">     419: </span></a>    <span class="b">NET_TCP_SLOW_START_AFTER_IDLE</span><span class="f">=</span><span class="c">117</span><span class="f">,</span>
+<a name="420"><span class="line">     420: </span></a>    <span class="b">NET_CIPSOV4_CACHE_ENABLE</span><span class="f">=</span><span class="c">118</span><span class="f">,</span>
+<a name="421"><span class="line">     421: </span></a>    <span class="b">NET_CIPSOV4_CACHE_BUCKET_SIZE</span><span class="f">=</span><span class="c">119</span><span class="f">,</span>
+<a name="422"><span class="line">     422: </span></a>    <span class="b">NET_CIPSOV4_RBM_OPTFMT</span><span class="f">=</span><span class="c">120</span><span class="f">,</span>
+<a name="423"><span class="line">     423: </span></a>    <span class="b">NET_CIPSOV4_RBM_STRICTVALID</span><span class="f">=</span><span class="c">121</span><span class="f">,</span>
+<a name="424"><span class="line">     424: </span></a>    <span class="b">NET_TCP_AVAIL_CONG_CONTROL</span><span class="f">=</span><span class="c">122</span><span class="f">,</span>
+<a name="425"><span class="line">     425: </span></a>    <span class="b">NET_TCP_ALLOWED_CONG_CONTROL</span><span class="f">=</span><span class="c">123</span><span class="f">,</span>
+<a name="426"><span class="line">     426: </span></a>    <span class="b">NET_TCP_MAX_SSTHRESH</span><span class="f">=</span><span class="c">124</span><span class="f">,</span>
+<a name="427"><span class="line">     427: </span></a>    <span class="b">NET_TCP_FRTO_RESPONSE</span><span class="f">=</span><span class="c">125</span><span class="f">,</span>
+<a name="428"><span class="line">     428: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="429"><span class="line">     429: </span></a>
+<a name="430"><span class="line">     430: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="431"><span class="line">     431: </span></a>    <span class="b">NET_IPV4_ROUTE_FLUSH</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="432"><span class="line">     432: </span></a>    <span class="b">NET_IPV4_ROUTE_MIN_DELAY</span><span class="f">=</span><span class="c">2</span><span class="f">,</span> <span class="k">/* obsolete since 2.6.25 */</span>
+<a name="433"><span class="line">     433: </span></a>    <span class="b">NET_IPV4_ROUTE_MAX_DELAY</span><span class="f">=</span><span class="c">3</span><span class="f">,</span> <span class="k">/* obsolete since 2.6.25 */</span>
+<a name="434"><span class="line">     434: </span></a>    <span class="b">NET_IPV4_ROUTE_GC_THRESH</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="435"><span class="line">     435: </span></a>    <span class="b">NET_IPV4_ROUTE_MAX_SIZE</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="436"><span class="line">     436: </span></a>    <span class="b">NET_IPV4_ROUTE_GC_MIN_INTERVAL</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="437"><span class="line">     437: </span></a>    <span class="b">NET_IPV4_ROUTE_GC_TIMEOUT</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="438"><span class="line">     438: </span></a>    <span class="b">NET_IPV4_ROUTE_GC_INTERVAL</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="439"><span class="line">     439: </span></a>    <span class="b">NET_IPV4_ROUTE_REDIRECT_LOAD</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="440"><span class="line">     440: </span></a>    <span class="b">NET_IPV4_ROUTE_REDIRECT_NUMBER</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="441"><span class="line">     441: </span></a>    <span class="b">NET_IPV4_ROUTE_REDIRECT_SILENCE</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="442"><span class="line">     442: </span></a>    <span class="b">NET_IPV4_ROUTE_ERROR_COST</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="443"><span class="line">     443: </span></a>    <span class="b">NET_IPV4_ROUTE_ERROR_BURST</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="444"><span class="line">     444: </span></a>    <span class="b">NET_IPV4_ROUTE_GC_ELASTICITY</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="445"><span class="line">     445: </span></a>    <span class="b">NET_IPV4_ROUTE_MTU_EXPIRES</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="446"><span class="line">     446: </span></a>    <span class="b">NET_IPV4_ROUTE_MIN_PMTU</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="447"><span class="line">     447: </span></a>    <span class="b">NET_IPV4_ROUTE_MIN_ADVMSS</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="448"><span class="line">     448: </span></a>    <span class="b">NET_IPV4_ROUTE_SECRET_INTERVAL</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="449"><span class="line">     449: </span></a>    <span class="b">NET_IPV4_ROUTE_GC_MIN_INTERVAL_MS</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="450"><span class="line">     450: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="451"><span class="line">     451: </span></a>
+<a name="452"><span class="line">     452: </span></a><span class="m">enum</span>
+<a name="453"><span class="line">     453: </span></a><span class="f">{</span>
+<a name="454"><span class="line">     454: </span></a>    <span class="b">NET_PROTO_CONF_ALL</span><span class="f">=</span><span class="f">-</span><span class="c">2</span><span class="f">,</span>
+<a name="455"><span class="line">     455: </span></a>    <span class="b">NET_PROTO_CONF_DEFAULT</span><span class="f">=</span><span class="f">-</span><span class="c">3</span>
+<a name="456"><span class="line">     456: </span></a>
+<a name="457"><span class="line">     457: </span></a>    <span class="k">/* And device ifindices ... */</span>
+<a name="458"><span class="line">     458: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="459"><span class="line">     459: </span></a>
+<a name="460"><span class="line">     460: </span></a><span class="m">enum</span>
+<a name="461"><span class="line">     461: </span></a><span class="f">{</span>
+<a name="462"><span class="line">     462: </span></a>    <span class="b">NET_IPV4_CONF_FORWARDING</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="463"><span class="line">     463: </span></a>    <span class="b">NET_IPV4_CONF_MC_FORWARDING</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="464"><span class="line">     464: </span></a>    <span class="b">NET_IPV4_CONF_PROXY_ARP</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="465"><span class="line">     465: </span></a>    <span class="b">NET_IPV4_CONF_ACCEPT_REDIRECTS</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="466"><span class="line">     466: </span></a>    <span class="b">NET_IPV4_CONF_SECURE_REDIRECTS</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="467"><span class="line">     467: </span></a>    <span class="b">NET_IPV4_CONF_SEND_REDIRECTS</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="468"><span class="line">     468: </span></a>    <span class="b">NET_IPV4_CONF_SHARED_MEDIA</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="469"><span class="line">     469: </span></a>    <span class="b">NET_IPV4_CONF_RP_FILTER</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="470"><span class="line">     470: </span></a>    <span class="b">NET_IPV4_CONF_ACCEPT_SOURCE_ROUTE</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="471"><span class="line">     471: </span></a>    <span class="b">NET_IPV4_CONF_BOOTP_RELAY</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="472"><span class="line">     472: </span></a>    <span class="b">NET_IPV4_CONF_LOG_MARTIANS</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="473"><span class="line">     473: </span></a>    <span class="b">NET_IPV4_CONF_TAG</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="474"><span class="line">     474: </span></a>    <span class="b">NET_IPV4_CONF_ARPFILTER</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="475"><span class="line">     475: </span></a>    <span class="b">NET_IPV4_CONF_MEDIUM_ID</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="476"><span class="line">     476: </span></a>    <span class="b">NET_IPV4_CONF_NOXFRM</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="477"><span class="line">     477: </span></a>    <span class="b">NET_IPV4_CONF_NOPOLICY</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="478"><span class="line">     478: </span></a>    <span class="b">NET_IPV4_CONF_FORCE_IGMP_VERSION</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="479"><span class="line">     479: </span></a>    <span class="b">NET_IPV4_CONF_ARP_ANNOUNCE</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="480"><span class="line">     480: </span></a>    <span class="b">NET_IPV4_CONF_ARP_IGNORE</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="481"><span class="line">     481: </span></a>    <span class="b">NET_IPV4_CONF_PROMOTE_SECONDARIES</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="482"><span class="line">     482: </span></a>    <span class="b">NET_IPV4_CONF_ARP_ACCEPT</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>
+<a name="483"><span class="line">     483: </span></a>    <span class="b">NET_IPV4_CONF_ARP_NOTIFY</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>
+<a name="484"><span class="line">     484: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="485"><span class="line">     485: </span></a>
+<a name="486"><span class="line">     486: </span></a><span class="k">/* /proc/sys/net/ipv4/netfilter */</span>
+<a name="487"><span class="line">     487: </span></a><span class="m">enum</span>
+<a name="488"><span class="line">     488: </span></a><span class="f">{</span>
+<a name="489"><span class="line">     489: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_MAX</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="490"><span class="line">     490: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_SYN_SENT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="491"><span class="line">     491: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_SYN_RECV</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="492"><span class="line">     492: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_ESTABLISHED</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="493"><span class="line">     493: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_FIN_WAIT</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="494"><span class="line">     494: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_CLOSE_WAIT</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="495"><span class="line">     495: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_LAST_ACK</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="496"><span class="line">     496: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_TIME_WAIT</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="497"><span class="line">     497: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_CLOSE</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="498"><span class="line">     498: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_UDP_TIMEOUT</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="499"><span class="line">     499: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_UDP_TIMEOUT_STREAM</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="500"><span class="line">     500: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_ICMP_TIMEOUT</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="501"><span class="line">     501: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_GENERIC_TIMEOUT</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="502"><span class="line">     502: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_BUCKETS</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="503"><span class="line">     503: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_LOG_INVALID</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="504"><span class="line">     504: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_TIMEOUT_MAX_RETRANS</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="505"><span class="line">     505: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_LOOSE</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="506"><span class="line">     506: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_BE_LIBERAL</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="507"><span class="line">     507: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_TCP_MAX_RETRANS</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="508"><span class="line">     508: </span></a>     <span class="b">NET_IPV4_NF_CONNTRACK_SCTP_TIMEOUT_CLOSED</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="509"><span class="line">     509: </span></a>     <span class="b">NET_IPV4_NF_CONNTRACK_SCTP_TIMEOUT_COOKIE_WAIT</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>
+<a name="510"><span class="line">     510: </span></a>     <span class="b">NET_IPV4_NF_CONNTRACK_SCTP_TIMEOUT_COOKIE_ECHOED</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>
+<a name="511"><span class="line">     511: </span></a>     <span class="b">NET_IPV4_NF_CONNTRACK_SCTP_TIMEOUT_ESTABLISHED</span><span class="f">=</span><span class="c">23</span><span class="f">,</span>
+<a name="512"><span class="line">     512: </span></a>     <span class="b">NET_IPV4_NF_CONNTRACK_SCTP_TIMEOUT_SHUTDOWN_SENT</span><span class="f">=</span><span class="c">24</span><span class="f">,</span>
+<a name="513"><span class="line">     513: </span></a>     <span class="b">NET_IPV4_NF_CONNTRACK_SCTP_TIMEOUT_SHUTDOWN_RECD</span><span class="f">=</span><span class="c">25</span><span class="f">,</span>
+<a name="514"><span class="line">     514: </span></a>     <span class="b">NET_IPV4_NF_CONNTRACK_SCTP_TIMEOUT_SHUTDOWN_ACK_SENT</span><span class="f">=</span><span class="c">26</span><span class="f">,</span>
+<a name="515"><span class="line">     515: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_COUNT</span><span class="f">=</span><span class="c">27</span><span class="f">,</span>
+<a name="516"><span class="line">     516: </span></a>    <span class="b">NET_IPV4_NF_CONNTRACK_CHECKSUM</span><span class="f">=</span><span class="c">28</span><span class="f">,</span>
+<a name="517"><span class="line">     517: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="518"><span class="line">     518: </span></a> 
+<a name="519"><span class="line">     519: </span></a><span class="k">/* /proc/sys/net/ipv6 */</span>
+<a name="520"><span class="line">     520: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="521"><span class="line">     521: </span></a>    <span class="b">NET_IPV6_CONF</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="522"><span class="line">     522: </span></a>    <span class="b">NET_IPV6_NEIGH</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="523"><span class="line">     523: </span></a>    <span class="b">NET_IPV6_ROUTE</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="524"><span class="line">     524: </span></a>    <span class="b">NET_IPV6_ICMP</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="525"><span class="line">     525: </span></a>    <span class="b">NET_IPV6_BINDV6ONLY</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="526"><span class="line">     526: </span></a>    <span class="b">NET_IPV6_IP6FRAG_HIGH_THRESH</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>
+<a name="527"><span class="line">     527: </span></a>    <span class="b">NET_IPV6_IP6FRAG_LOW_THRESH</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>
+<a name="528"><span class="line">     528: </span></a>    <span class="b">NET_IPV6_IP6FRAG_TIME</span><span class="f">=</span><span class="c">23</span><span class="f">,</span>
+<a name="529"><span class="line">     529: </span></a>    <span class="b">NET_IPV6_IP6FRAG_SECRET_INTERVAL</span><span class="f">=</span><span class="c">24</span><span class="f">,</span>
+<a name="530"><span class="line">     530: </span></a>    <span class="b">NET_IPV6_MLD_MAX_MSF</span><span class="f">=</span><span class="c">25</span><span class="f">,</span>
+<a name="531"><span class="line">     531: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="532"><span class="line">     532: </span></a>
+<a name="533"><span class="line">     533: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="534"><span class="line">     534: </span></a>    <span class="b">NET_IPV6_ROUTE_FLUSH</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="535"><span class="line">     535: </span></a>    <span class="b">NET_IPV6_ROUTE_GC_THRESH</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="536"><span class="line">     536: </span></a>    <span class="b">NET_IPV6_ROUTE_MAX_SIZE</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="537"><span class="line">     537: </span></a>    <span class="b">NET_IPV6_ROUTE_GC_MIN_INTERVAL</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="538"><span class="line">     538: </span></a>    <span class="b">NET_IPV6_ROUTE_GC_TIMEOUT</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="539"><span class="line">     539: </span></a>    <span class="b">NET_IPV6_ROUTE_GC_INTERVAL</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="540"><span class="line">     540: </span></a>    <span class="b">NET_IPV6_ROUTE_GC_ELASTICITY</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="541"><span class="line">     541: </span></a>    <span class="b">NET_IPV6_ROUTE_MTU_EXPIRES</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="542"><span class="line">     542: </span></a>    <span class="b">NET_IPV6_ROUTE_MIN_ADVMSS</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="543"><span class="line">     543: </span></a>    <span class="b">NET_IPV6_ROUTE_GC_MIN_INTERVAL_MS</span><span class="f">=</span><span class="c">10</span>
+<a name="544"><span class="line">     544: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="545"><span class="line">     545: </span></a>
+<a name="546"><span class="line">     546: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="547"><span class="line">     547: </span></a>    <span class="b">NET_IPV6_FORWARDING</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="548"><span class="line">     548: </span></a>    <span class="b">NET_IPV6_HOP_LIMIT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="549"><span class="line">     549: </span></a>    <span class="b">NET_IPV6_MTU</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="550"><span class="line">     550: </span></a>    <span class="b">NET_IPV6_ACCEPT_RA</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="551"><span class="line">     551: </span></a>    <span class="b">NET_IPV6_ACCEPT_REDIRECTS</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="552"><span class="line">     552: </span></a>    <span class="b">NET_IPV6_AUTOCONF</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="553"><span class="line">     553: </span></a>    <span class="b">NET_IPV6_DAD_TRANSMITS</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="554"><span class="line">     554: </span></a>    <span class="b">NET_IPV6_RTR_SOLICITS</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="555"><span class="line">     555: </span></a>    <span class="b">NET_IPV6_RTR_SOLICIT_INTERVAL</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="556"><span class="line">     556: </span></a>    <span class="b">NET_IPV6_RTR_SOLICIT_DELAY</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="557"><span class="line">     557: </span></a>    <span class="b">NET_IPV6_USE_TEMPADDR</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="558"><span class="line">     558: </span></a>    <span class="b">NET_IPV6_TEMP_VALID_LFT</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="559"><span class="line">     559: </span></a>    <span class="b">NET_IPV6_TEMP_PREFERED_LFT</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="560"><span class="line">     560: </span></a>    <span class="b">NET_IPV6_REGEN_MAX_RETRY</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="561"><span class="line">     561: </span></a>    <span class="b">NET_IPV6_MAX_DESYNC_FACTOR</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="562"><span class="line">     562: </span></a>    <span class="b">NET_IPV6_MAX_ADDRESSES</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="563"><span class="line">     563: </span></a>    <span class="b">NET_IPV6_FORCE_MLD_VERSION</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="564"><span class="line">     564: </span></a>    <span class="b">NET_IPV6_ACCEPT_RA_DEFRTR</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="565"><span class="line">     565: </span></a>    <span class="b">NET_IPV6_ACCEPT_RA_PINFO</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>
+<a name="566"><span class="line">     566: </span></a>    <span class="b">NET_IPV6_ACCEPT_RA_RTR_PREF</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>
+<a name="567"><span class="line">     567: </span></a>    <span class="b">NET_IPV6_RTR_PROBE_INTERVAL</span><span class="f">=</span><span class="c">21</span><span class="f">,</span>
+<a name="568"><span class="line">     568: </span></a>    <span class="b">NET_IPV6_ACCEPT_RA_RT_INFO_MAX_PLEN</span><span class="f">=</span><span class="c">22</span><span class="f">,</span>
+<a name="569"><span class="line">     569: </span></a>    <span class="b">NET_IPV6_PROXY_NDP</span><span class="f">=</span><span class="c">23</span><span class="f">,</span>
+<a name="570"><span class="line">     570: </span></a>    <span class="b">NET_IPV6_ACCEPT_SOURCE_ROUTE</span><span class="f">=</span><span class="c">25</span><span class="f">,</span>
+<a name="571"><span class="line">     571: </span></a>    <span class="b">__NET_IPV6_MAX</span>
+<a name="572"><span class="line">     572: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="573"><span class="line">     573: </span></a>
+<a name="574"><span class="line">     574: </span></a><span class="k">/* /proc/sys/net/ipv6/icmp */</span>
+<a name="575"><span class="line">     575: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="576"><span class="line">     576: </span></a>    <span class="b">NET_IPV6_ICMP_RATELIMIT</span><span class="f">=</span><span class="c">1</span>
+<a name="577"><span class="line">     577: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="578"><span class="line">     578: </span></a>
+<a name="579"><span class="line">     579: </span></a><span class="k">/* /proc/sys/net/&lt;protocol&gt;/neigh/&lt;dev&gt; */</span>
+<a name="580"><span class="line">     580: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="581"><span class="line">     581: </span></a>    <span class="b">NET_NEIGH_MCAST_SOLICIT</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="582"><span class="line">     582: </span></a>    <span class="b">NET_NEIGH_UCAST_SOLICIT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="583"><span class="line">     583: </span></a>    <span class="b">NET_NEIGH_APP_SOLICIT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="584"><span class="line">     584: </span></a>    <span class="b">NET_NEIGH_RETRANS_TIME</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="585"><span class="line">     585: </span></a>    <span class="b">NET_NEIGH_REACHABLE_TIME</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="586"><span class="line">     586: </span></a>    <span class="b">NET_NEIGH_DELAY_PROBE_TIME</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="587"><span class="line">     587: </span></a>    <span class="b">NET_NEIGH_GC_STALE_TIME</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="588"><span class="line">     588: </span></a>    <span class="b">NET_NEIGH_UNRES_QLEN</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="589"><span class="line">     589: </span></a>    <span class="b">NET_NEIGH_PROXY_QLEN</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="590"><span class="line">     590: </span></a>    <span class="b">NET_NEIGH_ANYCAST_DELAY</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="591"><span class="line">     591: </span></a>    <span class="b">NET_NEIGH_PROXY_DELAY</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="592"><span class="line">     592: </span></a>    <span class="b">NET_NEIGH_LOCKTIME</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="593"><span class="line">     593: </span></a>    <span class="b">NET_NEIGH_GC_INTERVAL</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="594"><span class="line">     594: </span></a>    <span class="b">NET_NEIGH_GC_THRESH1</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="595"><span class="line">     595: </span></a>    <span class="b">NET_NEIGH_GC_THRESH2</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>
+<a name="596"><span class="line">     596: </span></a>    <span class="b">NET_NEIGH_GC_THRESH3</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>
+<a name="597"><span class="line">     597: </span></a>    <span class="b">NET_NEIGH_RETRANS_TIME_MS</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>
+<a name="598"><span class="line">     598: </span></a>    <span class="b">NET_NEIGH_REACHABLE_TIME_MS</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>
+<a name="599"><span class="line">     599: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="600"><span class="line">     600: </span></a>
+<a name="601"><span class="line">     601: </span></a><span class="k">/* /proc/sys/net/dccp */</span>
+<a name="602"><span class="line">     602: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="603"><span class="line">     603: </span></a>    <span class="b">NET_DCCP_DEFAULT</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="604"><span class="line">     604: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="605"><span class="line">     605: </span></a>
+<a name="606"><span class="line">     606: </span></a><span class="k">/* /proc/sys/net/ipx */</span>
+<a name="607"><span class="line">     607: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="608"><span class="line">     608: </span></a>    <span class="b">NET_IPX_PPROP_BROADCASTING</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="609"><span class="line">     609: </span></a>    <span class="b">NET_IPX_FORWARDING</span><span class="f">=</span><span class="c">2</span>
+<a name="610"><span class="line">     610: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="611"><span class="line">     611: </span></a>
+<a name="612"><span class="line">     612: </span></a><span class="k">/* /proc/sys/net/llc */</span>
+<a name="613"><span class="line">     613: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="614"><span class="line">     614: </span></a>    <span class="b">NET_LLC2</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="615"><span class="line">     615: </span></a>    <span class="b">NET_LLC_STATION</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="616"><span class="line">     616: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="617"><span class="line">     617: </span></a>
+<a name="618"><span class="line">     618: </span></a><span class="k">/* /proc/sys/net/llc/llc2 */</span>
+<a name="619"><span class="line">     619: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="620"><span class="line">     620: </span></a>    <span class="b">NET_LLC2_TIMEOUT</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="621"><span class="line">     621: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="622"><span class="line">     622: </span></a>
+<a name="623"><span class="line">     623: </span></a><span class="k">/* /proc/sys/net/llc/station */</span>
+<a name="624"><span class="line">     624: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="625"><span class="line">     625: </span></a>    <span class="b">NET_LLC_STATION_ACK_TIMEOUT</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="626"><span class="line">     626: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="627"><span class="line">     627: </span></a>
+<a name="628"><span class="line">     628: </span></a><span class="k">/* /proc/sys/net/llc/llc2/timeout */</span>
+<a name="629"><span class="line">     629: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="630"><span class="line">     630: </span></a>    <span class="b">NET_LLC2_ACK_TIMEOUT</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="631"><span class="line">     631: </span></a>    <span class="b">NET_LLC2_P_TIMEOUT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="632"><span class="line">     632: </span></a>    <span class="b">NET_LLC2_REJ_TIMEOUT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="633"><span class="line">     633: </span></a>    <span class="b">NET_LLC2_BUSY_TIMEOUT</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="634"><span class="line">     634: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="635"><span class="line">     635: </span></a>
+<a name="636"><span class="line">     636: </span></a><span class="k">/* /proc/sys/net/appletalk */</span>
+<a name="637"><span class="line">     637: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="638"><span class="line">     638: </span></a>    <span class="b">NET_ATALK_AARP_EXPIRY_TIME</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="639"><span class="line">     639: </span></a>    <span class="b">NET_ATALK_AARP_TICK_TIME</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="640"><span class="line">     640: </span></a>    <span class="b">NET_ATALK_AARP_RETRANSMIT_LIMIT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="641"><span class="line">     641: </span></a>    <span class="b">NET_ATALK_AARP_RESOLVE_TIME</span><span class="f">=</span><span class="c">4</span>
+<a name="642"><span class="line">     642: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="643"><span class="line">     643: </span></a>
+<a name="644"><span class="line">     644: </span></a>
+<a name="645"><span class="line">     645: </span></a><span class="k">/* /proc/sys/net/netrom */</span>
+<a name="646"><span class="line">     646: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="647"><span class="line">     647: </span></a>    <span class="b">NET_NETROM_DEFAULT_PATH_QUALITY</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="648"><span class="line">     648: </span></a>    <span class="b">NET_NETROM_OBSOLESCENCE_COUNT_INITIALISER</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="649"><span class="line">     649: </span></a>    <span class="b">NET_NETROM_NETWORK_TTL_INITIALISER</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="650"><span class="line">     650: </span></a>    <span class="b">NET_NETROM_TRANSPORT_TIMEOUT</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="651"><span class="line">     651: </span></a>    <span class="b">NET_NETROM_TRANSPORT_MAXIMUM_TRIES</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="652"><span class="line">     652: </span></a>    <span class="b">NET_NETROM_TRANSPORT_ACKNOWLEDGE_DELAY</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="653"><span class="line">     653: </span></a>    <span class="b">NET_NETROM_TRANSPORT_BUSY_DELAY</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="654"><span class="line">     654: </span></a>    <span class="b">NET_NETROM_TRANSPORT_REQUESTED_WINDOW_SIZE</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="655"><span class="line">     655: </span></a>    <span class="b">NET_NETROM_TRANSPORT_NO_ACTIVITY_TIMEOUT</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="656"><span class="line">     656: </span></a>    <span class="b">NET_NETROM_ROUTING_CONTROL</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="657"><span class="line">     657: </span></a>    <span class="b">NET_NETROM_LINK_FAILS_COUNT</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="658"><span class="line">     658: </span></a>    <span class="b">NET_NETROM_RESET</span><span class="f">=</span><span class="c">12</span>
+<a name="659"><span class="line">     659: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="660"><span class="line">     660: </span></a>
+<a name="661"><span class="line">     661: </span></a><span class="k">/* /proc/sys/net/ax25 */</span>
+<a name="662"><span class="line">     662: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="663"><span class="line">     663: </span></a>    <span class="b">NET_AX25_IP_DEFAULT_MODE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="664"><span class="line">     664: </span></a>    <span class="b">NET_AX25_DEFAULT_MODE</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="665"><span class="line">     665: </span></a>    <span class="b">NET_AX25_BACKOFF_TYPE</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="666"><span class="line">     666: </span></a>    <span class="b">NET_AX25_CONNECT_MODE</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="667"><span class="line">     667: </span></a>    <span class="b">NET_AX25_STANDARD_WINDOW</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="668"><span class="line">     668: </span></a>    <span class="b">NET_AX25_EXTENDED_WINDOW</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="669"><span class="line">     669: </span></a>    <span class="b">NET_AX25_T1_TIMEOUT</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="670"><span class="line">     670: </span></a>    <span class="b">NET_AX25_T2_TIMEOUT</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="671"><span class="line">     671: </span></a>    <span class="b">NET_AX25_T3_TIMEOUT</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="672"><span class="line">     672: </span></a>    <span class="b">NET_AX25_IDLE_TIMEOUT</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="673"><span class="line">     673: </span></a>    <span class="b">NET_AX25_N2</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="674"><span class="line">     674: </span></a>    <span class="b">NET_AX25_PACLEN</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="675"><span class="line">     675: </span></a>    <span class="b">NET_AX25_PROTOCOL</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="676"><span class="line">     676: </span></a>    <span class="b">NET_AX25_DAMA_SLAVE_TIMEOUT</span><span class="f">=</span><span class="c">14</span>
+<a name="677"><span class="line">     677: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="678"><span class="line">     678: </span></a>
+<a name="679"><span class="line">     679: </span></a><span class="k">/* /proc/sys/net/rose */</span>
+<a name="680"><span class="line">     680: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="681"><span class="line">     681: </span></a>    <span class="b">NET_ROSE_RESTART_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="682"><span class="line">     682: </span></a>    <span class="b">NET_ROSE_CALL_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="683"><span class="line">     683: </span></a>    <span class="b">NET_ROSE_RESET_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="684"><span class="line">     684: </span></a>    <span class="b">NET_ROSE_CLEAR_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="685"><span class="line">     685: </span></a>    <span class="b">NET_ROSE_ACK_HOLD_BACK_TIMEOUT</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="686"><span class="line">     686: </span></a>    <span class="b">NET_ROSE_ROUTING_CONTROL</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="687"><span class="line">     687: </span></a>    <span class="b">NET_ROSE_LINK_FAIL_TIMEOUT</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="688"><span class="line">     688: </span></a>    <span class="b">NET_ROSE_MAX_VCS</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="689"><span class="line">     689: </span></a>    <span class="b">NET_ROSE_WINDOW_SIZE</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="690"><span class="line">     690: </span></a>    <span class="b">NET_ROSE_NO_ACTIVITY_TIMEOUT</span><span class="f">=</span><span class="c">10</span>
+<a name="691"><span class="line">     691: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="692"><span class="line">     692: </span></a>
+<a name="693"><span class="line">     693: </span></a><span class="k">/* /proc/sys/net/x25 */</span>
+<a name="694"><span class="line">     694: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="695"><span class="line">     695: </span></a>    <span class="b">NET_X25_RESTART_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="696"><span class="line">     696: </span></a>    <span class="b">NET_X25_CALL_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="697"><span class="line">     697: </span></a>    <span class="b">NET_X25_RESET_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="698"><span class="line">     698: </span></a>    <span class="b">NET_X25_CLEAR_REQUEST_TIMEOUT</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="699"><span class="line">     699: </span></a>    <span class="b">NET_X25_ACK_HOLD_BACK_TIMEOUT</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="700"><span class="line">     700: </span></a>    <span class="b">NET_X25_FORWARD</span><span class="f">=</span><span class="c">6</span>
+<a name="701"><span class="line">     701: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="702"><span class="line">     702: </span></a>
+<a name="703"><span class="line">     703: </span></a><span class="k">/* /proc/sys/net/token-ring */</span>
+<a name="704"><span class="line">     704: </span></a><span class="m">enum</span>
+<a name="705"><span class="line">     705: </span></a><span class="f">{</span>
+<a name="706"><span class="line">     706: </span></a>    <span class="b">NET_TR_RIF_TIMEOUT</span><span class="f">=</span><span class="c">1</span>
+<a name="707"><span class="line">     707: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="708"><span class="line">     708: </span></a>
+<a name="709"><span class="line">     709: </span></a><span class="k">/* /proc/sys/net/decnet/ */</span>
+<a name="710"><span class="line">     710: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="711"><span class="line">     711: </span></a>    <span class="b">NET_DECNET_NODE_TYPE</span> <span class="f">=</span> <span class="c">1</span><span class="f">,</span>
+<a name="712"><span class="line">     712: </span></a>    <span class="b">NET_DECNET_NODE_ADDRESS</span> <span class="f">=</span> <span class="c">2</span><span class="f">,</span>
+<a name="713"><span class="line">     713: </span></a>    <span class="b">NET_DECNET_NODE_NAME</span> <span class="f">=</span> <span class="c">3</span><span class="f">,</span>
+<a name="714"><span class="line">     714: </span></a>    <span class="b">NET_DECNET_DEFAULT_DEVICE</span> <span class="f">=</span> <span class="c">4</span><span class="f">,</span>
+<a name="715"><span class="line">     715: </span></a>    <span class="b">NET_DECNET_TIME_WAIT</span> <span class="f">=</span> <span class="c">5</span><span class="f">,</span>
+<a name="716"><span class="line">     716: </span></a>    <span class="b">NET_DECNET_DN_COUNT</span> <span class="f">=</span> <span class="c">6</span><span class="f">,</span>
+<a name="717"><span class="line">     717: </span></a>    <span class="b">NET_DECNET_DI_COUNT</span> <span class="f">=</span> <span class="c">7</span><span class="f">,</span>
+<a name="718"><span class="line">     718: </span></a>    <span class="b">NET_DECNET_DR_COUNT</span> <span class="f">=</span> <span class="c">8</span><span class="f">,</span>
+<a name="719"><span class="line">     719: </span></a>    <span class="b">NET_DECNET_DST_GC_INTERVAL</span> <span class="f">=</span> <span class="c">9</span><span class="f">,</span>
+<a name="720"><span class="line">     720: </span></a>    <span class="b">NET_DECNET_CONF</span> <span class="f">=</span> <span class="c">10</span><span class="f">,</span>
+<a name="721"><span class="line">     721: </span></a>    <span class="b">NET_DECNET_NO_FC_MAX_CWND</span> <span class="f">=</span> <span class="c">11</span><span class="f">,</span>
+<a name="722"><span class="line">     722: </span></a>    <span class="b">NET_DECNET_MEM</span> <span class="f">=</span> <span class="c">12</span><span class="f">,</span>
+<a name="723"><span class="line">     723: </span></a>    <span class="b">NET_DECNET_RMEM</span> <span class="f">=</span> <span class="c">13</span><span class="f">,</span>
+<a name="724"><span class="line">     724: </span></a>    <span class="b">NET_DECNET_WMEM</span> <span class="f">=</span> <span class="c">14</span><span class="f">,</span>
+<a name="725"><span class="line">     725: </span></a>    <span class="b">NET_DECNET_DEBUG_LEVEL</span> <span class="f">=</span> <span class="c">255</span>
+<a name="726"><span class="line">     726: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="727"><span class="line">     727: </span></a>
+<a name="728"><span class="line">     728: </span></a><span class="k">/* /proc/sys/net/decnet/conf/&lt;dev&gt; */</span>
+<a name="729"><span class="line">     729: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="730"><span class="line">     730: </span></a>    <span class="b">NET_DECNET_CONF_LOOPBACK</span> <span class="f">=</span> <span class="f">-</span><span class="c">2</span><span class="f">,</span>
+<a name="731"><span class="line">     731: </span></a>    <span class="b">NET_DECNET_CONF_DDCMP</span> <span class="f">=</span> <span class="f">-</span><span class="c">3</span><span class="f">,</span>
+<a name="732"><span class="line">     732: </span></a>    <span class="b">NET_DECNET_CONF_PPP</span> <span class="f">=</span> <span class="f">-</span><span class="c">4</span><span class="f">,</span>
+<a name="733"><span class="line">     733: </span></a>    <span class="b">NET_DECNET_CONF_X25</span> <span class="f">=</span> <span class="f">-</span><span class="c">5</span><span class="f">,</span>
+<a name="734"><span class="line">     734: </span></a>    <span class="b">NET_DECNET_CONF_GRE</span> <span class="f">=</span> <span class="f">-</span><span class="c">6</span><span class="f">,</span>
+<a name="735"><span class="line">     735: </span></a>    <span class="b">NET_DECNET_CONF_ETHER</span> <span class="f">=</span> <span class="f">-</span><span class="c">7</span>
+<a name="736"><span class="line">     736: </span></a>
+<a name="737"><span class="line">     737: </span></a>    <span class="k">/* ... and ifindex of devices */</span>
+<a name="738"><span class="line">     738: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="739"><span class="line">     739: </span></a>
+<a name="740"><span class="line">     740: </span></a><span class="k">/* /proc/sys/net/decnet/conf/&lt;dev&gt;/ */</span>
+<a name="741"><span class="line">     741: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="742"><span class="line">     742: </span></a>    <span class="b">NET_DECNET_CONF_DEV_PRIORITY</span> <span class="f">=</span> <span class="c">1</span><span class="f">,</span>
+<a name="743"><span class="line">     743: </span></a>    <span class="b">NET_DECNET_CONF_DEV_T1</span> <span class="f">=</span> <span class="c">2</span><span class="f">,</span>
+<a name="744"><span class="line">     744: </span></a>    <span class="b">NET_DECNET_CONF_DEV_T2</span> <span class="f">=</span> <span class="c">3</span><span class="f">,</span>
+<a name="745"><span class="line">     745: </span></a>    <span class="b">NET_DECNET_CONF_DEV_T3</span> <span class="f">=</span> <span class="c">4</span><span class="f">,</span>
+<a name="746"><span class="line">     746: </span></a>    <span class="b">NET_DECNET_CONF_DEV_FORWARDING</span> <span class="f">=</span> <span class="c">5</span><span class="f">,</span>
+<a name="747"><span class="line">     747: </span></a>    <span class="b">NET_DECNET_CONF_DEV_BLKSIZE</span> <span class="f">=</span> <span class="c">6</span><span class="f">,</span>
+<a name="748"><span class="line">     748: </span></a>    <span class="b">NET_DECNET_CONF_DEV_STATE</span> <span class="f">=</span> <span class="c">7</span>
+<a name="749"><span class="line">     749: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="750"><span class="line">     750: </span></a>
+<a name="751"><span class="line">     751: </span></a><span class="k">/* /proc/sys/net/sctp */</span>
+<a name="752"><span class="line">     752: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="753"><span class="line">     753: </span></a>    <span class="b">NET_SCTP_RTO_INITIAL</span> <span class="f">=</span> <span class="c">1</span><span class="f">,</span>
+<a name="754"><span class="line">     754: </span></a>    <span class="b">NET_SCTP_RTO_MIN</span>     <span class="f">=</span> <span class="c">2</span><span class="f">,</span>
+<a name="755"><span class="line">     755: </span></a>    <span class="b">NET_SCTP_RTO_MAX</span>     <span class="f">=</span> <span class="c">3</span><span class="f">,</span>
+<a name="756"><span class="line">     756: </span></a>    <span class="b">NET_SCTP_RTO_ALPHA</span>   <span class="f">=</span> <span class="c">4</span><span class="f">,</span>
+<a name="757"><span class="line">     757: </span></a>    <span class="b">NET_SCTP_RTO_BETA</span>    <span class="f">=</span> <span class="c">5</span><span class="f">,</span>
+<a name="758"><span class="line">     758: </span></a>    <span class="b">NET_SCTP_VALID_COOKIE_LIFE</span>       <span class="f">=</span>  <span class="c">6</span><span class="f">,</span>
+<a name="759"><span class="line">     759: </span></a>    <span class="b">NET_SCTP_ASSOCIATION_MAX_RETRANS</span> <span class="f">=</span>  <span class="c">7</span><span class="f">,</span>
+<a name="760"><span class="line">     760: </span></a>    <span class="b">NET_SCTP_PATH_MAX_RETRANS</span>        <span class="f">=</span>  <span class="c">8</span><span class="f">,</span>
+<a name="761"><span class="line">     761: </span></a>    <span class="b">NET_SCTP_MAX_INIT_RETRANSMITS</span>    <span class="f">=</span>  <span class="c">9</span><span class="f">,</span>
+<a name="762"><span class="line">     762: </span></a>    <span class="b">NET_SCTP_HB_INTERVAL</span>             <span class="f">=</span> <span class="c">10</span><span class="f">,</span>
+<a name="763"><span class="line">     763: </span></a>    <span class="b">NET_SCTP_PRESERVE_ENABLE</span>         <span class="f">=</span> <span class="c">11</span><span class="f">,</span>
+<a name="764"><span class="line">     764: </span></a>    <span class="b">NET_SCTP_MAX_BURST</span>               <span class="f">=</span> <span class="c">12</span><span class="f">,</span>
+<a name="765"><span class="line">     765: </span></a>    <span class="b">NET_SCTP_ADDIP_ENABLE</span>         <span class="f">=</span> <span class="c">13</span><span class="f">,</span>
+<a name="766"><span class="line">     766: </span></a>    <span class="b">NET_SCTP_PRSCTP_ENABLE</span>         <span class="f">=</span> <span class="c">14</span><span class="f">,</span>
+<a name="767"><span class="line">     767: </span></a>    <span class="b">NET_SCTP_SNDBUF_POLICY</span>         <span class="f">=</span> <span class="c">15</span><span class="f">,</span>
+<a name="768"><span class="line">     768: </span></a>    <span class="b">NET_SCTP_SACK_TIMEOUT</span>         <span class="f">=</span> <span class="c">16</span><span class="f">,</span>
+<a name="769"><span class="line">     769: </span></a>    <span class="b">NET_SCTP_RCVBUF_POLICY</span>         <span class="f">=</span> <span class="c">17</span><span class="f">,</span>
+<a name="770"><span class="line">     770: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="771"><span class="line">     771: </span></a>
+<a name="772"><span class="line">     772: </span></a><span class="k">/* /proc/sys/net/bridge */</span>
+<a name="773"><span class="line">     773: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="774"><span class="line">     774: </span></a>    <span class="b">NET_BRIDGE_NF_CALL_ARPTABLES</span> <span class="f">=</span> <span class="c">1</span><span class="f">,</span>
+<a name="775"><span class="line">     775: </span></a>    <span class="b">NET_BRIDGE_NF_CALL_IPTABLES</span> <span class="f">=</span> <span class="c">2</span><span class="f">,</span>
+<a name="776"><span class="line">     776: </span></a>    <span class="b">NET_BRIDGE_NF_CALL_IP6TABLES</span> <span class="f">=</span> <span class="c">3</span><span class="f">,</span>
+<a name="777"><span class="line">     777: </span></a>    <span class="b">NET_BRIDGE_NF_FILTER_VLAN_TAGGED</span> <span class="f">=</span> <span class="c">4</span><span class="f">,</span>
+<a name="778"><span class="line">     778: </span></a>    <span class="b">NET_BRIDGE_NF_FILTER_PPPOE_TAGGED</span> <span class="f">=</span> <span class="c">5</span><span class="f">,</span>
+<a name="779"><span class="line">     779: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="780"><span class="line">     780: </span></a>
+<a name="781"><span class="line">     781: </span></a><span class="k">/* proc/sys/net/irda */</span>
+<a name="782"><span class="line">     782: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="783"><span class="line">     783: </span></a>    <span class="b">NET_IRDA_DISCOVERY</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="784"><span class="line">     784: </span></a>    <span class="b">NET_IRDA_DEVNAME</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="785"><span class="line">     785: </span></a>    <span class="b">NET_IRDA_DEBUG</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="786"><span class="line">     786: </span></a>    <span class="b">NET_IRDA_FAST_POLL</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="787"><span class="line">     787: </span></a>    <span class="b">NET_IRDA_DISCOVERY_SLOTS</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="788"><span class="line">     788: </span></a>    <span class="b">NET_IRDA_DISCOVERY_TIMEOUT</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="789"><span class="line">     789: </span></a>    <span class="b">NET_IRDA_SLOT_TIMEOUT</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="790"><span class="line">     790: </span></a>    <span class="b">NET_IRDA_MAX_BAUD_RATE</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="791"><span class="line">     791: </span></a>    <span class="b">NET_IRDA_MIN_TX_TURN_TIME</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>
+<a name="792"><span class="line">     792: </span></a>    <span class="b">NET_IRDA_MAX_TX_DATA_SIZE</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>
+<a name="793"><span class="line">     793: </span></a>    <span class="b">NET_IRDA_MAX_TX_WINDOW</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>
+<a name="794"><span class="line">     794: </span></a>    <span class="b">NET_IRDA_MAX_NOREPLY_TIME</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>
+<a name="795"><span class="line">     795: </span></a>    <span class="b">NET_IRDA_WARN_NOREPLY_TIME</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>
+<a name="796"><span class="line">     796: </span></a>    <span class="b">NET_IRDA_LAP_KEEPALIVE_TIME</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>
+<a name="797"><span class="line">     797: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="798"><span class="line">     798: </span></a>
+<a name="799"><span class="line">     799: </span></a>
+<a name="800"><span class="line">     800: </span></a><span class="k">/* CTL_FS names: */</span>
+<a name="801"><span class="line">     801: </span></a><span class="m">enum</span>
+<a name="802"><span class="line">     802: </span></a><span class="f">{</span>
+<a name="803"><span class="line">     803: </span></a>    <span class="b">FS_NRINODE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>    <span class="k">/* int:current number of allocated inodes */</span>
+<a name="804"><span class="line">     804: </span></a>    <span class="b">FS_STATINODE</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="805"><span class="line">     805: </span></a>    <span class="b">FS_MAXINODE</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>    <span class="k">/* int:maximum number of inodes that can be allocated */</span>
+<a name="806"><span class="line">     806: </span></a>    <span class="b">FS_NRDQUOT</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>    <span class="k">/* int:current number of allocated dquots */</span>
+<a name="807"><span class="line">     807: </span></a>    <span class="b">FS_MAXDQUOT</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>    <span class="k">/* int:maximum number of dquots that can be allocated */</span>
+<a name="808"><span class="line">     808: </span></a>    <span class="b">FS_NRFILE</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>    <span class="k">/* int:current number of allocated filedescriptors */</span>
+<a name="809"><span class="line">     809: </span></a>    <span class="b">FS_MAXFILE</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>    <span class="k">/* int:maximum number of filedescriptors that can be allocated */</span>
+<a name="810"><span class="line">     810: </span></a>    <span class="b">FS_DENTRY</span><span class="f">=</span><span class="c">8</span><span class="f">,</span>
+<a name="811"><span class="line">     811: </span></a>    <span class="b">FS_NRSUPER</span><span class="f">=</span><span class="c">9</span><span class="f">,</span>    <span class="k">/* int:current number of allocated super_blocks */</span>
+<a name="812"><span class="line">     812: </span></a>    <span class="b">FS_MAXSUPER</span><span class="f">=</span><span class="c">10</span><span class="f">,</span>    <span class="k">/* int:maximum number of super_blocks that can be allocated */</span>
+<a name="813"><span class="line">     813: </span></a>    <span class="b">FS_OVERFLOWUID</span><span class="f">=</span><span class="c">11</span><span class="f">,</span>    <span class="k">/* int: overflow UID */</span>
+<a name="814"><span class="line">     814: </span></a>    <span class="b">FS_OVERFLOWGID</span><span class="f">=</span><span class="c">12</span><span class="f">,</span>    <span class="k">/* int: overflow GID */</span>
+<a name="815"><span class="line">     815: </span></a>    <span class="b">FS_LEASES</span><span class="f">=</span><span class="c">13</span><span class="f">,</span>    <span class="k">/* int: leases enabled */</span>
+<a name="816"><span class="line">     816: </span></a>    <span class="b">FS_DIR_NOTIFY</span><span class="f">=</span><span class="c">14</span><span class="f">,</span>    <span class="k">/* int: directory notification enabled */</span>
+<a name="817"><span class="line">     817: </span></a>    <span class="b">FS_LEASE_TIME</span><span class="f">=</span><span class="c">15</span><span class="f">,</span>    <span class="k">/* int: maximum time to wait for a lease break */</span>
+<a name="818"><span class="line">     818: </span></a>    <span class="b">FS_DQSTATS</span><span class="f">=</span><span class="c">16</span><span class="f">,</span>    <span class="k">/* disc quota usage statistics and control */</span>
+<a name="819"><span class="line">     819: </span></a>    <span class="b">FS_XFS</span><span class="f">=</span><span class="c">17</span><span class="f">,</span>    <span class="k">/* struct: control xfs parameters */</span>
+<a name="820"><span class="line">     820: </span></a>    <span class="b">FS_AIO_NR</span><span class="f">=</span><span class="c">18</span><span class="f">,</span>    <span class="k">/* current system-wide number of aio requests */</span>
+<a name="821"><span class="line">     821: </span></a>    <span class="b">FS_AIO_MAX_NR</span><span class="f">=</span><span class="c">19</span><span class="f">,</span>    <span class="k">/* system-wide maximum number of aio requests */</span>
+<a name="822"><span class="line">     822: </span></a>    <span class="b">FS_INOTIFY</span><span class="f">=</span><span class="c">20</span><span class="f">,</span>    <span class="k">/* inotify submenu */</span>
+<a name="823"><span class="line">     823: </span></a>    <span class="b">FS_OCFS2</span><span class="f">=</span><span class="c">988</span><span class="f">,</span>    <span class="k">/* ocfs2 */</span>
+<a name="824"><span class="line">     824: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="825"><span class="line">     825: </span></a>
+<a name="826"><span class="line">     826: </span></a><span class="k">/* /proc/sys/fs/quota/ */</span>
+<a name="827"><span class="line">     827: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="828"><span class="line">     828: </span></a>    <span class="b">FS_DQ_LOOKUPS</span> <span class="f">=</span> <span class="c">1</span><span class="f">,</span>
+<a name="829"><span class="line">     829: </span></a>    <span class="b">FS_DQ_DROPS</span> <span class="f">=</span> <span class="c">2</span><span class="f">,</span>
+<a name="830"><span class="line">     830: </span></a>    <span class="b">FS_DQ_READS</span> <span class="f">=</span> <span class="c">3</span><span class="f">,</span>
+<a name="831"><span class="line">     831: </span></a>    <span class="b">FS_DQ_WRITES</span> <span class="f">=</span> <span class="c">4</span><span class="f">,</span>
+<a name="832"><span class="line">     832: </span></a>    <span class="b">FS_DQ_CACHE_HITS</span> <span class="f">=</span> <span class="c">5</span><span class="f">,</span>
+<a name="833"><span class="line">     833: </span></a>    <span class="b">FS_DQ_ALLOCATED</span> <span class="f">=</span> <span class="c">6</span><span class="f">,</span>
+<a name="834"><span class="line">     834: </span></a>    <span class="b">FS_DQ_FREE</span> <span class="f">=</span> <span class="c">7</span><span class="f">,</span>
+<a name="835"><span class="line">     835: </span></a>    <span class="b">FS_DQ_SYNCS</span> <span class="f">=</span> <span class="c">8</span><span class="f">,</span>
+<a name="836"><span class="line">     836: </span></a>    <span class="b">FS_DQ_WARNINGS</span> <span class="f">=</span> <span class="c">9</span><span class="f">,</span>
+<a name="837"><span class="line">     837: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="838"><span class="line">     838: </span></a>
+<a name="839"><span class="line">     839: </span></a><span class="k">/* CTL_DEBUG names: */</span>
+<a name="840"><span class="line">     840: </span></a>
+<a name="841"><span class="line">     841: </span></a><span class="k">/* CTL_DEV names: */</span>
+<a name="842"><span class="line">     842: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="843"><span class="line">     843: </span></a>    <span class="b">DEV_CDROM</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="844"><span class="line">     844: </span></a>    <span class="b">DEV_HWMON</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="845"><span class="line">     845: </span></a>    <span class="b">DEV_PARPORT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="846"><span class="line">     846: </span></a>    <span class="b">DEV_RAID</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="847"><span class="line">     847: </span></a>    <span class="b">DEV_MAC_HID</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="848"><span class="line">     848: </span></a>    <span class="b">DEV_SCSI</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="849"><span class="line">     849: </span></a>    <span class="b">DEV_IPMI</span><span class="f">=</span><span class="c">7</span><span class="f">,</span>
+<a name="850"><span class="line">     850: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="851"><span class="line">     851: </span></a>
+<a name="852"><span class="line">     852: </span></a><span class="k">/* /proc/sys/dev/cdrom */</span>
+<a name="853"><span class="line">     853: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="854"><span class="line">     854: </span></a>    <span class="b">DEV_CDROM_INFO</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="855"><span class="line">     855: </span></a>    <span class="b">DEV_CDROM_AUTOCLOSE</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="856"><span class="line">     856: </span></a>    <span class="b">DEV_CDROM_AUTOEJECT</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="857"><span class="line">     857: </span></a>    <span class="b">DEV_CDROM_DEBUG</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="858"><span class="line">     858: </span></a>    <span class="b">DEV_CDROM_LOCK</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="859"><span class="line">     859: </span></a>    <span class="b">DEV_CDROM_CHECK_MEDIA</span><span class="f">=</span><span class="c">6</span>
+<a name="860"><span class="line">     860: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="861"><span class="line">     861: </span></a>
+<a name="862"><span class="line">     862: </span></a><span class="k">/* /proc/sys/dev/parport */</span>
+<a name="863"><span class="line">     863: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="864"><span class="line">     864: </span></a>    <span class="b">DEV_PARPORT_DEFAULT</span><span class="f">=</span><span class="f">-</span><span class="c">3</span>
+<a name="865"><span class="line">     865: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="866"><span class="line">     866: </span></a>
+<a name="867"><span class="line">     867: </span></a><span class="k">/* /proc/sys/dev/raid */</span>
+<a name="868"><span class="line">     868: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="869"><span class="line">     869: </span></a>    <span class="b">DEV_RAID_SPEED_LIMIT_MIN</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="870"><span class="line">     870: </span></a>    <span class="b">DEV_RAID_SPEED_LIMIT_MAX</span><span class="f">=</span><span class="c">2</span>
+<a name="871"><span class="line">     871: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="872"><span class="line">     872: </span></a>
+<a name="873"><span class="line">     873: </span></a><span class="k">/* /proc/sys/dev/parport/default */</span>
+<a name="874"><span class="line">     874: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="875"><span class="line">     875: </span></a>    <span class="b">DEV_PARPORT_DEFAULT_TIMESLICE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="876"><span class="line">     876: </span></a>    <span class="b">DEV_PARPORT_DEFAULT_SPINTIME</span><span class="f">=</span><span class="c">2</span>
+<a name="877"><span class="line">     877: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="878"><span class="line">     878: </span></a>
+<a name="879"><span class="line">     879: </span></a><span class="k">/* /proc/sys/dev/parport/parport n */</span>
+<a name="880"><span class="line">     880: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="881"><span class="line">     881: </span></a>    <span class="b">DEV_PARPORT_SPINTIME</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="882"><span class="line">     882: </span></a>    <span class="b">DEV_PARPORT_BASE_ADDR</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="883"><span class="line">     883: </span></a>    <span class="b">DEV_PARPORT_IRQ</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="884"><span class="line">     884: </span></a>    <span class="b">DEV_PARPORT_DMA</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="885"><span class="line">     885: </span></a>    <span class="b">DEV_PARPORT_MODES</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="886"><span class="line">     886: </span></a>    <span class="b">DEV_PARPORT_DEVICES</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>
+<a name="887"><span class="line">     887: </span></a>    <span class="b">DEV_PARPORT_AUTOPROBE</span><span class="f">=</span><span class="c">16</span>
+<a name="888"><span class="line">     888: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="889"><span class="line">     889: </span></a>
+<a name="890"><span class="line">     890: </span></a><span class="k">/* /proc/sys/dev/parport/parport n/devices/ */</span>
+<a name="891"><span class="line">     891: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="892"><span class="line">     892: </span></a>    <span class="b">DEV_PARPORT_DEVICES_ACTIVE</span><span class="f">=</span><span class="f">-</span><span class="c">3</span><span class="f">,</span>
+<a name="893"><span class="line">     893: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="894"><span class="line">     894: </span></a>
+<a name="895"><span class="line">     895: </span></a><span class="k">/* /proc/sys/dev/parport/parport n/devices/device n */</span>
+<a name="896"><span class="line">     896: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="897"><span class="line">     897: </span></a>    <span class="b">DEV_PARPORT_DEVICE_TIMESLICE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="898"><span class="line">     898: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="899"><span class="line">     899: </span></a>
+<a name="900"><span class="line">     900: </span></a><span class="k">/* /proc/sys/dev/mac_hid */</span>
+<a name="901"><span class="line">     901: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="902"><span class="line">     902: </span></a>    <span class="b">DEV_MAC_HID_KEYBOARD_SENDS_LINUX_KEYCODES</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="903"><span class="line">     903: </span></a>    <span class="b">DEV_MAC_HID_KEYBOARD_LOCK_KEYCODES</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>
+<a name="904"><span class="line">     904: </span></a>    <span class="b">DEV_MAC_HID_MOUSE_BUTTON_EMULATION</span><span class="f">=</span><span class="c">3</span><span class="f">,</span>
+<a name="905"><span class="line">     905: </span></a>    <span class="b">DEV_MAC_HID_MOUSE_BUTTON2_KEYCODE</span><span class="f">=</span><span class="c">4</span><span class="f">,</span>
+<a name="906"><span class="line">     906: </span></a>    <span class="b">DEV_MAC_HID_MOUSE_BUTTON3_KEYCODE</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>
+<a name="907"><span class="line">     907: </span></a>    <span class="b">DEV_MAC_HID_ADB_MOUSE_SENDS_KEYCODES</span><span class="f">=</span><span class="c">6</span>
+<a name="908"><span class="line">     908: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="909"><span class="line">     909: </span></a>
+<a name="910"><span class="line">     910: </span></a><span class="k">/* /proc/sys/dev/scsi */</span>
+<a name="911"><span class="line">     911: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="912"><span class="line">     912: </span></a>    <span class="b">DEV_SCSI_LOGGING_LEVEL</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="913"><span class="line">     913: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="914"><span class="line">     914: </span></a>
+<a name="915"><span class="line">     915: </span></a><span class="k">/* /proc/sys/dev/ipmi */</span>
+<a name="916"><span class="line">     916: </span></a><span class="m">enum</span> <span class="f">{</span>
+<a name="917"><span class="line">     917: </span></a>    <span class="b">DEV_IPMI_POWEROFF_POWERCYCLE</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>
+<a name="918"><span class="line">     918: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="919"><span class="line">     919: </span></a>
+<a name="920"><span class="line">     920: </span></a><span class="k">/* /proc/sys/abi */</span>
+<a name="921"><span class="line">     921: </span></a><span class="m">enum</span>
+<a name="922"><span class="line">     922: </span></a><span class="f">{</span>
+<a name="923"><span class="line">     923: </span></a>    <span class="b">ABI_DEFHANDLER_COFF</span><span class="f">=</span><span class="c">1</span><span class="f">,</span>    <span class="k">/* default handler for coff binaries */</span>
+<a name="924"><span class="line">     924: </span></a>    <span class="b">ABI_DEFHANDLER_ELF</span><span class="f">=</span><span class="c">2</span><span class="f">,</span>     <span class="k">/* default handler for ELF binaries */</span>
+<a name="925"><span class="line">     925: </span></a>    <span class="b">ABI_DEFHANDLER_LCALL7</span><span class="f">=</span><span class="c">3</span><span class="f">,</span><span class="k">/* default handler for procs using lcall7 */</span>
+<a name="926"><span class="line">     926: </span></a>    <span class="b">ABI_DEFHANDLER_LIBCSO</span><span class="f">=</span><span class="c">4</span><span class="f">,</span><span class="k">/* default handler for an libc.so ELF interp */</span>
+<a name="927"><span class="line">     927: </span></a>    <span class="b">ABI_TRACE</span><span class="f">=</span><span class="c">5</span><span class="f">,</span>        <span class="k">/* tracing flags */</span>
+<a name="928"><span class="line">     928: </span></a>    <span class="b">ABI_FAKE_UTSNAME</span><span class="f">=</span><span class="c">6</span><span class="f">,</span>    <span class="k">/* fake target utsname information */</span>
+<a name="929"><span class="line">     929: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="930"><span class="line">     930: </span></a>
+<a name="931"><span class="line">     931: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#__KERNEL___0"><span class="b">__KERNEL__</span></a>
+<a name="932"><span class="line">     932: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">list</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="933"><span class="line">     933: </span></a>
+<a name="934"><span class="line">     934: </span></a><span class="k">/* For the /proc/sys support */</span>
+<a name="935"><span class="line">     935: </span></a><span class="m">struct</span> <span class="b">ctl_table</span><span class="f">;</span>
+<a name="936"><span class="line">     936: </span></a><span class="m">struct</span> <span class="b">nsproxy</span><span class="f">;</span>
+<a name="937"><span class="line">     937: </span></a><span class="m">struct</span> <span class="b">ctl_table_root</span><span class="f">;</span>
+<a name="938"><span class="line">     938: </span></a>
+<a name="939"><span class="line">     939: </span></a><span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">{</span>
+<a name="940"><span class="line">     940: </span></a>    <span class="m">struct</span> <span class="b">list_head</span> <span class="b">list</span><span class="f">;</span>
+<a name="941"><span class="line">     941: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">*</span><span class="b">parent</span><span class="f">;</span>
+<a name="942"><span class="line">     942: </span></a>    <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">is_seen</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="943"><span class="line">     943: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="944"><span class="line">     944: </span></a>
+<a name="945"><span class="line">     945: </span></a><span class="m">extern</span> <span class="m">void</span> <span class="b">setup_sysctl_set</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">*</span><span class="b">p</span><span class="f">,</span>
+<a name="946"><span class="line">     946: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">*</span><span class="b">parent</span><span class="f">,</span>
+<a name="947"><span class="line">     947: </span></a>    <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">is_seen</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">*</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="948"><span class="line">     948: </span></a>
+<a name="949"><span class="line">     949: </span></a><span class="m">struct</span> <span class="b">ctl_table_header</span><span class="f">;</span>
+<a name="950"><span class="line">     950: </span></a>
+<a name="951"><span class="line">     951: </span></a><span class="m">extern</span> <span class="m">void</span> <span class="b">sysctl_head_get</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="952"><span class="line">     952: </span></a><span class="m">extern</span> <span class="m">void</span> <span class="b">sysctl_head_put</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="953"><span class="line">     953: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">sysctl_is_seen</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="954"><span class="line">     954: </span></a><span class="m">extern</span> <span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">sysctl_head_grab</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="955"><span class="line">     955: </span></a><span class="m">extern</span> <span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">sysctl_head_next</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">prev</span><span class="f">)</span><span class="f">;</span>
+<a name="956"><span class="line">     956: </span></a><span class="m">extern</span> <span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">__sysctl_head_next</span><span class="f">(</span><span class="m">struct</span> <span class="b">nsproxy</span> <span class="f">*</span><span class="b">namespaces</span><span class="f">,</span>
+<a name="957"><span class="line">     957: </span></a>                        <span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">prev</span><span class="f">)</span><span class="f">;</span>
+<a name="958"><span class="line">     958: </span></a><span class="m">extern</span> <span class="m">void</span> <span class="b">sysctl_head_finish</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">prev</span><span class="f">)</span><span class="f">;</span>
+<a name="959"><span class="line">     959: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">sysctl_perm</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_root</span> <span class="f">*</span><span class="b">root</span><span class="f">,</span>
+<a name="960"><span class="line">     960: </span></a>        <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">table</span><span class="f">,</span> <span class="m">int</span> <span class="b">op</span><span class="f">)</span><span class="f">;</span>
+<a name="961"><span class="line">     961: </span></a>
+<a name="962"><span class="line">     962: </span></a><span class="m">typedef</span> <span class="m">struct</span> <span class="b">ctl_table</span> <span class="b">ctl_table</span><span class="f">;</span>
+<a name="963"><span class="line">     963: </span></a>
+<a name="964"><span class="line">     964: </span></a><span class="m">typedef</span> <span class="m">int</span> <span class="b">proc_handler</span> <span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">ctl</span><span class="f">,</span> <span class="m">int</span> <span class="b">write</span><span class="f">,</span>
+<a name="965"><span class="line">     965: </span></a>              <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="b">buffer</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="b">lenp</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="b">ppos</span><span class="f">)</span><span class="f">;</span>
+<a name="966"><span class="line">     966: </span></a>
+<a name="967"><span class="line">     967: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_dostring</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="968"><span class="line">     968: </span></a>             <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="969"><span class="line">     969: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_dointvec</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="970"><span class="line">     970: </span></a>             <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="971"><span class="line">     971: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_dointvec_minmax</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="972"><span class="line">     972: </span></a>                <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="973"><span class="line">     973: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_dointvec_jiffies</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="974"><span class="line">     974: </span></a>                 <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="975"><span class="line">     975: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_dointvec_userhz_jiffies</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="976"><span class="line">     976: </span></a>                    <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="977"><span class="line">     977: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_dointvec_ms_jiffies</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="978"><span class="line">     978: </span></a>                    <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="979"><span class="line">     979: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_doulongvec_minmax</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="980"><span class="line">     980: </span></a>                  <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="981"><span class="line">     981: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_doulongvec_ms_jiffies_minmax</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">table</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="982"><span class="line">     982: </span></a>                      <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="983"><span class="line">     983: </span></a><span class="m">extern</span> <span class="m">int</span> <span class="b">proc_do_large_bitmap</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span>
+<a name="984"><span class="line">     984: </span></a>                <span class="m">void</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span> <span class="f">*</span><span class="f">,</span> <span class="b">loff_t</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="985"><span class="line">     985: </span></a>
+<a name="986"><span class="line">     986: </span></a><span class="k">/*
+<a name="987"><span class="line">     987: </span></a> * Register a set of sysctl names by calling register_sysctl_table
+<a name="988"><span class="line">     988: </span></a> * with an initialised array of struct ctl_table&apos;s.  An entry with 
+<a name="989"><span class="line">     989: </span></a> * NULL procname terminates the table.  table-&gt;de will be
+<a name="990"><span class="line">     990: </span></a> * set up by the registration and need not be initialised in advance.
+<a name="991"><span class="line">     991: </span></a> *
+<a name="992"><span class="line">     992: </span></a> * sysctl names can be mirrored automatically under /proc/sys.  The
+<a name="993"><span class="line">     993: </span></a> * procname supplied controls /proc naming.
+<a name="994"><span class="line">     994: </span></a> *
+<a name="995"><span class="line">     995: </span></a> * The table&apos;s mode will be honoured both for sys_sysctl(2) and
+<a name="996"><span class="line">     996: </span></a> * proc-fs access.
+<a name="997"><span class="line">     997: </span></a> *
+<a name="998"><span class="line">     998: </span></a> * Leaf nodes in the sysctl tree will be represented by a single file
+<a name="999"><span class="line">     999: </span></a> * under /proc; non-leaf nodes will be represented by directories.  A
+<a name="1000"><span class="line">    1000: </span></a> * null procname disables /proc mirroring at this node.
+<a name="1001"><span class="line">    1001: </span></a> *
+<a name="1002"><span class="line">    1002: </span></a> * sysctl(2) can automatically manage read and write requests through
+<a name="1003"><span class="line">    1003: </span></a> * the sysctl table.  The data and maxlen fields of the ctl_table
+<a name="1004"><span class="line">    1004: </span></a> * struct enable minimal validation of the values being written to be
+<a name="1005"><span class="line">    1005: </span></a> * performed, and the mode field allows minimal authentication.
+<a name="1006"><span class="line">    1006: </span></a> * 
+<a name="1007"><span class="line">    1007: </span></a> * There must be a proc_handler routine for any terminal nodes
+<a name="1008"><span class="line">    1008: </span></a> * mirrored under /proc/sys (non-terminals are handled by a built-in
+<a name="1009"><span class="line">    1009: </span></a> * directory handler).  Several default handlers are available to
+<a name="1010"><span class="line">    1010: </span></a> * cover common cases.
+<a name="1011"><span class="line">    1011: </span></a> */</span>
+<a name="1012"><span class="line">    1012: </span></a>
+<a name="1013"><span class="line">    1013: </span></a><span class="k">/* A sysctl table is an array of struct ctl_table: */</span>
+<a name="1014"><span class="line">    1014: </span></a><span class="m">struct</span> <span class="b">ctl_table</span> 
+<a name="1015"><span class="line">    1015: </span></a><span class="f">{</span>
+<a name="1016"><span class="line">    1016: </span></a>    <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">procname</span><span class="f">;</span>        <span class="k">/* Text ID for /proc/sys, or zero */</span>
+<a name="1017"><span class="line">    1017: </span></a>    <span class="m">void</span> <span class="f">*</span><span class="b">data</span><span class="f">;</span>
+<a name="1018"><span class="line">    1018: </span></a>    <span class="m">int</span> <span class="b">maxlen</span><span class="f">;</span>
+<a name="1019"><span class="line">    1019: </span></a>    <span class="b">mode_t</span> <span class="b">mode</span><span class="f">;</span>
+<a name="1020"><span class="line">    1020: </span></a>    <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">child</span><span class="f">;</span>
+<a name="1021"><span class="line">    1021: </span></a>    <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">parent</span><span class="f">;</span>    <span class="k">/* Automatically set */</span>
+<a name="1022"><span class="line">    1022: </span></a>    <span class="b">proc_handler</span> <span class="f">*</span><span class="b">proc_handler</span><span class="f">;</span>    <span class="k">/* Callback for text formatting */</span>
+<a name="1023"><span class="line">    1023: </span></a>    <span class="m">void</span> <span class="f">*</span><span class="b">extra1</span><span class="f">;</span>
+<a name="1024"><span class="line">    1024: </span></a>    <span class="m">void</span> <span class="f">*</span><span class="b">extra2</span><span class="f">;</span>
+<a name="1025"><span class="line">    1025: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="1026"><span class="line">    1026: </span></a>
+<a name="1027"><span class="line">    1027: </span></a><span class="m">struct</span> <span class="b">ctl_table_root</span> <span class="f">{</span>
+<a name="1028"><span class="line">    1028: </span></a>    <span class="m">struct</span> <span class="b">list_head</span> <span class="b">root_list</span><span class="f">;</span>
+<a name="1029"><span class="line">    1029: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="b">default_set</span><span class="f">;</span>
+<a name="1030"><span class="line">    1030: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">*</span><span class="f">(</span><span class="f">*</span><span class="b">lookup</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_root</span> <span class="f">*</span><span class="b">root</span><span class="f">,</span>
+<a name="1031"><span class="line">    1031: </span></a>                       <span class="m">struct</span> <span class="b">nsproxy</span> <span class="f">*</span><span class="b">namespaces</span><span class="f">)</span><span class="f">;</span>
+<a name="1032"><span class="line">    1032: </span></a>    <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">permissions</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_root</span> <span class="f">*</span><span class="b">root</span><span class="f">,</span>
+<a name="1033"><span class="line">    1033: </span></a>            <span class="m">struct</span> <span class="b">nsproxy</span> <span class="f">*</span><span class="b">namespaces</span><span class="f">,</span> <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">table</span><span class="f">)</span><span class="f">;</span>
+<a name="1034"><span class="line">    1034: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="1035"><span class="line">    1035: </span></a>
+<a name="1036"><span class="line">    1036: </span></a><span class="k">/* struct ctl_table_header is used to maintain dynamic lists of
+<a name="1037"><span class="line">    1037: </span></a>   struct ctl_table trees. */</span>
+<a name="1038"><span class="line">    1038: </span></a><span class="m">struct</span> <span class="b">ctl_table_header</span>
+<a name="1039"><span class="line">    1039: </span></a><span class="f">{</span>
+<a name="1040"><span class="line">    1040: </span></a>    <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">ctl_table</span><span class="f">;</span>
+<a name="1041"><span class="line">    1041: </span></a>    <span class="m">struct</span> <span class="b">list_head</span> <span class="b">ctl_entry</span><span class="f">;</span>
+<a name="1042"><span class="line">    1042: </span></a>    <span class="m">int</span> <span class="b">used</span><span class="f">;</span>
+<a name="1043"><span class="line">    1043: </span></a>    <span class="m">int</span> <span class="b">count</span><span class="f">;</span>
+<a name="1044"><span class="line">    1044: </span></a>    <span class="m">struct</span> <span class="b">completion</span> <span class="f">*</span><span class="b">unregistering</span><span class="f">;</span>
+<a name="1045"><span class="line">    1045: </span></a>    <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">ctl_table_arg</span><span class="f">;</span>
+<a name="1046"><span class="line">    1046: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_root</span> <span class="f">*</span><span class="b">root</span><span class="f">;</span>
+<a name="1047"><span class="line">    1047: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_set</span> <span class="f">*</span><span class="b">set</span><span class="f">;</span>
+<a name="1048"><span class="line">    1048: </span></a>    <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">attached_by</span><span class="f">;</span>
+<a name="1049"><span class="line">    1049: </span></a>    <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">attached_to</span><span class="f">;</span>
+<a name="1050"><span class="line">    1050: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">parent</span><span class="f">;</span>
+<a name="1051"><span class="line">    1051: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="1052"><span class="line">    1052: </span></a>
+<a name="1053"><span class="line">    1053: </span></a><span class="k">/* struct ctl_path describes where in the hierarchy a table is added */</span>
+<a name="1054"><span class="line">    1054: </span></a><span class="m">struct</span> <span class="b">ctl_path</span> <span class="f">{</span>
+<a name="1055"><span class="line">    1055: </span></a>    <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">procname</span><span class="f">;</span>
+<a name="1056"><span class="line">    1056: </span></a><span class="f">}</span><span class="f">;</span>
+<a name="1057"><span class="line">    1057: </span></a>
+<a name="1058"><span class="line">    1058: </span></a><span class="m">void</span> <span class="b">register_sysctl_root</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_root</span> <span class="f">*</span><span class="b">root</span><span class="f">)</span><span class="f">;</span>
+<a name="1059"><span class="line">    1059: </span></a><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">__register_sysctl_paths</span><span class="f">(</span>
+<a name="1060"><span class="line">    1060: </span></a>    <span class="m">struct</span> <span class="b">ctl_table_root</span> <span class="f">*</span><span class="b">root</span><span class="f">,</span> <span class="m">struct</span> <span class="b">nsproxy</span> <span class="f">*</span><span class="b">namespaces</span><span class="f">,</span>
+<a name="1061"><span class="line">    1061: </span></a>    <span class="m">const</span> <span class="m">struct</span> <span class="b">ctl_path</span> <span class="f">*</span><span class="b">path</span><span class="f">,</span> <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">table</span><span class="f">)</span><span class="f">;</span>
+<a name="1062"><span class="line">    1062: </span></a><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">register_sysctl_table</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span> <span class="b">table</span><span class="f">)</span><span class="f">;</span>
+<a name="1063"><span class="line">    1063: </span></a><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span><span class="b">register_sysctl_paths</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">ctl_path</span> <span class="f">*</span><span class="b">path</span><span class="f">,</span>
+<a name="1064"><span class="line">    1064: </span></a>                        <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">table</span><span class="f">)</span><span class="f">;</span>
+<a name="1065"><span class="line">    1065: </span></a>
+<a name="1066"><span class="line">    1066: </span></a><span class="m">void</span> <span class="b">unregister_sysctl_table</span><span class="f">(</span><span class="m">struct</span> <span class="b">ctl_table_header</span> <span class="f">*</span> <span class="b">table</span><span class="f">)</span><span class="f">;</span>
+<a name="1067"><span class="line">    1067: </span></a><span class="m">int</span> <span class="b">sysctl_check_table</span><span class="f">(</span><span class="m">struct</span> <span class="b">nsproxy</span> <span class="f">*</span><span class="b">namespaces</span><span class="f">,</span> <span class="m">struct</span> <span class="b">ctl_table</span> <span class="f">*</span><span class="b">table</span><span class="f">)</span><span class="f">;</span>
+<a name="1068"><span class="line">    1068: </span></a>
+<a name="1069"><span class="line">    1069: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* __KERNEL__ */</span>
+<a name="1070"><span class="line">    1070: </span></a>
+<a name="1071"><span class="line">    1071: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_SYSCTL_H */</span>
+<a name="1072"><span class="line">    1072: </span></a></pre>
+  </body>
+</html>

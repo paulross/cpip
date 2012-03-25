@@ -71,7 +71,7 @@ class DictTree(object):
         else:
             if self._ir is None:
                 self._ir = {}
-            if not self._ir.has_key(k[0]):
+            if k[0] not in self._ir:
                 self._ir[k[0]] = self.retNewInstance()
             self._ir[k[0]].add(k[1:], v)
             
@@ -104,7 +104,7 @@ class DictTree(object):
                     else:
                         raise ExceptionDictTree('Value of key is None')
         elif self._ir is not None:
-            if self._ir.has_key(k[0]):
+            if k[0] in self._ir:
                 self._ir[k[0]].remove(k[1:], v)
             else:
                 raise ExceptionDictTree('No key: %s' % (k[0]))
@@ -123,7 +123,10 @@ class DictTree(object):
             pass
         return None
     
-    def has_key(self, k):
+#    def has_key(self, k):
+#        return self.value(k) is not None
+
+    def __contains__(self, k):
         return self.value(k) is not None
 
     def values(self):
@@ -184,9 +187,7 @@ class DictTree(object):
         if self._v is not None:
             theL.append('%s%s' % (self.INDENT_STR*len(kStk), self._v))
         if self._ir is not None:
-            kS = self._ir.keys()
-            kS.sort()
-            for k in kS:
+            for k in sorted(self._ir.keys()):
                 theL.append('%s%s' % (self.INDENT_STR*len(kStk), k))
                 kStk.append(k)
                 self._ir[k]._indentedStr(theL, kStk)
@@ -195,91 +196,96 @@ class DictTree(object):
                 
 class DictTreeHtmlTable(DictTree):
     """A sub-class of DictTree that helps writing HTML row/col span tables
-    Suppose we have a tree like this:
+    Suppose we have a tree like this::
 
-                            |- AAA
-                            |
-                    |- AA --|- AAB
-                    |       |
-                    |       |- AAC
-            |- A ---|
-    Root ---|       |- AB
-            |       |
-            |       |- AC ---- ACA
-            |
-            |- B
-            |
-            |- C ---- CA ---- CAA
+                                |- AAA
+                                |
+                        |- AA --|- AAB
+                        |       |
+                        |       |- AAC
+                |- A ---|
+        Root ---|       |- AB
+                |       |
+                |       |- AC ---- ACA
+                |
+                |- B
+                |
+                |- C ---- CA ---- CAA
 
     And we want to represent the tree like this when laid out as
-    an HTML table:
-    |-----------------------|
-    | A     | AA    | AAA   |
-    |       |       |-------|
-    |       |       | AAB   |
-    |       |       |-------|
-    |       |       | AAC   |
-    |       |---------------|
-    |       | AB            |
-    |       |---------------|
-    |       | AC    | ACA   |
-    |-----------------------|
-    | B                     |
-    |-----------------------|
-    | C     | CA    | CAA   |
-    |-----------------------|
-
-    In this example the tree is loaded branch by branch thus:
-    myTree = DictTreeHtmlTable()
-    myTree.add(('A', 'AA', 'AAA'), None)
-    myTree.add(('A', 'AA', 'AAB'), None)
-    myTree.add(('A', 'AA', 'AAC'), None)
-    myTree.add(('A', 'AB',), None)
-    myTree.add(('A', 'AC', 'ACA'), None)
-    myTree.add(('B',), None)
-    myTree.add(('C', 'CA', 'CAA'), None)
-
-    The HTML code generator can be used like this:
-    # Write: <table border="2" width="100%">
-    for anEvent in myTree.genColRowEvents():
-        if anEvent == myTree.ROW_OPEN:
-            # Write out the '<tr>' element
-        elif anEvent == myTree.ROW_CLOSE:
-            # Write out the '</tr>' element
-        else:
-            k, v, r, c = anEvent
-            # Write '<td rowspan="%d" colspan="%d">%s</td>' % (r, c, v)
-    # Write: </table>
+    an HTML table::
     
-    And the HTML will look like this:
-    <table border="2" width="100%">
-        <tr valign="top">
-            <td rowspan="5">A</td>
-            <td rowspan="3">AA</td>
-            <td>AAA</td>
-        </tr>
-        <tr valign="top">
-            <td>AAB</td>
-        </tr>
-        <tr valign="top">
-            <td>AAC</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="2">AB</td>
-        </tr>
-        <tr valign="top">
-            <td>AC</td>
-            <td>ACA</td>
-        </tr>
-        <tr valign="top">
-            <td colspan="3">B</td>
-        </tr>
-        <tr valign="top">
-            <td>C</td>
-            <td>CA</td>
-            <td>CAA</td>
-        </tr>
-    </table>"""
+        |-----------------------|
+        | A     | AA    | AAA   |
+        |       |       |-------|
+        |       |       | AAB   |
+        |       |       |-------|
+        |       |       | AAC   |
+        |       |---------------|
+        |       | AB            |
+        |       |---------------|
+        |       | AC    | ACA   |
+        |-----------------------|
+        | B                     |
+        |-----------------------|
+        | C     | CA    | CAA   |
+        |-----------------------|
+
+    In this example the tree is loaded branch by branch thus::
+    
+        myTree = DictTreeHtmlTable()
+        myTree.add(('A', 'AA', 'AAA'), None)
+        myTree.add(('A', 'AA', 'AAB'), None)
+        myTree.add(('A', 'AA', 'AAC'), None)
+        myTree.add(('A', 'AB',), None)
+        myTree.add(('A', 'AC', 'ACA'), None)
+        myTree.add(('B',), None)
+        myTree.add(('C', 'CA', 'CAA'), None)
+
+    The HTML code generator can be used like this::
+
+        # Write: <table border="2" width="100%">
+        for anEvent in myTree.genColRowEvents():
+            if anEvent == myTree.ROW_OPEN:
+                # Write out the '<tr>' element
+            elif anEvent == myTree.ROW_CLOSE:
+                # Write out the '</tr>' element
+            else:
+                k, v, r, c = anEvent
+                # Write '<td rowspan="%d" colspan="%d">%s</td>' % (r, c, v)
+        # Write: </table>
+    
+    And the HTML code will look like this::
+    
+        <table border="2" width="100%">
+            <tr valign="top">
+                <td rowspan="5">A</td>
+                <td rowspan="3">AA</td>
+                <td>AAA</td>
+            </tr>
+            <tr valign="top">
+                <td>AAB</td>
+            </tr>
+            <tr valign="top">
+                <td>AAC</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="2">AB</td>
+            </tr>
+            <tr valign="top">
+                <td>AC</td>
+                <td>ACA</td>
+            </tr>
+            <tr valign="top">
+                <td colspan="3">B</td>
+            </tr>
+            <tr valign="top">
+                <td>C</td>
+                <td>CA</td>
+                <td>CAA</td>
+            </tr>
+        </table>
+    """
     # HTML table events
     ROW_OPEN = (None, 0, 0)
     ROW_CLOSE = (None, -1, -1)
@@ -354,8 +360,7 @@ class DictTreeHtmlTable(DictTree):
         """
         if self._ir is not None:
             # Non-leaf
-            keyS = self._ir.keys()
-            keyS.sort()
+            keyS = sorted(self._ir.keys())
             for i, k in enumerate(keyS):
                 keyBranch.append(k)
                 if i != 0:
@@ -377,8 +382,7 @@ class DictTreeHtmlTable(DictTree):
         #    % ('  '*d, self.rowSpan(), dMax-self.colSpan(), self._v)
         retVal = ""
         if self._ir is not None:
-            kS = self._ir.keys()
-            kS.sort()
+            kS = sorted(self._ir.keys())
             for k in kS:
                 retVal += '%s%s r=%d, c=%d\n' % ('  '*d, k, self._ir[k].rowSpan, self._ir[k].colSpan)
                 retVal += self._ir[k]._walkColRowSpan(d+1, dMax)

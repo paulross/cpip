@@ -35,7 +35,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 # Ugggh
 import re
 
-import PpToken
+#import PpToken
 from cpip import ExceptionCpip 
 
 class ExceptionConstantExpression(ExceptionCpip):
@@ -58,13 +58,6 @@ class ConstantExpression(object):
     """Class that interpret a stream of preprocessing tokens (class PpToken)
     and evaluate it as a constant expression.
     """
-    # Operators that are replaced directly by Python equivalents
-    WORD_REPLACE_MAP = {
-        '&&'    : 'and',
-        '||'    : 'or',
-        'true'  : 'True',
-        'false' : 'False',
-    }
     # Regex for conditional-expression
     # For example: '(a) > (b) ? (a) : (b)'
     RE_CONDITIONAL_EXPRESSION = re.compile(r'^(.+)\?(.+):(.+)$')
@@ -100,7 +93,13 @@ class ConstantExpression(object):
         return self._evaluateExpression(s)
 
     def _evaluateConditionalExpression(self, theMatch):
-        """Evaluates a conditional expression e.g. ... ? ... : ..."""
+        """Evaluates a conditional expression e.g. expr ? t : f
+        Which we convert with a regular expression to: ::
+            if exp:
+                t
+            else:
+                f
+        """
         assert(theMatch is not None)
         compileString = self.REPLACE_CONDITIONAL_EXPRESSION \
                         % (theMatch.group(1), theMatch.group(2), theMatch.group(3))
@@ -108,7 +107,7 @@ class ConstantExpression(object):
         try:
             c = compile(compileString, '<string>', 'exec')
             exec(c)
-        except Exception, err:
+        except Exception as err:
 #            logging.error('ConstantExpression._evaluateConditionalExpression() can not evaluate: "%s"' % compileString)
             raise ExceptionConditionalExpression(str(err))
         return result
@@ -119,7 +118,7 @@ class ConstantExpression(object):
         try:
 #            print '_evaluateExpression():', theStr
             return eval(theStr)
-        except Exception, err:
+        except Exception as err:
             raise ExceptionEvaluateExpression(
                 'Evaluation of "%s" gives error: %s' % (theStr, str(err))
                 )

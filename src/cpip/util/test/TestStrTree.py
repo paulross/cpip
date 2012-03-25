@@ -23,7 +23,7 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-import os
+#import os
 import sys
 import time
 import logging
@@ -94,7 +94,7 @@ class TestStrTree(unittest.TestCase):
                 'or', 'or_eq', 'xor', 'xor_eq',
                 ))
         mySt = StrTree.StrTree(myV)
-        #print
+        #print()
         #print mySt.values()
         #print str(mySt)
         self.assertEqual(1, mySt.has('#'))
@@ -115,7 +115,7 @@ class TestStrTree(unittest.TestCase):
                 'continue',
                 ))
         mySt = StrTree.StrTree(myV)
-        #print
+        #print()
         #print mySt.values()
         #print str(mySt)
         self.assertEqual(5, mySt.has('const'))
@@ -177,7 +177,7 @@ class TestStrTree(unittest.TestCase):
                 'double',
                 ))
         mySt = StrTree.StrTree(myV)
-        #print
+        #print()
         #print mySt.values()
         #print str(mySt)
         self.assertEqual(2, mySt.has('do'))
@@ -205,7 +205,7 @@ class TestStrTree(unittest.TestCase):
                 'delete', 'goto', 'reinterpret_cast', 'try',
                 ))
         mySt = StrTree.StrTree(myV)
-        #print
+        #print()
         #print mySt.values()
         #print str(mySt)
         self.assertEqual(2, mySt.has('do'))
@@ -284,11 +284,11 @@ class TestStrTreePerf(unittest.TestCase):
                 ]
         mySt = StrTree.StrTree(myV)
         self.assertEquals(myV, set(mySt.values()))
-        print
+        print()
         #print mySt.values()
         #print str(mySt)
         count = 10000
-        print 'Loop count: %d' % count
+        print('Loop count: %d' % count)
         FW = 32
         cntrFound = 0
         cStart = time.clock()
@@ -296,42 +296,42 @@ class TestStrTreePerf(unittest.TestCase):
             if mySt.has('do'):
                 cntrFound += 1
         #sys.stderr.write('has("do"):     %8d, Time: %8.3f (s)s ... ' % (count, time.clock() - cStart))
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, 'has("do")', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("do")', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'do' in myV:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in set:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in set:', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'do' in myVList:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in list:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in list:', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if mySt.has('double'):
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, 'has("double"):', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("double"):', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'double' in myV:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in set:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in set:', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'double' in myVList:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in list:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in list:', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         #'reinterpret_cast'
         self.assertEqual(count, cntrFound)
@@ -340,21 +340,21 @@ class TestStrTreePerf(unittest.TestCase):
         for i in range(count):
             if mySt.has('double'):
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, 'has("reinterpret_cast"):', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("reinterpret_cast"):', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'reinterpret_cast' in myV:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in set:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in set:', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'reinterpret_cast' in myVList:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in list:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in list:', time.clock() - cStart))
         self.assertEqual(count, cntrFound)
         #'strubbish'
         self.assertEqual(count, cntrFound)
@@ -363,21 +363,21 @@ class TestStrTreePerf(unittest.TestCase):
         for i in range(count):
             if mySt.has('strubbish'):
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, 'has("strubbish"):', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("strubbish"):', time.clock() - cStart))
         self.assertEqual(0, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'strubbish' in myV:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in set:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in set:', time.clock() - cStart))
         self.assertEqual(0, cntrFound)
         cntrFound = 0
         cStart = time.clock()
         for i in range(count):
             if 'strubbish' in myVList:
                 cntrFound += 1
-        print '%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in list:', time.clock() - cStart)
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in list:', time.clock() - cStart))
         self.assertEqual(0, cntrFound)
 
 class NullClass(unittest.TestCase):
@@ -396,7 +396,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
+    print(\
 """TestStrTree.py - A module that tests StrTree module.
 Usage:
 python TestStrTree.py [-lh --help]
@@ -414,19 +414,20 @@ Options (debug):
                 DEBUG       10
                 NOTSET      0
 """
-
+)
+    
 def main():
     """Invoke unit test code."""
-    print 'TestStrTree.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestStrTree.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -437,7 +438,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -447,8 +448,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

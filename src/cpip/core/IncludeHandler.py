@@ -27,7 +27,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import os
 import collections
-import StringIO
+import io
 #import time
 #import logging
 from cpip import ExceptionCpip
@@ -317,7 +317,7 @@ class CppIncludeStdOs(CppIncludeStd):
                 self._currentPlaceFromFile(myPath),
                 None,
                 )
-        except Exception, err:
+        except Exception as err:
             pass
         return None
 
@@ -336,7 +336,7 @@ class CppIncludeStdOs(CppIncludeStd):
                 )
             self.cpStackPush(retVal)
             #self._cpStack.append(retVal.currentPlace)
-        except Exception, err:
+        except Exception as err:
             pass
         return retVal
 
@@ -359,7 +359,7 @@ class CppIncludeStringIO(CppIncludeStd):
         try:
             myContent = self._filePathToContent[myPath]
             return FilePathOrigin(
-                StringIO.StringIO(myContent),
+                io.StringIO(myContent),
                 myPath,
                 self._currentPlaceFromFile(myPath),
                 None
@@ -372,7 +372,7 @@ class CppIncludeStringIO(CppIncludeStd):
         if len(self._cpStack) != 0:
             raise ExceptionCppInclude('setTu() with CP stack: %s' % self._cpStack)
         retVal = FilePathOrigin(
-            StringIO.StringIO(self._initialTuContent),
+            io.StringIO(self._initialTuContent),
             theTuIdentifier,
             self._currentPlaceFromFile(theTuIdentifier),
             'TU',
