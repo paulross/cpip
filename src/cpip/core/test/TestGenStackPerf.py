@@ -32,9 +32,9 @@ import logging
 import sys
 #import os
 try:
-    import cStringIO as StringIO
+    import io as StringIO
 except ImportError:
-    import StringIO
+    import io
 
 def gen_00(f):
     for b in f.read():
@@ -66,8 +66,7 @@ def gen_06(f):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestGenStackPerf.py - A module that tests generator stacks
+    print("""TestGenStackPerf.py - A module that tests generator stacks
 
 Usage:
 python TestGenStackPerf.py [-lh --help]
@@ -84,20 +83,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestGenStackPerf.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestGenStackPerf.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -108,7 +107,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -118,7 +117,7 @@ def main():
     clkStart = time.clock()
     siz = 1
     for s in range(8):
-        print 'Size: %8d' % siz
+        print('Size: %8d' % siz)
         for func in (
                   gen_00,
                   gen_01,
@@ -128,16 +127,16 @@ def main():
                   gen_05,
                   gen_06,
                   ):
-            myF = StringIO.StringIO(' ' * siz)
+            myF = io.StringIO(' ' * siz)
             genClkStart = time.clock()
             for b in func(myF):
                 pass
             genClkExec = time.clock() - genClkStart
-            print '  %s  %10.3f (s)  %10.3f (kb/s)' % (func, genClkExec, siz/(1024*genClkExec))
+            print('  %s  %10.3f (s)  %10.3f (kb/s)' % (func, genClkExec, siz/(1024*genClkExec)))
         siz *= 10
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

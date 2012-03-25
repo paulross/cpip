@@ -41,26 +41,26 @@ class TestListGen(unittest.TestCase):
     """Tests the generator."""
     def testSimple(self):
         """ListAsGenerator: simple test of a list of integers."""
-        myList = range(5)
-        myG = ListGen.ListAsGenerator(myList).next()
+        myList = list(range(5))
+        myG = next(ListGen.ListAsGenerator(myList))
         self.assertEqual(myList, [x for x in myG])
-        self.assertRaises(StopIteration, myG.next)
+        self.assertRaises(StopIteration, myG.__next__)
 
     def testPassingGenerator(self):
         """ListAsGenerator: Passing a generator around yielding list of ints."""
-        myList = range(6)
-        myG = ListGen.ListAsGenerator(myList).next()
+        myList = list(range(6))
+        myG = next(ListGen.ListAsGenerator(myList))
         result = []
         try:
             while 1:
                 result.append(self._takeGenAndConsume(myG))
         except StopIteration:
             pass
-        self.assertRaises(StopIteration, myG.next)
+        self.assertRaises(StopIteration, myG.__next__)
         self.assertEqual(myList, result)
 
     def _takeGenAndConsume(self, theGen):
-        return theGen.next()
+        return next(theGen)
 
     def testTokenGenerator(self):
         """ListAsGenerator: list of PpToken(token, token_type)."""
@@ -71,203 +71,203 @@ class TestListGen(unittest.TestCase):
                 PpToken.PpToken('BAR',     'identifier'),
                 PpToken.PpToken('\n',      'whitespace'),
             ]
-        myG = ListGen.ListAsGenerator(myList).next()
+        myG = next(ListGen.ListAsGenerator(myList))
         self.assertEqual(
                 PpToken.PpToken('#',   'preprocessing-op-or-punc'),
-                myG.next()
+                next(myG)
             )
         self.assertEqual(
                 PpToken.PpToken('define',  'identifier'),
-                myG.next()
+                next(myG)
             )
         self.assertEqual(
                 PpToken.PpToken(' ',       'whitespace'),
-                myG.next()
+                next(myG)
             )
         self.assertEqual(
                 PpToken.PpToken('BAR',     'identifier'),
-                myG.next()
+                next(myG)
             )
         self.assertEqual(
                 PpToken.PpToken('\n',      'whitespace'),
-                myG.next()
+                next(myG)
             )
-        self.assertRaises(StopIteration, myG.next)
+        self.assertRaises(StopIteration, myG.__next__)
 
     def testContinuation(self):
         """ListAsGenerator: test of using a extra generator on a list of ints."""
-        myList = range(5)
+        myList = list(range(5))
         myLetterList = [chr(x+ord('A')) for x in range(6)]
-        myContGen = ListGen.ListAsGenerator(myLetterList).next()
-        myG = ListGen.ListAsGenerator(myList, myContGen).next()
+        myContGen = next(ListGen.ListAsGenerator(myLetterList))
+        myG = next(ListGen.ListAsGenerator(myList, myContGen))
         self.assertEqual(
             [0, 1, 2, 3, 4, 'A', 'B', 'C', 'D', 'E', 'F'],
             [x for x in myG])
-        self.assertRaises(StopIteration, myG.next)
+        self.assertRaises(StopIteration, myG.__next__)
 
 class TestListGenUnget(unittest.TestCase):
     """Tests getting and ungetting a token."""
 
     def testAsimpleInit(self):
         """ListAsGenerator: simple list with list comprehension."""
-        myObj = ListGen.ListAsGenerator(range(8))
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(8)))
+        myGen = next(myObj)
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(8))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(8)))
 
     def testIncGen(self):
         """ListAsGenerator: with incremental generation (inc. gen.)."""
-        myObj = ListGen.ListAsGenerator(range(2))
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(2)))
+        myGen = next(myObj)
         # Iterate
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUnget(self):
         """ListAsGenerator: inc. gen. and single send()."""
-        myObj = ListGen.ListAsGenerator(range(2))
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(2)))
+        myGen = next(myObj)
         # Iterate 0
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
         # send() after next
         myGen.send(myVal)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetAtStart(self):
         """ListAsGenerator: inc. gen. and single send() before next()."""
-        myObj = ListGen.ListAsGenerator(range(2))
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(2)))
+        myGen = next(myObj)
         # Try sending before iterating
         self.assertRaises(TypeError, myGen.send, 42)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetAtEnd(self):
         """ListAsGenerator: inc. gen. and single send() after last next()."""
-        myObj = ListGen.ListAsGenerator(range(2))
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(2)))
+        myGen = next(myObj)
         # Iterate
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
         myGen.send(42)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 42)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetOnEmptyList(self):
         """ListAsGenerator: inc. gen. and send() where the initialy empty."""
         myObj = ListGen.ListAsGenerator([])
-        myGen = myObj.next()
+        myGen = next(myObj)
         # Try an insert
         self.assertRaises(TypeError, myGen.send, 127)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetMultipleCallsAtStart(self):
         """ListAsGenerator: inc. gen. where pairs of send() cancel each other."""
-        myObj = ListGen.ListAsGenerator(range(2))
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(2)))
+        myGen = next(myObj)
         # Iterate
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
         self.assertEqual(None, myGen.send(42))
         self.assertEqual(42, myGen.send(84))
         # 84 is thrown away by the external loop of UnitGen.next()
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
 class TestContinuationGenUnget(unittest.TestCase):
     """Tests getting and ungetting a token."""
 
     def testContinuationSimpleInit(self):
         """ListAsGenerator: simple list with list comprehension and continuation."""
-        myCont = ListGen.ListAsGenerator(range(4, 8))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myCont = ListGen.ListAsGenerator(list(range(4, 8)))
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(8))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(8)))
 
     def testContinuationSendOnAlternate(self):
         """ListAsGenerator: Continuation with send on alternate yields."""
-        myCont = ListGen.ListAsGenerator(range(4, 8))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myCont = ListGen.ListAsGenerator(list(range(4, 8)))
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         myResult = []
         for aVal in myGen:
             if aVal % 2 == 1:
                 # Odd numbers
                 myGen.send(aVal)
-                myResult.append(myGen.next())
+                myResult.append(next(myGen))
             else:
                 myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(8))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(8)))
 
     def testContinuationSendOnAlternateInList(self):
         """ListAsGenerator: Continuation with send on alternate yields in list part only."""
-        myCont = ListGen.ListAsGenerator(range(4, 8))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myCont = ListGen.ListAsGenerator(list(range(4, 8)))
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         myResult = []
         for aVal in myGen:
             if aVal % 2 == 1 and not myObj.listIsEmpty:
                 # Odd numbers
                 myGen.send(aVal)
-                myResult.append(myGen.next())
+                myResult.append(next(myGen))
             else:
                 myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(8))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(8)))
 
     def testContinuationSendOnAlternateInGen(self):
         """ListAsGenerator: Continuation with send on alternate yields in continuation part only."""
-        myCont = ListGen.ListAsGenerator(range(4, 8))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myCont = ListGen.ListAsGenerator(list(range(4, 8)))
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         myResult = []
         for aVal in myGen:
             if aVal % 2 == 1 and myObj.listIsEmpty:
                 # Odd numbers
                 myGen.send(aVal)
-                myResult.append(myGen.next())
+                myResult.append(next(myGen))
             else:
                 myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(8))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(8)))
 
     def testListIsEmpty_00(self):
         """ListAsGenerator: listIsEmpty flag is maintained [00]."""
         myCont = ListGen.ListAsGenerator(list('ABCDEFG'))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         myResult = []
         #print
         for aVal in myGen:
             #print '%s  %s' % (myObj.listIsEmpty, aVal)
             myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(4)+list('ABCDEFG'))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(4))+list('ABCDEFG'))
 
     def testListIsEmpty_01(self):
         """ListAsGenerator: listIsEmpty flag is maintained [01]."""
         myCont = ListGen.ListAsGenerator(list('ABCDEFG'))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         myResult = []
         if not myObj.listIsEmpty:
             for aVal in myGen:
@@ -275,14 +275,14 @@ class TestContinuationGenUnget(unittest.TestCase):
                 if myObj.listIsEmpty:
                     break
         myRemainderResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(4))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(4)))
 
     def testListIsEmpty_02(self):
         """ListAsGenerator: listIsEmpty flag is maintained [02]."""
         myCont = ListGen.ListAsGenerator(list('ABCDEFG'))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         #print
         #print [x for x in myGen if myObj.listIsEmpty]
         #myResult = [x for x in myGen if myObj.listIsEmpty]
@@ -291,29 +291,29 @@ class TestContinuationGenUnget(unittest.TestCase):
                 if myObj.listIsEmpty:
                     break
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(myResult, list('ABCDEFG'))
 
     def testListIsEmpty_03(self):
         """ListAsGenerator: listIsEmpty flag is maintained [03]."""
         myCont = ListGen.ListAsGenerator(list('ABCDEFG'))
-        myObj = ListGen.ListAsGenerator(range(4), myCont.next())
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
+        myGen = next(myObj)
         myResult = [x for x in myGen if myObj.listIsEmpty]
         #print
         #print myResult
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(myResult, [3,] + list('ABCDEFG'))
 
     def testListIsEmpty_04(self):
         """ListAsGenerator: listIsEmpty flag is maintained [04]."""
         myCont = ListGen.ListAsGenerator(list('ABC'))
-        myObj = ListGen.ListAsGenerator(range(3), myCont.next())
-        myGen = myObj.next()
+        myObj = ListGen.ListAsGenerator(list(range(3)), next(myCont))
+        myGen = next(myObj)
         myResult = [x for x in myGen if not myObj.listIsEmpty]
         #print
         #print myResult
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
         self.assertEqual(myResult, [0, 1,])
 
 class TestListIsEmpty_Special(unittest.TestCase):
@@ -323,10 +323,10 @@ class TestListIsEmpty_Special(unittest.TestCase):
         """TestListIsEmpty_Special: listIsEmpty flag is maintained [00]."""
         # INC == 1\n
         myGen = ListGen.ListAsGenerator([' ', '==', ' ', '1'])
-        myObj = ListGen.ListAsGenerator(['INC',], myGen.next())
+        myObj = ListGen.ListAsGenerator(['INC',], next(myGen))
         resultS = []
         #print
-        for aVal in myObj.next():
+        for aVal in next(myObj):
             #print 'aVal: %8s   %s' % ('"%s"' % aVal, myObj.listIsEmpty)
             resultS.append((aVal, myObj.listIsEmpty))
         #print resultS
@@ -337,12 +337,12 @@ class TestListIsEmpty_Special(unittest.TestCase):
         """TestListIsEmpty_Special: listIsEmpty flag is maintained [01]."""
         # INC == 1\n
         myListGen = ListGen.ListAsGenerator([' ', '==', ' ', '1'])
-        myObj     = ListGen.ListAsGenerator(['INC',], myListGen.next())
-        myGen = myObj.next()
+        myObj     = ListGen.ListAsGenerator(['INC',], next(myListGen))
+        myGen = next(myObj)
         #print
         resultS = []
         while not myObj.listIsEmpty:
-            myVal = myGen.next()
+            myVal = next(myGen)
             #print 'aVal: %8s   %s' % ('"%s"' % myVal, myObj.listIsEmpty)
             resultS.append((myVal, myObj.listIsEmpty))
         #print resultS
@@ -360,12 +360,12 @@ class TestListIsEmpty_Special(unittest.TestCase):
         """TestListIsEmpty_Special: listIsEmpty flag is maintained [02]."""
         # INC == 1\n
         myListGen = ListGen.ListAsGenerator([' ', '==', ' ', '1'])
-        myObj     = ListGen.ListAsGenerator(['#', 'if', 'INC',], myListGen.next())
-        myGen = myObj.next()
+        myObj     = ListGen.ListAsGenerator(['#', 'if', 'INC',], next(myListGen))
+        myGen = next(myObj)
         #print
         resultS = []
         while not myObj.listIsEmpty:
-            myVal = myGen.next()
+            myVal = next(myGen)
             #print 'aVal: %8s   %s' % ('"%s"' % myVal, myObj.listIsEmpty)
             resultS.append((myVal, myObj.listIsEmpty))
         #print resultS
@@ -396,8 +396,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestListGen.py - A module that tests ListGen module.
+    print("""TestListGen.py - A module that tests ListGen module.
 Usage:
 python TestListGen.py [-lh --help]
 
@@ -413,20 +412,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestListGen.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestListGen.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -437,7 +436,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -447,8 +446,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

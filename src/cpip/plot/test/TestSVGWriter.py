@@ -23,15 +23,12 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-import os
+#import os
 import sys
 import time
 import logging
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 from cpip.util import XmlWrite
 from cpip.plot import SVGWriter, Coord
@@ -45,7 +42,7 @@ class TestSVGWriter(unittest.TestCase):
     """Tests SVGWriter."""
     def test_00(self):
         """TestSVGWriter.test_00(): construction."""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(100, 'mm'),
             Coord.Dim(20, 'mm'),
@@ -61,7 +58,7 @@ class TestSVGWriter(unittest.TestCase):
     def test_01(self):
         """TestSVGlWriter.test_01(): <desc> and four rectangles.
         From second example in http://www.w3.org/TR/2003/REC-SVG11-20030114/struct.html#NewDocumentOverview"""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(5, 'cm'),
             Coord.Dim(4, 'cm'),
@@ -115,7 +112,7 @@ class TestSVGWriter(unittest.TestCase):
     def test_02(self):
         """TestSVGlWriter.test_02(): a circle.
         From http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#CircleElement"""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(12, 'cm'),
             Coord.Dim(4, 'cm'),
@@ -146,7 +143,7 @@ class TestSVGWriter(unittest.TestCase):
     def test_03(self):
         """TestSVGlWriter.test_03(): an elipse.
         Based on http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#EllipseElement"""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(12, 'cm'),
             Coord.Dim(4, 'cm'),
@@ -178,7 +175,7 @@ class TestSVGWriter(unittest.TestCase):
     def test_04(self):
         """TestSVGlWriter.test_04(): a line.
         Based on http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#LineElement"""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(12, 'cm'),
             Coord.Dim(4, 'cm'),
@@ -248,7 +245,7 @@ class TestSVGWriter(unittest.TestCase):
     def test_05(self):
         """TestSVGlWriter.test_05(): a polyline.
         Based on http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#PolylineElement"""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(12, 'cm'),
             Coord.Dim(4, 'cm'),
@@ -305,7 +302,7 @@ class TestSVGWriter(unittest.TestCase):
     def test_06(self):
         """TestSVGlWriter.test_06(): a polygon.
         Based on http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#PolygonElement"""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(12, 'cm'),
             Coord.Dim(4, 'cm'),
@@ -350,7 +347,7 @@ class TestSVGWriter(unittest.TestCase):
     def test_07(self):
         """TestSVGlWriter.test_07(): text.
         Based on http://www.w3.org/TR/2003/REC-SVG11-20030114/text.html#TextElement"""
-        myF = StringIO.StringIO()
+        myF = io.StringIO()
         myViewPort = Coord.Box(
             Coord.Dim(12, 'cm'),
             Coord.Dim(4, 'cm'),
@@ -391,8 +388,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestSVGWriter.py - A module that tests StrTree module.
+    print("""TestSVGWriter.py - A module that tests StrTree module.
 Usage:
 python TestSVGWriter.py [-lh --help]
 
@@ -408,20 +404,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestSVGWriter.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestSVGWriter.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -432,7 +428,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -442,8 +438,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

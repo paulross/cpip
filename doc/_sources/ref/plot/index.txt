@@ -1,0 +1,18 @@
+.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
+.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+
+**************
+CPIP Plot
+**************
+
+.. toctree::
+    :maxdepth: 2
+
+    Coord
+    
+    PlotNode
+    
+    SVGWriter
+    
+    TreePlotTransform
+    

@@ -1,0 +1,231 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>XmlWrite &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Utilities" href="../util/index.html" />
+    <link rel="next" title="CPIP Plot" href="../plot/index.html" />
+    <link rel="prev" title="StrTree" href="../util/StrTree.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/index.html" title="CPIP Plot"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../util/StrTree.html" title="StrTree"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" accesskey="U">CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="xmlwrite">
+<h1>XmlWrite<a class="headerlink" href="#xmlwrite" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.util.XmlWrite"></span><p>Writes XML and XHTML.</p>
+<dl class="class">
+<dt id="cpip.util.XmlWrite.Element">
+<em class="property">class </em><tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">Element</tt><big>(</big><em>theXmlStream</em>, <em>theElemName</em>, <em>theAttrs=None</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.Element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents an element in a markup stream.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.util.XmlWrite.ExceptionXml">
+<em class="property">exception </em><tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">ExceptionXml</tt><a class="headerlink" href="#cpip.util.XmlWrite.ExceptionXml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception specialisation for the XML writer.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.util.XmlWrite.ExceptionXmlEndElement">
+<em class="property">exception </em><tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">ExceptionXmlEndElement</tt><a class="headerlink" href="#cpip.util.XmlWrite.ExceptionXmlEndElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception specialisation for end of element.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.util.XmlWrite.XmlStream">
+<em class="property">class </em><tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">XmlStream</tt><big>(</big><em>theFout</em>, <em>theEnc='utf-8'</em>, <em>theDtdLocal=None</em>, <em>theId=0</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and maintains an XML output stream.</p>
+<dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.characters">
+<tt class="descname">characters</tt><big>(</big><em>theString</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.characters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encodes the string and writes it to the output.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.util.XmlWrite.XmlStream.id">
+<tt class="descname">id</tt><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A unique ID in this stream. The ID is incremented for each access.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.literal">
+<tt class="descname">literal</tt><big>(</big><em>theString</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.literal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes theString to the output without encoding.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.writeECMAScript">
+<tt class="descname">writeECMAScript</tt><big>(</big><em>theScript</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.writeECMAScript" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the ECMA script.
+&lt;script type=&#8221;text/ecmascript&#8221;&gt;
+//&lt;![CDATA[
+...
+// ]]&gt;
+&lt;/script&gt;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.xmlSpacePreserve">
+<tt class="descname">xmlSpacePreserve</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.xmlSpacePreserve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Suspends indentation for this element and its descendants.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.XmlWrite.decodeString">
+<tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">decodeString</tt><big>(</big><em>theS</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.decodeString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string that is the argument decoded. May raise a TypeError.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.XmlWrite.encodeString">
+<tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">encodeString</tt><big>(</big><em>theS</em>, <em>theCharPrefix=b'_'</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.encodeString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string that is the argument encoded.:</p>
+<div class="highlight-python"><pre>                   Table 1: The Base 64 Alphabet
+Value Encoding  Value Encoding  Value Encoding  Value Encoding
+    0 A            17 R            34 i            51 z
+    1 B            18 S            35 j            52 0
+    2 C            19 T            36 k            53 1
+    3 D            20 U            37 l            54 2
+    4 E            21 V            38 m            55 3
+    5 F            22 W            39 n            56 4
+    6 G            23 X            40 o            57 5
+    7 H            24 Y            41 p            58 6
+    8 I            25 Z            42 q            59 7
+    9 J            26 a            43 r            60 8
+   10 K            27 b            44 s            61 9
+   11 L            28 c            45 t            62 +
+   12 M            29 d            46 u            63 /
+   13 N            30 e            47 v
+   14 O            31 f            48 w         (pad) =
+   15 P            32 g            49 x
+   16 Q            33 h            50 y</pre>
+</div>
+<p>See section 3 of : <a class="reference external" href="http://www.faqs.org/rfcs/rfc3548.html">http://www.faqs.org/rfcs/rfc3548.html</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.XmlWrite.nameFromString">
+<tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">nameFromString</tt><big>(</big><em>theStr</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.nameFromString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a name from a string.
+See <a class="reference external" href="http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata">http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata</a>
+&#8220;ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
+followed by any number of letters, digits ([0-9]), hyphens (&#8220;-&#8221;),
+underscores (&#8220;_&#8221;), colons (&#8221;:&#8221;), and periods (&#8221;.&#8221;).
+This also works for in namespaces as &#8216;:&#8217; is not used in the encoding.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../util/StrTree.html"
+                        title="previous chapter">StrTree</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../plot/index.html"
+                        title="next chapter">CPIP Plot</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/util/XmlWrite.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/index.html" title="CPIP Plot"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../util/StrTree.html" title="StrTree"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" >CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

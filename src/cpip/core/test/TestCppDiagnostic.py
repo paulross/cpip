@@ -52,7 +52,7 @@ class TestCppDiagnostic(unittest.TestCase):
         self.assertEqual(1, myObj._cntrUndefined)
         try:
             myObj.undefined("Some message")
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined, err:
+        except CppDiagnostic.ExceptionCppDiagnosticUndefined as err:
             self.assertEqual("Some message", str(err))
         self.assertEqual(2, myObj._cntrUndefined)
 
@@ -65,7 +65,7 @@ class TestCppDiagnostic(unittest.TestCase):
         self.assertEqual(1, myObj._cntrPartialTokenStream)
         try:
             myObj.partialTokenStream("Some message")
-        except CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream, err:
+        except CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream as err:
             self.assertEqual("Some message", str(err))
         self.assertEqual(2, myObj._cntrPartialTokenStream)
 
@@ -106,7 +106,7 @@ class TestCppDiagnostic(unittest.TestCase):
         self.assertEqual(1, myObj._cntrUndefined)
         try:
             myObj.undefined("Some message", DummyLocator())
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined, err:
+        except CppDiagnostic.ExceptionCppDiagnosticUndefined as err:
             self.assertEqual('Some message at line=21, col=45 of file "fileName"', str(err))
         self.assertEqual(2, myObj._cntrUndefined)
 
@@ -119,7 +119,7 @@ class TestCppDiagnostic(unittest.TestCase):
         self.assertEqual(1, myObj._cntrPartialTokenStream)
         try:
             myObj.partialTokenStream("Some message", DummyLocator())
-        except CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream, err:
+        except CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream as err:
             self.assertEqual('Some message at line=21, col=45 of file "fileName"', str(err))
         self.assertEqual(2, myObj._cntrPartialTokenStream)
 
@@ -182,8 +182,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestCppDiagnostic.py - A module that tests CppDiagnostic module.
+    print("""TestCppDiagnostic.py - A module that tests CppDiagnostic module.
 Usage:
 python TestCppDiagnostic.py [-lh --help]
 
@@ -199,20 +198,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestCppDiagnostic.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestCppDiagnostic.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -223,7 +222,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -233,8 +232,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

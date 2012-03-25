@@ -19,35 +19,10 @@
 # Paul Ross: cpipdev@googlemail.com
 
 """This handles definition, undefinition, redefintion, replacement
-and rescaning of macro declartions
+and rescaning of macro declarations
 
 It implements: ISO/IEC 9899:1999(E) section 6 (aka 'C99')
 and/or: ISO/IEC 14882:1998(E) section 16 (aka 'C++98')
-
-TODO: 2008-11-21
-----------------
-2008-11-21_a: Come to a decision on placeholder tokens. Does #define p()
-whatever\n  mean that p has argument list [] or [[]]?
-
-2008-11-21_b: Replace references to 'object type' or 'object style' with
-'object-like'. Similarly for functions macros.
-
-2008-11-21_c: Do we follow C++ or C?
-
-2008-11-21_d: We should worry about 'Within the sequence of preprocessing tokens
-making up an invocation of a function-like macro, new-line is considered a
-normal white-space character.' in the C ISO/IEC 9899:1999(E) 6.10-3 and C++
-ISO/IEC 14882:1998(E) 16.3-9 in function-like replacement that I am not
-capturing?
-
-For example:
-#define f(a) a+a
-f(
-    1
-)
-Becomes:
-1 +1
-[2008-11-24: Done. See testReplaceFunction_09()]
 
 """
 __author__  = 'Paul Ross'
@@ -62,10 +37,10 @@ import copy
 #import traceback
 
 from cpip import ExceptionCpip
-import PpToken
-import PpTokenCount
-import PpWhitespace
-import FileLocation
+from cpip.core import PpToken
+from cpip.core import PpTokenCount
+from cpip.core import PpWhitespace
+from cpip.core import FileLocation
 #from ListGen import ListAsGenerator
 
 class ExceptionCpipDefine(ExceptionCpip):
@@ -307,8 +282,7 @@ class PpDefine(object):
         that.
         
         Playing with cpp -E it seems that it is a comma separated
-        [Eclipse is really shit] list where
-        whitespace is ignored, nothing else is allowed.
+        list where whitespace is ignored, nothing else is allowed.
         See unit tests testInitFunction_70(), 71 and 72.
         cpp.exe also is not so strict when it comes the the above sections. For
         example in this:
@@ -536,7 +510,7 @@ class PpDefine(object):
     def _retToken(self, theGen):
         """Returns the next token object and increments the IR."""
         assert(self.isCurrentlyDefined)
-        retTok = theGen.next()
+        retTok = next(theGen)
         # Note: True is always used as this is always unconditionally compiled
         self._tokenCount.inc(retTok, True)
         # Check for bad whitespace
@@ -606,8 +580,8 @@ class PpDefine(object):
     def incRefCount(self, theFileLineCol=None):
         """Increment the reference count. Typically callers do this when
         replacement is certain of in the event of definition testing e.g.
-        #ifdef SPAM or defined(SPAM) etc. Or if the macro is expanded e.g.
-        #define SPAM_N_EGGS spam and eggs
+        ``#ifdef SPAM or defined(SPAM)`` etc. Or if the macro is expanded e.g.
+        ``#define SPAM_N_EGGS spam and eggs``
         The menu is SPAM_N_EGGS.
         theFileLineCol is a FileLocation.FileLineCol object.
         """ 
@@ -780,6 +754,7 @@ class PpDefine(object):
         And an invocation of:
         ``f(1(,)2,3)`` i.e. this gets passed via the generator ``"1(,)2,3)"``
         and returns two argunments: ::
+        
             [
                 [
                     PpToken('1', 'pp-number'),
@@ -1044,7 +1019,7 @@ class PpDefine(object):
         #print '_retReplacementMap(): self._paramS:', self._paramS
         #print '_retReplacementMap():      theArgs:', theArgs
         for i, tok in enumerate(self._paramS):
-            assert(not retMap.has_key(tok)), \
+            assert(not tok in retMap), \
                 'Duplicate identifier in function macro has slipped through the constructor.'
             if self._isVariadic and i >= len(theArgs):
                 # This is the case where:
@@ -1118,7 +1093,7 @@ class PpDefine(object):
         # the canReplace flag independently
         #assert(0), '[:] on mutable'
         for myTtt in copy.deepcopy(self._replaceTokTypesS):
-            if theArgMap.has_key(myTtt.t):
+            if myTtt.t in theArgMap:
                 if self._isPlacemarker(theArgMap[myTtt.t]):
                     if flagStringize:
                         retReplList.append(
@@ -1176,7 +1151,7 @@ class PpDefine(object):
                 # Anly add if a variable argument is available e.g. not here
                 # #define F1(a,...) |a| __VA_ARGS__ EOL
                 # F1()  // | | EOL
-                if theArgMap.has_key(self.VARIABLE_ARGUMENT_IDENTIFIER):
+                if self.VARIABLE_ARGUMENT_IDENTIFIER in theArgMap:
                     if flagStringize:
                         retReplList.append(
                                 self._cppStringize(theArgMap[self.VARIABLE_ARGUMENT_IDENTIFIER]),
@@ -1343,12 +1318,15 @@ class PpDefine(object):
     #=============================
     # Comparison and redefinition.
     #=============================
-    def __cmp__(self, other):
-        """Comparison. Returns:
+    def __eq__(self, other):
+        return self.isSame(other) == 0
+    
+    def isSame(self, other):
+        """Tests 'sameness'. Returns:
         -1 if the identifiers are different.
         1 if the identifiers are the same but redefinition is NOT allowed.
-        0 if the identifiers are the same but redefinition is allowed i.e. they
-        are equivelent."""
+        0 if the identifiers are the same but redefinition is allowed i.e. the
+        macros are equivelent."""
         if not self.isCurrentlyDefined:
             raise ExceptionCpipDefine(
                 "#undef on already #undef'd instance of self macro"
@@ -1415,7 +1393,7 @@ class PpDefine(object):
         if len(self.replacements) != len(other.replacements):
             # ISO/IEC 14882:1998(E) 16.3-1 Macro replacement [cpp.replace]
             return False
-        for s, o in map(None, self.replacements, other.replacements):
+        for s, o in zip(self.replacements, other.replacements):
             # Treat ws runs as equivelent
             if self._wsHandler.isAllWhitespace(s):
                 if not self._wsHandler.isAllWhitespace(o):

@@ -53,37 +53,37 @@ class TestIndexMatch(unittest.TestCase):
 
     def test_02(self):
         """OaS.indexMatch() - missing returns -1"""
-        self.assertEqual(-1, OaS.indexMatch(range(4), 23))
-        self.assertEqual(-1, OaS.indexMatch(range(4), -1))
-        self.assertEqual(-1, OaS.indexMatch(range(4), 4))
+        self.assertEqual(-1, OaS.indexMatch(list(range(4)), 23))
+        self.assertEqual(-1, OaS.indexMatch(list(range(4)), -1))
+        self.assertEqual(-1, OaS.indexMatch(list(range(4)), 4))
 
     def test_03_01(self):
         """OaS.indexMatch() - correct match on range(1)"""
-        self.assertEqual(-1, OaS.indexMatch(range(1), -1))
-        self.assertEqual(0, OaS.indexMatch(range(1), 0))
-        self.assertEqual(-1, OaS.indexMatch(range(1), 1))
+        self.assertEqual(-1, OaS.indexMatch(list(range(1)), -1))
+        self.assertEqual(0, OaS.indexMatch(list(range(1)), 0))
+        self.assertEqual(-1, OaS.indexMatch(list(range(1)), 1))
 
     def test_03_02(self):
         """OaS.indexMatch() - correct match on range(2)"""
-        self.assertEqual(-1, OaS.indexMatch(range(2), -1))
-        self.assertEqual(0, OaS.indexMatch(range(2), 0))
-        self.assertEqual(1, OaS.indexMatch(range(2), 1))
-        self.assertEqual(-1, OaS.indexMatch(range(2), 2))
+        self.assertEqual(-1, OaS.indexMatch(list(range(2)), -1))
+        self.assertEqual(0, OaS.indexMatch(list(range(2)), 0))
+        self.assertEqual(1, OaS.indexMatch(list(range(2)), 1))
+        self.assertEqual(-1, OaS.indexMatch(list(range(2)), 2))
 
     def test_03_03(self):
         """OaS.indexMatch() - correct match on range(3)"""
-        self.assertEqual(-1, OaS.indexMatch(range(3), -1))
-        self.assertEqual(0, OaS.indexMatch(range(3), 0))
-        self.assertEqual(1, OaS.indexMatch(range(3), 1))
-        self.assertEqual(2, OaS.indexMatch(range(3), 2))
-        self.assertEqual(-1, OaS.indexMatch(range(3), 3))
+        self.assertEqual(-1, OaS.indexMatch(list(range(3)), -1))
+        self.assertEqual(0, OaS.indexMatch(list(range(3)), 0))
+        self.assertEqual(1, OaS.indexMatch(list(range(3)), 1))
+        self.assertEqual(2, OaS.indexMatch(list(range(3)), 2))
+        self.assertEqual(-1, OaS.indexMatch(list(range(3)), 3))
 
     def test_03_04(self):
         """OaS.indexMatch() - correct match on range(4)"""
-        self.assertEqual(0, OaS.indexMatch(range(4), 0))
-        self.assertEqual(1, OaS.indexMatch(range(4), 1))
-        self.assertEqual(2, OaS.indexMatch(range(4), 2))
-        self.assertEqual(3, OaS.indexMatch(range(4), 3))
+        self.assertEqual(0, OaS.indexMatch(list(range(4)), 0))
+        self.assertEqual(1, OaS.indexMatch(list(range(4)), 1))
+        self.assertEqual(2, OaS.indexMatch(list(range(4)), 2))
+        self.assertEqual(3, OaS.indexMatch(list(range(4)), 3))
 
     def test_04(self):
         """OaS.indexMatch() - 100 random ranges -10,000 to 10,000"""
@@ -93,7 +93,7 @@ class TestIndexMatch(unittest.TestCase):
             end = random.randint(-10000, 10000)
             if start > end:
                 start, end = end, start
-            myR = range(start, end)
+            myR = list(range(start, end))
             self.assertEqual(-1, OaS.indexMatch(myR, start-1))
             for j, aVal in enumerate(myR):
                 self.assertEqual(j, OaS.indexMatch(myR, aVal))
@@ -117,42 +117,42 @@ class TestLowerBound(unittest.TestCase):
 
     def test_01(self):
         """OaS.indexLB() - within list range(1)."""
-        self.assertEqual(-1, OaS.indexLB(range(1), -10))
-        self.assertEqual(0, OaS.indexLB(range(1), 0))
-        self.assertEqual(0, OaS.indexLB(range(1), 1))
-        self.assertEqual(0, OaS.indexLB(range(1), 2))
-        self.assertEqual(0, OaS.indexLB(range(1), 3))
+        self.assertEqual(-1, OaS.indexLB(list(range(1)), -10))
+        self.assertEqual(0, OaS.indexLB(list(range(1)), 0))
+        self.assertEqual(0, OaS.indexLB(list(range(1)), 1))
+        self.assertEqual(0, OaS.indexLB(list(range(1)), 2))
+        self.assertEqual(0, OaS.indexLB(list(range(1)), 3))
 
     def test_02(self):
         """OaS.indexLB() - within list range(2)."""
-        self.assertEqual(-1, OaS.indexLB(range(2), -10))
-        self.assertEqual(0, OaS.indexLB(range(2), 0))
-        self.assertEqual(1, OaS.indexLB(range(2), 1))
-        self.assertEqual(1, OaS.indexLB(range(2), 2))
-        self.assertEqual(1, OaS.indexLB(range(2), 3))
+        self.assertEqual(-1, OaS.indexLB(list(range(2)), -10))
+        self.assertEqual(0, OaS.indexLB(list(range(2)), 0))
+        self.assertEqual(1, OaS.indexLB(list(range(2)), 1))
+        self.assertEqual(1, OaS.indexLB(list(range(2)), 2))
+        self.assertEqual(1, OaS.indexLB(list(range(2)), 3))
 
     def test_03(self):
         """OaS.indexLB() - within list range(3)."""
-        self.assertEqual(-1, OaS.indexLB(range(3), -10))
-        self.assertEqual(0, OaS.indexLB(range(3), 0))
-        self.assertEqual(1, OaS.indexLB(range(3), 1))
-        self.assertEqual(2, OaS.indexLB(range(3), 2))
-        self.assertEqual(2, OaS.indexLB(range(3), 3))
+        self.assertEqual(-1, OaS.indexLB(list(range(3)), -10))
+        self.assertEqual(0, OaS.indexLB(list(range(3)), 0))
+        self.assertEqual(1, OaS.indexLB(list(range(3)), 1))
+        self.assertEqual(2, OaS.indexLB(list(range(3)), 2))
+        self.assertEqual(2, OaS.indexLB(list(range(3)), 3))
 
     def test_04(self):
         """OaS.indexLB() - within list range(4)."""
-        self.assertEqual(0, OaS.indexLB(range(4), 0))
-        self.assertEqual(1, OaS.indexLB(range(4), 1))
-        self.assertEqual(2, OaS.indexLB(range(4), 2))
-        self.assertEqual(3, OaS.indexLB(range(4), 3))
+        self.assertEqual(0, OaS.indexLB(list(range(4)), 0))
+        self.assertEqual(1, OaS.indexLB(list(range(4)), 1))
+        self.assertEqual(2, OaS.indexLB(list(range(4)), 2))
+        self.assertEqual(3, OaS.indexLB(list(range(4)), 3))
         self.assertEqual(0, OaS.indexLB([0], 23))
 
     def test_08_02(self):
         """OaS.indexLB() - within list range(8, 2)."""
-        self.assertEqual(0, OaS.indexLB(range(0, 8, 2), 0))
-        self.assertEqual(0, OaS.indexLB(range(0, 8, 2), 1))
-        self.assertEqual(1, OaS.indexLB(range(0, 8, 2), 2))
-        self.assertEqual(1, OaS.indexLB(range(0, 8, 2), 3))
+        self.assertEqual(0, OaS.indexLB(list(range(0, 8, 2)), 0))
+        self.assertEqual(0, OaS.indexLB(list(range(0, 8, 2)), 1))
+        self.assertEqual(1, OaS.indexLB(list(range(0, 8, 2)), 2))
+        self.assertEqual(1, OaS.indexLB(list(range(0, 8, 2)), 3))
 
     def test_random(self):
         """OaS.indexLB() - random sets of integers."""
@@ -196,39 +196,39 @@ class TestUpperBound(unittest.TestCase):
 
     def test_01(self):
         """OaS.indexUB() - within list range(1)."""
-        self.assertEqual(0, OaS.indexUB(range(1), -10))
-        self.assertEqual(0, OaS.indexUB(range(1), 0))
-        self.assertEqual(-1, OaS.indexUB(range(1), 1))
-        self.assertEqual(-1, OaS.indexUB(range(1), 2))
-        self.assertEqual(-1, OaS.indexUB(range(1), 3))
+        self.assertEqual(0, OaS.indexUB(list(range(1)), -10))
+        self.assertEqual(0, OaS.indexUB(list(range(1)), 0))
+        self.assertEqual(-1, OaS.indexUB(list(range(1)), 1))
+        self.assertEqual(-1, OaS.indexUB(list(range(1)), 2))
+        self.assertEqual(-1, OaS.indexUB(list(range(1)), 3))
 
     def test_02(self):
         """OaS.indexUB() - within list range(2)."""
-        self.assertEqual(0, OaS.indexUB(range(2), -10))
-        self.assertEqual(0, OaS.indexUB(range(2), 0))
-        self.assertEqual(1, OaS.indexUB(range(2), 1))
-        self.assertEqual(-1, OaS.indexUB(range(2), 2))
-        self.assertEqual(-1, OaS.indexUB(range(2), 3))
+        self.assertEqual(0, OaS.indexUB(list(range(2)), -10))
+        self.assertEqual(0, OaS.indexUB(list(range(2)), 0))
+        self.assertEqual(1, OaS.indexUB(list(range(2)), 1))
+        self.assertEqual(-1, OaS.indexUB(list(range(2)), 2))
+        self.assertEqual(-1, OaS.indexUB(list(range(2)), 3))
 
     def test_03(self):
         """OaS.indexUB() - within list range(3)."""
-        self.assertEqual(0, OaS.indexUB(range(3), -10))
-        self.assertEqual(0, OaS.indexUB(range(3), 0))
-        self.assertEqual(1, OaS.indexUB(range(3), 1))
-        self.assertEqual(2, OaS.indexUB(range(3), 2))
-        self.assertEqual(-1, OaS.indexUB(range(3), 3))
+        self.assertEqual(0, OaS.indexUB(list(range(3)), -10))
+        self.assertEqual(0, OaS.indexUB(list(range(3)), 0))
+        self.assertEqual(1, OaS.indexUB(list(range(3)), 1))
+        self.assertEqual(2, OaS.indexUB(list(range(3)), 2))
+        self.assertEqual(-1, OaS.indexUB(list(range(3)), 3))
 
     def test_04(self):
         """OaS.indexUB() - within list range(4)."""
-        self.assertEqual(0, OaS.indexUB(range(4), 0))
-        self.assertEqual(1, OaS.indexUB(range(4), 1))
-        self.assertEqual(2, OaS.indexUB(range(4), 2))
-        self.assertEqual(3, OaS.indexUB(range(4), 3))
+        self.assertEqual(0, OaS.indexUB(list(range(4)), 0))
+        self.assertEqual(1, OaS.indexUB(list(range(4)), 1))
+        self.assertEqual(2, OaS.indexUB(list(range(4)), 2))
+        self.assertEqual(3, OaS.indexUB(list(range(4)), 3))
 
     def test_08_02(self):
         """OaS.indexUB() - within list range(8, 2)."""
-        self.assertEqual(0, OaS.indexUB(range(0, 8, 2), 0))
-        self.assertEqual(1, OaS.indexUB(range(0, 8, 2), 1))
+        self.assertEqual(0, OaS.indexUB(list(range(0, 8, 2)), 0))
+        self.assertEqual(1, OaS.indexUB(list(range(0, 8, 2)), 1))
         
     def test_10(self):
         """OaS.indexUB() - Special tests (1)."""
@@ -309,8 +309,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestBufGen.py - A module that tests PpToken module.
+    print("""TestBufGen.py - A module that tests PpToken module.
 Usage:
 python TestBufGen.py [-lh --help]
 
@@ -326,20 +325,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestBufGen.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestBufGen.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -350,7 +349,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -360,8 +359,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

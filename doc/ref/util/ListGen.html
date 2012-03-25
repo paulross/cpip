@@ -1,0 +1,185 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ListGen &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Utilities" href="../util/index.html" />
+    <link rel="next" title="MatrixRep" href="../util/MatrixRep.html" />
+    <link rel="prev" title="DictTree" href="../util/DictTree.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/MatrixRep.html" title="MatrixRep"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../util/DictTree.html" title="DictTree"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" accesskey="U">CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="listgen">
+<h1>ListGen<a class="headerlink" href="#listgen" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.util.ListGen"></span><p>Treats a list as a generator with an optional additional generator. This is
+used for macro replacement for example.</p>
+<dl class="class">
+<dt id="cpip.util.ListGen.ListAsGenerator">
+<em class="property">class </em><tt class="descclassname">cpip.util.ListGen.</tt><tt class="descname">ListAsGenerator</tt><big>(</big><em>theList</em>, <em>theGen=None</em><big>)</big><a class="headerlink" href="#cpip.util.ListGen.ListAsGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that takes a list and provides a generator on that list. If the
+list is exhausted and call for another object is made then it is pulled of
+the generator (if available).</p>
+<p>The attribute <tt class="docutils literal"><span class="pre">listIsEmpty</span></tt> is True if the immediate list is empty.</p>
+<p>Iterating through the result and stopping when the list is exhausted using
+the flag listIsEmpty:</p>
+<p>Be clear when this flag is set, for example if we have a list [0,1,2,3]
+followed by [&#8216;A&#8217;, &#8216;B&#8217;, &#8216;C&#8217;] thus:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">myObj</span> <span class="o">=</span> <span class="n">ListAsGenerator</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">ListAsGenerator</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="s">&#39;ABC&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">next</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>And we try to iterate over it with list comprehension:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">myGen</span> <span class="o">=</span> <span class="n">myObj</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+<span class="n">myResult</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">myGen</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">myObj</span><span class="o">.</span><span class="n">listIsEmpty</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>myResult will be [0, 1,] because when 3 is yielded the flag is False as
+it refers to the _next_ item.</p>
+<p>Similarly the list comprehension:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">myResult</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">myGen</span> <span class="k">if</span> <span class="n">myObj</span><span class="o">.</span><span class="n">listIsEmpty</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Will be [3, &#8216;A&#8217;, &#8216;B&#8217;, &#8216;C&#8217;]</p>
+<p>If you want to recover the then this the technique:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">myResult</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">myObj</span><span class="o">.</span><span class="n">listIsEmpty</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">aVal</span> <span class="ow">in</span> <span class="n">myGen</span><span class="p">:</span>
+        <span class="n">myResult</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">aVal</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">myObj</span><span class="o">.</span><span class="n">listIsEmpty</span><span class="p">:</span>
+            <span class="k">break</span>
+</pre></div>
+</div>
+<p>Or exclude the list then this the technique:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="ow">not</span> <span class="n">myObj</span><span class="o">.</span><span class="n">listIsEmpty</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">aVal</span> <span class="ow">in</span> <span class="n">myGen</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">myObj</span><span class="o">.</span><span class="n">listIsEmpty</span><span class="p">:</span>
+            <span class="k">break</span>
+<span class="n">myResult</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">myGen</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The rationale for this behaviour is for generating macro replacement tokens
+in that the list contains tokens for re-examination and the last token may
+turn out to be a function like macro that needs the generator to (possibly)
+complete the expansion. Once that last token has been re-examined we do
+not want to consume any more tokens than necessary.</p>
+<dl class="attribute">
+<dt id="cpip.util.ListGen.ListAsGenerator.listIsEmpty">
+<tt class="descname">listIsEmpty</tt><a class="headerlink" href="#cpip.util.ListGen.ListAsGenerator.listIsEmpty" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the next yield would come from the generator, not the list.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../util/DictTree.html"
+                        title="previous chapter">DictTree</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../util/MatrixRep.html"
+                        title="next chapter">MatrixRep</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/util/ListGen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/MatrixRep.html" title="MatrixRep"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../util/DictTree.html" title="DictTree"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" >CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

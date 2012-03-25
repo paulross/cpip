@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PpTokeniser &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="PpWhitespace" href="../core/PpWhitespace.html" />
+    <link rel="prev" title="PpTokenCount" href="../core/PpTokenCount.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpWhitespace.html" title="PpWhitespace"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpTokenCount.html" title="PpTokenCount"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.PpTokeniser">
+<span id="pptokeniser"></span><span id="cpip-ref-pptokeniser"></span><h1>PpTokeniser<a class="headerlink" href="#module-cpip.core.PpTokeniser" title="Permalink to this headline">¶</a></h1>
+<p>Performs translation phases 0, 1, 2, 3 on C/C++ source code.</p>
+<p>Translation phases from ISO/IEC 9899:1999 (E):</p>
+<p>5.1.1.2 Translation phases
+5.1.1.2-1 The precedence among the syntax rules of translation is specified by
+the following phases.</p>
+<p>Phase 1. Physical source file multibyte characters are mapped, in an
+implementation defined manner, to the source character set (introducing
+new-line characters for end-of-line indicators) if necessary. Trigraph
+sequences are replaced by corresponding single-character internal
+representations.</p>
+<p>Phase 2. Each instance of a backslash character () immediately followed by
+a new-line character is deleted, splicing physical source lines to form
+logical source lines. Only the last backslash on any physical source line
+shall be eligible for being part of such a splice. A source file that is
+not empty shall end in a new-line character, which shall not be immediately
+preceded by a backslash character before any such splicing takes place.</p>
+<p>Phase 3. The source file is decomposed into preprocessing tokens6) and
+sequences of white-space characters (including comments). A source file
+shall not end in a partial preprocessing token or in a partial comment.
+Each comment is replaced by one space character. New-line characters are
+retained. Whether each nonempty sequence of white-space characters other
+than new-line is retained or replaced by one space character is
+implementation-defined.</p>
+<p>TODO: Do phases 0,1,2 as generators i.e. not in memory?</p>
+<p>TODO: Check coverage with a complete but minimal example of every token</p>
+<p>TODO: remove self._cppTokType and have it as a return value?</p>
+<p>TODO: Remove commented out code.</p>
+<p>TODO: Performance of phase 1 processing.</p>
+<p>TODO: rename next() as genPpTokens()?</p>
+<p>TODO: Perf rewrite slice functions to take an integer argument of where in the
+array to start inspecting for a slice. This avoids calls to ...[x:] e.g.
+myCharS = myCharS[sliceIdx:] in genLexPptokenAndSeqWs.</p>
+<dl class="exception">
+<dt id="cpip.core.PpTokeniser.ExceptionCpipTokeniser">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">ExceptionCpipTokeniser</tt><a class="headerlink" href="#cpip.core.PpTokeniser.ExceptionCpipTokeniser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple specialisation of an exception class for the preprocessor.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpTokeniser.ExceptionCpipTokeniserUcnConstraint">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">ExceptionCpipTokeniserUcnConstraint</tt><a class="headerlink" href="#cpip.core.PpTokeniser.ExceptionCpipTokeniserUcnConstraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specialisation for when universal character name exceeds constraints.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.PpTokeniser.PpTokeniser">
+<em class="property">class </em><tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">PpTokeniser</tt><big>(</big><em>theFileObj=None</em>, <em>theFileId=None</em>, <em>theDiagnostic=None</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imitates a Preprocessor that conforms to ISO/IEC 14882:1998(E).
+TODO: Escape sequences Table 5?</p>
+<p>Implementation note on all _slice...() and __slice...() functions.
+A _slice...() function takes a buffer-like object and an integer offset as
+arguments. The buffer-like object will be accessed by index so just needs
+to implement __getitem__(). On overrun or other out of bounds index an
+IndexError must be caught by the _slice...() function.
+i.e. len() should not be called on the buffer-like object, or rather, if
+len() (i.e. __len__() ) is called a TypeError will be raised and propagated
+out of this class to the caller.
+For example StrTree conforms to these requirements.</p>
+<p>The function is expected to return an integer that represents the number
+of objects that can be consumed from the buffer-like object. If the
+return value is non-zero the PpTokeniser is side-affected in that
+self._cppTokType is set to a non-None value. Before doing that a test is
+made and if self._cppTokType is already non-None then an assertion error
+is raised.
+The buffer-like object should not be side-affected by the _slice...()
+function regardless of the return value.</p>
+<p>So a _slice...() function pattern is:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">_slice</span><span class="o">...</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theBuf</span><span class="p">,</span> <span class="n">theOfs</span><span class="p">):</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">theOfs</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># Only access theBuf with [i] so that __getitem__() is called</span>
+        <span class="o">...</span><span class="n">theBuf</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">...</span>
+        <span class="c"># Success as the absence of an IndexError!</span>
+        <span class="c"># So return the length of objects that pass</span>
+        <span class="c"># First test and set for type of slice found</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">theOfs</span><span class="p">:</span>
+            <span class="k">assert</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cppTokType</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">),</span> <span class="s">&#39;_cppTokType was </span><span class="si">%s</span><span class="s"> now </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cppTokType</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cppTokType</span> <span class="o">=</span> <span class="o">...</span>
+        <span class="c"># NOTE: Return size of slice not the index of the end of the slice</span>
+        <span class="k">return</span> <span class="n">i</span> <span class="o">-</span> <span class="n">theOfs</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="c"># Here either return 0 on IndexError or i-theOfs</span>
+    <span class="k">return</span> <span class="o">...</span>
+</pre></div>
+</div>
+<p>NOTE: Functions starting with __slice... do not trap the IndexError, the
+caller must do that.</p>
+<dl class="attribute">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.cppTokType">
+<tt class="descname">cppTokType</tt><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.cppTokType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the type of the last preprocessing-token found by _sliceLexPptoken().</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.fileLineCol">
+<tt class="descname">fileLineCol</tt><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.fileLineCol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an instance of FileLineCol from the current physical line column.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.fileLocator">
+<tt class="descname">fileLocator</tt><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.fileLocator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the FileLocation object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.fileName">
+<tt class="descname">fileName</tt><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.fileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the ID of the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.genLexPptokenAndSeqWs">
+<tt class="descname">genLexPptokenAndSeqWs</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.genLexPptokenAndSeqWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a sequence of PpToken objects. either:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a sequence of whitespace (comments are replaces with a single whitespace).</li>
+<li>a pre-processing token.</li>
+</ul>
+</div></blockquote>
+<p>This performs translation phasse 3.</p>
+<p>NOTE: Whitespace sequences are not merged so <tt class="docutils literal"><span class="pre">'</span>&nbsp; <span class="pre">/\*\*/</span> <span class="pre">'</span></tt> will generate
+three tokens each of <tt class="docutils literal"><span class="pre">PpToken.PpToken('</span> <span class="pre">',</span> <span class="pre">'whitespace')</span></tt>.
+So this yields the tokens from translation phase 3 if supplied with
+the results of translation phase 2.</p>
+<p>NOTE: This does not generate &#8216;header-name&#8217; tokens as these are context
+dependent i.e. they are only valid in the context of a #include
+directive. ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 says that:
+&#8220;A header name preprocessing token is recognised only within a #include
+preprocessing directive.&#8221;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.initLexPhase12">
+<tt class="descname">initLexPhase12</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.initLexPhase12" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process phases one and two and returns the result as a string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.lexPhases_0">
+<tt class="descname">lexPhases_0</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.lexPhases_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>An non-standard phase that just reads the file and returns its
+contents as a list of lines (including EOL characters).
+May raise an ExceptionCpipTokeniser if self has been created with None
+or the file is unreadable</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.lexPhases_1">
+<tt class="descname">lexPhases_1</tt><big>(</big><em>theLineS</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.lexPhases_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase one
+Takes a list of lines (including EOL characters), replaces trigraphs
+and returns the new list of lines.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.lexPhases_2">
+<tt class="descname">lexPhases_2</tt><big>(</big><em>theLineS</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.lexPhases_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase two
+This joins physical to logical lines. NOTE: This side-effects the
+supplied lines and returns None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>The token generator. On being called this performs translations phases
+1, 2 and 3 (unless already done) and then generates pairs of:
+(preprocessing token, token type)
+Token type is an enumerated integer from LEX_PPTOKEN_TYPES.
+Proprocessing tokens include sequences of whitespace characters and
+these are not necessarily concatenated i.e. this generator can produce
+more than one whitespace token in sequence.
+TODO: Rename this to ppTokens() or something</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.pLineCol">
+<tt class="descname">pLineCol</tt><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.pLineCol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current physical (line, column) as integers.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.reduceToksToHeaderName">
+<tt class="descname">reduceToksToHeaderName</tt><big>(</big><em>theToks</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.reduceToksToHeaderName" title="Permalink to this definition">¶</a></dt>
+<dd><p>This takes a list of PpTokens and retuns a list of PpTokens
+that might have a header-name token type in them.
+May raise an ExceptionCpipTokeniser if tokens are not all consumed.
+This is used at lexer level for re-interpreting PpTokens in the
+context of a #include directive.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.resetTokType">
+<tt class="descname">resetTokType</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.resetTokType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Erases the memory of the previously seen token type.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpTokeniser.PpTokeniser.substAltToken">
+<tt class="descname">substAltToken</tt><big>(</big><em>tok</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.substAltToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>If a PpToken is a Digraph this alters its value to its alternative.
+If not the supplied token is returned unchanged.
+There are no side effects on self.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpTokeniser.TRIGRAPH_PREFIX">
+<tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">TRIGRAPH_PREFIX</tt><em class="property"> = '?'</em><a class="headerlink" href="#cpip.core.PpTokeniser.TRIGRAPH_PREFIX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Note: This is redoubled</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpTokeniser.TRIGRAPH_SIZE">
+<tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">TRIGRAPH_SIZE</tt><em class="property"> = 3</em><a class="headerlink" href="#cpip.core.PpTokeniser.TRIGRAPH_SIZE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Well it is a Trigraph</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/PpTokenCount.html"
+                        title="previous chapter">PpTokenCount</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/PpWhitespace.html"
+                        title="next chapter">PpWhitespace</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/PpTokeniser.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpWhitespace.html" title="PpWhitespace"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpTokenCount.html" title="PpTokenCount"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

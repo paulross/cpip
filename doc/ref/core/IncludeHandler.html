@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>IncludeHandler &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="MacroEnv" href="../core/MacroEnv.html" />
+    <link rel="prev" title="FileIncludeGraph" href="../core/FileIncludeGraph.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/MacroEnv.html" title="MacroEnv"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/FileIncludeGraph.html" title="FileIncludeGraph"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.IncludeHandler">
+<span id="includehandler"></span><span id="cpip-ref-includehandler"></span><h1>IncludeHandler<a class="headerlink" href="#module-cpip.core.IncludeHandler" title="Permalink to this headline">¶</a></h1>
+<p>Provides handlers for #including files.</p>
+<dl class="class">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd">
+<em class="property">class </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">CppIncludeStd</tt><big>(</big><em>theUsrDirs</em>, <em>theSysDirs</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class that applies search rules for #include statements.</p>
+<p>Search tactics based on RVCT and Berkeley UNIX search rules:</p>
+<div class="highlight-python"><pre>I is the usr includes.
+J is the sys includes.
+Size of I Size of J   #include &lt;...&gt;      #include "..."
+0         0           None                CP
+
+0         &gt;0          SYSTEMINCLUDEdirs   CP, SYSTEMINCLUDEdirs
+
+&gt;0        0           USERINCLUDEdirs     CP, USERINCLUDEdirs
+
+&gt;0        &gt;0          SYSTEMINCLUDEdirs,  CP, USERINCLUDEdirs,
+                      USERINCLUDEdirs      SYSTEMINCLUDEdirs</pre>
+</div>
+<p>ISO/IEC 9899:1999 (E) 6.10.2-3 means that a failure of q-char must be
+retried as if it was a h-char.
+i.e. A failure of a q-char-sequence thus:
+#include &#8221;...&#8221;
+Is to be retried as if it was written as a h-char-sequence thus:
+#include &lt;...&gt;
+See: _includeQcharseq()</p>
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.canInclude">
+<tt class="descname">canInclude</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.canInclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the last include succeeded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.clearFindLogic">
+<tt class="descname">clearFindLogic</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.clearFindLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the list of find results for a single #include statement.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.clearHistory">
+<tt class="descname">clearHistory</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.clearHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the CP stack. This needed if you use this class as a
+persistent one and it encounters an exception. You need to call this
+function before you can reuse it.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.cpStack">
+<tt class="descname">cpStack</tt><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.cpStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current stack of current places.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.cpStackPop">
+<tt class="descname">cpStackPop</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.cpStackPop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pops and returns the CP string off the current place stack.
+This is public so that the PpLexer can use it when processing
+pre-include files that might themselves include other files.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.cpStackPush">
+<tt class="descname">cpStackPush</tt><big>(</big><em>theFpo</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.cpStackPush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends the CP from the FilePathOrigin to the current place stack.
+This is public so that the PpLexer can use it when processing
+pre-include files that might themselves include other files.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.cpStackSize">
+<tt class="descname">cpStackSize</tt><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.cpStackSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the size of the current stack of current places.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.currentPlace">
+<tt class="descname">currentPlace</tt><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.currentPlace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last current place or None if #include failed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.endInclude">
+<tt class="descname">endInclude</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.endInclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Notify end of #include&#8217;d file. This pops the CP stack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.finalise">
+<tt class="descname">finalise</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.finalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalise at the end of the translation unit.
+Might raise a ExceptionCppInclude.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.findLogic">
+<tt class="descname">findLogic</tt><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.findLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of strings that describe _how_ the file was found
+For example:</p>
+<p><tt class="docutils literal"><span class="pre">['&lt;foo.h&gt;',</span> <span class="pre">'CP=None',</span> <span class="pre">'sys=None',</span> <span class="pre">'usr=include/foo.h']</span></tt></p>
+<p>Each string after [0] is of the form: <tt class="docutils literal"><span class="pre">key=value</span></tt> Where:</p>
+<ol class="arabic simple">
+<li>key is a key in <tt class="docutils literal"><span class="pre">self.INCLUDE_ORIGIN_CODES</span></tt></li>
+<li>= is the <tt class="docutils literal"><span class="pre">'='</span></tt> character.</li>
+<li>value is the result, or &#8216;None&#8217; if not found.</li>
+<li>Item [0] is the invocation</li>
+<li>Item [-1] is the final resolution.</li>
+</ol>
+<p>The intermediate ones are various tries in order.
+So:</p>
+<p><tt class="docutils literal"><span class="pre">['&lt;foo.h&gt;',</span> <span class="pre">'CP=None',</span> <span class="pre">'sys=None',</span> <span class="pre">'usr=include/foo.h']</span></tt></p>
+<p>Wwould mean:</p>
+<ul class="simple">
+<li>[0]: <tt class="docutils literal"><span class="pre">'&lt;foo.h&gt;'</span></tt> the include directive was: <tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;foo.h&gt;</span></tt></li>
+<li>[1]: <tt class="docutils literal"><span class="pre">'CP=None'</span></tt> the Current place was searched and nothing found.</li>
+<li>[2]: <tt class="docutils literal"><span class="pre">'sys=None'</span></tt> the system include(s) were searched and nothing found.</li>
+<li>[3]: <tt class="docutils literal"><span class="pre">'usr=include/foo.h'</span></tt> the user include(s) were searched and include/foo.h was found.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.includeHeaderName">
+<tt class="descname">includeHeaderName</tt><big>(</big><em>theStr</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.includeHeaderName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file location of a #include header-name where the
+header-name is a pp-token either a &lt;h-char-sequence&gt; or a
+&#8220;q-char-sequence&#8221; (including delimiters).
+If not None return value this also records the CP for the file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.initialTu">
+<tt class="descname">initialTu</tt><big>(</big><em>theTuIdentifier</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.initialTu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an Translation Unit Identifier this should return a
+class FilePathOrigin or None for the initial translation unit.
+As a precaution this should include code to check that the stack
+of current places is empty. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cpStack</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ExceptionCppInclude</span><span class="p">(</span><span class="s">&#39;setTu() with CP stack: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cpStack</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.validateCpStack">
+<tt class="descname">validateCpStack</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.validateCpStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests the coherence of the CP stack. A None can not be followed by
+a non-None.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.IncludeHandler.CppIncludeStdOs">
+<em class="property">class </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">CppIncludeStdOs</tt><big>(</big><em>theUsrDirs</em>, <em>theSysDirs</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStdOs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This implements _searchFile() based on an OS file system call.</p>
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStdOs.initialTu">
+<tt class="descname">initialTu</tt><big>(</big><em>theTuPath</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStdOs.initialTu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an path as a string this returns the
+class FilePathOrigin or None for the initial translation unit</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.IncludeHandler.CppIncludeStringIO">
+<em class="property">class </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">CppIncludeStringIO</tt><big>(</big><em>theUsrDirs</em>, <em>theSysDirs</em>, <em>theInitialTuContent</em>, <em>theFilePathToContent</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStringIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>This implements _searchFile() based on a lookup of stings that
+returns StringIO file-like object.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.IncludeHandler.ExceptionCppInclude">
+<em class="property">exception </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">ExceptionCppInclude</tt><a class="headerlink" href="#cpip.core.IncludeHandler.ExceptionCppInclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple specialisation of an exception class for the CppInclude.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.IncludeHandler.FilePathOrigin">
+<em class="property">class </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">FilePathOrigin</tt><a class="headerlink" href="#cpip.core.IncludeHandler.FilePathOrigin" title="Permalink to this definition">¶</a></dt>
+<dd><p>FilePathOrigin(fileObj, filePath, currentPlace, origin)</p>
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.FilePathOrigin.currentPlace">
+<tt class="descname">currentPlace</tt><a class="headerlink" href="#cpip.core.IncludeHandler.FilePathOrigin.currentPlace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.FilePathOrigin.fileObj">
+<tt class="descname">fileObj</tt><a class="headerlink" href="#cpip.core.IncludeHandler.FilePathOrigin.fileObj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.FilePathOrigin.filePath">
+<tt class="descname">filePath</tt><a class="headerlink" href="#cpip.core.IncludeHandler.FilePathOrigin.filePath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.FilePathOrigin.origin">
+<tt class="descname">origin</tt><a class="headerlink" href="#cpip.core.IncludeHandler.FilePathOrigin.origin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/FileIncludeGraph.html"
+                        title="previous chapter">FileIncludeGraph</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/MacroEnv.html"
+                        title="next chapter">MacroEnv</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/IncludeHandler.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/MacroEnv.html" title="MacroEnv"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/FileIncludeGraph.html" title="FileIncludeGraph"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

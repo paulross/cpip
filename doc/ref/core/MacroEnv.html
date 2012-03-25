@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MacroEnv &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="PpDefine" href="../core/PpDefine.html" />
+    <link rel="prev" title="IncludeHandler" href="../core/IncludeHandler.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpDefine.html" title="PpDefine"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/IncludeHandler.html" title="IncludeHandler"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.MacroEnv">
+<span id="macroenv"></span><span id="cpip-ref-macroenv"></span><h1>MacroEnv<a class="headerlink" href="#module-cpip.core.MacroEnv" title="Permalink to this headline">¶</a></h1>
+<p>This an environment of macro declarations</p>
+<p>It implements ISO/IEC 9899:1999(E) section 6 (aka &#8216;C&#8217;)
+and ISO/IEC 14882:1998(E) section 16 (aka &#8216;C++&#8217;)</p>
+<p>TODO: Record macro related events in the order that they happen.:</p>
+<div class="highlight-python"><pre>[
+    (
+        macro_ident,         - string
+        event,               - string e.g. 'define', 'replace', 'undef'
+        None or PpDefine,    - the latter if undef (or define???)
+        file,                - string
+        line,                - int
+        col,                 - int
+    ),
+]</pre>
+</div>
+<p>Can remap this on output to:
+{macro_ident : [index, ...], ...}</p>
+<p>TODO: Record #ifdef, #ifndef, #if defined and #elif defined when no macro is
+defined in a separate data structure so that we can say that these macros, if
+present, could alter the outcome i.e. it is a NOT dependency.</p>
+<dl class="exception">
+<dt id="cpip.core.MacroEnv.ExceptionMacroEnv">
+<em class="property">exception </em><tt class="descclassname">cpip.core.MacroEnv.</tt><tt class="descname">ExceptionMacroEnv</tt><a class="headerlink" href="#cpip.core.MacroEnv.ExceptionMacroEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when handling MacroEnv object.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.MacroEnv.ExceptionMacroEnvInvalidRedefinition">
+<em class="property">exception </em><tt class="descclassname">cpip.core.MacroEnv.</tt><tt class="descname">ExceptionMacroEnvInvalidRedefinition</tt><a class="headerlink" href="#cpip.core.MacroEnv.ExceptionMacroEnvInvalidRedefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for a invalid redefinition of a macro.
+NOTE: Under C rules (C Rationale 6.10.3) callers should merely issue a
+suitable diagnostic.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.MacroEnv.ExceptionMacroEnvNoMacroDefined">
+<em class="property">exception </em><tt class="descclassname">cpip.core.MacroEnv.</tt><tt class="descname">ExceptionMacroEnvNoMacroDefined</tt><a class="headerlink" href="#cpip.core.MacroEnv.ExceptionMacroEnvNoMacroDefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when trying to access a PpDefine that is not currently defined.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.MacroEnv.ExceptionMacroIndexError">
+<em class="property">exception </em><tt class="descclassname">cpip.core.MacroEnv.</tt><tt class="descname">ExceptionMacroIndexError</tt><a class="headerlink" href="#cpip.core.MacroEnv.ExceptionMacroIndexError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when an access to a PpDefine that generates a IndexError.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.MacroEnv.ExceptionMacroReplacementInit">
+<em class="property">exception </em><tt class="descclassname">cpip.core.MacroEnv.</tt><tt class="descname">ExceptionMacroReplacementInit</tt><a class="headerlink" href="#cpip.core.MacroEnv.ExceptionMacroReplacementInit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception in the constructor.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.MacroEnv.ExceptionMacroReplacementPredefinedRedefintion">
+<em class="property">exception </em><tt class="descclassname">cpip.core.MacroEnv.</tt><tt class="descname">ExceptionMacroReplacementPredefinedRedefintion</tt><a class="headerlink" href="#cpip.core.MacroEnv.ExceptionMacroReplacementPredefinedRedefintion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for a redefinition of a macro id that is predefined.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.MacroEnv.MacroEnv">
+<em class="property">class </em><tt class="descclassname">cpip.core.MacroEnv.</tt><tt class="descname">MacroEnv</tt><big>(</big><em>enableTrace=False</em>, <em>stdPredefMacros=None</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a set of #define directives that represent a macro processing
+environment. This provides support for #define and #undef directives.
+It also provides support for macro replacement see:
+ISO/IEC 9899:1999 (E) 6.10.3 Macro replacement.</p>
+<p><em>enableTrace</em> allows calls to _debugTokenStream() that may or may not
+produce log output (depending on logging level).
+If True this makes this code run slower, typically 3x slower</p>
+<p><em>stdPredefMacros</em> if present should be a dictionary of:
+<tt class="docutils literal"><span class="pre">{identifier</span> <span class="pre">:</span> <span class="pre">replacement_string_\n_terminated,</span> <span class="pre">...}</span></tt>
+For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;__DATE__&#39;</span> <span class="p">:</span> <span class="s">&#39;First of June</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span>
+    <span class="s">&#39;__TIME__&#39;</span> <span class="p">:</span> <span class="s">&#39;Just before lunchtime.</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Each identifier must be in <tt class="docutils literal"><span class="pre">STD_PREDEFINED_NAMES</span></tt></p>
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clears the macro environment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.define">
+<tt class="descname">define</tt><big>(</big><em>theGen</em>, <em>theFile</em>, <em>theLine</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.define" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines a macro. theGen should be in the state immediately after the
+<tt class="docutils literal"><span class="pre">#define</span></tt> i.e. this will consume leading whitespace and the trailing
+newline.</p>
+<p>Will raise a ExceptionMacroEnvInvalidRedefinition if the redefinition
+is not valid. May raise a ExceptionCpipDefineInit (or sub class) on failure.</p>
+<p>On success it returns the identifier of the macro as a string..
+The insertion is stable i.e. a valid re-definition does not replace
+the existing definition so that the existing state of the macro
+definition (file, line, reference count etc. are preserved.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.defined">
+<tt class="descname">defined</tt><big>(</big><em>theTtt</em>, <em>flagInvert</em>, <em>theFileLineCol=None</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.defined" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the PpToken theTtt is an identifier that is currently defined
+then this returns 1 as a PpToken, 0 as a PpToken otherwise.
+If the macro exists in the environment its reference count is
+incremented.
+See: ISO/IEC 9899:1999 (E) 6.10.1.
+theFileLineCol is a FileLocation.FileLineCol object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.genMacros">
+<tt class="descname">genMacros</tt><big>(</big><em>theIdentifier=None</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.genMacros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates PpDefine objects encountered during my existence.
+Macros that have been undefined will be generated first in order of
+un-definition followed by the currently defined macros in identifier
+order.
+Macros that have been #undef&#8217;d will have the attribute 
+isCurrentlyDefined as False.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.genMacrosInScope">
+<tt class="descname">genMacrosInScope</tt><big>(</big><em>theIdent=None</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.genMacrosInScope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates PpDefine objects encountered during my existence and still
+in scope i.e. not yet un-defined.
+If theIdent is not None then only that named macros will be yielded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.genMacrosOutOfScope">
+<tt class="descname">genMacrosOutOfScope</tt><big>(</big><em>theIdent=None</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.genMacrosOutOfScope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates PpDefine objects encountered during my existence but then
+undefined in the order of un-definition.
+If theIdent is not None then only that named macros will be yielded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.getUndefMacro">
+<tt class="descname">getUndefMacro</tt><big>(</big><em>theIdx</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.getUndefMacro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the PpDefine object from the undef list for the given index.
+Will raise an ExceptionMacroIndexError if the index is out of range.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.hasMacro">
+<tt class="descname">hasMacro</tt><big>(</big><em>theIdentifier</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.hasMacro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the environment has the macro.
+NOTE: This does _not_ increment the reference count so should not be
+used when processing #ifdef ..., #if defined ... or #if !defined ...
+for those use isDefined() and defined() instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.isDefined">
+<tt class="descname">isDefined</tt><big>(</big><em>theTtt</em>, <em>theFileLineCol=None</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.isDefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True theTtt is an identifier that is currently defined,
+False otherwise. If True this increments the macro reference.
+See: ISO/IEC 9899:1999 (E) 6.10.1.
+theFileLineCol is a FileLocation.FileLineCol object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.macro">
+<tt class="descname">macro</tt><big>(</big><em>theIdentifier</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the macro identified by the identifier.
+Will raise a ExceptionMacroEnvNoMacroDefined is undefined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.macroHistory">
+<tt class="descname">macroHistory</tt><big>(</big><em>incEnv=True</em>, <em>onlyRef=True</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macroHistory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the macro history as a multi-line string</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.macroHistoryMap">
+<tt class="descname">macroHistoryMap</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macroHistoryMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a map of {ident : ([ints, ...], True/False), ...}
+Where the macro identifier is mapped to a pair where:
+pair[0] is a list of indexes into getUndefMacro().
+pair[1] is boolean, True if the identifier is currently defined
+i.e. it is the value ofself.hasMacro(ident).
+The macro can be obtained by self.macro().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.macroNotDefinedDependencies">
+<tt class="descname">macroNotDefinedDependencies</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macroNotDefinedDependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a map of {identifier : [class FileLineColumn, ...], ...}
+where there has been an #ifdef and nothing is defined.
+Thus these macros, if present, could alter the outcome
+i.e. it is dependency on them NOT being defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.macroNotDefinedDependencyNames">
+<tt class="descname">macroNotDefinedDependencyNames</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macroNotDefinedDependencyNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an unsorted list of identifies
+where there has been an #ifdef and nothing is defined.
+Thus these macros, if present, could alter the outcome
+i.e. it is dependency on them NOT being defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.macroNotDefinedDependencyReferences">
+<tt class="descname">macroNotDefinedDependencyReferences</tt><big>(</big><em>theIdentifier</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macroNotDefinedDependencyReferences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an ordered list of class FileLineColumn for an identifier
+where there has been an #ifdef and nothing is defined.
+Thus these macros, if present, could alter the outcome
+i.e. it is dependency on them NOT being defined.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.macros">
+<tt class="descname">macros</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns list of strings of current macros.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.mightReplace">
+<tt class="descname">mightReplace</tt><big>(</big><em>theTtt</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.mightReplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if theTok might be able to be expanded.
+&#8216;Might&#8217; is not &#8216;can&#8217; or &#8216;will&#8217; because of this:</p>
+<div class="highlight-python"><pre>#define FUNC(a,b) a-b
+FUNC FUNC(45,3)</pre>
+</div>
+<p>Becomes:</p>
+<div class="highlight-python"><pre>FUNC 45 -3</pre>
+</div>
+<p>Thus <tt class="docutils literal"><span class="pre">mightReplace('FUNC',</span> <span class="pre">...)</span></tt> is True in both cases but actual
+replacement only occurs once for the second <tt class="docutils literal"><span class="pre">FUNC</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.referencedMacroIdentifiers">
+<tt class="descname">referencedMacroIdentifiers</tt><big>(</big><em>sortedByRefcount=False</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.referencedMacroIdentifiers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an unsorted list of macro identifiers that have a reference
+count &gt; 0. If sortedByRefcount is True the list will be in increasing
+order of reference count then by name. Use reverse() on the result to get decreasing
+order.
+If sortedByRefcount is False the return value is unsorted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.replace">
+<tt class="descname">replace</tt><big>(</big><em>theTtt</em>, <em>theGen</em>, <em>theFileLineCol=None</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a PpToken this returns the replacement as a list of
+[class PpToken, ...] that is the result of the substitution of
+macro definitions.
+theGen is a generator that might be used in the case of function-like
+macros to consume their argument lists.
+theFileLineCol is a FileLocation.FileLineCol object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.set__FILE__">
+<tt class="descname">set__FILE__</tt><big>(</big><em>theStr</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.set__FILE__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sets the <tt class="docutils literal"><span class="pre">__FILE__</span></tt> macro directly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.set__LINE__">
+<tt class="descname">set__LINE__</tt><big>(</big><em>theStr</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.set__LINE__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sets the <tt class="docutils literal"><span class="pre">__LINE__</span></tt> macro directly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.undef">
+<tt class="descname">undef</tt><big>(</big><em>theGen</em>, <em>theFile</em>, <em>theLine</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.undef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a definition from the map and adds the PpDefine to
+self._undefS. It returns None.
+If no definition exists this has no side-effects on the internal
+representation.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/IncludeHandler.html"
+                        title="previous chapter">IncludeHandler</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/PpDefine.html"
+                        title="next chapter">PpDefine</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/MacroEnv.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpDefine.html" title="PpDefine"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/IncludeHandler.html" title="IncludeHandler"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

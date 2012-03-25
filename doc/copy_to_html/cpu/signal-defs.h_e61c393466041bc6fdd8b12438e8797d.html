@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/include/asm-generic/signal-defs.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/include/asm-generic/signal-defs.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#__ASM_GENERIC_SIGNAL_DEFS_H_0"><span class="b">__ASM_GENERIC_SIGNAL_DEFS_H</span></a>
+<a name="2"><span class="line">       2: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#__ASM_GENERIC_SIGNAL_DEFS_H_0"><span class="b">__ASM_GENERIC_SIGNAL_DEFS_H</span></a>
+<a name="3"><span class="line">       3: </span></a>
+<a name="4"><span class="line">       4: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">compiler</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5"><span class="line">       5: </span></a>
+<a name="6"><span class="line">       6: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#SIG_BLOCK_0"><span class="b">SIG_BLOCK</span></a>
+<a name="7"><span class="line">       7: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SIG_BLOCK_0"><span class="b">SIG_BLOCK</span></a>          <span class="c">0</span>    <span class="k">/* for blocking signals */</span>
+<a name="8"><span class="line">       8: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="9"><span class="line">       9: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#SIG_UNBLOCK_0"><span class="b">SIG_UNBLOCK</span></a>
+<a name="10"><span class="line">      10: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SIG_UNBLOCK_0"><span class="b">SIG_UNBLOCK</span></a>        <span class="c">1</span>    <span class="k">/* for unblocking signals */</span>
+<a name="11"><span class="line">      11: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="12"><span class="line">      12: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#SIG_SETMASK_0"><span class="b">SIG_SETMASK</span></a>
+<a name="13"><span class="line">      13: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SIG_SETMASK_0"><span class="b">SIG_SETMASK</span></a>        <span class="c">2</span>    <span class="k">/* for setting the signal mask */</span>
+<a name="14"><span class="line">      14: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="15"><span class="line">      15: </span></a>
+<a name="16"><span class="line">      16: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#ZX19BU1NFTUJMWV9fX3Rlc3Rub3RkZWY_"><span class="b">__ASSEMBLY__</span></a>
+<a name="17"><span class="line">      17: </span></a><span class="m">typedef</span> <span class="m">void</span> <span class="b">__signalfn_t</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="18"><span class="line">      18: </span></a><span class="m">typedef</span> <span class="b">__signalfn_t</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="b">__sighandler_t</span><span class="f">;</span>
+<a name="19"><span class="line">      19: </span></a>
+<a name="20"><span class="line">      20: </span></a><span class="m">typedef</span> <span class="m">void</span> <span class="b">__restorefn_t</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="21"><span class="line">      21: </span></a><span class="m">typedef</span> <span class="b">__restorefn_t</span> <a href="cpu.c_macros.html#__user_0"><span class="b">__user</span></a> <span class="f">*</span><span class="b">__sigrestore_t</span><span class="f">;</span>
+<a name="22"><span class="line">      22: </span></a>
+<a name="23"><span class="line">      23: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SIG_DFL_0"><span class="b">SIG_DFL</span></a>    <span class="f">(</span><span class="f">(</span><a href="cpu.c_macros.html#__force_0"><span class="b">__force</span></a> <span class="b">__sighandler_t</span><span class="f">)</span><span class="c">0</span><span class="f">)</span>    <span class="k">/* default signal handling */</span>
+<a name="24"><span class="line">      24: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SIG_IGN_0"><span class="b">SIG_IGN</span></a>    <span class="f">(</span><span class="f">(</span><a href="cpu.c_macros.html#__force_0"><span class="b">__force</span></a> <span class="b">__sighandler_t</span><span class="f">)</span><span class="c">1</span><span class="f">)</span>    <span class="k">/* ignore signal */</span>
+<a name="25"><span class="line">      25: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#SIG_ERR_0"><span class="b">SIG_ERR</span></a>    <span class="f">(</span><span class="f">(</span><a href="cpu.c_macros.html#__force_0"><span class="b">__force</span></a> <span class="b">__sighandler_t</span><span class="f">)</span><span class="f">-</span><span class="c">1</span><span class="f">)</span>    <span class="k">/* error return from signal */</span>
+<a name="26"><span class="line">      26: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="27"><span class="line">      27: </span></a>
+<a name="28"><span class="line">      28: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* __ASM_GENERIC_SIGNAL_DEFS_H */</span>
+<a name="29"><span class="line">      29: </span></a></pre>
+  </body>
+</html>

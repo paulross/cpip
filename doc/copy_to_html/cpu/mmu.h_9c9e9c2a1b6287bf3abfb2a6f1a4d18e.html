@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/arch/x86/include/asm/mmu.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/arch/x86/include/asm/mmu.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#_ASM_X86_MMU_H_0"><span class="b">_ASM_X86_MMU_H</span></a>
+<a name="2"><span class="line">       2: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#_ASM_X86_MMU_H_0"><span class="b">_ASM_X86_MMU_H</span></a>
+<a name="3"><span class="line">       3: </span></a>
+<a name="4"><span class="line">       4: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">spinlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5"><span class="line">       5: </span></a><span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">mutex</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6"><span class="line">       6: </span></a>
+<a name="7"><span class="line">       7: </span></a><span class="k">/*
+<a name="8"><span class="line">       8: </span></a> * The x86 doesn&apos;t have a mmu context, but
+<a name="9"><span class="line">       9: </span></a> * we put the segment information here.
+<a name="10"><span class="line">      10: </span></a> */</span>
+<a name="11"><span class="line">      11: </span></a><span class="m">typedef</span> <span class="m">struct</span> <span class="f">{</span>
+<a name="12"><span class="line">      12: </span></a>    <span class="m">void</span> <span class="f">*</span><span class="b">ldt</span><span class="f">;</span>
+<a name="13"><span class="line">      13: </span></a>    <span class="m">int</span> <span class="b">size</span><span class="f">;</span>
+<a name="14"><span class="line">      14: </span></a>    <span class="m">struct</span> <span class="b">mutex</span> <span class="b">lock</span><span class="f">;</span>
+<a name="15"><span class="line">      15: </span></a>    <span class="m">void</span> <span class="f">*</span><span class="b">vdso</span><span class="f">;</span>
+<a name="16"><span class="line">      16: </span></a><span class="f">}</span> <span class="b">mm_context_t</span><span class="f">;</span>
+<a name="17"><span class="line">      17: </span></a>
+<a name="18"><span class="line">      18: </span></a><span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros.html#ZQ09ORklHX1NNUF90ZXN0bm90ZGVm"><span class="b">CONFIG_SMP</span></a>
+<a name="19"><span class="line">      19: </span></a><span class="m">void</span> <span class="b">leave_mm</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span><span class="f">;</span>
+<a name="20"><span class="line">      20: </span></a><span class="f">#</span><span class="n">else</span>
+<a name="21"><span class="line">      21: </span></a><span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">leave_mm</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span>
+<a name="22"><span class="line">      22: </span></a><span class="f">{</span>
+<a name="23"><span class="line">      23: </span></a><span class="f">}</span>
+<a name="24"><span class="line">      24: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="25"><span class="line">      25: </span></a>
+<a name="26"><span class="line">      26: </span></a><span class="f">#</span><span class="n">endif</span> <span class="k">/* _ASM_X86_MMU_H */</span>
+<a name="27"><span class="line">      27: </span></a></pre>
+  </body>
+</html>

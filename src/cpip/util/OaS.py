@@ -40,7 +40,7 @@ def indexMatch(l, v):
     i = 0
     j = len(l) - 1
     while i <= j:
-        m = i + ((j - i) / 2)
+        m = i + ((j - i) // 2)
         if l[m] < v:
             i = m + 1
         elif l[m] > v:
@@ -54,12 +54,12 @@ def indexLB(l, v):
     equal to v or the nearest lower value to v.
     Returns -1 if l empty or all values higher than v."""
     TRACE = 0
-    if TRACE: print 'TRACE indexLB(): l=%s, v=%s' % (l, v)
+    if TRACE: print('TRACE indexLB(): l=%s, v=%s' % (l, v))
     i = 0
     j = len(l) - 1
     while i < j:
-        m = i + ((j - i) / 2)
-        if TRACE: print 'TRACE indexLB(): i=%d, j=%d, m=%d l[m]=%d' % (i, j, m, l[m])
+        m = i + ((j - i) // 2)
+        if TRACE: print('TRACE indexLB(): i=%d, j=%d, m=%d l[m]=%d' % (i, j, m, l[m]))
         if m == i:
             # i and j are equal or just 1 apart
             if l[j] <= v:
@@ -75,7 +75,7 @@ def indexLB(l, v):
         else:
             # Here: l[m] == v
             return m
-    if TRACE: print 'TRACE indexLB(): END i=%d, j=%d' % (i, j)
+    if TRACE: print('TRACE indexLB(): END i=%d, j=%d' % (i, j))
     if i >= j and j >= 0 and j < len(l) and l[j] <= v:
         return j
     return -1

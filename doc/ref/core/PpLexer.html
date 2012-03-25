@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PpLexer &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="PpToken" href="../core/PpToken.html" />
+    <link rel="prev" title="PpDefine" href="../core/PpDefine.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpToken.html" title="PpToken"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpDefine.html" title="PpDefine"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.PpLexer">
+<span id="pplexer"></span><span id="cpip-ref-pplexer"></span><h1>PpLexer<a class="headerlink" href="#module-cpip.core.PpLexer" title="Permalink to this headline">¶</a></h1>
+<p>Generates tokens from a C or C++ translation unit.</p>
+<p>TODO: Fix accidental token pasting.</p>
+<p>TODO: Preprocessor statements in arguments of function like macros. Sect. 3.9
+of cpp.pdf and existing MacroEnv tests.</p>
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexer">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexer</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when handling PpLexer object.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerAlreadyGenerating">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerAlreadyGenerating</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerAlreadyGenerating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when two generators are created then the internal state will become inconsistent.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerCallStack">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerCallStack</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerCallStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when finding issues with the call stack or nested includes.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerCallStackTooSmall">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerCallStackTooSmall</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerCallStackTooSmall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when sys.getrecursionlimit() is too small.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerCondLevelOutOfRange">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerCondLevelOutOfRange</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerCondLevelOutOfRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when handling a conditional token generation level.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerDefine">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerDefine</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerDefine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when loading predefined macro definitions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerNestedInclueLimit">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerNestedInclueLimit</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerNestedInclueLimit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when nested #include limit exceeded.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerNoFile">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerNoFile</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerNoFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when can not find file.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerPreInclude">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerPreInclude</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerPreInclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when loading pre-include files.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerPreIncludeIncNoCp">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerPreIncludeIncNoCp</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerPreIncludeIncNoCp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when loading a pre-include file that has no current place
+(e.g. a StringIO object) and the pre-include then has an #include
+statement.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpLexer.ExceptionPpLexerPredefine">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">ExceptionPpLexerPredefine</tt><a class="headerlink" href="#cpip.core.PpLexer.ExceptionPpLexerPredefine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when loading predefined macro definitions.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpLexer.PREPROCESSING_DIRECTIVES">
+<tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">PREPROCESSING_DIRECTIVES</tt><em class="property"> = ['if', 'ifdef', 'ifndef', 'elif', 'else', 'endif', 'include', 'define', 'undef', 'line', 'error', 'pragma']</em><a class="headerlink" href="#cpip.core.PpLexer.PREPROCESSING_DIRECTIVES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allowable preprocessing directives</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.PpLexer.PpLexer">
+<em class="property">class </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">PpLexer</tt><big>(</big><em>tuFileId</em>, <em>includeHandler</em>, <em>preIncFiles=None</em>, <em>diagnostic=None</em>, <em>pragmaHandler=None</em><big>)</big><a class="headerlink" href="#cpip.core.PpLexer.PpLexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a translation unit tokeniser that applies ISO/IEC 9899:1999(E)
+Section 6 and ISO/IEC 14882:1998(E) section 16.</p>
+<dl class="docutils">
+<dt><em>tuFileId</em></dt>
+<dd>A file ID that will be given to the include
+handler to find the translation unit.
+Typically this will be the file path (as a string)
+to the file that is the Initial Translation Unit
+(ITU) i.e. the file being preprocessed.</dd>
+<dt><em>includeHandler</em></dt>
+<dd>A handler to file <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;d files typically a
+<tt class="docutils literal"><span class="pre">IncludeHandler.IncludeHandlerStd()</span></tt>.
+This might have user and system include path
+information and a means of resolving file
+references.</dd>
+<dt><em>preIncFiles</em></dt>
+<dd>An ordered list of file like objects that are
+pre-include files. These are processed in order
+before the ITU is processed. Macro redefinition
+rules apply.</dd>
+<dt><em>diagnostic</em></dt>
+<dd>A diagnostic object, defaults to a
+CppDiagnostic.PreprocessDiagnosticStd().</dd>
+<dt><em>pragmaHandler</em></dt>
+<dd>A handler for #pragma statements. This shall have a
+function pragma() defined that takes a non-zero
+length list of PpTokens the last of which will be
+a newline token.</dd>
+</dl>
+<p>TODO: Set flags here rather than supplying them to a generator?
+This would make the API simply the ctor and ppTokens/next().
+Flags would be:</p>
+<p>incWs - Include whitespace tokens.</p>
+<p>condLevel - (0, 1, 2) thus:</p>
+<ol class="arabic" start="0">
+<li><dl class="first docutils">
+<dt>No conditionally compiled tokens. The fileIncludeGraphRoot will</dt>
+<dd><p class="first last">not have any information about conditionally included files.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Conditionally compiled tokens are generated but not from </dt>
+<dd><p class="first last">conditionally included files. The fileIncludeGraphRoot will have
+a reference to a conditionally included file but not that
+included file&#8217;s includes.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Conditionally compiled tokens including tokens from conditionally</dt>
+<dd><p class="first last">included files. The fileIncludeGraphRoot will have all the
+information about conditionally included files recursively.</p>
+</dd>
+</dl>
+</li>
+</ol>
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.CALL_STACK_DEPTH_ASSUMED_PPTOKENS">
+<tt class="descname">CALL_STACK_DEPTH_ASSUMED_PPTOKENS</tt><em class="property"> = 10</em><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.CALL_STACK_DEPTH_ASSUMED_PPTOKENS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Each include
+The call stack depth, D = A + B + C*L
+Where L is the number of levels of nested includes and A is the call stack
+A above:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.CALL_STACK_DEPTH_FIRST_INCLUDE">
+<tt class="descname">CALL_STACK_DEPTH_FIRST_INCLUDE</tt><em class="property"> = 3</em><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.CALL_STACK_DEPTH_FIRST_INCLUDE" title="Permalink to this definition">¶</a></dt>
+<dd><p>B above:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.CALL_STACK_DEPTH_PER_INCLUDE">
+<tt class="descname">CALL_STACK_DEPTH_PER_INCLUDE</tt><em class="property"> = 3</em><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.CALL_STACK_DEPTH_PER_INCLUDE" title="Permalink to this definition">¶</a></dt>
+<dd><p>C above:</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.COND_LEVEL_DEFAULT">
+<tt class="descname">COND_LEVEL_DEFAULT</tt><em class="property"> = 0</em><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.COND_LEVEL_DEFAULT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conditianlity settings for token generation</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.COND_LEVEL_OPTIONS">
+<tt class="descname">COND_LEVEL_OPTIONS</tt><em class="property"> = range(0, 3)</em><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.COND_LEVEL_OPTIONS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Conditionality level (0, 1, 2)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.MAX_INCLUDE_DEPTH">
+<tt class="descname">MAX_INCLUDE_DEPTH</tt><em class="property"> = 200</em><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.MAX_INCLUDE_DEPTH" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum value of nested #include&#8217;s</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.UNNAMED_FILE_NAME">
+<tt class="descname">UNNAMED_FILE_NAME</tt><em class="property"> = 'Unnamed Pre-include'</em><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.UNNAMED_FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used when file objects have no name</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.colNum">
+<tt class="descname">colNum</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.colNum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current column number as an integer during processing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.condCompGraph">
+<tt class="descname">condCompGraph</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.condCompGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The conditional compilation graph as a CppCond.CppCondGraph object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.condState">
+<tt class="descname">condState</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.condState" title="Permalink to this definition">¶</a></dt>
+<dd><p>The conditional state as (boolean,  string).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.currentFile">
+<tt class="descname">currentFile</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.currentFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the file ID on the top of the file stack.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.definedMacros">
+<tt class="descname">definedMacros</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.definedMacros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representing the currently defined macros.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.fileIncludeGraphRoot">
+<tt class="descname">fileIncludeGraphRoot</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.fileIncludeGraphRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the FileIncludeGraphRoot object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.fileLineCol">
+<tt class="descname">fileLineCol</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.fileLineCol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a FileLineCol object or None</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.fileName">
+<tt class="descname">fileName</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.fileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current file name during processing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.fileStack">
+<tt class="descname">fileStack</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.fileStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the file stack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpLexer.PpLexer.finalise">
+<tt class="descname">finalise</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.finalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalisation, may raise any Exception.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.includeDepth">
+<tt class="descname">includeDepth</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.includeDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the integer depth of the include stack.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.lineNum">
+<tt class="descname">lineNum</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.lineNum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current line number as an integer during processing or None.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.macroEnvironment">
+<tt class="descname">macroEnvironment</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.macroEnvironment" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current Macro environment as a MacroEnv object.
+Caution: Write to this at your own risk. Your write might be ignored or
+cause undefined behaviour.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpLexer.PpLexer.ppTokens">
+<tt class="descname">ppTokens</tt><big>(</big><em>incWs=True</em>, <em>minWs=False</em>, <em>condLevel=0</em><big>)</big><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.ppTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator for providing PpToken.PpTokens to section 16 of ISO/IEC 14882:1998(E).</p>
+<p><em>incWs</em> - if True than whitespace tokens are included (i.e. tok.isWs() == True).</p>
+<p><em>minWs</em> - if True then whitespace runs will be minimised to a single
+space or, if  newline is in the whitespce run, a single newline</p>
+<p><em>condLevel</em> - if True then conditionally compiled tokens will be yielded
+and they will have have tok.isCond == True. The fileIncludeGraphRoot
+will be marked up with the appropriate conditionality. Levels are:</p>
+<div class="highlight-python"><pre>0: No conditionally compiled tokens. The fileIncludeGraphRoot will
+not have any information about conditionally included files.
+
+1: Conditionally compiled tokens are generated but not from 
+conditionally included files. The fileIncludeGraphRoot will have
+a reference to a conditionally included file but not that
+included file's includes.
+
+2: Conditionally compiled tokens including tokens from conditionally
+included files. The fileIncludeGraphRoot will have all the
+information about conditionally included files recursively.</pre>
+</div>
+<p>(see _cppInclude where we check if self._condStack.isTrue():).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpLexer.PpLexer.tuFileId">
+<tt class="descname">tuFileId</tt><a class="headerlink" href="#cpip.core.PpLexer.PpLexer.tuFileId" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the user supplied ID of the translation unit.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/PpDefine.html"
+                        title="previous chapter">PpDefine</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/PpToken.html"
+                        title="next chapter">PpToken</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/PpLexer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpToken.html" title="PpToken"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpDefine.html" title="PpDefine"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

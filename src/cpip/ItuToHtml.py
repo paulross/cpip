@@ -37,7 +37,7 @@ from cpip.core import CppDiagnostic
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip.util.MultiPassString import ExceptionMultiPass
-import TokenCss
+from cpip import TokenCss
 
 class ExceptionItuToHTML(ExceptionCpip):
     pass
@@ -89,7 +89,7 @@ class ItuToHtml(object):
                         self._incAndWriteLine(myS)
                         for t, tt in myItt.genTokensKeywordPpDirective():
                             self._handleToken(myS, t, tt)
-        except (ExceptionMultiPass, IOError), err:
+        except (ExceptionMultiPass, IOError) as err:
             raise ExceptionItuToHTML('%s line=%d, col=%d' \
                         % (
                             str(err),
@@ -115,7 +115,7 @@ class ItuToHtml(object):
         elif False and tt == 'preprocessing-op-or-punc':
             theS.characters(t)
         else:
-            if tt == 'identifier' and self._macroRefMap.has_key(t):
+            if tt == 'identifier' and t in self._macroRefMap:
                 # Make a link to a macro definition
                 with XmlWrite.Element(theS, 'a', {'href' : self._macroRefMap[t]}):
                     with XmlWrite.Element(theS, 'span', {'class' : '%s' % TokenCss.retClass(tt)}):
@@ -158,7 +158,7 @@ class ItuToHtml(object):
                     theFileId=self._fpIn,
                     theDiagnostic=myDiagnostic,
                 )
-        except IOError, err:
+        except IOError as err:
             raise ExceptionItuToHTML(str(err))
         self._lineNum = 0
         return myItt
@@ -166,7 +166,7 @@ class ItuToHtml(object):
 def main():
     usage = """usage: %prog [options] source out_dir
 Converts a source code file to HTML in the output directory."""
-    print 'Cmd: %s' % ' '.join(sys.argv)
+    print('Cmd: %s' % ' '.join(sys.argv))
     optParser = OptionParser(usage, version='%prog ' + __version__)
     optParser.add_option(
             "-l", "--loglevel",
@@ -190,8 +190,8 @@ Converts a source code file to HTML in the output directory."""
     TokenCss.writeCssToDir(args[1])
     myIth = ItuToHtml(args[0], args[1])
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
     return 0
 
 if __name__ == '__main__':

@@ -28,10 +28,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 import re
 import sys
 import collections
-# TODO: Temporary whilst hack with line number is here.
-import logging
-# TODO: Temporary to write a trace message
-import os
+
 from cpip import ExceptionCpip
 
 class ExceptionFileIncludeGraph(ExceptionCpip):
@@ -47,11 +44,11 @@ class ExceptionFileIncludeGraphTokenCounter(ExceptionFileIncludeGraph):
     """Exception for issues for token counters."""
     pass
 
-# The file ID for a 'dummy' file. This is used as the artificial root
-# node for all the pre-includes and the ITU
+#: The file ID for a 'dummy' file. This is used as the artificial root
+#: node for all the pre-includes and the ITU
 DUMMY_FILE_NAME = None
-# In the graph the line number is ignored for dummy roots and this one
-# used instead
+#: In the graph the line number is ignored for dummy roots and this one
+#: used instead
 DUMMY_FILE_LINENUM = -1
 
 class FileIncludeGraphRoot(object):
@@ -59,6 +56,7 @@ class FileIncludeGraphRoot(object):
     virtual or dummy root. It contains a list of FileIncludeGraph objects.
     In this way it can represent the list of graphs that would result from a
     list of pre-includes followed by the ITU itself.
+    
     In practice this is used by the PpLexer for this purpose where the
     dummy root is represented by None."""
     def __init__(self):
@@ -101,10 +99,44 @@ class FileIncludeGraphRoot(object):
 class FileIncludeGraph(object):
     """Recursive class that holds a graph of include files and and line numbers
     of the file that included them.
+    
     This class builds up a graph (actually a tree) of file includes. The
     insertion order is significant in that it is expected to be the order
     experienced by a translation unit processor.
-    addBaranch() is the way to add to the data structure."""
+    ``addBranch()`` is the way to add to the data structure.
+    
+    theFile - a file ID (e.g. a path)
+
+    theState - a boolean conditional compilation state.
+
+    theCondition - a conditional compilation condition string e.g. "a >= b+2".
+
+    thelogic - a string explanation of how that the file was found.
+
+    If theLogic is taken from an IncludeHandler as a list of items.
+    e.g. ['<foo.h>, CP=None, sys=None, usr=include/foo.h']
+    Each string after item[0] is of the form: key=value
+    Where:
+
+    key is a key in self.INCLUDE_ORIGIN_CODES
+    = is the '=' character.
+    value is the result, or 'None' if not found.
+
+    [0] is the invocation
+    [-1] is the final resolution.
+
+    The intermediate ones are various tries in order.
+    So ['<foo.h>', 'CP=None', 'sys=None', 'usr=include/foo.h'] would mean:
+
+    0. '<foo.h>' the include directive was: ``#include <foo.h>``
+    1. 'CP=None' the Current place was searched and nothing found.
+    2. 'sys=None' the system include(s) were searched and nothing found.
+    3. 'usr=include/foo.h' the user include(s) were searched and include/foo.h was found.
+    
+    This class does not distinguish between conditional compilation states
+    that are True or False. Nor does this class evaluate theCondition in
+    any way, it is merely stored for representation.
+    """
     LINE_SEPERATOR = '#'
     RE_SPLIT_LINENUM = re.compile(r'^(.+?)%s([-+]?\d+)$' % LINE_SEPERATOR)
     def __init__(self, theFile, theState, theCondition, theLogic):
@@ -162,16 +194,20 @@ class FileIncludeGraph(object):
         """The number of significant tokens seen by the PpLexer. A significant
         token is a non-whitespace, non-conditionally compiled token.
         Returns None if not initialised.
-        Note: This is the number of tokens for this file only, it does not
-        include the tokens that this file might include."""
+        
+        .. note::
+            
+            This is the number of tokens for this file only, it does not
+            include the tokens that this file might include.
+        """
         if self._tokCntr is not None:
             return self._tokCntr.tokenCountNonWs(False)
         
     @property
     def numTokensIncChildren(self):
         """The total number of tokens seen by the PpLexer including tokens
-        from files included by this one.
-        Returns None if not initialised.
+        from files included by this one. Returns None if not initialised.
+        
         May raise ExceptionFileIncludeGraphTokenCounter is the token counters
         have been loaded inconsistently (i.e. the children have not been
         loaded)."""
@@ -193,6 +229,7 @@ class FileIncludeGraph(object):
         from files included by this one. A significant
         token is a non-whitespace, non-conditionally compiled token.
         Returns None if not initialised.
+        
         May raise ExceptionFileIncludeGraphTokenCounter is the token counters
         have been loaded inconsistently (i.e. the children have not been
         loaded)."""
@@ -253,9 +290,7 @@ class FileIncludeGraph(object):
     #===========================================================================
     def genChildNodes(self):
         """Yields each child node as a FileIncludeGraph object."""
-        lineS = self._graph.keys()
-        lineS.sort()
-        for aLine in lineS:
+        for aLine in sorted(self._graph.keys()):
             yield self._graph[aLine]
     #===========================================================================
     # End: Child node access
@@ -266,21 +301,30 @@ class FileIncludeGraph(object):
     #===========================================================================
     def addBranch(self, theFileS, theLine, theIncFile, theState, theCondition, theLogic):
         """Adds a branch to the graph.
+        
         theFileS is a list of files that form the branch.
+        
         theLine is an integer value of the line number of the #include
         statement of the last named file in theFileS.
+        
         theIncFile is the file that is included.
+        
         theState is a boolean that describes the conditional compilation state.
+
         theCondition is the conditional compilation test e.g. '1>0'
+
         theLogic is a string representing how the branch was obtained.
         
         May raise ExceptionFileIncludeGraph if:
-            0. The branch is zero length.
-            1. The branch does not match the existing graph (this function just
-               immediately checks the first item on the branch but the others
-               are done recursively).
-            2. theLine is a duplicate of an existing line.
-            3. The branch has missing nodes.
+
+        0. The branch is zero length.
+        
+        1. The branch does not match the existing graph (this function just immediately
+           checks the first item on the branch but the others are done recursively).
+        
+        2. theLine is a duplicate of an existing line.
+        
+        3. The branch has missing nodes.
         """
 #        print('FileIncludeGraph.addBranch: %s line: %d leaf: %s' \
 #            % ([os.path.basename(f) for f in theFileS], theLine, theIncFile)
@@ -299,7 +343,7 @@ class FileIncludeGraph(object):
                                         % (self._fileName, theFileS[0]))
         if len(theFileS) == 1:
             # Base case
-            if self._graph.has_key(theLine):
+            if theLine in self._graph:
                 # Case 2. above.
                 raise ExceptionFileIncludeGraph('FileIncludeGraph.addBranch() dupe line %d in "%s".' \
                                             % (theLine, self._fileName))
@@ -350,9 +394,7 @@ class FileIncludeGraph(object):
         aBranch.append(self._fileName)
         theBrancheS.append(aBranch[:])
         aBranch.pop()
-        lineS = self._graph.keys()
-        lineS.sort()
-        for aLine in lineS:
+        for aLine in sorted(self._graph.keys()):
             aBranch.append(self._retFileLine(aLine))
             self._graph[aLine]._getBranches(theBrancheS, aBranch)
             aBranch.pop()
@@ -367,6 +409,7 @@ class FileIncludeGraph(object):
     def retLatestNode(self, theBranch):
         """Returns the last inserted node, a FileIncludeGraph object
         on the supplied branch.
+        
         This is generally used during dynamic construction by a caller
         that understands the state of the file include branch."""
 #        print 'TRACE: retLatestNode() branch %s self.fileName %s' % (theBranch, self.fileName)
@@ -426,9 +469,7 @@ class FileIncludeGraph(object):
         return self._retString(theIndent=0)
         
     def _retString(self, theIndent):
-        """Returns an indented string and makes a recursive call."""
-        lineNumS = self._graph.keys()
-        lineNumS.sort()
+        """Returns an indented string recursively."""
         retList = []
         retList.append('%s%s [%s, %s]: %5s "%s" "%s"' \
                        % (
@@ -446,7 +487,7 @@ class FileIncludeGraph(object):
         # and are thus missleading. We should normalise them to '/' e.g.
         # 000000: #include usr/spam.h
         # ditto above
-        for aLineNum in lineNumS:
+        for aLineNum in sorted(self._graph.keys()):
             retList.append('%s%06d: #include %s' \
                             % (
                                ' ' * theIndent,
@@ -458,11 +499,10 @@ class FileIncludeGraph(object):
         return '\n'.join(retList)
     
     def dumpGraph(self, theS=sys.stdout, theI=''):
+        """Writes out the graph to a stream."""
         theS.write('%s%s\n' % (theI, self.fileName))
-        lineNumS = self._graph.keys()
-        lineNumS.sort()
         myI = theI + '  '
-        for l in lineNumS:
+        for l in sorted(self._graph.keys()):
             theS.write('%s%06d:' % (myI, l))
             self._graph[l].dumpGraph(theS, myI)
                        
@@ -476,9 +516,7 @@ class FileIncludeGraph(object):
         current depth in the graph as an integer and line the line that is a
         non-monotonic sibling node ordinal."""
         visitor.visitGraph(self, depth, line)
-        lineS = self._graph.keys()
-        lineS.sort()
-        for l in lineS:
+        for l in sorted(self._graph.keys()):
             self._graph[l].acceptVisitor(visitor, depth+1, l)
 
 ###########################
@@ -561,6 +599,7 @@ class FigVisitorTree(object):
             self._stk[-1].addChild(self._nodeClass(theNode, theLine))
     
     def visitGraph(self, theFigNode, depth, line):
+        """Visit the give node."""
         if self.depth < depth:
             assert((depth - self.depth) == 1)
             self._addChild(theFigNode, line)
@@ -577,7 +616,7 @@ class FigVisitorFileSet(FigVisitorBase):
     include graph and a count of how often they are seen."""
     def __init__(self):
         super(FigVisitorFileSet, self).__init__()
-        self._fileNameMap = collections.defaultdict(int)# = set()
+        self._fileNameMap = collections.defaultdict(int)
         
     def visitGraph(self, theFigNode, theDepth, theLine): 
         """Hierarchical visitor pattern. This is given a FileIncludeGraph as a
@@ -587,10 +626,12 @@ class FigVisitorFileSet(FigVisitorBase):
         
     @property
     def fileNameSet(self):
-        return self._fileNameMap.keys()
+        """The set of file names seen."""
+        return set(self._fileNameMap)
     
     @property
     def fileNameMap(self):
+        """Dictionary of number of times each file is seen: {file : count, ...}."""
         return self._fileNameMap
 
 #######################

@@ -107,7 +107,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                 if myBg[i] == PpTokeniser.TRIGRAPH_PREFIX:
                     self._mps.setMarker()
                     if myBg[i+1] == PpTokeniser.TRIGRAPH_PREFIX \
-                    and PpTokeniser.TRIGRAPH_TABLE.has_key(myBg[i+2]):
+                    and myBg[i+2] in PpTokeniser.TRIGRAPH_TABLE:
                         # Do the trigraph replacement
                         self._mps.removeSetReplaceClear(
                                 isTerm=True,

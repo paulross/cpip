@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CPIPMain.py Examples &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../index.html" />
+    <link rel="next" title="Command Line Tools" href="../cmd_line_tools/index.html" />
+    <link rel="prev" title="Installing CPIP" href="../down_install.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../cmd_line_tools/index.html" title="Command Line Tools"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../down_install.html" title="Installing CPIP"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cpipmain-py-examples">
+<span id="cpip-examples"></span><h1><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples<a class="headerlink" href="#cpipmain-py-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="screenshots">
+<h2>Screenshots<a class="headerlink" href="#screenshots" title="Permalink to this headline">¶</a></h2>
+<p>This section shows some screenshots of <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt>&#8216;s output. <a class="reference internal" href="#cpip-examples-real"><em>Some Real Examples</em></a> are shown below.</p>
+<p><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> produces a set of HTML and SVG pages for each source file preprocessed. As well as the <em>Translation Unit</em> <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> generates information about the three important tasks for a preprocessor: file inclusion, conditional compilation and macro replacement.</p>
+<div class="section" id="home-page">
+<h3>Home Page<a class="headerlink" href="#home-page" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="file docutils literal"><span class="pre">index.html</span></tt> shows the list of files preprocessed in this pass (linked to file specific pages).</p>
+<p>It also shows the command line used and an explanation from the <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> help system as to what each option means.</p>
+<p>For example:</p>
+<img alt="The overall SVG diagram." class="align-center" src="../_images/HTMLLinux_cpu.c_Index.png" />
+<p>Each in the list of files preprocessed in this pass is linked to file specific page.</p>
+</div>
+<div class="section" id="file-specific-pages">
+<h3>File Specific Pages<a class="headerlink" href="#file-specific-pages" title="Permalink to this headline">¶</a></h3>
+<p>These describe the results of preprocessing a single file, it contains links to:</p>
+<ol class="arabic simple">
+<li>The final translation unit.</li>
+<li>The results of file inclusion.</li>
+<li>The results of conditional compilation.</li>
+<li>Macro processing results.</li>
+<li>The total token count.</li>
+<li>What files were included and how many times.</li>
+</ol>
+<p>The top of the page includes links to these sections (described in detail below):</p>
+<img alt="The overall SVG diagram." class="align-center" src="../_images/HTMLLinux_cpu.c_Home_Top.png" />
+<p>Further down the page is a table showing what files were included and how many times:</p>
+<img alt="The overall SVG diagram." class="align-center" src="../_images/HTMLLinux_cpu.c_Home_Lower.png" />
+<div class="section" id="translation-unit-original-file">
+<h4>Translation Unit &amp; Original File<a class="headerlink" href="#translation-unit-original-file" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="translation-unit">
+<h5>Translation Unit<a class="headerlink" href="#translation-unit" title="Permalink to this headline">¶</a></h5>
+<p>The preprocessed file and all its <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s become a <em>Translation Unit</em> which <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> represents as an HTML page.</p>
+<p>Each <tt class="docutils literal"><span class="pre">#include</span></tt> statement is represented in a nested fashion, any source code in the translation unit is presented syntax highlighted. The syntax is, of course, the C pre-processor language thus both <tt class="docutils literal"><span class="pre">typedef</span></tt> and <tt class="docutils literal"><span class="pre">char</span></tt> are pre-processor <em>identifiers</em> even if later on <tt class="docutils literal"><span class="pre">typedef</span></tt> is seen as a C keyword.</p>
+<p>The numbered links thus <tt class="docutils literal"><span class="pre">[</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="pre">19]</span></tt> are to an HTML representation of the orignal source code file/line.</p>
+<p>The other navigational element present is when the file path is the file being pre-processed a forward link is there to to the next part of this file, thus skipping over intermediate <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;d code.</p>
+<img alt="The complete translation unit represented in HTML." class="align-center" src="../_images/HTMLLinux_cpu.c_TU.png" />
+</div>
+<div class="section" id="original-file">
+<h5>Original  File<a class="headerlink" href="#original-file" title="Permalink to this headline">¶</a></h5>
+<p>All processed source code (original file and and included files) is presented as syntax highlighted HTML.</p>
+<p>The syntax is the C pre-preprocessor language. Macro names are linked to their definition in the <a class="reference internal" href="#cpip-macro-page-example"><em>Macro Definitions</em></a> page.</p>
+<img alt="A individual file in HTML." class="align-center" src="../_images/HTMLLinux_cpu.c_ITU.png" />
+</div>
+</div>
+<div class="section" id="the-svg-include-graph">
+<h4>The SVG Include Graph<a class="headerlink" href="#the-svg-include-graph" title="Permalink to this headline">¶</a></h4>
+<p>The file specific page offers a link to an SVG visualisation of the file include graph.</p>
+<div class="section" id="the-overall-picture">
+<h5>The Overall Picture<a class="headerlink" href="#the-overall-picture" title="Permalink to this headline">¶</a></h5>
+<p>The diagram represents a tree with the root (the file being preprocessed) at center left. Increasing include depth is left-to-right and source code order (i.e. <tt class="docutils literal"><span class="pre">#include</span></tt> order) is top to bottom.</p>
+<p>A special case is that the may be a file <tt class="docutils literal"><span class="pre">&quot;Unnamed</span> <span class="pre">Pre-Include&quot;</span></tt> at the top left and joined to the preprocessed file with a thick light grey line. This &#8216;virtual&#8217; file contains the macro declarations made on the <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> command line.</p>
+<p>Each file is represented by a fixed width block, the depth is proportional to the number of preprocessing tokens produced by a file (and its <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s). Cyan coloured blocks represent files that are included but contain no effective content, probably because their header guards use conditional compilation to prevent re-inclusion.</p>
+<p>The diagram looks like this:</p>
+<img alt="The overall SVG diagram." class="align-center" src="../_images/SVGLinuxOverall.png" />
+</div>
+<div class="section" id="a-detailed-look">
+<h5>A Detailed Look<a class="headerlink" href="#a-detailed-look" title="Permalink to this headline">¶</a></h5>
+<p>Zooming in to a part of the diagram reveals a host of new information. This example (in the center of the diagram above) and represents the <tt class="file docutils literal"><span class="pre">arch/x86/include/asm/bitops.h</span></tt> file.</p>
+<p>In this picture the <tt class="file docutils literal"><span class="pre">arch/x86/include/asm/bitops.h</span></tt> file is represented on the left and the files that it <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s to its right.</p>
+<img alt="Detail of the SVG diagram." class="align-center" src="../_images/SVGLinuxDetail.png" />
+<div class="section" id="file-path">
+<h6>File Path<a class="headerlink" href="#file-path" title="Permalink to this headline">¶</a></h6>
+<p>Many parts of this diagram can display additional information on a mouse over. For example mousing over the file name above the box shows the the absolute path of the file as a pop-up yellow block:</p>
+<img alt="The result of mousing over the file name." class="align-center" src="../_images/SVGFilePath.png" />
+</div>
+<div class="section" id="how-it-was-included">
+<h6>How it was Included?<a class="headerlink" href="#how-it-was-included" title="Permalink to this headline">¶</a></h6>
+<p>Moving the mouse over the <tt class="docutils literal"><span class="pre">?</span></tt> to the left of the block reveals a host of information about the file inclusion process:</p>
+<img alt="The result of mousing over the left hand ``?``." class="align-center" src="../_images/SVGIncPath.png" />
+<p>This pop-up yellow block contains the following:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">Inc:</span></tt> <em>Where</em> this was included from. This <tt class="file docutils literal"><span class="pre">arch/x86/include/asm/bitops.h</span></tt> file is included from line 23 of the <tt class="file docutils literal"><span class="pre">kernel/bitops.h</span></tt> file.</li>
+<li><tt class="docutils literal"><span class="pre">As:</span></tt> <em>Why</em> it was included. This is the current state of the conditional compilation stack.</li>
+<li><tt class="docutils literal"><span class="pre">How:</span></tt> <em>How</em> this file was included. This string starts with the text that follows the <tt class="docutils literal"><span class="pre">#include</span></tt> statement, in this case <tt class="docutils literal"><span class="pre">&lt;asm/bitops.h&gt;</span></tt>. This is followed by the search results, in this case this file was found by searching the system includes (<tt class="docutils literal"><span class="pre">sys=</span></tt>) and was found in <tt class="file docutils literal"><span class="pre">arch/x86/include</span></tt>. There may be more than one search made as fallback mechanisms are used and a failure will be shown with <tt class="docutils literal"><span class="pre">None</span></tt>. For example <tt class="docutils literal"><span class="pre">usr=None</span> <span class="pre">sys=spam/eggs</span></tt> means that the user include directories were searched first and nothing came up, then the system include directories were searched and the file was found in <tt class="file docutils literal"><span class="pre">spam/eggs</span></tt>.</li>
+</ul>
+</div>
+<div class="section" id="token-types">
+<h6>Token Types<a class="headerlink" href="#token-types" title="Permalink to this headline">¶</a></h6>
+<p>If you are interested in what types of preprocessor tokens were encountered than there is a host of information available to you. On the left hand side of each file block is a colour coded histogram of token types. If the file includes others then there will be two, the left hand one is for the file, the right hand one is for all the files it includes. Hovering over the <tt class="docutils literal"><span class="pre">?</span></tt> in either histogram pops up the legend thus:</p>
+<img alt="The legend for the histogram bars." class="align-center" src="../_images/SVGHistogramLegend.png" />
+<p>The actual count of tokens is seen when moving the mouse over the left of the three <tt class="docutils literal"><span class="pre">?</span></tt> characters within the box. There are two columns, the first is for all tokens and the second is for <em>significant</em> tokens, that is those that are not conditionally excluded by <tt class="docutils literal"><span class="pre">#if</span></tt> etc. statements:</p>
+<img alt="../_images/SVGTokensJustMe.png" class="align-center" src="../_images/SVGTokensJustMe.png" />
+<p>Similarly the token count for the files this file includes:</p>
+<img alt="../_images/SVGTokensChildren.png" class="align-center" src="../_images/SVGTokensChildren.png" />
+<p>And the combined token count:</p>
+<img alt="../_images/SVGTokensAll.png" class="align-center" src="../_images/SVGTokensAll.png" />
+</div>
+</div>
+</div>
+<div class="section" id="conditional-compilation">
+<h4>Conditional Compilation<a class="headerlink" href="#conditional-compilation" title="Permalink to this headline">¶</a></h4>
+<p>One tricky area for comprehending source code is understanding what code is conditionally compiled. Looking at a source file it is not immediately obvious which <tt class="docutils literal"><span class="pre">#if</span></tt> etc. statements are actually being processed.</p>
+<p>As an aid CPIP produces an HTML page that is the translation unit with <em>only</em> the conditional compilation statements, what is more they are nested according to their logical execution condition and colour coded according to the resolved state; green means code will be part of the translation unit and red means those statements will be ignored. The links in the (artificial) comment following the statement are to the HTML representation of the file where the statement occurs.</p>
+<p>Here is an example:</p>
+<img alt="Conditional compilation." class="align-center" src="../_images/HTMLLinux_cpu.c_CondComp.png" />
+</div>
+<div class="section" id="macro-definitions">
+<span id="cpip-macro-page-example"></span><h4>Macro Definitions<a class="headerlink" href="#macro-definitions" title="Permalink to this headline">¶</a></h4>
+<p>CPIP retains all information about marcos during preprocessing and the file specific page containing macro information starts like this:</p>
+<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Top.png" />
+<p>The contents starts with a list of links to macro information further down the page; the first set of links is alphabetical to all macros that are declared, even if they are not used. The second set is to any macros that are actually used in pre-processing this file.</p>
+<p>These are all linked to the main macro table further down the page that looks like this:</p>
+<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_TableStart.png" />
+<p>The table has the following columns:</p>
+<ul class="simple">
+<li>Macro name and its definition, this is on bold if the macro has been referenced.</li>
+<li>Where the macro was defined (NOTE: macros can be redefined and that would happen in a different place). This is linked to the source file.</li>
+<li>The reference count for the macro i.e. how many times the pre-processor was required to invoke the definition. This is linked to further down the page where the actual invocations are identified (see below).</li>
+<li>A boolean that says whether the macro is still defined at the end of procession the translation unit.</li>
+</ul>
+<p>As an example let&#8217;s look at <tt class="docutils literal"><span class="pre">BITS_TO_LONGS(nr)</span></tt>. Here is the macro table entry:</p>
+<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Table_BITS.png" />
+<p>A link in the second column takes you to an HTML rendition of the file where the macro is defined.</p>
+<p>A link in the third column takes you down the page to a summary of <em>where</em> the macro was referenced.</p>
+<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Table_BITS_Usage.png" />
+<p>Each link in that table takes you to the source code that referenced this macro. For example take <tt class="docutils literal"><span class="pre">BITS_TO_LONGS(nr)</span></tt> and the file <tt class="file docutils literal"><span class="pre">linux_2.6.37/kernel/cpu.c</span></tt> there are a seven references which are of the form <tt class="docutils literal"><span class="pre">line-column</span></tt>. The link to <tt class="docutils literal"><span class="pre">508-53</span></tt> goes to here:</p>
+<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Table_BITS_ITU.png" />
+</div>
+<div class="section" id="a-most-powerful-feature">
+<h4>A Most Powerful Feature<a class="headerlink" href="#a-most-powerful-feature" title="Permalink to this headline">¶</a></h4>
+<p>CPIP&#8217;s knowledge about macros and its ability to generate linked documents provides an especially powerful feature for understanding macros.</p>
+</div>
+</div>
+</div>
+<div class="section" id="some-real-examples">
+<span id="cpip-examples-real"></span><h2>Some Real Examples<a class="headerlink" href="#some-real-examples" title="Permalink to this headline">¶</a></h2>
+<p>CPIPMain is a command line tool that you can invoke very much like your favorite pre-processor. CPIPMain produces a number of HTML pages and SVG files that make it easier to understand what is happening during preprocessing. This section shows some examples of the kind of thing that CPIP can do.</p>
+<div class="section" id="symbian-os">
+<h3>Symbian OS<a class="headerlink" href="#symbian-os" title="Permalink to this headline">¶</a></h3>
+<p>Symbian OS might have been killed off by Nokia but here is an example of <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> pre-processing one of Symbian&#8217;s most basic files: <a class="reference external" href="../copy_to_html/e32std/index.html">e32std.h</a>.</p>
+</div>
+<div class="section" id="the-linux-kernel">
+<h3>The Linux Kernel<a class="headerlink" href="#the-linux-kernel" title="Permalink to this headline">¶</a></h3>
+<p>A more complex example that shows the <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> pre-processing the <a class="reference external" href="../copy_to_html/cpu/index.html">cpu.c</a> file in the Linux Kernel.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples</a><ul>
+<li><a class="reference internal" href="#screenshots">Screenshots</a><ul>
+<li><a class="reference internal" href="#home-page">Home Page</a></li>
+<li><a class="reference internal" href="#file-specific-pages">File Specific Pages</a><ul>
+<li><a class="reference internal" href="#translation-unit-original-file">Translation Unit &amp; Original File</a><ul>
+<li><a class="reference internal" href="#translation-unit">Translation Unit</a></li>
+<li><a class="reference internal" href="#original-file">Original  File</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-svg-include-graph">The SVG Include Graph</a><ul>
+<li><a class="reference internal" href="#the-overall-picture">The Overall Picture</a></li>
+<li><a class="reference internal" href="#a-detailed-look">A Detailed Look</a><ul>
+<li><a class="reference internal" href="#file-path">File Path</a></li>
+<li><a class="reference internal" href="#how-it-was-included">How it was Included?</a></li>
+<li><a class="reference internal" href="#token-types">Token Types</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#conditional-compilation">Conditional Compilation</a></li>
+<li><a class="reference internal" href="#macro-definitions">Macro Definitions</a></li>
+<li><a class="reference internal" href="#a-most-powerful-feature">A Most Powerful Feature</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#some-real-examples">Some Real Examples</a><ul>
+<li><a class="reference internal" href="#symbian-os">Symbian OS</a></li>
+<li><a class="reference internal" href="#the-linux-kernel">The Linux Kernel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../down_install.html"
+                        title="previous chapter">Installing CPIP</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../cmd_line_tools/index.html"
+                        title="next chapter">Command Line Tools</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/examples/examples.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../cmd_line_tools/index.html" title="Command Line Tools"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../down_install.html" title="Installing CPIP"
+             >previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.8.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

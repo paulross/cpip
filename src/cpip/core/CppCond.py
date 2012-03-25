@@ -26,6 +26,7 @@ a state class that callers that do interpret the language semantics can use.
 
 In particular this provides state change operations that might be triggered by
 the following six pre-processing directives: ::
+
     #if constant-expression new-line group opt
     #ifdef identifier new-line group opt
     #ifndef identifier new-line group opt
@@ -43,6 +44,7 @@ The stack i.e. CppCond can also be queried for its net boolean state and its
 net 'explanation'.
 
 Basic boolean stack operations ::
+
     Directive   Argument                Stack, s, boolean operation
     ---------   --------                -----------------------
     #if         constant-expression     s.push(bool)
@@ -372,7 +374,7 @@ class CppCond(object):
     #============================
     # Section: Determining state.
     #============================
-    def __nonzero__(self):
+    def __bool__(self):
         """Syntactic sugar for truth testing, wraps isTrue()."""
         return self.isTrue()
 

@@ -31,44 +31,49 @@ clockwise order.
 
 Transfoming sizes and positions
 -------------------------------
-Given:
+
 If the first suffix is 'l' this is the "logical" coordinate system.                                
 If the first suffix is 'p' this is the "physical" coordinate system.                                
-                                
-C    The canvas dimension, Cpw is "Canvas physical width"                            
-W    Width dimension, physical and logical.                            
-D    Depth dimension, physical and logical.                            
-B    Box datum position ("top-left"), physical and logical, x and y.                            
-P    Arbitrary point, physical and logical, x and y.                            
+  
+Then: ::
+                              
+    C    The canvas dimension, Cpw is "Canvas physical width"                            
+    W    Width dimension, physical and logical.                            
+    D    Depth dimension, physical and logical.                            
+    B    Box datum position ("top-left"), physical and logical, x and y.                            
+    P    Arbitrary point, physical and logical, x and y.                            
                                 
 So this "logical view" of the tree graph ('top' and '-'):
-i.e. Root(s) is a top and children are written in an anti-clockwise.
+i.e. Root(s) is a top and children are written in an anti-clockwise. ::
 
- ---> x
- |
- \/
- y
+     ---> x
+     |
+     \/
+     y
+    
+    <------------------------ Clw ------------------------>
+    |                                  To Parent
+    |                                     |
+    |             Blx, Bly -->*************************
+    |                         *                  |    *
+    Cld                       *                 Dl    *
+    |                         *<-------- Wl -----|--->*
+    |                         *                  |    *
+    |       Plx, Ply ->.      *                  |    *
+    |                         *************************
+    |                             |        |       |
+    |                        To C[0]  To C[c]   To C[C-1]
 
-<------------------------ Clw ------------------------>
-|                                  To Parent
-|                                     |
-|             Blx, Bly -->*************************
-|                         *                  |    *
-Cld                       *                 Dl    *
-|                         *<-------- Wl -----|--->*
-|                         *                  |    *
-|       Plx, Ply ->.      *                  |    *
-|                         *************************
-|                             |        |       |
-|                        To C[0]  To C[c]   To C[C-1]
-
-                                
+Or:
+                        
+====== ===    ===    ==    ==    ============== ============== ========== =========
 Origin Cpw    Cpd    Wp    Dp    Bpx            Bpy            Ppx        Ppy
------- ---    ---    --    --    ---            ---            ---        ---
+====== ===    ===    ==    ==    ============== ============== ========== =========
 top    Clw    Cld    Wl    Dl    Blx            Bly            Plx        Ply
 left   Cld    Clw    Dl    Wl    Bly            (Clw-Plx-Wl)   Ply        Clw-Plx
 bottom Clw    Cld    Wl    Dl    (Clw-Plx-Wl)   (Cld-Ply-Dl)   Clw-Plx    Cld-Ply
 right  Cld    Clw    Dl    Wl    (Cld-Ply-Dl)   Blx            Cld-Ply    Plx
+====== ===    ===    ==    ==    ============== ============== ========== =========
 
 Note the diagonal top-right to bottom-left transference between each pair of
 columns. That is because with each successive line we are doing a 90 degree
@@ -77,14 +82,17 @@ bottom->right) or Cld (left->bottom or right->top).
 
 Incrementing child positions
 ----------------------------
+
 Moving from one child to another is done in the following combinations:
 
+========= ====== ======
 Origin    '-'    '+'
-------    ---    ---
+========= ====== ======
 top       right  left
 left      up     down
 bottom    left   right
 right     down   up
+========= ====== ======
 """
 
 __author__  = 'Paul Ross'
@@ -93,7 +101,7 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 from cpip import ExceptionCpip
-import Coord
+from . import Coord
 
 class ExceptionTreePlotTransform(ExceptionCpip):
     """Exception class for TreePlotTransform."""

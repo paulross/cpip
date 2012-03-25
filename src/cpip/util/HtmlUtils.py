@@ -27,15 +27,22 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import os
 import hashlib
-import types
+#import types
+import sys
 
-import XmlWrite
+from . import XmlWrite
 from cpip.util import DictTree
     
 def retHtmlFileName(thePath):
     """Creates a unique, short, human readable file name base on the input
     file path."""
-    myHash = hashlib.md5(os.path.abspath(thePath)).hexdigest()
+    if sys.version_info[0] == 2:
+        myBy = bytes(os.path.abspath(thePath))
+    elif sys.version_info[0] == 3:
+        myBy = bytes(os.path.abspath(thePath), 'ascii')
+    else:
+        assert 0, 'Unknown Python version %d' % sys.version_info.major
+    myHash = hashlib.md5(myBy).hexdigest()
     return '%s_%s%s' % (os.path.basename(thePath), myHash, '.html')
 
 def retHtmlFileLink(theSrcPath, theLineNum):
@@ -75,6 +82,7 @@ def pathSplit(p):
     """Split a path into its components."""
     #print 'TRACE: pathSplit(%s):' % p
     #p = os.path.splitdrive(p)[1]
+    p = os.path.normpath(p)
     l = p.split(os.sep)
     retVal = ['%s%s' % (d, os.sep) for d in l[:-1]]
     retVal.append(l[-1])
@@ -142,13 +150,13 @@ def writeDictTreeAsTable(theS, theDt, tableAttrs, includeKeyTail):
                         if includeKeyTail:
                             theS.characters('%s:' % k[-1])                        
                         # Output depending on the type of the value
-                        if type(v) == types.ListType:
+                        if type(v) == list:
                             for h, n in v:
                                 theS.characters(' ')
                                 with XmlWrite.Element(theS, 'a', {'href' : h}):
                                     # Write the nav text
                                     theS.characters('%s' % n)
-                        elif type(v) == types.TupleType and len(v) == 2:
+                        elif type(v) == tuple and len(v) == 2:
                             with XmlWrite.Element(theS, 'a', {'href' : v[0]}):
                                 # Write the nav text
                                 theS.characters(v[1])

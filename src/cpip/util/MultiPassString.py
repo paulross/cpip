@@ -141,7 +141,7 @@ class MultiPassString(object):
         logging.debug('MultiPassString.setWordType() "%s", isTerm=%s', theType, isTerm)
         if self._idxMarker == self.MARKER_CLEAR:
             raise ExceptionMultiPass('setWordType(): when no marker present.')
-        if self._idxTypeMap.has_key(self._idxMarker):
+        if self._idxMarker in self._idxTypeMap:
             raise ExceptionMultiPass('setWordType(): Duplicate key: %s' % self._idxMarker)
         myLen = self.wordLength
         if isTerm:
@@ -230,9 +230,7 @@ class MultiPassString(object):
         TODO: Solve the overlap problem."""
         idx = 0
         k = 0
-        keys = self._idxTypeMap.keys()
-        keys.sort()
-        for k in keys:
+        for k in sorted(self._idxTypeMap.keys()):
             if k > idx:
                 logging.debug(
                     'MultiPassString.genWords() 0: k=%d, idx=%d, str="%s" type="%s"',

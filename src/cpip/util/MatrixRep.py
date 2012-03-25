@@ -57,13 +57,12 @@ class MatrixRep(object):
         is undefined."""
         #lineS = self._ir.keys()
         #lineS.sort()
-        for l in self._ir.keys():
+        for l in self._ir:
             if l >= len(theMat):
                 raise ExceptionMatrixRep('Line index %d is out of range (max %d).' \
                                          % (l, len(theMat)-1))
-            colS = self._ir[l].keys()
-            colS.sort()
             colInc = 0
+            colS = sorted(self._ir[l].keys())
             for c in colS:
                 if (c+colInc) >= len(theMat[l]):
                     raise ExceptionMatrixRep('Col index %d is out of range (max %d).' \

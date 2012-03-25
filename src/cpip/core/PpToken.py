@@ -146,6 +146,8 @@ class PpToken(object):
         '||'    : 'or',
         'true'  : 'True',
         'false' : 'False',
+        # Python 3 support where '/' can result in a float
+        '/'     : '//',
     }
     def __init__(self, t, tt, lineNum=0, colNum=0):
         """T is the token (a string) and tt is either an enumerated integer or
@@ -154,9 +156,9 @@ class PpToken(object):
         unless marked otherwise."""
         self._t = t
         # self._tt is an enumerated integer
-        if ENUM_NAME.has_key(tt):
+        if tt in ENUM_NAME:
             self._tt = tt
-        elif NAME_ENUM.has_key(tt):
+        elif tt in NAME_ENUM:
             self._tt = NAME_ENUM[tt]
         else:
             raise ExceptionCpipTokenUnknownType(
@@ -177,9 +179,9 @@ class PpToken(object):
     def subst(self, t, tt):
         """Substitutes token value and type."""
         self._t = t
-        if ENUM_NAME.has_key(tt):
+        if tt in ENUM_NAME:
             self._tt = tt
-        elif NAME_ENUM.has_key(tt):
+        elif tt in NAME_ENUM:
             self._tt = NAME_ENUM[tt]
         else:
             raise ExceptionCpipTokenUnknownType(
@@ -192,22 +194,28 @@ class PpToken(object):
         return 'PpToken(t="%s", tt=%s, line=%s, prev=%s, ?=%s)' \
             % (self.t.replace('\n', '\\n'), self.tt, self._canReplace, self._prevWs, self._isCond)
 
-    def __cmp__(self, other):
-        """Override of comparison operator.
-        Return value depends on cmp(...) used on each member."""
-        myVal = cmp(self.t, other.t)
-        if myVal:
-            return myVal
-        myVal = cmp(self.tt, other.tt)
-        if myVal:
-            return myVal
-        #myVal = cmp(self.canReplace, other.canReplace)
-        #if myVal:
-        #    return myVal
-        #myVal = cmp(self.prevWs, other.prevWs)
-        #if myVal:
-        #    return myVal
-        return 0
+    def __lt__(self, other):
+        return self.t < other.t or self.tt < other.tt
+    
+    def __eq__(self, other):
+        return self.t == other.t and self.tt == other.tt
+        
+#    def __cmp__(self, other):
+#        """Override of comparison operator.
+#        Return value depends on cmp(...) used on each member."""
+#        myVal = cmp(self.t, other.t)
+#        if myVal:
+#            return myVal
+#        myVal = cmp(self.tt, other.tt)
+#        if myVal:
+#            return myVal
+#        #myVal = cmp(self.canReplace, other.canReplace)
+#        #if myVal:
+#        #    return myVal
+#        #myVal = cmp(self.prevWs, other.prevWs)
+#        #if myVal:
+#        #    return myVal
+#        return 0
 
     def __repr__(self):
         return '"%s"' % self.t

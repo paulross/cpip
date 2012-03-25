@@ -930,7 +930,7 @@ class TestPlotNodeBboxRoundy(unittest.TestCase):
         self.assertEqual(
             Coord.Pt(
                 Coord.Dim(28, 'mm'),
-                Coord.Dim(189, 'mm')
+                Coord.Dim(185, 'mm')
             ),
             self._pnbcObj.pcLand(self._logicalDatum),
         )
@@ -953,8 +953,8 @@ class TestPlotNodeBboxRoundy(unittest.TestCase):
         #print 'myObj.cpStart', self._pnbcObj.cpStart(self._logicalDatum)
         self.assertEqual(
             Coord.Pt(
-                Coord.Dim(28, 'mm'),
-                Coord.Dim(189, 'mm')
+                Coord.Dim(28.0, 'mm'),
+                Coord.Dim(189.0, 'mm')
             ),
             self._pnbcObj.cpRoll(self._logicalDatum),
         )
@@ -965,8 +965,8 @@ class TestPlotNodeBboxRoundy(unittest.TestCase):
         #print 'myObj.cpTo', self._pnbcObj.cpTo(self._logicalDatum)
         self.assertEqual(
             Coord.Pt(
-                Coord.Dim(28, 'mm'),
-                Coord.Dim(189, 'mm')
+                Coord.Dim(28.0, 'mm'),
+                Coord.Dim(185.0, 'mm')
             ),
             self._pnbcObj.cpTo(self._logicalDatum),
         )
@@ -993,8 +993,7 @@ def unitTest(theVerbosity=2):
 ##################
 
 def usage():
-    print \
-"""TestPlotNode.py - Tests the PlotNode module.
+    print("""TestPlotNode.py - Tests the PlotNode module.
 Usage:
 python TestPlotNode.py [-hl: --help]
 
@@ -1008,23 +1007,23 @@ Options:
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
-    print 'TestPlotNode.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestPlotNode.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     import time
-    print 'Command line:'
-    print ' '.join(sys.argv)
-    print
+    print('Command line:')
+    print(' '.join(sys.argv))
+    print()
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
-    except getopt.GetoptError, myErr:
+    except getopt.GetoptError as myErr:
         usage()
-        print 'ERROR: Invalid option: %s' % str(myErr)
+        print('ERROR: Invalid option: %s' % str(myErr))
         sys.exit(1)
     logLevel = logging.WARNING
     for o, a in opts:
@@ -1035,7 +1034,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments[%d]!' % len(args)
+        print('ERROR: Wrong number of arguments[%d]!' % len(args))
         sys.exit(1)
     clkStart = time.clock()
     # Initialise logging etc.
@@ -1045,8 +1044,8 @@ def main():
                     stream=sys.stdout)
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

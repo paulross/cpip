@@ -1,0 +1,180 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PpWhitespace &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="PragmaHandler" href="../core/PragmaHandler.html" />
+    <link rel="prev" title="PpTokeniser" href="../core/PpTokeniser.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PragmaHandler.html" title="PragmaHandler"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpTokeniser.html" title="PpTokeniser"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.PpWhitespace">
+<span id="ppwhitespace"></span><span id="cpip-ref-ppwhitespace"></span><h1>PpWhitespace<a class="headerlink" href="#module-cpip.core.PpWhitespace" title="Permalink to this headline">¶</a></h1>
+<p>Understands whitespacey things about source code character streams.</p>
+<dl class="class">
+<dt id="cpip.core.PpWhitespace.PpWhitespace">
+<em class="property">class </em><tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">PpWhitespace</tt><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that does whitespacey type things in accordance with
+ISO/IEC 9899:1999(E) Section 6 and ISO/IEC 14882:1998(E).</p>
+<dl class="method">
+<dt id="cpip.core.PpWhitespace.PpWhitespace.hasLeadingWhitespace">
+<tt class="descname">hasLeadingWhitespace</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.hasLeadingWhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if any leading whitespace, False if zero length or
+starts with non-whitespace.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpWhitespace.PpWhitespace.isAllMacroWhitespace">
+<tt class="descname">isAllMacroWhitespace</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.isAllMacroWhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8220;Return True if theCharS is zero length or only has allowable
+whitespace for preprocesing macros.
+ISO/IEC 14882:1998(E) 16-2 only &#8216; &#8216; and &#8216;       &#8216; as whitespace.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpWhitespace.PpWhitespace.isAllWhitespace">
+<tt class="descname">isAllWhitespace</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.isAllWhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the supplied string is all whitespace.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpWhitespace.PpWhitespace.isBreakingWhitespace">
+<tt class="descname">isBreakingWhitespace</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.isBreakingWhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if whitespace leads theChars and that whitespace
+contains a newline.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpWhitespace.PpWhitespace.preceedsNewline">
+<tt class="descname">preceedsNewline</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.preceedsNewline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if theChars ends with a newline. i.e. this immediately
+precedes a new line.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpWhitespace.PpWhitespace.sliceNonWhitespace">
+<tt class="descname">sliceNonWhitespace</tt><big>(</big><em>theBuf</em>, <em>theOfs=0</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.sliceNonWhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of non-whitespace characters that are in
+theBuf from position theOfs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpWhitespace.PpWhitespace.sliceWhitespace">
+<tt class="descname">sliceWhitespace</tt><big>(</big><em>theBuf</em>, <em>theOfs=0</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.sliceWhitespace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the length of whitespace characters that are in theBuf from
+position theOfs.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/PpTokeniser.html"
+                        title="previous chapter">PpTokeniser</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/PragmaHandler.html"
+                        title="next chapter">PragmaHandler</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/PpWhitespace.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PragmaHandler.html" title="PragmaHandler"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/PpTokeniser.html" title="PpTokeniser"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

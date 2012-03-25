@@ -31,9 +31,9 @@ import logging
 import pprint
 
 try:
-    import cStringIO as StringIO
+    import io as StringIO
 except ImportError:
-    import StringIO
+    import io
 
 #try:
 #    from xml.etree import cElementTree as etree
@@ -77,7 +77,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlLowLevel.test_01(): Empty string, no processing."""
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(''))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(''))
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
         #print o
@@ -90,7 +90,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
     
     def test_02(self):
         """TestItuToHtmlLowLevel.test_02(): _translatePhase_1() with empty string."""
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(''))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(''))
         myIth._translatePhase_1()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
@@ -149,7 +149,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
         ]
         for s, eto, ety, cs in myTestData:
             #print 's:', s
-            myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(s))
+            myIth = ItuToTokens.ItuToTokens(io.StringIO(s))
             myIth._translatePhase_1()
             myMps = myIth.multiPassString
             o = [c for c in myMps.genChars()]
@@ -177,7 +177,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlPhase3.test_01(): Empty string."""
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(''))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(''))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
@@ -192,7 +192,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     def test_02(self):
         """TestItuToHtmlPhase3.test_02(): Macro."""
         myStr = '#define OBJ_LIKE /* white space */ (1-1) /* other */\n'
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         # Now test
@@ -251,7 +251,7 @@ g(x+(3,4)-w) | h 5) & m
 p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };
 """
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         wordS = [w for w in myMps.genWords()]
@@ -582,7 +582,7 @@ void main()
     cout << "Welcome to C++ Programming" << endl;
 }
 """
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -646,7 +646,7 @@ int o = 0123;
 int h = 0xABC;
 const char* s = "Hello world";
 """
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -737,7 +737,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
         """TestItuToHtmlTokenGenSpecial.test_01(): Use of $ in a file."""
         myStr = """# define _ASM_j(cond,dest) _asm jn##cond short $+11 _asm jmp dest
 """
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -778,7 +778,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
         """TestItuToHtmlTokenGenSpecial.test_02_00(): ISO/IEC 14882:1998(E) 2.12 Operators and punctuators [lex.operators] 'new' is a preprocessing-op-or-punc and keyword."""
         myStr = """(new);
 """
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -795,7 +795,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
         """TestItuToHtmlTokenGenSpecial.test_02_01(): ISO/IEC 14882:1998(E) 2.12 Operators and punctuators [lex.operators] 'new' is a preprocessing-op-or-punc and keyword."""
         myStr = """new;
 """
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -810,7 +810,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
         """TestItuToHtmlTokenGenSpecial.test_02_10(): Use of new after parenthesis."""
         myStr = """return(new(ELeave) CBufFlat(anExpandSize));
 """
-        myIth = ItuToTokens.ItuToTokens(StringIO.StringIO(myStr))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
         #print
         #pprint.pprint(myTokS)
@@ -851,8 +851,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestItuToHtml.py - A module that tests ItuToHtml module.
+    print("""TestItuToHtml.py - A module that tests ItuToHtml module.
 Usage:
 python TestItuToHtml.py [-lh --help]
 
@@ -868,20 +867,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestItuToHtml.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestItuToHtml.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -892,7 +891,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -902,8 +901,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

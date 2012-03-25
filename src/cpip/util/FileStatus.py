@@ -111,8 +111,7 @@ class FileInfoSet(object):
                 self.processPath(p, glob, isRecursive)
     
     def write(self, theS=sys.stdout):
-        kS = self._infoMap.keys()
-        kS.sort()
+        kS = sorted(self._infoMap.keys())
         fieldWidth = max([len(k) for k in kS])
         theS.write('%-*s  ' % (fieldWidth, 'File'))
         myTotal = FileInfo(None)
@@ -130,7 +129,7 @@ class FileInfoSet(object):
 def main():
     usage = """usage: %prog [options] dir
 Counts files and sizes."""
-    print 'Cmd: %s' % ' '.join(sys.argv)
+    print('Cmd: %s' % ' '.join(sys.argv))
     optParser = OptionParser(usage, version='%prog ' + __version__)
     optParser.add_option("-g", "--glob", type="string", dest="glob", default="*.py", 
                       help="Space separated list of file match patterns. [default: %default]")
@@ -159,8 +158,8 @@ Counts files and sizes."""
     myFis = FileInfoSet(args[0], glob=opts.glob.split(), isRecursive=opts.recursive)
     myFis.write()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
     return 0
 
 if __name__ == '__main__':

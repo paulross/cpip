@@ -24,7 +24,7 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import sys
-import os
+#import os
 import unittest
 import time
 import logging
@@ -74,7 +74,7 @@ class TestMaximalMunchText(unittest.TestCase):
     def consonants_2(self, theGen):
         i = 0
         try:
-            while theGen.next().lower() in 'bcdfghjklmnpqrstvwxyz':
+            while next(theGen).lower() in 'bcdfghjklmnpqrstvwxyz':
                 i +=1
         except StopIteration:
             pass
@@ -82,7 +82,7 @@ class TestMaximalMunchText(unittest.TestCase):
     def whitespace(self, theGen):
         i = 0
         try:
-            while theGen.next().lower() in ' \t\n':
+            while next(theGen).lower() in ' \t\n':
                 i +=1
         except StopIteration:
             pass
@@ -99,7 +99,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: ''."""
         myStrGen = TestBufGen.StrGen('')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.numbers,
@@ -114,7 +114,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'a'."""
         myStrGen = TestBufGen.StrGen('a')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.numbers,
@@ -131,7 +131,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'aeioubc123daaavfr'."""
         myStrGen = TestBufGen.StrGen('aeioubc123daaavfr')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.numbers,
@@ -153,7 +153,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'wraexyz'."""
         myStrGen = TestBufGen.StrGen('wraexyz')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.numbers,
@@ -178,7 +178,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'wraexyz' with alternate function."""
         myStrGen = TestBufGen.StrGen('wraexyz')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.numbers,
@@ -203,7 +203,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants, no whitespace: 'wrae xyz'."""
         myStrGen = TestBufGen.StrGen('wrae xyz')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.consonants,
@@ -221,7 +221,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants and whitespace: 'wrae xyz'."""
         myStrGen = TestBufGen.StrGen('wrae xyz')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.consonants,
@@ -241,7 +241,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: Test parsing vowels, consonants, whitespace as anyToken(): 'wrae xyz'."""
         myStrGen = TestBufGen.StrGen('wrae xyz')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.consonants,
@@ -267,7 +267,7 @@ class TestMaximalMunchText(unittest.TestCase):
         """TestMaximalMunchText: ambiguos result."""
         myStrGen = TestBufGen.StrGen('aeiou')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.vowels,
                         self.vowels,
@@ -294,7 +294,7 @@ class TestMaximalMunchReplace(unittest.TestCase):
     def whitespace(self, theGen):
         i = 0
         try:
-            while theGen.next().lower() in ' \t\n':
+            while next(theGen).lower() in ' \t\n':
                 i +=1
         except StopIteration:
             pass
@@ -314,7 +314,7 @@ class TestMaximalMunchReplace(unittest.TestCase):
         """TestMaximalMunchReplace: Space runs to single space."""
         myStrGen = TestBufGen.StrGen(' abc    def  ghi d ')
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.whitespace,
                         self.nonwhitespace,
@@ -359,7 +359,7 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         i = 0
         r = None
         try:
-            myChr = theGen.next()
+            myChr = next(theGen)
             if myChr not in self.SOURCE_CHARACTER_SET:
                 i = 1
                 myOrd = ord(myChr)
@@ -378,10 +378,10 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         i = 0
         r = None
         try:
-            if theGen.next() == '?' \
-            and theGen.next() == '?':
+            if next(theGen) == '?' \
+            and next(theGen) == '?':
                 try:
-                    r = self.TRIGRAPH_TABLE[theGen.next()]
+                    r = self.TRIGRAPH_TABLE[next(theGen)]
                     i = self.TRIGRAPH_SIZE
                 except KeyError:
                     pass
@@ -405,7 +405,7 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         myLStr = '#define arraycheck(a,b) a[b] || b[a]'
         myStrGen = TestBufGen.StrGen(myPStr)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.universalCharacterName,
                         self.trigraph,
@@ -429,7 +429,7 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         myLStr = 'ab\\u00A9$@xyz'
         myStrGen = TestBufGen.StrGen(myPStr)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.trigraph,
                         self.universalCharacterName,
@@ -457,9 +457,9 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         i = 0
         r = None
         try:
-            aChar = theGen.next()
+            aChar = next(theGen)
             if aChar == '\\' \
-            and theGen.next() == '\n':
+            and next(theGen) == '\n':
                 r = ''
                 i = 2
                 self._cntrAddNewLinesAfterCont += 1
@@ -487,7 +487,7 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         myStrOut = 'abcdef\n\n'
         myStrGen = TestBufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.lineContinuation,
                         MaxMunchGen.anyToken,
@@ -512,7 +512,7 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         myStrOut = 'abc\n\n\n'
         myStrGen = TestBufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.lineContinuation,
                         MaxMunchGen.anyToken,
@@ -537,7 +537,7 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         myStrOut = 'a\n'
         myStrGen = TestBufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.lineContinuation,
                         MaxMunchGen.anyToken,
@@ -566,15 +566,15 @@ class TestMaximalMunchComment(unittest.TestCase):
         i = 0
         r = None
         try:
-            aChar = theGen.next()
+            aChar = next(theGen)
             if aChar == '/' \
-            and theGen.next() == '*':
+            and next(theGen) == '*':
                 r = ' '
                 i = 2
                 while 1:
-                    if theGen.next() == '*':
+                    if next(theGen) == '*':
                         i += 1
-                        if theGen.next() == '/':
+                        if next(theGen) == '/':
                             i += 1
                             break
                     else:
@@ -589,13 +589,13 @@ class TestMaximalMunchComment(unittest.TestCase):
         i = 0
         r = None
         try:
-            aChar = theGen.next()
+            aChar = next(theGen)
             if aChar == '/' \
-            and theGen.next() == '/':
+            and next(theGen) == '/':
                 r = ' '
                 i = 2
                 while 1:
-                    if theGen.next() == '\n':
+                    if next(theGen) == '\n':
                         #i += 1
                         break
                     i += 1                        
@@ -631,7 +631,7 @@ class TestMaximalMunchComment(unittest.TestCase):
         myStrOut = ' \n\n/  \n\n \n\n \n\n \n'
         myStrGen = TestBufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.cComment,
                         self.cxxComment,
@@ -657,7 +657,7 @@ class TestMaximalMunchComment(unittest.TestCase):
         myStrOut = ''
         myStrGen = TestBufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.cComment,
                         self.cxxComment,
@@ -681,7 +681,7 @@ class TestMaximalMunchComment(unittest.TestCase):
         myStrOut = ''
         myStrGen = TestBufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
-                    myStrGen.next(),
+                    next(myStrGen),
                     [
                         self.cComment,
                         self.cxxComment,
@@ -720,8 +720,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestMaxMunchGen.py - A module that tests PpToken module.
+    print("""TestMaxMunchGen.py - A module that tests PpToken module.
 Usage:
 python TestMaxMunchGen.py [-lh --help]
 
@@ -737,20 +736,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestMaxMunchGen.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestMaxMunchGen.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -761,7 +760,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -771,8 +770,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

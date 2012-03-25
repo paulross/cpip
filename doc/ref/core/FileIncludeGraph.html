@@ -1,0 +1,505 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FileIncludeGraph &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="IncludeHandler" href="../core/IncludeHandler.html" />
+    <link rel="prev" title="CppDiagnostic" href="../core/CppDiagnostic.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/IncludeHandler.html" title="IncludeHandler"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/CppDiagnostic.html" title="CppDiagnostic"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.FileIncludeGraph">
+<span id="fileincludegraph"></span><span id="cpip-ref-fileincludegraph"></span><h1>FileIncludeGraph<a class="headerlink" href="#module-cpip.core.FileIncludeGraph" title="Permalink to this headline">¶</a></h1>
+<p>Captures the #include graph of a preprocessed file.</p>
+<dl class="data">
+<dt id="cpip.core.FileIncludeGraph.DUMMY_FILE_LINENUM">
+<tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">DUMMY_FILE_LINENUM</tt><em class="property"> = -1</em><a class="headerlink" href="#cpip.core.FileIncludeGraph.DUMMY_FILE_LINENUM" title="Permalink to this definition">¶</a></dt>
+<dd><p>In the graph the line number is ignored for dummy roots and this one
+used instead</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.FileIncludeGraph.DUMMY_FILE_NAME">
+<tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">DUMMY_FILE_NAME</tt><em class="property"> = None</em><a class="headerlink" href="#cpip.core.FileIncludeGraph.DUMMY_FILE_NAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file ID for a &#8216;dummy&#8217; file. This is used as the artificial root
+node for all the pre-includes and the ITU</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.FileIncludeGraph.ExceptionFileIncludeGraph">
+<em class="property">exception </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">ExceptionFileIncludeGraph</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.ExceptionFileIncludeGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple specialisation of an exception class for the
+FileincludeGraph classes.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.FileIncludeGraph.ExceptionFileIncludeGraphRoot">
+<em class="property">exception </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">ExceptionFileIncludeGraphRoot</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.ExceptionFileIncludeGraphRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for issues for dummy file ID&#8217;s.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.FileIncludeGraph.ExceptionFileIncludeGraphTokenCounter">
+<em class="property">exception </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">ExceptionFileIncludeGraphTokenCounter</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.ExceptionFileIncludeGraphTokenCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for issues for token counters.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorBase">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">FigVisitorBase</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for visitors, see FigVisitorTreeNodeBase for base class for
+tree visitors.</p>
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorBase.visitGraph">
+<tt class="descname">visitGraph</tt><big>(</big><em>theFigNode</em>, <em>theDepth</em>, <em>theLine</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorBase.visitGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hierarchical visitor pattern. This is given a FileIncludeGraph as a
+graph node. theDepth is the current depth in the graph as an integer,
+theLine the line that is a non-monotonic sibling node ordinal.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorFileSet">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">FigVisitorFileSet</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorFileSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple visitor that just collects the set of file IDs in the
+include graph and a count of how often they are seen.</p>
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorFileSet.fileNameMap">
+<tt class="descname">fileNameMap</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorFileSet.fileNameMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of number of times each file is seen: {file : count, ...}.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorFileSet.fileNameSet">
+<tt class="descname">fileNameSet</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorFileSet.fileNameSet" title="Permalink to this definition">¶</a></dt>
+<dd><p>The set of file names seen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorFileSet.visitGraph">
+<tt class="descname">visitGraph</tt><big>(</big><em>theFigNode</em>, <em>theDepth</em>, <em>theLine</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorFileSet.visitGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hierarchical visitor pattern. This is given a FileIncludeGraph as a
+graph node. theDepth is the current depth in the graph as an integer,
+theLine the line that is a non-monotonic sibling node ordinal.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTree">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">FigVisitorTree</tt><big>(</big><em>theNodeClass</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTree" title="Permalink to this definition">¶</a></dt>
+<dd><p>This visitor can visit a graph of FileIncludeGraphRoot and
+FileIncludeGraph that recreates a tree of Node(s) the type of which are
+supplied by the user. Each node instance will be constructed with either an
+instance of a FileIncludeGraphRoot or FileIncludeGraph or, in the case of a
+pseudo root node then None.</p>
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTree.depth">
+<tt class="descname">depth</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTree.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current depth in this graph representation. Changes to
+this determine if the node is a child, sibling or ancestor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTree.tree">
+<tt class="descname">tree</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTree.tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the top level node object as the only copy.
+This also finalises the tree.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTree.visitGraph">
+<tt class="descname">visitGraph</tt><big>(</big><em>theFigNode</em>, <em>depth</em>, <em>line</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTree.visitGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visit the give node.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">FigVisitorTreeNodeBase</tt><big>(</big><em>theLineNum</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for nodes created by a tree visitor. See FigVisitorBase for
+the base class for non-tree visitors.</p>
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase.addChild">
+<tt class="descname">addChild</tt><big>(</big><em>theObj</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase.addChild" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the object as a child.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase.finalise">
+<tt class="descname">finalise</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase.finalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>This will be called on finalisation. This is an opportunity
+for the root (None) not to accumulate properties from its immediate
+children for example.
+For depth first finalisation the child class should call finalise
+on each child first as this function does.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase.lineNum">
+<tt class="descname">lineNum</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase.lineNum" title="Permalink to this definition">¶</a></dt>
+<dd><p>The line number of the parent file that included me.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">FileIncludeGraph</tt><big>(</big><em>theFile</em>, <em>theState</em>, <em>theCondition</em>, <em>theLogic</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursive class that holds a graph of include files and and line numbers
+of the file that included them.</p>
+<p>This class builds up a graph (actually a tree) of file includes. The
+insertion order is significant in that it is expected to be the order
+experienced by a translation unit processor.
+<tt class="docutils literal"><span class="pre">addBranch()</span></tt> is the way to add to the data structure.</p>
+<p>theFile - a file ID (e.g. a path)</p>
+<p>theState - a boolean conditional compilation state.</p>
+<p>theCondition - a conditional compilation condition string e.g. &#8220;a &gt;= b+2&#8221;.</p>
+<p>thelogic - a string explanation of how that the file was found.</p>
+<p>If theLogic is taken from an IncludeHandler as a list of items.
+e.g. [&#8216;&lt;foo.h&gt;, CP=None, sys=None, usr=include/foo.h&#8217;]
+Each string after item[0] is of the form: key=value
+Where:</p>
+<p>key is a key in self.INCLUDE_ORIGIN_CODES
+= is the &#8216;=&#8217; character.
+value is the result, or &#8216;None&#8217; if not found.</p>
+<p>[0] is the invocation
+[-1] is the final resolution.</p>
+<p>The intermediate ones are various tries in order.
+So [&#8216;&lt;foo.h&gt;&#8217;, &#8216;CP=None&#8217;, &#8216;sys=None&#8217;, &#8216;usr=include/foo.h&#8217;] would mean:</p>
+<ol class="arabic simple" start="0">
+<li>&#8216;&lt;foo.h&gt;&#8217; the include directive was: <tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;foo.h&gt;</span></tt></li>
+<li>&#8216;CP=None&#8217; the Current place was searched and nothing found.</li>
+<li>&#8216;sys=None&#8217; the system include(s) were searched and nothing found.</li>
+<li>&#8216;usr=include/foo.h&#8217; the user include(s) were searched and include/foo.h was found.</li>
+</ol>
+<p>This class does not distinguish between conditional compilation states
+that are True or False. Nor does this class evaluate theCondition in
+any way, it is merely stored for representation.</p>
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.acceptVisitor">
+<tt class="descname">acceptVisitor</tt><big>(</big><em>visitor</em>, <em>depth</em>, <em>line</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.acceptVisitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hierarchical visitor pattern. This accepts a visitor object and calls
+visitor.visitGraph(self, depth, line) on that object where depth is the
+current depth in the graph as an integer and line the line that is a
+non-monotonic sibling node ordinal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.addBranch">
+<tt class="descname">addBranch</tt><big>(</big><em>theFileS</em>, <em>theLine</em>, <em>theIncFile</em>, <em>theState</em>, <em>theCondition</em>, <em>theLogic</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.addBranch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a branch to the graph.</p>
+<p>theFileS is a list of files that form the branch.</p>
+<p>theLine is an integer value of the line number of the #include
+statement of the last named file in theFileS.</p>
+<p>theIncFile is the file that is included.</p>
+<p>theState is a boolean that describes the conditional compilation state.</p>
+<p>theCondition is the conditional compilation test e.g. &#8216;1&gt;0&#8217;</p>
+<p>theLogic is a string representing how the branch was obtained.</p>
+<p>May raise ExceptionFileIncludeGraph if:</p>
+<ol class="arabic simple" start="0">
+<li>The branch is zero length.</li>
+<li>The branch does not match the existing graph (this function just immediately
+checks the first item on the branch but the others are done recursively).</li>
+<li>theLine is a duplicate of an existing line.</li>
+<li>The branch has missing nodes.</li>
+</ol>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.condComp">
+<tt class="descname">condComp</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.condComp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the condition, as a string, under which this file was
+included e.g. <tt class="docutils literal"><span class="pre">&quot;(a</span> <span class="pre">&gt;</span> <span class="pre">b)</span> <span class="pre">&amp;&amp;</span> <span class="pre">(1</span> <span class="pre">&gt;</span> <span class="pre">0)&quot;</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.condCompState">
+<tt class="descname">condCompState</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.condCompState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the recorded conditional compilation state as a boolean.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.dumpGraph">
+<tt class="descname">dumpGraph</tt><big>(</big><em>theS=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em>, <em>theI=''</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.dumpGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes out the graph to a stream.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.fileName">
+<tt class="descname">fileName</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.fileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current file name.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.findLogic">
+<tt class="descname">findLogic</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.findLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the findLogic string passed in in the constructor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.genChildNodes">
+<tt class="descname">genChildNodes</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.genChildNodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields each child node as a FileIncludeGraph object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.numTokens">
+<tt class="descname">numTokens</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.numTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of tokens seen by the PpLexer.
+Returns None if not initialised.
+Note: This is the number of tokens for this file only, it does not
+include the tokens that this file might include.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.numTokensIncChildren">
+<tt class="descname">numTokensIncChildren</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.numTokensIncChildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of tokens seen by the PpLexer including tokens
+from files included by this one. Returns None if not initialised.</p>
+<p>May raise ExceptionFileIncludeGraphTokenCounter is the token counters
+have been loaded inconsistently (i.e. the children have not been
+loaded).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.numTokensSig">
+<tt class="descname">numTokensSig</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.numTokensSig" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of significant tokens seen by the PpLexer. A significant
+token is a non-whitespace, non-conditionally compiled token.
+Returns None if not initialised.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is the number of tokens for this file only, it does not
+include the tokens that this file might include.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.numTokensSigIncChildren">
+<tt class="descname">numTokensSigIncChildren</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.numTokensSigIncChildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of significant tokens seen by the PpLexer including tokens
+from files included by this one. A significant
+token is a non-whitespace, non-conditionally compiled token.
+Returns None if not initialised.</p>
+<p>May raise ExceptionFileIncludeGraphTokenCounter is the token counters
+have been loaded inconsistently (i.e. the children have not been
+loaded).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.retBranches">
+<tt class="descname">retBranches</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.retBranches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of lists of the branches with &#8216;#&#8217; then the line number.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestBranch">
+<tt class="descname">retLatestBranch</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestBranch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the branch to the last inserted leaf as a list of
+branch strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestBranchDepth">
+<tt class="descname">retLatestBranchDepth</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestBranchDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Walks the graph and returns an integer that is
+the depth of the latest branch.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestBranchPairs">
+<tt class="descname">retLatestBranchPairs</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestBranchPairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the branch to the last inserted leaf as a list of
+pairs (filename, integer_line).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestLeaf">
+<tt class="descname">retLatestLeaf</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestLeaf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last inserted leaf, a FileIncludeGraph object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestNode">
+<tt class="descname">retLatestNode</tt><big>(</big><em>theBranch</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.retLatestNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last inserted node, a FileIncludeGraph object
+on the supplied branch.</p>
+<p>This is generally used during dynamic construction by a caller
+that understands the state of the file include branch.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.setTokenCounter">
+<tt class="descname">setTokenCounter</tt><big>(</big><em>theTokCounter</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.setTokenCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the token counter for this node which is a PpTokenCount object.
+The PpLexer sets this as the token count for this file only. This
+files #includes are a separate token counter.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraph.tokenCounter">
+<tt class="descname">tokenCounter</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraph.tokenCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the token counter for this node, a PpTokenCount object.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraphRoot">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeGraph.</tt><tt class="descname">FileIncludeGraphRoot</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraphRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Root class of the file include graph. This is used when there is a
+virtual or dummy root. It contains a list of FileIncludeGraph objects.
+In this way it can represent the list of graphs that would result from a
+list of pre-includes followed by the ITU itself.</p>
+<p>In practice this is used by the PpLexer for this purpose where the
+dummy root is represented by None.</p>
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraphRoot.acceptVisitor">
+<tt class="descname">acceptVisitor</tt><big>(</big><em>visitor</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraphRoot.acceptVisitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hierarchical visitor pattern. This accepts a visitor object and calls
+visitor.visitGraph(self, depth, line) on that object where depth is the
+current depth in the graph as an integer and line the line that is a
+non-monotonic sibling node ordinal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraphRoot.addGraph">
+<tt class="descname">addGraph</tt><big>(</big><em>theGraph</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraphRoot.addGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a FileIncludeGraph object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraphRoot.dumpGraph">
+<tt class="descname">dumpGraph</tt><big>(</big><em>theS=&lt;_io.TextIOWrapper name='&lt;stdout&gt;' mode='w' encoding='UTF-8'&gt;</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraphRoot.dumpGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump the node for debug/trace.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraphRoot.graph">
+<tt class="descname">graph</tt><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraphRoot.graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>The latest FileIncludeGraph object I have.
+Will raise a ExceptionFileIncludeGraphRoot if nothing there.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeGraph.FileIncludeGraphRoot.numTrees">
+<tt class="descname">numTrees</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeGraph.FileIncludeGraphRoot.numTrees" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of FileIncludeGraph objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/CppDiagnostic.html"
+                        title="previous chapter">CppDiagnostic</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/IncludeHandler.html"
+                        title="next chapter">IncludeHandler</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/FileIncludeGraph.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/IncludeHandler.html" title="IncludeHandler"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/CppDiagnostic.html" title="CppDiagnostic"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

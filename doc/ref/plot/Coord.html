@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Coord &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Plot" href="../plot/index.html" />
+    <link rel="next" title="PlotNode" href="../plot/PlotNode.html" />
+    <link rel="prev" title="CPIP Plot" href="../plot/index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/PlotNode.html" title="PlotNode"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../plot/index.html" title="CPIP Plot"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../plot/index.html" accesskey="U">CPIP Plot</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="coord">
+<h1>Coord<a class="headerlink" href="#coord" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main-classes">
+<h2>Main Classes<a class="headerlink" href="#main-classes" title="Permalink to this headline">¶</a></h2>
+<p>Most classes in this module are <tt class="docutils literal"><span class="pre">collections.namedtuple</span></tt> objects.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="38%" />
+<col width="49%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Class</th>
+<th class="head">Description</th>
+<th class="head">Attributes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Dim</span></tt></td>
+<td>Linear dimension</td>
+<td>value units</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Box</span></tt></td>
+<td>A Box</td>
+<td>width depth</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Pad</span></tt></td>
+<td>Padding around a tree object</td>
+<td>prev next, parent child</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Margin</span></tt></td>
+<td>Padding around an  object</td>
+<td>left right top bottom</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Pt</span></tt></td>
+<td>A point in Cartesian space</td>
+<td>x y</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.plot.Coord"></span><dl class="exception">
+<dt id="cpip.plot.Coord.ExceptionCoord">
+<em class="property">exception </em><tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">ExceptionCoord</tt><a class="headerlink" href="#cpip.plot.Coord.ExceptionCoord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for representing Coordinates.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.plot.Coord.ExceptionCoordUnitConvert">
+<em class="property">exception </em><tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">ExceptionCoordUnitConvert</tt><a class="headerlink" href="#cpip.plot.Coord.ExceptionCoordUnitConvert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception raised when converting units.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.units">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">units</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.Coord.units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the unsorted list of acceptable units.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.convert">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">convert</tt><big>(</big><em>val</em>, <em>unitFrom</em>, <em>unitTo</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a value from one set of units to another.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.plot.Coord.Dim">
+<em class="property">class </em><tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">Dim</tt><a class="headerlink" href="#cpip.plot.Coord.Dim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a dimension as an engineering value i.e. a number and units.</p>
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.scale">
+<tt class="descname">scale</tt><big>(</big><em>factor</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Dim() scaled by a factor, units are unchanged.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.convert">
+<tt class="descname">convert</tt><big>(</big><em>u</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Dim() with units changed and value converted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__add__">
+<tt class="descname">__add__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__add__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overload self+other, returned result has the sum of self and other.
+The units chosen are self&#8217;s unless self&#8217;s units are None in which case other&#8217;s
+units are used (if not None).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__sub__">
+<tt class="descname">__sub__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__sub__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overload self-other, returned result has the difference of self and
+other. The units chosen are self&#8217;s unless self&#8217;s units are None in
+which case other&#8217;s units are used (if not None).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__iadd__">
+<tt class="descname">__iadd__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__iadd__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Addition in place, value of other is converted to my units and added.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__isub__">
+<tt class="descname">__isub__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__isub__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subtraction in place, value of other is subtracted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__lt__">
+<tt class="descname">__lt__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__lt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if self value &lt; other value after unit conversion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__le__">
+<tt class="descname">__le__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__le__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if self value &lt;= other value after unit conversion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__eq__">
+<tt class="descname">__eq__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if self value == other value after unit conversion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__ne__">
+<tt class="descname">__ne__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if self value != other value after unit conversion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__gt__">
+<tt class="descname">__gt__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__gt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if self value &gt; other value after unit conversion.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Dim.__ge__">
+<tt class="descname">__ge__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Dim.__ge__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if self value &gt;= other value after unit conversion.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.plot.Coord.Pad">
+<em class="property">class </em><tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">Pad</tt><a class="headerlink" href="#cpip.plot.Coord.Pad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Padding around another object that forms the Bounding Box.
+All 4 attributes are Dim() objects</p>
+<dl class="method">
+<dt id="cpip.plot.Coord.Pad.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Pad.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stringifying.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.plot.Coord.Pt">
+<em class="property">class </em><tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">Pt</tt><a class="headerlink" href="#cpip.plot.Coord.Pt" title="Permalink to this definition">¶</a></dt>
+<dd><p>A point, an absolute x/y position on the plot area.
+Members are Coord.Dim().</p>
+<dl class="method">
+<dt id="cpip.plot.Coord.Pt.__eq__">
+<tt class="descname">__eq__</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Pt.__eq__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Comparison.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Pt.__str__">
+<tt class="descname">__str__</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Pt.__str__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stringifying.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Pt.convert">
+<tt class="descname">convert</tt><big>(</big><em>u</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Pt.convert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Pt() with units changed and value converted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.Coord.Pt.scale">
+<tt class="descname">scale</tt><big>(</big><em>factor</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.Pt.scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Pt() scaled by a factor, units are unchanged.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.baseUnitsDim">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">baseUnitsDim</tt><big>(</big><em>theLen</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.baseUnitsDim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Coord.Dim() of length and units BASE_UNITS.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.zeroBaseUnitsDim">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">zeroBaseUnitsDim</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.Coord.zeroBaseUnitsDim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Coord.Dim() of zero length and units BASE_UNITS.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.zeroBaseUnitsBox">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">zeroBaseUnitsBox</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.Coord.zeroBaseUnitsBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Coord.Box() of zero dimensions and units BASE_UNITS.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.zeroBaseUnitsPad">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">zeroBaseUnitsPad</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.Coord.zeroBaseUnitsPad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Coord.Pad() of zero dimensions and units BASE_UNITS.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.zeroBaseUnitsPt">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">zeroBaseUnitsPt</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.plot.Coord.zeroBaseUnitsPt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Coord.Dim() of zero length and units BASE_UNITS.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.newPt">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">newPt</tt><big>(</big><em>theP</em>, <em>incX=None</em>, <em>incY=None</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.newPt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Pt object by incrementing existing point incX, incY
+that are both Dim() objects or None.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.plot.Coord.convertPt">
+<tt class="descclassname">cpip.plot.Coord.</tt><tt class="descname">convertPt</tt><big>(</big><em>theP</em>, <em>theUnits</em><big>)</big><a class="headerlink" href="#cpip.plot.Coord.convertPt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new point with the dimensions of theP converted to theUnits.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="coord-dim">
+<h3><tt class="docutils literal"><span class="pre">Coord.Dim()</span></tt><a class="headerlink" href="#coord-dim" title="Permalink to this headline">¶</a></h3>
+<p>Creation, addition and subtraction:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">d</span> <span class="o">=</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">)</span>
+<span class="c"># d is 1.25 inches</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">)</span> <span class="o">-</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">)</span>
+<span class="c"># d is 0.75 inches</span>
+<span class="n">d</span> <span class="o">+=</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mf">25.4</span><span class="p">,</span> <span class="s">&#39;mm&#39;</span><span class="p">)</span>
+<span class="c"># d is 1.75 inches</span>
+</pre></div>
+</div>
+<p>Scaling and unit conversion returns a new object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">a</span> <span class="o">=</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">myObj</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mf">6.0</span><span class="p">)</span>
+<span class="c"># b is 72 pixels</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&#39;in&#39;</span><span class="p">)</span>
+<span class="c"># 1 is 1 inch</span>
+</pre></div>
+</div>
+<p>Comparison:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">assert</span><span class="p">(</span><span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">72</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">))</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">72</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">))</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">72</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">))</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">71</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">))</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;in&#39;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">73</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="coord-pt">
+<h3><tt class="docutils literal"><span class="pre">Coord.Pt()</span></tt><a class="headerlink" href="#coord-pt" title="Permalink to this headline">¶</a></h3>
+<p>Creation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">p</span> <span class="o">=</span> <span class="n">Coord</span><span class="o">.</span><span class="n">Pt</span><span class="p">(</span>
+        <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">),</span>
+        <span class="n">Coord</span><span class="o">.</span><span class="n">Dim</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="s">&#39;px&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="c"># Prints: &#39;Pt(x=Dim(12px), y=Dim(24px))&#39;</span>
+<span class="n">p</span><span class="o">.</span><span class="n">x</span> <span class="c"># Coord.Dim(12, &#39;px&#39;))</span>
+<span class="n">p</span><span class="o">.</span><span class="n">y</span> <span class="c"># Coord.Dim(24, &#39;px&#39;))</span>
+<span class="c"># Scale up by 6 and convert units</span>
+<span class="n">pIn</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s">&#39;in&#39;</span><span class="p">)</span>
+<span class="c"># pIn now &#39;Pt(x=Dim(1in), y=Dim(2in))&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>The unit tests are in <tt class="file docutils literal"><span class="pre">test/TestCoord.py</span></tt>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Coord</a><ul>
+<li><a class="reference internal" href="#main-classes">Main Classes</a></li>
+<li><a class="reference internal" href="#reference">Reference</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#examples">Examples</a><ul>
+<li><a class="reference internal" href="#coord-dim"><tt class="docutils literal"><span class="pre">Coord.Dim()</span></tt></a></li>
+<li><a class="reference internal" href="#coord-pt"><tt class="docutils literal"><span class="pre">Coord.Pt()</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#testing">Testing</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../plot/index.html"
+                        title="previous chapter">CPIP Plot</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../plot/PlotNode.html"
+                        title="next chapter">PlotNode</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/plot/Coord.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/PlotNode.html" title="PlotNode"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../plot/index.html" title="CPIP Plot"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../plot/index.html" >CPIP Plot</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

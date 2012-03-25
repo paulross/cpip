@@ -164,12 +164,10 @@ class LogicalPhysicalLineMap(object):
     def __str__(self):
         prefix = '    '
         retList = ['{line_num: [(col, line_increment, col_increment)], ...}']
-        kS = self._ir.keys()
-        if len(kS) == 0:
+        if len(self._ir) == 0:
             retList.append('%s%s' % (prefix, 'Empty'))
         else:
-            kS.sort()
-            for aK in kS:
+            for aK in sorted(self._ir.keys()):
                 retList.append('%s:' % aK)
                 for t in self._ir[aK]:
                     retList.append('%s%s' % (prefix, str(t)))
@@ -178,7 +176,7 @@ class LogicalPhysicalLineMap(object):
     def _addToIr(self, theLogicalLine, theLogicalCol, dLine, dColumn):
         """Adds, or updates a record to the internal representation."""
         addTup = (theLogicalCol, dLine, dColumn)
-        if not self._ir.has_key(theLogicalLine):
+        if theLogicalLine not in self._ir:
             self._ir[theLogicalLine] = [addTup]
         else:
             # Scan for existing entry and update it
@@ -211,7 +209,7 @@ class LogicalPhysicalLineMap(object):
         a logical line and logical column."""
         pLine = lLine
         pCol = lCol
-        if self._ir.has_key(lLine):
+        if lLine in self._ir:
             for lc, dl, dc in self._ir[lLine]:
                 if lCol >= lc:
                     pLine += dl

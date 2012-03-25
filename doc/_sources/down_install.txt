@@ -1,0 +1,91 @@
+.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
+.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+
+.. Downloading and installing CPIP
+
+#######################################
+Installing CPIP
+#######################################
+
+*******************************************
+Requirements
+*******************************************
+
+For cpip will need to have installed (with links):
+
+* `Python <http://www.python.org>`_
+
+Thats it!
+
+CPIP has been tested with Python 2.6, 2.7 and 3.2
+
+*******************************************
+Download
+*******************************************
+
+cpip's project page is at http://sourceforge.net/projects/cpip/ [#]_. From there you can either download an archive from the files section or pull the latest source from the repository.
+
+In any case you will unzip or clone/pull to a *directory* of your choice on your machine referred to hereon as :file:`{<cpip>}`.
+
+From a Release
+========================
+
+Releases are made irregularly and they are on the `downloads page <http://sourceforge.net/projects/cpip/files/>`_. Select the release that you want and unpack the file to your directory :file:`{<cpip>}`
+
+From the Hg Repo
+===========================
+
+The Mercurial repository has the most up-to-date code, get it with::
+
+	$ mkdir <cpip>
+	$ cd <cpip>
+	$ hg clone http://hg.code.sf.net/p/cpip/code-0 .
+
+*******************************************
+Installing and Testing
+*******************************************
+
+Follow this to test that your installation of CPIP works.
+
+Installing
+==================
+
+Setting the Environment
+--------------------------
+
+Put :file:`{<cpip>}` on your ``$PYTHONPATH``
+
+Testing
+============================
+
+To make sure that cpip can be imported from your ``$PYTHONPATH`` do this::
+
+	$ python3
+	Python 3.2 (r32:88452, Feb 20 2011, 11:12:31) 
+	[GCC 4.2.1 (Apple Inc. build 5664)] on darwin
+	Type "help", "copyright", "credits" or "license" for more information.
+	>>> import cpip
+	>>> dir(cpip)
+	['CPIP_VERSION', 'ExceptionCpip', 'RELEASE_NOTES', '__all__', '__author__', '__builtins__', '__cached__', '__date__', '__doc__', '__file__', '__name__', '__package__', '__path__', '__rights__', '__version__']
+	>>> cpip.CPIP_VERSION
+	(0, 8, 1)
+	>>> 
+
+Unit Testing
+--------------------------
+
+To run all the unit tests in the core::
+
+	$ cd <cpip>/core
+	$ python3 test/UnitTest.py
+	
+	
+Testing the Demo Code
+--------------------------
+
+See the :ref:`cpip.tutorial.PpLexer` for an example of running a CPIP ``PpLexer`` on the demonstation code. This gives the core CPIP software a good workout.
+
+.. rubric:: Footnotes
+
+.. [#] Our home page that has, among other things, this *very fine documentation* is at http://cpip.sourceforge.net
+

@@ -1,0 +1,31 @@
+.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
+.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+
+**************
+CPIP Core
+**************
+
+CPIP Core contains the core code for pre-processing.
+
+.. image:: images/CPIP_core_architrecture.png
+   :alt: CPIP Architecture.
+   :width: 800
+
+
+
+.. toctree::
+    :maxdepth: 2
+
+    ConstantExpression
+    CppCond
+    CppDiagnostic
+    FileIncludeGraph
+    IncludeHandler
+    MacroEnv
+    PpDefine
+    PpLexer
+    PpToken
+    PpTokenCount
+    PpTokeniser
+    PpWhitespace
+    PragmaHandler

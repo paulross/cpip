@@ -1,0 +1,483 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PlotNode &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Plot" href="../plot/index.html" />
+    <link rel="next" title="SVGWriter" href="../plot/SVGWriter.html" />
+    <link rel="prev" title="Coord" href="../plot/Coord.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/SVGWriter.html" title="SVGWriter"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../plot/Coord.html" title="Coord"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../plot/index.html" accesskey="U">CPIP Plot</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="plotnode">
+<h1>PlotNode<a class="headerlink" href="#plotnode" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.plot.PlotNode"></span><div class="section" id="bounding-boxes">
+<h2>Bounding Boxes<a class="headerlink" href="#bounding-boxes" title="Permalink to this headline">¶</a></h2>
+<p>Legend for the drawing below:</p>
+<div class="highlight-python"><pre>**** - Self sigma BB.
+~~~~ - Self pad box
+#### - Self width and depth.
+.... - All children
+++++ - Child[n] sigma BB.</pre>
+</div>
+<p>i.e. For a child its <tt class="docutils literal"><span class="pre">++++</span></tt> is equivalent to my <tt class="docutils literal"><span class="pre">****</span></tt>.</p>
+<p>D      - Self datum point.
+S      - Self plot datum point.
+x[n]   - Child datum point.
+Pl     - Parent landing point to self.
+Pt     - Parent take-off point from self.
+P[n]   - Self take off point and landing point to child n.
+pl[n]  - Child n landing point from self.
+pt[n]  - Child n take-off point to self.
+tdc    - Top dead centre.</p>
+<p>Box .... has depth of max(Boxes(++++).width) and
+width max(Box(~~~~), sum(Boxes(++++).depth)).</p>
+<p>Each instance of class knows about the following:
+Boxes:</p>
+<div class="highlight-python"><pre>* ``****`` - Self sigma BB as computed Dim() objects: self.bbSigmaDepth and self.bbSigmaWidth. Or as computed Box() object self.bbSigma
+* ``~~~~`` - As computed Dim() objects: self.bbSelfWidth, self.bbSelfDepth
+* ``####`` - Self width and depth as Dim() objects: self.width and self.depth
+* ``....`` - All children as a Box() object: self.bbChildren</pre>
+</div>
+<p>And padding between <tt class="docutils literal"><span class="pre">~~~~</span></tt> and <tt class="docutils literal"><span class="pre">....</span></tt> as Dim() object self.bbSpaceChildren</p>
+<p>i.e. not ++++ - Child[n] sigma BB. That the caller knows about its children.</p>
+<p>Points:
+Given D each instance of this class knows:
+S, Pl, Pt, P[0] to P[N-1], x[0], tdc (only).</p>
+<p>In the following diagrams where lines are adjacent that means that there is no
+spacing between them.</p>
+<div class="highlight-python"><pre>-|-----&gt; x increases
+ |
+ |
+\/
+y increases
+
+D ***************************************************************************
+*                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                     *
+*                ~                                    ~                     *
+*                ~    S ### Pl ###tdc### Pt ######    ~                     *
+*                ~    #                          #    ~                     *
+*                ~    #                          #    ~                     *
+*                ~    #                          #    ~                     *
+*                ~    #                          #    ~                     *
+*                ~    ## P[0] ## P[c] ## P[C-1] ##    ~                     *
+*                ~                                    ~                     *
+*                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                     *
+*                                        |                                  *
+*                                        |= self._bbSpaceChildren           *
+*                                        |                                  *
+*...........................................................................*
+*.x[0] + pl[0] + pt[0] +x[c] + pl[c] + pt[c] ++++++++++++x[C-1]+pl/pt[C-1]+.*
+*.+                    ++                               ++                +.*
+*.+                    ++                               ++                +.*
+*.+++++++++++++++++++++++                               ++                +.*
+*.                      +                               ++                +.*
+*.                      +                               +++++++++++++++++++.*
+*.                      +                               +                  .*
+*.                      +++++++++++++++++++++++++++++++++                  .*
+*...........................................................................*
+*****************************************************************************</pre>
+</div>
+<p>Note: <tt class="docutils literal"><span class="pre">....</span></tt> can be narrower than <tt class="docutils literal"><span class="pre">~~~~</span></tt></p>
+</div>
+<div class="section" id="verticies">
+<h2>Verticies<a class="headerlink" href="#verticies" title="Permalink to this headline">¶</a></h2>
+<p>The following show root at the left. Linking parent to child:</p>
+<div class="highlight-python"><pre>                    PC_land    PC_stop
+                     |            |
+                     x&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;x
+                    /
+                   /
+    x&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;x/
+    |            |
+PC_roll        PC_to</pre>
+</div>
+<p>PC_roll and PC_to are determined by the parent.
+PC_land and PC_stop are determined by the child.</p>
+<p>And child to parent:</p>
+<div class="highlight-python"><pre>CP_stop     CP_land
+    |          |
+    x&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;x                                                                  x&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;x
+                   |            |
+                CP_to        CP_roll</pre>
+</div>
+<p>CP_roll and CP_to are determined by the child.
+CP_land and CP_stop are determined by the parent.</p>
+<dl class="exception">
+<dt id="cpip.plot.PlotNode.ExceptionPlotNode">
+<em class="property">exception </em><tt class="descclassname">cpip.plot.PlotNode.</tt><tt class="descname">ExceptionPlotNode</tt><a class="headerlink" href="#cpip.plot.PlotNode.ExceptionPlotNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when handling PlotNodeBbox object.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox">
+<em class="property">class </em><tt class="descclassname">cpip.plot.PlotNode.</tt><tt class="descname">PlotNodeBbox</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a class that can hold the width and depth of an object and
+the bounding box of self and the children.
+This can then compute various dimensions of self and children.</p>
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbChildren">
+<tt class="descname">bbChildren</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbChildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>The bounding box of children as a Coord.Box() or None.
+i.e. the box ....</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbChildrenDepth">
+<tt class="descname">bbChildrenDepth</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbChildrenDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>The bounding box depth of children as a Coord.Dim() or None.
+i.e. the depth of box ....</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbChildrenWidth">
+<tt class="descname">bbChildrenWidth</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbChildrenWidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>The bounding box width of children as a Coord.Dim() or None.
+i.e. the width of box ....</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbSelfDepth">
+<tt class="descname">bbSelfDepth</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbSelfDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>The depth of self plus padding as a Coord.Dim().
+i.e. the depth of box ~~~~</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbSelfPadding">
+<tt class="descname">bbSelfPadding</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbSelfPadding" title="Permalink to this definition">¶</a></dt>
+<dd><p>The immediate padding around self as a Coord.Pad().</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbSelfWidth">
+<tt class="descname">bbSelfWidth</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbSelfWidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>The width of self plus padding as a Coord.Dim() or None.
+i.e. the width of box ~~~~</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbSigma">
+<tt class="descname">bbSigma</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbSigma" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bounding box of self and my children as a Coord.Box().</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbSigmaDepth">
+<tt class="descname">bbSigmaDepth</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbSigmaDepth" title="Permalink to this definition">¶</a></dt>
+<dd><p>The depth of self+children as a Coord.Dim() or None in the case that
+I don&#8217;t exist and I have no children.
+i.e. the depth of box <tt class="docutils literal"><span class="pre">****</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbSigmaWidth">
+<tt class="descname">bbSigmaWidth</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbSigmaWidth" title="Permalink to this definition">¶</a></dt>
+<dd><p>The depth of self+children as a Coord.Dim() or None in the case that
+I don&#8217;t exist and I have no children.
+i.e. the width of box <tt class="docutils literal"><span class="pre">****</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.bbSpaceChildren">
+<tt class="descname">bbSpaceChildren</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.bbSpaceChildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>The additional distance to give to the children as a
+Coord.Dim().</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.box">
+<tt class="descname">box</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.box" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Coord.Box() of ####.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.childBboxDatum">
+<tt class="descname">childBboxDatum</tt><big>(</big><em>theDatum</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.childBboxDatum" title="Permalink to this definition">¶</a></dt>
+<dd><p>The point x[0] as a Coord.Pt() given theDatum as Coord.Pt() or None
+if no children.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.depth">
+<tt class="descname">depth</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>The immediate depth of the node, if None then no BB depth or
+bbSpaceChildrend is allocated. i.e. the depth of box ####</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.extendChildBbox">
+<tt class="descname">extendChildBbox</tt><big>(</big><em>theChildBbox</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.extendChildBbox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the child bounding box by the amount theChildBbox which
+should be a Coord.Box(). This extends the .... line.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.hasSetArea">
+<tt class="descname">hasSetArea</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.hasSetArea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if width and depth are set, False otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.plotPointCentre">
+<tt class="descname">plotPointCentre</tt><big>(</big><em>theLd</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.plotPointCentre" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the logical point at the centre of the box shown as #### above.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.plotPointSelf">
+<tt class="descname">plotPointSelf</tt><big>(</big><em>theDatum</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.plotPointSelf" title="Permalink to this definition">¶</a></dt>
+<dd><p>The point S as a Coord.Pt() given theDatum as Coord.Pt().</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.plot.PlotNode.PlotNodeBbox.width">
+<tt class="descname">width</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBbox.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>The immediate width of the node, if None then no BB width is
+allocated. i.e. the width of box ####</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy">
+<em class="property">class </em><tt class="descclassname">cpip.plot.PlotNode.</tt><tt class="descname">PlotNodeBboxBoxy</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sub-class parent child edges that contact the corners of the
+box shown as #### above.</p>
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.cpLand">
+<tt class="descname">cpLand</tt><big>(</big><em>theLd</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.cpLand" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-from-child landing point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.cpRoll">
+<tt class="descname">cpRoll</tt><big>(</big><em>theLd</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.cpRoll" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-child-to-parent start point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.cpStop">
+<tt class="descname">cpStop</tt><big>(</big><em>theLd</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.cpStop" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-from-child stop point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.cpTo">
+<tt class="descname">cpTo</tt><big>(</big><em>theLd</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.cpTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-child-to-parent take off point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.pcLand">
+<tt class="descname">pcLand</tt><big>(</big><em>theLd</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.pcLand" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parent-to-me-as-child landing point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.pcRoll">
+<tt class="descname">pcRoll</tt><big>(</big><em>theDatum</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.pcRoll" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-to-child logical start point given the logical datum
+as a Coord.Pt and the child ordinal. This gives equispaced points along
+the lower edge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.pcStop">
+<tt class="descname">pcStop</tt><big>(</big><em>theLd</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.pcStop" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parent-to-me-as-child stop point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxBoxy.pcTo">
+<tt class="descname">pcTo</tt><big>(</big><em>theDatum</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxBoxy.pcTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-to-child logical take off point given the logical
+datum as a Coord.Pt ind the child ordinal. This gives equispaced points
+along the lower edge.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy">
+<em class="property">class </em><tt class="descclassname">cpip.plot.PlotNode.</tt><tt class="descname">PlotNodeBboxRoundy</tt><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sub-class for parent child edges that contact the centre of the
+box shown as #### above.</p>
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.cpLand">
+<tt class="descname">cpLand</tt><big>(</big><em>theDatumL</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.cpLand" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-from-child landing point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.cpRoll">
+<tt class="descname">cpRoll</tt><big>(</big><em>theDatumL</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.cpRoll" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-child-to-parent start point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.cpStop">
+<tt class="descname">cpStop</tt><big>(</big><em>theDatumL</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.cpStop" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-from-child stop point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.cpTo">
+<tt class="descname">cpTo</tt><big>(</big><em>theDatumL</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.cpTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-child-to-parent take off point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.pcLand">
+<tt class="descname">pcLand</tt><big>(</big><em>theDatumL</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.pcLand" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parent-to-me-as-child landing point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.pcRoll">
+<tt class="descname">pcRoll</tt><big>(</big><em>theDatumL</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.pcRoll" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-to-child logical start point given the logical datum
+as a Coord.Pt ind the child ordinal. This gives equispaced points along
+the lower edge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.pcStop">
+<tt class="descname">pcStop</tt><big>(</big><em>theDatumL</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.pcStop" title="Permalink to this definition">¶</a></dt>
+<dd><p>The parent-to-me-as-child stop point given the logical datum as a Coord.Pt.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.plot.PlotNode.PlotNodeBboxRoundy.pcTo">
+<tt class="descname">pcTo</tt><big>(</big><em>theDatumL</em>, <em>childIndex</em><big>)</big><a class="headerlink" href="#cpip.plot.PlotNode.PlotNodeBboxRoundy.pcTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>The me-as-parent-to-child logical take off point given the logical
+datum as a Coord.Pt ind the child ordinal. This gives equispaced points
+along the lower edge.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">PlotNode</a><ul>
+<li><a class="reference internal" href="#bounding-boxes">Bounding Boxes</a></li>
+<li><a class="reference internal" href="#verticies">Verticies</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../plot/Coord.html"
+                        title="previous chapter">Coord</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../plot/SVGWriter.html"
+                        title="next chapter">SVGWriter</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/plot/PlotNode.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../plot/SVGWriter.html" title="SVGWriter"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../plot/Coord.html" title="Coord"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../plot/index.html" >CPIP Plot</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

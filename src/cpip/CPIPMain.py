@@ -29,12 +29,9 @@ import logging
 import time
 import types
 from optparse import OptionParser
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 #import pprint
-#import subprocess
+import subprocess
 import multiprocessing
 
 #from cpip import ExceptionCpip
@@ -46,44 +43,97 @@ from cpip.core import PragmaHandler
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 #from cpip.plot import TreePlotTransform
-import Tu2Html
-import MacroHistoryHtml
-import IncGraphSVGBase
-import IncGraphSVG
-import IncGraphSVGPpi
-import ItuToHtml
-import TokenCss
-import CppCondGraphToHtml
+from cpip import Tu2Html
+from cpip import MacroHistoryHtml
+from cpip import IncGraphSVGBase
+from cpip import IncGraphSVG
+from cpip import IncGraphSVGPpi
+from cpip import ItuToHtml
+from cpip import TokenCss
+from cpip import CppCondGraphToHtml
 
 def unitTest():
     pass
 
 class FigVisitorDot(FileIncludeGraph.FigVisitorBase):
     """Simple visitor that collects parent/child links for plotting the graph with dot."""
+    FILE_EXT_TO_NODE_COLOURS = {
+        '.h'                    : 'yellow',
+        '.c'                    : 'lawngreen',
+        '.cpp'                  : 'limegreen',
+        '.inl'                  : 'salmon',
+    }
     def __init__(self):
         super(FigVisitorDot, self).__init__()
+        self._nodeS = set()
         self._rootS = []
         self._lineS = []
         
     def __str__(self):
         retL = ['digraph FigVisitorDot {',]
+        retL.extend(sorted(self._nodeS))
         if len(self._rootS) > 1:
             retL.append('%s;' % ' -> '.join(self._rootS))
         retL.extend(self._lineS)
         retL.append('}\n')
         return '\n'.join(retL)
+    
+    def _addNode(self, theFigNode):
+        myF = theFigNode.fileName.replace('\\', '/')
+        # Set the attributes according to the file extension
+        nodeAttrStr = '"%s" [' % myF
+        myExt = os.path.splitext(theFigNode.fileName)[1].lower()
+        if myF == 'Unnamed Pre-include':
+            nodeAttrStr += 'color=lightblue,style=filled'
+        elif myExt in self.FILE_EXT_TO_NODE_COLOURS:
+            nodeAttrStr += 'color=%s,style=filled' % self.FILE_EXT_TO_NODE_COLOURS[myExt]
+        else:
+            # Unknown
+            nodeAttrStr += 'color=red,style=filled'
+        nodeAttrStr += ',label="%s"' % myF
+        nodeAttrStr += '];'
+        self._nodeS.add(nodeAttrStr)
         
     def visitGraph(self, theFigNode, theDepth, theLine): 
         """."""
-        myF = theFigNode.fileName
+        self._addNode(theFigNode)
+        myF = theFigNode.fileName.replace('\\', '/')
+        # Set the attributes according to the file extension
         if theDepth == 1:
-            self._rootS.append('"%s"' % myF)
+            self._rootS.append('"%s"' % (myF))
         hasC = False
         for aC in theFigNode.genChildNodes():
-            self._lineS.append('"%s" -> "%s";' % (myF, aC.fileName))
+            self._lineS.append('"%s" -> "%s";' % (myF, aC.fileName.replace('\\', '/')))
             hasC = True
         if not hasC:
+            # Leaf node
             self._lineS.append('"%s";' % (myF))
+
+def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
+    logging.info('Creating include Graph for DOT...')
+    myFigr = theLexer.fileIncludeGraphRoot
+    myVis = FigVisitorDot()
+    myFigr.acceptVisitor(myVis)
+    dotPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotTxt(theItu)))
+    svgPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotSVG(theItu)))
+    f = open(dotPath, 'w')
+    f.write(str(myVis))
+    f.close()
+    result = False
+    # Now make a system call to dot
+    try:
+        retcode = subprocess.call("dot -Tsvg %s -o %s" % (dotPath, svgPath), shell=True)
+        if retcode < 0:
+            logging.error("dot was terminated by signal %d" % retcode)
+        elif retcode > 0:
+            logging.error("dot returned error code %d" % retcode)
+        elif retcode == 0:
+            result = True
+            logging.info("dot returned %d" % retcode)
+    except OSError as e:
+        logging.error("dot execution failed: %s" % str(e))
+    logging.info('Creating include Graph for DOT done.')
+    return result
 
 def retFileCountMap(theLexer):
     myFigr = theLexer.fileIncludeGraphRoot
@@ -92,71 +142,62 @@ def retFileCountMap(theLexer):
     return myFileNameVis.fileNameMap
 
 def _dumpCondCompGraph(theLexer):
-    print
-    print ' Conditional Compilation Graph '.center(75, '-')
+    print()
+    print(' Conditional Compilation Graph '.center(75, '-'))
     myFigr = theLexer.condCompGraph
-    print myFigr
-    print ' END Conditional Compilation Graph '.center(75, '-')
-
-def _dumpIncludeGraphDot(theLexer):
-    print
-    print ' Include Graph for DOT '.center(75, '-')
-    myFigr = theLexer.fileIncludeGraphRoot
-    myVis = FigVisitorDot()
-    myFigr.acceptVisitor(myVis)
-    print myVis
-    print ' END Include Graph for DOT '.center(75, '-')
+    print(myFigr)
+    print(' END Conditional Compilation Graph '.center(75, '-'))
 
 def _dumpIncludeGraph(theLexer):
-    print
-    print ' Include Graph '.center(75, '-')
+    print()
+    print(' Include Graph '.center(75, '-'))
     myFigr = theLexer.fileIncludeGraphRoot
-    print myFigr
-    print ' END Include Graph '.center(75, '-')
+    print(myFigr)
+    print(' END Include Graph '.center(75, '-'))
 
 def _dumpFileCount(theFileCountMap):
-    print
-    myList = theFileCountMap.keys()
+    print()
+    myList = list(theFileCountMap.keys())
     myList.sort()
-    print
-    print ' Count of files encountered '.center(75, '-')
+    print()
+    print(' Count of files encountered '.center(75, '-'))
     for f in myList:
-        print '%4d  %s' % (theFileCountMap[f], f)
-    print ' END Count of files encountered '.center(75, '-')
+        print('%4d  %s' % (theFileCountMap[f], f))
+    print(' END Count of files encountered '.center(75, '-'))
 
 def _dumpTokenCount(theTokenCounter):
-    print
-    print ' Token count '.center(75, '-')
+    print()
+    print(' Token count '.center(75, '-'))
     #print theTokenCounter
     myTotal = 0
     for tokType, tokCount in theTokenCounter.tokenTypesAndCounts(
                                         isAll=True,
                                         allPossibleTypes=True):
-        print '%8d  %s' % (tokCount, tokType)
+        print('%8d  %s' % (tokCount, tokType))
         myTotal += tokCount
-    print '%8d  %s' % (myTotal, 'TOTAL')
-    print ' END Token count '.center(75, '-')
+    print('%8d  %s' % (myTotal, 'TOTAL'))
+    print(' END Token count '.center(75, '-'))
 
 def _dumpMacroEnv(theLexer):
-    print
-    print ' Macro Environment and History '.center(75, '-')
-    print theLexer.macroEnvironment.macroHistory()
-    print ' END Macro Environment and History '.center(75, '-')
-    print
+    print()
+    print(' Macro Environment and History '.center(75, '-'))
+    print(theLexer.macroEnvironment.macroHistory())
+    print(' END Macro Environment and History '.center(75, '-'))
+    print()
 
 def _dumpMacroEnvDot(theLexer):
-    print
-    print ' Macro dependencies as a DOT file '.center(75, '-')
-    print 'digraph MacroDependencyDot {'
+    print()
+    print(' Macro dependencies as a DOT file '.center(75, '-'))
+    print('digraph MacroDependencyDot {')
     myMacEnv = theLexer.macroEnvironment
     for aPpDef in myMacEnv.genMacros():
         if aPpDef.isReferenced:
             for aRtok in aPpDef.replacementTokens:
                 if aRtok.isIdentifier() and myMacEnv.hasMacro(aRtok.t):
-                    print '"%s" -> "%s";' % (aPpDef.identifier, aRtok.t)
-    print '}\n'
-    print ' END Macro dependencies as a DOT file '.center(75, '-')
-    print
+                    print('"%s" -> "%s";' % (aPpDef.identifier, aRtok.t))
+    print('}\n')
+    print(' END Macro dependencies as a DOT file '.center(75, '-'))
+    print()
 
 def tuIndexFileName(theTu):
     return 'index_' + HtmlUtils.retHtmlFileName(theTu)
@@ -178,6 +219,12 @@ def includeGraphFileNameCcg(theItu):
 
 def includeGraphFileNameText(theItu):
     return os.path.basename(theItu)+'.include.txt.html'
+
+def includeGraphFileNameDotTxt(theItu):
+    return os.path.basename(theItu)+'.include.dot'
+
+def includeGraphFileNameDotSVG(theItu):
+    return os.path.basename(theItu)+'.include.dot.svg'
 
 def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
     def _linkToIndex(theS, theItu):
@@ -208,7 +255,7 @@ def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
                 myS.characters(str(theLexer.fileIncludeGraphRoot))
             _linkToIndex(myS, theItu)
 
-def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCntr, incPpiLink):
+def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCntr, incPpiLink, hasIncDot):
     with XmlWrite.XhtmlStream(os.path.join(theOutDir, tuIndexFileName(theTuPath))) as myS:
         with XmlWrite.Element(myS, 'head'):
             with XmlWrite.Element(
@@ -247,6 +294,11 @@ def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCn
                 myS.characters('As ')
                 with XmlWrite.Element(myS, 'a',{'href' : includeGraphFileNameSVG(theTuPath),}):
                     myS.characters('Normal [SVG]')
+                # If we have successfully written a .dot file then link to it
+                if hasIncDot:
+                    myS.characters(', ')
+                    with XmlWrite.Element(myS,'a', {'href' : includeGraphFileNameDotSVG(theTuPath),}):
+                        myS.characters('Dot dependency [SVG]')
                 if incPpiLink:
                     myS.characters(', ')
                     with XmlWrite.Element(myS,'a', {'href' : includeGraphFileNameSVGPpi(theTuPath),}):
@@ -315,8 +367,7 @@ def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCn
             # TODO: Value count
             #with XmlWrite.Element(myS, 'p'):
             #    myS.characters('Total files processed: %d' % sum(theFileCountMap.values()))
-            myItuFileS = theFileCountMap.keys()
-            myItuFileS.sort()
+            myItuFileS = sorted(theFileCountMap.keys())
             # Create a list for the DictTree
             myFileLinkS = [
                 (
@@ -369,11 +420,15 @@ def tdCallback(theS, attrs, k, v):
         
 def writeIndexHtml(theOutDir, theTuS, theCmdLine, theOptMap):
     """Writes the top level index.html page.
+    
     theOutDir - The output directory.
+    
     theTuS - The list of translation units processed.
+    
     theCmdLine - The command line as a string.
+    
     theOptMap is a map of {opt_name : (value, help), ...} from the
-        command line options."""
+    command line options."""
     theTuS.sort()
     with XmlWrite.XhtmlStream(os.path.join(theOutDir, 'index.html')) as myS:
         with XmlWrite.Element(myS, 'head'):
@@ -415,7 +470,7 @@ def writeIndexHtml(theOutDir, theTuS, theCmdLine, theOptMap):
                         myS.characters('Value')
                     with XmlWrite.Element(myS, 'th', {'style' : "padding: 2px 6px 2px 6px"}):
                         myS.characters('Description')
-                optS = theOptMap.keys()
+                optS = list(theOptMap.keys())
                 optS.sort()
                 for o in optS:
                     with XmlWrite.Element(myS, 'tr'):
@@ -428,8 +483,8 @@ def writeIndexHtml(theOutDir, theTuS, theCmdLine, theOptMap):
                             with XmlWrite.Element(myS, 'tt'):
                                 myVal = theOptMap[o][0]
                                 # Break up lists as these can be quite long
-                                if type(myVal) == types.ListType \
-                                or type(myVal) == types.TupleType:
+                                if type(myVal) == list \
+                                or type(myVal) == tuple:
                                     if len(myVal) > 0:
                                         for i, aVal in enumerate(myVal):
                                             if i > 0:
@@ -479,7 +534,6 @@ F - File names encountered and their count.
 I - Include graph.
 M - Macro environment.
 T - Token count.
-D - Include graph as an input to DOT.
 R - Macro dependencies as an input to DOT.
 [default: %default]""")
     optParser.add_option("--heap", action="store_true", dest="heap", default=False, 
@@ -543,7 +597,7 @@ R - Macro dependencies as an input to DOT.
         try:
             from guppy import hpy
         except ImportError:
-            print 'Can not profile memory as you do not have guppy installed: http://guppy-pe.sourceforge.net/'
+            print('Can not profile memory as you do not have guppy installed: http://guppy-pe.sourceforge.net/')
             opts.heap = False
     if len(args) > 0:
         # Start memory profiling if requested
@@ -572,7 +626,7 @@ R - Macro dependencies as an input to DOT.
             # Add macros in psuedo pre-include
             if opts.defines:
                 myStr = '\n'.join(['#define '+' '.join(d.split('=')) for d in opts.defines])+'\n'
-                myPreIncFiles = [StringIO.StringIO(myStr), ]
+                myPreIncFiles = [io.StringIO(myStr), ]
                 #print 'TRACE: myStr', myStr
             myPreIncFiles.extend([open(f) for f in opts.preInc])
             myDiag = None
@@ -606,17 +660,12 @@ R - Macro dependencies as an input to DOT.
             logging.info('Processing TU done.')
             myFileCountMap = retFileCountMap(myLexer)
             # Write out the HTML for each source file
-            mySrcFileS = myFileCountMap.keys()
-            mySrcFileS.sort()
-            for aSrc in mySrcFileS:
+            for aSrc in sorted(myFileCountMap.keys()):
                 myItuToHtmlFileSet.add(aSrc)
             # Now output state
             # Conditional compilation graph
             if 'C' in opts.dump:
                 _dumpCondCompGraph(myLexer)
-            # Conditional compilation graph
-            if 'D' in opts.dump:
-                _dumpIncludeGraphDot(myLexer)
             # File include graph
             if 'I' in opts.dump:
                 _dumpIncludeGraph(myLexer)
@@ -670,6 +719,10 @@ R - Macro dependencies as an input to DOT.
             logging.info('Writing include graph (TEXT) to:')
             logging.info('  %s', outPath)
             writeIncludeGraphAsText(opts.output, anItu, myLexer)
+            # Include graph as a dot file
+            logging.info('Writing include graph (DOT) to:')
+            logging.info('  %s', outPath)
+            hasIncGraphDot = writeIncludeGraphAsDot(opts.output, anItu, myLexer)
             # Write Conditional compilation graph in HTML
             outPath = os.path.join(opts.output, includeGraphFileNameCcg(anItu))
             logging.info('Conditional compilation graph in HTML:')
@@ -681,11 +734,9 @@ R - Macro dependencies as an input to DOT.
                     tuIndexFileName(anItu),
                 )            
             # This is an index for the TU
-            writeTuIndexHtml(opts.output, anItu, myLexer, myFileCountMap, myTokCntr, opts.write_ppi_graph)
+            writeTuIndexHtml(opts.output, anItu, myLexer, myFileCountMap, myTokCntr, opts.write_ppi_graph, hasIncGraphDot)
             logging.info('Done: %s', anItu)
-        mySrcFileS = list(myItuToHtmlFileSet)
-        mySrcFileS.sort()
-        for aSrc in mySrcFileS:
+        for aSrc in sorted(myItuToHtmlFileSet):
             try:
                 # Could be 'Unnamed Pre-include'
                 if aSrc != myLexer.UNNAMED_FILE_NAME:
@@ -696,7 +747,7 @@ R - Macro dependencies as an input to DOT.
                         opts.keep_going,
                         macroRefMap=myMacroRefMap,
                     )
-            except ItuToHtml.ExceptionItuToHTML, err:
+            except ItuToHtml.ExceptionItuToHTML as err:
                 logging.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
         # An index.html for all the args with the command line and options
         writeIndexHtml(
@@ -707,20 +758,20 @@ R - Macro dependencies as an input to DOT.
             )
         logging.info('All done.')
         if opts.heap and myHeap is not None:
-            print 'Dump of heap:'
+            print('Dump of heap:')
             h = myHeap.heap()
-            print h
-            print
-            print 'Dump of heap byrcs:'
-            print h.byrcs
-            print
+            print(h)
+            print()
+            print('Dump of heap byrcs:')
+            print(h.byrcs)
+            print()
     else:
         optParser.print_help()
         optParser.error("No arguments!")
         return 1
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
     return 0
 
 if __name__ == '__main__':

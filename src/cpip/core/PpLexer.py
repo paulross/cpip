@@ -20,27 +20,10 @@
 
 """Generates tokens from a C or C++ translation unit.
 
-DONE: Add flag to include/exclude whitespace tokens in the generator.
-NO: Also add a comment type of token?
-
-DONE: Redesign initialiseTu() because it currently fails if ppTokens is
-called twice in succession.
-DONE: Test with (wrongly) indented #if #else etc. this seems to give an evaluation error.
-See TestPpLexerConditional.test_14...
-DONE: Variadic macros.
 TODO: Fix accidental token pasting.
+
 TODO: Preprocessor statements in arguments of function like macros. Sect. 3.9
 of cpp.pdf and existing MacroEnv tests.
-There for the call stack depth, D = A + 3 + 3L
-Where L is the number of levels of nested includes and A is the call stack
-depth of the function that calls ppTokens()
-DONE: Complete but minimal TU to check coverage.
-DONE: Have a token counting class rather than two integers at present
-DONE: Mutex flag that prevents >1 generator in play at any time.
-DONE: Diagnostic has isDebug attribute. [Needs test case]
-DONE: #if defned SPAM causes crash: ExceptionEvaluateExpression: Evaluation of " 0 0 0 0.0 " gives error: invalid syntax (<string>, line 1)
-
-DONE: Missing pragma handler causes diagnostic unspecified which is INFO. Should this be warning?
 """
 
 __author__  = 'Paul Ross'
@@ -49,25 +32,18 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import logging
-#import traceback
 import os
-#import sys
-import pprint
 
-import ConstantExpression
-import CppCond
-import CppDiagnostic
-#import FileIncludeGraph
-#import FileIncludeStack_old as FileIncludeStack
-import FileIncludeStack# as FileIncludeStack
-#import FileLocation
-import IncludeHandler
-import MacroEnv
-import PpToken
-#import PpTokenCount
-import PpTokeniser
-import PpWhitespace
-import PragmaHandler
+from cpip.core import ConstantExpression
+from cpip.core import CppCond
+from cpip.core import CppDiagnostic
+from cpip.core import FileIncludeStack
+from cpip.core import IncludeHandler
+from cpip.core import MacroEnv
+from cpip.core import PpToken
+from cpip.core import PpTokeniser
+from cpip.core import PpWhitespace
+from cpip.core import PragmaHandler
 
 from cpip.util import ListGen
 
@@ -132,6 +108,8 @@ class ExceptionPpLexerAlreadyGenerating(ExceptionPpLexer):
 ##################################################
 # Section: PpLexer - the main point of this module.
 ##################################################
+
+#: Allowable preprocessing directives
 PREPROCESSING_DIRECTIVES = [        
     'if',
     'ifdef',
@@ -159,8 +137,8 @@ class PpLexer(object):
         (ITU) i.e. the file being preprocessed.
     
     *includeHandler*
-        A handler to file #includ'ed files typically a
-        IncludeHandler.IncludeHandlerStd().
+        A handler to file ``#include``'d files typically a
+        ``IncludeHandler.IncludeHandlerStd()``.
         This might have user and system include path
         information and a means of resolving file
         references.
@@ -184,7 +162,9 @@ class PpLexer(object):
     TODO: Set flags here rather than supplying them to a generator?
     This would make the API simply the ctor and ppTokens/next().
     Flags would be:
+    
     incWs - Include whitespace tokens.
+    
     condLevel - (0, 1, 2) thus:
     
     0. No conditionally compiled tokens. The fileIncludeGraphRoot will
@@ -198,23 +178,23 @@ class PpLexer(object):
         information about conditionally included files recursively.    
     """
     PP_DIRECTIVE_PREFIX = '#'
-    # The maximum value of nested #include's
+    #: The maximum value of nested #include's
     MAX_INCLUDE_DEPTH = 200
-    # Each include 
-    # The call stack depth, D = A + B + C*L
-    # Where L is the number of levels of nested includes and A is the call stack
-    # depth of the function that calls ppTokens()
-    # A above:
+    #: Each include 
+    #: The call stack depth, D = A + B + C*L
+    #: Where L is the number of levels of nested includes and A is the call stack
+    #" depth of the function that calls ppTokens()
+    #: A above:
     CALL_STACK_DEPTH_ASSUMED_PPTOKENS = 10
-    # B above:
+    #: B above:
     CALL_STACK_DEPTH_FIRST_INCLUDE = 3
-    # C above:
+    #: C above:
     CALL_STACK_DEPTH_PER_INCLUDE = 3
-    # Used when file objects have no name
+    #: Used when file objects have no name
     UNNAMED_FILE_NAME = 'Unnamed Pre-include'
-    # Conditianlity settings for token generation
+    #: Conditianlity settings for token generation
     COND_LEVEL_DEFAULT = 0
-    # (0, 1, 2)
+    #: Conditionality level (0, 1, 2)
     COND_LEVEL_OPTIONS = range(3)
     ###########################################
     # Section: Initialisation and finalisation.
@@ -296,7 +276,7 @@ class PpLexer(object):
         }
         # Sanity check
         for aType in PREPROCESSING_DIRECTIVES:
-            assert(self._KEYWORD_DESPATCH.has_key(aType))
+            assert(aType in self._KEYWORD_DESPATCH)
         # The Macro environment
         self._macroEnv = MacroEnv.MacroEnv()
         # Conditional level of compilation
@@ -364,9 +344,9 @@ class PpLexer(object):
                 for aTok in self._genPpTokensRecursive(myGen):
                     #print 'TRACE: aTok:', aTok
                     yield aTok
-            except CppDiagnostic.ExceptionCppDiagnosticUndefined, err:
+            except CppDiagnostic.ExceptionCppDiagnosticUndefined as err:
                 raise ExceptionPpLexerPredefine(err)
-            except ExceptionCpip, err:
+            except ExceptionCpip as err:
                 raise ExceptionPpLexerPreInclude(
                     'Failed to process pre-include with error: %s' % str(err)
                 )
@@ -419,22 +399,25 @@ class PpLexer(object):
         
         *incWs* - if True than whitespace tokens are included (i.e. tok.isWs() == True).
         
-        
         *minWs* - if True then whitespace runs will be minimised to a single
         space or, if  newline is in the whitespce run, a single newline
         
         *condLevel* - if True then conditionally compiled tokens will be yielded
         and they will have have tok.isCond == True. The fileIncludeGraphRoot
-        will be marked up with the appropriate conditionality. Levels are:        
-        0: No conditionally compiled tokens. The fileIncludeGraphRoot will
+        will be marked up with the appropriate conditionality. Levels are::
+
+            0: No conditionally compiled tokens. The fileIncludeGraphRoot will
             not have any information about conditionally included files.
-        1: Conditionally compiled tokens are generated but not from 
+    
+            1: Conditionally compiled tokens are generated but not from 
             conditionally included files. The fileIncludeGraphRoot will have
             a reference to a conditionally included file but not that
             included file's includes.
-        2: Conditionally compiled tokens including tokens from conditionally
+    
+            2: Conditionally compiled tokens including tokens from conditionally
             included files. The fileIncludeGraphRoot will have all the
             information about conditionally included files recursively.
+
         (see _cppInclude where we check if self._condStack.isTrue():)."""
         if self._isGenerating:
             raise ExceptionPpLexerAlreadyGenerating()
@@ -530,7 +513,7 @@ class PpLexer(object):
             while 1:
                 # Take the position just before the token
                 myFlc = self.fileLineCol
-                myTtt = theGen.next()
+                myTtt = next(theGen)
                 # Now we evaluate the token in our context
                 # 1. Is it a (potiential) directive?
                 # 2. Otherwise is it unconditional?
@@ -566,7 +549,7 @@ class PpLexer(object):
                                             myFlc):
                                 yield aTtt
                                 self._tuIndex += 1
-                        except ExceptionCpip, err:
+                        except ExceptionCpip as err:
                             self._diagnostic.error(str(err), self._fis.fileLineCol)
                     else:
                         # Nothing to replace, just move right along
@@ -587,7 +570,7 @@ class PpLexer(object):
             try:
                 # Update the FileIncludeStack
                 self._diagnosticDebugMessage('_genPpTokens() END')
-            except Exception, err:
+            except Exception as err:
                 logging.fatal('PpLexer._genPpTokensRecursive(): Encountered exception in finally clause: %s' % str(err))
                 pass
 
@@ -732,7 +715,7 @@ class PpLexer(object):
         newline. If theDiscardList is non-None intermediate tokens will be
         appended to it."""
         while 1:
-            myTtt = theGen.next()
+            myTtt = next(theGen)
             if not myTtt.isWs() \
             or self._wsHandler.isBreakingWhitespace(myTtt.t):
                 return myTtt
@@ -749,7 +732,7 @@ class PpLexer(object):
             # Take the position just before we read the token to give it
             # to self._macroEnv.replace(...)
             myFlc = self.fileLineCol
-            myTtt = theGen.next()
+            myTtt = next(theGen)
             if self._wsHandler.isBreakingWhitespace(myTtt.t):
                 retList.append(myTtt)
                 break
@@ -763,7 +746,7 @@ class PpLexer(object):
                                         myFlc,
                                         ):
                             retList.append(aTtt)
-                    except ExceptionCpip, err:
+                    except ExceptionCpip as err:
                         self._diagnostic.error(str(err), self._fis.fileLineCol)
                     if len(retList) > 0 \
                     and self._wsHandler.isBreakingWhitespace(retList[-1].t):
@@ -791,9 +774,9 @@ class PpLexer(object):
         retList = []
         if len(theTokS) > 0:
             myListAsGen = ListGen.ListAsGenerator(theTokS)
-            myGen = myListAsGen.next()
+            myGen = next(myListAsGen)
             while not myListAsGen.listIsEmpty:
-                myTok = myGen.next()
+                myTok = next(myGen)
                 #print '_retListReplacedTokens(): myTok', myTok
                 if self._macroEnv.mightReplace(myTok):
                     for aTtt in self._macroEnv.replace(
@@ -907,7 +890,7 @@ class PpLexer(object):
         flagInvert = flagHasSeenDefined = False
         while 1:
             myFlc = self.fileLineCol
-            myTtt = theGen.next()
+            myTtt = next(theGen)
             rawTokS.append(myTtt)
             #print '_retDefinedSubstitution(): %s' % myTtt
             if self._wsHandler.isBreakingWhitespace(myTtt.t):
@@ -969,7 +952,7 @@ class PpLexer(object):
         try:
             myCe = ConstantExpression.ConstantExpression(myTokS)
             myBool = myCe.evaluate()
-        except ConstantExpression.ExceptionConstantExpression, err:
+        except ConstantExpression.ExceptionConstantExpression as err:
             myBool = None
             self._diagnostic.undefined(
                     'Can not evaluate constant expression "%s", error: %s' \
@@ -1128,7 +1111,7 @@ class PpLexer(object):
                 self._condStack.oEndif()
                 self._condCompGraph.oEndif(theFlc, self._tuIndex, myEndifState)
                 yield PpToken.PpToken('\n', 'whitespace')
-            except Exception, err:
+            except Exception as err:
                 logging.fatal('PpLexer._cppEndif(): Encountered exception in finally clause: %s' % str(err))
                 pass
     #======================================
@@ -1182,7 +1165,7 @@ class PpLexer(object):
                                 # may displace an exception generated in the try block above.
                                 try:
                                     self._pptPop()
-                                except Exception, err:
+                                except Exception as err:
                                     logging.fatal('PpLexer._cppInclude(): [0] Encountered exception in finally clause : %s' % str(err))
                         else:
                             # Failure to find #included file
@@ -1190,7 +1173,7 @@ class PpLexer(object):
                             self._cppIncludeReportError(
                                 '%s: No such file or directory' % myHeaderNameTok.t
                                 )
-                    except IncludeHandler.ExceptionCppInclude, err:
+                    except IncludeHandler.ExceptionCppInclude as err:
                         logging.error('Include failed with %s', str(err))
                     finally:
                         # Trap any exception in the finally block otherwise that
@@ -1204,7 +1187,7 @@ class PpLexer(object):
                             #print 'self._fileStack now:', self._fileStack
                             #print '    Line number now:', self._fileLocator.lineNum
                             #print '_genPpTokens() exit'
-                        except Exception, err:
+                        except Exception as err:
                             logging.fatal('PpLexer._cppInclude(): [1] Encountered exception in finally clause : %s' % str(err))
         #logging.debug('#include %s END' % str(myHeaderNameTok))#.t)
         #logging.debug('self._fileStack now:\n    %s' % str('\n    '.join(self._fileStack)))
@@ -1291,7 +1274,7 @@ class PpLexer(object):
                 for aPrefixTok in ppTokenPrefix:
                     self._fis.tokenCountInc(aPrefixTok, True, num=1)
                 self._fis.tokenCounterAdd(self._macroEnv.macro(myIdent).tokenCounter)
-            except MacroEnv.ExceptionMacroEnvInvalidRedefinition, err:
+            except MacroEnv.ExceptionMacroEnvInvalidRedefinition as err:
                 # C99Rationale: 6.10.3 - "...with diagnostics generated only if the definitions differ."
                 self._diagnostic.warning(str(err))
             # Note: this token will be counted by the ppTokens() generator but
@@ -1336,7 +1319,7 @@ class PpLexer(object):
                                     PpToken.PpToken('whatever', 'identifier'),
                                     True,
                                     num=1)
-            except MacroEnv.ExceptionMacroEnv, err:
+            except MacroEnv.ExceptionMacroEnv as err:
                 self._diagnostic.error(str(err))
 #                raise ExceptionPpLexerDefine(str(err))
             yield PpToken.PpToken('\n', 'whitespace')
@@ -1424,10 +1407,10 @@ but is not required to."""
                         # may displace an exception generated in the try block above.
                         try:
                             self._pptPop()
-                        except Exception, err:
+                        except Exception as err:
                             logging.fatal('PpLexer._cppPragma(): Encountered exception in finally clause: %s' % str(err))
                             pass
-            except PragmaHandler.ExceptionPragmaHandler, err:
+            except PragmaHandler.ExceptionPragmaHandler as err:
                 self._diagnostic.undefined(str(err), theFlc)
         else:
             # No pragma handler so warn (Was: report unspecified behaviour)

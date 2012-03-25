@@ -75,9 +75,9 @@ import logging
 import sys
 import os
 try:
-    import cStringIO as StringIO
+    import io as StringIO
 except ImportError:
-    import StringIO
+    import io
 import pprint
 
 from cpip.core import PpLexer, PpTokeniser, PpToken
@@ -100,7 +100,7 @@ class TestPpLexerCondIncBase(TestPpLexerLimits):
     # Are all possible combinations of conditional include generated
     IS_ITU_EXHAUSTIVE = True#False 
     def setUp(self):
-        self._itu = StringIO.StringIO()
+        self._itu = io.StringIO()
         #myInt = long(1)
         myInt = self.retIntRep()
         #print myInt
@@ -117,7 +117,7 @@ class TestPpLexerCondIncBase(TestPpLexerLimits):
         self._itu.close()
         
     def retIntRep(self):
-        return (long(1)<<self.MAX_DEPTH_INDEX+1)-1
+        return (int(1)<<self.MAX_DEPTH_INDEX+1)-1
         
     def _padStr(self, theD):
         return ''
@@ -135,7 +135,7 @@ class TestPpLexerCondIncBase(TestPpLexerLimits):
     
     def retCppDefine(self, theIntId, theIntRepr):
         # NOTE: Inversion of logic here
-        if ((long(1) << theIntId) & theIntRepr):
+        if ((int(1) << theIntId) & theIntRepr):
             mName = self._retMacroName(theIntId) + ' 1'
         else:
             mName = self._retMacroName(theIntId) + ' 0'
@@ -237,7 +237,7 @@ class TestPpLexerCondIncFour(TestPpLexerCondIncBase):
                  'mt.h',
                  self.retIncHandler(),
                  preIncFiles=[
-                              StringIO.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                              io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
                               ],
                  diagnostic=None,
                  )
@@ -250,12 +250,12 @@ class TestPpLexerCondIncFour(TestPpLexerCondIncBase):
         return
         myIntRepr = self.retIntRep()
         while 1:
-            print
-            print 'myIntRepr:', myIntRepr
-            print 'With\n', self.retPreIncludeMacros(myIntRepr)
-            print 'self._itu:\n', self._itu.getvalue()
-            print 'Expects: ', self._includeId(myIntRepr)
-            print '     Or: ', self.retExpTokensNoWs(myIntRepr)
+            print()
+            print('myIntRepr:', myIntRepr)
+            print('With\n', self.retPreIncludeMacros(myIntRepr))
+            print('self._itu:\n', self._itu.getvalue())
+            print('Expects: ', self._includeId(myIntRepr))
+            print('     Or: ', self.retExpTokensNoWs(myIntRepr))
             if myIntRepr == 0:
                 break
             myIntRepr -= 1
@@ -272,7 +272,7 @@ class TestPpLexerCondIncFour(TestPpLexerCondIncBase):
                      'mt.h',
                      myIncHandler,
                      preIncFiles=[
-                        StringIO.StringIO(self.retPreIncludeMacros(myIntRepr)),
+                        io.StringIO(self.retPreIncludeMacros(myIntRepr)),
                                   ],
                      diagnostic=None,
                      )
@@ -300,7 +300,7 @@ class TestPpLexerCondIncEight(TestPpLexerCondIncBase):
                  'mt.h',
                  self.retIncHandler(),
                  preIncFiles=[
-                              StringIO.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                              io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
                               ],
                  diagnostic=None,
                  )
@@ -313,7 +313,7 @@ class TestPpLexerCondIncEight(TestPpLexerCondIncBase):
         myIntRepr = self.retIntRep()
         myIncHandler = self.retIncHandler()
         #print 'self._itu:\n', self._itu.getvalue()
-        print 'self._itu size: %d' % len(self._itu.getvalue())
+        print('self._itu size: %d' % len(self._itu.getvalue()))
         while 1:
             #print 'myIntRepr:', myIntRepr
             #print
@@ -322,7 +322,7 @@ class TestPpLexerCondIncEight(TestPpLexerCondIncBase):
                      'mt.h',
                      myIncHandler,
                      preIncFiles=[
-                        StringIO.StringIO(self.retPreIncludeMacros(myIntRepr)),
+                        io.StringIO(self.retPreIncludeMacros(myIntRepr)),
                                   ],
                      diagnostic=None,
                      )
@@ -350,7 +350,7 @@ class TestPpLexerCondInc64NonExhaustive(TestPpLexerCondIncBase):
                  'mt.h',
                  self.retIncHandler(),
                  preIncFiles=[
-                              StringIO.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                              io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
                               ],
                  diagnostic=None,
                  )
@@ -363,8 +363,8 @@ class TestPpLexerCondInc64NonExhaustive(TestPpLexerCondIncBase):
         """Tests 5.2.4.1 Translation limits - 64 nesting levels of conditional inclusion, non-exhaustive."""
         myIntRepr = self.retIntRep()
         myIncHandler = self.retIncHandler()
-        print 'self._itu size: %d' % len(self._itu.getvalue())
-        print 'self._itu:\n', self._itu.getvalue()
+        print('self._itu size: %d' % len(self._itu.getvalue()))
+        print('self._itu:\n', self._itu.getvalue())
         while 1:
             #print 'myIntRepr:', myIntRepr
             #print
@@ -373,7 +373,7 @@ class TestPpLexerCondInc64NonExhaustive(TestPpLexerCondIncBase):
                      'mt.h',
                      myIncHandler,
                      preIncFiles=[
-                        StringIO.StringIO(self.retPreIncludeMacros(myIntRepr)),
+                        io.StringIO(self.retPreIncludeMacros(myIntRepr)),
                                   ],
                      diagnostic=None,
                      )
@@ -409,8 +409,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestPpLexerLimits.py - A module that tests the implementation limits of
+    print("""TestPpLexerLimits.py - A module that tests the implementation limits of
 the PpLexer module.
 Usage:
 python TestPpLexerLimits.py [-lh --help]
@@ -427,20 +426,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestPpLexer.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestPpLexer.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -451,7 +450,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -461,8 +460,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

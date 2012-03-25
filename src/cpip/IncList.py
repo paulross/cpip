@@ -23,16 +23,13 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-import os
+#import os
 import sys
 import logging
 import time
-import types
+#import types
 from optparse import OptionParser
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 #import pprint
 #import subprocess
 #import multiprocessing
@@ -59,7 +56,7 @@ def preProcessForIncludes(theItu, incUsr, incSys, theDefineS, preIncS, keepGoing
     # Add macros in psuedo pre-include
     if theDefineS:
         myStr = '\n'.join(['#define '+' '.join(d.split('=')) for d in theDefineS])+'\n'
-        myPreIncFiles = [StringIO.StringIO(myStr), ]
+        myPreIncFiles = [io.StringIO(myStr), ]
     myPreIncFiles.extend([open(f) for f in preIncS])
     myDiag = None
     if keepGoing:
@@ -151,16 +148,16 @@ Preprocess the files and lists included files."""
         myFileS = list(myFileSet)
         myFileS.sort()
         message = ' Included files [%d] ' % len(myFileS)
-        print message.center(75, '-')
-        print '\n'.join(myFileS)
-        print ' Included files '.center(75, '-')
+        print(message.center(75, '-'))
+        print('\n'.join(myFileS))
+        print(' Included files '.center(75, '-'))
     else:
         optParser.print_help()
         optParser.error("No arguments!")
         return 1
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
     return 0
 
 if __name__ == '__main__':

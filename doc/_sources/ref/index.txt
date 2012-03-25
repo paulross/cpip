@@ -1,0 +1,13 @@
+*****************
+CPIP Reference
+*****************
+
+.. toctree::
+    :maxdepth: 2
+
+    core/index
+    
+    util/index
+    
+    plot/index
+    

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <title>File: /Users/paulross/dev/linux-2.6.37/include/linux/threads.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux-2.6.37/include/linux/threads.h</h1>
+    <pre><a name="1"><span class="line">       1: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#_LINUX_THREADS_H_0"><span class="b">_LINUX_THREADS_H</span></a>
+<a name="2"><span class="line">       2: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#_LINUX_THREADS_H_0"><span class="b">_LINUX_THREADS_H</span></a>
+<a name="3"><span class="line">       3: </span></a>
+<a name="4"><span class="line">       4: </span></a>
+<a name="5"><span class="line">       5: </span></a><span class="k">/*
+<a name="6"><span class="line">       6: </span></a> * The default limit for the nr of threads is now in
+<a name="7"><span class="line">       7: </span></a> * /proc/sys/kernel/threads-max.
+<a name="8"><span class="line">       8: </span></a> */</span>
+<a name="9"><span class="line">       9: </span></a>
+<a name="10"><span class="line">      10: </span></a><span class="k">/*
+<a name="11"><span class="line">      11: </span></a> * Maximum supported processors.  Setting this smaller saves quite a
+<a name="12"><span class="line">      12: </span></a> * bit of memory.  Use nr_cpu_ids instead of this except for static bitmaps.
+<a name="13"><span class="line">      13: </span></a> */</span>
+<a name="14"><span class="line">      14: </span></a><span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros.html#CONFIG_NR_CPUS_0"><span class="b">CONFIG_NR_CPUS</span></a>
+<a name="15"><span class="line">      15: </span></a><span class="k">/* FIXME: This should be fixed in the arch&apos;s Kconfig */</span>
+<a name="16"><span class="line">      16: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#CONFIG_NR_CPUS_0"><span class="b">CONFIG_NR_CPUS</span></a>    <span class="c">1</span>
+<a name="17"><span class="line">      17: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="18"><span class="line">      18: </span></a>
+<a name="19"><span class="line">      19: </span></a><span class="k">/* Places which use this should consider cpumask_var_t. */</span>
+<a name="20"><span class="line">      20: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#NR_CPUS_0"><span class="b">NR_CPUS</span></a>        <a href="cpu.c_macros.html#CONFIG_NR_CPUS_0"><span class="b">CONFIG_NR_CPUS</span></a>
+<a name="21"><span class="line">      21: </span></a>
+<a name="22"><span class="line">      22: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#MIN_THREADS_LEFT_FOR_ROOT_0"><span class="b">MIN_THREADS_LEFT_FOR_ROOT</span></a> <span class="c">4</span>
+<a name="23"><span class="line">      23: </span></a>
+<a name="24"><span class="line">      24: </span></a><span class="k">/*
+<a name="25"><span class="line">      25: </span></a> * This controls the default maximum pid allocated to a process
+<a name="26"><span class="line">      26: </span></a> */</span>
+<a name="27"><span class="line">      27: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PID_MAX_DEFAULT_0"><span class="b">PID_MAX_DEFAULT</span></a> <span class="f">(</span><span class="b">CONFIG_BASE_SMALL</span> <span class="f">?</span> <span class="c">0x1000</span> <span class="f">:</span> <span class="c">0x8000</span><span class="f">)</span>
+<a name="28"><span class="line">      28: </span></a>
+<a name="29"><span class="line">      29: </span></a><span class="k">/*
+<a name="30"><span class="line">      30: </span></a> * A maximum of 4 million PIDs should be enough for a while.
+<a name="31"><span class="line">      31: </span></a> * [NOTE: PID/TIDs are limited to 2^29 ~= 500+ million, see futex.h.]
+<a name="32"><span class="line">      32: </span></a> */</span>
+<a name="33"><span class="line">      33: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PID_MAX_LIMIT_0"><span class="b">PID_MAX_LIMIT</span></a> <span class="f">(</span><span class="b">CONFIG_BASE_SMALL</span> <span class="f">?</span> <a href="cpu.c_macros.html#PAGE_SIZE_0"><span class="b">PAGE_SIZE</span></a> <span class="f">*</span> <span class="c">8</span> <span class="f">:</span> \
+<a name="34"><span class="line">      34: </span></a>    <span class="f">(</span><span class="m">sizeof</span><span class="f">(</span><span class="m">long</span><span class="f">)</span> <span class="f">&gt;</span> <span class="c">4</span> <span class="f">?</span> <span class="c">4</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">:</span> <a href="cpu.c_macros.html#PID_MAX_DEFAULT_0"><span class="b">PID_MAX_DEFAULT</span></a><span class="f">)</span><span class="f">)</span>
+<a name="35"><span class="line">      35: </span></a>
+<a name="36"><span class="line">      36: </span></a><span class="k">/*
+<a name="37"><span class="line">      37: </span></a> * Define a minimum number of pids per cpu.  Heuristically based
+<a name="38"><span class="line">      38: </span></a> * on original pid max of 32k for 32 cpus.  Also, increase the
+<a name="39"><span class="line">      39: </span></a> * minimum settable value for pid_max on the running system based
+<a name="40"><span class="line">      40: </span></a> * on similar defaults.  See kernel/pid.c:pidmap_init() for details.
+<a name="41"><span class="line">      41: </span></a> */</span>
+<a name="42"><span class="line">      42: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PIDS_PER_CPU_DEFAULT_0"><span class="b">PIDS_PER_CPU_DEFAULT</span></a>    <span class="c">1024</span>
+<a name="43"><span class="line">      43: </span></a><span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros.html#PIDS_PER_CPU_MIN_0"><span class="b">PIDS_PER_CPU_MIN</span></a>    <span class="c">8</span>
+<a name="44"><span class="line">      44: </span></a>
+<a name="45"><span class="line">      45: </span></a><span class="f">#</span><span class="n">endif</span>
+<a name="46"><span class="line">      46: </span></a></pre>
+  </body>
+</html>

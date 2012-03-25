@@ -29,10 +29,7 @@ import sys
 import os
 #import pprint
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 from cpip.core import PpLexer
 from cpip.core import CppDiagnostic
@@ -101,7 +98,7 @@ class TestPpLexerLowLevel(TestPpLexer):
             'mt.h',
             CppIncludeStringIO([], [], '', {}),
             preIncFiles=[
-                StringIO.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
             ],
             diagnostic=None,
         )
@@ -183,7 +180,7 @@ class TestPpLexerLowLevel(TestPpLexer):
             'mt.h',
             CppIncludeStringIO([], [], '', {}),
             preIncFiles=[
-                StringIO.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
                          ],
             diagnostic=None,
         )
@@ -242,7 +239,7 @@ class TestPpLexerPreDefine(TestPpLexer):
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -272,7 +269,7 @@ mt.h [0, 0]:  True "" \"\"""",
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -297,7 +294,7 @@ mt.h [0, 0]:  True "" \"\"""",
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -333,7 +330,7 @@ mt.h [0, 0]:  True "" \"\"""",
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -374,7 +371,7 @@ mt.h [0, 0]:  True "" \"\"""",
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -408,7 +405,7 @@ mt.h [0, 0]:  True "" \"\"""")
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -447,7 +444,7 @@ mt.h [0, 0]:  True "" \"\"""")
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -482,7 +479,7 @@ mt.h [0, 0]:  True "" \"\"""")
             'mt.h',
             CppIncludeStringIO([], [], '', {}),
             preIncFiles=[
-                          StringIO.StringIO(x) for x in preDefMacros
+                          io.StringIO(x) for x in preDefMacros
                           ],
             diagnostic=None,
             )
@@ -503,7 +500,7 @@ mt.h [0, 0]:  True "" \"\"""")
             'mt.h',
             CppIncludeStringIO([], [], '', {}),
             preIncFiles=[
-                          StringIO.StringIO(x) for x in preDefMacros
+                          io.StringIO(x) for x in preDefMacros
                           ],
             diagnostic=None,
             )
@@ -527,7 +524,7 @@ mt.h [0, 0]:  True "" \"\"""")
             'mt.h',
             CppIncludeStringIO([], [], '', {}),
             preIncFiles=[
-                          StringIO.StringIO(x) for x in preDefMacros
+                          io.StringIO(x) for x in preDefMacros
                           ],
             diagnostic=None,
             )
@@ -546,7 +543,7 @@ mt.h [0, 0]:  True "" \"\"""")
             'mt.h',
             CppIncludeStringIO([], [], '', {}),
             preIncFiles=[
-                          StringIO.StringIO(x) for x in preDefMacros
+                          io.StringIO(x) for x in preDefMacros
                           ],
             diagnostic=None,
             )
@@ -568,7 +565,7 @@ mt.h [0, 0]:  True "" \"\"""")
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -605,7 +602,7 @@ mt.h [0, 0]:  True "" \"\"""")
                  'mt.h',
                  CppIncludeStringIO([], [], '', {}),
                  preIncFiles=[
-                              StringIO.StringIO(x) for x in myPiS
+                              io.StringIO(x) for x in myPiS
                               ],
                  diagnostic=None,
                  )
@@ -756,7 +753,7 @@ SPAM
         try:
             result = ''.join([t.t for t in myLexer.ppTokens()])
             self.fail('CppDiagnostic.ExceptionCppDiagnosticUndefined not raised.')
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined, err:
+        except CppDiagnostic.ExceptionCppDiagnosticUndefined as err:
             self.assertEqual(
                 str(err),
                 ' identifier "# DefINE" at line=1, col=2 of file "define.h"'
@@ -1298,7 +1295,7 @@ class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
                                   'src/spam.c',
                                   self._incSim,
                                   preIncFiles=[
-                                               StringIO.StringIO(x) for x in preDefMacros
+                                               io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
         result = ''.join([t.t for t in myLexer.ppTokens()])
@@ -1325,7 +1322,7 @@ src/spam.c [0, 0]:  True "" ""
                                   'src/spam.c',
                                   self._incSim,
                                   preIncFiles=[
-                                               StringIO.StringIO(x) for x in preDefMacros
+                                               io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
         result = ''.join([t.t for t in myLexer.ppTokens()])
@@ -1354,7 +1351,7 @@ src/spam.c [0, 0]:  True "" ""
                                   'src/spam.c',
                                   self._incSim,
                                   preIncFiles=[
-                                               StringIO.StringIO(x) for x in preDefMacros
+                                               io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
         result = ''.join([t.t for t in myLexer.ppTokens()])
@@ -1380,7 +1377,7 @@ src/spam.c [0, 0]:  True "" ""
                                   'src/spam.c',
                                   self._incSim,
                                   preIncFiles=[
-                                               StringIO.StringIO(x) for x in preDefMacros
+                                               io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
         result = ''.join([t.t for t in myLexer.ppTokens()])
@@ -1436,7 +1433,7 @@ class TestIncludeHandler_PreInclude_Includes(TestIncludeHandlerBase):
                                   'src/spam.c',
                                   self._incSim,
                                   preIncFiles=[
-                                               StringIO.StringIO(x) for x in preIncludeS
+                                               io.StringIO(x) for x in preIncludeS
                                                ],
                                   )
         try:
@@ -1740,7 +1737,7 @@ class TestPpLexerConditional_LowLevel(TestPpLexer):
                     """\n""",
                     {}
                     ),
-                 preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  diagnostic=None,
                  )
         myTestS = (
@@ -1771,7 +1768,7 @@ class TestPpLexerConditional_LowLevel(TestPpLexer):
         for aStr, expectedTokS in myTestS:
             #print 'TRACE TestPpLexerConditional_LowLevel.test_00(): %s' % aStr
             myCpp = PpTokeniser.PpTokeniser(
-                theFileObj=StringIO.StringIO(aStr)
+                theFileObj=io.StringIO(aStr)
                 )
             repTokS, rawTokS = myLexer._retDefinedSubstitution(myCpp.next())
             self._printDiff(repTokS, expectedTokS)
@@ -1854,7 +1851,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n"""
@@ -1878,7 +1875,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nFAIL\n\n"""
@@ -1907,7 +1904,7 @@ FAIL
 """,
                     {}
                     ),
-                    preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                    preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\n\nPASS\n\n"""
@@ -1934,7 +1931,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\n\nPASS\n\n"""
@@ -1991,7 +1988,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n"""
@@ -2023,7 +2020,7 @@ PASS
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n\nPASS\n\n"""
@@ -2067,7 +2064,7 @@ PASS
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n"""
@@ -2093,7 +2090,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n"""
@@ -2119,7 +2116,7 @@ PASS
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n"""
@@ -2145,7 +2142,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n"""
@@ -2171,7 +2168,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n"""
@@ -2197,7 +2194,7 @@ FAIL
 """,
                     {}
                     ),
-                preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
         result = ''.join([t.t for t in myLexer.ppTokens()])
         expectedResult = """\n\nPASS\n\n"""
@@ -2300,7 +2297,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
             self.assertTrue(True)
             
     def test_00_00(self):
-        """TestPpLexerConditionalProblems.test_00_00(): Raises on #if defned NOT_DEFINED with PreprocessDiagnosticKeepGoing()"""
+        """TestPpLexerConditionalProblems.test_00_00(): No raise on #if defned NOT_DEFINED with PreprocessDiagnosticKeepGoing()"""
         #print
         myLexer = PpLexer.PpLexer(
                  'mt.h',
@@ -2314,11 +2311,11 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
-            self.fail('CppCond.ExceptionCppCond not raised')
-        except CppCond.ExceptionCppCond:
-            self.assertTrue(True)
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
             
     def test_01(self):
         """TestPpLexerConditionalProblems.test_01(): Raises on #if 1 2"""
@@ -2355,11 +2352,16 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
-            self.fail('CppCond.ExceptionCppCond not raised')
-        except CppCond.ExceptionCppCond:
-            self.assertTrue(True)
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+#        try:
+#            result = ''.join([t.t for t in myLexer.ppTokens()])
+#            self.fail('CppCond.ExceptionCppCond not raised')
+#        except CppCond.ExceptionCppCond:
+#            self.assertTrue(True)
                         
     def test_02(self):
         """TestPpLexerConditionalProblems.test_02(): Raises on #elif defned NOT_DEFINED"""
@@ -2696,7 +2698,7 @@ class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
                                   'src/spam.c',
                                   self._incSim,
                                   preIncFiles=[
-                                               StringIO.StringIO(x) for x in preDefMacros
+                                               io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
         resultTokS = [t for t in myLexer.ppTokens(condLevel=0)]
@@ -2726,10 +2728,10 @@ class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
             PpToken.PpToken('\n', 'whitespace'),
             PpToken.PpToken('\n', 'whitespace'),
         ]
-        print
-        print 'Expected result:'
-        print expTokS
-        print 'Actual result:'
+        print()
+        print('Expected result:')
+        print(expTokS)
+        print('Actual result:')
         self.pprintTokensAsCtors(resultTokS)
         self._printDiff(resultTokS, expTokS)
         self.assertEqual(resultTokS, expTokS)
@@ -2752,7 +2754,7 @@ src/spam.c [12, 1]:  True "" ""
                                   'src/spam.c',
                                   self._incSim,
                                   preIncFiles=[
-                                               StringIO.StringIO(x) for x in preDefMacros
+                                               io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
         resultTokS = [t for t in myLexer.ppTokens(condLevel=0)]
@@ -2829,7 +2831,7 @@ class TestPpLexerError(TestPpLexer):
                     """#error some kind of MY_ERROR message
 """,
                     {}),
-                 preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  )
 
         result = ''.join([t.t for t in myLexer.ppTokens()])
@@ -2849,7 +2851,7 @@ class TestPpLexerError(TestPpLexer):
                     """#error some kind of MY_ERROR(wtf) message
 """,
                     {}),
-                 preIncFiles=[StringIO.StringIO(x) for x in preDefMacros],
+                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  )
 
         result = ''.join([t.t for t in myLexer.ppTokens()])
@@ -3557,7 +3559,7 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  )
         try:
             ''.join([t.t for t in myLexer.ppTokens()])
-            print myLexer.fileIncludeGraphRoot
+            print(myLexer.fileIncludeGraphRoot)
             self.fail('ExceptionPpLexerNestedInclueLimit not raised')
         except PpLexer.ExceptionPpLexerNestedInclueLimit:
             pass
@@ -3581,7 +3583,7 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  )
         try:
             ''.join([t.t for t in myLexer.ppTokens()])
-            print myLexer.fileIncludeGraphRoot
+            print(myLexer.fileIncludeGraphRoot)
             self.fail('ExceptionPpLexerNestedInclueLimit not raised')
         except PpLexer.ExceptionPpLexerNestedInclueLimit:
             pass
@@ -3606,7 +3608,7 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  )
         try:
             ''.join([t.t for t in myLexer.ppTokens()])
-            print myLexer.fileIncludeGraphRoot
+            print(myLexer.fileIncludeGraphRoot)
             self.fail('ExceptionPpLexerNestedInclueLimit not raised')
         except PpLexer.ExceptionPpLexerNestedInclueLimit:
             pass
@@ -3632,7 +3634,7 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  )
         try:
             ''.join([t.t for t in myLexer.ppTokens()])
-            print myLexer.fileIncludeGraphRoot
+            print(myLexer.fileIncludeGraphRoot)
             self.fail('ExceptionPpLexerNestedInclueLimit not raised')
         except PpLexer.ExceptionPpLexerNestedInclueLimit:
             pass
@@ -3659,7 +3661,7 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  )
         try:
             ''.join([t.t for t in myLexer.ppTokens()])
-            print myLexer.fileIncludeGraphRoot
+            print(myLexer.fileIncludeGraphRoot)
             self.fail('ExceptionPpLexerNestedInclueLimit not raised')
         except PpLexer.ExceptionPpLexerNestedInclueLimit:
             pass
@@ -3835,7 +3837,7 @@ class PpLexerPragma(TestPpLexer):
         try:
             myTokS = [t for t in myLexer.ppTokens()]
             self.fail('ExceptionCppDiagnosticUndefined not raised')
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined, err:
+        except CppDiagnostic.ExceptionCppDiagnosticUndefined as err:
             self.assertEqual(str(err), 'pragma() raised at line=1, col=2 of file "hello.c"')
 
 class MinimalWhitespace(TestPpLexer):
@@ -3857,7 +3859,7 @@ long double ld = xglue(TENTH,
 """,
                     {}),
                  preIncFiles=[
-                              StringIO.StringIO("""#define TENTH 0.1
+                              io.StringIO("""#define TENTH 0.1
 
 #define F f
 a
@@ -3905,7 +3907,7 @@ long double ld = xglue(TENTH,
 """,
                     {}),
                  preIncFiles=[
-                              StringIO.StringIO("""#define TENTH 0.1
+                              io.StringIO("""#define TENTH 0.1
 
 #define F f
 a
@@ -4277,7 +4279,7 @@ not OK.
                  )
         # Qstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' "codeanalysis/sourceannotations.h" \n')
+            theFileObj=io.StringIO(' "codeanalysis/sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         #print
@@ -4285,13 +4287,13 @@ not OK.
         self.assertEqual(myResult, PpToken.PpToken('"codeanalysis/sourceannotations.h"', 'header-name'),)
         # Hstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' <codeanalysis/sourceannotations.h> \n')
+            theFileObj=io.StringIO(' <codeanalysis/sourceannotations.h> \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         self.assertEqual(myResult, PpToken.PpToken('<codeanalysis/sourceannotations.h>', 'header-name'),)
         # Qstring with \\
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' "codeanalysis\\sourceannotations.h" \n')
+            theFileObj=io.StringIO(' "codeanalysis\\sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         #print
@@ -4306,19 +4308,19 @@ not OK.
                  )
         # Qstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' "codeanalysis/sourceannotations.h" \n')
+            theFileObj=io.StringIO(' "codeanalysis/sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         self.assertEqual(myResult, PpToken.PpToken('"codeanalysis/sourceannotations.h"', 'header-name'),)
         # Hstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' <codeanalysis/sourceannotations.h> \n')
+            theFileObj=io.StringIO(' <codeanalysis/sourceannotations.h> \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         self.assertEqual(myResult, PpToken.PpToken('<codeanalysis/sourceannotations.h>', 'header-name'),)
         # Qstring with \\
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(' "codeanalysis\\sourceannotations.h" \n')
+            theFileObj=io.StringIO(' "codeanalysis\\sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         #print
@@ -4494,7 +4496,7 @@ system.
                     {},
                 ),
                 preIncFiles=[
-                    StringIO.StringIO("#define BITS_PER_LONG 32\n")
+                    io.StringIO("#define BITS_PER_LONG 32\n")
                 ],
             )
         resTokS = [t for t in myLexer.ppTokens()]
@@ -4526,7 +4528,7 @@ system.
                     {},
                 ),
                 preIncFiles=[
-                    StringIO.StringIO("\n")
+                    io.StringIO("\n")
                 ],
             )
         resTokS = [t for t in myLexer.ppTokens()]
@@ -4722,7 +4724,7 @@ class TestLinuxMacroInTypesH(TestPpLexer):
                     {},
                     ),
                 preIncFiles=[
-                    StringIO.StringIO("\n")
+                    io.StringIO("\n")
                 ],
                 diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
             )
@@ -4756,7 +4758,7 @@ class TestLinuxMacroInTypesH(TestPpLexer):
                     {},
                     ),
                 preIncFiles=[
-                    StringIO.StringIO("#define __EXPORTED_HEADERS__\n")
+                    io.StringIO("#define __EXPORTED_HEADERS__\n")
                 ],
                 diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
 #                diagnostic=None
@@ -4807,50 +4809,50 @@ class NullClass(TestPpLexer):
 
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCtor))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerLowLevel))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerPreDefine))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerNull))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerInvalidDirective))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerDefine))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerDefineFromStandard))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_Simple))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_NotFound))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_IllFormed))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_Conditional))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_PreInclude_Includes))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandlerMacro_Simple))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandlerMacro_SimpleUndef))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MacroObject))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MacroFunction))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MultipleDepth))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_HeaderGuard))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditional))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalProblems))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalWithState))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditional_LowLevel))
-#    ## When condLevel != 0. We a re not interested in that just yet
-#    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalAllIncludes))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerError))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerBadMacroDirective))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(C99Rationale))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeGraph))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeGraphReplacement))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalSpurious))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeRecursion))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerRaiseOnError))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(PpLexerReadOnly))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(PpLexerPragma))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MinimalWhitespace))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Unmaintainable))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerErrorInCondStack))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerMacroLineContinuation))
-#    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDefineEMPTY))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerHeaderName))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCtor))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerLowLevel))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerPreDefine))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerNull))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerInvalidDirective))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerDefine))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerDefineFromStandard))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_Simple))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_NotFound))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_IllFormed))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_Conditional))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_PreInclude_Includes))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandlerMacro_Simple))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandlerMacro_SimpleUndef))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MacroObject))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MacroFunction))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MultipleDepth))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_HeaderGuard))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditional))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalProblems))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalWithState))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditional_LowLevel))
+    ## When condLevel != 0. We a re not interested in that just yet
+    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalAllIncludes))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerError))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerBadMacroDirective))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(C99Rationale))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeGraph))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeGraphReplacement))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalSpurious))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeRecursion))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerRaiseOnError))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(PpLexerReadOnly))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(PpLexerPragma))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MinimalWhitespace))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Unmaintainable))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerErrorInCondStack))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerMacroLineContinuation))
+    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDefineEMPTY))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerHeaderName))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinux))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInclude))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInTypesH))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInclude))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInTypesH))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
@@ -4860,8 +4862,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestPpLexer.py - A module that tests PpLexer module.
+    print("""TestPpLexer.py - A module that tests PpLexer module.
 Usage:
 python TestPpLexer.py [-lh --help]
 
@@ -4877,20 +4878,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'TestPpLexer.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestPpLexer.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -4901,7 +4902,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -4911,8 +4912,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

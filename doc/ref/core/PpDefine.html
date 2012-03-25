@@ -1,0 +1,550 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>PpDefine &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Core" href="../core/index.html" />
+    <link rel="next" title="PpLexer" href="../core/PpLexer.html" />
+    <link rel="prev" title="MacroEnv" href="../core/MacroEnv.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpLexer.html" title="PpLexer"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../core/MacroEnv.html" title="MacroEnv"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.PpDefine">
+<span id="ppdefine"></span><span id="cpip-ref-ppdefine"></span><h1>PpDefine<a class="headerlink" href="#module-cpip.core.PpDefine" title="Permalink to this headline">¶</a></h1>
+<p>This handles definition, undefinition, redefintion, replacement
+and rescaning of macro declarations</p>
+<p>It implements: ISO/IEC 9899:1999(E) section 6 (aka &#8216;C99&#8217;)
+and/or: ISO/IEC 14882:1998(E) section 16 (aka &#8216;C++98&#8217;)</p>
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefine">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefine</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when handling PpDefine object.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineBadArguments">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineBadArguments</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineBadArguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when scanning an argument list for a function style macro
+fails.
+NOTE: This is only raised during replacement not during
+initialisation.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineBadWs">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineBadWs</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineBadWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when calling bad whitespace is in a define statement.
+See: ISO/IEC 9899:1999(E) Section 6.10-f and ISO/IEC 14882:1998(E) 16-2</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineDupeId">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineDupeId</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineDupeId" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for a function-like macro has duplicates
+in the identifier-list.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineInit">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineInit</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineInit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when creating PpDefine object fails.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineInitBadLine">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineInitBadLine</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineInitBadLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for a bad line number given as argument.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineInvalidCmp">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineInvalidCmp</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineInvalidCmp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for a redefinition where the identifers are different.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineMissingWs">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineMissingWs</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineMissingWs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when calling missing ws between identifier and replacement tokens.</p>
+<p>See: ISO/IEC 9899:1999(E) Section 6.10.3-3 and ISO/IEC 14882:1998(E) Section ???</p>
+<p>Note: cpp says for &#8220;#define PLUS+&#8221;:
+src.h:1:13: warning: ISO C requires whitespace after the macro name</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="cpip.core.PpDefine.ExceptionCpipDefineReplace">
+<em class="property">exception </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">ExceptionCpipDefineReplace</tt><a class="headerlink" href="#cpip.core.PpDefine.ExceptionCpipDefineReplace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when replacing a macro definition fails.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.PpDefine.PpDefine">
+<em class="property">class </em><tt class="descclassname">cpip.core.PpDefine.</tt><tt class="descname">PpDefine</tt><big>(</big><em>theTokGen</em>, <em>theFileId</em>, <em>theLine</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a single #define directive and performs ISO/IEC 9899:1999 (E) 6.10.3 Macro replacement.</p>
+<p>theTokGen is a PpToken generator that is expected to
+generate pp-tokens that appear after the start of the #define directive
+from the first non-whitespace token onwards i.e. the __init__ will,
+itself, consume leading whitespace.</p>
+<p>theFileId is a string that represents the file ID.</p>
+<p>theLine is a positive integer that represents the line in theFile that
+the #define statement occurred.</p>
+<p>Definition example, object-like macros:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span><span class="n">identifier</span><span class="p">,</span> <span class="p">[</span><span class="n">replacement</span><span class="o">-</span><span class="nb">list</span> <span class="p">(</span><span class="n">opt</span><span class="p">)],</span> <span class="n">new</span><span class="o">-</span><span class="n">line</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Or function-like macros:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+    <span class="n">identifier</span><span class="p">,</span>
+    <span class="n">lparen</span><span class="p">,</span>
+    <span class="p">[</span><span class="n">identifier</span><span class="o">-</span><span class="nb">list</span><span class="p">(</span><span class="n">opt</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="s">&#39;)&#39;</span><span class="p">,</span>
+    <span class="n">replacement</span><span class="o">-</span><span class="nb">list</span><span class="p">,</span>
+    <span class="n">new</span><span class="o">-</span><span class="n">line</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>NOTE: No whitespace is allowed between the identifier and the lparen
+of function-like macros.</p>
+<p>The <tt class="docutils literal"><span class="pre">identifier-list</span></tt> of parameters is stored as a list of names.
+The replacement-list is stored as a list of
+preprocessor tokens.
+Leading and trailing whitespace in the replacement
+list is removed to facilitate redefinition comparison.</p>
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.assertReplListIntegrity">
+<tt class="descname">assertReplListIntegrity</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.assertReplListIntegrity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests that any identifier tokens in the replacement list are
+actually replaceable. This will raise an assertion failure if
+not. It is really an integrity tests to see if an external entity
+has grabbed a reference to the replacement list and set a token
+to be not replaceable.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.consumeFunctionPreamble">
+<tt class="descname">consumeFunctionPreamble</tt><big>(</big><em>theGen</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.consumeFunctionPreamble" title="Permalink to this definition">¶</a></dt>
+<dd><p>This consumes tokens to the preamble of a Function style macro
+invocation. This really means consuming whitespace and the opening
+<tt class="docutils literal"><span class="pre">LPAREN</span></tt>.</p>
+<dl class="docutils">
+<dt>This will return either:</dt>
+<dd>None - Tokens including the leading LPAREN have been consumed.
+List of (token, token_type) if the LPAREN is not found.</dd>
+</dl>
+<p>For example given this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#define t(a) a+2</span>
+<span class="n">t</span>   <span class="p">(</span><span class="mi">21</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span>  <span class="p">;</span>
+</pre></div>
+</div>
+<p>For the first <tt class="docutils literal"><span class="pre">t</span></tt> this would consume <tt class="docutils literal"><span class="pre">'</span>&nbsp;&nbsp; <span class="pre">('</span></tt> and return None leaving the
+next token to be (&#8216;21&#8217;, &#8216;pp-number&#8217;).</p>
+<p>For the second <tt class="docutils literal"><span class="pre">t</span></tt> this would consume <tt class="docutils literal"><span class="pre">'</span>&nbsp; <span class="pre">;'</span></tt> and return:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+    <span class="p">(</span><span class="s">&#39;  &#39;</span><span class="p">,</span> <span class="s">&#39;whitespace&#39;</span><span class="p">),</span>
+    <span class="p">(</span><span class="s">&#39;;&#39;</span><span class="p">,</span>   <span class="s">&#39;preprocessing-op-or-punc&#39;</span><span class="p">),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>This allows the MacroReplacementEnv to generate the correct result: ::</dt>
+<dd>21 +2 - t ;</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.expandArguments">
+<tt class="descname">expandArguments</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.expandArguments" title="Permalink to this definition">¶</a></dt>
+<dd><p>The flag that says whether arguments should be expanded.
+For object like macros this will be False. For function like macros
+this will be False if there is a stringize (&#8216;#&#8217;) or a token pasting
+operator (&#8216;##&#8217;). True otherwise.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.fileId">
+<tt class="descname">fileId</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.fileId" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file ID given as an argument in the constructor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.identifier">
+<tt class="descname">identifier</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.identifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>The macro identifier i.e. the name as a string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.incRefCount">
+<tt class="descname">incRefCount</tt><big>(</big><em>theFileLineCol=None</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.incRefCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increment the reference count. Typically callers do this when
+replacement is certain of in the event of definition testing e.g.
+<tt class="docutils literal"><span class="pre">#ifdef</span> <span class="pre">SPAM</span> <span class="pre">or</span> <span class="pre">defined(SPAM)</span></tt> etc. Or if the macro is expanded e.g.
+<tt class="docutils literal"><span class="pre">#define</span> <span class="pre">SPAM_N_EGGS</span> <span class="pre">spam</span> <span class="pre">and</span> <span class="pre">eggs</span></tt>
+The menu is SPAM_N_EGGS.
+theFileLineCol is a FileLocation.FileLineCol object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.isCurrentlyDefined">
+<tt class="descname">isCurrentlyDefined</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.isCurrentlyDefined" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the current instance is a valid definition
+i.e. it has not been #undef&#8217;d.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.isObjectTypeMacro">
+<tt class="descname">isObjectTypeMacro</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.isObjectTypeMacro" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if this is an object type macro and
+False if it is a function type macro.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.isReferenced">
+<tt class="descname">isReferenced</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.isReferenced" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the reference count has been incremented since
+construction.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.isSame">
+<tt class="descname">isSame</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.isSame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests &#8216;sameness&#8217;. Returns:
+-1 if the identifiers are different.
+1 if the identifiers are the same but redefinition is NOT allowed.
+0 if the identifiers are the same but redefinition is allowed i.e. the
+macros are equivelent.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.isValidRefefinition">
+<tt class="descname">isValidRefefinition</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.isValidRefefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if this is a valid redefinition of <em>other</em>, False otherwise.
+Will raise an <tt class="docutils literal"><span class="pre">ExceptionCpipDefineInvalidCmp</span></tt> if the identifiers are
+different.
+Will raise an <tt class="docutils literal"><span class="pre">ExceptionCpipDefine</span></tt> if either is not currently defined.</p>
+<p>From: <strong>ISO/IEC 9899:1999 (E) 6.10.3:</strong></p>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt>Two replacement lists are identical if and only if the preprocessing</dt>
+<dd><p class="first last">tokens in both have the same number, ordering, spelling, and white-space
+separation, where all white-space separations are considered identical.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>An identifier currently defined as a macro without use of lparen</dt>
+<dd><p class="first last">(an object-like macro) may be redefined by another #define preprocessing
+directive provided that the second definition is an object-like macro
+definition and the two replacement lists are identical, otherwise the
+program is ill-formed.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>An identifier currently defined as a macro using lparen (a</dt>
+<dd><p class="first last">function-like macro) may be redefined by another #define preprocessing
+directive provided that the second definition is a function-like macro
+definition that has the same number and spelling of parameters, and the
+two replacement lists are identical, otherwise the program is
+ill-formed.</p>
+</dd>
+</dl>
+</li>
+</ol>
+<p>See also: <strong>ISO/IEC 14882:1998(E) 16.3 Macro replacement [cpp.replace]</strong></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.line">
+<tt class="descname">line</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.line" title="Permalink to this definition">¶</a></dt>
+<dd><p>The line number given as an argument in the constructor.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.parameters">
+<tt class="descname">parameters</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of parameter names as strings for a function like macros
+or None if this is an object type Macro.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.refCount">
+<tt class="descname">refCount</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.refCount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current reference count as an integer less its initial
+value on construction.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.refFileLineColS">
+<tt class="descname">refFileLineColS</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.refFileLineColS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of FileLineCol objects where this macro was referenced.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.replaceArgumentList">
+<tt class="descname">replaceArgumentList</tt><big>(</big><em>theArgList</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.replaceArgumentList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an list of arguments this does argument substitution and
+returns the replacement token list. The argument list is of the form
+given by retArgumentListTokens(). The caller must have replaced any
+macro invocations in theArgList before calling this method.
+NOTE: For function style macros only.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.replaceObjectStyleMacro">
+<tt class="descname">replaceObjectStyleMacro</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.replaceObjectStyleMacro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of [(token, token_type), ...] from the replacement
+of an object style macro.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.replacementTokens">
+<tt class="descname">replacementTokens</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.replacementTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of zero or more replacement token
+i.e. [class PpToken, ...].</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.replacements">
+<tt class="descname">replacements</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.replacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>The list of zero or more replacement tokens as strings.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.retArgumentListTokens">
+<tt class="descname">retArgumentListTokens</tt><big>(</big><em>theGen</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.retArgumentListTokens" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a function macro this reads the tokens following a <tt class="docutils literal"><span class="pre">LPAREN</span></tt> and
+returns a list of arguments where each argument is a list of
+PpToken objects.</p>
+<p>Thus this function returns a list of lists of PpToken objects,
+for example given this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#define f(x,y) ...</span>
+<span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This function, then passed &#8220;a,b)&#8221; returns:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+    <span class="p">[</span>
+        <span class="n">PpToken</span><span class="o">.</span><span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;identifier&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">PpToken</span><span class="o">.</span><span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;identifier&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>And an invocation of:
+<tt class="docutils literal"><span class="pre">f(1(,)2,3)</span></tt> i.e. this gets passed via the generator <tt class="docutils literal"><span class="pre">&quot;1(,)2,3)&quot;</span></tt>
+and returns two argunments:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+    <span class="p">[</span>
+        <span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="s">&#39;pp-number&#39;</span><span class="p">),</span>
+        <span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;(&#39;</span><span class="p">,</span> <span class="s">&#39;preprocessing-op-or-punc&#39;</span><span class="p">),</span>
+        <span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;preprocessing-op-or-punc&#39;</span><span class="p">),</span>
+        <span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;)&#39;</span><span class="p">,</span> <span class="s">&#39;preprocessing-op-or-punc&#39;</span><span class="p">),</span>
+        <span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;2&#39;</span><span class="p">,</span> <span class="s">&#39;pp-number&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;3&#39;</span><span class="p">,</span> <span class="s">&#39;pp-number&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>So this function supports two cases:</p>
+<ol class="arabic simple">
+<li>Parsing function style macro declarations.</li>
+<li>Interpreting function style macro invocations where the argument list
+is subject to replacement before invoking the macro.</li>
+</ol>
+<p>In the case that an argument is missing a <tt class="docutils literal"><span class="pre">PpDefine.PLACEMARKER</span></tt>
+token is inserted. For example:</p>
+<div class="highlight-python"><pre>#define FUNCTION_STYLE(a,b,c) ...
+FUNCTION_STYLE(,2,3)</pre>
+</div>
+<p>Gives:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
+    <span class="n">PpDefine</span><span class="o">.</span><span class="n">PLACEMARKER</span><span class="p">,</span>
+    <span class="p">[</span>
+        <span class="n">PpToken</span><span class="o">.</span><span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;2&#39;</span><span class="p">,</span>       <span class="s">&#39;pp-number&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+    <span class="p">[</span>
+        <span class="n">PpToken</span><span class="o">.</span><span class="n">PpToken</span><span class="p">(</span><span class="s">&#39;3&#39;</span><span class="p">,</span>       <span class="s">&#39;pp-number&#39;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>Placemarker tokens are not used if the macro is defined with no
+arguments.
+This might raise a ExceptionCpipDefineBadArguments if the list
+does not match the prototype or a StopIteration if the token list is
+too short.
+This ignores leading and trailing whitespace for each argument.
+TODO: Raise an ExceptionCpipDefineBadArguments if there is a #define
+statement. e.g.:</p>
+<div class="highlight-python"><pre>#define f(x) x x
+f (1
+#undef f
+#define f 2
+f)</pre>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.strIdentPlusParam">
+<tt class="descname">strIdentPlusParam</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.strIdentPlusParam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the identifier name and parameters if a function-like macro
+as a string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.strReplacements">
+<tt class="descname">strReplacements</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.strReplacements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the replacements tokens with minimised whitespace as a string.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.tokenCounter">
+<tt class="descname">tokenCounter</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.tokenCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The PpTokenCount object that counts tokens that have been consumed
+from the input.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.tokensConsumed">
+<tt class="descname">tokensConsumed</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.tokensConsumed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of tokens consumed by the class.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.PpDefine.PpDefine.undef">
+<tt class="descname">undef</tt><big>(</big><em>theFileId</em>, <em>theLineNum</em><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.undef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Records this instance of a macro #undef&#8217;d at a particular file
+and line number. May raise an ExceptionCpipDefine if already undefined
+of the line number is bad.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.undefFileId">
+<tt class="descname">undefFileId</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.undefFileId" title="Permalink to this definition">¶</a></dt>
+<dd><p>The file ID where this macro was undef&#8217;d or None.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.undefLine">
+<tt class="descname">undefLine</tt><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.undefLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>The line number where this macro was undef&#8217;d or None.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../core/MacroEnv.html"
+                        title="previous chapter">MacroEnv</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../core/PpLexer.html"
+                        title="next chapter">PpLexer</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/PpDefine.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../core/PpLexer.html" title="PpLexer"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../core/MacroEnv.html" title="MacroEnv"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

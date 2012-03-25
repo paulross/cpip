@@ -1,3 +1,7 @@
+.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
+.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+
+.. CPIP Tutorials
 
 **************
 CPIP Tutorials
@@ -14,15 +18,4 @@ Contents:
    
    FileIncGraph.rst
 
-Tutorials
-=========
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

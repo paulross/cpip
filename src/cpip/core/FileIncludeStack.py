@@ -123,7 +123,7 @@ class FileIncludeStack(object):
         l = p.rfind(os.sep)
         if l == -1:
             l = len(p)
-        print thePref, [f[l+1:] for f in theL]
+        print(thePref, [f[l+1:] for f in theL])
 
     def includeStart(self, theFpo, theLineNum, isUncond, condStr, incLogic):
         """Start an #include file.

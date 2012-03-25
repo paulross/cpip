@@ -1,0 +1,162 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MaxMunchGen &mdash; CPIP 0.8.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.8.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="up" title="CPIP Utilities" href="../util/index.html" />
+    <link rel="next" title="StrTree" href="../util/StrTree.html" />
+    <link rel="prev" title="MatrixRep" href="../util/MatrixRep.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/StrTree.html" title="StrTree"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../util/MatrixRep.html" title="MatrixRep"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" accesskey="U">CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="maxmunchgen">
+<h1>MaxMunchGen<a class="headerlink" href="#maxmunchgen" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.util.MaxMunchGen"></span><p>Generic Maximal Munch generator.</p>
+<dl class="exception">
+<dt id="cpip.util.MaxMunchGen.ExceptionMaxMunchGen">
+<em class="property">exception </em><tt class="descclassname">cpip.util.MaxMunchGen.</tt><tt class="descname">ExceptionMaxMunchGen</tt><a class="headerlink" href="#cpip.util.MaxMunchGen.ExceptionMaxMunchGen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception specialisation for MaxMunchGen.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.util.MaxMunchGen.MaxMunchGen">
+<em class="property">class </em><tt class="descclassname">cpip.util.MaxMunchGen.</tt><tt class="descname">MaxMunchGen</tt><big>(</big><em>theGen</em>, <em>theFnS</em>, <em>isExclusive=False</em>, <em>yieldReplacement=False</em><big>)</big><a class="headerlink" href="#cpip.util.MaxMunchGen.MaxMunchGen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a generator that applies Maximal munch rules.</p>
+<dl class="method">
+<dt id="cpip.util.MaxMunchGen.MaxMunchGen.gen">
+<tt class="descname">gen</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.MaxMunchGen.MaxMunchGen.gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields a maximal munch.
+If yieldReplacement is False these will be pairs of (iterable, kind)
+where kind is from the function, any replacement will be done on the fly.
+If yieldReplacement is True these will be triples of
+(iterable, kind, repl) where kind and repl are from the function with
+repl being None if no replacement. No replacement will have been done.</p>
+<p>TODO: Reconsider this design. Really yieldReplacement decides if the
+underlying generator buffer contains the replacement rather than whether
+self yields the replacement.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.MaxMunchGen.anyToken">
+<tt class="descclassname">cpip.util.MaxMunchGen.</tt><tt class="descname">anyToken</tt><big>(</big><em>theGen</em><big>)</big><a class="headerlink" href="#cpip.util.MaxMunchGen.anyToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function that always reads one token.
+This can be used as the last registered function to ensure that the token
+stream is read to completion. The kind returned is None.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../util/MatrixRep.html"
+                        title="previous chapter">MatrixRep</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../util/StrTree.html"
+                        title="next chapter">StrTree</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/util/MaxMunchGen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../util/StrTree.html" title="StrTree"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../util/MatrixRep.html" title="MatrixRep"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="../util/index.html" >CPIP Utilities</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

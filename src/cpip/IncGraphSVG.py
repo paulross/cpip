@@ -32,7 +32,7 @@ from cpip.plot import Coord
 from cpip.plot import PlotNode
 from cpip.plot import SVGWriter
 #from cpip.plot import TreePlotTransform
-import IncGraphSVGBase
+from cpip import IncGraphSVGBase
 
 class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     COMMON_UNITS            = 'mm'
@@ -658,7 +658,7 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                         incX=Coord.Dim(2.0, self.COMMON_UNITS),
                         incY=Coord.Dim(2.0, self.COMMON_UNITS),
                     )
-                myTokIdxS = range(len(self.HIST_PP_TOKEN_TYPES_COLOURS))
+                myTokIdxS = list(range(len(self.HIST_PP_TOKEN_TYPES_COLOURS)))
                 if theTpt.positiveSweepDir:
                     myTokIdxS.reverse()
                 for iC in myTokIdxS:

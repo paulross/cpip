@@ -27,7 +27,7 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 from cpip import ExceptionCpip
-import PpToken
+from cpip.core import PpToken
 
 class ExceptionPpTokenCount(ExceptionCpip):
     """Exception when handling PpTokenCount object."""
@@ -47,12 +47,12 @@ class PpTokenCount(object):
         
     def __iadd__(self, other):
         """In-place add of the contents of another PpTokenCount object."""
-        for tt in other._cntrTokAll.keys():
+        for tt in other._cntrTokAll:
             try:
                 self._cntrTokAll[tt] += other._cntrTokAll[tt]
             except KeyError:
                 self._cntrTokAll[tt] = other._cntrTokAll[tt]
-        for tt in other._cntrTokUncon.keys():
+        for tt in other._cntrTokUncon:
             try:
                 self._cntrTokUncon[tt] += other._cntrTokUncon[tt]
             except KeyError:
@@ -139,10 +139,10 @@ class PpTokenCount(object):
                 yield aType, self.tokenCount(aType, isAll)
             else:
                 if isAll:
-                    if self._cntrTokAll.has_key(aType):
+                    if aType in self._cntrTokAll:
                         yield aType, self._cntrTokAll[aType]
                 else:
-                    if self._cntrTokUncon.has_key(aType):
+                    if aType in self._cntrTokUncon:
                         yield aType, self._cntrTokUncon[aType]
     
 class PpTokenCountStack(object):

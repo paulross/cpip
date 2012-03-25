@@ -31,12 +31,9 @@ import os
 import unittest
 import time
 import logging
-import pprint
+#import pprint
 
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 sys.path.append(os.path.join(os.pardir + os.sep))
 from cpip.core import PpToken, FileIncludeGraph, PpTokenCount, PpLexer
@@ -91,8 +88,8 @@ and loads of other things.
         self.assertEqual(0, _incSim.cpStackSize)
         myLexer = PpLexer.PpLexer('src/spam.c', _incSim)
         result = ''.join([t.t for t in myLexer.ppTokens()])
-        #print 'Result:'
-        #print result
+#        print('Result:')
+#        print(result)
         expectedResult = """Include usr/spam:
 Content of: user, spam.h
 
@@ -111,50 +108,51 @@ and loads of other things.
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
         myFigr = myLexer.fileIncludeGraphRoot
-        print 'FileIncludeGraph:'
-        print myFigr
+        print('FileIncludeGraph:')
+        print(myFigr)
         # WARN: excape \b (two places on last two lines
         expGraph = """src/spam.c [32, 24]:  True "" ""
-000002: #include usr\spam.h
-        usr\spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
-000004: #include usr\inc\eggs.h
-        usr\inc\eggs.h [23, 15]:  True "" "['"inc/eggs.h"', 'CP=None', 'usr=usr']"
-000006: #include sys\chips.h
-        sys\chips.h [4, 3]:  True "" "['<chips.h>', 'sys=sys']"
-000008: #include sys\inc\\beans.h
-        sys\inc\\beans.h [44, 27]:  True "" "['<inc/beans.h>', 'sys=sys']\""""
-        #print 'Exp FileIncludeGraph:'
-        #print expGraph
+000002: #include usr/spam.h
+        usr/spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+000004: #include usr/inc/eggs.h
+        usr/inc/eggs.h [23, 15]:  True "" "['"inc/eggs.h"', 'CP=None', 'usr=usr']"
+000006: #include sys/chips.h
+        sys/chips.h [4, 3]:  True "" "['<chips.h>', 'sys=sys']"
+000008: #include sys/inc/beans.h
+        sys/inc/beans.h [44, 27]:  True "" "['<inc/beans.h>', 'sys=sys']\""""
+#        print('Exp FileIncludeGraph:')
+#        print(expGraph)
+#        self.maxDiff = None
         #for i, c in enumerate(str(myFigr)):
         #    if c != expGraph[i]:
         #        print '[%d] %s != %s' % (i, c, expGraph[i])
         self.assertEqual(expGraph, str(myFigr))
-        print
+        print()
         myFigr.dumpGraph()
         self.assertEqual(expGraph, str(myFigr))
         # Now visit the graph
-        myVis = FileIncludeGraph.FigVisitorTree(IncGraphSVG.SVGTreeNode)
+        myVis = FileIncludeGraph.FigVisitorTree(IncGraphSVG.SVGTreeNodeMain)
         myFigr.acceptVisitor(myVis)
         # Tree is now a graph of IncGraphSVG.SVGTreeNode
         myIgs = myVis.tree()
-        print
-        print 'myIgs'
+        print()
+        print('myIgs')
         #print myIgs
         myIgs.dumpToStream()
-        print
+        print()
         # Create a plot configuration
         myTpt = TreePlotTransform.TreePlotTransform(myIgs.plotCanvas, 'left', '+')
-        mySvg = StringIO.StringIO()
+        mySvg = io.StringIO()
         myIgs.plotToFileObj(mySvg, myTpt)
-        print
-        print mySvg.getvalue()
+        print()
+        print(mySvg.getvalue())
         for aPos in myTpt.genRootPos():
             for aDir in myTpt.genSweepDir():
                 aTpt = TreePlotTransform.TreePlotTransform(myIgs.plotCanvas, aPos, aDir)
-                mySvg = StringIO.StringIO()
+                mySvg = io.StringIO()
                 myIgs.plotToFileObj(mySvg, aTpt)
-                print
-                print mySvg.getvalue()
+                print()
+                print(mySvg.getvalue())
     
     
     def test_05(self):
@@ -251,11 +249,11 @@ ITU.h [140, 70]:  True "" "CP=."
                 ba.h [32, 16]:  True "" "CP=."
         000119: #include bb.h
                 bb.h [64, 32]:  True "" "CP=.\""""
-        print
-        print expGraph
-        print
-        print str(myFigr)
-        print
+        print()
+        print(expGraph)
+        print()
+        print(str(myFigr))
+        print()
         myFigr.dumpGraph()
         self.assertEqual(expGraph, str(myFigr))
         # Now visit the graph
@@ -263,17 +261,17 @@ ITU.h [140, 70]:  True "" "CP=."
         myFigr.acceptVisitor(myVis)
         # Tree is now a graph of IncGraphSVG.SVGTreeNode
         myIgs = myVis.tree()
-        print
-        print 'myIgs'
+        print()
+        print('myIgs')
         #print myIgs
         myIgs.dumpToStream()
-        print
+        print()
         # Create a plot configuration
         myTpt = TreePlotTransform.TreePlotTransform(myIgs.plotCanvas, 'top', '-')
-        mySvg = StringIO.StringIO()
+        mySvg = io.StringIO()
         myIgs.plotToFileObj(mySvg, myTpt)
-        print
-        print mySvg.getvalue()
+        print()
+        print(mySvg.getvalue())
 
     def test_10(self):
         """TestIncGraphSVGVisitor: Two pre-includes and a graph."""
@@ -389,11 +387,11 @@ ITU.h [140, 70]:  True "" "CP=."
                 ba.h [32, 16]:  True "" "CP=."
         000119: #include bb.h
                 bb.h [64, 32]:  True "" "CP=.\""""
-        print
-        print expGraph
-        print
-        print str(myFigr)
-        print
+        print()
+        print(expGraph)
+        print()
+        print(str(myFigr))
+        print()
         myFigr.dumpGraph()
         self.assertEqual(expGraph, str(myFigr))
         # Now visit the graph
@@ -401,17 +399,17 @@ ITU.h [140, 70]:  True "" "CP=."
         myFigr.acceptVisitor(myVis)
         # Tree is now a graph of IncGraphSVG.SVGTreeNode
         myIgs = myVis.tree()
-        print
-        print 'myIgs'
+        print()
+        print('myIgs')
         #print myIgs
         myIgs.dumpToStream()
-        print
+        print()
         # Create a plot configuration
         myTpt = TreePlotTransform.TreePlotTransform(myIgs.plotCanvas, 'top', '-')
-        mySvg = StringIO.StringIO()
+        mySvg = io.StringIO()
         myIgs.plotToFileObj(mySvg, myTpt)
-        print
-        print mySvg.getvalue()
+        print()
+        print(mySvg.getvalue())
 
 
 def unitTest(theVerbosity=2):
@@ -427,8 +425,7 @@ def unitTest(theVerbosity=2):
 
 def usage():
     """Send the help to stdout."""
-    print \
-"""TestIncGraphSVG.py - A module that tests IncGraphSVG module.
+    print("""TestIncGraphSVG.py - A module that tests IncGraphSVG module.
 Usage:
 python TestIncGraphSVG.py [-lh --help]
 
@@ -444,20 +441,20 @@ Options (debug):
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
     """Invoke unit test code."""
-    print 'IncGraphSVG.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('IncGraphSVG.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -468,7 +465,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -478,8 +475,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
 # Copyright (C) 2008-2011 Paul Ross
 # 
@@ -23,17 +23,18 @@
 It implements ISO/IEC 9899:1999(E) section 6 (aka 'C')
 and ISO/IEC 14882:1998(E) section 16 (aka 'C++')
 
-TODO: Record macro related events in the order that they happen.
-[
-    (
-        macro_ident,         - string
-        event,               - string e.g. 'define', 'replace', 'undef'
-        None or PpDefine,    - the latter if undef (or define???)
-        file,                - string
-        line,                - int
-        col,                 - int
-    ),
-]
+TODO: Record macro related events in the order that they happen.::
+
+    [
+        (
+            macro_ident,         - string
+            event,               - string e.g. 'define', 'replace', 'undef'
+            None or PpDefine,    - the latter if undef (or define???)
+            file,                - string
+            line,                - int
+            col,                 - int
+        ),
+    ]
 
 Can remap this on output to:
 {macro_ident : [index, ...], ...}
@@ -50,16 +51,13 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 import logging
 import traceback
 import types
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
+import io
 
 from cpip import ExceptionCpip
-import PpToken
-import PpTokeniser
-import PpDefine
-import PpWhitespace
+from cpip.core import PpToken
+from cpip.core import PpTokeniser
+from cpip.core import PpDefine
+from cpip.core import PpWhitespace
 from cpip.util.ListGen import ListAsGenerator
 
 class ExceptionMacroEnv(ExceptionCpip):
@@ -203,9 +201,7 @@ class MacroEnv(object):
     ###################
     def __str__(self):
         retStr = []
-        keyS = self._defineMap.keys()
-        keyS.sort()
-        for k in keyS:
+        for k in sorted(self._defineMap.keys()):
             retStr.append('%s' % str(self._defineMap[k]))
         return '\n'.join(retStr)
 
@@ -223,11 +219,11 @@ class MacroEnv(object):
         provided by theList. It will be preceded by the debugMarker value
         (if set) and that will always be cleared."""
         assert(self._enableTrace)
-        if type(theArg) == types.ListType:
+        if type(theArg) == list:
             # Assume list of class PpToken
             debugStr = '[%d] %s' \
                 % (len(theArg), PpToken.tokensStr(theArg, shortForm=True))
-        elif type(theArg) == types.StringType:
+        elif type(theArg) == str:
             debugStr = theArg
         elif theArg is None:
             debugStr = 'None'
@@ -278,7 +274,7 @@ class MacroEnv(object):
         ``#define`` i.e. this will consume leading whitespace and the trailing
         newline.
         
-        Will raise a ExceptionMacroEnvInvalidRedefinition is the redefinition
+        Will raise a ExceptionMacroEnvInvalidRedefinition if the redefinition
         is not valid. May raise a ExceptionCpipDefineInit (or sub class) on failure.
         
         On success it returns the identifier of the macro as a string..
@@ -287,7 +283,7 @@ class MacroEnv(object):
         definition (file, line, reference count etc. are preserved."""
         try:
             myDef = PpDefine.PpDefine(theGen, theFile, theLine)
-        except PpDefine.ExceptionCpipDefineInit, err:
+        except PpDefine.ExceptionCpipDefineInit as err:
             raise ExceptionMacroReplacementInit(str(err))
         # Test if attempting to redefine a predefined or undefineable identifier
         if myDef.identifier in self.STD_PREDEFINED_NAMES \
@@ -307,7 +303,7 @@ class MacroEnv(object):
         the existing definition so that the definition file, line and reference
         count are preserved."""
         # Test for redefinition
-        if self._defineMap.has_key(ppD.identifier):
+        if ppD.identifier in self._defineMap:
             if not ppD.isValidRefefinition(self._defineMap[ppD.identifier]):
                 raise ExceptionMacroEnvInvalidRedefinition(
                     'Ignoring invalid redefinition of "%s" as "%s"' \
@@ -346,7 +342,7 @@ class MacroEnv(object):
         """Takes a string 'identifier replacement\n' and sets the macro map.
         This uses __defien(...) so only a redefinition exception is raised."""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=StringIO.StringIO(theStr)
+            theFileObj=io.StringIO(theStr)
             )
         myGen = myCpp.next()
         # Set file to '' and line to 1 as these are builtin macros
@@ -422,7 +418,7 @@ class MacroEnv(object):
         Thus ``mightReplace('FUNC', ...)`` is True in both cases but actual
         replacement only occurs once for the second ``FUNC``."""
         assert(self._assertDefineMapIntegrity())
-        return theTtt.canReplace and self._defineMap.has_key(theTtt.t)
+        return theTtt.canReplace and theTtt.t in self._defineMap
 
     def _hasExpanded(self, theTtt):
         """Returns True if theTok represents a macro name that has already
@@ -493,12 +489,12 @@ class MacroEnv(object):
                                 '_expand("%s") function argument was' \
                                 % theTtt, argTokS)
                         if argTokS != myMacro.PLACEMARKER:
-                            myGen = ListAsGenerator(argTokS, None).next()
+                            myGen = next(ListAsGenerator(argTokS, None))
                             myExpArgTokS = []
                             while 1:
                                 try:
                                     myExpArgTokS += self._expand(
-                                                                 myGen.next(),
+                                                                 next(myGen),
                                                                  myGen,
                                                                  theFileLineCol,
                                                                  )
@@ -535,9 +531,9 @@ class MacroEnv(object):
             self._debugTokenStream('_expand("%s") reexamine' % theTtt, rTokS)
         self._expandedSet.add(theTtt.t)
         myListAsGen = ListAsGenerator(rTokS, theGen)
-        myGen = myListAsGen.next()
+        myGen = next(myListAsGen)
         while not myListAsGen.listIsEmpty:
-            reexTokS += self._expand(myGen.next(), myGen, theFileLineCol)
+            reexTokS += self._expand(next(myGen), myGen, theFileLineCol)
             #print 'myListAsGen.listIsEmpty', myListAsGen.listIsEmpty
         self._expandedSet.remove(theTtt.t)
         if self._enableTrace:
@@ -565,9 +561,7 @@ class MacroEnv(object):
         # Now the existent one(s)
         if theIdent is None:
             # yield all of them
-            idS = self._defineMap.keys()
-            idS.sort()
-            for anId in idS:
+            for anId in sorted(self._defineMap.keys()):
                 yield self._defineMap[anId]
         else:
             try:
@@ -594,11 +588,11 @@ class MacroEnv(object):
         NOTE: This does _not_ increment the reference count so should not be
         used when processing #ifdef ..., #if defined ... or #if !defined ...
         for those use isDefined() and defined() instead."""
-        return self._defineMap.has_key(theIdentifier)
+        return theIdentifier in self._defineMap
         
     def macros(self):
         """Returns list of strings of current macros."""
-        return self._defineMap.keys()
+        return list(self._defineMap.keys())
         
     def macro(self, theIdentifier):
         """Returns the macro identified by the identifier.
@@ -630,13 +624,17 @@ class MacroEnv(object):
         if sortedByRefcount:
             myPairs = []
             # Sort by name
-            keyS = self._defineMap.keys()
-            keyS.sort()
-            for k in keyS:
+            for k in sorted(self._defineMap.keys()):
                 rc = self._defineMap[k].refCount
                 if rc > 0:
                     myPairs.append((k, rc))
-            myPairs.sort(lambda x,y: cmp(x[1],y[1]))
+            # Sort by DSU
+            # D
+            listD = [(x[1], x) for x in myPairs]
+            # S
+            listD.sort()
+            # U
+            myPairs = [v[1] for v in listD]
             return [x[0] for x in myPairs] 
         return [mId for mId in self._defineMap.keys() if self._defineMap[mId].refCount > 0]
     
@@ -701,7 +699,7 @@ class MacroEnv(object):
                 retMap[aMacro.identifier] = ([], True)
         # Finally mark the undef'd ones
         for k in undefMap.keys():
-            if not retMap.has_key(k):
+            if k not in retMap:
                 retMap[k] = (
                         undefMap[k],
                         False,
@@ -720,7 +718,7 @@ class MacroEnv(object):
         where there has been an #ifdef and nothing is defined.
         Thus these macros, if present, could alter the outcome
         i.e. it is dependency on them NOT being defined."""
-        return self._ifDefAbsentMacros.keys()
+        return list(self._ifDefAbsentMacros.keys())
 
     def macroNotDefinedDependencyReferences(self, theIdentifier):
         """Returns an ordered list of class FileLineColumn for an identifier

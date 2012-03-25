@@ -60,7 +60,7 @@ def convert(val, unitFrom, unitTo):
     try:
         return val * UNIT_MAP[unitFrom] / UNIT_MAP[unitTo]
     except KeyError:
-        if UNIT_MAP.has_key(unitFrom):
+        if unitFrom in UNIT_MAP:
             raise ExceptionCoordUnitConvert('Unsupported units %s' % unitTo)
         raise ExceptionCoordUnitConvert('Unsupported units %s' % unitFrom)
 
@@ -114,28 +114,29 @@ class Dim(collections.namedtuple('Dim', 'value units',)):
         self = self - other
         return self
 
-    def __cmp__(self, other):
-        """Comparison."""
-        return cmp(self.value, convert(other.value, other.units, self.units))
-
     def __lt__(self, other):
-        return cmp(self, other) < 0
+        """Returns true if self value < other value after unit conversion."""
+        return (self.value < convert(other.value, other.units, self.units))
 
     def __le__(self, other):
-        return cmp(self, other) <= 0
+        """Returns true if self value <= other value after unit conversion."""
+        return (self.value <= convert(other.value, other.units, self.units))
 
     def __eq__(self, other):
-        #return cmp(self, other) == 0
+        """Returns true if self value == other value after unit conversion."""
         return (self.value == convert(other.value, other.units, self.units))
 
     def __ne__(self, other):
-        return cmp(self, other) != 0
+        """Returns true if self value != other value after unit conversion."""
+        return (self.value != convert(other.value, other.units, self.units))
 
     def __gt__(self, other):
-        return cmp(self, other) > 0
+        """Returns true if self value > other value after unit conversion."""
+        return (self.value > convert(other.value, other.units, self.units))
 
     def __ge__(self, other):
-        return cmp(self, other) >= 0
+        """Returns true if self value >= other value after unit conversion."""
+        return (self.value >= convert(other.value, other.units, self.units))
 
 # All of these take a Dim() for each member
 #
@@ -164,15 +165,9 @@ class Pt(collections.namedtuple('Pt', 'x y',)):
     """A point, an absolute x/y position on the plot area.
     Members are Coord.Dim()."""
     __slots__ = ()
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """Comparison."""
-        myCmp = cmp(self.x, other.x)
-        if myCmp:
-            return myCmp
-        myCmp = cmp(self.y, other.y)
-        if myCmp:
-            return myCmp
-        return 0
+        return self.x == other.x and self.y == other.y
 
     def __str__(self):
         """Stringifying."""

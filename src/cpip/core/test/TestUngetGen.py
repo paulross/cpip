@@ -44,7 +44,7 @@ class UngetGen(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         """yield the next value."""
         for aVal in self._iterable:
             r = yield aVal
@@ -70,85 +70,85 @@ class TestUngetGen(unittest.TestCase):
 
     def testAsimpleInit(self):
         """Tests UngetGen with a list comprehension."""
-        myObj = UngetGen(range(8))
-        myGen = myObj.next()
+        myObj = UngetGen(list(range(8)))
+        myGen = next(myObj)
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.next)
-        self.assertEqual(myResult, range(8))
+        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertEqual(myResult, list(range(8)))
 
     def testIncGen(self):
         """Tests UngetGen with incremental generation."""
-        myObj = UngetGen(range(2))
-        myGen = myObj.next()
+        myObj = UngetGen(list(range(2)))
+        myGen = next(myObj)
         # Iterate
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUnget(self):
         """Tests UngetGen with incremental generation and single send()."""
-        myObj = UngetGen(range(2))
-        myGen = myObj.next()
+        myObj = UngetGen(list(range(2)))
+        myGen = next(myObj)
         # Iterate
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
         # sned() after next
         myGen.send(myVal)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetAtStart(self):
         """Tests UngetGen with incremental generation and single send() before next()."""
-        myObj = UngetGen(range(2))
-        myGen = myObj.next()
+        myObj = UngetGen(list(range(2)))
+        myGen = next(myObj)
         # Try sending before iterating
         self.assertRaises(TypeError, myGen.send, 42)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetAtEnd(self):
         """Tests UngetGen with incremental generation and single send() after last next()."""
-        myObj = UngetGen(range(2))
-        myGen = myObj.next()
+        myObj = UngetGen(list(range(2)))
+        myGen = next(myObj)
         # Iterate
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
         myGen.send(42)
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 42)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetOnEmptyList(self):
         """Tests UngetGen with incremental generation and send() where the initial list is empty."""
         myObj = UngetGen([])
-        myGen = myObj.next()
+        myGen = next(myObj)
         # Try an insert
         self.assertRaises(TypeError, myGen.send, 127)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
     def testIncGenUngetMultipleCallsAtStart(self):
         """Tests UngetGen with incremental generation where pairs of send() cancel each other."""
-        myObj = UngetGen(range(2))
-        myGen = myObj.next()
+        myObj = UngetGen(list(range(2)))
+        myGen = next(myObj)
         # Iterate
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 0)
         self.assertEqual(None, myGen.send(42))
         self.assertEqual(42, myGen.send(84))
         # 84 is thrown away by the external loop of UnitGen.next()
-        myVal = myGen.next()
+        myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.next)
+        self.assertRaises(StopIteration, myGen.__next__)
 
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestUngetGen)
@@ -161,8 +161,7 @@ def unitTest(theVerbosity=2):
 
 
 def usage():
-    print \
-"""TestUngetGen.py - Tests UngetGen
+    print("""TestUngetGen.py - Tests UngetGen
 Usage:
 python TestUngetGen.py [-hl: --help]
 
@@ -176,20 +175,20 @@ Options:
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
-    print 'TestUngetGen.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
-    print
+    print('TestUngetGen.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
+    print()
     import getopt
     import sys
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
     except getopt.GetoptError:
         usage()
-        print 'ERROR: Invalid options!'
+        print('ERROR: Invalid options!')
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -200,7 +199,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments!'
+        print('ERROR: Wrong number of arguments!')
         sys.exit(1)
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
@@ -210,8 +209,8 @@ def main():
     clkStart = time.clock()
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

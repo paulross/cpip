@@ -91,8 +91,8 @@ def main():
         optParser.error("No arguments!")
         return 1
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
     return 0
 
 if __name__ == '__main__':

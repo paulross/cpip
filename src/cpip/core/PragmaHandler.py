@@ -31,7 +31,7 @@ from cpip import ExceptionCpip
 
 class ExceptionPragmaHandler(ExceptionCpip):
     """Simple specialisation of an exception class for the PragmaHandler.
-    If raised this will cause the PpLexer to register an undefined """
+    If raised this will cause the PpLexer to register undefined behaviour."""
     pass
 
 class ExceptionPragmaHandlerStopParsing(ExceptionPragmaHandler):
