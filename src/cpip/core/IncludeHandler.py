@@ -36,15 +36,17 @@ class ExceptionCppInclude(ExceptionCpip):
     """Simple specialisation of an exception class for the CppInclude."""
     pass
 
-"""FilePathOrigin is a class used externally to collect:
-- An open file object that can be read by the caller.
-- The file path of that object, wherever found.
-- The 'current place' of that file, wherever found. This will affect
-  subsequent calls.
-- The origin code, i.e. how it was found.
-Any or all or these attributes may be None
-The methods _searchFile(), _includeQcharseq() and _includeHcharseq() return
-such an object (or None)."""
+#: FilePathOrigin is a class used externally to collect:
+#:
+#: * An open file object that can be read by the caller.
+#: * The file path of that object, wherever found.
+#: * The 'current place' of that file, wherever found. This will affect
+#:   subsequent calls.
+#: * The origin code, i.e. how it was found.
+#:
+#: Any or all or these attributes may be None
+#: as the methods ``_searchFile()``, ``_includeQcharseq()`` and ``_includeHcharseq()`` return
+#: such an object (or None).
 FilePathOrigin = collections.namedtuple(
     'FilePathOrigin',
     'fileObj filePath currentPlace origin',
@@ -68,13 +70,13 @@ class CppIncludeStd(object):
                               USERINCLUDEdirs      SYSTEMINCLUDEdirs
 
     ISO/IEC 9899:1999 (E) 6.10.2-3 means that a failure of q-char must be
-    retried as if it was a h-char.
-    i.e. A failure of a q-char-sequence thus:
-    #include "..."
-    Is to be retried as if it was written as a h-char-sequence thus:
-    #include <...>
+    retried as if it was a h-char. i.e. A failure of a q-char-sequence thus: ``#include "..."``
+    
+    Is to be retried as if it was written as a h-char-sequence thus: ``#include <...>``
+    
     See: _includeQcharseq()
     """
+    #: Codes for the results of a search for an include
     INCLUDE_ORIGIN_CODES = {
         None    : 'Not found',
         'comp'  : 'Compiler specific directories',
@@ -369,6 +371,8 @@ class CppIncludeStringIO(CppIncludeStd):
         return None
 
     def initialTu(self, theTuIdentifier):
+        """Given an path as a string this returns the
+        class FilePathOrigin or None for the initial translation unit"""
         if len(self._cpStack) != 0:
             raise ExceptionCppInclude('setTu() with CP stack: %s' % self._cpStack)
         retVal = FilePathOrigin(

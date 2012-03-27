@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PpTokeniser &mdash; CPIP 0.8.0 documentation</title>
+    <title>PpTokeniser &mdash; CPIP 0.8.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.0',
+        VERSION:     '0.8.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
     <link rel="up" title="CPIP Core" href="../core/index.html" />
     <link rel="next" title="PpWhitespace" href="../core/PpWhitespace.html" />
     <link rel="prev" title="PpTokenCount" href="../core/PpTokenCount.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../core/PpTokenCount.html" title="PpTokenCount"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
       </ul>
@@ -91,6 +91,24 @@ implementation-defined.</p>
 <p>TODO: Perf rewrite slice functions to take an integer argument of where in the
 array to start inspecting for a slice. This avoids calls to ...[x:] e.g.
 myCharS = myCharS[sliceIdx:] in genLexPptokenAndSeqWs.</p>
+<dl class="data">
+<dt id="cpip.core.PpTokeniser.COMMENT_REPLACEMENT">
+<tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">COMMENT_REPLACEMENT</tt><em class="property"> = ' '</em><a class="headerlink" href="#cpip.core.PpTokeniser.COMMENT_REPLACEMENT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Comments are replaced by a single space</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpTokeniser.C_KEYWORDS">
+<tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">C_KEYWORDS</tt><em class="property"> = ('auto', 'break', 'case', 'char', 'const', 'continue', 'default', 'do', 'double', 'else', 'enum', 'extern', 'float', 'for', 'goto', 'if', 'inline', 'int', 'long', 'register', 'restrict', 'return', 'short', 'signed', 'sizeof', 'static', 'struct', 'switch', 'typedef', 'union', 'unsigned', 'void', 'volatile', 'while', '_Bool', '_Complex', '_Imaginary')</em><a class="headerlink" href="#cpip.core.PpTokeniser.C_KEYWORDS" title="Permalink to this definition">¶</a></dt>
+<dd><p>ISO/IEC 9899:1999 (E) 6.4.1 Keywords</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpTokeniser.DIGRAPH_TABLE">
+<tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">DIGRAPH_TABLE</tt><em class="property"> = {'and': '&amp;&amp;', '%:%:': '##', 'and_eq': '&amp;=', 'xor': '^', 'xor_eq': '^=', '&lt;:': '[', 'bitand': '&amp;', 'compl': '~', 'or': '||', '%&gt;': '}', ':&gt;': ']', '&lt;%': '{', '%:': '#', 'not': '!', 'not_eq': '!=', 'bitor': '|', 'or_eq': '|='}</em><a class="headerlink" href="#cpip.core.PpTokeniser.DIGRAPH_TABLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map of Digraph alternates</p>
+</dd></dl>
+
 <dl class="exception">
 <dt id="cpip.core.PpTokeniser.ExceptionCpipTokeniser">
 <em class="property">exception </em><tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">ExceptionCpipTokeniser</tt><a class="headerlink" href="#cpip.core.PpTokeniser.ExceptionCpipTokeniser" title="Permalink to this definition">¶</a></dt>
@@ -103,29 +121,37 @@ myCharS = myCharS[sliceIdx:] in genLexPptokenAndSeqWs.</p>
 <dd><p>Specialisation for when universal character name exceeds constraints.</p>
 </dd></dl>
 
+<dl class="data">
+<dt id="cpip.core.PpTokeniser.LEN_SOURCE_CHARACTER_SET">
+<tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">LEN_SOURCE_CHARACTER_SET</tt><em class="property"> = 96</em><a class="headerlink" href="#cpip.core.PpTokeniser.LEN_SOURCE_CHARACTER_SET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Size of the source code character set</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="cpip.core.PpTokeniser.PpTokeniser">
 <em class="property">class </em><tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">PpTokeniser</tt><big>(</big><em>theFileObj=None</em>, <em>theFileId=None</em>, <em>theDiagnostic=None</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Imitates a Preprocessor that conforms to ISO/IEC 14882:1998(E).
-TODO: Escape sequences Table 5?</p>
-<p>Implementation note on all _slice...() and __slice...() functions.
-A _slice...() function takes a buffer-like object and an integer offset as
+<dd><p>Imitates a Preprocessor that conforms to ISO/IEC 14882:1998(E).</p>
+<p>Takes an optional file like object.
+If theFileObj has a &#8216;name&#8217; attribute then that will be use as the name
+otherwise theFileId will be used as the file name.</p>
+<p><strong>Implementation note:</strong> On all <tt class="docutils literal"><span class="pre">_slice...()</span></tt> and <tt class="docutils literal"><span class="pre">__slice...()</span></tt> functions:
+A <tt class="docutils literal"><span class="pre">_slice...()</span></tt> function takes a buffer-like object and an integer offset as
 arguments. The buffer-like object will be accessed by index so just needs
-to implement __getitem__(). On overrun or other out of bounds index an
-IndexError must be caught by the _slice...() function.
-i.e. len() should not be called on the buffer-like object, or rather, if
-len() (i.e. __len__() ) is called a TypeError will be raised and propagated
-out of this class to the caller.
-For example StrTree conforms to these requirements.</p>
+to implement <tt class="docutils literal"><span class="pre">__getitem__()</span></tt>. On overrun or other out of bounds index an
+IndexError must be caught by the <tt class="docutils literal"><span class="pre">_slice...()</span></tt> function.
+i.e. <tt class="docutils literal"><span class="pre">len()</span></tt> should not be called on the buffer-like object, or rather, if
+<tt class="docutils literal"><span class="pre">len()</span></tt> (i.e. <tt class="docutils literal"><span class="pre">__len__()</span></tt>) is called a <tt class="docutils literal"><span class="pre">TypeError</span></tt> will be raised and propagated
+out of this class to the caller.</p>
+<p>StrTree, for example, conforms to these requirements.</p>
 <p>The function is expected to return an integer that represents the number
 of objects that can be consumed from the buffer-like object. If the
 return value is non-zero the PpTokeniser is side-affected in that
-self._cppTokType is set to a non-None value. Before doing that a test is
-made and if self._cppTokType is already non-None then an assertion error
-is raised.
-The buffer-like object should not be side-affected by the _slice...()
+<tt class="docutils literal"><span class="pre">self._cppTokType</span></tt> is set to a non-None value. Before doing that a test is
+made and if <tt class="docutils literal"><span class="pre">self._cppTokType</span></tt> is already non-None then an assertion error
+is raised.</p>
+<p>The buffer-like object should not be side-affected by the <tt class="docutils literal"><span class="pre">_slice...()</span></tt>
 function regardless of the return value.</p>
-<p>So a _slice...() function pattern is:</p>
+<p>So a <tt class="docutils literal"><span class="pre">_slice...()</span></tt> function pattern is:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">_slice</span><span class="o">...</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theBuf</span><span class="p">,</span> <span class="n">theOfs</span><span class="p">):</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">theOfs</span>
     <span class="k">try</span><span class="p">:</span>
@@ -145,8 +171,9 @@ function regardless of the return value.</p>
     <span class="k">return</span> <span class="o">...</span>
 </pre></div>
 </div>
-<p>NOTE: Functions starting with __slice... do not trap the IndexError, the
+<p>NOTE: Functions starting with <tt class="docutils literal"><span class="pre">__slice...</span></tt> do not trap the IndexError, the
 caller must do that.</p>
+<p>TODO: ISO/IEC 14882:1998(E) Escape sequences Table 5?</p>
 <dl class="attribute">
 <dt id="cpip.core.PpTokeniser.PpTokeniser.cppTokType">
 <tt class="descname">cppTokType</tt><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.cppTokType" title="Permalink to this definition">¶</a></dt>
@@ -174,23 +201,24 @@ caller must do that.</p>
 <dl class="method">
 <dt id="cpip.core.PpTokeniser.PpTokeniser.genLexPptokenAndSeqWs">
 <tt class="descname">genLexPptokenAndSeqWs</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpTokeniser.PpTokeniser.genLexPptokenAndSeqWs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates a sequence of PpToken objects. either:</p>
+<dd><p>Generates a sequence of PpToken objects. Either:</p>
 <blockquote>
 <div><ul class="simple">
 <li>a sequence of whitespace (comments are replaces with a single whitespace).</li>
 <li>a pre-processing token.</li>
 </ul>
 </div></blockquote>
-<p>This performs translation phasse 3.</p>
+<p>This performs translation phase 3.</p>
 <p>NOTE: Whitespace sequences are not merged so <tt class="docutils literal"><span class="pre">'</span>&nbsp; <span class="pre">/\*\*/</span> <span class="pre">'</span></tt> will generate
-three tokens each of <tt class="docutils literal"><span class="pre">PpToken.PpToken('</span> <span class="pre">',</span> <span class="pre">'whitespace')</span></tt>.
-So this yields the tokens from translation phase 3 if supplied with
+three tokens each of <tt class="docutils literal"><span class="pre">PpToken.PpToken('</span> <span class="pre">',</span> <span class="pre">'whitespace')</span></tt> i.e. leading
+whitespace, comment replced by single space, trailing whitespace.</p>
+<p>So this yields the tokens from translation phase 3 if supplied with
 the results of translation phase 2.</p>
 <p>NOTE: This does not generate &#8216;header-name&#8217; tokens as these are context
-dependent i.e. they are only valid in the context of a #include
+dependent i.e. they are only valid in the context of a <tt class="docutils literal"><span class="pre">#include</span></tt>
 directive. ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 says that:
-&#8220;A header name preprocessing token is recognised only within a #include
-preprocessing directive.&#8221;.</p>
+<em>&#8220;A header name preprocessing token is recognised only within a #include
+preprocessing directive.&#8221;</em>.</p>
 </dd></dl>
 
 <dl class="method">
@@ -281,6 +309,12 @@ There are no side effects on self.</p>
 <dd><p>Well it is a Trigraph</p>
 </dd></dl>
 
+<dl class="data">
+<dt id="cpip.core.PpTokeniser.TRIGRAPH_TABLE">
+<tt class="descclassname">cpip.core.PpTokeniser.</tt><tt class="descname">TRIGRAPH_TABLE</tt><em class="property"> = {'!': '|', &quot;'&quot;: '^', ')': ']', '(': '[', '-': '~', '=': '#', '&lt;': '{', '/': '\\', '&gt;': '}'}</em><a class="headerlink" href="#cpip.core.PpTokeniser.TRIGRAPH_TABLE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map of Trigraph alternates after the ?? prefix</p>
+</dd></dl>
+
 </div>
 
 
@@ -332,7 +366,7 @@ There are no side effects on self.</p>
         <li class="right" >
           <a href="../core/PpTokenCount.html" title="PpTokenCount"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
       </ul>

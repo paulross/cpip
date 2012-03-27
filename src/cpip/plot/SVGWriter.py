@@ -38,9 +38,9 @@ def dimToTxt(theDim):
     return '%s%s' % (theDim.value, theDim.units)
 
 class SVGWriter(XmlWrite.XmlStream):
+    """Initialise the stream with a file and Coord.Box() object.
+    The view port units must be the same for width and depth."""
     def __init__(self, theFile, theViewPort, rootAttrs=None):
-        """Initialise the stream with a file and Coord.Box() object.
-        The view port units must be the same for width and depth."""
         super(SVGWriter, self).__init__(theFile)
         self._viewPort = theViewPort
         self._rootAttrs = rootAttrs
@@ -60,25 +60,25 @@ class SVGWriter(XmlWrite.XmlStream):
         return self
     
 class SVGGroup(XmlWrite.Element):
-    """A group element in SVG."""
+    """Initialise the group with a stream.
+    
+    See: http://www.w3.org/TR/2003/REC-SVG11-20030114/struct.html#GElement
+    
+    Sadly we can't use ``**kwargs`` because of Python restrictions on keyword
+    names. For example ``stroke-width`` that is not a valid keyword
+    argument (although ``stroke_width`` would be). So instead we pass in an
+    optional dictionary {string : string, ...}"""
     def __init__(self, theXmlStream, attrs=None):
-        """Initialise the group with a stream.
-        See: http://www.w3.org/TR/2003/REC-SVG11-20030114/struct.html#GElement
-        Sadly we can't use **kwargs because of Python restrictions on keyword
-        names. If we use stroke-width but that is not a valid keyword
-        argument (although stroke_width would be). So instead we pass in an
-        optional dictionary {string : string, ...}"""
         super(SVGGroup, self).__init__(theXmlStream, 'g', attrs)
 
 class SVGRect(XmlWrite.Element):
-    """A rectangle in SVG."""
+    """Initialise the rectangle with a stream, a Coord.Pt() and a
+    Coord.Box() objects.
+    See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#RectElement
+    Typical attributes:
+    {'fill' : "blue", 'stroke' : "black", 'stroke-width' : "2", }
+    """
     def __init__(self, theXmlStream, thePoint, theBox, attrs=None):
-        """Initialise the rectangle with a stream, a Coord.Pt() and a
-        Coord.Box() objects.
-        See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#RectElement
-        Typical attributes:
-        {'fill' : "blue", 'stroke' : "black", 'stroke-width' : "2", }
-        """
         myAttrs = {
                     'x'         : dimToTxt(thePoint.x),
                     'y'         : dimToTxt(thePoint.y),
@@ -90,10 +90,10 @@ class SVGRect(XmlWrite.Element):
         super(SVGRect, self).__init__(theXmlStream, 'rect', myAttrs)
     
 class SVGCircle(XmlWrite.Element):
-    """A circle in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#CircleElement"""
+    """A circle in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#CircleElement
+    
+    Initialise the circle with a stream, a Coord.Pt() and a Coord.Dim() objects."""
     def __init__(self, theXmlStream, thePoint, theRadius, attrs=None):
-        """Initialise the circle with a stream, a Coord.Pt() and a
-        Coord.Dim() objects."""
         _attrs = {
                     'cx'        : dimToTxt(thePoint.x),
                     'cy'        : dimToTxt(thePoint.y),
@@ -104,10 +104,10 @@ class SVGCircle(XmlWrite.Element):
         super(SVGCircle, self).__init__(theXmlStream, 'circle', _attrs)
     
 class SVGElipse(XmlWrite.Element):
-    """An elipse in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#EllipseElement"""
+    """An elipse in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#EllipseElement
+    
+    Initialise the elipse with a stream, a Coord.Pt() and a Coord.Dim() objects."""
     def __init__(self, theXmlStream, ptFrom, theRadX, theRadY, attrs=None):
-        """Initialise the circle with a stream, a Coord.Pt() and a
-        Coord.Dim() objects."""
         _attrs = {
                     'cx'        : dimToTxt(ptFrom.x),
                     'cy'        : dimToTxt(ptFrom.y),
@@ -119,9 +119,10 @@ class SVGElipse(XmlWrite.Element):
         super(SVGElipse, self).__init__(theXmlStream, 'elipse', _attrs)
     
 class SVGLine(XmlWrite.Element):
-    """A rectangle in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#LineElement"""
+    """A line in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#LineElement
+    
+    Initialise the line with a stream, and two Coord.Pt() objects."""
     def __init__(self, theXmlStream, ptFrom, ptTo, attrs=None):
-        """Initialise the line with a stream, and two Coord.Pt() objects."""
         _attrs = {
                     'x1'        : dimToTxt(ptFrom.x),
                     'y1'        : dimToTxt(ptFrom.y),
@@ -133,11 +134,13 @@ class SVGLine(XmlWrite.Element):
         super(SVGLine, self).__init__(theXmlStream, 'line', _attrs)
     
 class SVGPointList(XmlWrite.Element):
-    """An abstract class that takes a list of points, derived by polyline and polygon."""
+    """An abstract class that takes a list of points, derived by polyline and polygon.
+    
+    Initialise the element with a stream, a name, and a list of Coord.Pt() objects.
+
+    NOTE: The units of the points are ignored, it is up to the caller to convert
+    them to the User Coordinate System."""
     def __init__(self, theXmlStream, name, pointS, attrs):
-        """Initialise the element with a stream, a name, and a list of Coord.Pt() objects.
-        NOTE: The units of the points are ignored, it is up to the caller to convert
-        them to the User Coordinate System."""
         _attrs = {
             'points' : ' '.join(['%s,%s' % (p.x.value, p.y.value) for p in pointS])
         }
@@ -146,28 +149,32 @@ class SVGPointList(XmlWrite.Element):
         super(SVGPointList, self).__init__(theXmlStream, name, _attrs)
 
 class SVGPolyline(SVGPointList):
-    """A polyline in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#PolylineElement"""
+    """A polyline in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#PolylineElement
+    
+    Initialise the polyline with a stream, and a list of Coord.Pt() objects.
+
+    NOTE: The units of the points are ignored, it is up to the caller to convert
+    them to the User Coordinate System."""
     def __init__(self, theXmlStream, pointS, attrs=None):
-        """Initialise the polyline with a stream, and a list of Coord.Pt() objects.
-        NOTE: The units of the points are ignored, it is up to the caller to convert
-        them to the User Coordinate System."""
         super(SVGPolyline, self).__init__(theXmlStream, 'polyline', pointS, attrs)
     
 class SVGPolygon(SVGPointList):
-    """A polygon in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#PolygonElement"""
+    """A polygon in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/shapes.html#PolygonElement
+    
+    Initialise the polygon with a stream, and a list of Coord.Pt() objects.
+
+    NOTE: The units of the points are ignored, it is up to the caller to convert
+    them to the User Coordinate System."""
     def __init__(self, theXmlStream, pointS, attrs=None):
-        """Initialise the polygon with a stream, and a list of Coord.Pt() objects.
-        NOTE: The units of the points are ignored, it is up to the caller to convert
-        them to the User Coordinate System."""
         super(SVGPolygon, self).__init__(theXmlStream, 'polygon', pointS, attrs)
     
 class SVGText(XmlWrite.Element):
-    """Text in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/text.html#TextElement"""
+    """Text in SVG. See: http://www.w3.org/TR/2003/REC-SVG11-20030114/text.html#TextElement
+    
+    Initialise the text with a stream, a Coord.Pt() and font as a string and
+    size as an integer. If thePoint is None then no location will be specified
+    (for example for use inside a <defs> element."""
     def __init__(self, theXmlStream, thePoint, theFont, theSize, attrs=None):
-        """Initialise the text with a stream, a Coord.Pt() and font 
-        as a string and size as an integer.
-        If thePoint is None then no location will be specified (for example
-        for use inside a <defs> element."""
         _attrs = {
                 'font-family'   : theFont,
                 'font-size'     : '%s' % theSize,
@@ -178,4 +185,3 @@ class SVGText(XmlWrite.Element):
         if attrs:
             _attrs.update(attrs)
         super(SVGText, self).__init__(theXmlStream, 'text', _attrs)
-

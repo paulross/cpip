@@ -26,12 +26,14 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-
+#: Whitespace characters
 LEX_WHITESPACE = set('\t\v\f\n ')
+#: Number of whitespace characters
 LEN_WHITESPACE_CHARACTER_SET = 5
+#: Whitespace newline
 LEX_NEWLINE = '\n'
-# Whitespace characters that are significant in define statements
-# ISO/IEC 14882:1998(E) 16-2 only ' ' and '\t' as ws
+#: Whitespace characters that are significant in define statements
+#: ISO/IEC 14882:1998(E) 16-2 only ' ' and '\t' as ws
 DEFINE_WHITESPACE = set('\n\t ')
 
 class PpWhitespace(object):
@@ -88,6 +90,7 @@ class PpWhitespace(object):
     def isAllMacroWhitespace(self, theCharS):
         """"Return True if theCharS is zero length or only has allowable
         whitespace for preprocesing macros.
+        
         ISO/IEC 14882:1998(E) 16-2 only ' ' and '\t' as whitespace."""
         for c in theCharS:
             if c not in DEFINE_WHITESPACE:

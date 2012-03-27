@@ -19,26 +19,6 @@
 # Paul Ross: cpipdev@googlemail.com
 
 __author__  = 'Paul Ross'
-__date__    = '2011-07-10'
+__date__    = '2012-03-26'
 __version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
-
-__all__ = ['core', 'util', 'plot']
-
-"""CPIP: 'C' Preprocessor in Python.
-"""
-
-CPIP_VERSION = (0, 8, 1)
-
-RELEASE_NOTES = [
-    """Release Notes (latest at top).
-==============================
-2012-03-26: Updated to Python 3.
-
-2011-07-10: First public release of CPIP.
-""",
-]
-
-class ExceptionCpip(Exception):
-    """Simple specialisation of an exception class for CPIP and its modules."""
-    pass
+__rights__  = 'Copyright (c) 2008-2012 Paul Ross'

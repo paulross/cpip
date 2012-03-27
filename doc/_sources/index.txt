@@ -12,6 +12,8 @@ Instead of regard pre-processing as a just a dirty job that just has to be done 
 
 As well CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on (see :ref:`cpip-examples`).
 
+CPIP's project page is here: https://sourceforge.net/projects/cpip/
+
 Contents:
 
 .. toctree::

@@ -38,6 +38,8 @@ class ExceptionPpTokenCountStack(ExceptionPpTokenCount):
     pass
 
 class PpTokenCount(object):
+    """Maps of ``{token_type : integer_count, ...}``
+    self._cntrTokAll is all tokens."""
     def __init__(self):
         # Maps of {token_type : integer_count, ...}
         # self._cntrTokAll is all tokens

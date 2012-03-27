@@ -324,7 +324,7 @@ That leads to a fairly obvious way of managing that ``#include`` payload.
 Implementation
 ^^^^^^^^^^^^^^^^^^^
 
-If you want to create a new include mechanism then you should sub-class the base class ``cpip.core.IncludeHandler.CppIncludeStd``. 
+If you want to create a new include mechanism then you should sub-class the base class ``cpip.core.IncludeHandler.CppIncludeStd`` [reference documentation: :ref:`cpip.ref.IncludeHandler`]. 
 
 Sub-classing this requires implementing the following methods :
 

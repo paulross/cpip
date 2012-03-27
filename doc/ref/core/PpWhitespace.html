@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PpWhitespace &mdash; CPIP 0.8.0 documentation</title>
+    <title>PpWhitespace &mdash; CPIP 0.8.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.0',
+        VERSION:     '0.8.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
     <link rel="up" title="CPIP Core" href="../core/index.html" />
     <link rel="next" title="PragmaHandler" href="../core/PragmaHandler.html" />
     <link rel="prev" title="PpTokeniser" href="../core/PpTokeniser.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../core/PpTokeniser.html" title="PpTokeniser"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
       </ul>
@@ -60,6 +60,31 @@
   <div class="section" id="module-cpip.core.PpWhitespace">
 <span id="ppwhitespace"></span><span id="cpip-ref-ppwhitespace"></span><h1>PpWhitespace<a class="headerlink" href="#module-cpip.core.PpWhitespace" title="Permalink to this headline">¶</a></h1>
 <p>Understands whitespacey things about source code character streams.</p>
+<dl class="data">
+<dt id="cpip.core.PpWhitespace.DEFINE_WHITESPACE">
+<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">DEFINE_WHITESPACE</tt><em class="property"> = {'\t', ' ', '\n'}</em><a class="headerlink" href="#cpip.core.PpWhitespace.DEFINE_WHITESPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whitespace characters that are significant in define statements
+ISO/IEC 14882:1998(E) 16-2 only &#8216; &#8216; and &#8216;t&#8217; as ws</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpWhitespace.LEN_WHITESPACE_CHARACTER_SET">
+<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">LEN_WHITESPACE_CHARACTER_SET</tt><em class="property"> = 5</em><a class="headerlink" href="#cpip.core.PpWhitespace.LEN_WHITESPACE_CHARACTER_SET" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of whitespace characters</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpWhitespace.LEX_NEWLINE">
+<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">LEX_NEWLINE</tt><em class="property"> = '\n'</em><a class="headerlink" href="#cpip.core.PpWhitespace.LEX_NEWLINE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whitespace newline</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="cpip.core.PpWhitespace.LEX_WHITESPACE">
+<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">LEX_WHITESPACE</tt><em class="property"> = {'\t', ' ', '\x0b', '\n', '\x0c'}</em><a class="headerlink" href="#cpip.core.PpWhitespace.LEX_WHITESPACE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whitespace characters</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="cpip.core.PpWhitespace.PpWhitespace">
 <em class="property">class </em><tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">PpWhitespace</tt><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace" title="Permalink to this definition">¶</a></dt>
@@ -76,8 +101,8 @@ starts with non-whitespace.</p>
 <dt id="cpip.core.PpWhitespace.PpWhitespace.isAllMacroWhitespace">
 <tt class="descname">isAllMacroWhitespace</tt><big>(</big><em>theCharS</em><big>)</big><a class="headerlink" href="#cpip.core.PpWhitespace.PpWhitespace.isAllMacroWhitespace" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#8220;Return True if theCharS is zero length or only has allowable
-whitespace for preprocesing macros.
-ISO/IEC 14882:1998(E) 16-2 only &#8216; &#8216; and &#8216;       &#8216; as whitespace.</p>
+whitespace for preprocesing macros.</p>
+<p>ISO/IEC 14882:1998(E) 16-2 only &#8216; &#8216; and &#8216;       &#8216; as whitespace.</p>
 </dd></dl>
 
 <dl class="method">
@@ -167,7 +192,7 @@ position theOfs.</p>
         <li class="right" >
           <a href="../core/PpTokeniser.html" title="PpTokeniser"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
       </ul>

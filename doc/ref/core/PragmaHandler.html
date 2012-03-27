@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PragmaHandler &mdash; CPIP 0.8.0 documentation</title>
+    <title>PragmaHandler &mdash; CPIP 0.8.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.0',
+        VERSION:     '0.8.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
     <link rel="up" title="CPIP Core" href="../core/index.html" />
     <link rel="next" title="CPIP Utilities" href="../util/index.html" />
     <link rel="prev" title="PpWhitespace" href="../core/PpWhitespace.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../core/PpWhitespace.html" title="PpWhitespace"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
       </ul>
@@ -115,11 +115,29 @@ be macro replaced before being passed to self.</p>
 <em class="property">class </em><tt class="descclassname">cpip.core.PragmaHandler.</tt><tt class="descname">PragmaHandlerSTDC</tt><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for a pragma handler that implements ISO/IEC 9899:1999 (E)
 6.10.5 Error directive para. 2.</p>
+<dl class="attribute">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerSTDC.DIRECTIVES">
+<tt class="descname">DIRECTIVES</tt><em class="property"> = ('FP_CONTRACT', 'FENV_ACCESS', 'CX_LIMITED_RANGE')</em><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC.DIRECTIVES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard C acceptable macro directives</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerSTDC.ON_OFF_SWITCH_STATES">
+<tt class="descname">ON_OFF_SWITCH_STATES</tt><em class="property"> = ('ON', 'OFF', 'DEFAULT')</em><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC.ON_OFF_SWITCH_STATES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard C macro states</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PragmaHandler.PragmaHandlerSTDC.STDC">
+<tt class="descname">STDC</tt><em class="property"> = 'STDC'</em><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC.STDC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard C macro</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="cpip.core.PragmaHandler.PragmaHandlerSTDC.pragma">
 <tt class="descname">pragma</tt><big>(</big><em>theTokS</em><big>)</big><a class="headerlink" href="#cpip.core.PragmaHandler.PragmaHandlerSTDC.pragma" title="Permalink to this definition">¶</a></dt>
-<dd><p>Inject a macro declaration into the environment.
-See ISO/IEC 9899:1999 (E) 6.10.5 Error directive para. 2.</p>
+<dd><p>Inject a macro declaration into the environment.</p>
+<p>See ISO/IEC 9899:1999 (E) 6.10.5 Error directive para. 2.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -181,7 +199,7 @@ See ISO/IEC 9899:1999 (E) 6.10.5 Error directive para. 2.</p>
         <li class="right" >
           <a href="../core/PpWhitespace.html" title="PpWhitespace"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
       </ul>

@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>IncludeHandler &mdash; CPIP 0.8.0 documentation</title>
+    <title>IncludeHandler &mdash; CPIP 0.8.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.0',
+        VERSION:     '0.8.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
     <link rel="up" title="CPIP Core" href="../core/index.html" />
     <link rel="next" title="MacroEnv" href="../core/MacroEnv.html" />
     <link rel="prev" title="FileIncludeGraph" href="../core/FileIncludeGraph.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../core/FileIncludeGraph.html" title="FileIncludeGraph"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
       </ul>
@@ -78,12 +78,15 @@ Size of I Size of J   #include &lt;...&gt;      #include "..."
                       USERINCLUDEdirs      SYSTEMINCLUDEdirs</pre>
 </div>
 <p>ISO/IEC 9899:1999 (E) 6.10.2-3 means that a failure of q-char must be
-retried as if it was a h-char.
-i.e. A failure of a q-char-sequence thus:
-#include &#8221;...&#8221;
-Is to be retried as if it was written as a h-char-sequence thus:
-#include &lt;...&gt;
-See: _includeQcharseq()</p>
+retried as if it was a h-char. i.e. A failure of a q-char-sequence thus: <tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&quot;...&quot;</span></tt></p>
+<p>Is to be retried as if it was written as a h-char-sequence thus: <tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;...&gt;</span></tt></p>
+<p>See: _includeQcharseq()</p>
+<dl class="attribute">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.INCLUDE_ORIGIN_CODES">
+<tt class="descname">INCLUDE_ORIGIN_CODES</tt><em class="property"> = {None: 'Not found', 'comp': 'Compiler specific directories', 'TU': 'Translation unit', 'sys': 'System include directories', 'usr': 'User include directories', 'CP': 'Current Place'}</em><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.INCLUDE_ORIGIN_CODES" title="Permalink to this definition">¶</a></dt>
+<dd><p>Codes for the results of a search for an include</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="cpip.core.IncludeHandler.CppIncludeStd.canInclude">
 <tt class="descname">canInclude</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.canInclude" title="Permalink to this definition">¶</a></dt>
@@ -226,6 +229,13 @@ class FilePathOrigin or None for the initial translation unit</p>
 <em class="property">class </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">CppIncludeStringIO</tt><big>(</big><em>theUsrDirs</em>, <em>theSysDirs</em>, <em>theInitialTuContent</em>, <em>theFilePathToContent</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStringIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>This implements _searchFile() based on a lookup of stings that
 returns StringIO file-like object.</p>
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStringIO.initialTu">
+<tt class="descname">initialTu</tt><big>(</big><em>theTuIdentifier</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStringIO.initialTu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an path as a string this returns the
+class FilePathOrigin or None for the initial translation unit</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="exception">
@@ -237,7 +247,17 @@ returns StringIO file-like object.</p>
 <dl class="class">
 <dt id="cpip.core.IncludeHandler.FilePathOrigin">
 <em class="property">class </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">FilePathOrigin</tt><a class="headerlink" href="#cpip.core.IncludeHandler.FilePathOrigin" title="Permalink to this definition">¶</a></dt>
-<dd><p>FilePathOrigin(fileObj, filePath, currentPlace, origin)</p>
+<dd><p>FilePathOrigin is a class used externally to collect:</p>
+<ul class="simple">
+<li>An open file object that can be read by the caller.</li>
+<li>The file path of that object, wherever found.</li>
+<li>The &#8216;current place&#8217; of that file, wherever found. This will affect
+subsequent calls.</li>
+<li>The origin code, i.e. how it was found.</li>
+</ul>
+<p>Any or all or these attributes may be None
+as the methods <tt class="docutils literal"><span class="pre">_searchFile()</span></tt>, <tt class="docutils literal"><span class="pre">_includeQcharseq()</span></tt> and <tt class="docutils literal"><span class="pre">_includeHcharseq()</span></tt> return
+such an object (or None).</p>
 <dl class="attribute">
 <dt id="cpip.core.IncludeHandler.FilePathOrigin.currentPlace">
 <tt class="descname">currentPlace</tt><a class="headerlink" href="#cpip.core.IncludeHandler.FilePathOrigin.currentPlace" title="Permalink to this definition">¶</a></dt>
@@ -315,7 +335,7 @@ returns StringIO file-like object.</p>
         <li class="right" >
           <a href="../core/FileIncludeGraph.html" title="FileIncludeGraph"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
       </ul>

@@ -41,7 +41,7 @@ class ListAsGenerator(object):
     Iterating through the result and stopping when the list is exhausted using
     the flag listIsEmpty:
     
-    Be clear when this flag is set, for example if we have a list [0,1,2,3]
+    To be clear: when this flag is set, for example if we have a list [0,1,2,3]
     followed by ['A', 'B', 'C'] thus::
     
         myObj = ListAsGenerator(range(3), ListAsGenerator(list('ABC')).next())
