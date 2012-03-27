@@ -57,22 +57,26 @@ class ExceptionCpipTokenIllegalMerge(
 # Global definitions of enumerated preprocessing token types
 ############################################################
 
-# Types of preprocessing-token
-# From: ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken]
-# NOTE: ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 says that:
-# "A header name preprocessing token is recognized only within a #include
-# preprocessing directive."
-# So in other contexts a header-name that is a q-char-sequence should be treated
-# as a string-literal
-# This produces interesting issues in this case
-# #define str(s) # s
-# #nclude str(foo.h)
-# The stringise operator creates a string-literal token but the #include
-# directive expects a header-name.
-# So in certian contexts (macro stringising followed by #include instruction)
-# we need to 'downcast' a string-literal to a header-name.
-# See PpLexer for how this is done
-
+#: Types of preprocessing-token
+#: From: ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken]
+#: NOTE: ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 says that:
+#:
+#: "A header name preprocessing token is recognized only within a #include
+#: preprocessing directive."
+#:
+#: So in other contexts a header-name that is a q-char-sequence should be treated
+#: as a string-literal
+#:
+#: This produces interesting issues in this case::
+#:
+#:     #define str(s) # s
+#:     #include str(foo.h)
+#:
+#: The stringise operator creates a string-literal token but the #include
+#: directive expects a header-name.
+#: So in certain contexts (macro stringising followed by #include instruction)
+#: we need to 'downcast' a string-literal to a header-name.
+#: See PpLexer for how this is done
 LEX_PPTOKEN_TYPES = [
     'header-name',
     'identifier',
@@ -89,15 +93,15 @@ LEX_PPTOKEN_TYPES = [
     'concat',
 ]
 
-# Map of {PREPROCESS_TOKEN_TYPE : integer, ...}
-# So this can be used thus:
-# self._cppTokType = NAME_ENUM['header-name']
+#: Map of {PREPROCESS_TOKEN_TYPE : integer, ...}
+#: So this can be used thus:
+#: self._cppTokType = NAME_ENUM['header-name']
 NAME_ENUM = {}
-# Map of {integer : PREPROCESS_TOKEN_TYPE, ...}
-# So this can be used thus:
-# if ENUM_NAME[token_type] == 'header-name':
+#: Map of {integer : PREPROCESS_TOKEN_TYPE, ...}
+#: So this can be used thus:
+#: if ENUM_NAME[token_type] == 'header-name':
 ENUM_NAME = {}
-# Range of allowable enum values
+#: Range of allowable enum values
 LEX_PPTOKEN_TYPE_ENUM_RANGE = range(len(LEX_PPTOKEN_TYPES))
 # Initialise maps without poluting the global namespace
 # with variables.
@@ -138,9 +142,15 @@ def tokensStr(theTokens, shortForm=True):
 
 class PpToken(object):
     """Holds a preprocessor token, its type and whether the token can
-    be replaced."""
+    be replaced.
+    
+    t is the token (a string) and tt is either an enumerated integer or
+    a string. Internally tt is stored as an enumerated integer.
+    If the token is an identifier then it is eligible for replacement
+    unless marked otherwise."""
+    #: Representation of a single wqhitespace
     SINGLE_SPACE = ' '
-    # Operators that are replaced directly by Python equivalents for constant evaluation
+    #: Operators that are replaced directly by Python equivalents for constant evaluation
     WORD_REPLACE_MAP = {
         '&&'    : 'and',
         '||'    : 'or',
@@ -231,7 +241,9 @@ class PpToken(object):
 
     def replaceNewLine(self):
         """Replace any newline with a single whitespace character in-place.
+        
         See: C ISO/IEC 9899:1999(E) 6.10-3 and C++ ISO/IEC 14882:1998(E) 16.3-9
+        
         This will raise a ExceptionCpipTokenIllegalOperation if I am not
         a whitespace token."""
         if self.isWs():
@@ -243,6 +255,7 @@ class PpToken(object):
 
     def shrinkWs(self):
         """Replace all whitespace with a single ' '
+        
         This will raise a ExceptionCpipTokenIllegalOperation if I am not
         a whitespace token."""
         if self.isWs():
@@ -254,10 +267,10 @@ class PpToken(object):
         """Returns an string value suitable for eval'ing in a constant expression.
         For numbers this removes such tiresome trivia as 'u', 'L' etc. For others
         it replaces '&&' with 'and' and so on.
+        
         See ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4
-        i.e. section 16.1-4
-        And: ISO/IEC 9899:1999 (E) 6.10.1 Conditional inclusion sub-section 3
-        i.e. section 6.10.1-3"""
+        i.e. section 16.1-4 and: ISO/IEC 9899:1999 (E) 6.10.1 Conditional
+        inclusion sub-section 3 i.e. section 6.10.1-3"""
         if self._tt == NAME_ENUM['pp-number']:
             # Remove any suffix characters from numbers
             # NOTE: This does not enforce strict accuracy (floats can only have
@@ -290,6 +303,7 @@ class PpToken(object):
 
     def merge(self, other):
         """This will merge by appending the other token if possible.
+        
         Failure will raise a ExceptionCpipTokenIllegalMerge if
         the token types are different."""
         self._t += other.t

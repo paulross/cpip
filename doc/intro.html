@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CPIP Introduction &mdash; CPIP 0.8.0 documentation</title>
+    <title>CPIP Introduction &mdash; CPIP 0.8.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.8.0',
+        VERSION:     '0.8.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.0 documentation" href="index.html" />
+    <link rel="top" title="CPIP 0.8.1 documentation" href="index.html" />
     <link rel="next" title="Installing CPIP" href="down_install.html" />
     <link rel="prev" title="Welcome to CPIP" href="index.html" /> 
   </head>
@@ -45,7 +45,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to CPIP"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">CPIP 0.8.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -56,9 +56,9 @@
             
   <div class="section" id="cpip-introduction">
 <h1>CPIP Introduction<a class="headerlink" href="#cpip-introduction" title="Permalink to this headline">¶</a></h1>
-<p>CPIP is a C/C++ pre-processor implemented in Python. Most pre-processors regard pre-processing as a dirty job that just has to be done as soon as possible. This can make it very hard to track down subtle defects at the pre-processing stage as pre-processors throw away a lot of useful information in favor of getting the result as fast as possible.</p>
-<p>Few developers really understand pre-processing, to many it is an obscure bit of black magic.</p>
-<p>CPIP aims to improve that and by recording every detail of preprocessing so CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on.</p>
+<p>CPIP is a C/C++ pre-processor implemented in Python. Most pre-processors regard pre-processing as a dirty job that just has to be done as soon as possible. This can make it very hard to track down subtle defects at the pre-processing stage as pre-processors throw away a lot of useful information in favor of getting the result as cheaply as possible.</p>
+<p>Few developers really understand pre-processing, to many it is an obscure bit of black magic. CPIP aims to improve that and by recording every detail of preprocessing so CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on.</p>
+<p>CPIP is not designed to be a replacement for <tt class="docutils literal"><span class="pre">cpp</span></tt> (or any other established pre-processor), instead CPIP regards clarity and understanding as more important than speed of processing.</p>
 <p>CPIP takes its standard as C99 or, more formally, ISO/IEC 9899:1999 (E) <a class="footnote-reference" href="#id3" id="id1">[1]</a>.</p>
 <div class="section" id="pre-processing-c-c">
 <h2>Pre-processing C/C++<a class="headerlink" href="#pre-processing-c-c" title="Permalink to this headline">¶</a></h2>
@@ -108,11 +108,42 @@
 <li>A command line tool that acts as a C/C++ pre-processor but produces all sorts of wonderful information about pre-processing: <a class="reference internal" href="examples/examples.html#cpip-examples"><em>CPIPMain.py Examples</em></a>.</li>
 <li>A Python interface to pre-processing via the PpLexer, see the <a class="reference internal" href="tutorial/PpLexer.html#cpip-tutorial-pplexer"><em>PpLexer Tutorial</em></a>. If you want to construct your own pre-processor or understand a specific aspect of preprocessing then this is for you.</li>
 </ul>
+</div>
+<div class="section" id="cpip-core-architecture">
+<span id="cpip-intro-architecture"></span><h2>CPIP Core Architecture<a class="headerlink" href="#cpip-core-architecture" title="Permalink to this headline">¶</a></h2>
+<p>CPIP provides a set of <a class="reference internal" href="cmd_line_tools/index.html#cpip-cmd-line-tools"><em>Command Line Tools</em></a> built round a core of Python code. The architecture of this core code is illustrated below, at the heart of it is the <tt class="docutils literal"><span class="pre">PpLexer</span></tt>. The user interacts with this in two ways:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Constructing a PpLexer with the following:</dt>
+<dd><ul class="first last simple">
+<li>A file-like object that represents the <em>Initial Translation Unit</em> i.e.the file to be pre-processed.</li>
+<li>Any pre-include files.</li>
+<li>An include handler that manages <tt class="docutils literal"><span class="pre">#include</span></tt> statements.</li>
+<li><em>Optionally:</em> a <tt class="docutils literal"><span class="pre">CppDiagnostic</span></tt> to handle error conditions.</li>
+<li><em>Optionally:</em> a <tt class="docutils literal"><span class="pre">Pragmahandler</span></tt> to handle <tt class="docutils literal"><span class="pre">#pragma</span></tt> statements.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Processing the file (and its <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s) token by token.</p>
+</li>
+</ul>
+<p>For the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> its construction is fairly straightforward; it just takes a reference to the user supplied objects.</p>
+<p>Processing the ITU is a more serious matter. The <tt class="docutils literal"><span class="pre">PpLexer</span></tt> uses a <tt class="docutils literal"><span class="pre">PpTokeniser</span></tt> to generate pre-processing tokens (shown in yellow below) according to translation phases one to three. The <tt class="docutils literal"><span class="pre">PpTokeniser</span></tt> also keeps track of logical to physical file location.</p>
+<p>Depending on the parser state the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> may/may not pass the token to various internal objects (shown in purple below) that keep track of:</p>
+<ul class="simple">
+<li>File inclusion.</li>
+<li>Conditional compilation.</li>
+<li>Macro Environment.</li>
+</ul>
+<p>The resulting token (if any) after that processing is yielded to the user.</p>
+<p>An extremely useful feature of CPIP is that the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> maintains all these data structures and provides an interface to them for the user. Some examples of what can be done with this information is here: <a class="reference internal" href="examples/examples.html#cpip-examples"><em>CPIPMain.py Examples</em></a>.</p>
+<img alt="CPIP Architecture." src="_images/CPIP_core_architrecture.png" />
 <p class="rubric">Footnotes</p>
 <table class="docutils footnote" frame="void" id="id3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Other standards are of interest: &#8220;C++98&#8221; [ISO/IEC 14882:1998(E)] describes more limited pre-processing (no variadic macros for example). &#8220;C++0x&#8221; [ISO/IEC JTC 1/SC 22 N 4411 in draft] does not substantially change this. In any case CPIP attempts to emulate common custom and practice as well.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Other standards are of interest: &#8220;C++98&#8221; [ISO/IEC 14882:1998(E)] describes more limited pre-processing (no variadic macros for example). &#8220;C++0x&#8221; [ISO/IEC JTC 1/SC 22 N 4411 in draft] does not substantially change this. In any case CPIP attempts to emulate common custom and practice (yes, including variadic macros).</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="id4" rules="none">
@@ -140,6 +171,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#cpip-and-pre-processing">CPIP and Pre-processing</a></li>
+<li><a class="reference internal" href="#cpip-core-architecture">CPIP Core Architecture</a></li>
 </ul>
 </li>
 </ul>
@@ -187,7 +219,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to CPIP"
              >previous</a> |</li>
-        <li><a href="index.html">CPIP 0.8.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">

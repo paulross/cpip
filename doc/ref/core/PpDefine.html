@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PpDefine &mdash; CPIP 0.8.0 documentation</title>
+    <title>PpDefine &mdash; CPIP 0.8.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.0',
+        VERSION:     '0.8.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
     <link rel="up" title="CPIP Core" href="../core/index.html" />
     <link rel="next" title="PpLexer" href="../core/PpLexer.html" />
     <link rel="prev" title="MacroEnv" href="../core/MacroEnv.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../core/MacroEnv.html" title="MacroEnv"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
       </ul>
@@ -144,8 +144,7 @@ the #define statement occurred.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">[</span>
     <span class="n">identifier</span><span class="p">,</span>
     <span class="n">lparen</span><span class="p">,</span>
-    <span class="p">[</span><span class="n">identifier</span><span class="o">-</span><span class="nb">list</span><span class="p">(</span><span class="n">opt</span><span class="p">),</span>
-    <span class="p">],</span>
+    <span class="p">[</span><span class="n">identifier</span><span class="o">-</span><span class="nb">list</span><span class="p">(</span><span class="n">opt</span><span class="p">),],</span>
     <span class="s">&#39;)&#39;</span><span class="p">,</span>
     <span class="n">replacement</span><span class="o">-</span><span class="nb">list</span><span class="p">,</span>
     <span class="n">new</span><span class="o">-</span><span class="n">line</span><span class="p">,</span>
@@ -160,6 +159,67 @@ The replacement-list is stored as a list of
 preprocessor tokens.
 Leading and trailing whitespace in the replacement
 list is removed to facilitate redefinition comparison.</p>
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.CPP_CONCAT_OP">
+<tt class="descname">CPP_CONCAT_OP</tt><em class="property"> = '##'</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.CPP_CONCAT_OP" title="Permalink to this definition">¶</a></dt>
+<dd><p>C standard definition of concatenation operator</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.CPP_STRINGIZE_OP">
+<tt class="descname">CPP_STRINGIZE_OP</tt><em class="property"> = '#'</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.CPP_STRINGIZE_OP" title="Permalink to this definition">¶</a></dt>
+<dd><p>C standard definition of string&#8217;izing operator</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.IDENTIFIER_SEPERATOR">
+<tt class="descname">IDENTIFIER_SEPERATOR</tt><em class="property"> = ','</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.IDENTIFIER_SEPERATOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>C standard definition of identifier separator in function-like macros</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.INITIAL_REF_COUNT">
+<tt class="descname">INITIAL_REF_COUNT</tt><em class="property"> = 0</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.INITIAL_REF_COUNT" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is what the reference count is set to on construction</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.LPAREN">
+<tt class="descname">LPAREN</tt><em class="property"> = '('</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.LPAREN" title="Permalink to this definition">¶</a></dt>
+<dd><p>C standard definition of left parenthesis</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.PLACEMARKER">
+<tt class="descname">PLACEMARKER</tt><em class="property"> = None</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.PLACEMARKER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Our representation of a placemarker token</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.RPAREN">
+<tt class="descname">RPAREN</tt><em class="property"> = ')'</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.RPAREN" title="Permalink to this definition">¶</a></dt>
+<dd><p>C standard definition of right parenthesis</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.STRINGIZE_WHITESPACE_CHAR">
+<tt class="descname">STRINGIZE_WHITESPACE_CHAR</tt><em class="property"> = ' '</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.STRINGIZE_WHITESPACE_CHAR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whitespace runs are replaced by a single space
+ISO/IEC 9899:1999 (E) 6.10.3.2-2</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.VARIABLE_ARGUMENT_IDENTIFIER">
+<tt class="descname">VARIABLE_ARGUMENT_IDENTIFIER</tt><em class="property"> = '...'</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.VARIABLE_ARGUMENT_IDENTIFIER" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable argument (variadic) macro definitions</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.PpDefine.PpDefine.VARIABLE_ARGUMENT_SUBSTITUTE">
+<tt class="descname">VARIABLE_ARGUMENT_SUBSTITUTE</tt><em class="property"> = '__VA_ARGS__'</em><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.VARIABLE_ARGUMENT_SUBSTITUTE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable argument (variadic) macro substitution</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="cpip.core.PpDefine.PpDefine.assertReplListIntegrity">
 <tt class="descname">assertReplListIntegrity</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpDefine.PpDefine.assertReplListIntegrity" title="Permalink to this definition">¶</a></dt>
@@ -176,11 +236,11 @@ to be not replaceable.</p>
 <dd><p>This consumes tokens to the preamble of a Function style macro
 invocation. This really means consuming whitespace and the opening
 <tt class="docutils literal"><span class="pre">LPAREN</span></tt>.</p>
-<dl class="docutils">
-<dt>This will return either:</dt>
-<dd>None - Tokens including the leading LPAREN have been consumed.
-List of (token, token_type) if the LPAREN is not found.</dd>
-</dl>
+<p>This will return either:</p>
+<ul class="simple">
+<li>None - Tokens including the leading LPAREN have been consumed.</li>
+<li>List of (token, token_type) if the LPAREN is not found.</li>
+</ul>
 <p>For example given this:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#define t(a) a+2</span>
 <span class="n">t</span>   <span class="p">(</span><span class="mi">21</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span>  <span class="p">;</span>
@@ -195,10 +255,10 @@ next token to be (&#8216;21&#8217;, &#8216;pp-number&#8217;).</p>
 <span class="p">]</span>
 </pre></div>
 </div>
-<dl class="docutils">
-<dt>This allows the MacroReplacementEnv to generate the correct result: ::</dt>
-<dd>21 +2 - t ;</dd>
-</dl>
+<p>This allows the MacroReplacementEnv to generate the correct result:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="mi">21</span> <span class="o">+</span><span class="mi">2</span> <span class="o">-</span> <span class="n">t</span> <span class="p">;</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -427,8 +487,8 @@ arguments.
 This might raise a ExceptionCpipDefineBadArguments if the list
 does not match the prototype or a StopIteration if the token list is
 too short.
-This ignores leading and trailing whitespace for each argument.
-TODO: Raise an ExceptionCpipDefineBadArguments if there is a #define
+This ignores leading and trailing whitespace for each argument.</p>
+<p>TODO: Raise an ExceptionCpipDefineBadArguments if there is a #define
 statement. e.g.:</p>
 <div class="highlight-python"><pre>#define f(x) x x
 f (1
@@ -537,7 +597,7 @@ of the line number is bad.</p>
         <li class="right" >
           <a href="../core/MacroEnv.html" title="MacroEnv"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
       </ul>

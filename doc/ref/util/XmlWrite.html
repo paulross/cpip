@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>XmlWrite &mdash; CPIP 0.8.0 documentation</title>
+    <title>XmlWrite &mdash; CPIP 0.8.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.0',
+        VERSION:     '0.8.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.0 documentation" href="../../index.html" />
+    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
     <link rel="up" title="CPIP Utilities" href="../util/index.html" />
     <link rel="next" title="CPIP Plot" href="../plot/index.html" />
     <link rel="prev" title="StrTree" href="../util/StrTree.html" /> 
@@ -46,7 +46,7 @@
         <li class="right" >
           <a href="../util/StrTree.html" title="StrTree"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../util/index.html" accesskey="U">CPIP Utilities</a> &raquo;</li> 
       </ul>
@@ -82,6 +82,15 @@
 <dd><p>Exception specialisation for end of element.</p>
 </dd></dl>
 
+<dl class="data">
+<dt id="cpip.util.XmlWrite.RAISE_ON_ERROR">
+<tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">RAISE_ON_ERROR</tt><em class="property"> = True</em><a class="headerlink" href="#cpip.util.XmlWrite.RAISE_ON_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Global flag that sets the error behaviour
+If True then this module may raise an ExceptionXml and that might mask other
+exceptions. If False no ExceptionXml will be raised but a logging.error(...)
+will be written. These will not mask other Exceptions.</p>
+</dd></dl>
+
 <dl class="class">
 <dt id="cpip.util.XmlWrite.XmlStream">
 <em class="property">class </em><tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">XmlStream</tt><big>(</big><em>theFout</em>, <em>theEnc='utf-8'</em>, <em>theDtdLocal=None</em>, <em>theId=0</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream" title="Permalink to this definition">¶</a></dt>
@@ -92,10 +101,22 @@
 <dd><p>Encodes the string and writes it to the output.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.comment">
+<tt class="descname">comment</tt><big>(</big><em>theS</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a comment to the output stream.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.endElement">
+<tt class="descname">endElement</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.endElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ends an element.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="cpip.util.XmlWrite.XmlStream.id">
 <tt class="descname">id</tt><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.id" title="Permalink to this definition">¶</a></dt>
-<dd><p>A unique ID in this stream. The ID is incremented for each access.</p>
+<dd><p>A unique ID in this stream. The ID is incremented on each call.</p>
 </dd></dl>
 
 <dl class="method">
@@ -105,14 +126,28 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.pI">
+<tt class="descname">pI</tt><big>(</big><em>theS</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.pI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a Processing Instruction to the output stream.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.XmlWrite.XmlStream.startElement">
+<tt class="descname">startElement</tt><big>(</big><em>name</em>, <em>attrs</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.startElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens a named element with attributes.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="cpip.util.XmlWrite.XmlStream.writeECMAScript">
 <tt class="descname">writeECMAScript</tt><big>(</big><em>theScript</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.XmlStream.writeECMAScript" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes the ECMA script.
-&lt;script type=&#8221;text/ecmascript&#8221;&gt;
+<dd><p>Writes the ECMA script.</p>
+<p>Example:</p>
+<div class="highlight-python"><pre>&lt;script type="text/ecmascript"&gt;
 //&lt;![CDATA[
 ...
 // ]]&gt;
-&lt;/script&gt;</p>
+&lt;/script&gt;</pre>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -131,8 +166,9 @@
 
 <dl class="function">
 <dt id="cpip.util.XmlWrite.encodeString">
-<tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">encodeString</tt><big>(</big><em>theS</em>, <em>theCharPrefix=b'_'</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.encodeString" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a string that is the argument encoded.:</p>
+<tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">encodeString</tt><big>(</big><em>theS</em>, <em>theCharPrefix='_'</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.encodeString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string that is the argument encoded.
+RFC3548:</p>
 <div class="highlight-python"><pre>                   Table 1: The Base 64 Alphabet
 Value Encoding  Value Encoding  Value Encoding  Value Encoding
     0 A            17 R            34 i            51 z
@@ -159,12 +195,12 @@ Value Encoding  Value Encoding  Value Encoding  Value Encoding
 <dl class="function">
 <dt id="cpip.util.XmlWrite.nameFromString">
 <tt class="descclassname">cpip.util.XmlWrite.</tt><tt class="descname">nameFromString</tt><big>(</big><em>theStr</em><big>)</big><a class="headerlink" href="#cpip.util.XmlWrite.nameFromString" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a name from a string.
-See <a class="reference external" href="http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata">http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata</a>
-&#8220;ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
+<dd><p>Returns a name from a string.</p>
+<p>See <a class="reference external" href="http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata">http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata</a></p>
+<p>&#8220;ID and NAME tokens must begin with a letter ([A-Za-z]) and may be
 followed by any number of letters, digits ([0-9]), hyphens (&#8220;-&#8221;),
-underscores (&#8220;_&#8221;), colons (&#8221;:&#8221;), and periods (&#8221;.&#8221;).
-This also works for in namespaces as &#8216;:&#8217; is not used in the encoding.</p>
+underscores (&#8220;_&#8221;), colons (&#8221;:&#8221;), and periods (&#8221;.&#8221;).</p>
+<p>This also works for in namespaces as &#8216;:&#8217; is not used in the encoding.</p>
 </dd></dl>
 
 </div>
@@ -218,7 +254,7 @@ This also works for in namespaces as &#8216;:&#8217; is not used in the encoding
         <li class="right" >
           <a href="../util/StrTree.html" title="StrTree"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.0 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
           <li><a href="../util/index.html" >CPIP Utilities</a> &raquo;</li> 
       </ul>

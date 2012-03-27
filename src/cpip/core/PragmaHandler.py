@@ -66,12 +66,15 @@ class PragmaHandlerNull(PragmaHandlerABC):
 class PragmaHandlerSTDC(PragmaHandlerABC):
     """Base class for a pragma handler that implements ISO/IEC 9899:1999 (E)
     6.10.5 Error directive para. 2."""
+    #: Standard C macro
     STDC = 'STDC'
+    #: Standard C acceptable macro directives
     DIRECTIVES = (
         'FP_CONTRACT',
         'FENV_ACCESS',
         'CX_LIMITED_RANGE',
     )
+    #: Standard C macro states
     ON_OFF_SWITCH_STATES = (
         'ON',
         'OFF',
@@ -92,6 +95,7 @@ class PragmaHandlerSTDC(PragmaHandlerABC):
         
     def pragma(self, theTokS):
         """Inject a macro declaration into the environment.
+        
         See ISO/IEC 9899:1999 (E) 6.10.5 Error directive para. 2."""
         myTokS = []
         try:

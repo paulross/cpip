@@ -5,13 +5,7 @@
 CPIP Core
 **************
 
-CPIP Core contains the core code for pre-processing.
-
-.. image:: images/CPIP_core_architrecture.png
-   :alt: CPIP Architecture.
-   :width: 800
-
-
+CPIP Core contains the core code for pre-processing. The architecture is described here: :ref:`cpip.intro.architecture`.
 
 .. toctree::
     :maxdepth: 2

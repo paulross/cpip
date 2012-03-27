@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2012 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,26 +19,40 @@
 # Paul Ross: cpipdev@googlemail.com
 
 __author__  = 'Paul Ross'
-__date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__date__    = '2012-03-26'
+__version__ = '0.8.1'
+__rights__  = 'Copyright (c) 2008-2012 Paul Ross'
 
-__all__ = ['core', 'util', 'plot']
+from distutils.core import setup
 
-"""CPIP: 'C' Preprocessor in Python.
-"""
-
-CPIP_VERSION = (0, 8, 1)
-
-RELEASE_NOTES = [
-    """Release Notes (latest at top).
-==============================
-2012-03-26: Updated to Python 3.
-
-2011-07-10: First public release of CPIP.
-""",
-]
-
-class ExceptionCpip(Exception):
-    """Simple specialisation of an exception class for CPIP and its modules."""
-    pass
+setup(
+    name='CPIP',
+    version='0.8.1',
+    description='A C Preprocessor implemented in Python.',
+    author='Paul Ross',
+    author_email='cpipdev@googlemail.com',
+    url='http://cpip.sourceforge.net/',
+    packages=[
+        'core',
+        'util',
+        'plot',
+        'core.test',
+        'util.test',
+        'plot.test',
+        'test',
+    ],
+    py_modules=[
+        'CPIPMain',
+        'CppCondGraphToHtml',
+        'IncGraphSVG',
+        'IncGraphSVGBase',
+        'IncGraphSVGPpi',
+        'IncGraphXML',
+        'IncList',
+        'ItuToHtml',
+        'MacroHistoryHtml',
+        'TokenCss',
+        'Tu2Html',
+        'TuIndexer',
+    ],
+)

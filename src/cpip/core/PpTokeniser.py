@@ -71,7 +71,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 # TODO: 'C' keywords
 #: ISO/IEC 9899:1999 (E) 6.4.1 Keywords
-"""auto
+C_KEYWORDS = tuple("""auto
 break
 case
 char
@@ -108,7 +108,7 @@ while
 _Bool
 _Complex
 _Imaginary
-"""
+""".split())
 
 #Removed to stop logging holding up the performance
 #import logging
@@ -122,9 +122,11 @@ from cpip.util import StrTree, MatrixRep
 ######################################################################
 # Section: Module level information that is based on ISO/IEC 9899:1999
 ######################################################################
+#: Size of the source code character set
 LEN_SOURCE_CHARACTER_SET = 96
+#: Comments are replaced by a single space
 COMMENT_REPLACEMENT = ' '
-
+#: Map of Digraph alternates
 DIGRAPH_TABLE = {
     '<%'        : '{',
     'and'       : '&&',
@@ -144,7 +146,7 @@ DIGRAPH_TABLE = {
     '%:%:'      : '##',
     'bitand'    : '&',
 }
-
+#: Map of Trigraph alternates after the ?? prefix
 TRIGRAPH_TABLE = {
     '='       : '#',
     '('       :  '[',
@@ -372,28 +374,33 @@ COMMENT_TYPES = (COMMENT_TYPE_C, COMMENT_TYPE_CXX)
 ####################
 class PpTokeniser(object):
     """Imitates a Preprocessor that conforms to ISO/IEC 14882:1998(E).
-    TODO: Escape sequences Table 5?
     
-    Implementation note on all _slice...() and __slice...() functions.
-    A _slice...() function takes a buffer-like object and an integer offset as
+    Takes an optional file like object.
+    If theFileObj has a 'name' attribute then that will be use as the name
+    otherwise theFileId will be used as the file name.
+    
+    **Implementation note:** On all ``_slice...()`` and ``__slice...()`` functions:
+    A ``_slice...()`` function takes a buffer-like object and an integer offset as
     arguments. The buffer-like object will be accessed by index so just needs
-    to implement __getitem__(). On overrun or other out of bounds index an
-    IndexError must be caught by the _slice...() function.
-    i.e. len() should not be called on the buffer-like object, or rather, if
-    len() (i.e. __len__() ) is called a TypeError will be raised and propagated
+    to implement ``__getitem__()``. On overrun or other out of bounds index an
+    IndexError must be caught by the ``_slice...()`` function.
+    i.e. ``len()`` should not be called on the buffer-like object, or rather, if
+    ``len()`` (i.e. ``__len__()``) is called a ``TypeError`` will be raised and propagated
     out of this class to the caller.
-    For example StrTree conforms to these requirements.
+    
+    StrTree, for example, conforms to these requirements.
     
     The function is expected to return an integer that represents the number
     of objects that can be consumed from the buffer-like object. If the
     return value is non-zero the PpTokeniser is side-affected in that
-    self._cppTokType is set to a non-None value. Before doing that a test is
-    made and if self._cppTokType is already non-None then an assertion error
+    ``self._cppTokType`` is set to a non-None value. Before doing that a test is
+    made and if ``self._cppTokType`` is already non-None then an assertion error
     is raised.
-    The buffer-like object should not be side-affected by the _slice...()
+    
+    The buffer-like object should not be side-affected by the ``_slice...()``
     function regardless of the return value.
     
-    So a _slice...() function pattern is::
+    So a ``_slice...()`` function pattern is::
     
         def _slice...(self, theBuf, theOfs):
             i = theOfs
@@ -413,8 +420,10 @@ class PpTokeniser(object):
             # Here either return 0 on IndexError or i-theOfs
             return ...
     
-    NOTE: Functions starting with __slice... do not trap the IndexError, the
+    NOTE: Functions starting with ``__slice...`` do not trap the IndexError, the
     caller must do that.
+    
+    TODO: ISO/IEC 14882:1998(E) Escape sequences Table 5?
     """
     # We support translation phases (0), 1, 2, 3
     PHASES_SUPPORTED = range(0, 4)
@@ -740,24 +749,25 @@ class PpTokeniser(object):
                 # with the iteration...
 
     def genLexPptokenAndSeqWs(self, theCharS):
-        """Generates a sequence of PpToken objects. either:
+        """Generates a sequence of PpToken objects. Either:
         
             * a sequence of whitespace (comments are replaces with a single whitespace).
             * a pre-processing token.
         
-        This performs translation phasse 3.
+        This performs translation phase 3.
         
         NOTE: Whitespace sequences are not merged so ``'  /\*\*/ '`` will generate
-        three tokens each of ``PpToken.PpToken(' ', 'whitespace')``.
+        three tokens each of ``PpToken.PpToken(' ', 'whitespace')`` i.e. leading
+        whitespace, comment replced by single space, trailing whitespace.
+        
         So this yields the tokens from translation phase 3 if supplied with
         the results of translation phase 2.
         
         NOTE: This does not generate 'header-name' tokens as these are context
-        dependent i.e. they are only valid in the context of a #include
+        dependent i.e. they are only valid in the context of a ``#include``
         directive. ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 says that:
-        "A header name preprocessing token is recognised only within a #include
-        preprocessing directive.".
-        
+        *"A header name preprocessing token is recognised only within a #include
+        preprocessing directive."*.
         """
         #print 'TRACE: genLexPptokenAndSeqWs():'
         self._fileLocator.startNewPhase()

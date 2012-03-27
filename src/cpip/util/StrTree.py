@@ -30,7 +30,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 #import logging
 
 class StrTree(object):
-    """TODO"""
+    """Initialise the class with a optional list of strings."""
     def __init__(self, theIterable=None):
         """Initialise the class with a optional list of strings."""
         self._ir = {}
@@ -77,6 +77,7 @@ class StrTree(object):
         return 0
     
     def values(self):
+        """Returns all values."""
         return self._values([])
     
     def _values(self, l):

@@ -111,8 +111,7 @@ class PpDefine(object):
         [
             identifier,
             lparen,
-            [identifier-list(opt),
-            ],
+            [identifier-list(opt),],
             ')',
             replacement-list,
             new-line,
@@ -128,20 +127,26 @@ class PpDefine(object):
     Leading and trailing whitespace in the replacement
     list is removed to facilitate redefinition comparison.
     """
+    #: C standard definition of left parenthesis
     LPAREN                      = '('
+    #: C standard definition of right parenthesis
     RPAREN                      = ')'
+    #: C standard definition of identifier separator in function-like macros
     IDENTIFIER_SEPERATOR        = ','
+    #: C standard definition of string'izing operator
     CPP_STRINGIZE_OP            = '#'
+    #: C standard definition of concatenation operator
     CPP_CONCAT_OP               = '##'
-    # Our representation of a placemarker token
+    #: Our representation of a placemarker token
     PLACEMARKER                 = None
-    # Whitespace runs are replaced by a single space
-    # ISO/IEC 9899:1999 (E) 6.10.3.2-2
+    #: Whitespace runs are replaced by a single space
+    #: ISO/IEC 9899:1999 (E) 6.10.3.2-2
     STRINGIZE_WHITESPACE_CHAR   = ' '
-    # Variable argument (variadic) macro definitions
+    #: Variable argument (variadic) macro definitions
     VARIABLE_ARGUMENT_IDENTIFIER = '...'
+    #: Variable argument (variadic) macro substitution
     VARIABLE_ARGUMENT_SUBSTITUTE = '__VA_ARGS__'
-    # This is what the reference count is set to on construction
+    #: This is what the reference count is set to on construction
     INITIAL_REF_COUNT = 0
     ########################
     # Section: Construction.
@@ -660,8 +665,9 @@ class PpDefine(object):
         ``LPAREN``.
         
         This will return either:
-            None - Tokens including the leading LPAREN have been consumed.
-            List of (token, token_type) if the LPAREN is not found.
+        
+        * None - Tokens including the leading LPAREN have been consumed.
+        * List of (token, token_type) if the LPAREN is not found.
         
         For example given this: ::
 
@@ -679,6 +685,7 @@ class PpDefine(object):
             ]
 
         This allows the MacroReplacementEnv to generate the correct result: ::
+        
             21 +2 - t ;
         """
         assert(self.isCurrentlyDefined)
@@ -798,6 +805,7 @@ class PpDefine(object):
         does not match the prototype or a StopIteration if the token list is
         too short.
         This ignores leading and trailing whitespace for each argument.
+        
         TODO: Raise an ExceptionCpipDefineBadArguments if there is a #define
         statement. e.g.: ::
         
