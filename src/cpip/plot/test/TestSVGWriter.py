@@ -30,6 +30,7 @@ import logging
 
 import io
 
+import cpip
 from cpip.util import XmlWrite
 from cpip.plot import SVGWriter, Coord
 
@@ -40,6 +41,15 @@ import unittest
 
 class TestSVGWriter(unittest.TestCase):
     """Tests SVGWriter."""
+
+    def setUp(self):
+        self.maxDiff = None
+        self._indentML = cpip.INDENT_ML
+        cpip.INDENT_ML = True
+    
+    def tearDown(self):
+        cpip.INDENT_ML = self._indentML
+    
     def test_00(self):
         """TestSVGWriter.test_00(): construction."""
         myF = io.StringIO()
@@ -53,7 +63,7 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="20mm" version="1.1" width="100mm" xmlns="http://www.w3.org/2000/svg"/>\n""")
+<svg height="20.0mm" version="1.1" width="100.0mm" xmlns="http://www.w3.org/2000/svg" />\n""")
         
     def test_01(self):
         """TestSVGlWriter.test_01(): <desc> and four rectangles.
@@ -99,13 +109,13 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="4cm" version="1.1" width="5cm" xmlns="http://www.w3.org/2000/svg">
+<svg height="4.00cm" version="1.1" width="5.00cm" xmlns="http://www.w3.org/2000/svg">
   <desc>Four separate rectangles</desc>
-  <rect height="1.0cm" width="2.0cm" x="0.5cm" y="0.5cm"/>
-  <rect height="1.5cm" width="1.0cm" x="0.5cm" y="2.0cm"/>
-  <rect height="2.0cm" width="1.5cm" x="3.0cm" y="0.5cm"/>
-  <rect height="0.5cm" width="1.0cm" x="3.5cm" y="3.0cm"/>
-  <rect fill="none" height="3.98cm" stroke="blue" stroke-width=".02cm" width="4.98cm" x="0.01cm" y="0.01cm"/>
+  <rect height="1.00cm" width="2.00cm" x="0.50cm" y="0.50cm" />
+  <rect height="1.50cm" width="1.00cm" x="0.50cm" y="2.00cm" />
+  <rect height="2.00cm" width="1.50cm" x="3.00cm" y="0.50cm" />
+  <rect height="0.50cm" width="1.00cm" x="3.50cm" y="3.00cm" />
+  <rect fill="none" height="3.98cm" stroke="blue" stroke-width=".02cm" width="4.98cm" x="0.01cm" y="0.01cm" />
 </svg>
 """)
        
@@ -133,10 +143,10 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="4cm" version="1.1" width="12cm" xmlns="http://www.w3.org/2000/svg">
+<svg height="4.00cm" version="1.1" width="12.00cm" xmlns="http://www.w3.org/2000/svg">
   <desc>Example circle01 - circle filled with red and stroked with blue</desc>
-  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px"/>
-  <circle cx="600px" cy="200px" fill="red" r="100px" stroke="blue" stroke-width="10"/>
+  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px" />
+  <circle cx="600px" cy="200px" fill="red" r="100px" stroke="blue" stroke-width="10" />
 </svg>
 """)
 
@@ -165,10 +175,10 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="4cm" version="1.1" width="12cm" xmlns="http://www.w3.org/2000/svg">
+<svg height="4.00cm" version="1.1" width="12.00cm" xmlns="http://www.w3.org/2000/svg">
   <desc>Example ellipse01 - examples of ellipses</desc>
-  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px"/>
-  <elipse cx="600px" cy="200px" fill="red" rx="250px" ry="100px" stroke="blue" stroke-width="10"/>
+  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px" />
+  <elipse cx="600px" cy="200px" fill="red" rx="250px" ry="100px" stroke="blue" stroke-width="10" />
 </svg>
 """)
 
@@ -229,15 +239,15 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="4cm" version="1.1" width="12cm" xmlns="http://www.w3.org/2000/svg">
+<svg height="4.00cm" version="1.1" width="12.00cm" xmlns="http://www.w3.org/2000/svg">
   <desc>Example line01 - lines expressed in user coordinates</desc>
-  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px"/>
+  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px" />
   <g stroke="green">
-    <line stroke-width="5" x1="100px" x2="300px" y1="300px" y2="100px"/>
-    <line stroke-width="10" x1="300px" x2="500px" y1="300px" y2="100px"/>
-    <line stroke-width="15" x1="500px" x2="700px" y1="300px" y2="100px"/>
-    <line stroke-width="20" x1="700px" x2="900px" y1="300px" y2="100px"/>
-    <line stroke-width="25" x1="900px" x2="1100px" y1="300px" y2="100px"/>
+    <line stroke-width="5" x1="100px" x2="300px" y1="300px" y2="100px" />
+    <line stroke-width="10" x1="300px" x2="500px" y1="300px" y2="100px" />
+    <line stroke-width="15" x1="500px" x2="700px" y1="300px" y2="100px" />
+    <line stroke-width="20" x1="700px" x2="900px" y1="300px" y2="100px" />
+    <line stroke-width="25" x1="900px" x2="1100px" y1="300px" y2="100px" />
   </g>
 </svg>
 """)
@@ -292,10 +302,10 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="4cm" version="1.1" viewBox="0 0 1200 400" width="12cm" xmlns="http://www.w3.org/2000/svg">
+<svg height="4.00cm" version="1.1" viewBox="0 0 1200 400" width="12.00cm" xmlns="http://www.w3.org/2000/svg">
   <desc>Example line01 - lines expressed in user coordinates</desc>
-  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px"/>
-  <polyline fill="none" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375" stroke="blue" stroke-width="5"/>
+  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px" />
+  <polyline fill="none" points="50,375 150,375 150,325 250,325 250,375 350,375 350,250 450,250 450,375 550,375 550,175 650,175 650,375 750,375 750,100 850,100 850,375 950,375 950,25 1050,25 1050,375 1150,375" stroke="blue" stroke-width="5" />
 </svg>
 """)
         
@@ -337,10 +347,10 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="4cm" version="1.1" viewBox="0 0 1200 400" width="12cm" xmlns="http://www.w3.org/2000/svg">
+<svg height="4.00cm" version="1.1" viewBox="0 0 1200 400" width="12.00cm" xmlns="http://www.w3.org/2000/svg">
   <desc>Example line01 - lines expressed in user coordinates</desc>
-  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px"/>
-  <polygon fill="red" points="350,75 379,161 469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161" stroke="blue" stroke-width="10"/>
+  <rect fill="none" height="398px" stroke="blue" stroke-width="2" width="1198px" x="1px" y="1px" />
+  <polygon fill="red" points="350,75 379,161 469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161" stroke="blue" stroke-width="10" />
 </svg>
 """)
 
@@ -367,10 +377,10 @@ class TestSVGWriter(unittest.TestCase):
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg height="4cm" version="1.1" viewBox="0 0 1000 300" width="12cm" xmlns="http://www.w3.org/2000/svg">
+<svg height="4.00cm" version="1.1" viewBox="0 0 1000 300" width="12.00cm" xmlns="http://www.w3.org/2000/svg">
   <desc>Example text01 - &apos;Hello, out there&apos; in blue</desc>
   <text fill="blue" font-family="Verdans" font-size="55" x="250px" y="150px">Hello, out there</text>
-  <rect fill="none" height="298px" stroke="blue" stroke-width="2" width="998px" x="1px" y="1px"/>
+  <rect fill="none" height="298px" stroke="blue" stroke-width="2" width="998px" x="1px" y="1px" />
 </svg>
 """)
 

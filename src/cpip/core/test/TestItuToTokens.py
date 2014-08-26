@@ -30,10 +30,11 @@ import time
 import logging
 import pprint
 
-try:
-    import io as StringIO
-except ImportError:
-    import io
+#try:
+#    import io as StringIO
+#except ImportError:
+#    import io
+import io
 
 #try:
 #    from xml.etree import cElementTree as etree
@@ -832,6 +833,29 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
             ]
         self.assertEqual(expTokS, myTokS)
 
+class TestItuToHtmlTokenGenLinux(unittest.TestCase):
+    """Test the ItuToHtml token genreator for special cases from processing Linux."""
+    def setUp(self):
+        pass
+        
+    def tearDown(self):
+        pass
+
+    def test_00(self):
+        """TestItuToHtmlTokenGenLinux.test_00(): setUp() and tearDown()."""
+        pass
+    
+    def test_01(self):
+        """TestItuToHtmlTokenGenLinux.test_01(): linux-3.13/include/linux/init.h."""
+        myStr = """/* Data marked not to be saved by software suspend */
+#define __nosavedata __section(.data..nosave)
+"""
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
+        myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
+        print
+        pprint.pprint(myTokS)
+
+
 class NullClass(unittest.TestCase):
     pass
 
@@ -842,6 +866,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestItuToHtmlPhase3))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestItuToHtmlTokenGen))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestItuToHtmlTokenGenSpecial))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestItuToHtmlTokenGenLinux))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 

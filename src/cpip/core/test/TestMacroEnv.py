@@ -4435,21 +4435,56 @@ s(@)
             repString = self.tokensToString(repList)
             self.assertEqual(repString, myOut)
 
-class TestPredefinedInCtor(TestMacroEnv):
-    """Tests predefined macros in the constructor."""
+class TestPredefinedRedefinition(TestMacroEnv):
+    """Tests redefining predefined macros."""
     def test_00(self):
-        """TestPredefinedInCtor.test_00 - Trying to define a macro in the ctor that is not a predefined one."""
+        """TestPredefinedInCtor.test_00 - Define an arbitrary macro as a stdPredefMacros then trying to redefine it fails."""
+        myEnv = MacroEnv.MacroEnv(
+                    enableTrace=True,
+            stdPredefMacros = {
+                    '__DATE__'      : 'Apr 02 2009\n',
+                    '__TIME__'      : '14:21:32\n',
+                }
+            )
         self.assertRaises(
-            MacroEnv.ExceptionMacroReplacementInit,
-            MacroEnv.MacroEnv,
-            True,   # enableTrace
-            {       # stdPredefMacros
+            MacroEnv.ExceptionMacroReplacementPredefinedRedefintion,
+            myEnv.define,
+            PpTokeniser.PpTokeniser(
+                theFileObj=io.StringIO('__DATE__ Apr 02 2009\n')
+            ).next(),
+            'mt.h',
+            1
+        )
+        self.assertRaises(
+            MacroEnv.ExceptionMacroReplacementPredefinedRedefintion,
+            myEnv.define,
+            PpTokeniser.PpTokeniser(
+                theFileObj=io.StringIO('__TIME__ 14:21:32\n')
+            ).next(),
+            'mt.h',
+            1
+        )
+
+    def test_01(self):
+        """TestPredefinedInCtor.test_01 - Define an arbitrary macro as a stdPredefMacros then trying to redefine it fails."""
+        myEnv = MacroEnv.MacroEnv(
+                    enableTrace=True,
+            stdPredefMacros = {
                 'SPAM' : '\n',
                 }
             )
+        self.assertRaises(
+            MacroEnv.ExceptionMacroReplacementPredefinedRedefintion,
+            myEnv.define,
+            PpTokeniser.PpTokeniser(
+                theFileObj=io.StringIO('SPAM\n')
+            ).next(),
+            'mt.h',
+            1
+        )
 
-    def test_01(self):
-        """TestPredefinedInCtor.test_01 - Define a macro in the ctor with a token stream that is to short."""
+    def test_02(self):
+        """TestPredefinedInCtor.test_02 - Define a macro in the ctor with a token stream that is to short."""
         myPredef = {
             '__LINE__'      : '1',
         }
@@ -4460,8 +4495,8 @@ class TestPredefinedInCtor(TestMacroEnv):
             myPredef,       # stdPredefMacros
         )
 
-    def test_02(self):
-        """TestPredefinedInCtor.test_02 - attempt to define 'defined' in ctor."""
+    def test_03(self):
+        """TestPredefinedInCtor.test_03 - attempt to define 'defined' in ctor."""
         myPredef = {
             'defined'      : '\n',
         }
@@ -4472,8 +4507,8 @@ class TestPredefinedInCtor(TestMacroEnv):
             myPredef,       # stdPredefMacros
         )
 
-    def test_03(self):
-        """TestPredefinedInCtor.test_03 - attempt to redefine 'defined'."""
+    def test_04(self):
+        """TestPredefinedInCtor.test_04 - attempt to redefine 'defined'."""
         myMap = MacroEnv.MacroEnv()
         myStr = """defined
 """
@@ -4510,7 +4545,12 @@ class TestPredefinedInCtor(TestMacroEnv):
 
     def test_12(self):
         """TestPredefinedInCtor.test_12 - Attempt to redefine a macro that is a predefined one."""
-        myMap = MacroEnv.MacroEnv()
+        myMap = MacroEnv.MacroEnv(
+            stdPredefMacros = {
+                '__STDC__'     : '1\n',
+                '__cplusplus'  : '201103L\n',
+            }
+        )
         for aMacro in (
             '__LINE__ \n',
             '__FILE__ \n',
@@ -4519,6 +4559,7 @@ class TestPredefinedInCtor(TestMacroEnv):
             '__STDC__ \n',
             '__cplusplus \n',
             ):
+#             print(aMacro)
             myCpp = PpTokeniser.PpTokeniser(
                 theFileObj=io.StringIO(aMacro)
                 )
@@ -4942,8 +4983,8 @@ BEANS
         #print myEnv.referencedMacroIdentifiers(sortedByRefcount=False)
         # NOTE: no guarentee of sort order when sortedByRefcount=False
         self.assertEqual(
-                ['BEANS', 'EGGS', 'CHIPS', 'SPAM'],
-                myEnv.referencedMacroIdentifiers(sortedByRefcount=False)
+                set(['BEANS', 'EGGS', 'CHIPS', 'SPAM']),
+                set(myEnv.referencedMacroIdentifiers(sortedByRefcount=False))
                          )
         #print
         #print myEnv.referencedMacroIdentifiers(sortedByRefcount=True)
@@ -5611,7 +5652,7 @@ In scope:
             )
 
 class TestLinux(TestMacroEnv):
-
+    """Tests that resulted in processing Linux."""
     def test_00(self):
         """TestLinux.test_00() - From include/linux/stringify.h."""
         """#define __stringify_1(x...)    #x
@@ -5651,6 +5692,192 @@ __stringify(x...)    __stringify_1(x)
                 repList += myReplacements
             repString = self.tokensToString(repList)
             self.assertEqual(repString, myOut)
+
+    def test_01(self):
+        """Test where we get errors such as missing arguments.
+        macro "__ASM_SEL" passed 3 arguments, but takes just 2 at line=203, col=25 of file "/Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/rwsem.h"
+        macro "__ASM_SEL" requires 2 arguments, but only 1 given at line=213, col=23 of file "/Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/rwsem.h"
+        """
+        src = """#define __ASM_SEL(a,b) a,b
+#define __ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
+/* rwsem.h */
+f(__ASM_SIZE(add))
+"""
+        def_src = """__ASM_SEL(a,b) a,b
+__ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
+"""
+        myMacEnv = MacroEnv.MacroEnv(enableTrace=True)
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(def_src)
+            )
+        myGen = myCpp.next()
+        i = 0
+        while i < 2:
+            myMacEnv.define(myGen, '', 1)
+            i += 1
+        self._checkMacroEnv(
+            myGen,
+            myMacEnv,
+            ['__ASM_SEL', '__ASM_SIZE',]
+            )
+        srcIn = "f(__ASM_SIZE(add))\n"
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(srcIn)
+            )
+        repList = []
+        myGen = myCpp.next()
+        myMacEnv.debugMarker = 'TestLinux.test_01()'
+        for ttt in myGen:
+            myReplacements = myMacEnv.replace(ttt, myGen)
+            repList += myReplacements
+        repString = self.tokensToString(repList)
+        self.assertEqual(repString, 'f(addl,addq)\n')
+
+    def test_02(self):
+        """Test where we get errors such as missing arguments.
+        macro "__ASM_SEL" passed 3 arguments, but takes just 2 at line=203, col=25 of file "/Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/rwsem.h"
+        macro "__ASM_SEL" requires 2 arguments, but only 1 given at line=213, col=23 of file "/Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/rwsem.h"
+        """
+        src = """/* asm.h */
+# define __ASM_FORM(x)    " " #x " "
+/* ndef CONFIG_X86_32 */
+# define __ASM_SEL(a,b) __ASM_FORM(b)
+#define __ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, \
+                      inst##q##__VA_ARGS__)
+#define _ASM_ADD    __ASM_SIZE(add)
+/* rwsem.h */
+f(_ASM_ADD)
+"""
+        def_src = """__ASM_FORM(x)    " " #x " "
+__ASM_SEL(a,b) __ASM_FORM(b)
+__ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
+_ASM_ADD    __ASM_SIZE(add)
+"""
+        myMacEnv = MacroEnv.MacroEnv(enableTrace=True)
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(def_src)
+            )
+        myGen = myCpp.next()
+        i = 0
+        while i < 4:
+            myMacEnv.define(myGen, '', 1)
+            i += 1
+#         print('WTF')
+#         print(myMacEnv)
+        self._checkMacroEnv(
+            myGen,
+            myMacEnv,
+            ['__ASM_FORM', '__ASM_SEL', '__ASM_SIZE', '_ASM_ADD',]
+            )
+        srcIn = "f(_ASM_ADD)\n"
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(srcIn)
+            )
+        repList = []
+        myGen = myCpp.next()
+        myMacEnv.debugMarker = 'TestLinux.test_01()'
+        for ttt in myGen:
+            myReplacements = myMacEnv.replace(ttt, myGen)
+            repList += myReplacements
+        repString = self.tokensToString(repList)
+#         print(repString)
+        self.assertEqual(repString, 'f(" " "addq" " ")\n')
+
+class MacroDependencies(TestMacroEnv):
+    """Test of macro dependencies."""
+    def test_00(self):
+        """MacroDependencies.test_00(): - No macro dependencies."""
+        myEnv = MacroEnv.MacroEnv()
+        myStr = """SPAM 1
+EGGS 2
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(myStr)
+            )
+        myGen = myCpp.next()
+        myEnv.define(myGen, 'f.h', 1)
+        myEnv.define(myGen, 'f.h', 2)
+#         print()
+#         print(myEnv._staticMacroDependencies('EGGS').branches())
+        self.assertEquals([], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEquals([], myEnv._staticMacroDependencies('EGGS'))
+
+    def test_01(self):
+        """MacroDependencies.test_01(): - Simple macro dependency."""
+        myEnv = MacroEnv.MacroEnv()
+        myStr = """SPAM EGGS
+EGGS 2
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(myStr)
+            )
+        myGen = myCpp.next()
+        myEnv.define(myGen, 'f.h', 1)
+        myEnv.define(myGen, 'f.h', 2)
+        self.assertEquals(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEquals([], myEnv._staticMacroDependencies('EGGS'))
+        myAdjList = myEnv.allStaticMacroDependencies()
+        self.assertEquals(['EGGS',], myAdjList.children('SPAM'))
+        self.assertRaises(KeyError, myAdjList.children, 'EGGS')
+        self.assertEquals(['SPAM',], myAdjList.parents('EGGS'))
+        self.assertRaises(KeyError, myAdjList.parents, 'SPAM')
+        
+    def test_02(self):
+        """MacroDependencies.test_02(): - Macro dependency on self."""
+        myEnv = MacroEnv.MacroEnv()
+        myStr = """SPAM SPAM\n"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(myStr)
+            )
+        myGen = myCpp.next()
+        myEnv.define(myGen, 'f.h', 1)
+        self.assertEquals(['SPAM',], myEnv._staticMacroDependencies('SPAM'))
+        myAdjList = myEnv.allStaticMacroDependencies()
+        self.assertEquals(['SPAM',], myAdjList.children('SPAM'))
+        self.assertEquals(['SPAM',], myAdjList.parents('SPAM'))
+
+    def test_03(self):
+        """MacroDependencies.test_03(): - Macro cyclic dependency."""
+        myEnv = MacroEnv.MacroEnv()
+        myStr = """SPAM EGGS
+EGGS SPAM
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(myStr)
+            )
+        myGen = myCpp.next()
+        myEnv.define(myGen, 'f.h', 1)
+        myEnv.define(myGen, 'f.h', 2)
+#         print()
+#         print(myEnv._staticMacroDependencies('EGGS').branches())
+#         print(myEnv.allStaticMacroDependencies())
+#         for k, v in myEnv.allStaticMacroDependencies().items():
+#             print(k, ':', v)
+        self.assertEquals(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEquals(['SPAM',], myEnv._staticMacroDependencies('EGGS'))
+        myAdjList = myEnv.allStaticMacroDependencies()
+        self.assertEquals(['EGGS',], myAdjList.children('SPAM'))
+        self.assertEquals(['SPAM',], myAdjList.children('EGGS'))
+        self.assertEquals(['SPAM',], myAdjList.parents('EGGS'))
+        self.assertEquals(['EGGS',], myAdjList.parents('SPAM'))
+
+    def test_04(self):
+        """MacroDependencies.test_04(): - Non-existent macro."""
+        myEnv = MacroEnv.MacroEnv()
+        myStr = """SPAM 1
+EGGS 2
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(myStr)
+            )
+        myGen = myCpp.next()
+        myEnv.define(myGen, 'f.h', 1)
+        myEnv.define(myGen, 'f.h', 2)
+        try:
+            myEnv._staticMacroDependencies('CHIPS').branches()
+            self.fail('MacroEnv.ExceptionMacroEnvNoMacroDefined not raised')
+        except MacroEnv.ExceptionMacroEnvNoMacroDefined:
+            pass
 
 class NullClass(TestMacroEnv):
     pass
@@ -5705,7 +5932,7 @@ def unitTest(theVerbosity=2):
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestStringise))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPredefinedInCtor))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPredefinedRedefinition))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPredefined__FILE__))
     # - OK
@@ -5726,6 +5953,8 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroHistory))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinux))
+    # - OK
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroDependencies))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

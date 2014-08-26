@@ -35,6 +35,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 import os
 import logging
 
+import cpip
 from cpip.core import PpTokenCount
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
@@ -55,7 +56,8 @@ def _adjustFileStack(theS, lexStack, theFileStack, theIntId):
         flagUnwind = False
         while (len(theFileStack) > len(lexStack)) \
         or (len(theFileStack) > 0 and lexStack[len(theFileStack)-1] != theFileStack[-1]):
-            theIntId = _writeFileName(theS, len(theFileStack), theFileStack, 'Ending', theFileStack[-1], theIntId)
+            theIntId = _writeFileName(theS, len(theFileStack), theFileStack,
+                                      'Ending', theFileStack[-1], theIntId)
             theFileStack.pop()
             flagUnwind = True
         # Wind up stack as necessary
@@ -63,12 +65,15 @@ def _adjustFileStack(theS, lexStack, theFileStack, theIntId):
             indentStr = '.' * (len(theFileStack)-1)
             theS.characters('\n%s' % indentStr)
             if len(theFileStack) > 0:
-                theIntId = _writeFileName(theS, 0, theFileStack, 'Holding', theFileStack[-1], theIntId)
+                theIntId = _writeFileName(theS, 0, theFileStack, 'Holding',
+                                          theFileStack[-1], theIntId)
             theFileStack.append(lexStack[len(theFileStack)])
-            theIntId = _writeFileName(theS, len(theFileStack)-1, theFileStack, 'Starting', lexStack[len(theFileStack)-1], theIntId)
+            theIntId = _writeFileName(theS, len(theFileStack)-1, theFileStack,
+                                      'Starting', lexStack[len(theFileStack)-1], theIntId)
         # Reaffirm the current file
         if flagUnwind and len(theFileStack) > 0:
-            theIntId = _writeFileName(theS, len(theFileStack), theFileStack, 'Back in', theFileStack[-1], theIntId)
+            theIntId = _writeFileName(theS, len(theFileStack), theFileStack,
+                                      'Back in', theFileStack[-1], theIntId)
     return theIntId
 
 def _writeFileName(theS, lenIndent, theFileStack, theAction, theFile, theIntId):
@@ -76,20 +81,22 @@ def _writeFileName(theS, lenIndent, theFileStack, theAction, theFile, theIntId):
     if lenIndent > 0:
         theS.characters('\n%s' % ('.' * lenIndent))
     if len(theFileStack) == 1:
-        with XmlWrite.Element(theS, 'a', {'name' : '%d' % theIntId}):
+        with XmlWrite.Element(theS, 'a', {'name' : '_%d' % theIntId}):
             pass
         theIntId += 1
-        with XmlWrite.Element(theS, 'a', {'href' : '#%d' % theIntId}):
+        with XmlWrite.Element(theS, 'a', {'href' : '#_%d' % theIntId}):
             with XmlWrite.Element(theS, 'span', {'class' : 'file'}):
                 theS.characters(
                     '# %s FILE: %s' \
-                        % ('%*s' % (FILE_SHIFT_ACTION_WIDTH, theAction), os.path.normpath(theFile))
+                        % ('%*s' % (FILE_SHIFT_ACTION_WIDTH, theAction),
+                           os.path.normpath(theFile))
                 )
     else:
         with XmlWrite.Element(theS, 'span', {'class' : 'file'}):
             theS.characters(
                 '# %s FILE: %s' \
-                    % ('%*s' % (FILE_SHIFT_ACTION_WIDTH, theAction), os.path.normpath(theFile))
+                    % ('%*s' % (FILE_SHIFT_ACTION_WIDTH, theAction),
+                       os.path.normpath(theFile))
             )
     return theIntId
 
@@ -99,9 +106,20 @@ def linkToIndex(theS, theIdxPath):
         with XmlWrite.Element(theS, 'a', {'href' : theIdxPath}):
             theS.characters('Index')
             
-def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath):
+def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath, incItuAnchors=True):
     """Processes the PpLexer and writes the tokens to the HTML file.
-    Returns a PpTokenCount.PpTokenCount()."""
+    theHtmlPath - the path to the HTML file to write.
+    theTitle - A string to go into the <title> element.
+    theCondLevel - the Conditional level to pass to theLex.ppTokens()
+    theIdxPath - path to link back to the index page.
+    incItuAnchors - boolean, if True will write anchors for lines in the ITU
+        that are in this TU. If True then setItuLineNumbers returned is likely
+        to be non-empty.
+    
+    Returns a pair of (PpTokenCount.PpTokenCount(), set(int))
+    The latter is a set of integer line numbers in the ITU that are in the TU,
+    these line numbers with have anchors in this HTML file of the form:
+    <a name="%d" />."""
     if not os.path.exists(os.path.dirname(theHtmlPath)):
         os.makedirs(os.path.dirname(theHtmlPath))
     LINE_FIELD_WIDTH = 8
@@ -111,8 +129,10 @@ def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath):
     myTokCntr = PpTokenCount.PpTokenCount()
     # Write CSS
     TokenCss.writeCssToDir(os.path.dirname(theHtmlPath))
+    # Set of active lines of the ITU (only) that made it into the TU
+    setItuLineNumbers = set()
     # Process the TU
-    with XmlWrite.XhtmlStream(theHtmlPath) as myS:
+    with XmlWrite.XhtmlStream(theHtmlPath, mustIndent=cpip.INDENT_ML) as myS:
         with XmlWrite.Element(myS, 'head'):
             with XmlWrite.Element(
                 myS,
@@ -168,14 +188,21 @@ def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath):
                                 myS.characters(indentStr)
                                 myS.characters(' ' * (LINE_FIELD_WIDTH + 8))
                                 colNum = 1
-                            with XmlWrite.Element(myS, 'span', {'class' : TokenCss.retClass(t.tt)}):
+                            with XmlWrite.Element(myS, 'span',
+                                            {'class' : TokenCss.retClass(t.tt)}):
                                 myS.characters(t.t)
                                 colNum += len(t.t)
                         if t.t == '\n' and len(myFileStack) != 0:
+                            # Write an ID for the ITU only
+                            if incItuAnchors and len(myFileStack) == 1:
+                                with XmlWrite.Element(myS, 'a',
+                                                {'name' : '%d' % theLex.lineNum}):
+                                    setItuLineNumbers.add(theLex.lineNum)
                             # Write the line prefix
                             myS.characters(indentStr)
                             myS.characters('[')
-                            myS.characters(' ' * (LINE_FIELD_WIDTH - len('%d' % theLex.lineNum)))
+                            myS.characters(' ' * \
+                                    (LINE_FIELD_WIDTH - len('%d' % theLex.lineNum)))
                             HtmlUtils.writeHtmlFileLink(
                                     myS,
                                     theLex.fileName,
@@ -186,4 +213,4 @@ def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath):
                             myS.characters(']: ')
                             colNum = 1
             linkToIndex(myS, theIdxPath)
-    return myTokCntr
+    return myTokCntr, setItuLineNumbers

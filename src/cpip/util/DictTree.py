@@ -54,7 +54,7 @@ class DictTree(object):
     def add(self, k, v):
         """Add a key/value. k is a list of hashables."""
         if self._vI not in self.ITERABLE_TYPE:
-            raise ExceptionDictTree('"%s" not in acceptble range: %s' \
+            raise ExceptionDictTree('"%s" not in acceptable range: %s' \
                                     % (self._vI, self.ITERABLE_TYPE))
         if len(k) == 0:
             if self._vI is None:

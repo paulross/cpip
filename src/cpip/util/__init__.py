@@ -26,4 +26,5 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-__all__ = ['BufGen', 'DictTree', 'ListGen', 'MatrixRep', 'MaxMunchGen', 'StrTree', 'XmlWrite',]
+__all__ = ['BufGen', 'DirWalk', 'DictTree', 'ListGen', 'MatrixRep',
+           'MaxMunchGen', 'StrTree', 'XmlWrite',]

@@ -29,6 +29,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 import sys
 import time
 import logging
+import pprint
 
 from cpip.core import CppCond
 from cpip.core import FileLocation
@@ -44,18 +45,22 @@ class TestConditionalState(unittest.TestCase):
         """ConditionalState: Test basic construction."""
         myCs = CppCond.ConditionalState(True, 'me')
         self.assertEqual(True, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('me', myCs.constExprStr())
 
     def testFlip_00(self):
         """ConditionalState: Test flip() False->True->False == False->True->False."""
         myCs = CppCond.ConditionalState(False, 'me')
         self.assertEqual(False, myCs.state)
+        self.assertEqual(False, myCs.hasBeenTrue)
         self.assertEqual('me', myCs.constExprStr())
         myCs.flip()
         self.assertEqual(True, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('%s(me)' % CppCond.TOKEN_NEGATION, myCs.constExprStr())
         myCs.flip()
         self.assertEqual(False, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('%s(%s(me))' \
                          % (CppCond.TOKEN_NEGATION, CppCond.TOKEN_NEGATION), myCs.constExprStr())
 
@@ -63,12 +68,15 @@ class TestConditionalState(unittest.TestCase):
         """ConditionalState: Test flip() True->False->True == True->False->False."""
         myCs = CppCond.ConditionalState(True, 'me')
         self.assertEqual(True, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('me', myCs.constExprStr())
         myCs.flip()
         self.assertEqual(False, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('%s(me)' % CppCond.TOKEN_NEGATION, myCs.constExprStr())
         myCs.flip()
         self.assertEqual(False, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('%s(%s(me))' \
                          % (CppCond.TOKEN_NEGATION, CppCond.TOKEN_NEGATION), myCs.constExprStr())
 
@@ -77,11 +85,13 @@ class TestConditionalState(unittest.TestCase):
         #if a
         myCs = CppCond.ConditionalState(False, 'a')
         self.assertEqual(False, myCs.state)
+        self.assertEqual(False, myCs.hasBeenTrue)
         self.assertEqual('a', myCs.constExprStr())
         self.assertEqual('!(a)', myCs.constExprStr(invert=True))
         #elif b
         myCs.flipAndAdd(True, 'b')
         self.assertEqual(True, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('(%s)' % CppCond.TOKEN_JOIN_AND.join(['!(a)', 'b']),
                          myCs.constExprStr())
         self.assertEqual('%s(%s)' % (
@@ -92,6 +102,7 @@ class TestConditionalState(unittest.TestCase):
         #elif c
         myCs.flipAndAdd(True, 'c')
         self.assertEqual(False, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('(%s)' % CppCond.TOKEN_JOIN_AND.join(['!(a)', '!(b)', 'c',]),
                          myCs.constExprStr())
         self.assertEqual('%s(%s)' % (
@@ -105,11 +116,13 @@ class TestConditionalState(unittest.TestCase):
         #if a
         myCs = CppCond.ConditionalState(True, 'a')
         self.assertEqual(True, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('a', myCs.constExprStr())
         self.assertEqual('!(a)', myCs.constExprStr(invert=True))
         #elif b
         myCs.flipAndAdd(False, 'b')
         self.assertEqual(False, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('(%s)' % CppCond.TOKEN_JOIN_AND.join(['!(a)', 'b']),
                          myCs.constExprStr())
         self.assertEqual('%s(%s)' % (
@@ -120,6 +133,7 @@ class TestConditionalState(unittest.TestCase):
         #elif c
         myCs.flipAndAdd(True, 'c')
         self.assertEqual(False, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('(%s)' % CppCond.TOKEN_JOIN_AND.join(['!(a)', '!(b)', 'c',]),
                          myCs.constExprStr())
         self.assertEqual('%s(%s)' % (
@@ -133,11 +147,13 @@ class TestConditionalState(unittest.TestCase):
         #if a
         myCs = CppCond.ConditionalState(False, 'a')
         self.assertEqual(False, myCs.state)
+        self.assertEqual(False, myCs.hasBeenTrue)
         self.assertEqual('a', myCs.constExprStr())
         self.assertEqual('!(a)', myCs.constExprStr(invert=True))
         #elif b
         myCs.flipAndAdd(False, 'b')
         self.assertEqual(False, myCs.state)
+        self.assertEqual(False, myCs.hasBeenTrue)
         self.assertEqual('(%s)' % CppCond.TOKEN_JOIN_AND.join(['!(a)', 'b']),
                          myCs.constExprStr())
         self.assertEqual('%s(%s)' % (
@@ -148,6 +164,7 @@ class TestConditionalState(unittest.TestCase):
         #elif c
         myCs.flipAndAdd(True, 'c')
         self.assertEqual(True, myCs.state)
+        self.assertEqual(True, myCs.hasBeenTrue)
         self.assertEqual('(%s)' % CppCond.TOKEN_JOIN_AND.join(['!(a)', '!(b)', 'c',]),
                          myCs.constExprStr())
         self.assertEqual('%s(%s)' % (
@@ -162,6 +179,14 @@ class TestCppCondLowLevel(unittest.TestCase):
         """Construct an empty CppCond and test."""
         myObj = CppCond.CppCond()
         self.assertEqual(0, myObj.stackDepth)
+        myObj.close()
+
+    def testEmptyCtorIsTrue(self):
+        """Construct an empty CppCond and test."""
+        myObj = CppCond.CppCond()
+        self.assertEqual(0, myObj.stackDepth)
+        self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj.close()
 
     def testSingleInsertTrue(self):
@@ -216,12 +241,15 @@ class TestCppCondLowLevel(unittest.TestCase):
         myObj._push(True, '')
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual(True, myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj._flip()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual(False, myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj._flip()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual(False, myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj._pop()
         myObj.close()
 
@@ -232,12 +260,15 @@ class TestCppCondLowLevel(unittest.TestCase):
         myObj._push(False, '')
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual(False, myObj.isTrue())
+        self.assertFalse(myObj.hasBeenTrueAtCurrentDepth())
         myObj._flip()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual(True, myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj._flip()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual(False, myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj._pop()
         myObj.close()
 
@@ -345,14 +376,17 @@ class TestCppCondIfElifElse(unittest.TestCase):
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('1', str(myObj))
         self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj.oElif(False, '0')
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(1) && 0)', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(1) && !(0))', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj.oEndif()
         myObj.close()
 
@@ -363,17 +397,20 @@ class TestCppCondIfElifElse(unittest.TestCase):
         myObj.oIf(False, '0')
         self.assertEqual(1, myObj.stackDepth)
         self.assertFalse(myObj.isTrue())
+        self.assertFalse(myObj.hasBeenTrueAtCurrentDepth())        
         self.assertEqual('0', str(myObj))
         self.assertFalse(myObj.isTrue())
         myObj.oElif(True, '1')
         self.assertEqual(1, myObj.stackDepth)
         self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         self.assertEqual('(!(0) && 1)', str(myObj))
         self.assertTrue(myObj.isTrue())
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(0) && !(1))', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         myObj.oEndif()
         myObj.close()
 
@@ -385,13 +422,16 @@ class TestCppCondIfElifElse(unittest.TestCase):
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('0', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertFalse(myObj.hasBeenTrueAtCurrentDepth())
         myObj.oElif(False, '0')
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(0) && 0)', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertFalse(myObj.hasBeenTrueAtCurrentDepth())
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())
         self.assertEqual('(!(0) && !(0))', str(myObj))
         myObj.oEndif()
         myObj.close()
@@ -425,19 +465,23 @@ class TestCppCondIfElifElseMultipleDepth(unittest.TestCase):
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('1', str(myObj))
         self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         # Second block
         myObj.oIf(True, '1.1')
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('1 && 1.1', str(myObj))
         self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oElif(False, '1.2')
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('1 && (!(1.1) && 1.2)', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oElse()
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('1 && (!(1.1) && !(1.2))', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oEndif()
         self.assertEqual(1, myObj.stackDepth)
         # Back to first block
@@ -445,10 +489,12 @@ class TestCppCondIfElifElseMultipleDepth(unittest.TestCase):
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(1) && 2)', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(1) && !(2))', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oEndif()
         myObj.close()
 
@@ -460,19 +506,23 @@ class TestCppCondIfElifElseMultipleDepth(unittest.TestCase):
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('1', str(myObj))
         self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         # Second block
         myObj.oIf(False, '1.1')
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('1 && 1.1', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertFalse(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oElif(True, '1.2')
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('1 && (!(1.1) && 1.2)', str(myObj))
         self.assertTrue(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oElse()
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('1 && (!(1.1) && !(1.2))', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oEndif()
         self.assertEqual(1, myObj.stackDepth)
         # Back to first block
@@ -480,10 +530,12 @@ class TestCppCondIfElifElseMultipleDepth(unittest.TestCase):
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(1) && 2)', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('(!(1) && !(2))', str(myObj))
         self.assertFalse(myObj.isTrue())
+        self.assertTrue(myObj.hasBeenTrueAtCurrentDepth())        
         myObj.oEndif()
         myObj.close()
 
@@ -734,7 +786,7 @@ class TestCppCondIfElifElseMultipleDepth(unittest.TestCase):
 
 class TestCppCond(unittest.TestCase):
     """Tests the CppCond as a caller might use it."""
-    def testSequentialBool(self):
+    def test_00(self):
         """CppCond simulating an example of sequential #if, #elif #else from ISO/IEC 9899:1999(E) section 6.10.2-8
 #if VERSION == 1
 #define INCFILE "vers1.h"
@@ -765,6 +817,127 @@ Forward references: macro replacement (6.10"""
         myObj.oEndif()
         myObj.close()
 
+    def test_01(self):
+        """CppCond simulating an example of sequential and nested #if, #else to check boolean state #if 1."""
+        # Simulating this, should process to: TRUE TRUE TRUE
+        s = """TRUE
+#if 1
+TRUE
+#else
+FALSE
+#endif
+TRUE
+"""
+        myObj = CppCond.CppCond()
+        self.assertEqual(0, myObj.stackDepth)
+        self.assertTrue(myObj)
+        myObj.oIf(True, '1')
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('1', str(myObj))
+        self.assertTrue(myObj)
+        myObj.oElse()
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('!(1)', str(myObj))
+        self.assertFalse(myObj)
+        myObj.oEndif()
+        self.assertEqual(0, myObj.stackDepth)
+        self.assertTrue(myObj)
+        myObj.close()
+
+    def test_02(self):
+        """CppCond simulating an example of sequential and nested #if, #else to check boolean state #if 0."""
+        # Simulating this, should process to: TRUE TRUE TRUE
+        s = """TRUE
+#if 0
+FALSE
+#else
+TRUE
+#endif
+TRUE
+"""
+        myObj = CppCond.CppCond()
+        self.assertEqual(0, myObj.stackDepth)
+        self.assertTrue(myObj)
+        myObj.oIf(False, '0')
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('0', str(myObj))
+        self.assertFalse(myObj)
+        myObj.oElse()
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('!(0)', str(myObj))
+        self.assertTrue(myObj)
+        myObj.oEndif()
+        self.assertEqual(0, myObj.stackDepth)
+        self.assertTrue(myObj)
+        myObj.close()
+
+    def test_03(self):
+        """CppCond simulating an example of sequential and nested #if, #else to check boolean state #if 1."""
+        # Simulating this, should process to: TRUE TRUE TRUE TRUE TRUE
+        s = """TRUE
+#if 1
+TRUE
+#if 11
+TRUE
+#else
+FALSE
+#endif
+TRUE
+#else
+#if 11
+FALSE
+#else
+FALSE
+#endif
+FALSE
+#endif
+TRUE
+"""
+        myObj = CppCond.CppCond()
+        self.assertEqual(0, myObj.stackDepth)
+        self.assertTrue(myObj)
+        myObj.oIf(True, '1')
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('1', str(myObj))
+        self.assertTrue(myObj)
+        #
+        myObj.oIf(True, '11')
+        self.assertEqual(2, myObj.stackDepth)
+        self.assertEqual('1 && 11', str(myObj))
+        self.assertTrue(myObj)
+        myObj.oElse()
+        self.assertEqual(2, myObj.stackDepth)
+        self.assertEqual('1 && !(11)', str(myObj))
+        self.assertFalse(myObj)
+        myObj.oEndif()
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('1', str(myObj))
+        self.assertTrue(myObj)
+        #
+        myObj.oElse()
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('!(1)', str(myObj))
+        self.assertFalse(myObj)
+        #
+        myObj.oIf(True, '11')
+        self.assertEqual(2, myObj.stackDepth)
+        self.assertEqual('!(1) && 11', str(myObj))
+        self.assertFalse(myObj)
+        myObj.oElse()
+        self.assertEqual(2, myObj.stackDepth)
+        self.assertEqual('!(1) && !(11)', str(myObj))
+        self.assertFalse(myObj)
+        myObj.oEndif()
+        self.assertEqual(1, myObj.stackDepth)
+        self.assertEqual('!(1)', str(myObj))
+        self.assertFalse(myObj)
+        #
+        myObj.oEndif()
+        self.assertEqual(0, myObj.stackDepth)
+        self.assertTrue(myObj)
+        myObj.close()
+
+        
 class TestCppCondGraph(unittest.TestCase):
     """Tests the CppCondGraph."""
     def test_00(self):
@@ -1489,6 +1662,151 @@ class TestCppCondGraphVisitor(unittest.TestCase):
 <-#if
 ->#endif
 <-#endif""", str(myV))
+
+class TestLineConditionalInterpretation(unittest.TestCase):
+    def test_00(self):
+        """TestLineConditionalInterpretation.test_00(): Basic test, no conditions."""
+        lst = [(0, True),]
+        lci = CppCond.LineConditionalInterpretation(lst)
+        self.assertEqual(lci.isCompiled(1), 1)
+        self.assertEqual(lci.isCompiled(100), 1)
+        self.assertEqual(lci.isCompiled(1000), 1)
+
+    def test_01(self):
+        """TestLineConditionalInterpretation.test_01(): Basic test, no conditions, raises on line number == -1."""
+        lst = [(0, True),]
+        lci = CppCond.LineConditionalInterpretation(lst)
+        self.assertEqual(lci.isCompiled(0), 1)
+        self.assertRaises(ValueError, lci.isCompiled, -1)
+
+    def test_02(self):
+        """TestLineConditionalInterpretation.test_02(): Basic test, with conditions."""
+        lst = [(0, True), (10, False), (20, True),]
+        lci = CppCond.LineConditionalInterpretation(lst)
+        self.assertEqual(lci.isCompiled(1), 1)
+        self.assertEqual(lci.isCompiled(9), 1)
+        self.assertEqual(lci.isCompiled(10), 0)
+        self.assertEqual(lci.isCompiled(11), 0)
+        self.assertEqual(lci.isCompiled(19), 0)
+        self.assertEqual(lci.isCompiled(20), 1)
+        self.assertEqual(lci.isCompiled(21), 1)
+
+    def test_03(self):
+        """TestLineConditionalInterpretation.test_03(): Basic test, with conditions, inverted."""
+        lst = [(0, False), (10, True), (20, False),]
+        lci = CppCond.LineConditionalInterpretation(lst)
+        self.assertEqual(lci.isCompiled(1), 0)
+        self.assertEqual(lci.isCompiled(9), 0)
+        self.assertEqual(lci.isCompiled(10), 1)
+        self.assertEqual(lci.isCompiled(11), 1)
+        self.assertEqual(lci.isCompiled(19), 1)
+        self.assertEqual(lci.isCompiled(20), 0)
+        self.assertEqual(lci.isCompiled(21), 0)
+
+    def test_04(self):
+        """TestLineConditionalInterpretation.test_04(): Basic test, with conditions, duplicate, same."""
+        lst = [(0, True), (10, False), (20, True), (10, False), (20, True),]
+        lci = CppCond.LineConditionalInterpretation(lst)
+        self.assertEqual(lci.isCompiled(1), 1)
+        self.assertEqual(lci.isCompiled(9), 1)
+        self.assertEqual(lci.isCompiled(10), 0)
+        self.assertEqual(lci.isCompiled(11), 0)
+        self.assertEqual(lci.isCompiled(19), 0)
+        self.assertEqual(lci.isCompiled(20), 1)
+        self.assertEqual(lci.isCompiled(21), 1)
+
+    def test_05(self):
+        """TestLineConditionalInterpretation.test_05(): Basic test, with conditions, duplicate, same."""
+        lst = [(0, True), (10, False), (20, True), (10, False), (20, True),]
+        lci = CppCond.LineConditionalInterpretation(lst)
+        self.assertEqual(lci.isCompiled(1), 1)
+        self.assertEqual(lci.isCompiled(9), 1)
+        self.assertEqual(lci.isCompiled(10), 0)
+        self.assertEqual(lci.isCompiled(11), 0)
+        self.assertEqual(lci.isCompiled(19), 0)
+        self.assertEqual(lci.isCompiled(20), 1)
+        self.assertEqual(lci.isCompiled(21), 1)
+
+    def test_06(self):
+        """TestLineConditionalInterpretation.test_06(): Basic test, with conditions, duplicate, different."""
+        lst = [(0, True), (10, False), (20, True), (30, True), (10, True), (20, False), (30, True)]
+        lci = CppCond.LineConditionalInterpretation(lst)
+        self.assertEqual(lci.isCompiled(1), 1)
+        self.assertEqual(lci.isCompiled(9), 1)
+        self.assertEqual(lci.isCompiled(10), -1)
+        self.assertEqual(lci.isCompiled(11), -1)
+        self.assertEqual(lci.isCompiled(19), -1)
+        self.assertEqual(lci.isCompiled(20), -1)
+        self.assertEqual(lci.isCompiled(21), -1)
+        self.assertEqual(lci.isCompiled(29), -1)
+        self.assertEqual(lci.isCompiled(30), 1)
+        self.assertEqual(lci.isCompiled(31), 1)
+
+class TestCppCondGraphVisitorLineCondCompilation(unittest.TestCase):
+    """Tests the CppCondGraph visitor."""
+    def test_00(self):
+        """TestCppCondGraphVisitor.test_00() - Test a visitor object."""
+        myCcg = CppCond.CppCondGraph()
+        # 0
+        myCcg.oIf(FileLocation.FileLineCol('file_0', 10, 1), 0, True, '0')
+        # 1
+        myCcg.oIfdef(FileLocation.FileLineCol('file_1', 20, 1), 0, False, '0.0')
+        # 2
+        myCcg.oIfndef(FileLocation.FileLineCol('file_2', 30, 1), 0, False, '0.0.0')
+        myCcg.oElif(FileLocation.FileLineCol('file_2', 40, 1), 0, False, '0.0.1')
+        myCcg.oElif(FileLocation.FileLineCol('file_2', 50, 1), 0, False, '0.0.2')
+        myCcg.oElse(FileLocation.FileLineCol('file_2', 60, 1), 0, True)
+        # 3
+        myCcg.oIf(FileLocation.FileLineCol('file_3', 70, 1), 0, True, '0.0.3')
+        myCcg.oElif(FileLocation.FileLineCol('file_3', 80, 1), 0, False, '0.0.4')
+        myCcg.oElse(FileLocation.FileLineCol('file_3', 90, 1), 0, False)
+        myCcg.oEndif(FileLocation.FileLineCol('file_3', 100, 1), 0, True)
+        # 2
+        myCcg.oEndif(FileLocation.FileLineCol('file_2', 201, 1), 0, False)
+        # 1
+        myCcg.oEndif(FileLocation.FileLineCol('file_1', 301, 1), 0, True)
+        # 0
+        myCcg.oEndif(FileLocation.FileLineCol('file_0', 401, 1), 0, False)
+#        print()
+#        print(myCcg)
+        self.assertTrue(myCcg.isComplete)
+        self.assertEqual(
+            """#if 0 /* True "file_0" 10 0 */
+    #ifdef 0.0 /* False "file_1" 20 0 */
+        #ifndef 0.0.0 /* False "file_2" 30 0 */
+        #elif 0.0.1 /* False "file_2" 40 0 */
+        #elif 0.0.2 /* False "file_2" 50 0 */
+        #else /* True "file_2" 60 0 */
+            #if 0.0.3 /* True "file_3" 70 0 */
+            #elif 0.0.4 /* False "file_3" 80 0 */
+            #else /* False "file_3" 90 0 */
+            #endif /* True "file_3" 100 0 */
+        #endif /* False "file_2" 201 0 */
+    #endif /* True "file_1" 301 0 */
+#endif /* False "file_0" 401 0 */""",
+            str(myCcg),
+        )
+        myV = CppCond.CppCondGraphVisitorConditionalLines()
+        myCcg.visit(myV)
+#         print()
+#         pprint.pprint(myV._fileMap)
+        self.assertEqual(sorted(myV.fileIdS), ['file_%d' % n for n in range(4)])
+        self.assertEqual(
+            [(0, True), (10, True), (0, True), (401, False)],
+            myV._lineCondition('file_0')
+        )
+        self.assertEqual(
+            [(0, True), (20, False), (0, False), (301, True)],
+            myV._lineCondition('file_1')
+        )
+        self.assertEqual(
+            [(0, False), (30, False), (40, False), (50, False), (60, True), (0, True), (201, False)],
+            myV._lineCondition('file_2'),
+        )
+        self.assertEqual(
+            [(0, True), (70, True), (80, False), (90, False), (100, True)],
+            myV._lineCondition('file_3'),
+        )
         
 class Special(unittest.TestCase):
     pass
@@ -1504,6 +1822,8 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppCondGraph))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppCondGraphFail))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppCondGraphVisitor))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLineConditionalInterpretation))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppCondGraphVisitorLineCondCompilation))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

@@ -29,8 +29,8 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 #import sys
 #import time
-#import logging
-#import pprint
+import logging
+import pprint
 
 # Ugggh
 import re
@@ -103,14 +103,19 @@ class ConstantExpression(object):
         assert(theMatch is not None)
         compileString = self.REPLACE_CONDITIONAL_EXPRESSION \
                         % (theMatch.group(1), theMatch.group(2), theMatch.group(3))
-        result = None
+#        print('compileString:', compileString)
+#        result = None
         try:
+            _locals = {'result' : None}
             c = compile(compileString, '<string>', 'exec')
-            exec(c)
+            exec(c, {}, _locals)
+#            pprint.pprint(locals())
+            return _locals['result']
+#            return locals()['result']
         except Exception as err:
-#            logging.error('ConstantExpression._evaluateConditionalExpression() can not evaluate: "%s"' % compileString)
+            logging.error('ConstantExpression._evaluateConditionalExpression() can not evaluate: "%s"' % compileString)
             raise ExceptionConditionalExpression(str(err))
-        return result
+#        return result
 
     def _evaluateExpression(self, theStr):
         """Evaluates a conditional expression e.g. 1 < 2 """

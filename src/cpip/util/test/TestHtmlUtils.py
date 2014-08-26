@@ -142,9 +142,9 @@ class Test_XhtmlWrite(unittest.TestCase):
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-  <a name="47">Navigation text</a>
-</html>
+  <a name="47" />Navigation text</html>
 """)
+        
     def test_04(self):
         """TestXhtmlWrite.test_04(): writeHtmlFileAnchor() with class."""
         myF = io.StringIO()
@@ -155,7 +155,26 @@ class Test_XhtmlWrite(unittest.TestCase):
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-  <a name="47">
+  <a name="47" />
+  <span class="CSS_class">Navigation text</span>
+</html>
+""")
+
+    def test_05(self):
+        """TestXhtmlWrite.test_05(): writeHtmlFileAnchor() with class and href."""
+        myF = io.StringIO()
+        with XmlWrite.XhtmlStream(myF) as myS:
+            HtmlUtils.writeHtmlFileAnchor(myS, 47,
+                                          theText='Navigation text',
+                                          theClass='CSS_class',
+                                          theHref='HREF_TARGET')
+#        print()
+#        print(myF.getvalue())
+        self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <a name="47" />
+  <a href="HREF_TARGET">
     <span class="CSS_class">Navigation text</span>
   </a>
 </html>

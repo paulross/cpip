@@ -49,6 +49,21 @@ UNIT_MAP = {
     'mm'        : 72.0/25.4,
 }
 
+# Formatting strings for writing attributes.
+# We are trying not to write 3.999999999mm here!
+UNIT_MAP_DEFAULT_FORMAT = {
+    None        : '%d',  # Implied base units i.e. default
+    'px'        : '%d',
+    'pt'        : '%d',  # Actual base units i.e. BASE_UNITS
+    'pc'        : '%.2f',
+    'in'        : '%.3f',
+    'cm'        : '%.2f',
+    'mm'        : '%.1f',
+}
+
+# Formatting string for value and units e.g. to create '0.67in' from (2.0 / 3.0, 'in')
+UNIT_MAP_DEFAULT_FORMAT_WITH_UNITS = {__k : UNIT_MAP_DEFAULT_FORMAT[__k] + '%s' for __k in UNIT_MAP_DEFAULT_FORMAT}
+
 def units():
     """Returns the unsorted list of acceptable units."""
     return UNIT_MAP.keys()

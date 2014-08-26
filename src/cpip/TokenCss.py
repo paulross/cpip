@@ -46,6 +46,18 @@ for __i, __tt in enumerate(ItuToTokens.ITU_TOKEN_TYPES):
     ENUM_TT_MAP[__enum] = __tt
 
 ITU_CSS_LIST = [
+    """/* Conditionally compiled == %s. */
+span.%s {
+background-color: GreenYellow;
+}""" % (True, True),
+    """/* Conditionally compiled == %s. */
+span.%s {
+background-color: Salmon;
+}""" % (False, False),
+    """/* Conditionally compiled == %s. */
+span.%s {
+background-color: yellowgreen;
+}""" % ('Maybe', 'Maybe'),
     """/* %s */
 span.%s {
 color:         Chartreuse;
@@ -140,7 +152,7 @@ padding:        6px;
 # }""",
 #===============================================================================
     """h1 {
-color:            IndianRed;
+color:            darkgoldenrod;
 font-family:      sans-serif;
 font-size:        14pt;
 font-weight:      bold;

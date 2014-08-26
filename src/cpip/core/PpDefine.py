@@ -260,7 +260,7 @@ class PpDefine(object):
             # Check that this has been set
             assert(self._expandArguments is not None)
         except StopIteration:
-            raise ExceptionCpipDefineInit('Token stream is too short.')
+            raise ExceptionCpipDefineInit('Token stream is too short')
         assert(self.isCurrentlyDefined)
 
     def _appendArgIdentifier(self, theTok, theGenTok):
@@ -705,7 +705,7 @@ class PpDefine(object):
         # replacement. These will be returned on failure.
         failTokList = []
         while 1:
-            # This emulates cpp.exe that allows any ammount of ws
+            # This emulates cpp.exe that allows any amount of ws
             # between the identifier and LPAREN
             try:
                 myTtt = self._retToken(theGen)
@@ -839,7 +839,6 @@ class PpDefine(object):
         trailingWs = []
         while 1:
             myTtt = self._retToken(theGen)
-            #print 'TRACE: myTtt', myTtt
             if myTtt.t == self.LPAREN:
                 pDepth += 1
                 myArg.append(myTtt)
@@ -1142,7 +1141,7 @@ class PpDefine(object):
                                 retReplList += theArgMap[myTtt.t]
                             flagConcatSeen = False
                         else:
-                            retReplList += theArgMap[myTtt.t]
+                            retReplList += copy.deepcopy(theArgMap[myTtt.t])
             elif myTtt.t == self.CPP_STRINGIZE_OP:
                 flagStringize = True
                 if flagConcatSeen:
@@ -1166,7 +1165,16 @@ class PpDefine(object):
                             )
                         flagStringize = False
                     else:
-                        retReplList.extend(theArgMap[self.VARIABLE_ARGUMENT_IDENTIFIER])                       
+                        retReplList.extend(theArgMap[self.VARIABLE_ARGUMENT_IDENTIFIER])
+                # Subtle bug here, if I have:
+                # __ASM_SEL(a,b) a,b
+                # __ASM_SIZE(inst, ...) __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
+                # And I call __ASM_SIZE(a) i.e. __VA__ARGS__ is empty then without
+                # the following line the ',' will be pasted on to 'al' i.e.
+                # ['__ASM_SEL', '(', 'al,', 'aq', ')']
+                # Rather than the correct tokens:
+                # ['__ASM_SEL', '(', 'al', ',', 'aq', ')']
+                flagConcatSeen = False
             else:
                 if flagConcatSeen:
                     if not myTtt.isWs():

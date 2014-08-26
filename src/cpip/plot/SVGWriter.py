@@ -27,7 +27,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 from cpip import ExceptionCpip
 from cpip.util import XmlWrite
-#from cpip.plot import Coord
+from cpip.plot import Coord
 
 class ExceptionSVGWriter(ExceptionCpip):
     """Exception class for SVGWriter."""
@@ -35,13 +35,13 @@ class ExceptionSVGWriter(ExceptionCpip):
 
 def dimToTxt(theDim):
     """Converts a Coord.Dim() object to text for SVG units."""
-    return '%s%s' % (theDim.value, theDim.units)
+    return Coord.UNIT_MAP_DEFAULT_FORMAT_WITH_UNITS[theDim.units] % (theDim.value, theDim.units)
 
 class SVGWriter(XmlWrite.XmlStream):
     """Initialise the stream with a file and Coord.Box() object.
     The view port units must be the same for width and depth."""
-    def __init__(self, theFile, theViewPort, rootAttrs=None):
-        super(SVGWriter, self).__init__(theFile)
+    def __init__(self, theFile, theViewPort, rootAttrs=None, mustIndent=True):
+        super(SVGWriter, self).__init__(theFile, mustIndent=mustIndent)
         self._viewPort = theViewPort
         self._rootAttrs = rootAttrs
             
@@ -175,10 +175,11 @@ class SVGText(XmlWrite.Element):
     size as an integer. If thePoint is None then no location will be specified
     (for example for use inside a <defs> element."""
     def __init__(self, theXmlStream, thePoint, theFont, theSize, attrs=None):
-        _attrs = {
-                'font-family'   : theFont,
-                'font-size'     : '%s' % theSize,
-            }
+        _attrs = {}
+        if theFont is not None:
+            _attrs['font-family'] = theFont,
+        if theSize is not None:
+            _attrs['font-size'] = '%s' % theSize
         if thePoint is not None:
             _attrs['x'] = dimToTxt(thePoint.x)
             _attrs['y'] = dimToTxt(thePoint.y)

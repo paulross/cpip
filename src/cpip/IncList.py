@@ -79,7 +79,7 @@ def preProcessForIncludes(theItu, incUsr, incSys, theDefineS, preIncS, keepGoing
     retVal = retIncludedFileSet(myLexer)
     # Remove any artificial files
     try:
-        retVal.remove(myLexer.UNNAMED_FILE_NAME)
+        retVal.remove(PpLexer.UNNAMED_FILE_NAME)
     except KeyError:
         pass
     return retVal

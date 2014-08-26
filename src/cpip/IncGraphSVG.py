@@ -24,6 +24,7 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import os
+import inspect
 #import sys
 #from cpip.core import FileIncludeGraph
 from cpip.core import PpTokenCount
@@ -35,6 +36,18 @@ from cpip.plot import SVGWriter
 from cpip import IncGraphSVGBase
 
 class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
+    """This does most of the heavy lifting of plotting the include graph SVG.
+    Challenges are plotting things in the 'right' order and with the 'right'
+    JavaScript so that the DHTML does not look too hideous.
+    Basic principle here is that `plotInitialise()` writes static data. In
+    our case just the pretty histogram pop-up (Ed. is this right???).
+    Then `plotToSVGStream()` is called - this is implemented in the base class.
+    FInally `plotFinalise()` is called - this overlays the DHTML text. This is
+    a little tricky as our way of DHTML is to switch opacity on underlying
+    objects the switching boundary being the overlying object (e.g. '?').
+    So _all_ the underlying objects need to be written first so that the
+    overlying objects are always 'visible' to trigger onmouseover/onmouseout on
+    the underlying object."""
     COMMON_UNITS            = 'mm'
     WIDTH_PER_TOKEN         = Coord.Dim(1.0/1000.0,     COMMON_UNITS)
     WIDTH_MINIMUM           = Coord.Dim(5,              COMMON_UNITS)
@@ -99,6 +112,53 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         'stroke'            : "black",
         'stroke-dasharray'  : "8,2,2,2",
     }
+    # CSS entries
+    STYLE_VERDANA_12 = 'text.V12'
+    CLASS_VERDANA_12 = 'V12'
+    ATTRS_VERDANA_12 = {
+      'dominant-baseline'   : 'middle',
+      'font-family'         : 'Verdana',
+      'font-size'           : '12',
+      'text-anchor'         : 'middle',
+      'text-decoration'     : 'underline',
+    }
+    # Used for histogram
+    STYLE_VERDANA_9 = 'text.V9'
+    CLASS_VERDANA_9 = 'V9'
+    ATTRS_VERDANA_9 = {
+      'dominant-baseline'   : 'middle',
+      'font-family'         : 'Verdana',
+      'font-size'           : '9',
+#       'opacity'             : '1.0',
+#       'text-anchor'         : 'middle',
+#       'text-decoration'     : 'underline',
+    }
+    STYLE_TEXT_SCALE = 'text.scale'
+    CLASS_TEXT_SCALE = 'scale'
+    ATTRS_TEXT_SCALE = {
+      'dominant-baseline'   : 'middle',
+      'font-family'         : 'Verdana',
+      'font-size'           : '12',
+      'text-anchor'         : 'left',
+    }
+    # font-family="Courier" font-size="10" font-weight="normal"
+    STYLE_COURIER_10 = 'text.C10'
+    CLASS_COURIER_10 = 'C10'
+    ATTRS_COURIER_10 = {
+      'font-family'         : 'Courier',
+      'font-size'           : '10',
+      'font-weight'         : '10',
+    }
+    # Invisible rectangle
+    STYLE_RECT_INVIS = 'rect.invis'
+    CLASS_RECT_INVIS = 'invis'
+    ATTRS_RECT_INVIS = {
+      'fill'                : 'red',
+      'opacity'             : '0',
+      'stroke'              : 'black',
+      'stroke-width'        : '1',
+    }
+    #
     # Chevron attributes
     CHEVRON_COLOUR_FILL         = "palegreen"#"cornflowerblue"
     CHEVRON_COLOUR_STROKE       = "black"
@@ -123,24 +183,6 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     HIST_LEGEND_ID = "HistogramLegend"
     # The placeholder text for JavaScript rollover
     POPUP_TEXT = ' ? '
-#===============================================================================
-#    # Attributes for alternate text
-#    ALT_RECT_FILL = 'khaki'#'yellow'
-#    ALT_ID_SUFFIX = '.alt'
-#    ALT_FONT_FAMILY = 'monospace'
-#    ALT_FONT_PROPERTIES = {
-#        'Courier' : {
-#                        'size'          : 10,
-#                        'lenFactor'     : 0.8,
-#                        'heightFactor'  : 1.5,
-#            },
-#        'monospace' : {
-#                        'size'          : 10,
-#                        'lenFactor'     : 0.7,
-#                        'heightFactor'  : 1.2,
-#            },
-#        }
-#===============================================================================
     def __init__(self, theFig, theLineNum):
         super(SVGTreeNodeMain, self).__init__(theFig, theLineNum)
         # PpTokenCount object for my children only, set on finalise
@@ -162,6 +204,11 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
             # A PpTokenCount.PpTokenCount() object for this node only.
             self._dataMap['tokenCntr']      = theFig.tokenCounter
             self._dataMap['findLogic']      = theFig.findLogic
+        # A list of tuples of (Coord.Pt, Cooord.Box, attributes) that are to be
+        # written last as <rect class="invis" ...
+        self._triggerS = []
+        # We have two passes
+        self._numPassesToPlotSelf = 2
             
     #============================================
     # Section: Accessor methods used by ancestors
@@ -186,16 +233,6 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         retVal += self.tokenCounter
         retVal += self.tokenCounterChildren
         return retVal
-        #return self._tokenCounterTotal
-#===============================================================================
-#    @property
-#    def tokenCounterSigma(self):
-#        """This is the computed PpTokenCount.PpTokenCount() for me plus my children."""
-#        retVal = PpTokenCount.PpTokenCount()
-#        retVal += self.tokenCounter
-#        retVal += self.tokenCounterChildren
-#        return retVal
-#===============================================================================
     
     @property
     def condComp(self):
@@ -241,56 +278,112 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 self._bb.bbSpaceChildren = self.SPACE_PARENT_CHILD
         # Bounding boxes now set up
             
+    def writePreamble(self, theS):
+        """Write any preamble such as CSS or JavaScript.
+        To be implemented by child classes."""
+        cssDict = {
+            'tspan' : {'white-space' : 'pre'},
+            self.STYLE_VERDANA_12 : self.ATTRS_VERDANA_12,
+            self.STYLE_VERDANA_9 : self.ATTRS_VERDANA_9,
+            self.STYLE_COURIER_10 : self.ATTRS_COURIER_10,
+            self.STYLE_TEXT_SCALE : self.ATTRS_TEXT_SCALE,
+            self.STYLE_RECT_INVIS : self.ATTRS_RECT_INVIS,
+        }
+        with XmlWrite.Element(theS, 'defs', {}):
+            theS.writeCSS(cssDict)
+        self._writeECMAScript(theS)
+        self._writeScaleControls(theS)
+    
+    def _writeScaleControls(self, theSvg):
+        """Write the text elements that control re-scaling."""
+        myAttrs = {
+            'class'             : self.CLASS_TEXT_SCALE,
+        }
+        myPointP = Coord.Pt(
+            Coord.Dim(8.0, self.COMMON_UNITS),
+            Coord.Dim(4.0, self.COMMON_UNITS),
+        )
+        with SVGWriter.SVGGroup(theSvg, {'id' : 'scaleGroup'}):
+            with SVGWriter.SVGText(theSvg, myPointP, None, None, myAttrs):
+                theSvg.characters('Scale by:')
+            myAttrs['text-decoration']  = "underline"
+            myPointP = Coord.newPt(myPointP, incX=Coord.Dim(24, 'mm'), incY=None)
+            for scale in self.SCALE_FACTORS:
+                myAttrs['onclick'] = "scaleGraphic(%s, '%s')" % (scale, scale)
+                myAttrs['id'] = str(scale)
+                if scale == self._scale:
+                    myAttrs['font-weight'] = 'bold'
+                else:
+                    myAttrs['font-weight'] = 'normal'
+                text = '%d%%' % int(scale * 100)
+                with SVGWriter.SVGText(theSvg, myPointP, None, None, myAttrs):
+                    theSvg.characters(text)
+                myPointP = Coord.newPt(myPointP,
+                                       incX=Coord.Dim(5 * len(text), 'mm'),
+                                       incY=None)
+
     def plotInitialise(self, theSvg, theDatumL, theTpt):
-        """Plot the histogram legend once only.""" 
-        self._plotHistogramLegend(theSvg, theTpt)
+        """Plot the histogram legend once only."""
+        self.commentFunctionBegin(theSvg)
+#         self._plotHistogramLegend(theSvg, theTpt)
+        self.commentFunctionEnd(theSvg)
 
     def plotFinalise(self, theSvg, theDatumL, theTpt):
         """Finish the plot. In this case we write the text overlays.""" 
         # Plot all text elements so that they are on top
-        self._plotTextToSVGStream(theSvg, theDatumL, theTpt)
+        self.commentFunctionBegin(theSvg, File=self._fileName)
+        self._writeTriggers(theSvg)
+        self.commentFunctionEnd(theSvg, File=self._fileName)
 
-    def _plotTextToSVGStream(self, theSvg, theDatumL, theTpt):
-        """Plot the text overlay to the SVG stream. This is depth first and
-        recursive."""
-        if len(self._children) > 0:
-            # Reverse the order of child plotting, this is so the pop-up box
-            # masks the sibling texts
-            myChildS = [r for r in self._enumerateChildren(theDatumL, theTpt)]
-            myChildS.reverse()
-            for i, datumChildL in myChildS:
-                # Recursive call
-                self._children[i]._plotTextToSVGStream(theSvg, datumChildL, theTpt)
-        self._plotTextOverlay(theSvg, theDatumL, theTpt)
-
-    def _plotSelf(self, theSvg, theDatumL, theTpt):
+    def _writeTriggers(self, theSvg):
+        """Write the rectangles that trigger pop-up text last so that they are on top."""
+        for aChild in self._children:
+            aChild._writeTriggers(theSvg)
+        for _pt, _box, _attrs in self._triggerS:
+            with SVGWriter.SVGRect(theSvg, _pt, _box, _attrs):
+                pass
+                
+    def _plotSelf(self, theSvg, theDatumL, theTpt, thePassNum, idStack):
         """Plot me to a stream at the logical datum point"""
         assert(not self.isRoot)
-        theSvg.comment(' %s ' % self.nodeName)
-        # Plot self
-        if self.condCompState:
-            if self.numTokens > 0:
-                myAttrs = self.ATTRS_NODE_NORMAL
+        if thePassNum == 0:
+            self.commentFunctionBegin(
+                        theSvg,
+                        File=self._fileName,
+                        Node=self.nodeName,
+                        Pass=thePassNum)
+            # Plot self
+            if self.condCompState:
+                if self.numTokens > 0:
+                    myAttrs = self.ATTRS_NODE_NORMAL
+                else:
+                    myAttrs = self.ATTRS_NODE_MT
             else:
-                myAttrs = self.ATTRS_NODE_MT
-        else:
-            myAttrs = self.ATTRS_NODE_CONDITIONAL
-        if self._bb.hasSetArea:
-            myDatumL = self._bb.plotPointSelf(theDatumL)
-            #myBox = Coord.Box(self._bb.width, self._bb.depth)
-            myBox = self._bb.box
-            #print 'myDatumL', myDatumL
-            #print 'myBox', myBox  
-            # Plot my box at:
-            myBoxDatumP = theTpt.boxDatumP(myDatumL, myBox) 
-            with SVGWriter.SVGRect(
+                myAttrs = self.ATTRS_NODE_CONDITIONAL
+            if self._bb.hasSetArea:
+                # Plot my box at:
+                myBoxDatumP = theTpt.boxDatumP(
+                        self._bb.plotPointSelf(theDatumL),
+                        self._bb.box) 
+                with SVGWriter.SVGRect(
+                        theSvg,
+                        myBoxDatumP,
+                        theTpt.boxP(self._bb.box),
+                        myAttrs,
+                    ):
+                    pass
+            self._plotSelfInternals(theSvg, theDatumL, theTpt)
+        elif thePassNum == 1:
+            self._plotTextOverlay(theSvg, theDatumL, theTpt, idStack)        
+        self.commentFunctionEnd(
                     theSvg,
-                    myBoxDatumP,
-                    theTpt.boxP(myBox),
-                    myAttrs,
-                ):
-                pass
-        self._plotSelfInternals(theSvg, theDatumL, theTpt)
+                    File=self._fileName,
+                    Node=self.nodeName,
+                    Pass=thePassNum)
+
+    def plotRoot(self, theSvg, theDatumL, theTpt, passNum):
+        if passNum == 1:
+            self._plotHistogramLegend(theSvg, theTpt)
 
     def _plotSelfToChildren(self, theSvg, theDatumL, theTpt):
         """Plot links from me to my children to a stream at the
@@ -359,7 +452,7 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         """Join up children of root node with vertical lines."""
         assert(len(self._children) > 0)
         assert(self.isRoot)
-        theSvg.comment('_plotRootChildToChild()')
+        self.commentFunctionBegin(theSvg)
         ptNextL = None
         for i, datumChildL in self._enumerateChildren(theDatumL, theTpt):
             if i > 0:
@@ -378,9 +471,11 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                     self._children[i].bb.plotPointSelf(datumChildL),
                     self._children[i].bb.box,
                 )
+        self.commentFunctionEnd(theSvg)
     
     def _plotSelfInternals(self, theSvg, theDl, theTpt):
-        """Plot structures inside the box."""
+        """Plot structures inside the box and the static text that is
+        the file name."""
         # Histograms of token types
         if self.__mustPlotSelfHistogram():
             # First the histogram of just me
@@ -393,16 +488,27 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 self._plotHistogram(theSvg, myHistDl, theTpt, self._tokenCounterChildren)
         # Now the Chevron
         self._plotChevron(theSvg, theDl, theTpt)
+        # The filename as display text (no animation)
+        if not self.isRoot:
+            self._plotFileName(theSvg, theDl, theTpt)
 
-    def _plotTextOverlay(self, theSvg, theDatumL, theTpt):
-        """Plots all the text associated with the parent and child."""
+    def _plotTextOverlay(self, theSvg, theDatumL, theTpt, idStack):
+        """Plots all the text associated with the parent and child.
+        We write the hidden objects first then the visible objects. This is
+        because the hidden objects are controlled onmouseover/onmouseout on
+        the visible objects and they have to be later in the SVG file for this
+        to work."""
+        self.commentFunctionBegin(
+                    theSvg,
+                    File=self._fileName, Node=self.nodeName)
+        # TODO: Re-think this as it is non-intuitive. Essentially it should not
+        # matter whether the child or the parent node is plotted first but it is
+        # essential that all the 'hidden' DHTML text for any node is written
+        # first, _then_ the 'visible' text that controls that 'hidden' text.
+        # 
         # Child information first
         if len(self._children) > 0 and not self.isRoot:
             self._plotTextOverlayChildren(theSvg, theDatumL, theTpt)
-        # Now me
-        # Filename
-        if not self.isRoot:
-            self._plotTextOverlayFileName(theSvg, theDatumL, theTpt)
         # Histogram
         if self.__mustPlotSelfHistogram():
             # Write a single '?' in the middle
@@ -414,92 +520,114 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 self._plotTextOverlayHistogram(theSvg, myHistDl, theTpt)
         if not self.isRoot:
             self._plotTextOverlayTokenCountTable(theSvg, theDatumL, theTpt)
+            self._plotFileNameStackPopup(theSvg, theDatumL, theTpt, idStack)
+        self.commentFunctionEnd(
+                    theSvg,
+                    File=self._fileName, Node=self.nodeName)
 
     def _plotTextOverlayChildren(self, theSvg, theDatumL, theTpt):
         """Plot text associated with my children to a stream at the
         (self) logical datum point."""
         assert(len(self._children) > 0)
         assert(not self.isRoot)
+        self.commentFunctionBegin(theSvg, File=self._fileName)
         for i, datumChildL in self._enumerateChildren(theDatumL, theTpt):
-            self._plotTextOverlayChild(theSvg, i, datumChildL, theTpt)
+            self._plotWhereWhyHow(theSvg, i, datumChildL, theTpt)
+        self.commentFunctionEnd(theSvg, File=self._fileName)
     
-    def _plotTextOverlayChild(self, theSvg, iChild, theDatumL, theTpt):
-        """Plot description of inclusion of the child to a stream at the
-        (self) logical datum point.
-        Returns the logical datum of the first child."""
+    def _plotWhereWhyHow(self, theSvg, iChild, theDatumL, theTpt):
+        """Plot description of Where/Why/How inclusion of a single child to a
+        stream at the (self) logical datum point."""
         assert(not self.isRoot)
         assert(len(self._children) > 0)
         assert(iChild >=0 and iChild < len(self._children))
+        self.commentFunctionBegin(theSvg, File=self._fileName)
         #myDatumL = theDatumL
         #myDatumL = Coord.newPt(theDatumL, incX=self.FILE_PADDING.prev, incY=None)#self.FILE_PADDING.parent.scale(-1.0))
         myDatumL = self._children[iChild].bb.plotPointSelf(theDatumL)
         # Move logical datum logically 'up' and 'right' by half
-        myDatumL = Coord.newPt(
+#         myDatumL = Coord.newPt(
+#                 myDatumL,
+#                 incX=self._children[iChild].bb.width.scale(0.5),
+#                 incY=self.FILE_PADDING.parent.scale(-0.5),
+#         )
+        myAltTxtPointP = theTpt.pt(Coord.newPt(
                 myDatumL,
                 incX=self._children[iChild].bb.width.scale(0.5),
                 incY=self.FILE_PADDING.parent.scale(-0.5),
-        )
-        myPointP = theTpt.pt(myDatumL)
+        ))
         altTextS = []
-        altTextS.append('Inc: %s#%d' \
+        altTextS.append('Where: %s#%d ' \
                         % (self.nodeName, self._children[iChild].lineNum))
         if len(self._children[iChild].condComp) > 0:
+#             altTextS.append(
+#                 '  Why: %s since: %s ' \
+#                 % (
+#                     str(self._children[iChild].condCompState),
+#                     self._children[iChild].condComp
+#                     )
+#             )
+            assert self._children[iChild].condCompState
             altTextS.append(
-                ' As: %s since: %s' \
+                '  Why: %s ' \
                 % (
-                    str(self._children[iChild].condCompState),
                     self._children[iChild].condComp
                     )
             )
         else:
             altTextS.append(
-                ' As: %s' \
+                '  Why: %s ' \
                     % (str(self._children[iChild].condCompState)
                     )
             )
-        altTextS.append('How: %s' % ', '.join(self._children[iChild].findLogic))
-        self.writeOnMouseOverTextAndAlternate(theSvg, myPointP, theSvg.id, self.POPUP_TEXT, altTextS)
+        altTextS.append('  How: #include %s' % ', '.join(self._children[iChild].findLogic))
+#         self.writeAltTextAndMouseOverText(
+#                 theSvg, myPointP, theSvg.id,
+#                 self.POPUP_TEXT, altTextS, Coord.Dim(20, 'pt'))
+        triggerBoxP = theTpt.boxP(
+            Coord.Box(self._children[iChild].bb.width, self.FILE_PADDING.parent)
+        )
+#         triggerPointP = theTpt.pt(myDatumL)
+        triggerPointP = theTpt.pt(Coord.newPt(
+                myDatumL,
+                incX=self._children[iChild].bb.width,
+                incY=self.FILE_PADDING.parent.scale(-1.0),
+        ))
+        self.writeAltTextAndMouseOverRect(
+            theSvg,
+            theSvg.id,
+            myAltTxtPointP,
+            altTextS,
+            triggerPointP,
+            triggerBoxP,
+        )
+        
+        self.commentFunctionEnd(theSvg, File=self._fileName)
     
     def _plotTextOverlayHistogram(self, theSvg, theHistDl, theTpt):
         """Plot the text associated with a histogram."""
-        myCentreL = Coord.newPt(theHistDl, self._bb.width.scale(0.5), self.HIST_DEPTH.scale(0.5))
-        myId = theSvg.id
-        with  XmlWrite.Element(theSvg, 'defs'):
-            with SVGWriter.SVGText(theSvg, None, 'Verdana', 12,
-                        {
-                            'id'                : myId,
-                            'text-decoration'   : "underline",
-                            #'font-weight'       : "bold",
-                            #'text-anchor'       : "middle",
-                            #'dominant-baseline' : "middle",
-                            'text-anchor'       : "left",
-                            'dominant-baseline' : "middle",
-                        }
-                    ):
-                theSvg.characters(self.POPUP_TEXT)#'?')
-        # Write the <use> element
-        # <use xlink:href="#pre_include" onmouseover="switch_to_alt(evt)" onmouseout="switch_from_alt(evt)" />
-        myPtP = theTpt.pt(myCentreL)
-        useAttrs = {
-            'xlink:href'    : '#%s' % myId, 
-            #'onmouseover'   : "swap_id(evt, \"#%s\")" % self.HIST_LEGEND_ID,
-            #'onmouseout'    : "swap_id(evt, \"#%s\")" % myId,
-            'x'             : SVGWriter.dimToTxt(myPtP.x),
-            'y'             : SVGWriter.dimToTxt(myPtP.y),
+        myCentreL = Coord.newPt(
+            theHistDl, self._bb.width.scale(0.5), self.HIST_DEPTH.scale(0.5))
+        myPointP = theTpt.pt(myCentreL)
+        # TODO: The myPointP.x.value + 2, myPointP.y.value - 2
+        # looks wrong. It is not using theTpt.
+        myAttrs = {
+              'class'       : self.CLASS_RECT_INVIS,
+            'onmouseover'       : "showHistogram(%s, %s)" \
+                % (myPointP.x.value + 3, myPointP.y.value + 2),
+            'onmouseout'    : "hideHistogram()",
         }
-        self._addECMAScriptSwapIdAttrs(useAttrs,
-                                       self.BROWSER,
-                                       "#%s" % self.HIST_LEGEND_ID,
-                                       "#%s" % myId,
-                                       )
-        with  XmlWrite.Element(theSvg, 'use', useAttrs):
+        myWidth = self._bb.width
+        myBox = Coord.Box(myWidth, self.HIST_DEPTH)
+        with SVGWriter.SVGRect(
+                        theSvg,
+                        theTpt.boxDatumP(theHistDl, myBox),
+                        theTpt.boxP(myBox),
+                        myAttrs):
             pass
-
-
-    def _plotTextOverlayFileName(self, theSvg, theDatumL, theTpt):
-        """Writes out the file name at the top with a pop-up with the
-        absolute path."""
-        # Write the file name
+    
+    def _fileNamePoint(self, theDatumL, theTpt):
+        """Returns the point to plot the file name or None."""
         if self._bb.hasSetArea:
             myDatumL = self._bb.plotPointSelf(theDatumL)
             textPointL = theTpt.tdcL(myDatumL, self._bb.box)
@@ -509,95 +637,178 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                     incX=self.FILE_PADDING.prev.scale(0.5),
                     incY=None
                 )
-            textPointP = theTpt.pt(textPointL)
-            #textPointP = theTpt.tdcP(myDatumL, self._bb.box)
-            self.writeOnMouseOverTextAndAlternate(
-                    theSvg,
-                    textPointP,
-                    theId=theSvg.id,
-                    theText=os.path.basename(self.nodeName),
-                    theAltS=[self.nodeName,])
+            return theTpt.pt(textPointL)
+
+    def _fileIdStackToListOfStr(self, theIdStack):
+        """Given a list of alternating file names and line numbers such as:
+        ['root', 3, foo.h, 7, bar.h] this returns a list of strings thus:
+        ['root#3, 'foo.h#7, 'bar.h']"""
+        # Create file stack
+        myAltS = []
+        i = 0
+        while i < len(theIdStack):
+            if i + 1 < len(theIdStack):
+                myAltS.append('%s#%d' % (theIdStack[i], theIdStack[i+1]))
+            else:
+                myAltS.append(theIdStack[i])
+            i += 2
+        return myAltS
+
+    def _plotFileName(self, theSvg, theDatumL, theTpt):
+        """Writes out the file name adjacent to the file box as static text."""
+        self.commentFunctionBegin(theSvg, File=self._fileName)
+        if self._bb.hasSetArea:
+            textPointP = self._fileNamePoint(theDatumL, theTpt)
+            assert textPointP is not None
+            myAttrs = {
+                'class'             : self.CLASS_VERDANA_12,
+                'opacity'           : '1.0',
+            }
+            with SVGWriter.SVGText(theSvg, textPointP, None, None, myAttrs):
+                theSvg.characters(os.path.basename(self.nodeName))
+        self.commentFunctionEnd(theSvg, File=self._fileName)
+
+    def _plotFileNameStackPopup(self, theSvg, theDatumL, theTpt, idStack):
+        """Writes out the file name at the top with a pop-up with the
+        absolute path."""
+        self.commentFunctionBegin(theSvg, File=self._fileName)
+        if self._bb.hasSetArea:
+            textPointP = self._fileNamePoint(theDatumL, theTpt)
+            assert textPointP is not None
+            # Make the trigger box 14 points high to cover the 12 pt text and
+            # 12pts per char in the 
+            triggerBoxP = Coord.Box(
+                Coord.baseUnitsDim(12 * len(os.path.basename(self.nodeName))),
+                Coord.baseUnitsDim(14)
+            )
+            triggerPointP = Coord.newPt(
+                textPointP,
+                triggerBoxP.width.scale(-0.5),
+                triggerBoxP.depth.scale(-0.5),
+            )
+            self.writeAltTextAndMouseOverRect(
+                theSvg,
+                theSvg.id,
+                textPointP,
+                self._fileIdStackToListOfStr(idStack),
+                triggerPointP,
+                triggerBoxP,
+            )
+        self.commentFunctionEnd(theSvg, File=self._fileName)
 
     def _plotTextOverlayTokenCountTable(self, theSvg, theDatumL, theTpt):
         """Plots the token count table as text+alternate text."""
         assert(not self.isRoot)
+        self.commentFunctionBegin(theSvg, File=self._fileName)
         myDatumL = self._bb.plotPointSelf(theDatumL)
         # Move to center
         myDatumL = Coord.newPt(
                 myDatumL,
-                incX=self._bb.width.scale(0.5),
-                incY=self._bb.depth.scale(0.5))
-        # Make the three datum points: Me, and if necessary my children and combined
-        # Plot these in right to left so each pop-up masks other text
+                incX=self._bb.width,#.scale(0.5),
+                incY=None)
+#                 incY=self._bb.depth.scale(0.5))
+        triggerBoxL = self._bb.box
+        if self.__mustPlotSelfHistogram():
+            myDatumL = Coord.newPt(myDatumL, None, self.HIST_DEPTH)
+            triggerBoxL = Coord.Box(triggerBoxL.width, triggerBoxL.depth - self.HIST_DEPTH)
+            if self.__mustPlotChildHistogram():
+                myDatumL = Coord.newPt(myDatumL, None, self.HIST_DEPTH)
+                triggerBoxL = Coord.Box(triggerBoxL.width, triggerBoxL.depth - self.HIST_DEPTH)
         myDatumP = theTpt.pt(myDatumL)
+        altTextS = self._altTextsForTokenCount()
+        self.writeAltTextAndMouseOverRect(
+            theSvg, theSvg.id, myDatumP, altTextS, myDatumP, theTpt.boxP(triggerBoxL),
+        )
+        self.commentFunctionEnd(theSvg, File=self._fileName)
+    
+    def _altTextsForTokenCount(self):
+        """Returns a list of strings that are the alternate text for token counts."""
+        assert(not self.isRoot)
         if len(self._children) > 0:
-            nudgeDim = Coord.Dim(20, 'pt')
-            myDatumPChild = Coord.newPt(myDatumP, incX=nudgeDim, incY=None)
-            myDatumPTotal = Coord.newPt(myDatumPChild, incX=nudgeDim, incY=None)
             myCounterTotal = PpTokenCount.PpTokenCount()
             myCounterTotal += self.tokenCounter
             myCounterTotal += self.tokenCounterChildren
-            # Plot total
-            altTextS = self._altTextsForTokenCount('Me and my children:', myCounterTotal)
-            self.writeOnMouseOverTextAndAlternate(theSvg,
-                                                  myDatumPTotal,
-                                                  theSvg.id,
-                                                  self.POPUP_TEXT,
-                                                  altTextS)
-            # Plot for children
-            altTextS = self._altTextsForTokenCount('My children:', self.tokenCounterChildren)
-            self.writeOnMouseOverTextAndAlternate(theSvg,
-                                                  myDatumPChild,
-                                                  theSvg.id,
-                                                  self.POPUP_TEXT,
-                                                  altTextS)
-        # Always do me
-        altTextS = self._altTextsForTokenCount('Just me:', self.tokenCounter)
-        self.writeOnMouseOverTextAndAlternate(theSvg,
-                                              myDatumP,
-                                              theSvg.id,
-                                              self.POPUP_TEXT,
-                                              altTextS)
-    
-    def _altTextsForTokenCount(self, theTitle, theCounter):
-        """Returns a list of strings that are the alternate text for token
-        counts of self."""
-        assert(not self.isRoot)
         FIELD_WIDTH = 7
         myTokTypeS = [t[0] for t in self.HIST_PP_TOKEN_TYPES_COLOURS]
         typeLen = max([len(t) for t in myTokTypeS])
-        altTextS = [theTitle,]
-        altTextS.append('%*s %*s [%*s]' \
-                        % (typeLen,
-                           'Type',
-                           FIELD_WIDTH,
-                           'All',
-                           FIELD_WIDTH,
-                           'Sig.',
-                           )
-                        )
-        cntrAll = cntrSig = 0
-        for t in myTokTypeS:
-            altTextS.append('%*s %*d [%*d]' \
+        altTextS = []
+        if len(self._children) > 0:
+            altTextS.append('%*s %*s [%*s] %*s [%*s] %*s [%*s]' \
                             % (typeLen,
-                               t,
+                               'Type',
                                FIELD_WIDTH,
-                               theCounter.tokenCount(t, isAll=True),
+                               'Me',
                                FIELD_WIDTH,
-                               theCounter.tokenCount(t, isAll=False),
+                               'Me',
+                               FIELD_WIDTH,
+                               'Child',
+                               FIELD_WIDTH,
+                               'Child',
+                               FIELD_WIDTH,
+                               'All',
+                               FIELD_WIDTH,
+                               'All',
                                )
                             )
-            cntrAll += theCounter.tokenCount(t, isAll=True)
-            cntrSig += theCounter.tokenCount(t, isAll=False)
-        altTextS.append('%*s %*d [%*d]' \
-                        % (typeLen,
-                           'Total',
-                           FIELD_WIDTH,
-                           cntrAll,
-                           FIELD_WIDTH,
-                           cntrSig,
-                           )
-                        )
+        else:
+            altTextS.append('%*s %*s [%*s]' \
+                            % (typeLen,
+                               'Type',
+                               FIELD_WIDTH,
+                               'Me',
+                               FIELD_WIDTH,
+                               'Me',
+                               )
+                            )
+#         cntrAll = cntrSig = 0
+        cntrTotalS = [0,] * 6
+        for t in myTokTypeS:
+            cntrTotalS[0] += self.tokenCounter.tokenCount(t, isAll=True)
+            cntrTotalS[1] += self.tokenCounter.tokenCount(t, isAll=False)
+            line = '%*s %*d [%*d]' \
+                                % (typeLen,
+                                   t,
+                                   FIELD_WIDTH,
+                                   self.tokenCounter.tokenCount(t, isAll=True),
+                                   FIELD_WIDTH,
+                                   self.tokenCounter.tokenCount(t, isAll=False),
+                                   )
+            if len(self._children) > 0:
+                line += ' %*d [%*d] %*d [%*d]' \
+                                % (FIELD_WIDTH,
+                                   self.tokenCounterChildren.tokenCount(t, isAll=True),
+                                   FIELD_WIDTH,
+                                   self.tokenCounterChildren.tokenCount(t, isAll=False),
+                                   FIELD_WIDTH,
+                                   myCounterTotal.tokenCount(t, isAll=True),
+                                   FIELD_WIDTH,
+                                   myCounterTotal.tokenCount(t, isAll=False),
+                                   )
+                cntrTotalS[2] += self.tokenCounterChildren.tokenCount(t, isAll=True)
+                cntrTotalS[3] += self.tokenCounterChildren.tokenCount(t, isAll=False)
+                cntrTotalS[4] += myCounterTotal.tokenCount(t, isAll=True)
+                cntrTotalS[5] += myCounterTotal.tokenCount(t, isAll=False)
+            altTextS.append(line)
+        line = '%*s %*d [%*d]' \
+            % (typeLen,
+               'Total',
+               FIELD_WIDTH,
+               cntrTotalS[0],
+               FIELD_WIDTH,
+               cntrTotalS[1],
+               )
+        if len(self._children) > 0:
+            line += ' %*d [%*d] %*d [%*d]' \
+                            % (FIELD_WIDTH,
+                               cntrTotalS[2],
+                               FIELD_WIDTH,
+                               cntrTotalS[3],
+                               FIELD_WIDTH,
+                               cntrTotalS[4],
+                               FIELD_WIDTH,
+                               cntrTotalS[5],
+                               )
+        altTextS.append(line)
         return altTextS
     
     def __mustPlotSelfHistogram(self):
@@ -641,55 +852,63 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
             Coord.Dim(0.0, self.COMMON_UNITS),
             Coord.Dim(0.0, self.COMMON_UNITS),
         )
-        with XmlWrite.Element(theSvg, 'defs'):
-            with SVGWriter.SVGGroup(theSvg, {'id' : self.HIST_LEGEND_ID}):
-                # Outline rectangle
-                with SVGWriter.SVGRect(
-                            theSvg,
-                            myDatumP,
-                            Coord.Box(
-                                Coord.Dim(48.0, self.COMMON_UNITS),
-                                Coord.Dim(40.0, self.COMMON_UNITS),
-                            ),
-                            { 'fill' : self.ALT_RECT_FILL },
-                        ):
-                    pass
-                myDatumP = Coord.newPt(myDatumP,
-                        incX=Coord.Dim(2.0, self.COMMON_UNITS),
-                        incY=Coord.Dim(2.0, self.COMMON_UNITS),
-                    )
-                myTokIdxS = list(range(len(self.HIST_PP_TOKEN_TYPES_COLOURS)))
-                if theTpt.positiveSweepDir:
-                    myTokIdxS.reverse()
-                for iC in myTokIdxS:
-                    myBox = Coord.Box(self.HIST_DEPTH, self.HIST_DEPTH)
-                    # Convert to physical and plot
-                    with SVGWriter.SVGRect(
-                            theSvg,
-                            myDatumP,
-                            myBox,
-                            {
-                                'fill'         : self.HIST_PP_TOKEN_TYPES_COLOURS[iC][1],
-                                'stroke'       : self.HIST_RECT_COLOUR_STROKE,
-                                'stroke-width' : self.HIST_RECT_STROKE_WIDTH,
-                            },
-                        ):
-                        pass
-                    myTextDatumP = Coord.newPt(myDatumP,
-                                           incX=self.HIST_DEPTH+Coord.Dim(2.0, self.COMMON_UNITS),
-                                           incY=self.HIST_DEPTH.scale(0.5),
-                        )
-                    with SVGWriter.SVGText(theSvg, myTextDatumP, 'Verdana', 9,
-                                {
-                                    'dominant-baseline'       : "middle",
-                                }
-                            ):
-                        theSvg.characters(self.HIST_PP_TOKEN_TYPES_COLOURS[iC][0])
-                    # Increment the datum
-                    myDatumP = Coord.newPt(
+        with SVGWriter.SVGGroup(theSvg, {'id' : self.HIST_LEGEND_ID, 'opacity' : '0.0'}):
+            idVal = 0
+            # Outline rectangle
+            with SVGWriter.SVGRect(
+                        theSvg,
                         myDatumP,
-                        incX=None,
-                        incY=self.HIST_DEPTH)
+                        Coord.Box(
+                            Coord.Dim(48.0, self.COMMON_UNITS),
+                            Coord.Dim(40.0, self.COMMON_UNITS),
+                        ),
+                        {
+                            'fill' : self.ALT_RECT_FILL,
+                            'id' : '%d' % idVal,
+                        },
+                    ):
+                idVal += 2
+            myDatumP = Coord.newPt(myDatumP,
+                    incX=Coord.Dim(2.0, self.COMMON_UNITS),
+                    incY=Coord.Dim(2.0, self.COMMON_UNITS),
+                )
+            myTokIdxS = list(range(len(self.HIST_PP_TOKEN_TYPES_COLOURS)))
+            if theTpt.positiveSweepDir:
+                myTokIdxS.reverse()
+            for iC in myTokIdxS:
+                myBox = Coord.Box(self.HIST_DEPTH, self.HIST_DEPTH)
+                # Convert to physical and plot
+                with SVGWriter.SVGRect(
+                        theSvg,
+                        myDatumP,
+                        myBox,
+                        {
+                            'fill'         : self.HIST_PP_TOKEN_TYPES_COLOURS[iC][1],
+                            'stroke'       : self.HIST_RECT_COLOUR_STROKE,
+                            'stroke-width' : self.HIST_RECT_STROKE_WIDTH,
+                            'id'           : '%d' % idVal
+                        },
+                    ):
+                    idVal += 2
+                myTextDatumP = Coord.newPt(myDatumP,
+                                       incX=self.HIST_DEPTH+Coord.Dim(2.0, self.COMMON_UNITS),
+                                       incY=self.HIST_DEPTH.scale(0.5),
+                    )
+                with SVGWriter.SVGText(theSvg, myTextDatumP, None, None,
+                            {
+                                'font-family'       : 'Verdana',
+                                'font-size'         : '10',
+                                'dominant-baseline' : 'middle',
+                                'id'                : '%d' % idVal,
+                            }
+                        ):
+                    theSvg.characters(self.HIST_PP_TOKEN_TYPES_COLOURS[iC][0])
+                    idVal += 2
+                # Increment the datum
+                myDatumP = Coord.newPt(
+                    myDatumP,
+                    incX=None,
+                    incY=self.HIST_DEPTH)
         
     def _plotChevron(self, theSvg, theDl, theTpt):
         """Plots a wedge to represent the relative number of tokens in me and
@@ -750,3 +969,79 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                                                                ):
                 pass
             j += 1
+
+#     def writeAltTextAndMouseOverText(
+#                         self, theSvg, thePoint, theId, theText, theAltS, yOffs):
+#         """Writes out the alternate text to the SVG stream immediately and returns
+#         a tuple of (thePoint, 'Verdana', 12, myAttrs, theText) to write out later
+#         (so it is on top)."""
+#         self._writeAlternateText(theSvg, thePoint, theId, theText, theAltS, yOffs)
+#         # <text id="original" font-family="Verdana" font-size="12" text-anchor="middle" x="250" y="250">Original text.</text>
+#         myAttrs = {
+#             'id'                : 't%s' % theId,
+#             'class'             : self.CLASS_VERDANA_12,
+#             'opacity'           : '1.0',
+# #             #'font-weight'       : "bold",
+# #             'text-decoration'   : "underline",
+# #             'text-anchor'       : "middle",
+# #             'dominant-baseline' : "middle",
+# #             #'dominant-baseline' : "text-after-edge",
+#             'onmouseover'       : "swapOpacity('t%s', 't%s')" \
+#                         % (theId, theId+self.ALT_ID_SUFFIX),
+#             'onmouseout'        : "swapOpacity('t%s', 't%s')" \
+#                         % (theId, theId+self.ALT_ID_SUFFIX),
+#         }
+# #         self._addECMAScriptMouseOverAttrs(myAttrs, theId, theId+self.ALT_ID_SUFFIX)
+#         self._triggerText.append((thePoint, None, None, myAttrs, theText))
+    
+    def writeAltTextAndMouseOverRect(
+                self, theSvg, theId, theAltPt, theAltS, theTrigPt, theTrigRect):
+        """Composes and writes the (pop-up) alternate text.
+        Also writes a trigger rectangle."""
+        # Write a grouping element and give it the alternate ID
+        with SVGWriter.SVGGroup(theSvg, {'id' : 't%s%s' % (theId, self.ALT_ID_SUFFIX), 'opacity' : '0.0'}):
+            altFontSize = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['size']
+            altFontLenFactor = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['lenFactor']
+            altFontHeightFactor = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['heightFactor']
+            # Compute masking box for alternate
+            maxChars = max([len(s) for s in theAltS])
+            # Take around 80% of character length
+            boxWidth = Coord.Dim(altFontSize * maxChars * altFontLenFactor, 'pt')
+            if len(theAltS) < 2:
+                boxHeight = Coord.Dim(altFontSize * 2, 'pt')
+            else:
+                boxHeight = Coord.Dim(altFontSize * len(theAltS) * altFontHeightFactor, 'pt')
+                
+            boxAttrs = { 'fill' : self.ALT_RECT_FILL }
+            with SVGWriter.SVGRect(
+                    theSvg,
+                    theAltPt,
+                    Coord.Box(boxWidth, boxHeight),
+                    boxAttrs,
+                ):
+                pass
+            # As the main text is centered and the alt text is left
+            # justified we need to move the text plot point left by a bit.
+            myAltTextPt = Coord.newPt(
+                theAltPt,
+                incX=Coord.Dim(1 * altFontSize * 3 * altFontLenFactor / 2.0, 'pt'),
+                incY=Coord.Dim(12, 'pt'),
+            )
+            with SVGWriter.SVGText(theSvg, myAltTextPt, 'Courier', altFontSize,
+                        {
+                            'font-weight'       : "normal",
+                        }
+                    ):
+                self._writeStringListToTspan(theSvg, myAltTextPt, theAltS)
+        # Add the trigger rectangle for writing on finalise
+        boxAttrs = {
+            'class' : self.CLASS_RECT_INVIS,
+            'id'                : 't%s' % theId,
+            'onmouseover'       : "swapOpacity('t%s', 't%s')" \
+                        % (theId, theId+self.ALT_ID_SUFFIX),
+            'onmouseout'        : "swapOpacity('t%s', 't%s')" \
+                        % (theId, theId+self.ALT_ID_SUFFIX),
+        }
+        self._triggerS.append((theTrigPt, theTrigRect, boxAttrs))
+#         with SVGWriter.SVGRect(theSvg, theTrigPt, theTrigRect, boxAttrs):
+#             pass

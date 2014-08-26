@@ -108,51 +108,51 @@ and loads of other things.
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
         myFigr = myLexer.fileIncludeGraphRoot
-        print('FileIncludeGraph:')
-        print(myFigr)
+#         print('FileIncludeGraph:')
+#         print(myFigr)
         # WARN: excape \b (two places on last two lines
         expGraph = """src/spam.c [32, 24]:  True "" ""
 000002: #include usr/spam.h
-        usr/spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+  usr/spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
 000004: #include usr/inc/eggs.h
-        usr/inc/eggs.h [23, 15]:  True "" "['"inc/eggs.h"', 'CP=None', 'usr=usr']"
+  usr/inc/eggs.h [23, 15]:  True "" "['"inc/eggs.h"', 'CP=None', 'usr=usr']"
 000006: #include sys/chips.h
-        sys/chips.h [4, 3]:  True "" "['<chips.h>', 'sys=sys']"
+  sys/chips.h [4, 3]:  True "" "['<chips.h>', 'sys=sys']"
 000008: #include sys/inc/beans.h
-        sys/inc/beans.h [44, 27]:  True "" "['<inc/beans.h>', 'sys=sys']\""""
-#        print('Exp FileIncludeGraph:')
-#        print(expGraph)
-#        self.maxDiff = None
+  sys/inc/beans.h [44, 27]:  True "" "['<inc/beans.h>', 'sys=sys']\""""
+#         print('Exp FileIncludeGraph:')
+#         print(expGraph)
+#         self.maxDiff = None
         #for i, c in enumerate(str(myFigr)):
         #    if c != expGraph[i]:
         #        print '[%d] %s != %s' % (i, c, expGraph[i])
         self.assertEqual(expGraph, str(myFigr))
-        print()
-        myFigr.dumpGraph()
+#         print()
+#         myFigr.dumpGraph()
         self.assertEqual(expGraph, str(myFigr))
         # Now visit the graph
         myVis = FileIncludeGraph.FigVisitorTree(IncGraphSVG.SVGTreeNodeMain)
         myFigr.acceptVisitor(myVis)
         # Tree is now a graph of IncGraphSVG.SVGTreeNode
         myIgs = myVis.tree()
-        print()
-        print('myIgs')
+#         print()
+#         print('myIgs')
         #print myIgs
-        myIgs.dumpToStream()
-        print()
+#         myIgs.dumpToStream()
+#         print()
         # Create a plot configuration
         myTpt = TreePlotTransform.TreePlotTransform(myIgs.plotCanvas, 'left', '+')
         mySvg = io.StringIO()
         myIgs.plotToFileObj(mySvg, myTpt)
-        print()
-        print(mySvg.getvalue())
+#         print()
+#         print(mySvg.getvalue())
         for aPos in myTpt.genRootPos():
             for aDir in myTpt.genSweepDir():
                 aTpt = TreePlotTransform.TreePlotTransform(myIgs.plotCanvas, aPos, aDir)
                 mySvg = io.StringIO()
                 myIgs.plotToFileObj(mySvg, aTpt)
-                print()
-                print(mySvg.getvalue())
+#                 print()
+#                 print(mySvg.getvalue())
     
     
     def test_05(self):

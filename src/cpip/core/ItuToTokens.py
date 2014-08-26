@@ -159,7 +159,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
         logging.debug('ItuToTokens._translatePhase_2(): end.')
 
     def _translatePhase_3(self):
-        """Performs translation phase two. Replaces comments and decomposes
+        """Performs translation phase three. Replaces comments and decomposes
         stream into preprocessing tokens."""
         logging.debug('ItuToTokens._translatePhase_3(): start.')
         # Note this is similar to the code in self.genLexPptokenAndSeqWs()
@@ -196,6 +196,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                                 'string-literal',
                                 'non-whitespace'
                             )
+#                        print('_translatePhase_3', self._cppTokType, myIsTerm, ''.join(myBg[ofsIdx:ofsIdx+sliceLen]))
                         self._mps.setWordType(self._cppTokType, isTerm=myIsTerm)
                     ofsIdx += sliceLen
                 else:

@@ -119,22 +119,16 @@ __initPptokenMaps()
 # Global functions for preprocessing tokens.
 ############################################
 def tokensStr(theTokens, shortForm=True):
-    """Given a list of tokens this returns them as a string."""
+    """Given a list of tokens this returns them as a string.
+    If shortForm is True then the lexical string is returned.
+    If False then the PpToken representations separated by ' |' is returned.
+    e.g. 'PpToken(t="f", tt=identifier, line=True, prev=False, ?=False) | ...'"""
     assert(theTokens is not None)
     if shortForm:
         strList = [t.t for t in theTokens]
         return ''.join(strList)
     strList = [str(t) for t in theTokens]
     return ' | '.join(strList)
-    #strList = []
-    #for t in theTokens:
-    #    if t is None:
-    #        strList.append('None')
-    #    else:
-    #        strList.append(t.t)
-    #if shortForm:
-    #    return ''.join(strList)
-    #return ' | '.join(strList)
 
 #################################################
 # End: Global functions for preprocessing tokens.
@@ -148,7 +142,7 @@ class PpToken(object):
     a string. Internally tt is stored as an enumerated integer.
     If the token is an identifier then it is eligible for replacement
     unless marked otherwise."""
-    #: Representation of a single wqhitespace
+    #: Representation of a single whitespace
     SINGLE_SPACE = ' '
     #: Operators that are replaced directly by Python equivalents for constant evaluation
     WORD_REPLACE_MAP = {
@@ -271,17 +265,34 @@ class PpToken(object):
         See ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4
         i.e. section 16.1-4 and: ISO/IEC 9899:1999 (E) 6.10.1 Conditional
         inclusion sub-section 3 i.e. section 6.10.1-3"""
-        if self._tt == NAME_ENUM['pp-number']:
-            # Remove any suffix characters from numbers
-            # NOTE: This does not enforce strict accuracy (floats can only have
-            # one suffix, integers up to two) but it assumes that this PpToken
-            # has been created by the PpTokeniser that does enforce those rules.
-            s = 0
-            while s > -2 and len(self._t) > 1-s and self._t[s-1] in ('f', 'F', 'l', 'L', 'u', 'U'):
-                s -= 1
-            if s != 0:
-                return self._t[:s]
-            return self._t                
+        # TODO: This test of 'concat' is a flakey and to get round a Linux problem
+        # Need to review the whole 'concat' thing. Probably re-classify it.
+        if self._tt == NAME_ENUM['pp-number'] or self._tt == NAME_ENUM['concat']:
+            # Decompose the number into something that Python can evaluate.
+            # This means removing suffixes like 'U' and 'L' for integers
+            # and 'F' and 'L' for floats.
+            # See:
+            # ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon]
+            # ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon]
+            #
+            # Here we detect if it is a float by the mandatory presence of '.'
+            s = self._t.lower()
+            endI = 0
+            if '.' in s:
+                # Float
+                for fSuffix in ('fl', 'lf', 'f', 'l'):
+                    if s.endswith(fSuffix):
+                        endI = -len(fSuffix)
+                        break
+            else:
+                # Integer
+                for iSuffix in ('ul', 'lu', 'u', 'l'):
+                    if s.endswith(iSuffix):
+                        endI = -len(iSuffix)
+                        break
+            if endI != 0:
+                return self._t[:endI]
+            return self._t
         if self.isWs():
             # Remove newlines, make whitespace runs a single space
             self.shrinkWs()

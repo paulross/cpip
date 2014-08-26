@@ -50,6 +50,9 @@ DUMMY_FILE_NAME = None
 #: In the graph the line number is ignored for dummy roots and this one
 #: used instead
 DUMMY_FILE_LINENUM = -1
+# Indentation of file include graph as text
+DEFAULT_TEXT_INDENT = 2
+
 
 class FileIncludeGraphRoot(object):
     """Root class of the file include graph. This is used when there is a
@@ -495,7 +498,7 @@ class FileIncludeGraph(object):
                                self._graph[aLineNum].fileName,
                                )
                             )
-            retList.append(self._graph[aLineNum]._retString(theIndent+8))
+            retList.append(self._graph[aLineNum]._retString(theIndent+DEFAULT_TEXT_INDENT))
         return '\n'.join(retList)
     
     def dumpGraph(self, theS=sys.stdout, theI=''):

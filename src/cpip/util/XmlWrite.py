@@ -139,18 +139,18 @@ class XmlStream(object):
                   "'"   : '&apos;', 
                   '"'   : '&quot;',
                   }
-    def __init__(self, theFout, theEnc='utf-8', theDtdLocal=None, theId=0):
+    def __init__(self, theFout, theEnc='utf-8', theDtdLocal=None, theId=0, mustIndent=True):
         """Initialise with a writable file like object or a file path.
         
-        theFout - The file-like object or a string. If the latter it will be
-        closed on __exit__.
+        theFout - The file-like object or a path as a string. If the latter it
+        will be closed on __exit__.
         
         theEnc - The encoding to be used.
         
         theDtdLocal - Any local DTD as a string.
         
         id - An integer value to use as an ID string."""
-        if type(theFout) == type(''):
+        if isinstance(theFout, str):
             self._file = open(theFout, 'w')
             self._fileClose = True
         else:
@@ -164,6 +164,7 @@ class XmlStream(object):
         self._canIndentStk = []
         # An integer that represents a unique ID
         self._intId = theId
+        self._mustIndent = mustIndent
     
     @property
     def id(self):
@@ -202,12 +203,13 @@ class XmlStream(object):
         for k in kS:
             self._file.write(' %s="%s"' % (k, self._encode(attrs[k])))
         self._inElem = True
-        self._canIndentStk.append(True)
+        self._canIndentStk.append(self._mustIndent)
         self._elemStk.append(name)
 
     def characters(self, theString):
         """Encodes the string and writes it to the output."""
         self._closeElemIfOpen()
+#         print('WTF', repr(self._encode(theString)))
         self._file.write(self._encode(theString))
         # mixed content - don't indent
         self._flipIndent(False)
@@ -219,9 +221,11 @@ class XmlStream(object):
         # mixed content - don't indent
         self._flipIndent(False)
 
-    def comment(self, theS):
+    def comment(self, theS, newLine=False):
         """Writes a comment to the output stream."""
         self._closeElemIfOpen()
+        if newLine:
+            self._indent()
         self._file.write('<!--%s-->' % self._encode(theS))
         # mixed content - don't indent
         #self._flipIndent(False)
@@ -247,7 +251,7 @@ class XmlStream(object):
             logging.error(errMsg)
         myName = self._elemStk.pop()
         if self._inElem:
-            self._file.write('/>')
+            self._file.write(' />')
             self._inElem = False
         else:
             self._indent()
@@ -266,12 +270,42 @@ class XmlStream(object):
             </script>
         """
         self.startElement('script', {'type' : "text/ecmascript"})
+        self.writeCDATA(theScript)
+        self.endElement('script')
+    
+    def writeCDATA(self, theData):
+        """Writes a CDATA section.
+        
+        Example::
+        
+            <![CDATA[
+            ...
+            ]]>
+        """
         self._closeElemIfOpen()
         self.xmlSpacePreserve()
-        self._file.write('\n//<![CDATA[\n')
-        self._file.write(theScript)
-        self._file.write('\n// ]]>\n')
-        self.endElement('script')
+        self._file.write('\n<![CDATA[\n')
+        self._file.write(theData)
+        self._file.write('\n]]>\n')
+    
+    def writeCSS(self, theCSSMap):
+        """Writes a style sheet as a CDATA section. Expects a dict of dicts.
+        
+        Example::
+        
+            <style type="text/css"><![CDATA[
+                ...
+            ]]></style>
+        """
+        self.startElement('style', {'type' : "text/css"})
+        theLines = []
+        for style in sorted(theCSSMap.keys()):
+            theLines.append('%s {' % style)
+            for attr in sorted(theCSSMap[style].keys()):
+                theLines.append('%s : %s;' % (attr, theCSSMap[style][attr]))
+            theLines.append('}')
+        self.writeCDATA('\n'.join(theLines))
+        self.endElement('style')
     
     def _indent(self, offset=0):
         if self._canIndent:
@@ -284,9 +318,11 @@ class XmlStream(object):
             self._inElem = False
 
     def _encode(self, theStr):
-        # TODO: This code does not seem to handle theStr bytes objects with '\x00' in them for example
+        # TODO: This code does not seem to handle theStr bytes objects with
+        # '\x00' in them for example
         retL = []
         for c in theStr:
+#             print(repr(c))
             try:
                 retL.append(self.ENTITY_MAP[c])
             except KeyError:
@@ -295,6 +331,7 @@ class XmlStream(object):
                 #retL.append(u.encode('ascii', 'xmlcharrefreplace'))
                 # Python 3.x code
                 retL.append(c)
+#         print(retL)
         return ''.join(retL)#.encode(self._enc, 'xmlcharrefreplace')
     
     def __enter__(self):

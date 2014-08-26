@@ -68,15 +68,24 @@ def writeHtmlFileLink(theS, theSrcPath, theLineNum, theText='', theClass=None):
             else:
                 with XmlWrite.Element(theS, 'span', {'class' : theClass}):
                     theS.characters(theText)
-                
-def writeHtmlFileAnchor(theS, theLineNum, theText='', theClass=None):
+
+def writeCharsAndSpan(theS, theText, theSpan):
+    assert theText
+    if theSpan is None:
+        theS.characters(theText)
+    else:
+        with XmlWrite.Element(theS, 'span', {'class' : theSpan}):
+            theS.characters(theText)
+
+def writeHtmlFileAnchor(theS, theLineNum, theText='', theClass=None, theHref=None):
     with XmlWrite.Element(theS, 'a', {'name' : "%d" % theLineNum}):
-        if theText:
-            if theClass is None:
-                theS.characters(theText)
-            else:
-                with XmlWrite.Element(theS, 'span', {'class' : theClass}):
-                    theS.characters(theText)
+        pass
+    if theText:
+        if theHref is None:
+            writeCharsAndSpan(theS, theText, theClass)
+        else:
+            with XmlWrite.Element(theS, 'a', {'href' : theHref}):
+                writeCharsAndSpan(theS, theText, theClass)
 
 def pathSplit(p):
     """Split a path into its components."""
@@ -173,16 +182,16 @@ def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
     theKvS - A list of pairs (file_path, value).
     tableStyle - The style used for the table.
     fnTd - A callback function that is executed for a <td> element when
-    there is a non-None value. This is called with the following arguments:
-    theS - The HTML stream.
-    attrs - A map of attrs that include the rowspac/colspan for the <td>
-    k - The key as a list of path components.
-    v - The value given by the caller.
+        there is a non-None value. This is called with the following arguments:
+            theS - The HTML stream.
+            attrs - A map of attrs that include the rowspan/colspan for the <td>
+            k - The key as a list of path components.
+            v - The value given by the caller.
     """
     myDict = DictTree.DictTreeHtmlTable(valueType)
     for k, v in theKvS:
         myDict.add(pathSplit(k), v)
-    # Propogate table class attribute
+    # Propagate table class attribute
     with XmlWrite.Element(theS, 'table', {'class' : tableStyle}):
         for anEvent in myDict.genColRowEvents():
             if anEvent == myDict.ROW_OPEN:
@@ -206,23 +215,5 @@ def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
                     with XmlWrite.Element(theS, 'td', myTdAttrs):
                         # Write out part of the file name
                         theS.characters(k[-1])
-#===============================================================================
-#                        if includeKeyTail:
-#                            theS.characters('%s:' % k[-1])                        
-#                        # Output depending on the type of the value
-#                        if type(v) == types.ListType:
-#                            for h, n in v:
-#                                theS.characters(' ')
-#                                with XmlWrite.Element(theS, 'a', {'href' : h}):
-#                                    # Write the nav text
-#                                    theS.characters('%s' % n)
-#                        elif type(v) == types.TupleType and len(v) == 2:
-#                            with XmlWrite.Element(theS, 'a', {'href' : v[0]}):
-#                                # Write the nav text
-#                                theS.characters(v[1])
-#                        else:
-#                            # Treat as string
-#                            theS.characters(str(v))
-#===============================================================================
     # Write: </table>
 

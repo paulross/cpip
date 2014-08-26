@@ -109,6 +109,8 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import logging
 import collections
+import bisect
+
 from cpip import ExceptionCpip
 
 CPP_COND_DIRECTIVES = ('if', 'ifdef', 'ifndef', 'elif', 'else', 'endif')
@@ -175,6 +177,12 @@ class ConditionalState(object):
         """Returns boolean state of self."""
         assert(len(self._condList) > 0)
         return self._state
+    
+    @property
+    def hasBeenTrue(self):
+        """Return True if the state has been True at any time in the lifetime
+        of this object."""
+        return self._hasBeenTrue
 
     def flip(self):
         """Inverts the boolean such as for #else directive."""
@@ -387,6 +395,17 @@ class CppCond(object):
             if not anObj.state:
                 return False
         return True
+    
+    def hasBeenTrueAtCurrentDepth(self):
+        """Return True if the ConditionalState at the current depth has ever been
+        True. This is used to decide whether to evaluate #elif expressions. They
+        don't need to be if the ConditionalState has already been True, and in
+        fact, the C Rationale (6.10) says that bogus #elif expressions should
+        _not_ be evaluated in this case - i.e. ignore syntax errors.""" 
+        if len(self._stateStack) == 0:
+            # An empty stack is always True
+            return True
+        return self._stateStack[-1].hasBeenTrue
     #========================
     # End: Determining state.
     #========================
@@ -395,8 +414,12 @@ class CppCond(object):
 # Section: Graph of conditional preprocessing directives.
 #========================================================
 # Simple POD for state where:
-# file - The file ID
-# line - The line number of the file
+# fileId - The file ID
+# lineNum - The line number of the file
+# tuIndex - See PpLexer that generates this which has this documentation:
+#     Integer counter that indicates where in the Translation Unit we are.
+#     This increases monotonically and approximates to the size of the
+#     Translation Unit seen so far.
 # state - Boolean True/False/None
 # const_expr - A constant-expression as a string or None
 # None is used for #else and #elif
@@ -511,7 +534,7 @@ class CppCondGraph(object):
         self._ifSectS[-1].oEndif(theFlc, theTuIdx, theBool)
 
 class CppCondGraphNode(object):
-    """Base class for all nodes in the CppCondGraph.""" 
+    """Base class for all nodes in the CppCondGraph."""
     # Number of spaces to pad out the text dump
     DUMP_PAD_SPACES = 4
     def __init__(self, theCppDirective, theFileLineCol, theTuIdx, theBool, theConstExpr=None):
@@ -680,7 +703,16 @@ class CppCondGraphNode(object):
         self._childIfSectS[-1].oEndif(theFlc, theTuIdx, theBool)
 
 class CppCondGraphIfSection(object):
+    """Class that represents a conditionally compiled section starting with
+    #if... and ending with #endif.""" 
     def __init__(self, theIfCppD, theFlc, theTuIdx, theBool, theCe):
+        """Constructor with:
+        theIfCppD - A string, one of '#if', '#ifdef', '#ifndef'.
+        theFlc - a FileLineColumn object that identifies the position in the file.
+        theTuIndex - An integer that represents the position in the translation unit.
+        theBool - The current state of the conditional stack.
+        theCe - The constant expression to be evaluated as a string.
+        """
         super(CppCondGraphIfSection, self).__init__()
         assert(theIfCppD in CPP_COND_IF_DIRECTIVES)
         # A list of sibling CppCondGraphNode objects representing
@@ -792,3 +824,117 @@ class CppCondGraphIfSection(object):
         else:
             # Otherwise append to me, this makes self.isSectionComplete == True
             self._siblingNodeS.append(CppCondGraphNode('endif', theFlc, theTuIdx, theBool))
+
+class LineConditionalInterpretation(object):
+    """Class that represents the conditional compilation state of every line in
+    a file. This takes a list of [(line_num, boolean), ...] and interprets
+    individual line numbers as to whether they are compiled or not.
+    If the same file is included twice with a different macro environment then
+    it is entirely possible that line_num is not monotonic.
+    We have to sort theList by line_num and if there are duplicate line_num
+    with different boolean values then the conditional compilation state at
+    then point is ambiguos.
+    """
+    def __init__(self, theList):
+        self._lines = []
+        self._bools = []
+        # Only keep unique values then sort, this means we might have:
+        # [(10, False), (10, True), ...]
+        for l, b in sorted(set(theList)):
+            self._lines.append(l)
+            self._bools.append(b)
+            
+    def isCompiled(self, lineNum):
+        """Returns 1 if this line is compiled, 0 if not or -1 if it is ambiguos
+        i.e. sometimes it is and somtimes not when multiply included."""
+        idx = bisect.bisect_right(self._lines, lineNum)
+        if idx == 0:
+            raise ValueError('LineConditionInterpretation.isCompiled(): Can not find %s in %s' % (lineNum, self._lines))
+        idx -= 1
+        if idx > 0 \
+        and self._lines[idx-1] == self._lines[idx] \
+        and self._bools[idx-1] != self._bools[idx]:
+            return -1
+        return 1 if self._bools[idx] else 0
+    
+    def __str__(self):
+        return str(zip(self._lines, self._bools))
+
+class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
+    """Allows you to find out if any particular line in a file is compiled or
+    not. This is useful to be handed to the ITU to HTML generator that can
+    colourize the HTML depending if any line is compiled or not.
+    
+    This is a visitor class that walks the graph creating a dict of:
+    {file_id : [(line_num, boolean), ...], ...}
+    It then decomposes those into a map of {file_id : LineConditionalInterpretation(), ...}
+    which can perfom the actual conditional state determination.
+    
+    API is really isCompiled(file, line): and this returns -1, 0, 1.
+    0 means NO. 1 means YES and -1 means sometimes - for re-included files in a
+    different macro environment perhaps.
+    """
+    def __init__(self):
+        super(CppCondGraphVisitorConditionalLines, self).__init__()
+        # {file_id : [(line_num, boolean), ...], ...}
+        self._fileMap = {}
+        self._prevFile = None
+        self._prevState = True
+        # Lazy evaluation of a {file_id : LineConditionalInterpretation(), ...}
+        self._fileLineCondition = None
+        
+    #---------------------
+    # Visitor methods
+    #---------------------
+    def visitPre(self, theCcgNode, theDepth):
+        """Capture the fileID, line number and state."""
+        # Carry over state from previous file
+        if self._prevFile != theCcgNode.fileId:
+            self._addFileLineState(theCcgNode.fileId, 0, self._prevState)
+        self._prevFile = theCcgNode.fileId
+        self._prevState = theCcgNode.state
+        # Add current state
+        self._addFileLineState(theCcgNode.fileId, theCcgNode.lineNum, theCcgNode.state)
+        
+    def _addFileLineState(self, file, line, state):
+        try:
+            self._fileMap[file].append((line, state))
+        except KeyError:
+            self._fileMap[file] = [(line, state),]
+            
+    def visitPost(self, theCcgNode, theDepth):
+        pass
+    #---------------------
+    # END: Visitor methods
+    #---------------------
+    
+    #---------------------
+    # Accessor methods
+    #---------------------
+    @property
+    def fileIdS(self):
+        """An unordered list of file IDs."""
+        return self._fileMap.keys()
+    
+    @property
+    def fileLineCondition(self):
+        if self._fileLineCondition is None:
+            self._fileLineCondition = dict(((k, LineConditionalInterpretation(v)) for k, v in self._fileMap.items()))
+        return self._fileLineCondition
+    
+    # Testing only
+    def _lineCondition(self, theFile):
+        """An ordered list of (line_num, boolean)."""
+        return self._fileMap[theFile]
+    
+    def pprint(self):
+        for f in sorted(self.fileLineCondition.keys()):
+            print(f, str(self.fileLineCondition[f]))
+
+    def isCompiled(self, fileId, lineNum):
+        """Returns 1 if this line is compiled, 0 if not or -1 if it is ambiguos
+        i.e. sometimes it is and somtimes not when multiply included."""
+        return self.fileLineCondition[fileId].isCompiled(lineNum)
+    #---------------------
+    # END: Accessor methods
+    #---------------------

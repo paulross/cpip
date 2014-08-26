@@ -33,6 +33,7 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import logging
 import os
+import datetime
 
 from cpip.core import ConstantExpression
 from cpip.core import CppCond
@@ -125,6 +126,9 @@ PREPROCESSING_DIRECTIVES = [
     'pragma',
 ]
 
+#: Used when file objects have no name
+UNNAMED_FILE_NAME = 'Unnamed Pre-include'
+
 class PpLexer(object):
     """Create a translation unit tokeniser that applies ISO/IEC 9899:1999(E)
     Section 6 and ISO/IEC 14882:1998(E) section 16.
@@ -190,8 +194,6 @@ class PpLexer(object):
     CALL_STACK_DEPTH_FIRST_INCLUDE = 3
     #: C above:
     CALL_STACK_DEPTH_PER_INCLUDE = 3
-    #: Used when file objects have no name
-    UNNAMED_FILE_NAME = 'Unnamed Pre-include'
     #: Conditianlity settings for token generation
     COND_LEVEL_DEFAULT = 0
     #: Conditionality level (0, 1, 2)
@@ -205,6 +207,8 @@ class PpLexer(object):
                  preIncFiles=None,
                  diagnostic=None,
                  pragmaHandler=None,
+                 stdPredefMacros=None,
+                 autoDefineDateTime=True,
                  ):
         """Create a translation unit tokeniser.
         tuFileId        - A file ID that will be given to the include
@@ -231,6 +235,16 @@ class PpLexer(object):
                             implemented, if True then the tokens stream will be
                             be macro replace before being passed to the pragma
                             handler.
+        stdPredefMacros  - A dictionary of Standard pre-defined macros.
+                            See for example:
+                            ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names
+                            ISO/IEC 14882:1998 (E) 16.8 Predefined macro names
+                            N2800=08-0310 16.8 Predefined macro names
+                            The macros __DATE__ and __TIME__ will be automatically
+                            updated to current locale date/time (see autoDefineDateTime).
+        autoDefineDateTime - If True then the macros __DATE__ and __TIME__ will
+                                be automatically updated to current locale date/time.
+                                Mostly this is used for testing.
         TODO: Set flags here rather than supplying them to a generator?
         This would make the API simply the ctor and ppTokens/next().
         Flags would be:
@@ -273,12 +287,24 @@ class PpLexer(object):
             'line'      : self._cppLine,
             'error'     : self._cppError,
             'pragma'    : self._cppPragma,
+            # Not in the standard but is often seen
+            'warning'   : self._cppWarning,
         }
         # Sanity check
         for aType in PREPROCESSING_DIRECTIVES:
             assert(aType in self._KEYWORD_DESPATCH)
         # The Macro environment
-        self._macroEnv = MacroEnv.MacroEnv()
+        # Handle predefined macros
+        if stdPredefMacros is None:
+            stdPredefMacros = {}
+        if autoDefineDateTime:
+            # ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names
+            # "Mmm dd yyyy" with no leading zero on dd
+            dt = datetime.datetime.now()
+            stdPredefMacros['__DATE__'] = dt.strftime("%b") + ' %2d' % dt.day \
+                + dt.strftime(" %Y") + '\n'
+            stdPredefMacros['__TIME__'] = dt.strftime("%H:%M:%S") + '\n'
+        self._macroEnv = MacroEnv.MacroEnv(stdPredefMacros=stdPredefMacros)
         # Conditional level of compilation
         #0: No conditionally compiled tokens. The fileIncludeGraphRoot will
         #    not have any information about conditionally included files.
@@ -324,7 +350,7 @@ class PpLexer(object):
                 currPlace = os.path.dirname(aFileObj.name)
             except AttributeError:
                 # This can happen with StringIO file-like objects
-                fileId = self.UNNAMED_FILE_NAME
+                fileId = UNNAMED_FILE_NAME
                 currPlace = None#'Pre-Include [%d]' % i
             # Create a FilePathOrigin object
             myFpo = IncludeHandler.FilePathOrigin(
@@ -492,6 +518,8 @@ class PpLexer(object):
         finally:
             # Trap any exception in the finally block otherwise that
             # may displace an exception generated in the try block above.
+            # TODO: Why not?
+#             self._isGenerating = False
             try:
                 # End the ITU
                 self._includeHandler.endInclude()
@@ -499,7 +527,7 @@ class PpLexer(object):
             except Exception as err:
                 logging.fatal('PpLexer.ppTokens(): Encountered exception in finally clause: %s' % str(err))
                 pass
-        # finalise
+        # TODO: should finalise be within the finally?
         self.finalise()
 
     def _genPpTokensRecursive(self, theGen):
@@ -958,9 +986,6 @@ class PpLexer(object):
                     'Can not evaluate constant expression "%s", error: %s' \
                         % (myTokStr, str(err)),
                     self._fis.fileLineCol)
-#            # TODO Remove this
-#            print 'Constant Expression failure, macro environment is:'
-#            print self.macroEnvironment
         return myBool, myTokStr
 
     def _retDefineAndTokens(self, theGen):
@@ -1028,17 +1053,28 @@ class PpLexer(object):
 
     def _cppElif(self, theGen, theFlc):
         """Handles a elif directive."""
-        myBool, myStr = self._retIfEvalAndTokens(theGen)
-        # TODO: Why is this different to Ifdef/Ifndef?
+        # If we have already seen the self._condStack as being True then we do
+        # not tempt fate with self._retIfEvalAndTokens(theGen) as
+        # the eval is irrelevant and macros may have syntax errors that are
+        # 'safe' (according to the Rationale) to ignore.
+        if self._condStack.hasBeenTrueAtCurrentDepth():
+            # Some previous block is True so the evaluation of #elif is
+            # irrelevent. See the C Rationale page 97/98.
+            # So all we need to do here is consume the token to EOL
+            # Test is in TestPpLexer.test_6_10_00_03()
+            myTokS = self._tokensToEol(theGen, macroReplace=False)
+            myStr = ''.join([t.t for t in myTokS]).strip()
+            myBool = False
+        else:
+            # This might evelauate to True so we definitely want macro expansion
+            # and eval
+            myBool, myStr = self._retIfEvalAndTokens(theGen)
         if myBool is not None:
-            #print '_cppElif(): myStr: "%s"' % myStr
-            #print '_cppElif(): self._condStack was:', self._condStack
             self._condStack.oElif(myBool, myStr)
             self._condCompGraph.oElif(theFlc,
                                       self._tuIndex,
                                       self._condStack.isTrue(),
                                       myStr)
-            #print '_cppElif(): self._condStack now:', self._condStack
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppIfdef(self, theGen, theFlc):
@@ -1107,8 +1143,8 @@ class PpLexer(object):
                 # Take state for cond graph, we do this now so that self._condStack
                 # is always called before self._condCompGraph as the former has
                 # the exception handling. 
-                myEndifState = self._condStack.isTrue()
                 self._condStack.oEndif()
+                myEndifState = self._condStack.isTrue()
                 self._condCompGraph.oEndif(theFlc, self._tuIndex, myEndifState)
                 yield PpToken.PpToken('\n', 'whitespace')
             except Exception as err:
@@ -1217,35 +1253,20 @@ class PpLexer(object):
         # #define current get_current()
         # #include <asm/current.h>
         # Expands to: #include <asm/get_current().h>
-        myTokS = self._tokensToEol(theGen, macroReplace=True)
-#        print '_retHeaderName(): ', myTokS
-        # At this point either a newline token had been recieved (break)
-        # or a StopIteration raised (and we do not handle that).
-        # So myTokS has what we have seen so far (if anything).
-        # Now reinterpret it using the PpTokeniser.reduceToksToHeaderName()
-        # and return the first header-name token.
+        # TODO: Change to macroReplace=False and see below
         #
-        # NOTE: There are many cases in the Windows world where include
-        # statements are of the form:
-        # #include "codeanalysis\sourceannotations.h"
-        # [e.g. Microsoft Visual Studio 9.0\VC\include\sal.h#932]
-        # The C++ standard specifically says about the '\' character:
-        # ISO/IEC 14882:2003(E) 2.8 Header names [lex.header]
-        # Para. 2 (and footnote 19) that this causes undefined behaviour.
-        # (ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3. and footnote
-        # 68 says the same).
-        # We had, at one point, a way of handling these bad cases but removed
-        # it as the problem space is unbounded...
+        myTokS = self._tokensToEol(theGen, macroReplace=False)
         myPpTokeniser = PpTokeniser.PpTokeniser()
-        myReducedTokS = myPpTokeniser.reduceToksToHeaderName(myTokS)
-        for aTtt in myReducedTokS:
-            if aTtt.tt == 'header-name':
-                #print '_retHeaderName(): returns: %s' % aTtt
-                return aTtt
-        # Failure indication
-#        print '_retHeaderName(): returns: None as tokens: %s' % ''.join([t.t for t in myTokS])
-#        print self.macroEnvironment
-        return None
+        headerS = myPpTokeniser.filterHeaderNames(myTokS)
+        if len(headerS) == 1:
+            # Treat as a h-char-sequence or q-char-sequence
+            return headerS[0]
+        # Try a macro expansion
+        myTokS = self._retListReplacedTokens(myTokS)
+        headerS = myPpTokeniser.filterHeaderNames(myTokS)
+        if len(headerS) == 1:
+            # Treat as a h-char-sequence or q-char-sequence
+            return headerS[0]
 
     #==============================
     # End: Handling file inclusion.
@@ -1359,6 +1380,15 @@ class PpLexer(object):
             myErrMsg = ''.join([t.t for t in myTokS])
             myErrMsg = myErrMsg.strip()
             self._diagnostic.error(myErrMsg, theFlc)
+        yield PpToken.PpToken('\n', 'whitespace')
+
+    def _cppWarning(self, theGen, theFlc):
+        """Handles a warning directive. Not in the standard but we support it."""
+        myTokS = self._tokensToEol(theGen, macroReplace=False)
+        if self._condStack.isTrue():
+            myMsg = ''.join([t.t for t in myTokS])
+            myMsg = myMsg.strip()
+            self._diagnostic.warning(myMsg, theFlc)
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppPragma(self, theGen, theFlc):

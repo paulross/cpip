@@ -3830,6 +3830,61 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             myReplaceToks,
             )
 
+    def testReplaceFunction_20(self):
+        """PpDefine: Replacement OK from function type macro: <#define> 'r(x,y) x ## y, y ## x\\n' called with r(2,3)"""
+        # NOTE: This problem was discovered when processing Linux.
+        # See the __ASM_SEL issue.
+        # Essentially _functionLikeReplacement() was corrupting the map created
+        # by _retReplacementMap() when doing concatenation.
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO('r(x,y) x ## y, y ## x\n')
+            )
+        myGen = myCpp.next()
+        myCppDef = PpDefine.PpDefine(myGen, '', 1)
+        self.assertEqual(False, myCppDef.isObjectTypeMacro)
+        self.assertEqual(20, myCppDef.tokensConsumed)
+        self.assertEqual('r', myCppDef.identifier)
+        self.assertEqual(['x', 'y'], myCppDef.parameters)
+        self.assertEqual(
+            ['x', ' ', '##', ' ', 'y', ',', ' ', 'y', ' ', '##', ' ', 'x'],
+            myCppDef.replacements,
+        )
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, myGen.__next__)
+        # Replacement
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO('(2,3)')
+            )
+        myGen = myCpp.next()
+        # First consume the preamble i.e. LPAREN
+        self.assertEqual(None, myCppDef.consumeFunctionPreamble(myGen))
+        # Now consume the arguments
+        myArgS = myCppDef.retArgumentListTokens(myGen)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, myGen.__next__)
+        # Check the arguments
+        myExpectedArgTokens = [
+                [
+                    PpToken.PpToken('2',       'pp-number'),
+                ],
+                [
+                    PpToken.PpToken('3',       'pp-number'),
+                ],
+            ]
+        self.assertEqual(myExpectedArgTokens, myArgS)
+        myReplaceToks = myCppDef.replaceArgumentList(myArgS)
+        #self.pprintReplacementList(myReplaceToks)
+        self.assertEqual(
+            [
+                PpToken.PpToken('23',       'pp-number'),
+                PpToken.PpToken(',',        'preprocessing-op-or-punc'),
+                PpToken.PpToken(' ',        'whitespace'),
+                PpToken.PpToken('32',       'pp-number'),
+            ],
+            myReplaceToks,
+            )
+
+
     # Testing failure
     def testReplaceFunction_50(self):
         """PpDefine: Replace bad from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' with FOO(1,2)."""
@@ -5877,6 +5932,119 @@ F_3_END
 #            self.assertEquals(expRepl, myReplacements)
 #===============================================================================
 
+class TestPpDefineLinux(TestPpDefine):
+    """Tests exposed by preprocessing the Linus Kernel"""
+
+    def test_00(self):
+        """PpDefine: Linux issue with: #define __ASM_SIZE(inst) inst##l, inst##q"""
+        src = """#define __ASM_SIZE(inst)    inst##l, inst##q
+/* rwsem.h */
+__ASM_SIZE(a)
+/* Expects:
+al, aq
+*/
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO('__ASM_SIZE(inst)    inst##l, inst##q\n')
+            )
+        myGen = myCpp.next()
+        myCppDef = PpDefine.PpDefine(myGen, '', 1)
+        self.assertEqual(False, myCppDef.isObjectTypeMacro)
+        self.assertEqual(14, myCppDef.tokensConsumed)
+        self.assertEqual('__ASM_SIZE', myCppDef.identifier)
+        self.assertEqual(['inst'], myCppDef.parameters)
+        self.assertEqual(['inst', '##', 'l', ',', ' ', 'inst', '##', 'q'], myCppDef.replacements)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, myGen.__next__)
+        # Replacement
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO('(a)')
+            )
+        myGen = myCpp.next()
+        # First consume the preamble i.e. LPAREN
+        self.assertEqual(None, myCppDef.consumeFunctionPreamble(myGen))
+        # Now consume the arguments
+        myArgS = myCppDef.retArgumentListTokens(myGen)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, myGen.__next__)
+        # Check the arguments
+        myExpectedArgTokens = [
+                [
+                    PpToken.PpToken('a',       'identifier'),
+                ],
+            ]
+        self.assertEqual(myExpectedArgTokens, myArgS)
+        myReplaceToks = myCppDef.replaceArgumentList(myArgS)
+        #self.pprintReplacementList(myReplaceToks)
+        self.assertEqual(
+            [
+                PpToken.PpToken(t="al", tt='identifier'),
+                PpToken.PpToken(t=",", tt='preprocessing-op-or-punc'),
+                PpToken.PpToken(t=" ", tt='whitespace'),
+                PpToken.PpToken(t="aq", tt='identifier'),
+            ],
+            myReplaceToks,
+            )
+
+    def test_01(self):
+        """PpDefine: Linux issue with: #define __ASM_SIZE(inst, ...) inst##l##__VA_ARGS__, inst##q##__VA_ARGS__"""
+        src = """#define __ASM_SIZE(inst, ...) inst##l##__VA_ARGS__, inst##q##__VA_ARGS__
+/* rwsem.h */
+__ASM_SIZE(a)
+/* Expects:
+al, aq
+*/
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO('__ASM_SIZE(inst, ...) inst##l##__VA_ARGS__, inst##q##__VA_ARGS__\n')
+            )
+        myGen = myCpp.next()
+        myCppDef = PpDefine.PpDefine(myGen, '', 1)
+        self.assertEqual(False, myCppDef.isObjectTypeMacro)
+        self.assertEqual(21, myCppDef.tokensConsumed)
+        self.assertEqual('__ASM_SIZE', myCppDef.identifier)
+        self.assertEqual(['inst', '...'], myCppDef.parameters)
+        self.assertEqual(
+            [
+                'inst', '##', 'l', '##', '__VA_ARGS__', ',',
+                ' ', 'inst', '##', 'q', '##', '__VA_ARGS__'
+            ],
+            myCppDef.replacements,
+        )
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, myGen.__next__)
+        # Replacement
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO('(a)')
+            )
+        myGen = myCpp.next()
+        # First consume the preamble i.e. LPAREN
+        self.assertEqual(None, myCppDef.consumeFunctionPreamble(myGen))
+        # Now consume the arguments
+        myArgS = myCppDef.retArgumentListTokens(myGen)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, myGen.__next__)
+        # Check the arguments
+        myExpectedArgTokens = [
+                [
+                    PpToken.PpToken('a',       'identifier'),
+                ],
+            ]
+        self.assertEqual(myExpectedArgTokens, myArgS)
+        myReplaceToks = myCppDef.replaceArgumentList(myArgS)
+#         self.pprintReplacementList(myReplaceToks)
+        # TODO: This test was created whilst fixing the Linux __ASM_SEL bug
+        # however why is the token type of 'al' concat and not 'aq'?
+        self.assertEqual(
+            [
+                PpToken.PpToken(t="al", tt='identifier'),
+                PpToken.PpToken(t=",", tt='preprocessing-op-or-punc'),
+                PpToken.PpToken(t=" ", tt='whitespace'),
+                PpToken.PpToken(t="aq", tt='identifier'),
+            ],
+            myReplaceToks,
+            )
+
 class NullClass(TestPpDefine):
     pass
 
@@ -5915,6 +6083,8 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpDefineVariadic))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpDefineFunctionLikeAcceptableVariadicArguments))
+    # - OK
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpDefineLinux))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################
