@@ -1173,6 +1173,23 @@ class PpTokeniser(object):
             raise ExceptionCpipTokeniser(
                 'reduceToksToHeaderName() has unparsed tokens: %s' % myString)
         return retTokS
+    
+    def filterHeaderNames(self, theToks):
+        """Returns a list of 'header-name' tokens from the supplied stream.
+        May raise ExceptionCpipTokeniser if un-parsable or theToks has
+        non-(whitespace, header-name)."""
+        ret = []
+        for t in self.reduceToksToHeaderName(theToks):
+            if t.tt != 'whitespace':
+                if t.tt == 'header-name':
+                    ret.append(t)
+                else:
+                    return []
+#                    raise ExceptionCpipTokeniser(
+#                        'retHeaderName(): wrong token type %s' % t)
+#        print(theToks, ret)
+        return ret
+                    
 
     def _sliceLexHeader(self, theBuf, theOfs=0):
         """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header].

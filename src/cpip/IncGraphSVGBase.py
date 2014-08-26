@@ -143,8 +143,11 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-#import os
 import sys
+import inspect
+import pprint
+
+import cpip
 from cpip.core import FileIncludeGraph
 #from cpip.core import PpTokenCount
 from cpip.util import XmlWrite
@@ -202,17 +205,23 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     ALT_FONT_PROPERTIES = {
         'Courier' : {
                         'size'          : 10,
-                        'lenFactor'     : 0.8,
-                        'heightFactor'  : 1.5*1.5,
+                        'lenFactor'     : 0.5,
+                        'heightFactor'  : 1.2,
             },
         'monospace' : {
                         'size'          : 10,
-                        'lenFactor'     : 0.7,
-                        'heightFactor'  : 1.2*1.5,
+                        'lenFactor'     : 0.5,
+                        'heightFactor'  : 1.2,
             },
         }
     NAMESPACE_XLINK = 'http://www.w3.org/1999/xlink'
-    BROWSER = 'Opera'
+    # Used to rescale SVG rather than zooming in the browser as the latter is
+    # slow with Chrome and Safari (both WebKit) and pretty much everything else.
+    # Initial, presentational, scale is chose depending on the size of the diagram. 
+    SCALE_FACTORS = (0.05, 0.1, 0.25, 0.5, 1.0, 1.5, 2.0,)
+    # Used to decide initial scale
+    SCALE_MAX_Y = Coord.Dim(1000, 'mm')
+#    POPUP_COORD_Y_OFFSET = Coord.Dim(20, 'pt')
     def __init__(self, theFig, theLineNum):
         super(SVGTreeNodeBase, self).__init__(theLineNum)
         self._isRoot = theFig is None
@@ -229,14 +238,40 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
             self._condCompState = theFig.condCompState
         # The bounding box, to be (re)set by derived classes
         self._bb = None
+        self.TRACE = cpip.SVG_COMMENT_FUNCTIONS
+        # Number of passes to call plotSelf()
+        self._numPassesToPlotSelf = 0
 
+    #============================================
+    # Section: Trace/Debug
+    #============================================
     def dumpToStream(self, theS=sys.stdout, p=''):
         """Debug/trace."""
         theS.write('%sFile: %s\n' % (p, self.nodeName))
         for aLine in str(self.bb).splitlines():
             theS.write('%s%s\n' % (p, aLine))
         for aChild in self._children:
-            aChild.dumpToStream(theS, p+'  ')       
+            aChild.dumpToStream(theS, p+'  ')
+    
+    def commentFunctionBegin(self, theSvg, **kwargs):
+        """Injects a comment into the SVG with the start of the
+        executing function name."""
+        if self.TRACE:
+            theSvg.comment(' %s(): %s %s'
+                           % (inspect.stack()[1][3], 'BEGIN',
+                              pprint.pformat(kwargs)), newLine=True)
+          
+    def commentFunctionEnd(self, theSvg, **kwargs):
+        """Injects a comment into the SVG with the completion of the
+        executing function name."""
+        if self.TRACE:
+            theSvg.comment(' %s(): %s %s'
+                           % (inspect.stack()[1][3], 'END',
+                              pprint.pformat(kwargs)), newLine=True)
+          
+    #============================================
+    # End: Trace/Debug
+    #============================================
 
     #============================================
     # Section: Accessor methods used by ancestors
@@ -285,32 +320,7 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
         For depth first finalisation the child class should call finalise
         on each child first."""
         raise NotImplementedError('finalise() not implemented')
-    
-#===============================================================================
-#    def finalise(self):
-#        """Finalisation this sets up all the bounding boxes of me and my children."""
-#        for aChild in self._children:
-#            aChild.finalise()
-#        # Now accumulate my children's bounding boxes and token counts
-#        self._tokenCounterChildren = PpTokenCount.PpTokenCount()
-#        self._tokenCounterChildren += self.tokenCounter
-#        self._numChildSigTokens = 0
-#        for aChild in self._children:
-#            self._bb.extendChildBbox(aChild.bb.bbSigma)
-#            self._tokenCount += aChild.tokenCount
-#            self._tokenCounterChildren += aChild.tokenCounter
-#            self._numChildSigTokens += aChild.tokenCounter.tokenCountNonWs(isAll=False)
-#        # Set up my bounding box only if non-root node
-#        if not self.isRoot:
-#            #self._bb.width = max(self.WIDTH_MINIMUM, self.WIDTH_PER_TOKEN.scale(self._tokenCount))
-#            self._bb.width = self.WIDTH_MINIMUM + self.WIDTH_PER_TOKEN.scale(self._tokenCount)
-#            self._bb.depth = self.FILE_DEPTH
-#            self._bb.bbSelfPadding = self.FILE_PADDING
-#            if len(self._children) > 0:
-#                self._bb.bbSpaceChildren = self.SPACE_PARENT_CHILD
-#        # Bounding boxes set up
-#===============================================================================
-            
+                
     def plotToFilePath(self, theFileName, theTpt):
         """Root level call to plot to a SVG file, theTpt is an
         TreePlotTransform object and is used to transform the internal logical
@@ -320,54 +330,77 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     def plotToFileObj(self, theFileObj, theTpt):
         """Root level call to plot to a file object. The SVG stream is
         created here."""
-#===============================================================================
-#        # Add a margin and round up
-#        myWidth = self.CANVAS_PADDING.prev \
-#                    + theTpt.canvasP().width \
-#                    + self.CANVAS_PADDING.next
-#        myWidth = Coord.Dim(int(myWidth.value+0.5), myWidth.units)
-#        myDepth = self.CANVAS_PADDING.parent \
-#                    + theTpt.canvasP().depth \
-#                    + self.CANVAS_PADDING.child
-#        myDepth = Coord.Dim(int(myDepth.value+0.5), myDepth.units)
-#        myCanvasP = Coord.Box(myWidth, myDepth)
-#===============================================================================
+        if self._numPassesToPlotSelf < 1:
+            raise ValueError('No self._numPassesToPlotSelf set!')
         # Make viewBox user coordinates * self.VIEWBOX_SCALE
         myRootAttrs = {
-            'viewBox' : '0 0 %d %d' \
-                % (
-                    theTpt.canvasP().width.value * self.VIEWBOX_SCALE,
-                    theTpt.canvasP().depth.value * self.VIEWBOX_SCALE,
-                    ),
+#             'viewBox' : '0 0 %d %d' \
+#                 % (
+#                     theTpt.canvasP().width.value * self.VIEWBOX_SCALE,
+#                     theTpt.canvasP().depth.value * self.VIEWBOX_SCALE,
+#                     ),
             'xmlns:xlink'   : self.NAMESPACE_XLINK,
-        } 
-        with SVGWriter.SVGWriter(theFileObj, theTpt.canvasP(), myRootAttrs) as myS:
+        }
+        # Bit of a hacky way to add enough margin for the pop-ups or rather
+        # drop downs. This adds space for the bottom most boxes.
+        canvasY = theTpt.canvasP().depth + Coord.Dim(60, 'mm') + Coord.Dim(8, 'mm')
+        myCanvas = Coord.Box(
+                    theTpt.canvasP().width + Coord.Dim(60, 'mm'),
+                    canvasY,
+        )
+        # Shrink canvas if it is a large plot
+        yOffsetForScalingText =  Coord.Dim(10, 'mm')
+        scaleIdx = self.SCALE_FACTORS.index(1)
+        assert scaleIdx >= 0
+        while scaleIdx > 0 and canvasY > self.SCALE_MAX_Y:
+            canvasY = canvasY.scale(0.5)
+            scaleIdx -= 1
+        self._scale = self.SCALE_FACTORS[scaleIdx]
+        with SVGWriter.SVGWriter(theFileObj, myCanvas, myRootAttrs, mustIndent=cpip.INDENT_ML) as myS:
+            # yOffsetForScalingText is applied wrong, should respect theTpt
             myDatum = Coord.Pt(
-                         CANVAS_PADDING.prev,
+                         CANVAS_PADDING.prev - yOffsetForScalingText,
                          CANVAS_PADDING.parent,
                     )
-            #print 'TRACE: myDatum', myDatum
-            self._writeECMAScriptOnMouseOver(myS, self.BROWSER)
-            myS.comment(' Root position: %s, Sweep direction: %s ' \
-                         % (theTpt.rootPos, theTpt.sweepDir))
-            #<rect x="1" y="1" width="1198" height="398" fill="none" stroke="blue" stroke-width="2"/>
-            with SVGWriter.SVGRect(
-                    myS,
-                    Coord.zeroBaseUnitsPt(),#myDatum,
-                    theTpt.canvasP(),
-                    {
-                        'fill'         : 'none',
-                        'stroke'       : 'grey',
-                        'stroke-width' : '2',
-                    },
-                ):
-                pass
-            # Start the plot
-            self.plotInitialise(myS, myDatum, theTpt)
-            # Now plot all contents
-            self.plotToSVGStream(myS, myDatum, theTpt)
-            # Finish the plot
-            self.plotFinalise(myS, myDatum, theTpt)
+            self.writePreamble(myS)
+            myS.comment(' Root position: %s, Sweep direction: %s canvas=%s datum=%s' \
+                         % (theTpt.rootPos, theTpt.sweepDir, theTpt.canvasP(), myDatum),
+                         newLine=True)
+            # Shift the drawing down a bit to make way for the scale buttons.
+            with SVGWriter.SVGGroup(myS, {'transform' : "translate(0, 24)"}):
+                with SVGWriter.SVGGroup(myS,
+                        {
+                            'id' : 'graphic',
+                            'transform' : "scale(%s)" % self.SCALE_FACTORS[scaleIdx]
+                        }):
+                    # Apply a group element for scaling the plot
+                    # More hackery: yOffsetForScalingText is applied wrong, should respect theTpt
+                    with SVGWriter.SVGRect(
+                            myS,
+                            Coord.newPt(
+                                        Coord.zeroBaseUnitsPt(),
+                                        incX=None,
+                                        incY=yOffsetForScalingText),
+                            theTpt.canvasP(),
+                            {
+                                'fill'         : 'none',
+                                'stroke'       : 'grey',
+                                'stroke-width' : '2',
+                            },
+                        ):
+                        pass
+                    # Start the plot
+                    self.plotInitialise(myS, myDatum, theTpt)
+                    # Now plot all contents
+                    for p in range(self._numPassesToPlotSelf):
+                        self.plotToSVGStream(myS, myDatum, theTpt, p, [])
+                    # Finish the plot
+                    self.plotFinalise(myS, myDatum, theTpt)
+
+    def writePreamble(self, theS):
+        """Write any preamble such as CSS or JavaScript.
+        To be implemented by child classes."""
+        raise NotImplementedError
 
     def plotInitialise(self, theSvg, theDatumL, theTpt):
         """Called once immediately before the recursive plotToSVGStream().
@@ -379,22 +412,43 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
         Can be overridden in child classes for specific use.""" 
         pass
 
-    def plotToSVGStream(self, theSvg, theDatumL, theTpt):
+    def plotToSVGStream(self, theSvg, theDatumL, theTpt, passNum, idStack):
         """Plot me to a stream and my children at the logical datum point,
         this is a recursive call."""
+        self.commentFunctionBegin(theSvg, File=self._fileName, Pass=passNum)
+        if not self.isRoot:
+            if self.lineNum != -1:
+                idStack.append(self.lineNum)
+            idStack.append(self.nodeName)
         if len(self._children) > 0:
-            if self.isRoot:
-                self._plotRootChildToChild(theSvg, theDatumL, theTpt)
-            else:
-                self._plotSelfToChildren(theSvg, theDatumL, theTpt)
+            if passNum == 0:
+                if self.isRoot:
+                    self._plotRootChildToChild(theSvg, theDatumL, theTpt)
+                else:
+                    self._plotSelfToChildren(theSvg, theDatumL, theTpt)
             # Recursive call
-            for i, datumChildL in self._enumerateChildren(theDatumL, theTpt):
-                self._children[i].plotToSVGStream(theSvg, datumChildL, theTpt)
+            # TODO: Consider reversing this so that drop-downs appear over
+            # children.
+#             for i, datumChildL in self._enumerateChildren(theDatumL, theTpt):
+            for i, datumChildL in reversed(list(self._enumerateChildren(theDatumL, theTpt))):
+                self._children[i].plotToSVGStream(theSvg, datumChildL, theTpt, passNum, idStack)
         # Plot me last so I sit over any me-to-child lines
         if not self.isRoot:
-            self._plotSelf(theSvg, theDatumL, theTpt)
+            self._plotSelf(theSvg, theDatumL, theTpt, passNum, idStack)
+        else:
+            self.plotRoot(theSvg, theDatumL, theTpt, passNum)
+        if not self.isRoot:
+            if self.lineNum != -1:
+                idStack.pop()
+            idStack.pop()
+        self.commentFunctionEnd(theSvg, File=self._fileName, Pass=passNum)
+        
+    def plotRoot(self, theSvg, theDatumL, theTpt, passNum):
+        """Call to plot any root node, for example our child class uses this
+        to plot the histogram legend before starting on the text."""
+        pass
 
-    def _plotSelf(self, theSvg, theDatumL, theTpt):
+    def _plotSelf(self, theSvg, theDatumL, theTpt, idStack):
         """Plot me to a stream at the logical datum point.
         Must be provided by child classes."""
         raise NotImplementedError('_plotSelf() not implemented')
@@ -424,149 +478,115 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     #=============================================
     # Section: Writing SVG code to do pop-up text.
     #=============================================
-    def _writeECMAScriptOnMouseOver(self, theSvg, theBrowser):
+    def _writeECMAScript(self, theSvg):
         """Writes the ECMA script for pop-up text switching."""
         myScriptS = []
-        if theBrowser == 'Opera':
-            myScriptS.append("""
-var altSuffix = ".alt";
+        myScriptS.append("""
+function swapOpacity(idFrom, idTo) {
+    var svgFrom = document.getElementById(idFrom);
+    var svgTo = document.getElementById(idTo);
+    var attrFrom = svgFrom.getAttribute("opacity");
+    var attrTo = svgTo.getAttribute("opacity");
+    svgTo.setAttributeNS(null, "opacity", attrFrom);
+    svgFrom.setAttributeNS(null, "opacity", attrTo);
+}
+
+function setOpacity(id, value) {
+    var svgElem = document.getElementById(id);
+    svgElem.setAttributeNS(null, "opacity", value);
+}
+
 """)
-            myScriptS.append("""
-function switch_to_alt(elem) {
-    myHref = elem.getAttributeNS('%s', 'xlink:href');
-    if (myHref.lastIndexOf(altSuffix) == -1) {
-        elem.setAttributeNS('%s', 'xlink:href', myHref + altSuffix);
+        # Pop-up for histogram that uses different technique
+        myScriptS.append("""
+function showHistogram(x, y) {
+    var histElem = document.getElementById("HistogramLegend");
+    // Use the ID to compute the y offset. The x offset is 8.0mm for text,
+    // 2.0mm or 0mm for rect
+    for (var i = 0; i < 38; i += 2) {
+        var elem = histElem.children[i / 2]
+        if (i == 0) {
+            var xOffset = 0;
+        } else if (elem.nodeName == "text") {
+            var xOffset = 8;
+        } else {
+            var xOffset = 2;
+        }
+        elem.setAttributeNS(null, "x", x + xOffset + "mm");
+        elem.setAttributeNS(null, "y", y + i + "mm");
     }
+    histElem.setAttributeNS(null, "opacity", 1.0);
 }
-""" % (self.NAMESPACE_XLINK, self.NAMESPACE_XLINK))
-            myScriptS.append("""
-function switch_from_alt(elem) {
-    myHref = elem.getAttributeNS('%s', 'xlink:href');
-    if (myHref.lastIndexOf(altSuffix) != -1) {
-        myHref = myHref.substring(0, myHref.lastIndexOf(altSuffix));
-        elem.setAttributeNS('%s', 'xlink:href', myHref);
-    }
+ 
+function hideHistogram() {
+    setOpacity("HistogramLegend", 0.0)
 }
-""" % (self.NAMESPACE_XLINK, self.NAMESPACE_XLINK))
-            myScriptS.append(""" 
-function swap_id(elem, theId) {
-    elem.setAttributeNS('%s', 'xlink:href', theId);
-}
-""" % self.NAMESPACE_XLINK)
-        else:
-            # This works in IE/Firefox
-            myScriptS.append("""
-var altSuffix = ".alt";
+ 
 """)
-            myScriptS.append("""
-function switch_to_alt(evt) {
-    var textTgt = evt.target;
-    myOldLink = textTgt.getAttribute("xlink:href");
-    if (myOldLink.lastIndexOf(altSuffix) == -1) {
-        textTgt.setAttribute("xlink:href", myOldLink + altSuffix);
+        # Scaling controls
+        myScriptS.append("""
+function scaleGraphic(scale, theId) {
+    var graphicGroup = document.getElementById("graphic");
+    graphicGroup.setAttributeNS(null, "transform", "scale(" + scale + ")");
+    // Un-bold all then bold the txtId.
+    var scaleGroup = document.getElementById("scaleGroup");
+    for (var i = 0; i < scaleGroup.children.length; ++i) {
+        var elem = scaleGroup.children[i];
+        if (elem.id == theId) {
+            elem.setAttributeNS(null, "font-weight", "bold");
+        } else {
+            elem.setAttributeNS(null, "font-weight", "normal");
+        }
     }
-}
-""")
-            myScriptS.append("""
-function switch_from_alt(evt) {
-    var textTgt = evt.target;
-    myOldLink = textTgt.getAttribute("xlink:href");
-    if (myOldLink.lastIndexOf(altSuffix) != -1) {
-        myOldLink = myOldLink.substring(0, myOldLink.lastIndexOf(altSuffix));
-    }
-    textTgt.setAttribute("xlink:href", myOldLink);
-}
-""")
-            myScriptS.append("""
-function swap_id(evt, theId) {
-    var textTgt = evt.target;
-    textTgt.setAttribute("xlink:href", theId);
 }
 """)
         theSvg.writeECMAScript(''.join(myScriptS))
 
-    def _addECMAScriptMouseOverAttrs(self, theAttrs, theBrowser):
-        """Writes the ECMA script for pop-up text switching."""
-        if theBrowser == 'Opera':
-            theAttrs['onmouseover'] = "switch_to_alt(this)"
-            theAttrs['onmouseout'] = "switch_from_alt(this)"
-        else:
-            theAttrs['onmouseover'] = "switch_to_alt(evt)"
-            theAttrs['onmouseout'] = "switch_from_alt(evt)"
-
-    def _addECMAScriptSwapIdAttrs(self, theAttrs, theBrowser, theIdOver, theIdOut):
-        """Writes the ECMA script for pop-up text switching."""
-        if theBrowser == 'Opera':
-            theAttrs['onmouseover'] = "swap_id(this, \"%s\")" % theIdOver
-            theAttrs['onmouseout'] = "swap_id(this, \"%s\")" % theIdOut
-        else:
-            theAttrs['onmouseover'] = "swap_id(evt, \"%s\")" % theIdOver
-            theAttrs['onmouseout'] = "swap_id(evt, \"%s\")" % theIdOut
-
-    def writeOnMouseOverTextAndAlternate(self, theSvg, thePoint, theId, theText, theAltS):
-        """Writes the <defs> element for the pair of texts and the <use> element
-        that references the first one.
+    def _writeAlternateText(self, theSvg, thePoint, theId, theText, theAltS, yOffs=Coord.Dim(0, 'pt')):
+        """Composes and writes the (pop-up) alternate text.
         thePoint is the physical point to locate both texts."""
-        altFontSize = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['size']
-        altFontLenFactor = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['lenFactor']
-        altFontHeightFactor = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['heightFactor']
-        with XmlWrite.Element(theSvg, 'defs'):
-            # <text id="original" font-family="Verdana" font-size="12" text-anchor="middle" x="250" y="250">Original text.</text>
-            with SVGWriter.SVGText(theSvg, thePoint, 'Verdana', 12,
+        # Write a grouping element and give it the alternate ID
+        with SVGWriter.SVGGroup(theSvg, {'id' : 't%s%s' % (theId, self.ALT_ID_SUFFIX), 'opacity' : '0.0'}):
+            altFontSize = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['size']
+            altFontLenFactor = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['lenFactor']
+            altFontHeightFactor = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['heightFactor']
+            # Compute masking box for alternate
+            maxChars = max([len(s) for s in theAltS])
+            # Take around 80% of character length
+            boxWidth = Coord.Dim(altFontSize * maxChars * altFontLenFactor, 'pt')
+            if len(theAltS) < 2:
+                boxHeight = Coord.Dim(altFontSize * 2, 'pt')
+            else:
+                boxHeight = Coord.Dim(altFontSize * len(theAltS) * altFontHeightFactor, 'pt')
+                 
+            boxAttrs = { 'fill' : self.ALT_RECT_FILL }
+            with SVGWriter.SVGRect(
+                    theSvg,
+                    # Edge the plot point up and left by a bit
+                    Coord.newPt(
+                        thePoint,
+                        incX=Coord.Dim(-1 * altFontSize * (1 + len(theText) * altFontLenFactor / 2.0), 'pt'),
+                        incY=Coord.Dim(-1*altFontHeightFactor * altFontSize, 'pt') + yOffs,
+                    ),
+                    Coord.Box(boxWidth, boxHeight),
+                    boxAttrs,
+                ):
+                pass
+            # As the main text is centered and the alt text is left
+            # justified we need to move the text plot point left by a bit.
+            myAltTextPt = Coord.newPt(
+                thePoint,
+                incX=Coord.Dim(-1 * altFontSize * len(theText) * altFontLenFactor / 2.0, 'pt'),
+                incY=yOffs,
+            )
+            with SVGWriter.SVGText(theSvg, myAltTextPt, 'Courier', altFontSize,
                         {
-                            'id'                : theId,
-                            #'font-weight'       : "bold",
-                            'text-decoration'   : "underline",
-                            'text-anchor'       : "middle",
-                            'dominant-baseline' : "middle",
-                            #'dominant-baseline' : "text-after-edge",
+                            'font-weight'       : "normal",
                         }
                     ):
-                theSvg.characters(theText)
-            # Write a grouping element and give it the alternate ID
-            with SVGWriter.SVGGroup(theSvg, {'id' : theId+self.ALT_ID_SUFFIX}):
-                # Compute masking box for alternate
-                maxChars = max([len(s) for s in theAltS])
-                # Take 80% of character length
-                boxWidth = Coord.Dim(altFontSize * maxChars * altFontLenFactor, 'pt')
-                if len(theAltS) < 2:
-                    boxHeight = Coord.Dim(altFontSize * 2, 'pt')
-                else:
-                    boxHeight = Coord.Dim(altFontSize * len(theAltS) * altFontHeightFactor, 'pt')
-                with SVGWriter.SVGRect(
-                        theSvg,
-                        # Edge the plot point up and left by a bit
-                        Coord.newPt(
-                            thePoint,
-                            incX=Coord.Dim(-1 * altFontSize * (1 + len(theText) * altFontLenFactor / 2.0), 'pt'),
-                            incY=Coord.Dim(-1*altFontHeightFactor * altFontSize, 'pt'),
-                        ),
-                        Coord.Box(boxWidth, boxHeight),
-                        { 'fill' : self.ALT_RECT_FILL },
-                    ):
-                    pass
-                # As the main text is centered and the alt text is left
-                # justified we need to move the text plot point left by a bit.
-                myAltTextPt = Coord.newPt(
-                    thePoint,
-                    incX=Coord.Dim(-1 * altFontSize * len(theText) * altFontLenFactor / 2.0, 'pt'),
-                    incY=None,
-                )
-                with SVGWriter.SVGText(theSvg, myAltTextPt, 'Courier', altFontSize,
-                            {
-                                'font-weight'       : "normal",
-                            }
-                        ):
-                    self._writeStringListToTspan(theSvg, myAltTextPt, theAltS)
-        # Write the <use> element
-        # <use xlink:href="#pre_include" onmouseover="switch_to_alt(evt)" onmouseout="switch_from_alt(evt)" />
-        useAttrs = {
-            'xlink:href'    : '#%s' % theId,
-        }
-        self._addECMAScriptMouseOverAttrs(useAttrs, self.BROWSER)
-        with  XmlWrite.Element(theSvg, 'use', useAttrs):
-            pass
-    
+                self._writeStringListToTspan(theSvg, myAltTextPt, theAltS)
+
+
     def _writeStringListToTspan(self, theSvg, thePointX, theList):
         """Converts a multi-line string to tspan elements in monospaced format.
         theSvg is the SVG stream.
@@ -582,12 +602,13 @@ function swap_id(evt, theId) {
         """
         #theSvg.xmlSpacePreserve()
         for i, aLine in enumerate(theList):
-            elemAttrs = {'xml:space' : "preserve"}
+            elemAttrs = {}#'xml:space' : "preserve"}
             if i > 0:
                 elemAttrs['x'] = SVGWriter.dimToTxt(thePointX.x) 
                 elemAttrs['dy'] = "1.5em"
-            with  XmlWrite.Element(theSvg, 'tspan', elemAttrs):
+            with XmlWrite.Element(theSvg, 'tspan', elemAttrs):
                 theSvg.characters(aLine)
+                theSvg.characters(' ')
     #=============================================
     # End: Writing SVG code to do pop-up text.
     #=============================================

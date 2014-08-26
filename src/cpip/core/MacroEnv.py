@@ -59,6 +59,7 @@ from cpip.core import PpTokeniser
 from cpip.core import PpDefine
 from cpip.core import PpWhitespace
 from cpip.util.ListGen import ListAsGenerator
+from cpip.util.Tree import DuplexAdjacencyList
 
 class ExceptionMacroEnv(ExceptionCpip):
     """Exception when handling MacroEnv object."""
@@ -117,29 +118,36 @@ class MacroEnv(object):
     # ExceptionMacroReplacementPredefinedRedefintion
     # __LINE__ and __FILE__ can be redefined dynamically by the methods
     # set__LINE__(...) and set__FILE__(...)
-    STD_PREDEFINED_NAMES = set(
-        (
-            '__LINE__',
-            '__FILE__',
-            '__DATE__',
-            '__TIME__',
-            '__STDC__',
-            '__cplusplus',
-        )
-    )
+    # __DATE__ and __TIME__ should be set by the caller.
+    #
+    # Macro identifiers that can never, ever be redefined
+    # There is some variety among the standards with '__cplusplus'
+    # ISO/IEC 9899:1999 (C99)  6.10.8 "The implementation shall not predefine the
+    #   macro __cplusplus, nor shall it define it in any standard header."
+    # N3242=11-0012 (C++11) 16.8 "The following macro names shall be defined by
+    #   the implementation: The name __cplusplus is defined to the value 201103L
+    #   when compiling a C++ translation unit.
+    # ISO/IEC 9899:201x (C11) 6.10.8 "The implementation shall not predefine the
+    #   macro __cplusplus, nor shall it define it in any standard header."
+    #
+    # So we do not specifically exclude '__cplusplus' but leave it to the user
+    # to pre-define it or not.
     NAMES_NO_REDEFINITION = set(
         (
             # This has a special semantics and can not be redefined
             'defined',
         )
     )
+    STD_PREDEFINED_NEVER_REDEFINED = set(
+            ['__LINE__', '__FILE__', '__DATE__', '__TIME__']
+        ) | NAMES_NO_REDEFINITION 
     def __init__(self, enableTrace=False, stdPredefMacros=None):
         """Constructor.
         enableTrace allows calls to _debugTokenStream() that may or may not
         produce log output (depending on logging level).
         stdPredefMacros, if present should be a dictionary of:
         {identifier : replacement_string_\n_terminated, ...}
-        identifier must be in STD_PREDEFINED_NAMES
+        These identifiers are not permitted to be redefined.
         This also increments the count is the number of times that the
         identifier has been referenced in the lifetime of me.
         A 'reference' is defined as: replacement or if defined.
@@ -166,6 +174,7 @@ class MacroEnv(object):
         # A map of predefined macros and those discovered in the translation
         # unit. This is a map of:
         # {identifier : class PpDefine, ...}
+        # Where identifier is a string.
         self._defineMap = {}
         # This is a list of PpDefine objects that have been #undef'd and
         # successfully removed from self._defineMap
@@ -175,12 +184,21 @@ class MacroEnv(object):
         # Can be set by a caller and will be written once to debug output before
         # any internal call to _debugTokenStream()
         self.debugMarker = None
+        # The macro identifier set of macros that can not be redefined
+        # This is composed of a static and dynamic part:
+        # Static: __LINE__, __FILE__, __DATE__, __TIME__
+        # Dynamic: Things like __STDC__ and that all depends on which standard
+        # you support. This you express through stdPredefMacros.keys()
+        self._noDefineIdentifiers = set(self.STD_PREDEFINED_NEVER_REDEFINED)
         if self._stdPredefMacros is not None:
-            # Check all keys in self.STD_PREDEFINED_NAMES
+            # Check all keys not in self.NAMES_NO_REDEFINITION as these can never
+            # ever be re/defined
             for k in self._stdPredefMacros.keys():
-                if k not in self.STD_PREDEFINED_NAMES:
+                if k in self.NAMES_NO_REDEFINITION:
                     raise ExceptionMacroReplacementInit(
                             '"%s" is not a predefined identifier' % k)
+            # Add identifier to set of those that can not be redefined
+            self._noDefineIdentifiers |= self._stdPredefMacros.keys()
             # Now insert the definitions in the internal representation.
             for k in self._stdPredefMacros.keys():
                 # We use __setString here to avoid raising an
@@ -286,8 +304,7 @@ class MacroEnv(object):
         except PpDefine.ExceptionCpipDefineInit as err:
             raise ExceptionMacroReplacementInit(str(err))
         # Test if attempting to redefine a predefined or undefineable identifier
-        if myDef.identifier in self.STD_PREDEFINED_NAMES \
-        or myDef.identifier in self.NAMES_NO_REDEFINITION:
+        if myDef.identifier in self._noDefineIdentifiers:
             raise ExceptionMacroReplacementPredefinedRedefintion(
                 'Attempting to redefine predefined identifier "%s"' \
                 % myDef.identifier
@@ -457,6 +474,8 @@ class MacroEnv(object):
                             '_expand("%s") already expanded' % theTtt)
             theTtt.canReplace = False
             return [theTtt, ]
+        if self._enableTrace:
+            self._debugTokenStream('_expand() examining "%s"' % theTtt.t)
         hasReplaced = False
         myMacro = self._defineMap[theTtt.t]
         #myMacro.assertReplListIntegrity()
@@ -471,6 +490,8 @@ class MacroEnv(object):
         else:
             # Function-like macro
             myPreamble = myMacro.consumeFunctionPreamble(theGen)
+            if self._enableTrace:
+                self._debugTokenStream('_expand() func preamble', myPreamble)
             if myPreamble is not None:
                 rTokS = [theTtt, ] + myPreamble
                 hasReplaced = False
@@ -479,7 +500,11 @@ class MacroEnv(object):
                         '_expand("%s") function preamble failed' % theTtt,
                         rTokS)
             else:
+                if self._enableTrace:
+                    self._debugTokenStream('_expand() extracting arguments')
                 myArgS = myMacro.retArgumentListTokens(theGen)
+                if self._enableTrace:
+                    self._debugTokenStream('_expand() arguments %s' % myArgS)
                 if myMacro.expandArguments:
                     # Expand out each argument
                     myExpandedArgS = []
@@ -591,7 +616,7 @@ class MacroEnv(object):
         return theIdentifier in self._defineMap
         
     def macros(self):
-        """Returns list of strings of current macros."""
+        """Returns and unsorted list of strings of current macro identifiers."""
         return list(self._defineMap.keys())
         
     def macro(self, theIdentifier):
@@ -603,6 +628,37 @@ class MacroEnv(object):
             raise ExceptionMacroEnvNoMacroDefined(
                     'Macro %s is not currently defined' % theIdentifier
                     )
+    
+    #---------------------------
+    # Macro dependencies
+    #---------------------------
+    def allStaticMacroDependencies(self):
+        """Returns a DuplexAdjacencyList() of macro dependencies for the
+        Macro environment. All objects in the DuplexAdjacencyList() are macro
+        identifiers as strings.
+        A DuplexAdjacencyList() can be converted to a util.Tree() and that
+        can be converted to a DictTree()"""
+        ret = DuplexAdjacencyList()
+        for macroIdentifier in self.macros():
+            for depMacro in self._staticMacroDependencies(macroIdentifier):
+                ret.add(macroIdentifier, depMacro)
+        return ret
+
+    def _staticMacroDependencies(self, theIdentifier):
+        """Returns the immediate dependencies as a list of strings for a macro
+        identified by the string."""
+        ret = []
+        macro = self.macro(theIdentifier)
+        for tok in macro.replacementTokens:
+            if tok.tt == 'identifier' \
+            and self.hasMacro(tok.t) \
+            and tok.t not in ret:
+                ret.append(tok.t)
+        return ret
+
+    #---------------------------
+    # END: Macro dependencies
+    #---------------------------
     
     def getUndefMacro(self, theIdx):
         """Returns the PpDefine object from the undef list for the given index.

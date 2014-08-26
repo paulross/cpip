@@ -26,6 +26,8 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
+import types
+
 from cpip import ExceptionCpip
 
 class ExceptionBufGen(ExceptionCpip):
@@ -41,22 +43,37 @@ class BufGen(object):
     
     def __str__(self):
         return 'BufGen: %s' % self._buf
-     
-    def __getitem__(self, key):
-        """Implements indexing e.g. [n] operation.
-        TODO: Respond to type.SliceType and they have attributes
-        'start', 'step', 'stop'
-        """
-        if key < 0:
+
+    def _extendBuffer(self, idx):
+        if idx < 0:
             raise IndexError('BufGen index out of range')
         try:
-            while len(self._buf) <= key:
+            while len(self._buf) <= idx:
                 self._buf.append(next(self._gen))
         except StopIteration:
             raise IndexError('BufGen index out of range')
-        if len(self._buf) > key:
+     
+    def __getitem__(self, key):
+        """Implements indexing and slicing. Negative indexes will raise an
+        IndexError."""
+        if isinstance(key, slice):
+            self._extendBuffer(key.stop - 1)
             return self._buf[key]
-        raise IndexError('BufGen index out of range')
+        elif isinstance(key, int):
+            self._extendBuffer(key)
+            if len(self._buf) > key:
+                return self._buf[key]
+            raise IndexError('BufGen index out of range')
+#        if key < 0:
+#            raise IndexError('BufGen index out of range')
+#        try:
+#            while len(self._buf) <= key:
+#                self._buf.append(next(self._gen))
+#        except StopIteration:
+#            raise IndexError('BufGen index out of range')
+#        if len(self._buf) > key:
+#            return self._buf[key]
+#        raise IndexError('BufGen index out of range')
             
     @property
     def lenBuf(self):

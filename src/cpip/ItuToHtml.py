@@ -31,12 +31,13 @@ import time
 import logging
 from optparse import OptionParser
 
+import cpip
 from cpip import ExceptionCpip
 from cpip.core import ItuToTokens
 from cpip.core import CppDiagnostic
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
-from cpip.util.MultiPassString import ExceptionMultiPass
+# from cpip.util.MultiPassString import ExceptionMultiPass
 from cpip import TokenCss
 
 class ExceptionItuToHTML(ExceptionCpip):
@@ -44,19 +45,39 @@ class ExceptionItuToHTML(ExceptionCpip):
     
 class ItuToHtml(object):
     """Converts an ITU to HTML and write it to the output directory."""
-    def __init__(self, theItuPath, theHtmlDir, keepGoing=False, macroRefMap=None):
+    _condCompClassMap = {
+        -1 : 'Maybe',
+        0 : 'False',
+        1 : 'True',
+    }
+    def __init__(self, theItu, theHtmlDir, writeAnchors, keepGoing=False,
+                 macroRefMap=None, cppCondMap=None, ituToTuLineSet=None):
         """Takes an input source file and an output directory.
-        theItuPath - The original source file path
-        theHtmlDir - The output directory for the HTML
+        theItu - The original source file path (or file like object for the input).
+        theHtmlDir - The output directory for the HTML or a file-like object for the output 
         keepGoing - Bool, if True raise on error.
-        macroRefMap - Map of {identifier : href_text, ...) to link to macro definitions."""
-        self._fpIn = theItuPath
-        self._fpOut = os.path.join(theHtmlDir, HtmlUtils.retHtmlFileName(self._fpIn))
-        if not os.path.exists(theHtmlDir):
-            os.makedirs(theHtmlDir)
+        macroRefMap - Map of {identifier : href_text, ...) to link to macro definitions.
+        ituToTuLineSet - Set of integer line numbers which are lines that can be linked
+        to the translation unit representation."""
+        if isinstance(theItu, str):
+            self._fpIn = theItu
+            self._ituFileObj = open(self._fpIn)
+        else:
+            self._fpIn = 'Unknown'
+            self._ituFileObj = theItu
+        if isinstance(theHtmlDir, str):
+            if not os.path.exists(theHtmlDir):
+                os.makedirs(theHtmlDir)
+            self._fOut = open(os.path.join(theHtmlDir, HtmlUtils.retHtmlFileName(self._fpIn)), 'w')
+        else:
+            self._fOut = theHtmlDir
+        self._writeAnchors = writeAnchors
         self._keepGoing = keepGoing
         # Map of {identifier : href_text, ...) to link to macro definitions.
         self._macroRefMap = macroRefMap or {}
+        self._cppCondMap = cppCondMap
+        self._ituToTuLineSet = ituToTuLineSet
+#         cppCondMap.pprint()
         # Start at 0 as this gets incremented before write
         self._lineNum = 0
         self._convert()
@@ -66,8 +87,10 @@ class ItuToHtml(object):
         # Create reader
         myItt = self._initReader()
         # Create writer and iterate
+        if self._fOut is None:
+            return
         try:
-            with XmlWrite.XhtmlStream(self._fpOut) as myS:
+            with XmlWrite.XhtmlStream(self._fOut, mustIndent=cpip.INDENT_ML) as myS:
                 with XmlWrite.Element(myS, 'head'):
                     with XmlWrite.Element(
                         myS,
@@ -89,7 +112,8 @@ class ItuToHtml(object):
                         self._incAndWriteLine(myS)
                         for t, tt in myItt.genTokensKeywordPpDirective():
                             self._handleToken(myS, t, tt)
-        except (ExceptionMultiPass, IOError) as err:
+#        except (ExceptionMultiPass, IOError) as err:
+        except (IOError) as err:
             raise ExceptionItuToHTML('%s line=%d, col=%d' \
                         % (
                             str(err),
@@ -97,27 +121,23 @@ class ItuToHtml(object):
                             myItt.fileLocator.colNum,
                         )
                     )
-#===============================================================================
-#        print 'TRACE: _convert() done: line=%d, col=%d' \
-#                    % (
-#                        myItt.fileLocator.lineNum,
-#                        myItt.fileLocator.colNum,
-#                    )
-#===============================================================================
                     
     def _handleToken(self, theS, t, tt):
         logging.debug('_handleToken(): "%s", %s', t, tt)
         if tt == 'whitespace':
-            self._writeTextWithNewlines(theS, t)
+            self._writeTextWithNewlines(theS, t, None)
         elif tt in ('C comment', 'C++ comment'):
-            with XmlWrite.Element(theS, 'span', {'class' : '%s' % TokenCss.retClass(tt)}):
-                self._writeTextWithNewlines(theS, t)
+            self._writeTextWithNewlines(theS, t, TokenCss.retClass(tt))
         elif False and tt == 'preprocessing-op-or-punc':
             theS.characters(t)
         else:
             if tt == 'identifier' and t in self._macroRefMap:
-                # Make a link to a macro definition
-                with XmlWrite.Element(theS, 'a', {'href' : self._macroRefMap[t]}):
+                # As we can not definitively determine which particular
+                # definition of the macro is relevant for this source file
+                # we just use the last definition in the list.
+                assert len(self._macroRefMap[t]) > 0
+                href = self._macroRefMap[t][-1][2]
+                with XmlWrite.Element(theS, 'a', {'href' : href}):
                     with XmlWrite.Element(theS, 'span', {'class' : '%s' % TokenCss.retClass(tt)}):
                         theS.characters(t)
             else:
@@ -125,26 +145,54 @@ class ItuToHtml(object):
                     self._lineNum += t.count('\n')
                     theS.characters(t)
     
-    def _writeTextWithNewlines(self, theS, theText):
+    def _writeTextWithNewlines(self, theS, theText, spanClass):
         """Splits text by newlines and writes it out."""
         # Whitespace, line breaks
         myL = theText.split('\n')
         if len(myL) > 1:
             # Do all up to the last
             for s in myL[:-1]:
-                theS.characters(s.replace('\t', '    '))
+                if spanClass is not None:
+                    with XmlWrite.Element(theS, 'span', {'class' : spanClass}):
+                        theS.characters(s.replace('\t', '    '))
+                else:
+                    theS.characters(s.replace('\t', '    '))
                 theS.characters('\n')
                 self._incAndWriteLine(theS)
         # Now the last
-        theS.characters(myL[-1].replace('\t', '    '))
+        if spanClass is not None:
+            with XmlWrite.Element(theS, 'span', {'class' : spanClass}):
+                theS.characters(myL[-1].replace('\t', '    '))
+        else:
+            theS.characters(myL[-1].replace('\t', '    '))
     
     def _incAndWriteLine(self, theS):
         self._lineNum += 1
-        HtmlUtils.writeHtmlFileAnchor(
-                theS,
-                self._lineNum,
-                '%8d: ' % self._lineNum,
-                'line')
+        classAttr = 'line'
+        if self._cppCondMap is not None:
+            try:
+                lineIsCompiled = self._cppCondMap.isCompiled(self._fpIn, self._lineNum)
+            except KeyError:
+                pass
+            else:
+                classAttr = self._condCompClassMap[lineIsCompiled]
+#       # Write a link to the TU representation if I am the ITU
+        if self._ituToTuLineSet is not None \
+        and self._lineNum in self._ituToTuLineSet:
+            myHref = '%s.html#%d' % (os.path.basename(self._fpIn), self._lineNum)
+        else:
+            myHref = None
+        if self._writeAnchors:
+            HtmlUtils.writeHtmlFileAnchor(
+                    theS,
+                    self._lineNum,
+                    '%8d:' % self._lineNum,
+                    classAttr,
+                    theHref=myHref)
+        else:
+            # Just write the line number without the anchor
+            HtmlUtils.writeCharsAndSpan(theS, '%8d:' % self._lineNum, classAttr)
+        theS.characters(' ')
         
     def _initReader(self):
         """Create and return a reader, initialise internals."""
@@ -154,7 +202,7 @@ class ItuToHtml(object):
             myDiagnostic = None
         try:
             myItt = ItuToTokens.ItuToTokens(
-                    theFileObj=open(self._fpIn),
+                    theFileObj=self._ituFileObj,
                     theFileId=self._fpIn,
                     theDiagnostic=myDiagnostic,
                 )
@@ -174,7 +222,11 @@ Converts a source code file to HTML in the output directory."""
             dest="loglevel",
             default=30,
             help="Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: %default]"
-        )      
+        )
+    optParser.add_option("-a", "--anchors", action="store_false", dest="anchors",
+                         default=True, 
+                      help="Suppress line anchors. [default: %default]")
+    
     opts, args = optParser.parse_args()
     clkStart = time.clock()
     # Initialise logging etc.
@@ -188,12 +240,11 @@ Converts a source code file to HTML in the output directory."""
         return 1
     # Your code here
     TokenCss.writeCssToDir(args[1])
-    myIth = ItuToHtml(args[0], args[1])
+    ItuToHtml(args[0], args[1], opts.anchors)
     clkExec = time.clock() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0
 
 if __name__ == '__main__':
-    #multiprocessing.freeze_support()
     sys.exit(main())

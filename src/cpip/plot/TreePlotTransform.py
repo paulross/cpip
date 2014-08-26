@@ -24,7 +24,7 @@ order plotted anti-clockwise or clockwise.
 
 This can convert 'logical' positions into 'physical' positions. Where a
 'logical' position is one with the root of the tree at the top and the
-child nodes in left-to-right (i.e. anti-clockwise) order.
+child nodes below in left-to-right (i.e. anti-clockwise) order.
 A 'physical' position is a plot-able position where the root of the tree is
 top/left/bottom or right and the child nodes are in anti-clockwise or
 clockwise order.

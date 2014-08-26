@@ -27,7 +27,7 @@ import time
 import logging
 import sys
 import os
-#import pprint
+import pprint
 
 import io
 
@@ -104,10 +104,14 @@ class TestPpLexerLowLevel(TestPpLexer):
         )
         for t in myLexer.ppTokens():
             pass
+#         self.assertEqual(
+#             myLexer.definedMacros,
+#             """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
+# #define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
         self.assertEqual(
-            myLexer.definedMacros,
-            """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
-#define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
+            sorted(myLexer.macroEnvironment.macros()),
+            ['EGGS', 'SPAM', '__DATE__', '__TIME__'],
+        )
         myTokS = []
         self.assertEqual([], myLexer._retListReplacedTokens(myTokS))
         myTokS = [
@@ -186,10 +190,14 @@ class TestPpLexerLowLevel(TestPpLexer):
         )
         for t in myLexer.ppTokens():
             pass
+#         self.assertEqual(
+#             myLexer.definedMacros,
+#             """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
+# #define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
         self.assertEqual(
-            myLexer.definedMacros,
-            """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
-#define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
+            sorted(myLexer.macroEnvironment.macros()),
+            ['EGGS', 'SPAM', '__DATE__', '__TIME__'],
+        )
         myTokS = []
         self.assertEqual(0, myLexer._countNonWsTokens(myTokS))
         myTokS = [
@@ -253,9 +261,13 @@ class TestPpLexerPreDefine(TestPpLexer):
         #print
         #print myLexer.definedMacros
         #print myLexer.fileIncludeGraphRoot
+#         self.assertEqual(
+#             str(myLexer.definedMacros),
+#             '#define SPAM 1 /* Unnamed Pre-include#1 Ref: 0 True */')
         self.assertEqual(
-            str(myLexer.definedMacros),
-            '#define SPAM 1 /* Unnamed Pre-include#1 Ref: 0 True */')
+            sorted(myLexer.macroEnvironment.macros()),
+            ['SPAM', '__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [7, 4]:  True "" ""
@@ -280,7 +292,11 @@ mt.h [0, 0]:  True "" \"\"""",
         #print
         #print myLexer.definedMacros
         #print myLexer.fileIncludeGraphRoot
-        self.assertEqual(str(myLexer.definedMacros), '')
+#         self.assertEqual(str(myLexer.definedMacros), '')
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [0, 0]:  True "" ""
@@ -308,7 +324,11 @@ mt.h [0, 0]:  True "" \"\"""",
         #print
         #print myLexer.definedMacros
         #print myLexer.fileIncludeGraphRoot
-        self.assertEqual(str(myLexer.definedMacros), '')
+#         self.assertEqual(str(myLexer.definedMacros), '')
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [1, 0]:  True "" ""
@@ -347,7 +367,11 @@ mt.h [0, 0]:  True "" \"\"""",
         #print
         #print myLexer.definedMacros
         #print myLexer.fileIncludeGraphRoot
-        self.assertEqual(str(myLexer.definedMacros), '')
+#         self.assertEqual(str(myLexer.definedMacros), '')
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [1, 0]:  True "" ""
@@ -386,8 +410,12 @@ mt.h [0, 0]:  True "" \"\"""",
         #print
         #print myLexer.definedMacros
         #print myLexer.fileIncludeGraphRoot
-        self.assertEqual(str(myLexer.definedMacros), """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
-#define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
+#         self.assertEqual(str(myLexer.definedMacros), """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
+# #define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['EGGS', 'SPAM', '__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [21, 15]:  True "" ""
@@ -421,11 +449,15 @@ mt.h [0, 0]:  True "" \"\"""")
         #print
         #print myLexer.definedMacros
         #print myLexer.fileIncludeGraphRoot
+#         self.assertEqual(
+#                          str(myLexer.definedMacros),
+#                          """#define CHIPS EGGS /* Unnamed Pre-include#3 Ref: 0 True */
+# #define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
+# #define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
         self.assertEqual(
-                         str(myLexer.definedMacros),
-                         """#define CHIPS EGGS /* Unnamed Pre-include#3 Ref: 0 True */
-#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
-#define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
+            sorted(myLexer.macroEnvironment.macros()),
+            ['CHIPS', 'EGGS', 'SPAM', '__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [28, 19]:  True "" ""
@@ -464,7 +496,11 @@ mt.h [0, 0]:  True "" \"\"""")
         #print myLexer.definedMacros
         #print
         #print myLexer.fileIncludeGraphRoot
-        self.assertEqual(str(myLexer.definedMacros), '')
+#         self.assertEqual(str(myLexer.definedMacros), '')
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [6, 3]:  True "" ""
@@ -581,10 +617,14 @@ mt.h [0, 0]:  True "" \"\"""")
         #print myLexer.definedMacros
         #print
         #print myLexer.fileIncludeGraphRoot
+#         self.assertEqual(
+#             str(myLexer.definedMacros),
+#             """#define EGGS SPAM /* Unnamed Pre-include#1 Ref: 0 True */
+# #define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
         self.assertEqual(
-            str(myLexer.definedMacros),
-            """#define EGGS SPAM /* Unnamed Pre-include#1 Ref: 0 True */
-#define SPAM(x,y) x+y /* Unnamed Pre-include#1 Ref: 0 True */""")
+            sorted(myLexer.macroEnvironment.macros()),
+            ['EGGS', 'SPAM', '__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [14, 11]:  True "" ""
@@ -620,10 +660,14 @@ mt.h [0, 0]:  True "" \"\"""")
         #print myLexer.definedMacros
         #print 'File Include Graph'
         #print myLexer.fileIncludeGraphRoot
+#         self.assertEqual(
+#             str(myLexer.definedMacros),
+#             """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
+# #define SPAM(x,y) x+y /* Unnamed Pre-include#4 Ref: 0 True */""")
         self.assertEqual(
-            str(myLexer.definedMacros),
-            """#define EGGS SPAM /* Unnamed Pre-include#2 Ref: 0 True */
-#define SPAM(x,y) x+y /* Unnamed Pre-include#4 Ref: 0 True */""")
+            sorted(myLexer.macroEnvironment.macros()),
+            ['EGGS', 'SPAM', '__DATE__', '__TIME__'],
+        )
         self.assertEqual(
             str(myLexer.fileIncludeGraphRoot),
             """Unnamed Pre-include [15, 11]:  True "" ""
@@ -1236,17 +1280,17 @@ Content of: system, include, spam.h
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
-        #print 'FileIncludeGraph:'
-        #print myLexer.fileIncludeGraphRoot
+#        print('FileIncludeGraph:')
+#        print(myLexer.fileIncludeGraphRoot)
         expGraph = """src/spam.c [0, 0]:  True "" ""
 000001: #include usr\spam.h
-        usr\spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+  usr\spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
 000002: #include usr\inc\spam.h
-        usr\inc\spam.h [15, 10]:  True "" "['"inc/spam.h"', 'CP=None', 'usr=usr']"
+  usr\inc\spam.h [15, 10]:  True "" "['"inc/spam.h"', 'CP=None', 'usr=usr']"
 000003: #include sys\spam.h
-        sys\spam.h [12, 8]:  True "" "['<spam.h>', 'sys=sys']"
+  sys\spam.h [12, 8]:  True "" "['<spam.h>', 'sys=sys']"
 000004: #include sys\inc\spam.h
-        sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+  sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
 class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
@@ -1306,7 +1350,7 @@ class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
         expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
 000002: #include usr\spam.h
-        usr\spam.h [12, 8]:  True "INC == 0" "['"spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
+  usr\spam.h [12, 8]:  True "INC == 0" "['"spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
@@ -1335,7 +1379,7 @@ src/spam.c [0, 0]:  True "" ""
         expGraph = """Unnamed Pre-include [9, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
 000004: #include usr\inc\spam.h
-        usr\inc\spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
+  usr\inc\spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def testSimpleInclude_02(self):
@@ -1364,7 +1408,7 @@ src/spam.c [0, 0]:  True "" ""
         expGraph = """Unnamed Pre-include [11, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
 000006: #include sys\spam.h
-        sys\spam.h [12, 8]:  True "(!(INC == 0) && !(INC == 1) && INC == 2)" "['<spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+  sys\spam.h [12, 8]:  True "(!(INC == 0) && !(INC == 1) && INC == 2)" "['<spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def testSimpleInclude_03(self):
@@ -1390,7 +1434,7 @@ src/spam.c [0, 0]:  True "" ""
         expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
 000008: #include sys\inc\spam.h
-        sys\inc\spam.h [15, 10]:  True "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+  sys\inc\spam.h [15, 10]:  True "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
 class TestIncludeHandler_PreInclude_Includes(TestIncludeHandlerBase):
@@ -1650,34 +1694,34 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
         #print myLexer.fileIncludeGraphRoot
         expGraph = """src/spam.c [0, 0]:  True "" ""
 000001: #include usr\spam.h
-        usr\spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
-        000001: #include usr\inc\spam.h
-                usr\inc\spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
-                000001: #include sys\spam.h
-                        sys\spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
-                        000001: #include sys\inc\spam.h
-                                sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+  usr\spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+  000001: #include usr\inc\spam.h
+    usr\inc\spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
+    000001: #include sys\spam.h
+      sys\spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
+      000001: #include sys\inc\spam.h
+        sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def testSimpleIncludeTwice(self):
         """TestIncludeHandler_UsrSys_MultipleDepth.testSimpleInclude(): Tests multiple depth #include statements that resolve to usr/sys invoked twice."""
         expectedResult = """Content of: system, include, spam.h\n\n\n\n\n"""
         expGraph = """src/spam.c [0, 0]:  True "" ""
-000001: #include usr\spam.h
-        usr\spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
-        000001: #include usr\inc\spam.h
-                usr\inc\spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
-                000001: #include sys\spam.h
-                        sys\spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
-                        000001: #include sys\inc\spam.h
-                                sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+000001: #include usr/spam.h
+  usr/spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+  000001: #include usr/inc/spam.h
+    usr/inc/spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
+    000001: #include sys/spam.h
+      sys/spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
+      000001: #include sys/inc/spam.h
+        sys/inc/spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
         result = ''.join([t.t for t in myLexer.ppTokens()])
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
-        #print 'FileIncludeGraph:'
-        #print myLexer.fileIncludeGraphRoot
+#        print('FileIncludeGraph:')
+#        print(myLexer.fileIncludeGraphRoot)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
         # Do it again, this should raise
         try:
@@ -1716,9 +1760,9 @@ ONCE
         #print myLexer.fileIncludeGraphRoot
         expGraph = """spam.c [0, 0]:  True "" ""
 000001: #include spam.h
-        spam.h [7, 4]:  True "" "['"spam.h"', 'CP=']"
+  spam.h [7, 4]:  True "" "['"spam.h"', 'CP=']"
 000002: #include spam.h
-        spam.h [2, 0]:  True "" "['"spam.h"', 'CP=']\""""
+  spam.h [2, 0]:  True "" "['"spam.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
 class TestPpLexerConditional_LowLevel(TestPpLexer):
@@ -1806,7 +1850,7 @@ FAIL
         #print str(myLexer.condCompGraph)
         self.assertEqual("""#if 1 /* True "mt.h" 1 0 */
 #else /* False "mt.h" 3 9 */
-#endif /* False "mt.h" 5 12 */""", str(myLexer.condCompGraph))
+#endif /* True "mt.h" 5 12 */""", str(myLexer.condCompGraph))
 
     def test_01(self):
         """TestPpLexerConditional.test_01(): Simple #if 0"""
@@ -2571,7 +2615,11 @@ FAIL_1
         #print 'nonCondTokS:'
         #print ''.join(nonCondTokS)
         # Check only one macro defined
-        self.assertEqual(myLexer.definedMacros, '#define ONE_ /* mt.h#2 Ref: 0 True */')
+#         self.assertEqual(myLexer.definedMacros, '#define ONE_ /* mt.h#2 Ref: 0 True */')
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['ONE_', '__DATE__', '__TIME__'],
+        )
         expResult = [
                      ("\n", (True, '1')),
                      ("\n", (True, '1')),
@@ -2594,7 +2642,7 @@ FAIL_1
         self.assertEqual(''.join(nonCondTokS),"\n\n\n")
 
     def test_02(self):
-        """TestPpLexerConditionalWithState.test_02(): Simple #if with conditional #undef, macro environment is"""
+        """TestPpLexerConditionalWithState.test_02(): Simple #if with conditional #undef, macro environment is altered in conditional part."""
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
@@ -2630,7 +2678,11 @@ PASS
         #print 'nonCondTokS:'
         #print ''.join(nonCondTokS)
         # Check only one macro defined
-        self.assertEqual(myLexer.definedMacros, '#define ONE 1 /* mt.h#1 Ref: 0 True */')
+#         self.assertEqual(myLexer.definedMacros, '#define ONE 1 /* mt.h#1 Ref: 0 True */')
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['ONE', '__DATE__', '__TIME__'],
+        )
         expResult = [
                      ('\n',     (True, '')),
                      ('\n',     (False, '0')),
@@ -2648,6 +2700,76 @@ PASS
         self.assertEqual(''.join(allTokS),"\n\n#undef ONE\n\nPASS\n\n")
         self.assertEqual(''.join(nonCondTokS),"\n\nPASS\n\n")
         #print myLexer.macroEnvironment
+
+    def test_10(self):
+        """TestPpLexerConditionalWithState.test_10(): Simple #if/#else/#endif state is correct."""
+        # Simulating this, should process to: TRUE TRUE TRUE
+        src = """TRUE
+#if 1
+TRUE
+#else
+FALSE
+#endif
+TRUE
+"""
+        myLexer = PpLexer.PpLexer(
+                 'mt.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    src,
+                    {}
+                    ),
+                 )
+        tokAndState = []
+        allTokS = []
+        nonCondTokS = []
+        myGen = myLexer.ppTokens(condLevel=1)
+#        print()
+        for aResult in myGen:
+            tokAndState.append((aResult.t, myLexer.condState))
+            allTokS.append(aResult.t)
+            if not aResult.isCond:
+                nonCondTokS.append(aResult.t)
+#            print('Result:', aResult)
+#            print('State: ', myLexer.condState)
+        myLexer.finalise()
+#        print('tokAndState:')
+#        print(tokAndState)
+#        pprint.pprint(tokAndState)
+#        print('allTokS:')
+#        print(''.join(allTokS))
+#        print('nonCondTokS:')
+#        print(''.join(nonCondTokS))
+        # Check only one macro defined
+#         self.assertEqual(myLexer.definedMacros, '')
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['__DATE__', '__TIME__'],
+        )
+        expResult = [
+            ('TRUE',    (True, '')),
+            ('\n',      (True, '')),
+            ('\n',      (True, '1')),
+            ('TRUE',    (True, '1')),
+            ('\n',      (True, '1')),
+            ('\n',      (False, '!(1)')), # Reduction of #else to a '\n'
+            ('FALSE',   (False, '!(1)')),
+            ('\n',      (False, '!(1)')),
+            ('\n',      (True, '')), # Reduction of #endif to '\n'
+            ('TRUE',    (True, '')),
+            ('\n',      (True, '')),
+        ]
+        self.assertEqual(tokAndState, expResult)
+        self.assertEqual(''.join(allTokS),"TRUE\n\nTRUE\n\nFALSE\n\nTRUE\n")
+        self.assertEqual(''.join(nonCondTokS),"TRUE\n\nTRUE\n\nTRUE\n")
+        #print myLexer.macroEnvironment
+#        print()
+#        print(myLexer.condCompGraph)
+        expGraphStr = """#if 1 /* True "mt.h" 2 7 */
+#else /* False "mt.h" 4 16 */
+#endif /* True "mt.h" 6 26 */"""
+        self.assertEqual(str(myLexer.condCompGraph), expGraphStr)
 
 class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
     """Tests conditional #include statements i.e. when condLevel !=0. Note: This is similar to stuff
@@ -2849,6 +2971,74 @@ class TestPpLexerError(TestPpLexer):
                     [],
                     [],
                     """#error some kind of MY_ERROR(wtf) message
+""",
+                    {}),
+                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
+                 )
+
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        self.assertEqual(result, '\n\n')
+        myLexer.finalise()
+
+class TestPpLexerWarning(TestPpLexer):
+    """Tests the construction of a PpLexer object and process #warning statement.
+    NOTE: #warning is not in the standard at all but can occur, for example
+    in:
+    /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.9.sdk/usr/include/sys/cdefs.h
+    78  /* This SDK is designed to work with clang and specific versions of
+    79   * gcc >= 4.0 with Apple's patch sets */
+    80  #if !defined(__GNUC__) || __GNUC__ < 4
+    81  #warning "Unsupported compiler detected"
+    82  #endif
+    """
+    def test_00(self):
+        """TestPpLexerWarning - simple warning message."""
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    """#warning some kind of warning message
+""",
+                    {}),
+                 )
+
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        self.assertEqual(result, """
+""")
+        myLexer.finalise()
+
+    def test_01(self):
+        """TestPpLexerWarning - error message with object-like macro substitution."""
+        preDefMacros = [
+                        '#define MY_WARN SOME MACRO STUFF\n',
+                        ]
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    """#warning some kind of MY_WARN message
+""",
+                    {}),
+                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
+                 )
+
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        self.assertEqual(result, '\n\n')
+        myLexer.finalise()
+
+    def test_02(self):
+        """TestPpLexerWarning - error message with function-like macro substitution."""
+        preDefMacros = [
+                        '#define MY_WARN(x) # x\n',
+                        ]
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    """#warning some kind of MY_WARN(wtf) message
 """,
                     {}),
                  preIncFiles=[io.StringIO(x) for x in preDefMacros],
@@ -3167,7 +3357,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
         #print myLexer.fileIncludeGraphRoot
         expGraph = """spam.h [7, 4]:  True "" ""
 000003: #include spam.h
-        spam.h [2, 1]:  True "INC == 1" "['"spam.h"', 'CP=']\""""
+  spam.h [2, 1]:  True "INC == 1" "['"spam.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def test_01(self):
@@ -3197,7 +3387,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
         #print myLexer.fileIncludeGraphRoot
         expGraph = """spam.h [7, 4]:  True "" ""
 000003: #include spam.h
-        spam.h [2, 1]:  True "defined INC" "['"spam.h"', 'CP=']\""""
+  spam.h [2, 1]:  True "defined INC" "['"spam.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def test_02(self):
@@ -3227,7 +3417,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
         #print myLexer.fileIncludeGraphRoot
         expGraph = """spam.h [7, 4]:  True "" ""
 000003: #include spam.h
-        spam.h [2, 1]:  True "!defined UNDEF" "['"spam.h"', 'CP=']\""""
+  spam.h [2, 1]:  True "!defined UNDEF" "['"spam.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def test_03(self):
@@ -3257,7 +3447,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
         #print myLexer.fileIncludeGraphRoot
         expGraph = """spam.h [7, 4]:  True "" ""
 000003: #include spam.h
-        spam.h [2, 1]:  True "UNDEF == 0" "['"spam.h"', 'CP=']\""""
+  spam.h [2, 1]:  True "UNDEF == 0" "['"spam.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def test_04(self):
@@ -3287,7 +3477,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
         #print myLexer.fileIncludeGraphRoot
         expGraph = """spam.h [7, 4]:  True "" ""
 000003: #include spam.h
-        spam.h [2, 1]:  True "! UNDEF" "['"spam.h"', 'CP=']\""""
+  spam.h [2, 1]:  True "! UNDEF" "['"spam.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
 class TestPpLexerFileIncludeGraphReplacement(TestPpLexer):
@@ -3365,6 +3555,7 @@ EOF: spam_redef.h
 """,
                      }
                     ),
+                    autoDefineDateTime=False,
                  )
         #print
         result = ''.join([t.t for t in myLexer.ppTokens()])
@@ -3421,9 +3612,9 @@ EOF
 #        print myLexer.fileIncludeGraphRoot
         expGraph = """ITU.h [92, 47]:  True "" ""
 000025: #include spam_undef.h
-        spam_undef.h [19, 13]:  True "" "['"spam_undef.h"', 'CP=']"
+  spam_undef.h [19, 13]:  True "" "['"spam_undef.h"', 'CP=']"
 000039: #include spam_redef.h
-        spam_redef.h [32, 21]:  True "" "['"spam_redef.h"', 'CP=']\""""
+  spam_redef.h [32, 21]:  True "" "['"spam_redef.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
         expHistory = """Macro Environment:
 #define SPAM Redefined in spam_redef.h /* spam_redef.h#5 Ref: 3 True */
@@ -3717,13 +3908,13 @@ class TestPpLexerRaiseOnError(TestIncludeHandlerBase):
         myLexer.finalise()
         expGraph = """src/spam.c [0, 0]:  True "" ""
 000001: #include usr/spam.h
-        usr/spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
-        000001: #include usr/inc/spam.h
-                usr/inc/spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
-                000001: #include sys/spam.h
-                        sys/spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
-                        000001: #include sys/inc/spam.h
-                                sys/inc/spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\""""
+  usr/spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+  000001: #include usr/inc/spam.h
+    usr/inc/spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
+    000001: #include sys/spam.h
+      sys/spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
+      000001: #include sys/inc/spam.h
+        sys/inc/spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\""""
 #        print 'FileIncludeGraph:'
 #        print 'Expected:'
 #        print expGraph
@@ -3791,7 +3982,10 @@ class PpLexerPragma(TestPpLexer):
         #print myTokS
         #print
         myEnv = myLexer.macroEnvironment
-        self.assertEqual(myEnv.macros(), [])
+        self.assertEqual(
+            sorted(myEnv.macros()),
+            ['__DATE__', '__TIME__'],
+        )
 
     def test_STDC_00(self):
         """PpLexerPragma - STDC."""
@@ -3816,7 +4010,10 @@ class PpLexerPragma(TestPpLexer):
         #print
         #print myEnv.macroHistory()
         self.assertEqual(myEnv.hasMacro('FP_CONTRACT'), True)
-        self.assertEqual(myEnv.macros(), ['FP_CONTRACT',])
+        self.assertEqual(
+            sorted(myEnv.macros()),
+            ['FP_CONTRACT', '__DATE__', '__TIME__'],
+        )
 
     def test_pragma_raises_00(self):
         """PpLexerPragma - raising ExceptionPragmaHandler."""
@@ -4192,12 +4389,20 @@ class TestPpLexerMacroLineContinuation(TestPpLexer):
         self.assertEqual(result, expectedResult)
         #print
         #print '"%s"' % str(myLexer.macroEnvironment)
-        expStr = """#define __END_ARM asm(".code 16 ") /* mt.h#8 Ref: 0 True */
-#define __SWITCH_TO_ARM asm("push {r0} "); asm("add r0, pc, #4 "); asm("bx r0 "); asm("nop "); asm(".align 2 "); asm(".code 32 "); asm("ldr r0, [sp], #4 ") /* mt.h#1 Ref: 0 True */"""
-        #print
-        #print '"%s"' % expStr
-        #self.printStrDiff(expStr, str(myLexer.macroEnvironment))
-        self.assertEqual(expStr, str(myLexer.macroEnvironment))
+#         expStr = """#define __END_ARM asm(".code 16 ") /* mt.h#8 Ref: 0 True */
+# #define __SWITCH_TO_ARM asm("push {r0} "); asm("add r0, pc, #4 "); asm("bx r0 "); asm("nop "); asm(".align 2 "); asm(".code 32 "); asm("ldr r0, [sp], #4 ") /* mt.h#1 Ref: 0 True */"""
+#         #print
+#         #print '"%s"' % expStr
+#         #self.printStrDiff(expStr, str(myLexer.macroEnvironment))
+#         self.assertEqual(expStr, str(myLexer.macroEnvironment))
+        self.assertEqual(
+            sorted(myLexer.macroEnvironment.macros()),
+            ['__DATE__', '__END_ARM', '__SWITCH_TO_ARM', '__TIME__'],
+        )
+        self.assertEqual(
+            myLexer.macroEnvironment.macro('__END_ARM').strReplacements(),
+            'asm(".code 16 ")'
+        )
 
 class TestPpLexerHeaderName(TestPpLexer):
     """Tests #include statememts when a \\ is used."""
@@ -4697,6 +4902,50 @@ spam.h
         self._printDiff(resultTokS, expTokS)
         self.assertEqual(resultTokS, expTokS)
 
+    def test_04(self):
+        """TestLinuxMacroInclude.test_04() - Macro replacement does not happen in h-str or q-str."""
+        myStr = """#define current get_current()
+#include <asm/current.h>
+"""
+        myLexer = PpLexer.PpLexer(
+                 'define_trace.h',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    myStr,
+                    {
+                        os.path.join('.', 'asm', 'current.h') : """Contents of current header
+""",
+                    }
+                    ),
+                 )
+        resultTokS = [t for t in myLexer.ppTokens()]
+        myLexer.finalise()
+        resultStr = ''.join([t.t for t in resultTokS])
+#        print()
+#        print('Result')
+#        print(resultStr)
+#        print('Result as tokens')
+#        self.pprintTokensAsCtors(resultTokS)
+        expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('Contents', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('of', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('get_current', 'identifier'),
+            PpToken.PpToken('(', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(')', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('header', 'identifier'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('\n', 'whitespace'),
+        ]
+#        print('Diff')
+        self._printDiff(resultTokS, expTokS)
+        self.assertEqual(resultTokS, expTokS)
+
+
 class TestLinuxMacroInTypesH(TestPpLexer):
     """Linux Kernel include/types.h warning that should not be there."""
     ITU_CONTENT = """#ifndef _LINUX_TYPES_H
@@ -4730,9 +4979,12 @@ class TestLinuxMacroInTypesH(TestPpLexer):
             )
         resultTokS = [t for t in myLexer.ppTokens()]
         myLexer.finalise()
-#        print
-#        print self.pprintTokensAsCtors(resultTokS)
+#         print('HERE')
+#         print(resultTokS)
+#         self.pprintTokensAsCtors(resultTokS)
+#         print('HERE')
         expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
             PpToken.PpToken('\n', 'whitespace'),
             PpToken.PpToken('\n', 'whitespace'),
             PpToken.PpToken('\n', 'whitespace'),
@@ -4782,6 +5034,115 @@ class TestLinuxMacroInTypesH(TestPpLexer):
         self._printDiff(resultTokS, expTokS)
         self.assertEqual(resultTokS, expTokS)
 
+class TestLinuxOther(TestPpLexer):
+    def test_00(self):
+        """Sepecial.test_00()."""
+
+class TestLinuxEvalProblem(TestPpLexer):
+    def test_00(self):
+        """Testing error in processing linux-3.13/arch/x86/include/asm/irq_vectors.h"""
+        content = """#define SPURIOUS_APIC_VECTOR            0xff
+/*
+ * Sanity check
+ */
+#if ((SPURIOUS_APIC_VECTOR & 0x0F) != 0x0F)
+# error SPURIOUS_APIC_VECTOR definition error
+#endif
+"""
+        myLexer = PpLexer.PpLexer(
+                 'irq_vectors.h',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    content,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        result = ''.join([t.t for t in tokS])
+#        self.pprintTokensAsCtors(tokS)
+#        print('WTF')
+#        print(result)
+#        print('WTF')
+        expectedResult = '\n \n\n'
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        
+    def test_01(self):
+        """Testing error in processing linux-3.13/include/linux/mm_types.h"""
+        content = """#define BITS_PER_LONG 32
+#define __AC(X,Y)    (X##Y)
+#define _AC(X,Y) __AC(X,Y)
+#define PAGE_SIZE (_AC(1,UL) << PAGE_SHIFT)
+
+struct page_frag {
+        struct page *page;
+#if (BITS_PER_LONG > 32) || (PAGE_SIZE >= 65536)
+        __u32 offset;
+        __u32 size;
+#else
+        __u16 offset;
+        __u16 size;
+#endif
+};
+"""
+        myLexer = PpLexer.PpLexer(
+                 'mm_types.h',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    content,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        result = ''.join([t.t for t in tokS])
+#        print('Result:\n', result)
+#        self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('struct', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('page_frag', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('{', 'preprocessing-op-or-punc'),
+            PpToken.PpToken('\n        ', 'whitespace'),
+            PpToken.PpToken('struct', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('page', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('*', 'preprocessing-op-or-punc'),
+            PpToken.PpToken('page', 'identifier'),
+            PpToken.PpToken(';', 'preprocessing-op-or-punc'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('__u16', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('offset', 'identifier'),
+            PpToken.PpToken(';', 'preprocessing-op-or-punc'),
+            PpToken.PpToken('\n        ', 'whitespace'),
+            PpToken.PpToken('__u16', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('size', 'identifier'),
+            PpToken.PpToken(';', 'preprocessing-op-or-punc'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('}', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(';', 'preprocessing-op-or-punc'),
+            PpToken.PpToken('\n', 'whitespace'),
+        ]
+#        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(tokS, expTokS)
+        myLexer.finalise()
+        
 class Special(TestPpLexer):
     def test_00(self):
         """Sepecial.test_00()."""
@@ -4835,6 +5196,7 @@ def unitTest(theVerbosity=2):
     ## When condLevel != 0. We a re not interested in that just yet
     #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalAllIncludes))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerError))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerWarning))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerBadMacroDirective))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(C99Rationale))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeGraph))
@@ -4853,6 +5215,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinux))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInclude))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInTypesH))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxEvalProblem))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))

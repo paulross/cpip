@@ -222,9 +222,9 @@ class TestConstantExpressionConditionalExpression(unittest.TestCase):
         myCpp = PpTokeniser.PpTokeniser()
         myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('((1U)==(2L)) ? (1) : (2)\n')]
         myObj = ConstantExpression.ConstantExpression(myToksTypes)
-        print()
-        print(myToksTypes)
-        print(myObj.evaluate())
+#        print()
+#        print(myToksTypes)
+#        print(myObj.evaluate())
         self.assertEqual(2, myObj.evaluate())
 #        self.assertRaises(ConstantExpression.ExceptionConditionalExpression, myObj.evaluate)
 
@@ -237,50 +237,6 @@ class TestConstantExpressionLinux(unittest.TestCase):
         myObj = ConstantExpression.ConstantExpression(myToksTypes)
 #        print()
 #        print(myObj.evaluate())
-        self.assertEqual(1000000000, myObj.evaluate())
-
-    def test_01(self):
-        """TestConstantExpressionLinux.test_01(): jiffies.h expansion of ((((NSEC_PER_SEC << 2) / TICK_NSEC) << (SEC_JIFFIE_SC - 2)) & 0x80000000)"""
-        myCpp = PpTokeniser.PpTokeniser()
-        myStr = """(((0 + 100/2) / 100))
-"""
-        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs(myStr)]
-        myObj = ConstantExpression.ConstantExpression(myToksTypes)
-        print()
-        print((myObj.evaluate()))
-        self.assertEqual(0, myObj.evaluate())
-
-    def test_02(self):
-        """TestConstantExpressionLinux.test_02(): jiffies.h expansion of ((((NSEC_PER_SEC << 2) / TICK_NSEC) << (SEC_JIFFIE_SC - 2)) & 0x80000000)"""
-        myCpp = PpTokeniser.PpTokeniser()
-        myStr = """((0) / (((0 + 100/2) / 100)))
-"""
-        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs(myStr)]
-        myObj = ConstantExpression.ConstantExpression(myToksTypes)
-        print()
-        print((myObj.evaluate()))
-        self.assertEqual(1000000000, myObj.evaluate())
-
-    def test_09(self):
-        """TestConstantExpressionLinux.test_09(): jiffies.h expansion of ((((NSEC_PER_SEC << 2) / TICK_NSEC) << (SEC_JIFFIE_SC - 2)) & 0x80000000)"""
-        myCpp = PpTokeniser.PpTokeniser()
-        myStr = """(((0) / (((0 + 100/2) / 100))) << (8))
-"""
-        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs(myStr)]
-        myObj = ConstantExpression.ConstantExpression(myToksTypes)
-        print()
-        print((myObj.evaluate()))
-        self.assertEqual(1000000000, myObj.evaluate())
-
-    def test_10(self):
-        """TestConstantExpressionLinux.test_10(): jiffies.h expansion of ((((NSEC_PER_SEC << 2) / TICK_NSEC) << (SEC_JIFFIE_SC - 2)) & 0x80000000)"""
-        myCpp = PpTokeniser.PpTokeniser()
-        myStr = """((((1 << 2) / (( (((1000000UL * 1000) / ((( (((0) / (((0 + 100/2) / 100))) << (8)) + ((((0) % (((0 + 100/2) / 100))) << (8)) + (((0 + 100/2) / 100)) / 2) / (((0 + 100/2) / 100)))))) << (8)) + ((((1000000UL * 1000) % ((( (((0) / (((0 + 100/2) / 100))) << (8)) + ((((0) % (((0 + 100/2) / 100))) << (8)) + (((0 + 100/2) / 100)) / 2) / (((0 + 100/2) / 100)))))) << (8)) + ((( (((0) / (((0 + 100/2) / 100))) << (8)) + ((((0) % (((0 + 100/2) / 100))) << (8)) + (((0 + 100/2) / 100)) / 2) / (((0 + 100/2) / 100))))) / 2) / ((( (((0) / (((0 + 100/2) / 100))) << (8)) + ((((0) % (((0 + 100/2) / 100))) << (8)) + (((0 + 100/2) / 100)) / 2) / (((0 + 100/2) / 100)))))))) << ((31 - 7) - 2)) & 0x80000000)
-"""
-        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs(myStr)]
-        myObj = ConstantExpression.ConstantExpression(myToksTypes)
-        print()
-        print((myObj.evaluate()))
         self.assertEqual(1000000000, myObj.evaluate())
 
 def unitTest(theVerbosity=2):

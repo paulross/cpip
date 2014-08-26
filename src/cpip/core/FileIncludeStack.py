@@ -25,12 +25,12 @@ __date__    = '2011-07-10'
 __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
-import os
 import logging
 from cpip import ExceptionCpip
 from cpip.core import PpTokeniser
 from cpip.core import PpTokenCount
 from cpip.core import FileIncludeGraph
+from cpip.util import CommonPrefix
 
 class ExceptionFileIncludeStack(ExceptionCpip):
     """Exception for FileIncludeStack object."""
@@ -119,10 +119,7 @@ class FileIncludeStack(object):
             )
 
     def _printFileList(self, thePref, theL):
-        p = os.path.commonprefix(theL)
-        l = p.rfind(os.sep)
-        if l == -1:
-            l = len(p)
+        l = CommonPrefix.lenCommonPrefix(theL)
         print(thePref, [f[l+1:] for f in theL])
 
     def includeStart(self, theFpo, theLineNum, isUncond, condStr, incLogic):

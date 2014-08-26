@@ -18,7 +18,63 @@
 # 
 # Paul Ross: cpipdev@googlemail.com
 
-"""Writes out a macro history in HTML."""
+"""Writes out a macro history in HTML.
+
+Macros can be:
+Active - In scope at the end of processing a translation unit (one per identifier). 
+Inactive - Not in scope at the end of processing a translation unit (>=0 per identifier). 
+And:
+Referenced - Have had some influence over the processing of the translation unit.
+Not Referenced - No influence over the processing of the translation unit.
+
+Example test:
+
+/* Source         Active?    Refs    ID   */
+#define FOO    /*     N        0    FOO_0 */
+#undef FOO
+#define FOO    /*     N        2    FOO_1 */
+FOO
+FOO
+#undef FOO
+#define FOO    /*     Y        1    FOO_2 */
+FOO
+#define BAR    /*     Y        0    BAR_0 */
+
+Macros with reference counts of zero are not that interesting so they are
+relegated to a page (<file>_macros_noref.html) that just describes their
+definition and where they where defined.
+
+Macros _with_ reference counts are presented on a page (<file>_macros_ref.html)
+with one section per macro. The section has:
+definition, where defined,
+[This macro depends on the following macros:],
+[Macros that depend on this macro:], 
+
+These two HTML pages are joined by a <file>_macros.html this lists (and links to)
+the identifiers in this order:
+- Active, ref count >0
+- Inactive, ref count >0
+- Active, ref count =0
+- Inactive, ref count =0
+
+Macro HTML IDs
+--------------
+This is identifier + '_' + n
+For any active macro the value of n is the number of previously defined macros.
+Current code is like this:
+
+myUndefIdxS, isDefined = myMacroMap[aMacroName]
+# Write the undefined ones
+for anIndex in myUndefIdxS:
+    myMacro = theEnv.getUndefMacro(anIndex)
+    startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
+                               anIndex, startLetter, retVal) 
+# Now the defined one
+if isDefined:
+    myMacro = theEnv.macro(aMacroName)
+    startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
+                               len(myUndefIdxS), startLetter, retVal) 
+"""
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
@@ -26,9 +82,9 @@ __version__ = '0.8.0'
 __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import os
-import types
+import collections
 
-#from cpip.core import PpTokenCount
+from cpip.core import PpLexer
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip.util import DictTree
@@ -64,24 +120,26 @@ TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED = (
         'tested'
     )
 
-def writeTd(theStream, theStr):
+def _writeTd(theStream, theStr):
     """Write a <td> element and contents."""
     with XmlWrite.Element(theStream, 'td'):
         theStream.characters(theStr)
             
-def writeTh(theStream, theStr):
+def _writeTh(theStream, theStr):
     """Write a <th> element and contents."""
     with XmlWrite.Element(theStream, 'th'):
         theStream.characters(theStr)
             
 def _retMacroId(theMacro, theIndex=None):
+    macroStr = theMacro.identifier#theMacro.strIdentPlusParam()
     if theIndex is not None:
-        return '%s_%d' % (theMacro.strIdentPlusParam(), theIndex)
-    return theMacro.strIdentPlusParam()
+        macroStr += '_%d' % theIndex
+    return XmlWrite.encodeString(macroStr)
 
 def _writeTableOfMacros(theS, theEnv, theHtmlPath):
     """Writes the table of macros, where they are defined, their ref count etc.""" 
-    # Return value is a map of {identifier : href_text, ...) to link to macro definitions.
+    # Return value is a map of {identifier : href_text, ...) to link to macro
+    # definitions.
     retVal = {}
     # Write table of all macros
     myMacroMap = theEnv.macroHistoryMap()
@@ -100,35 +158,39 @@ def _writeTableOfMacros(theS, theEnv, theHtmlPath):
                                           'cellpadding' : "8",
                                           }):
         with XmlWrite.Element(theS, 'tr'):
-            writeTh(theS, 'Declaration')
-            writeTh(theS, 'Declared In')
-            writeTh(theS, 'Ref. Count')
-            writeTh(theS, 'Defined?')
+            _writeTh(theS, 'Declaration')
+            _writeTh(theS, 'Declared In')
+            _writeTh(theS, 'Ref. Count')
+            _writeTh(theS, 'Defined?')
         startLetter = ''
         for aMacroName in myMacroNameS:
             myUndefIdxS, isDefined = myMacroMap[aMacroName]
             # Write the undefined ones
             for anIndex in myUndefIdxS:
                 myMacro = theEnv.getUndefMacro(anIndex)
-                startLetter = writeTrMacro(theS, theHtmlPath, myMacro, anIndex, startLetter, retVal) 
+                startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
+                                           anIndex, startLetter, retVal) 
             # Now the defined one
             if isDefined:
                 myMacro = theEnv.macro(aMacroName)
-                startLetter = writeTrMacro(theS, theHtmlPath, myMacro, len(myUndefIdxS), startLetter, retVal) 
+                startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
+                                           len(myUndefIdxS), startLetter, retVal) 
     with XmlWrite.Element(theS, 'br'):
         pass
     # End: write table of all macros
     return retVal
 
-def writeTrMacro(theS, theHtmlPath, theMacro, theIntOccurence, theStartLetter, retMap):
+def _writeTrMacro(theS, theHtmlPath, theMacro, theIntOccurence, theStartLetter, retMap):
     """Write the macro as a row in the general table.
-    theMacro is a PpDefine object."""
+    theMacro is a PpDefine object.
+    theStartLetter is the current letter we are writing ['A', 'B', ...] which
+    writes an anchor at the beginning of each letter section."""
     with XmlWrite.Element(theS, 'tr'):
         if theMacro.identifier[0] != theStartLetter:
             theStartLetter = theMacro.identifier[0]
-            writeTdMacro(theS, theMacro, theStartLetter, theIntOccurence)
+            _writeTdMacro(theS, theMacro, theStartLetter, theIntOccurence)
         else:
-            writeTdMacro(theS, theMacro, '', theIntOccurence)
+            _writeTdMacro(theS, theMacro, '', theIntOccurence)
         if theMacro.identifier not in retMap:
             # Add to the return value
             retMap[theMacro.identifier] = '%s#%s' \
@@ -144,52 +206,52 @@ def writeTrMacro(theS, theHtmlPath, theMacro, theIntOccurence, theStartLetter, r
                     '%s#%d' % (theMacro.fileId, theMacro.line),
                     'file_decl'
                 )
-        writeTdRefCount(theS, theMacro)
-        writeTdMonospace(theS, str(theMacro.isCurrentlyDefined))
+        _writeTdRefCount(theS, theMacro)
+        _writeTdMonospace(theS, str(theMacro.isCurrentlyDefined))
     return theStartLetter
 
-def writeTdMacro(theS, theDef, startLetter, theIntOccurence):
+def _writeTdMacro(theS, theDef, startLetter, theIntOccurence):
     """Write the macro cell in the general table. theDef is a PpDefine object."""
+    with XmlWrite.Element(theS, 'td'):
+        return _writeMacroDefinitionAndAnchor(theS, theDef, startLetter, theIntOccurence)
+        
+def _writeMacroDefinitionAndAnchor(theS, theDef, theIntOccurence):
+    """Writes a definition of the macro with an anchor that can be linked to.
+    This also writes an anchor based on the first character of the macro name so
+    that alphabetic links can reference it.
+    """
+    macroAnchorName = _retMacroId(theDef, theIntOccurence)
     if len(theDef.strReplacements()):
-        myReplStr = splitLine(' '.join([theDef.strIdentPlusParam(), theDef.strReplacements()]))[len(theDef.strIdentPlusParam()):]
+        rStr = splitLine(' '.join([theDef.strIdentPlusParam(),
+                    theDef.strReplacements()]), splitLen=80, splitLenHard=132)
+        myReplStr = rStr[len(theDef.strIdentPlusParam()):]
     else:
         myReplStr = ''
-    with XmlWrite.Element(theS, 'td'):
-        if startLetter:
-            with XmlWrite.Element(
-                    theS,
-                    'a',
-                    {'name' : '%s.%s' % (ANCHOR_MACRO_ALPHA, startLetter)}):
-                pass
-        # Set an anchor
-        with XmlWrite.Element(
-                theS,
-                'a',
-                {'name' : _retMacroId(theDef, theIntOccurence)}):
-            pass
-        # Write the enclosing <span> element depending on the macro properties
-        spanClass = 'macro'
-        if theDef.isCurrentlyDefined:
-            spanClass += '_s_t'
-        else:
-            spanClass += '_s_f'
-        if theDef.refCount > 0:
-            spanClass += '_r_t'
-        else:
-            spanClass += '_r_f'
-        # Now definition and replacement list
-        with XmlWrite.Element(theS, 'span', {'class' : spanClass + '_name'}):
-            theS.characters(theDef.strIdentPlusParam())
-        if myReplStr:
-            with XmlWrite.Element(theS, 'span', {'class' : spanClass + '_repl'}):
-                theS.charactersWithBr(myReplStr)
+    # Write the enclosing <span> element depending on the macro properties
+    spanClass = 'macro'
+    if theDef.isCurrentlyDefined:
+        spanClass += '_s_t'
+    else:
+        spanClass += '_s_f'
+    if theDef.refCount > 0:
+        spanClass += '_r_t'
+    else:
+        spanClass += '_r_f'
+    # Now definition and replacement list
+    with XmlWrite.Element(theS, 'span', {'class' : spanClass + '_name'}):
+        theS.characters('#define ')
+        theS.characters(theDef.strIdentPlusParam())
+    if myReplStr:
+        with XmlWrite.Element(theS, 'span', {'class' : spanClass + '_repl'}):
+            theS.charactersWithBr(myReplStr)
+    return macroAnchorName
             
-def writeTdMonospace(theStream, theStr):
+def _writeTdMonospace(theStream, theStr):
     with XmlWrite.Element(theStream, 'td'):
         with XmlWrite.Element(theStream, 'span', {'class' : 'monospace'}):
             theStream.characters(theStr)
 
-def writeTdRefCount(theS, theMacro):
+def _writeTdRefCount(theS, theMacro):
     with XmlWrite.Element(theS, 'td'):
         with XmlWrite.Element(theS, 'span', {'class' : 'monospace'}):
             if theMacro.refCount > 0:
@@ -198,19 +260,19 @@ def writeTdRefCount(theS, theMacro):
                             theS,
                             'a', 
                             {
-                                'href' : '#%s' % XmlWrite.nameFromString(macroId(theMacro))
+                                'href' : '#%s' % XmlWrite.nameFromString(_macroId(theMacro))
                             }
                         ):
                     theS.characters(str(theMacro.refCount))
             else:
                 theS.characters(str(theMacro.refCount))
 
-def splitLineToList(sIn):
+def splitLineToList(sIn, splitLen=60, splitLenHard=80):
     """Splits a long string into a list of lines. This tries to do it nicely at
     whitespaces but will force a split if necessary."""
-    splitLen = 60
-    # This forces a split here, if zero or negative then do not split.
-    splitLenHard = 80
+#     splitLen = 60
+#     # This forces a split here, if zero or negative then do not split.
+#     splitLenHard = 80
     sIn = sIn.strip()
     if len(sIn) <= splitLen:
         return [sIn, ]
@@ -252,52 +314,81 @@ def splitLineToList(sIn):
         strS.append(sIn)
     return strS
 
-def splitLine(theStr):
-    """Splits a long string into string that is a set of lines with continuation characters."""
-    return '\n    '.join(splitLineToList(theStr))
+def splitLine(theStr, splitLen=60, splitLenHard=80):
+    """Splits a long string into string that is a set of lines with continuation
+    characters."""
+    return '\n    '.join(splitLineToList(theStr, splitLen, splitLenHard))
 
-def macroId(theMacro):
+def _macroId(theMacro):
     return '%s_%s#%d' % (theMacro.identifier, theMacro.fileId, theMacro.line)
 
-def macroIdTestedWhenNotDefined(theMacroId):
+def _macroIdTestedWhenNotDefined(theMacroId):
     return '%s_testnotdef' % theMacroId
 
-def pathSplit(p):
-    """Split a path into its components, this keeps the trailing '/' for directories."""
-    l = p.split(os.sep)
-    retVal = ['%s%s' % (d, os.sep) for d in l[:-1]]
-    retVal.append(l[-1])
-    return retVal
+def _getMacroDependencyTrees(theMacroAdjList, theMacro):
+    """Returns the dependency trees (parent/child, child/parent) for the macro.
+    Can be None."""
+    if theMacroAdjList.hasParent(theMacro.identifier):
+        pcTree = theMacroAdjList.treeParentChild(theMacro.identifier)
+    else:
+        pcTree = None
+    if theMacroAdjList.hasChild(theMacro.identifier):
+        cpTree = theMacroAdjList.treeChildParent(theMacro.identifier)
+    else:
+        cpTree = None
+    return pcTree, cpTree
 
-def _writeSectionOnMacroHistory(theS, theEnv, theOmitFiles):
+def _writeSectionOnMacroHistory(theS, theEnv, theOmitFiles, theHtmlPath, theItu, isReferenced):
+    """Write the section that says where macros were used with links to the
+    file/line/column.
+    theEnv - A MacroEnv() object.
+    theOmitFiles - a list of pseudo files not to link to e.g. ['Unnamed Pre-include',].
+    """
+    retMap = {}
+    # Create macro dependency map of {identifier : util.Tree(), ...}
+    macroAdjList = theEnv.allStaticMacroDependencies()
     # Write table of macro usage
     with XmlWrite.Element(theS, 'hr'):
         pass
-    with XmlWrite.Element(theS, 'a', {'name' : TITLE_ANCHOR_LINKTEXT_MACROS_HISTORY[1]}):
-        pass
     with XmlWrite.Element(theS, 'h1'):
+        with XmlWrite.Element(theS, 'a', {'name' : TITLE_ANCHOR_LINKTEXT_MACROS_HISTORY[1]}):
+            pass
         theS.characters(TITLE_ANCHOR_LINKTEXT_MACROS_HISTORY[0])
     # First the #undef'd one(s)
+    declareCount = collections.defaultdict(int)
     doneTitle = False
     for aMacro in theEnv.genMacrosOutOfScope(None):
-        if aMacro.refCount > 0:
+        if (isReferenced and aMacro.refCount > 0) \
+        or (not isReferenced and aMacro.refCount == 0):
             if not doneTitle:
                 with XmlWrite.Element(theS, 'h2'):
                     theS.characters('Macros Out-of-scope')
                 doneTitle = True
-            writeMacroHistory(theS, aMacro, theOmitFiles)
+            _writeMacroHistory(theS, aMacro, theOmitFiles, declareCount[aMacro.identifier])
+            _writeMacroDependencies(theS, theEnv, aMacro, macroAdjList, theItu)
+        declareCount[aMacro.identifier] += 1
     if doneTitle:
         with XmlWrite.Element(theS, 'hr'):
             pass
     # Now the existent one(s)
     doneTitle = False
     for aMacro in theEnv.genMacrosInScope(None):
-        if aMacro.refCount > 0:
+        if (isReferenced and aMacro.refCount > 0) \
+        or (not isReferenced and aMacro.refCount == 0):
             if not doneTitle:
                 with XmlWrite.Element(theS, 'h2'):
                     theS.characters('Macros In Scope')
                 doneTitle = True
-            writeMacroHistory(theS, aMacro, theOmitFiles)
+            _writeMacroHistory(theS, aMacro, theOmitFiles, declareCount[aMacro.identifier])
+            _writeMacroDependencies(theS, theEnv, aMacro, macroAdjList, theItu)
+            if aMacro.identifier not in retMap:
+                # Add to the return value
+                retMap[aMacro.identifier] = '%s#%s' \
+                    % (
+                        os.path.basename(theHtmlPath),
+                        _retMacroId(aMacro, declareCount[aMacro.identifier]),
+                    )
+        declareCount[aMacro.identifier] += 1
     if doneTitle:
         with XmlWrite.Element(theS, 'hr'):
             pass
@@ -306,17 +397,23 @@ def _writeSectionOnMacroHistory(theS, theEnv, theOmitFiles):
     myMacroNotDefS = theEnv.macroNotDefinedDependencyNames()
     myMacroNotDefS.sort()
     if len(myMacroNotDefS) > 0:
-        with XmlWrite.Element(theS, 'a', {'name' : TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED[1]}):
-            with XmlWrite.Element(theS, 'h2'):
-                theS.characters(TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED[0])
+        with XmlWrite.Element(theS, 'h2'):
+            with XmlWrite.Element(theS, 'a',
+                    {'name' : TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED[1]}):
+                pass
+            theS.characters(TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED[0])
         for aMacroId in myMacroNotDefS:
-            writeMacrosTestedButNotDefined(theS, aMacroId, theEnv)
+            _writeMacrosTestedButNotDefined(theS, aMacroId, theEnv)
         with XmlWrite.Element(theS, 'hr'):
             pass
+    return retMap
 
-def writeMacroHistory(theS, theMacro, theOmitFiles):
-    """Writes out the macro history from a PpDefine object."""
-    anchorName = XmlWrite.nameFromString(macroId(theMacro))
+def _writeMacroHistory(theS, theMacro, theOmitFiles, theIntOccurence):
+    """Writes out the macro history from a PpDefine object.
+    theMacro - a PpDefine() object.
+    theOmitFiles - a list of pseudo files not to link to e.g. ['Unnamed Pre-include',].
+    """
+    anchorName = _retMacroId(theMacro, theIntOccurence)
     # Write out the macro title
     with XmlWrite.Element(theS, 'h3'):
         with XmlWrite.Element(theS, 'a', {'name' : anchorName}):
@@ -327,20 +424,40 @@ def writeMacroHistory(theS, theMacro, theOmitFiles):
                    str(theMacro.isCurrentlyDefined)
                 )
             )
-    if theMacro.fileId in theOmitFiles:
+    with XmlWrite.Element(theS, 'p'):
+        anchorName = _writeMacroDefinitionAndAnchor(theS, theMacro,
+                                                    theIntOccurence)
+    with XmlWrite.Element(theS, 'p'):
+        with XmlWrite.Element(theS, 'tt'):
+            theS.characters('defined @ ')
+#             theS.literal('&nbsp;')
+#             theS.characters('@ ')
+        HtmlUtils.writeHtmlFileLink(
+                theS,
+                theMacro.fileId,
+                theMacro.line,
+                '%s#%d' % (theMacro.fileId, theMacro.line),
+                'file_decl'
+            )
+    _writeMacroReferencesTable(theS, theMacro.refFileLineColS)
+    # If inactive then state where #undef'd
+    if not theMacro.isCurrentlyDefined:
         with XmlWrite.Element(theS, 'p'):
+            with XmlWrite.Element(theS, 'tt'):
+                theS.characters('undef\'d @ ')
+#                 theS.literal('&nbsp;&nbsp;')
+#                 theS.characters('@ ')
             HtmlUtils.writeHtmlFileLink(
                     theS,
-                    theMacro.fileId,
-                    theMacro.line,
-                    '%s#%d' % (theMacro.fileId, theMacro.line),
+                    theMacro.undefFileId,
+                    theMacro.undefLine,
+                    '%s#%d' % (theMacro.undefFileId, theMacro.undefLine),
                     'file_decl'
                 )
-    writeMacroReferencesTable(theS, theMacro.refFileLineColS)
-    
-def writeMacrosTestedButNotDefined(theS, theMacroId, theEnv):
+
+def _writeMacrosTestedButNotDefined(theS, theMacroId, theEnv):
     """Writes out the macro history for macros tested but not defined."""
-    anchorName = XmlWrite.nameFromString(macroIdTestedWhenNotDefined(theMacroId))
+    anchorName = XmlWrite.nameFromString(_macroIdTestedWhenNotDefined(theMacroId))
     # This is a list of [class FileLineColumn, ...]
     myRefS = theEnv.macroNotDefinedDependencyReferences(theMacroId)
     # Write out the macro title
@@ -352,30 +469,75 @@ def writeMacrosTestedButNotDefined(theS, theMacroId, theEnv):
                    len(myRefS),
                 )
             )
-    writeMacroReferencesTable(theS, myRefS)
+    _writeMacroReferencesTable(theS, myRefS)
     
-def writeMacroReferencesTable(theS, theFlcS):
+def _writeMacroReferencesTable(theS, theFlcS):
     """Writes all the references to a file/line/col in a rowspan/colspan HTML
     table with links to the position in the HTML representation of the file
     that references something.
     This uses a particular design pattern that uses a  DictTree to sort out the
     rows and columns. In this case the DictTree values are lists of pairs
-    (href, nav_text) where nav_text is the line_col of the referencing file."""
+    (href, nav_text) where nav_text is the line-col of the referencing file."""
     myFileLineColS = []
+    # This removes duplicates, it is a list of (fileId, lineNum, colNum).
+    # If an include file is included N times there will be N-1 duplicate entries
+    # for the header guard macro otherwise.
+    hasSeen = []
     for aFlc in theFlcS:
-        myFileLineColS.append(
-            (
-                aFlc.fileId,
+        ident = (aFlc.fileId, aFlc.lineNum, aFlc.colNum)
+        if ident not in hasSeen:
+            myFileLineColS.append(
                 (
-                    HtmlUtils.retHtmlFileLink(aFlc.fileId, aFlc.lineNum),
-                    # Navigation text
-                    '%d-%d' % (aFlc.lineNum, aFlc.colNum),
-                ),
+                    aFlc.fileId,
+                    (
+                        HtmlUtils.retHtmlFileLink(aFlc.fileId, aFlc.lineNum),
+                        # Navigation text
+                        '%d-%d' % (aFlc.lineNum, aFlc.colNum),
+                    ),
+                )
             )
-        )
-    HtmlUtils.writeFilePathsAsTable('list', theS, myFileLineColS, 'filetable', tdCallback)
+            hasSeen.append(ident)
+    if len(myFileLineColS) > 0:
+        HtmlUtils.writeFilePathsAsTable('list', theS, myFileLineColS, 'filetable', _tdFilePathCallback)
 
-def tdCallback(theS, attrs, k, v):
+def _writeMacroDependencies(theS, theEnv, theMacro, theMacroAdjList, theItu):
+    pcTree, cpTree = _getMacroDependencyTrees(theMacroAdjList, theMacro)
+    if pcTree is not None:
+        with XmlWrite.Element(theS, 'p', {}):
+            theS.characters('I depend on these macros:')
+        _writeMacroDependenciesTable(theS, theEnv, pcTree, theItu)
+    if cpTree is not None:
+        with XmlWrite.Element(theS, 'p', {}):
+            theS.characters('These macros depend on me:')
+        _writeMacroDependenciesTable(theS, theEnv, cpTree, theItu)
+
+def _writeMacroDependenciesTable(theS, theEnv, theAdjList, theItu):
+    """Writes all the macro dependencies to a rowspan/colspan HTML
+    that references something.
+    table with links to the position in the HTML representation of the file
+    This uses a particular design pattern that uses a DictTree to sort out the
+    rows and columns. In this case the DictTree values are lists of pairs
+    (href, nav_text) where nav_text is the line_col of the referencing file."""
+    myDt = DictTree.DictTreeHtmlTable('list')
+    for branch in theAdjList.branches():
+        # I might depend on a macro (that is referenced) but I am not referenced.
+        if theEnv.macro(branch[-1]).refCount > 0:
+            href = '%s#%s' % (
+                _macroHistoryRefName(theItu),
+                _retMacroId(theEnv.macro(branch[-1]), 0),
+            )
+        else:
+            href = '%s#%s' % (
+                _macroHistoryNorefName(theItu),
+                _retMacroId(theEnv.macro(branch[-1]), 0),
+            )
+        # TODO: theIntOccurence is set 0 here
+        myDt.add(branch, (href, branch[-1],))
+    # Now iterate with rowspan/colspan
+    if len(myDt) > 0:
+        HtmlUtils.writeDictTreeAsTable(theS, myDt, tableAttrs={'class' :"filetable"}, includeKeyTail=False)
+
+def _tdFilePathCallback(theS, attrs, k, v):
     """Callback function for the file reference table."""
     attrs['class'] = 'filetable'
     with XmlWrite.Element(theS, 'td', attrs):
@@ -411,111 +573,130 @@ def _retListMacroNamesOutOfScope(theEnv):
 def _retListMacroNamesInScope(theEnv):
     return [m.identifier for m in theEnv.genMacrosInScope(None)]
 
-def _writeToc(theS, theEnv):
-    """Write out the table of contents."""
-    with XmlWrite.Element(theS, 'h1'):
-        theS.characters('Contents')
+def _retSetMacros(theEnv, isReferenced, isActive):
+    """Returns a set of {(Identifier, href_name), ...} of macros identifiers
+    and their references. Multiple identifier that have been def'd/undef'd
+    have unique, lexagraphically sequential hrefs (with a trailing integer).
+    isReferenced - If True only macros that are referenced are included.
+    isActive - Only currently active macros are included, undef'd ones are
+    excluded."""  
+    nameRefsS = set()
+    declareCount = collections.defaultdict(int)
+    for aMacro in theEnv.genMacrosOutOfScope(None):
+        if not isActive \
+        and (isReferenced and aMacro.refCount > 0 \
+        or not isReferenced and aMacro.refCount == 0):
+            visualName = aMacro.strIdentPlusParam()
+            nameRefsS.add(
+                (
+                    visualName,
+                    _retMacroId(aMacro, declareCount[aMacro.identifier]),
+                )
+            )
+        declareCount[aMacro.identifier] += 1
+    for aMacro in theEnv.genMacrosInScope(None):
+        if isActive \
+        and (isReferenced and aMacro.refCount > 0 \
+        or not isReferenced and aMacro.refCount == 0):
+            visualName = aMacro.strIdentPlusParam()
+            nameRefsS.add(
+                (
+                    visualName,
+                    _retMacroId(aMacro, declareCount[aMacro.identifier]),
+                )
+            )
+        declareCount[aMacro.identifier] += 1
+    return nameRefsS
+
+def _writeTocMacros(theS, theEnv, isReferenced, filePrefix):
+    """Write out the table of contents from the environment.
+    isReferenced controls whether these are referenced macros (interesting) or
+    non referenced macros (a larger, less interesting set).
+    filePrefix - If not None this is the HTML file to link to.
+    """
+    with XmlWrite.Element(theS, 'h2'):
+        if isReferenced:
+            theS.characters('Referenced Macros:')
+        else:
+            theS.characters('Non-Referenced Macros:')
     with XmlWrite.Element(theS, 'ul'):
-        numMacros = 0
-        with XmlWrite.Element(theS, 'li'):
-            with XmlWrite.Element(theS, 'p'):
-                # Now write alphabetical list
-                # First the #undef'd one(s), referenced or not
-                letterSet = set()
-                for aMacro in theEnv.genMacrosOutOfScope(None):
-                    letterSet.add(aMacro.identifier[0])
-                    numMacros += 1
-                # Now the existent one(s)
-                for aMacro in theEnv.genMacrosInScope(None):
-                    letterSet.add(aMacro.identifier[0])
-                    numMacros += 1
-                if len(letterSet):
-                    theS.characters('Macro ')
-                    with XmlWrite.Element(theS, 'a', {'href' : '#%s' % TITLE_ANCHOR_LINKTEXT_MACROS_TABLE[1]}):
-                        theS.characters(TITLE_ANCHOR_LINKTEXT_MACROS_TABLE[2])
-                    theS.characters(' (all macros, alphabetical) [%d]: ' % numMacros)
-                    _writeTocLetterLinks(
-                        theS,
-                        letterSet,
-                    )
         # Now list all the referenced macros by name with links to the macro
         # table
-        numMacros = 0
-        with XmlWrite.Element(theS, 'li'):
-            with XmlWrite.Element(theS, 'p'):
-                nameS = set()
-                for aMacro in theEnv.genMacrosOutOfScope(None):
-                    if aMacro.refCount > 0:
-                        numMacros += 1
-                        nameS.add(aMacro.strIdentPlusParam())
-                # Now the existent one(s)
-                for aMacro in theEnv.genMacrosInScope(None):
-                    if aMacro.refCount > 0:
-                        numMacros += 1
-                        nameS.add(aMacro.strIdentPlusParam())
-                nameList = list(nameS)
-                nameList.sort()
-                theS.characters('Referenced macros [%d]: ' % numMacros)
-                for aName in nameList:
-                    theS.literal(' &nbsp; &nbsp; ')
-                    with XmlWrite.Element(theS, 'tt'):
-                        # Note: Use '_0' to reference the first one
-                        with XmlWrite.Element(theS, 'a', {'href' : '#%s_0' % aName}):
-                            theS.characters(aName)
-        # Link to macro history section
-        with XmlWrite.Element(theS, 'li'):
-            with XmlWrite.Element(theS, 'p'):
-                theS.characters('Macro ')
-                with XmlWrite.Element(theS, 'a', {'href' : '#%s' \
-                                    % TITLE_ANCHOR_LINKTEXT_MACROS_HISTORY[1]}):
-                    theS.characters(TITLE_ANCHOR_LINKTEXT_MACROS_HISTORY[2])
-                theS.characters(' (referenced macros only)')
-        # Link to macros that are not defined but tested
-        with XmlWrite.Element(theS, 'li'):
-            with XmlWrite.Element(theS, 'p'):
-                # TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED = ('Macros Not Defined but Tested'
-                theS.characters('Macros ')
-                with XmlWrite.Element(theS,
-                                      'a',
-                                      {
-                                        'href' : '#%s' % TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED[1]
-                                        }):
-                    theS.characters(TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED[2])
-                theS.characters(' when not defined')
-                # Now the ones that would have an effect if only they had been defined
-                # This is a list of [identifiers, ...]
-                myMacroNotDefS = theEnv.macroNotDefinedDependencyNames()
-                myMacroNotDefS.sort()
-                for anId in myMacroNotDefS:
-                    theS.literal(' &nbsp; &nbsp; ')
-                    with XmlWrite.Element(theS, 'tt'):
-                        # Note: Use '_0' to reference the first one
-                        myHref = XmlWrite.nameFromString(macroIdTestedWhenNotDefined(anId))
-                        with XmlWrite.Element(
-                                    theS,
-                                    'a',
-                                    {
-                                        'href' : '#%s' % myHref,
-                                    }
-                                ):
-                            theS.characters(anId)
+        boolTitleS = (
+                (False, 'Inactive'),
+                (True, 'Active'),
+            )
+        for isActive, title in boolTitleS:
+            nameRefsS = _retSetMacros(theEnv, isReferenced=isReferenced, isActive=isActive)
+            if len(nameRefsS) > 0:
+                nameList = list(nameRefsS)
+                with XmlWrite.Element(theS, 'li'):
+                    with XmlWrite.Element(theS, 'p'):
+                        nameList.sort()
+                        theS.characters('%s [%d]: ' % (title, len(nameRefsS)))
+                        for aName, aHref in nameList:
+                            theS.literal(' &nbsp; &nbsp; ')
+                            with XmlWrite.Element(theS, 'tt'):
+                                if filePrefix is not None:
+                                    href = '%s#%s' % (filePrefix, aHref)
+                                else:
+                                    href = '#%s' % aHref
+                                with XmlWrite.Element(theS, 'a',
+                                        {'href' : href}):
+                                    theS.characters(aName)
+
+def _retMacroIdHrefNames(theEnv, theItu):
+    """Returns a dict of {identifier : [(fileId, lineNum, href_name), ...], ...}
+    for annotating HTML.
+    The order in the list is the translation unit order in which macros are
+    defined/undef'd.
+    """
+    # dict of {identifier : [(fileId, lineNum, href_name), ...], ...}
+    retVal = {}
+    declareCount = collections.defaultdict(int)
+    for myGen in (theEnv.genMacrosOutOfScope(None), theEnv.genMacrosInScope(None)):
+        for aMacro in myGen:
+            if aMacro.refCount > 0:
+                htmlFile = _macroHistoryRefName(theItu)
+            else:
+                htmlFile = _macroHistoryNorefName(theItu)
+            hrefName = '%s#%s' % (
+                htmlFile,
+                _retMacroId(aMacro, declareCount[aMacro.identifier]),
+            )
+#             visualName = aMacro.strIdentPlusParam()
+            try:
+                retVal[aMacro.identifier].append((aMacro.fileId, aMacro.line, hrefName))
+            except KeyError:
+                retVal[aMacro.identifier] = [(aMacro.fileId, aMacro.line, hrefName)]
+            declareCount[aMacro.identifier] += 1
+    return retVal
+
+def _macroHistoryIndexName(theItu):
+    return os.path.basename(theItu) + '_macros' + '.html'
+
+def _macroHistoryRefName(theItu):
+    return os.path.basename(theItu) + '_macros' + '_ref' + '.html'
+
+def _macroHistoryNorefName(theItu):
+    return os.path.basename(theItu) + '_macros' + '_noref' + '.html'
+
+def _linkToIndex(theS, theIdx):
+    with XmlWrite.Element(theS, 'p'):
+        theS.characters('Return to ')
+        with XmlWrite.Element(theS, 'a', {'href' : theIdx}):
+            theS.characters('Index')
 
 def processMacroHistoryToHtml(theLex, theHtmlPath, theItu, theIndexPath):
     """Write out the macro history from the PpLexer as HTML.
-    Returns a map of {identifier : href_text, ...) to link to macro definitions."""
-    def _linkToIndex(theS, theIdx):
-        with XmlWrite.Element(theS, 'p'):
-            theS.characters('Return to ')
-            with XmlWrite.Element(theS, 'a', {'href' : theIdx}):
-                theS.characters('Index')
-    # Return value is a map of {identifier : href_text, ...) to link to macro definitions.
-    retVal = {}
-    # Write CSS
-    #open(os.path.join(os.path.dirname(theHtmlPath), TokenCss.TT_CSS_FILE), 'w').write(CSS_STRING_MACRO)
+    Returns a map of:
+    {identifier : [(fileId, lineNum, href_name), ...], ...}
+    which can be used by src->html generator for providing links to macro pages."""
     TokenCss.writeCssToDir(os.path.dirname(theHtmlPath))
     # Grab the environment
     myEnv = theLex.macroEnvironment
-    with XmlWrite.XhtmlStream(theHtmlPath) as myS:
+    # Write the index page that links to the referenced and non-referenced pages
+    with XmlWrite.XhtmlStream(os.path.join(theHtmlPath, _macroHistoryIndexName(theItu))) as myS:
         with XmlWrite.Element(myS, 'head'):
             with XmlWrite.Element(
                 myS,
@@ -534,137 +715,60 @@ def processMacroHistoryToHtml(theLex, theHtmlPath, theItu, theIndexPath):
                 myS.characters('Macro Environment for: %s' % theItu)
             _linkToIndex(myS, theIndexPath)
             # Write the TOC and get the sorted list all the macros in alphabetical order
-            _writeToc(myS, myEnv)
-            # Write table of macros gettign the map of links as a return value
-            retVal = _writeTableOfMacros(myS, myEnv, theHtmlPath)
-            # Write table of macro usage
-            _writeSectionOnMacroHistory(myS, myEnv, [theLex.UNNAMED_FILE_NAME,])
+            _writeTocMacros(myS, myEnv, isReferenced=True, filePrefix=_macroHistoryRefName(theItu))
+            _writeTocMacros(myS, myEnv, isReferenced=False, filePrefix=_macroHistoryNorefName(theItu))
             # Write back link
             _linkToIndex(myS, theIndexPath)
-    # Now update the return link map with
-    # theEnv.macroNotDefinedDependencyNames()
-    for anId in myEnv.macroNotDefinedDependencyNames():
-        if anId not in retVal:
-            retVal[anId] = '%s#%s' \
-                    % (
-                        os.path.basename(theHtmlPath),
-                        XmlWrite.nameFromString(macroIdTestedWhenNotDefined(anId))
-                    )
-    return retVal
-
-import sys
-from optparse import OptionParser
-#import pprint
-
-######################################
-# Test code
-######################################
-import unittest
-
-class NullClass(unittest.TestCase):
-    pass
-
-class TestSplitLine(unittest.TestCase):
-    def setUp(self):
-        pass
-    
-    def tearDown(self):
-        pass
-    
-    def testSetUpTearDown(self):
-        """TestCountDict: test setUp() and tearDown()."""
-        pass
-
-    def test_00(self):
-        """TestSplitLine.test_00(): Multi line."""
-        myS = '_INIT_SECURITY_POLICY_C7(c1,c2,c3,c4,c5,c6,c7) { FOUR_TUINT8( (TUint8)TSecurityPolicy::ETypeC7, CAPABILITY_AS_TUINT8(c1), CAPABILITY_AS_TUINT8(c2), CAPABILITY_AS_TUINT8(c3) ), FOUR_TUINT8( CAPABILITY_AS_TUINT8(c4), CAPABILITY_AS_TUINT8(c5), CAPABILITY_AS_TUINT8(c6), CAPABILITY_AS_TUINT8(c7) ) } /* s:/epoc32/include\e32cmn.h#3997 Ref: 0 True */'
-        #pprint.pprint(myS)
-        #print
-        #pprint.pprint(splitLineToList(myS))
-        self.assertEqual(
-                    [
-                    '_INIT_SECURITY_POLICY_C7(c1,c2,c3,c4,c5,c6,c7) { FOUR_TUINT8( \\',
-                    '(TUint8)TSecurityPolicy::ETypeC7, CAPABILITY_AS_TUINT8(c1), \\',
-                    'CAPABILITY_AS_TUINT8(c2), CAPABILITY_AS_TUINT8(c3) ), FOUR_TUINT8( \\',
-                    'CAPABILITY_AS_TUINT8(c4), CAPABILITY_AS_TUINT8(c5), \\',
-                    'CAPABILITY_AS_TUINT8(c6), CAPABILITY_AS_TUINT8(c7) ) } /* \\',
-                    's:/epoc32/include\\e32cmn.h#3997 Ref: 0 True */'
-                    ],
-                    splitLineToList(myS),
-                )
-        #print
-        #print splitLine(myS)
-        self.assertEqual(r"""_INIT_SECURITY_POLICY_C7(c1,c2,c3,c4,c5,c6,c7) { FOUR_TUINT8( \
-    (TUint8)TSecurityPolicy::ETypeC7, CAPABILITY_AS_TUINT8(c1), \
-    CAPABILITY_AS_TUINT8(c2), CAPABILITY_AS_TUINT8(c3) ), FOUR_TUINT8( \
-    CAPABILITY_AS_TUINT8(c4), CAPABILITY_AS_TUINT8(c5), \
-    CAPABILITY_AS_TUINT8(c6), CAPABILITY_AS_TUINT8(c7) ) } /* \
-    s:/epoc32/include\e32cmn.h#3997 Ref: 0 True */""",
-            splitLine(myS))
-
-    def test_01(self):
-        """TestSplitLine.test_00(): Short line."""
-        myS = 'CONST_CAST(type,exp) (const_cast<type>(exp))'
-        #pprint.pprint(myS)
-        #print
-        #pprint.pprint(splitLineToList(myS))
-        self.assertEqual(
-                    [
-                    'CONST_CAST(type,exp) (const_cast<type>(exp))'
-                    ],
-                    splitLineToList(myS),
-                )
-        #print
-        #print splitLine(myS)
-        self.assertEqual(r"""CONST_CAST(type,exp) (const_cast<type>(exp))""",
-            splitLine(myS))
-
-    def test_02(self):
-        """TestSplitLine.test_00(): Hard split."""
-        myS='CAPABILITY_AS_TUINT8(cap)((TUint8)(int)((cap)==ECapability_None?(__invalid_capability_value(*)[1])(ECapability_None):(__invalid_capability_value(*)[((TUint)(cap+1)<=(TUint)ECapability_Limit)?1:2])(cap)))'
-        #pprint.pprint(myS)
-        #print
-        #pprint.pprint(splitLineToList(myS))
-        self.assertEqual(
-                [
-                    'CAPABILITY_AS_TUINT8(cap)((TUint8)(int)((cap)==ECapability_None?(__invalid_capab\\',
-                    'ility_value(*)[1])(ECapability_None):(__invalid_capability_value(*)[((TUint)(cap\\',
-                    '+1)<=(TUint)ECapability_Limit)?1:2])(cap)))',
-                ],
-                splitLineToList(myS)
-            )
-        #print
-        #print splitLine(myS)
-        self.assertEqual(r"""CAPABILITY_AS_TUINT8(cap)((TUint8)(int)((cap)==ECapability_None?(__invalid_capab\
-    ility_value(*)[1])(ECapability_None):(__invalid_capability_value(*)[((TUint)(cap\
-    +1)<=(TUint)ECapability_Limit)?1:2])(cap)))""",
-                splitLine(myS)
-            )
-
-class Special(unittest.TestCase):
-    pass
-
-def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSplitLine))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
-    myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
-    return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
-
-def main():
-    usage = "usage: %prog [options] file"
-    print('Cmd: %s' % ' '.join(sys.argv))
-    optParser = OptionParser(usage, version='%prog ' + __version__)
-    optParser.add_option(
-            "-l", "--loglevel",
-            type="int",
-            dest="loglevel",
-            default=30,
-            help="Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: %default]"
-        )
-    unitTest()
-    return 0
-    
-if __name__ == '__main__':
-    sys.exit(main())
+    # Write the page for referenced macros
+    with XmlWrite.XhtmlStream(os.path.join(theHtmlPath, _macroHistoryRefName(theItu))) as myS:
+        with XmlWrite.Element(myS, 'head'):
+            with XmlWrite.Element(
+                myS,
+                'link',
+                {
+                    'href'  : TokenCss.TT_CSS_FILE,
+                    'type'  : "text/css",
+                    'rel'   : "stylesheet",
+                    }
+                ):
+                pass
+            with XmlWrite.Element(myS, 'title'):
+                myS.characters('Referenced Macros for: %s' % theItu)
+        with XmlWrite.Element(myS, 'body'):
+            with XmlWrite.Element(myS, 'h1'):
+                myS.characters('Referenced Macros for: %s' % theItu)
+            _linkToIndex(myS, theIndexPath)
+            _writeTocMacros(myS, myEnv, isReferenced=True, filePrefix=None)
+            _writeSectionOnMacroHistory(
+                    myS, myEnv, [PpLexer.UNNAMED_FILE_NAME,],
+                    theHtmlPath, theItu, isReferenced=True)
+            _linkToIndex(myS, theIndexPath)
+    # Write the page for non-referenced macros
+    with XmlWrite.XhtmlStream(os.path.join(theHtmlPath, _macroHistoryNorefName(theItu))) as myS:
+        with XmlWrite.Element(myS, 'head'):
+            with XmlWrite.Element(
+                myS,
+                'link',
+                {
+                    'href'  : TokenCss.TT_CSS_FILE,
+                    'type'  : "text/css",
+                    'rel'   : "stylesheet",
+                    }
+                ):
+                pass
+            with XmlWrite.Element(myS, 'title'):
+                myS.characters('Non-Referenced Macros for: %s' % theItu)
+        with XmlWrite.Element(myS, 'body'):
+            with XmlWrite.Element(myS, 'h1'):
+                myS.characters('Non-Referenced Macros for: %s' % theItu)
+            _linkToIndex(myS, theIndexPath)
+            _writeTocMacros(myS, myEnv, isReferenced=False, filePrefix=None)
+            _writeSectionOnMacroHistory(
+                    myS, myEnv, [PpLexer.UNNAMED_FILE_NAME,],
+                    theHtmlPath, theItu, isReferenced=False)
+            _linkToIndex(myS, theIndexPath)
+    retVal = _retMacroIdHrefNames(myEnv, theItu)
+#     print('retVal', retVal)
+#     print('indexPath', indexPath)
+    return retVal, _macroHistoryIndexName(theItu)
     

@@ -19,20 +19,22 @@
 # Paul Ross: cpipdev@googlemail.com
 
 __author__  = 'Paul Ross'
-__date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__date__    = '2014-03-03'
+__version__ = '0.9.0'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 __all__ = ['core', 'util', 'plot']
 
 """CPIP: 'C' Preprocessor in Python.
 """
 
-CPIP_VERSION = (0, 8, 1)
+CPIP_VERSION = (0, 9, 0)
 
 RELEASE_NOTES = [
     """Release Notes (latest at top).
 ==============================
+2014-01-11: Revisited SVG and HTML code to make it faster and cross browser.
+
 2012-03-26: Updated to Python 3.
 
 2011-07-10: First public release of CPIP.
@@ -42,3 +44,15 @@ RELEASE_NOTES = [
 class ExceptionCpip(Exception):
     """Simple specialisation of an exception class for CPIP and its modules."""
     pass
+
+###########################
+# Constants for trace/debug
+###########################
+# Whitespace indent and bloat the HTML/SVG files.
+INDENT_ML = True
+# Write the function name in a SVG comment.
+SVG_COMMENT_FUNCTIONS = False
+###########################
+# Constants for trace/debug
+###########################
+

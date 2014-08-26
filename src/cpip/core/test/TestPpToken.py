@@ -516,6 +516,28 @@ class TestPpTokenEvalConstExpr(unittest.TestCase):
         myTok = PpToken.PpToken('', 'pp-number')
         self.assertEqual('', myTok.evalConstExpr())
 
+    def test_06(self):
+        """TestPpTokenEvalConstExpr.test_06(): Integer literals, Hex and unsigned/long."""
+        myTok = PpToken.PpToken('0xFF', 'pp-number')
+        self.assertEqual('0xFF', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('0XAF', 'pp-number')
+        self.assertEqual('0XAF', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('0xFFul', 'pp-number')
+        self.assertEqual('0xFF', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('0XAFul', 'pp-number')
+        self.assertEqual('0XAF', myTok.evalConstExpr())
+
+    def test_07(self):
+        """TestPpTokenEvalConstExpr.test_07(): Integer literals, Octal and unsigned/long."""
+        myTok = PpToken.PpToken('012', 'pp-number')
+        self.assertEqual('012', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('017', 'pp-number')
+        self.assertEqual('017', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('017uL', 'pp-number')
+        self.assertEqual('017', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('017l', 'pp-number')
+        self.assertEqual('017', myTok.evalConstExpr())
+
     def test_10(self):
         """TestPpTokenEvalConstExpr.test_10(): Identifiers."""
         myTok = PpToken.PpToken('ABC', 'identifier')
@@ -533,6 +555,22 @@ class TestPpTokenEvalConstExpr(unittest.TestCase):
         """TestPpTokenEvalConstExpr.test_11(): '/' gets converted to '//' for true division."""
         myTok = PpToken.PpToken('/', 'preprocessing-op-or-punc')
         self.assertEqual('//', myTok.evalConstExpr())
+        
+        
+class TestPpTokenEscapeCodes(unittest.TestCase):
+    """Tests escape codes."""
+    def test_00(self):
+        """Tests \\u escape."""
+        p = PpToken.PpToken(r'object\u0092s', 'identifier')
+#        print(p.t)
+        self.assertEqual(p.t, r'object\u0092s')
+        
+    def test_01(self):
+        """Tests \\x escape."""
+        p = PpToken.PpToken(r'object\x92s', 'identifier')
+#        print(p.t)
+        self.assertEqual(p.t, r'object\x92s')
+
 
 def unitTest(theVerbosity=2):
     """Execute unit tests."""
@@ -547,6 +585,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpTokenIsCond))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpTokenLineColumn))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpTokenEvalConstExpr))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpTokenEscapeCodes))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 

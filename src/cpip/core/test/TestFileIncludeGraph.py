@@ -217,22 +217,22 @@ class TestFileIncludeGraphPlot(unittest.TestCase):
             ],
             myObj.retBranches(),
             )
-        #print
-        #print myObj
+#        print()
+#        print(myObj)
         self.assertEqual(
                          """a.h [None, None]:  True "a > 1" "CP=a"
 000001: #include b.h
-        b.h [None, None]:  True "b > 0" "CP=b"
-        000002: #include c.h
-                c.h [None, None]:  True "c > 0" "CP=c"
-                000003: #include d3.h
-                        d3.h [None, None]:  True "d > 3" "CP=d"
-                000004: #include d4.h
-                        d4.h [None, None]:  True "d > 4" "CP=d4"
-        000007: #include t.h
-                t.h [None, None]:  True "t > 0" "CP=t"
+  b.h [None, None]:  True "b > 0" "CP=b"
+  000002: #include c.h
+    c.h [None, None]:  True "c > 0" "CP=c"
+    000003: #include d3.h
+      d3.h [None, None]:  True "d > 3" "CP=d"
+    000004: #include d4.h
+      d4.h [None, None]:  True "d > 4" "CP=d4"
+  000007: #include t.h
+    t.h [None, None]:  True "t > 0" "CP=t"
 000005: #include x.h
-        x.h [None, None]:  True "x > 0" "CP=x\"""",
+  x.h [None, None]:  True "x > 0" "CP=x\"""",
                         str(myObj),
         )
 
@@ -681,7 +681,7 @@ PreInclude_01 [None, None]:  True "x > 1" "Forced PreInclude_01\"""", str(myFigr
         self.assertEqual(
             """a.h [24, 17]:  True "a >= b+2" "CP=."
 000001: #include b.h
-        b.h [None, None]:  True "" "CP=.\"""",
+  b.h [None, None]:  True "" "CP=.\"""",
             str(myFigr),
         )
 
@@ -721,7 +721,7 @@ PreInclude_01 [None, None]:  True "x > 1" "Forced PreInclude_01\"""", str(myFigr
         self.assertEqual(
             """PreInc_00 [24, 17]:  True "" "Forced PreInc_00"
 000001: #include a.h
-        a.h [117, 91]:  True "" "CP=.\"""",
+  a.h [117, 91]:  True "" "CP=.\"""",
             str(myFigr),
         )
         # Simulate a new pre-include
@@ -733,7 +733,7 @@ PreInclude_01 [None, None]:  True "x > 1" "Forced PreInclude_01\"""", str(myFigr
         #print myFigr
         self.assertEqual("""PreInc_00 [24, 17]:  True "" "Forced PreInc_00"
 000001: #include a.h
-        a.h [117, 91]:  True "" "CP=."
+  a.h [117, 91]:  True "" "CP=."
 PreInc_01 [None, None]:  True "" "Forced PreInc_01\"""", str(myFigr))
         # Add a new branch
         myFigr.graph.addBranch(['PreInc_01',], 15, 'b.h', True, '', 'CP=.')
@@ -759,10 +759,10 @@ PreInc_01 [None, None]:  True "" "Forced PreInc_01\"""", str(myFigr))
         self.assertEqual(
             """PreInc_00 [24, 17]:  True "" "Forced PreInc_00"
 000001: #include a.h
-        a.h [117, 91]:  True "" "CP=."
+  a.h [117, 91]:  True "" "CP=."
 PreInc_01 [240, 170]:  True "" "Forced PreInc_01"
 000015: #include b.h
-        b.h [1171, 914]:  True "" "CP=.\"""",
+  b.h [1171, 914]:  True "" "CP=.\"""",
             str(myFigr),
         )
 
@@ -896,17 +896,17 @@ class TestFileIncludeGraphRootVisitorBase(unittest.TestCase):
 PreInclude_01 [120, 60]:  True "x > 1" "Forced PreInclude_00"
 ITU.h [140, 70]:  True "" "CP=."
 000015: #include a.h
-        a.h [2, 1]:  True "" "CP=."
-        000017: #include aa.h
-                aa.h [4, 2]:  True "" "CP=."
-        000019: #include ab.h
-                ab.h [8, 4]:  True "" "CP=."
+  a.h [2, 1]:  True "" "CP=."
+  000017: #include aa.h
+    aa.h [4, 2]:  True "" "CP=."
+  000019: #include ab.h
+    ab.h [8, 4]:  True "" "CP=."
 000115: #include b.h
-        b.h [16, 8]:  True "" "CP=."
-        000117: #include ba.h
-                ba.h [32, 16]:  True "" "CP=."
-        000119: #include bb.h
-                bb.h [64, 32]:  True "" "CP=.\""""
+  b.h [16, 8]:  True "" "CP=."
+  000117: #include ba.h
+    ba.h [32, 16]:  True "" "CP=."
+  000119: #include bb.h
+    bb.h [64, 32]:  True "" "CP=.\""""
         #print
         #print expGraph
         #print
@@ -1011,21 +1011,21 @@ ITU.h [140, 70]:  True "" "CP=."
         myTcs.close()
         expTree = """ITU.h [140, 70]:  True "" "ITU"
 000015: #include a.h
-        a.h [2, 1]:  True "" "CP=."
-        000017: #include aa.h
-                aa.h [4, 2]:  True "" "CP=."
-                000019: #include aaa.h
-                        aaa.h [8, 4]:  True "" "CP=."
-                        000020: #include aaaa.h
-                                aaaa.h [80, 42]:  True "" "CP=."
-                        000021: #include aaab.h
-                                aaab.h [81, 43]:  True "" "CP=."
-                000023: #include aab.h
-                        aab.h [28, 14]:  True "" "CP=."
-                        000117: #include aaba.h
-                                aaba.h [7, 2]:  True "" "CP=."
+  a.h [2, 1]:  True "" "CP=."
+  000017: #include aa.h
+    aa.h [4, 2]:  True "" "CP=."
+    000019: #include aaa.h
+      aaa.h [8, 4]:  True "" "CP=."
+      000020: #include aaaa.h
+        aaaa.h [80, 42]:  True "" "CP=."
+      000021: #include aaab.h
+        aaab.h [81, 43]:  True "" "CP=."
+    000023: #include aab.h
+      aab.h [28, 14]:  True "" "CP=."
+      000117: #include aaba.h
+        aaba.h [7, 2]:  True "" "CP=."
 000115: #include b.h
-        b.h [16, 8]:  True "" "CP=.\""""
+  b.h [16, 8]:  True "" "CP=.\""""
         #print
         #print expTree
         #print
@@ -1157,21 +1157,21 @@ class TestFileIncludeGraphRootVisitor(TestFileIncludeGraphRootVisitorBase):
 PreInclude_01 [120, 60]:  True "x > 1" "Forced PreInclude_01"
 ITU.h [140, 70]:  True "" ""
 000015: #include a.h
-        a.h [2, 1]:  True "" "CP=."
-        000017: #include aa.h
-                aa.h [4, 2]:  True "" "CP=."
-                000019: #include aaa.h
-                        aaa.h [8, 4]:  True "" "CP=."
-                        000020: #include aaaa.h
-                                aaaa.h [80, 42]:  True "" "CP=."
-                        000021: #include aaab.h
-                                aaab.h [81, 43]:  True "" "CP=."
-                000023: #include aab.h
-                        aab.h [28, 14]:  True "" "CP=."
-                        000117: #include aaba.h
-                                aaba.h [7, 2]:  True "" "CP=."
+  a.h [2, 1]:  True "" "CP=."
+  000017: #include aa.h
+    aa.h [4, 2]:  True "" "CP=."
+    000019: #include aaa.h
+      aaa.h [8, 4]:  True "" "CP=."
+      000020: #include aaaa.h
+        aaaa.h [80, 42]:  True "" "CP=."
+      000021: #include aaab.h
+        aaab.h [81, 43]:  True "" "CP=."
+    000023: #include aab.h
+      aab.h [28, 14]:  True "" "CP=."
+      000117: #include aaba.h
+        aaba.h [7, 2]:  True "" "CP=."
 000115: #include b.h
-        b.h [16, 8]:  True "" "CP=.\""""
+  b.h [16, 8]:  True "" "CP=.\""""
         #print
         #print myFigr
         #print
@@ -1397,21 +1397,21 @@ ITU.h [140, 70]:  True "" ""
 PreInclude_01 [120, 60]:  True "x > 1" "Forced PreInclude_01"
 ITU.h [140, 70]:  True "" "ITU"
 000015: #include a.h
-        a.h [2, 1]:  True "" ""a.h", CP="
-        000017: #include aa.h
-                aa.h [4, 2]:  True "" ""aa.h", CP=."
-                000019: #include aaa.h
-                        aaa.h [8, 4]:  True "" ""aaa.h", CP=."
-                        000020: #include aaaa.h
-                                aaaa.h [80, 42]:  True "" ""aaaa.h", CP=."
-                        000021: #include aaab.h
-                                aaab.h [81, 43]:  True "" ""aaab.h", CP=."
-                000023: #include aab.h
-                        aab.h [28, 14]:  True "" ""aab.h", CP=."
-                        000117: #include aaba.h
-                                aaba.h [7, 2]:  True "" ""aaba.h", CP=."
+  a.h [2, 1]:  True "" ""a.h", CP="
+  000017: #include aa.h
+    aa.h [4, 2]:  True "" ""aa.h", CP=."
+    000019: #include aaa.h
+      aaa.h [8, 4]:  True "" ""aaa.h", CP=."
+      000020: #include aaaa.h
+        aaaa.h [80, 42]:  True "" ""aaaa.h", CP=."
+      000021: #include aaab.h
+        aaab.h [81, 43]:  True "" ""aaab.h", CP=."
+    000023: #include aab.h
+      aab.h [28, 14]:  True "" ""aab.h", CP=."
+      000117: #include aaba.h
+        aaba.h [7, 2]:  True "" ""aaba.h", CP=."
 000115: #include b.h
-        b.h [16, 8]:  True "" ""b.h", CP=.\""""
+  b.h [16, 8]:  True "" ""b.h", CP=.\""""
         #print
         #print myFigr
         #print

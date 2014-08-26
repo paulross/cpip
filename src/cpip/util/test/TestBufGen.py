@@ -214,6 +214,26 @@ class TestBufGenIndex(unittest.TestCase):
         except TypeError:
             pass
 
+    def test_03(self):
+        """Test simple string buffer slicing."""
+        myStrGen = StrGen('abcdef')
+        myBg = BufGen.BufGen(next(myStrGen))
+        # Index into it provoking the generator
+        self.assertEquals(['a', 'b', 'c'], myBg[0:3])
+        self.assertEquals("BufGen: ['a', 'b', 'c']", str(myBg))
+        self.assertEquals(['a', 'c', 'e'], myBg[0:6:2])
+        self.assertEquals("BufGen: ['a', 'b', 'c', 'd', 'e', 'f']", str(myBg))
+
+    def test_04(self):
+        """Test simple string buffer slicing out of range."""
+        myStrGen = StrGen('abcdef')
+        myBg = BufGen.BufGen(next(myStrGen))
+        try:
+            myBg[0:8]
+            self.fail('IndexError not raised.')
+        except IndexError:
+            pass
+
 class NullClass(unittest.TestCase):
     pass
 

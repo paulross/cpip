@@ -27,10 +27,11 @@ __rights__  = 'Copyright (c) 2008-2011 Paul Ross'
 
 import os
 
+import cpip
 from cpip.core import CppCond
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
-import TokenCss
+from cpip import TokenCss
 
 def linkToIndex(theS, theIdxPath):
     with XmlWrite.Element(theS, 'p'):
@@ -40,7 +41,7 @@ def linkToIndex(theS, theIdxPath):
 
 class CcgVisitorToHtml(CppCond.CppCondGraphVisitorBase):
     """Writing CppCondGraph visitor object."""
-    PAD_STR = '    '
+    PAD_STR = '  '
     def __init__(self, theHtmlStream):
         """Constructor with an output XmlWrite.XhtmlStream and
         a a TuIndexer.TuIndexer object."""
@@ -95,7 +96,7 @@ def processCppCondGrphToHtml(theLex,
     ## Write CSS
     #TokenCss.writeCssToDir(os.path.dirname(theHtmlPath))
     # Process the TU
-    with XmlWrite.XhtmlStream(theHtmlPath) as myS:
+    with XmlWrite.XhtmlStream(theHtmlPath, mustIndent=cpip.INDENT_ML) as myS:
         with XmlWrite.Element(myS, 'head'):
             with XmlWrite.Element(
                 myS,

@@ -141,13 +141,15 @@ class MultiPassString(object):
         logging.debug('MultiPassString.setWordType() "%s", isTerm=%s', theType, isTerm)
         if self._idxMarker == self.MARKER_CLEAR:
             raise ExceptionMultiPass('setWordType(): when no marker present.')
-        if self._idxMarker in self._idxTypeMap:
-            raise ExceptionMultiPass('setWordType(): Duplicate key: %s' % self._idxMarker)
+#        if self._idxMarker in self._idxTypeMap:
+#            raise ExceptionMultiPass('setWordType(): Duplicate key: %s' % self._idxMarker)
         myLen = self.wordLength
         if isTerm:
             myLen += 1
         if myLen <= 0:
-            raise ExceptionMultiPass('Marking word with illegal length: %s' % myLen)
+            myLen = 1
+            theType = 'Unknown'
+#            raise ExceptionMultiPass('Marking word with illegal length: %s' % myLen)
         self._idxTypeMap[self._idxMarker] = Word(wordLen=myLen, wordType=theType)
 
     def removeMarkedWord(self, isTerm):

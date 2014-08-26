@@ -78,8 +78,9 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
     def test_01(self):
         """TestItuToHtmlLowLevel.test_01(): Empty string, no processing."""
         myInput = ""
-        myOutput = ""
-        myIth = ItuToHtml.ItuToHtml(io.StringIO(''))
+        myOutput = io.StringIO()
+        myIth = ItuToHtml.ItuToHtml(io.StringIO(''), myOutput)
+        print(myOutput.getvalue())
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
         #print o
