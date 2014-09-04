@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CPIP Core &mdash; CPIP 0.8.1 documentation</title>
+    <title>cpip.core &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +23,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
     <link rel="up" title="CPIP Reference" href="../index.html" />
-    <link rel="next" title="ConstantExpression" href="../core/ConstantExpression.html" />
-    <link rel="prev" title="CPIP Reference" href="../index.html" /> 
+    <link rel="next" title="ConstantExpression" href="ConstantExpression.html" />
+    <link rel="prev" title="CPIPMain" href="../CPIPMain.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,12 +39,12 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../core/ConstantExpression.html" title="ConstantExpression"
+          <a href="ConstantExpression.html" title="ConstantExpression"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="CPIP Reference"
+          <a href="../CPIPMain.html" title="CPIPMain"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">CPIP Reference</a> &raquo;</li> 
       </ul>
     </div>  
@@ -57,23 +55,25 @@
           <div class="body">
             
   <div class="section" id="cpip-core">
-<h1>CPIP Core<a class="headerlink" href="#cpip-core" title="Permalink to this headline">¶</a></h1>
+<h1>cpip.core<a class="headerlink" href="#cpip-core" title="Permalink to this headline">¶</a></h1>
 <p>CPIP Core contains the core code for pre-processing. The architecture is described here: <a class="reference internal" href="../../intro.html#cpip-intro-architecture"><em>CPIP Core Architecture</em></a>.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../core/ConstantExpression.html">ConstantExpression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/CppCond.html">CppCond</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/CppDiagnostic.html">CppDiagnostic</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/FileIncludeGraph.html">FileIncludeGraph</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/IncludeHandler.html">IncludeHandler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/MacroEnv.html">MacroEnv</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/PpDefine.html">PpDefine</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/PpLexer.html">PpLexer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/PpToken.html">PpToken</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/PpTokenCount.html">PpTokenCount</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/PpTokeniser.html">PpTokeniser</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/PpWhitespace.html">PpWhitespace</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/PragmaHandler.html">PragmaHandler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ConstantExpression.html">ConstantExpression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CppCond.html">CppCond</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CppDiagnostic.html">CppDiagnostic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FileIncludeGraph.html">FileIncludeGraph</a></li>
+<li class="toctree-l1"><a class="reference internal" href="FileIncludeStack.html">FileIncludeStack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="IncludeHandler.html">IncludeHandler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ItuToTokens.html">ItuToTokens</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MacroEnv.html">MacroEnv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PpDefine.html">PpDefine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PpLexer.html">PpLexer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PpToken.html">PpToken</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PpTokenCount.html">PpTokenCount</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PpTokeniser.html">PpTokeniser</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PpWhitespace.html">PpWhitespace</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PragmaHandler.html">PragmaHandler</a></li>
 </ul>
 </div>
 </div>
@@ -85,10 +85,10 @@
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../index.html"
-                        title="previous chapter">CPIP Reference</a></p>
+  <p class="topless"><a href="../CPIPMain.html"
+                        title="previous chapter">CPIPMain</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../core/ConstantExpression.html"
+  <p class="topless"><a href="ConstantExpression.html"
                         title="next chapter">ConstantExpression</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -122,18 +122,18 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../core/ConstantExpression.html" title="ConstantExpression"
+          <a href="ConstantExpression.html" title="ConstantExpression"
              >next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="CPIP Reference"
+          <a href="../CPIPMain.html" title="CPIPMain"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

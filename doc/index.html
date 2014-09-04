@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to CPIP &mdash; CPIP 0.8.1 documentation</title>
+    <title>Welcome to CPIP &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.8.1',
+        URL_ROOT:    './',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="#" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="#" />
     <link rel="next" title="CPIP Introduction" href="intro.html" /> 
   </head>
   <body>
@@ -41,7 +39,7 @@
         <li class="right" >
           <a href="intro.html" title="CPIP Introduction"
              accesskey="N">next</a> |</li>
-        <li><a href="#">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="#">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -53,14 +51,14 @@
   <div class="section" id="welcome-to-cpip">
 <h1>Welcome to CPIP<a class="headerlink" href="#welcome-to-cpip" title="Permalink to this headline">¶</a></h1>
 <p>CPIP is a C/C++ pre-processor implemented in Python.</p>
-<p>Instead of regard pre-processing as a just a dirty job that just has to be done as quickly as possible CPIP aims to record every detail of preprocessing CPIP help debugging difficult problems involving preprocessing.</p>
-<p>As well CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on (see <a class="reference internal" href="examples/examples.html#cpip-examples"><em>CPIPMain.py Examples</em></a>).</p>
+<p>Instead of regard pre-processing as a just a dirty job that just has to be done as quickly as possible CPIP records every detail of preprocessing for inspection. Uniquely, CPIP can make those difficult preprocessing debugging problems easy to solve.</p>
+<p>CPIP can can produce some wonderfully visual information about file dependencies, macro usage and much more (see <a class="reference internal" href="examples/examples.html#cpip-examples"><em>CPIPMain.py Examples</em></a>).</p>
 <p>CPIP&#8217;s project page is here: <a class="reference external" href="https://sourceforge.net/projects/cpip/">https://sourceforge.net/projects/cpip/</a></p>
 <p>Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">CPIP Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="intro.html#pre-processing-c-c">Pre-processing C/C++</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html#pre-processing-c-and-c">Pre-processing C and C++</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="intro.html#file-inclusion">File Inclusion</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intro.html#conditional-compilation">Conditional Compilation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="intro.html#macro-replacement">Macro Replacement</a></li>
@@ -87,11 +85,10 @@
 <li class="toctree-l1"><a class="reference internal" href="examples/examples.html"><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="examples/examples.html#screenshots">Screenshots</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="examples/examples.html#home-page">Home Page</a></li>
-<li class="toctree-l3"><a class="reference internal" href="examples/examples.html#file-specific-pages">File Specific Pages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples/examples.html#preprocessed-file-specific-page">Preprocessed File Specific Page</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="examples/examples.html#some-real-examples">Some Real Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="examples/examples.html#symbian-os">Symbian OS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="examples/examples.html#the-linux-kernel">The Linux Kernel</a></li>
 </ul>
 </li>
@@ -125,12 +122,32 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ref/index.html">CPIP Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ref/core/index.html">CPIP Core</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ref/CPIPMain.html">CPIPMain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/CppCondGraphToHtml.html">CppCondGraphToHtml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/IncGraphSVG.html">IncGraphSVG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/IncGraphSVGBase.html">IncGraphSVGBase</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ref/IncGraphSVGBase.html#writing-onmouseover-onmouseout-event-handlers-to-provide-additional-information">Writing onmouseover/onmouseout event handlers to provide additional information.</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/IncGraphSVGBase.html#opera">Opera</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ref/IncGraphXML.html">IncGraphXML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/IncList.html">IncList</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/ItuToHtml.html">ItuToHtml</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/MacroHistoryHtml.html">MacroHistoryHtml</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ref/MacroHistoryHtml.html#macro-html-ids">Macro HTML IDs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ref/TokenCss.html">TokenCss</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/Tu2Html.html">Tu2Html</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/TuIndexer.html">TuIndexer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ref/core/index.html">cpip.core</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/ConstantExpression.html">ConstantExpression</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/CppCond.html">CppCond</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/CppDiagnostic.html">CppDiagnostic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/FileIncludeGraph.html">FileIncludeGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/FileIncludeStack.html">FileIncludeStack</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/IncludeHandler.html">IncludeHandler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/core/ItuToTokens.html">ItuToTokens</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/MacroEnv.html">MacroEnv</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/PpDefine.html">PpDefine</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/core/PpLexer.html">PpLexer</a></li>
@@ -141,17 +158,24 @@
 <li class="toctree-l3"><a class="reference internal" href="ref/core/PragmaHandler.html">PragmaHandler</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="ref/util/index.html">CPIP Utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ref/util/index.html">cpip.util</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ref/util/BufGen.html">BufGen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/CommonPrefix.html">CommonPrefix</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/util/DictTree.html">DictTree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/DirWalk.html">DirWalk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/DupeLines.html">DupeLines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/FileStatus.html">FileStatus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/HtmlUtils.html">HtmlUtils</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/util/ListGen.html">ListGen</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/util/MatrixRep.html">MatrixRep</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/util/MaxMunchGen.html">MaxMunchGen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/OaS.html">OaS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/util/StrTree.html">StrTree</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ref/util/Tree.html">Tree</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/util/XmlWrite.html">XmlWrite</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="ref/plot/index.html">CPIP Plot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ref/plot/index.html">cpip.plot</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ref/plot/Coord.html">Coord</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/plot/PlotNode.html">PlotNode</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ref/plot/SVGWriter.html">SVGWriter</a></li>
@@ -180,9 +204,7 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to CPIP</a><ul>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Welcome to CPIP</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
@@ -223,12 +245,12 @@
         <li class="right" >
           <a href="intro.html" title="CPIP Introduction"
              >next</a> |</li>
-        <li><a href="#">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="#">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
 import sys
@@ -37,6 +37,7 @@ class ExceptionFileStatus(ExceptionCpip):
     pass
 
 class FileInfo(object):
+    """Holds information on a text file."""
     def __init__(self, thePath):
         self._path = thePath
         self._sloc = 0
@@ -54,11 +55,13 @@ class FileInfo(object):
             self._count += 1
         
     def writeHeader(self, theS=sys.stdout):
+        """Writes header to stream."""
         theS.write('%8s  ' % 'SLOC')
         theS.write('%8s  ' % 'Size')
         theS.write('%s' % 'MD5')
     
     def write(self, theS=sys.stdout, incHash=True):
+        """Writes the number of lines and bytes (optionally MD5) to stream."""
         theS.write('%8d  ' % self._sloc)
         theS.write('%8d  ' % self._size)
         if incHash:
@@ -66,29 +69,35 @@ class FileInfo(object):
     
     @property
     def sloc(self):
+        """Lines in file."""
         return self._sloc
     
     @property
     def size(self):
+        """Size in bytes."""
         return self._size
     
     @property
     def count(self):
+        """Files processed."""
         return self._count
     
     def __iadd__(self, other):
+        """Add other to me."""
         self._sloc += other.sloc
         self._size += other.size
         self._count += other.count
         return self
         
 class FileInfoSet(object):
+    """Contains information on a set of files."""
     def __init__(self, thePath, glob=None, isRecursive=False):
         # Map of (path : class FileInfo, ...}
         self._infoMap = {}
         self.processPath(thePath, glob, isRecursive)
     
     def processPath(self, theP, glob=None, isRecursive=False):
+        """Process a file or directory."""
         if os.path.isdir(theP):
             self.processDir(theP, glob, isRecursive)
         elif os.path.isfile(theP):
@@ -111,6 +120,7 @@ class FileInfoSet(object):
                 self.processPath(p, glob, isRecursive)
     
     def write(self, theS=sys.stdout):
+        """Write summary to stream."""
         kS = sorted(self._infoMap.keys())
         fieldWidth = max([len(k) for k in kS])
         theS.write('%-*s  ' % (fieldWidth, 'File'))

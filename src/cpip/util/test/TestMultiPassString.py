@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import sys
 #import os
@@ -73,7 +73,7 @@ class TestMultiPassStringMarker(TestBase):
     
     def test_01(self):
         """TestMultiPassStringMarker.test_01(): Empty string."""
-        myMps = MultiPassString.MultiPassString(io.StringIO(''))
+        myMps = MultiPassString.MultiPassString(io.StringIO(u''))
         o = [c for c in myMps.genChars()]
         #print o
         self.assertEqual([], o)
@@ -85,7 +85,7 @@ class TestMultiPassStringMarker(TestBase):
     
     def test_02(self):
         """TestMultiPassStringMarker.test_02(): C++ and line continuation using individual functions."""
-        myStr = """
+        myStr = u"""
 // Some comment \\
 and \\
 the rest
@@ -148,7 +148,7 @@ the rest
 
     def test_03_00(self):
         """TestMultiPassStringMarker.test_03_00(): C++ comment using removeSetReplaceClear()."""
-        myStr = '// C\n\n'
+        myStr = u'// C\n\n'
         myMps = MultiPassString.MultiPassString(io.StringIO(myStr))
         # Mark comment
         for c in myMps.genChars():
@@ -175,7 +175,7 @@ the rest
 
     def test_03_01(self):
         """TestMultiPassStringMarker.test_03_01(): C++ comment using removeSetReplaceClear()."""
-        myStr = '// C\\\n\n'
+        myStr = u'// C\\\n\n'
         myMps = MultiPassString.MultiPassString(io.StringIO(myStr))
         o = []
         myMps.setMarker()
@@ -212,7 +212,7 @@ the rest
 
     def test_03_02(self):
         """TestMultiPassStringMarker.test_03_02(): C++ comment using removeSetReplaceClear()."""
-        myStr = '// C\\\n\n\n'
+        myStr = u'// C\\\n\n\n'
         myMps = MultiPassString.MultiPassString(io.StringIO(myStr))
         o = []
         myMps.setMarker()
@@ -250,7 +250,7 @@ the rest
 
     def test_03(self):
         """TestMultiPassStringMarker.test_03(): C++ and line continuation using removeSetReplaceClear()."""
-        myStr = """
+        myStr = u"""
 // Some comment \\
 and \\
 the rest
@@ -293,7 +293,7 @@ the rest
 
     def test_04(self):
         """TestMultiPassStringMarker.test_04(): Spaces and numbers, multiple passes."""
-        myStr = """ 1  12   123    1234"""
+        myStr = u""" 1  12   123    1234"""
         myMps = MultiPassString.MultiPassString(io.StringIO(myStr))
         # Mark whitespace
         o = []
@@ -370,7 +370,7 @@ the rest
 
     def test_05(self):
         """TestMultiPassStringMarker.test_05(): Spaces and numbers, single pass."""
-        myStr = """ 1  12   123    1234"""
+        myStr = u""" 1  12   123    1234"""
         myMps = MultiPassString.MultiPassString(io.StringIO(myStr))
         o = []
         cType = MultiPassString.MultiPassString.UNKNOWN_TOKEN_TYPE

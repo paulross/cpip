@@ -4,7 +4,7 @@
 .. _cpip.ref.FileIncludeGraph:
 
 FileIncludeGraph
-=======================
+======================
 
 .. automodule:: cpip.core.FileIncludeGraph
    :members:

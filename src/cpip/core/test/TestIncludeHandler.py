@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
 import sys
@@ -94,16 +94,16 @@ class TestCppIncludeLookup(unittest.TestCase):
                 os.path.join('sys'),
                 os.path.join('sys', 'inc'),
                 ],
-            """Contents of src/spam.c
+            u"""Contents of src/spam.c
 """,
             {
-                os.path.join('usr', 'inc', 'spam.h') : """User, include, spam.h
+                os.path.join('usr', 'inc', 'spam.h') : u"""User, include, spam.h
 """,
-                os.path.join('usr', 'spam.h') : """User, spam.h
+                os.path.join('usr', 'spam.h') : u"""User, spam.h
 """,
-                os.path.join('sys', 'spam.h') : """System, spam.h
+                os.path.join('sys', 'spam.h') : u"""System, spam.h
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """System, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""System, include, spam.h
 """,
             }
             )
@@ -111,7 +111,7 @@ class TestCppIncludeLookup(unittest.TestCase):
         self.assertEqual([], self._incSim.cpStack)
         self.assertEqual(0, self._incSim.cpStackSize)
         # Load the initial translation unit
-        f = self._incSim.initialTu('src/spam.c')
+        f = self._incSim.initialTu(u'src/spam.c')
         self._incSim.validateCpStack()
         self.assertEqual(['src',], self._incSim.cpStack)
         self.assertEqual(1, self._incSim.cpStackSize)
@@ -285,12 +285,12 @@ class TestCppIncludeFallback(unittest.TestCase):
             [
                 os.path.join('sys'),
                 ],
-            """Contents of src/spam.c
+            u"""Contents of src/spam.c
 """,
             {
-                os.path.join('usr', 'spam.hp') : """User, spam.hp
+                os.path.join('usr', 'spam.hp') : u"""User, spam.hp
 """,
-                os.path.join('sys', 'spam.h') : """System, spam.h
+                os.path.join('sys', 'spam.h') : u"""System, spam.h
 """,
             }
             )
@@ -377,14 +377,14 @@ class TestCppIncludeCurrentPlace(unittest.TestCase):
             [
                 os.path.join('sys'),
                 ],
-            """Contents of src/spam.c
+            u"""Contents of src/spam.c
 """,
             {
-                os.path.join('usr', 'spam.hp') : """User, spam.hp
+                os.path.join('usr', 'spam.hp') : u"""User, spam.hp
 """,
-                os.path.join('sys', 'spam.h') : """System, spam.h
+                os.path.join('sys', 'spam.h') : u"""System, spam.h
 """,
-                os.path.join('src', 'spam.h') : """Current place, spam.h
+                os.path.join('src', 'spam.h') : u"""Current place, spam.h
 """,
             }
             )
@@ -479,7 +479,7 @@ class TestCppIncludeFailure(unittest.TestCase):
             [
                 os.path.join('sys'),
                 ],
-            """Contents of src/spam.c
+            u"""Contents of src/spam.c
 """,
             {
                 os.path.join('usr', 'spam.hp') : """User, spam.hp
@@ -596,16 +596,25 @@ class TestCppIncludeStdOs(unittest.TestCase):
     """Tests standard include behaviour from the OS file system."""
     def setUp(self):
         self._incSim = IncludeHandler.CppIncludeStdOs([], [])
+        
+    def _getRelFilePath(self, fileRelHere):
+        return os.path.join(self._getRelDirPath(), fileRelHere)
+
+    def _getRelDirPath(self):
+        r = os.path.dirname(__file__)
+        if r == os.sep:
+            r = ''
+        return r
 
     def testIncludeInitialTuPasses(self):
         """Tests standard TU find succeeds from the OS file system."""
-        f = self._incSim.initialTu('mt.h')
+        f = self._incSim.initialTu(self._getRelFilePath('mt.h'))
         self.assertNotEqual(None, f)
-        self.assertEqual([''], self._incSim.cpStack)
+        self.assertEqual([self._getRelDirPath()], self._incSim.cpStack)
         # Test the return value
         self.assertEqual('', f.fileObj.read())
-        self.assertEqual('mt.h', f.filePath)
-        self.assertEqual('', f.currentPlace)
+        self.assertEqual(os.path.join(self._getRelDirPath(), 'mt.h'), f.filePath)
+        self.assertEqual(self._getRelDirPath(), f.currentPlace)
         self.assertEqual('TU', f.origin)
 
     def testIncludeInitialTuFails(self):
@@ -615,12 +624,18 @@ class TestCppIncludeStdOs(unittest.TestCase):
 
     def testIncludePasses(self):
         """Tests standard include succeeds from the OS file system."""
-        f = self._incSim._searchFile('mt.h', os.curdir)
+        f = self._incSim._searchFile(self._getRelFilePath('mt.h'), os.curdir)
         self.assertNotEqual(None, f)
         # Test the return value
         self.assertEqual('', f.fileObj.read())
-        self.assertEqual(os.path.join(os.curdir, 'mt.h'), f.filePath)
-        self.assertEqual(os.curdir, f.currentPlace)
+        self.assertEqual(os.path.join(os.curdir, self._getRelDirPath(), 'mt.h'), f.filePath)
+#         print(os.path.join(os.curdir, self._getRelDirPath()))
+#         print('===========', self._getRelDirPath(), '||', f.currentPlace)
+        expCurrentPlace = os.path.relpath(os.path.join(os.curdir, self._getRelDirPath()))
+        if len(self._getRelDirPath()) > 0:
+            expCurrentPlace = os.path.join(os.curdir, expCurrentPlace)
+        self.assertEqual(os.path.abspath(expCurrentPlace),
+                         os.path.abspath(f.currentPlace))
         self.assertEqual(None, f.origin)
 
     def testIncludeFails(self):
@@ -629,8 +644,8 @@ class TestCppIncludeStdOs(unittest.TestCase):
         self.assertEqual(None, f)
 
     def testNoMultipleTuS(self):
-        """TestCppIncludeFailure: multiple TUs fails."""
-        f = self._incSim.initialTu('mt.h')
+        """TestCppIncludeFailure: multiple ITUs fails."""
+        f = self._incSim.initialTu(self._getRelFilePath('mt.h'))
         self.assertNotEqual(None, f)
         self.assertRaises(
             IncludeHandler.ExceptionCppInclude,

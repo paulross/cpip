@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/stringify.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/stringify.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X19MSU5VWF9TVFJJTkdJRllfSF8w"><span class="b">__LINUX_STRINGIFY_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19MSU5VWF9TVFJJTkdJRllfSF8w"><span class="b">__LINUX_STRINGIFY_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="k">/* Indirect stringification.  Doing two levels allows the parameter to be a</span>
+<a name="5" /><span class="Maybe">       5:</span> <span class="k"> * macro itself.  For example, compile with -DFOO=bar, __stringify(FOO)</span>
+<a name="6" /><span class="Maybe">       6:</span> <span class="k"> * converts to &quot;bar&quot;.</span>
+<a name="7" /><span class="Maybe">       7:</span> <span class="k"> */</span>
+<a name="8" /><span class="Maybe">       8:</span> 
+<a name="9" /><span class="Maybe">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19zdHJpbmdpZnlfMV8w"><span class="b">__stringify_1</span></a><span class="f">(</span><span class="b">x</span><span class="f">...</span><span class="f">)</span>    <span class="f">#</span><span class="b">x</span>
+<a name="10" /><span class="Maybe">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19zdHJpbmdpZnlfMA__"><span class="b">__stringify</span></a><span class="f">(</span><span class="b">x</span><span class="f">...</span><span class="f">)</span>    <a href="cpu.c_macros_ref.html#_X19zdHJpbmdpZnlfMV8w"><span class="b">__stringify_1</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>
+<a name="11" /><span class="Maybe">      11:</span> 
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* !__LINUX_STRINGIFY_H */</span>
+<a name="13" /><span class="True">      13:</span> </pre>
+  </body>
+</html>

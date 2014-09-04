@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>MacroEnv &mdash; CPIP 0.8.1 documentation</title>
+    <title>MacroEnv &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +23,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
-    <link rel="up" title="CPIP Core" href="../core/index.html" />
-    <link rel="next" title="PpDefine" href="../core/PpDefine.html" />
-    <link rel="prev" title="IncludeHandler" href="../core/IncludeHandler.html" /> 
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.core" href="index.html" />
+    <link rel="next" title="PpDefine" href="PpDefine.html" />
+    <link rel="prev" title="ItuToTokens" href="ItuToTokens.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,14 +39,14 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../core/PpDefine.html" title="PpDefine"
+          <a href="PpDefine.html" title="PpDefine"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../core/IncludeHandler.html" title="IncludeHandler"
+          <a href="ItuToTokens.html" title="ItuToTokens"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">cpip.core</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -63,16 +61,17 @@
 <p>It implements ISO/IEC 9899:1999(E) section 6 (aka &#8216;C&#8217;)
 and ISO/IEC 14882:1998(E) section 16 (aka &#8216;C++&#8217;)</p>
 <p>TODO: Record macro related events in the order that they happen.:</p>
-<div class="highlight-python"><pre>[
+<div class="highlight-python"><div class="highlight"><pre>[
     (
         macro_ident,         - string
-        event,               - string e.g. 'define', 'replace', 'undef'
+        event,               - string e.g. &#39;define&#39;, &#39;replace&#39;, &#39;undef&#39;
         None or PpDefine,    - the latter if undef (or define???)
         file,                - string
         line,                - int
         col,                 - int
     ),
-]</pre>
+]
+</pre></div>
 </div>
 <p>Can remap this on output to:
 {macro_ident : [index, ...], ...}</p>
@@ -137,6 +136,16 @@ For example:</p>
 </pre></div>
 </div>
 <p>Each identifier must be in <tt class="docutils literal"><span class="pre">STD_PREDEFINED_NAMES</span></tt></p>
+<dl class="method">
+<dt id="cpip.core.MacroEnv.MacroEnv.allStaticMacroDependencies">
+<tt class="descname">allStaticMacroDependencies</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.allStaticMacroDependencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a DuplexAdjacencyList() of macro dependencies for the
+Macro environment. All objects in the DuplexAdjacencyList() are macro
+identifiers as strings.
+A DuplexAdjacencyList() can be converted to a util.Tree() and that
+can be converted to a DictTree()</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="cpip.core.MacroEnv.MacroEnv.clear">
 <tt class="descname">clear</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.clear" title="Permalink to this definition">¶</a></dt>
@@ -274,7 +283,7 @@ i.e. it is dependency on them NOT being defined.</p>
 <dl class="method">
 <dt id="cpip.core.MacroEnv.MacroEnv.macros">
 <tt class="descname">macros</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.macros" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns list of strings of current macros.</p>
+<dd><p>Returns and unsorted list of strings of current macro identifiers.</p>
 </dd></dl>
 
 <dl class="method">
@@ -282,11 +291,13 @@ i.e. it is dependency on them NOT being defined.</p>
 <tt class="descname">mightReplace</tt><big>(</big><em>theTtt</em><big>)</big><a class="headerlink" href="#cpip.core.MacroEnv.MacroEnv.mightReplace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if theTok might be able to be expanded.
 &#8216;Might&#8217; is not &#8216;can&#8217; or &#8216;will&#8217; because of this:</p>
-<div class="highlight-python"><pre>#define FUNC(a,b) a-b
-FUNC FUNC(45,3)</pre>
+<div class="highlight-python"><div class="highlight"><pre>#define FUNC(a,b) a-b
+FUNC FUNC(45,3)
+</pre></div>
 </div>
 <p>Becomes:</p>
-<div class="highlight-python"><pre>FUNC 45 -3</pre>
+<div class="highlight-python"><div class="highlight"><pre>FUNC 45 -3
+</pre></div>
 </div>
 <p>Thus <tt class="docutils literal"><span class="pre">mightReplace('FUNC',</span> <span class="pre">...)</span></tt> is True in both cases but actual
 replacement only occurs once for the second <tt class="docutils literal"><span class="pre">FUNC</span></tt>.</p>
@@ -345,10 +356,10 @@ representation.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../core/IncludeHandler.html"
-                        title="previous chapter">IncludeHandler</a></p>
+  <p class="topless"><a href="ItuToTokens.html"
+                        title="previous chapter">ItuToTokens</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../core/PpDefine.html"
+  <p class="topless"><a href="PpDefine.html"
                         title="next chapter">PpDefine</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -382,19 +393,19 @@ representation.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../core/PpDefine.html" title="PpDefine"
+          <a href="PpDefine.html" title="PpDefine"
              >next</a> |</li>
         <li class="right" >
-          <a href="../core/IncludeHandler.html" title="IncludeHandler"
+          <a href="ItuToTokens.html" title="ItuToTokens"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+          <li><a href="index.html" >cpip.core</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

@@ -15,10 +15,10 @@ CPIP is not designed to be a replacement for ``cpp`` (or any other established p
 CPIP takes its standard as C99 or, more formally, ISO/IEC 9899:1999 (E) [#]_.
 
 ************************
-Pre-processing C/C++
+Pre-processing C and C++
 ************************
 
-The basic task of any preprocessor is to produce a *Translation Unit* for a compiler to work with. To do this the pre-processor has to do three inter-related tasks:
+The basic task of any preprocessor is to produce a *Translation Unit* for a compiler to work with. To do this the pre-processor has to do three inter-related tasks [#]_:
 
 * File inclusion i.e. responding to ``#include`` commands.
 * Conditional Compilation ``#if``, ``#ifdef`` etc.
@@ -109,6 +109,8 @@ An extremely useful feature of CPIP is that the ``PpLexer`` maintains all these 
 
 .. rubric:: Footnotes
 
-.. [#] Other standards are of interest: "C++98" [ISO/IEC 14882:1998(E)] describes more limited pre-processing (no variadic macros for example). "C++0x" [ISO/IEC JTC 1/SC 22 N 4411 in draft] does not substantially change this. In any case CPIP attempts to emulate common custom and practice (yes, including variadic macros).
+.. [#] Other standards are of interest: "C++98" [ISO/IEC 14882:1998(E)] describes more limited pre-processing (no variadic macros for example). "C++11" [ISO/IEC JTC 1/SC 22 N 4411 in draft] and C++14 does not substantially change this. In any case CPIP attempts to emulate common custom and practice (yes, including variadic macros).
 
-.. [#] Rationale for International Standard — Programming Languages — C Revision 5.10 April-2003 Sect. 6.10.3.4
+.. [#] Of course the preprocessor has to do many other minor tasks such as replacing trigraphs and removing comments.
+
+.. [#] Rationale for International Standard - Programming Languages - C Revision 5.10 April-2003 Sect. 6.10.3.4

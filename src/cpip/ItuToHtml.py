@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import sys
 import os
@@ -54,15 +54,17 @@ class ItuToHtml(object):
                  macroRefMap=None, cppCondMap=None, ituToTuLineSet=None):
         """Takes an input source file and an output directory.
         theItu - The original source file path (or file like object for the input).
-        theHtmlDir - The output directory for the HTML or a file-like object for the output 
+        theHtmlDir - The output directory for the HTML or a file-like object for the output
+        writeAnchors - Bool, whether to write file anchors.
         keepGoing - Bool, if True raise on error.
         macroRefMap - Map of {identifier : href_text, ...) to link to macro definitions.
         ituToTuLineSet - Set of integer line numbers which are lines that can be linked
         to the translation unit representation."""
-        if isinstance(theItu, str):
+        try:
+            # Assume string or unicode first
             self._fpIn = theItu
             self._ituFileObj = open(self._fpIn)
-        else:
+        except TypeError:
             self._fpIn = 'Unknown'
             self._ituFileObj = theItu
         if isinstance(theHtmlDir, str):

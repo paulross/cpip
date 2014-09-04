@@ -1,0 +1,387 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/cred.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/cred.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/* Credentials management - see Documentation/security/credentials.txt</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> *</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> * Copyright (C) 2008 Red Hat, Inc. All Rights Reserved.</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> * Written by David Howells (dhowells@redhat.com)</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> *</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> * This program is free software; you can redistribute it and/or</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * modify it under the terms of the GNU General Public Licence</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> * as published by the Free Software Foundation; either version</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> * 2 of the Licence, or (at your option) any later version.</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> */</span>
+<a name="11" /><span class="True">      11:</span> 
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0NSRURfSF8w"><span class="b">_LINUX_CRED_H</span></a>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0NSRURfSF8w"><span class="b">_LINUX_CRED_H</span></a>
+<a name="14" /><span class="True">      14:</span> 
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">capability</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">init</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">key</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="18" /><span class="True">      18:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">selinux</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="19" /><span class="True">      19:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">atomic</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="20" /><span class="True">      20:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">uidgid</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="21" /><span class="True">      21:</span> 
+<a name="22" /><span class="True">      22:</span> <span class="m">struct</span> <span class="b">user_struct</span><span class="f">;</span>
+<a name="23" /><span class="True">      23:</span> <span class="m">struct</span> <span class="b">cred</span><span class="f">;</span>
+<a name="24" /><span class="True">      24:</span> <span class="m">struct</span> <span class="b">inode</span><span class="f">;</span>
+<a name="25" /><span class="True">      25:</span> 
+<a name="26" /><span class="True">      26:</span> <span class="k">/*</span>
+<a name="27" /><span class="True">      27:</span> <span class="k"> * COW Supplementary groups list</span>
+<a name="28" /><span class="True">      28:</span> <span class="k"> */</span>
+<a name="29" /><span class="True">      29:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_TkdST1VQU19TTUFMTF8w"><span class="b">NGROUPS_SMALL</span></a>        <span class="c">32</span>
+<a name="30" /><span class="True">      30:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_TkdST1VQU19QRVJfQkxPQ0tfMA__"><span class="b">NGROUPS_PER_BLOCK</span></a>    <span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span><span class="f">)</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_UEFHRV9TSVpFXzA_"><span class="b">PAGE_SIZE</span></a> <span class="f">/</span> <span class="m">sizeof</span><span class="f">(</span><span class="b">kgid_t</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="31" /><span class="True">      31:</span> 
+<a name="32" /><span class="True">      32:</span> <span class="m">struct</span> <span class="b">group_info</span> <span class="f">{</span>
+<a name="33" /><span class="True">      33:</span>     <span class="b">atomic_t</span>    <span class="b">usage</span><span class="f">;</span>
+<a name="34" /><span class="True">      34:</span>     <span class="m">int</span>        <span class="b">ngroups</span><span class="f">;</span>
+<a name="35" /><span class="True">      35:</span>     <span class="m">int</span>        <span class="b">nblocks</span><span class="f">;</span>
+<a name="36" /><span class="True">      36:</span>     <span class="b">kgid_t</span>        <span class="b">small_block</span><span class="f">[</span><a href="cpu.c_macros_ref.html#_TkdST1VQU19TTUFMTF8w"><span class="b">NGROUPS_SMALL</span></a><span class="f">]</span><span class="f">;</span>
+<a name="37" /><span class="True">      37:</span>     <span class="b">kgid_t</span>        <span class="f">*</span><span class="b">blocks</span><span class="f">[</span><span class="c">0</span><span class="f">]</span><span class="f">;</span>
+<a name="38" /><span class="True">      38:</span> <span class="f">}</span><span class="f">;</span>
+<a name="39" /><span class="True">      39:</span> 
+<a name="40" /><span class="True">      40:</span> <span class="k">/**</span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> * get_group_info - Get a reference to a group info structure</span>
+<a name="42" /><span class="True">      42:</span> <span class="k"> * @group_info: The group info to reference</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"> *</span>
+<a name="44" /><span class="True">      44:</span> <span class="k"> * This gets a reference to a set of supplementary groups.</span>
+<a name="45" /><span class="True">      45:</span> <span class="k"> *</span>
+<a name="46" /><span class="True">      46:</span> <span class="k"> * If the caller is accessing a task&apos;s credentials, they must hold the RCU read</span>
+<a name="47" /><span class="True">      47:</span> <span class="k"> * lock when reading.</span>
+<a name="48" /><span class="True">      48:</span> <span class="k"> */</span>
+<a name="49" /><span class="True">      49:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="b">get_group_info</span><span class="f">(</span><span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="b">gi</span><span class="f">)</span>
+<a name="50" /><span class="True">      50:</span> <span class="f">{</span>
+<a name="51" /><span class="True">      51:</span>     <span class="b">atomic_inc</span><span class="f">(</span><span class="f">&amp;</span><span class="b">gi</span><span class="f">-&gt;</span><span class="b">usage</span><span class="f">)</span><span class="f">;</span>
+<a name="52" /><span class="True">      52:</span>     <span class="m">return</span> <span class="b">gi</span><span class="f">;</span>
+<a name="53" /><span class="True">      53:</span> <span class="f">}</span>
+<a name="54" /><span class="True">      54:</span> 
+<a name="55" /><span class="True">      55:</span> <span class="k">/**</span>
+<a name="56" /><span class="True">      56:</span> <span class="k"> * put_group_info - Release a reference to a group info structure</span>
+<a name="57" /><span class="True">      57:</span> <span class="k"> * @group_info: The group info to release</span>
+<a name="58" /><span class="True">      58:</span> <span class="k"> */</span>
+<a name="59" /><span class="True">      59:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cHV0X2dyb3VwX2luZm9fMA__"><span class="b">put_group_info</span></a><span class="f">(</span><span class="b">group_info</span><span class="f">)</span>            \
+<a name="60" /><span class="True">      60:</span> <span class="m">do</span> <span class="f">{</span>                            \
+<a name="61" /><span class="True">      61:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">atomic_dec_and_test</span><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">group_info</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">usage</span><span class="f">)</span><span class="f">)</span>    \
+<a name="62" /><span class="True">      62:</span>         <span class="b">groups_free</span><span class="f">(</span><span class="b">group_info</span><span class="f">)</span><span class="f">;</span>        \
+<a name="63" /><span class="True">      63:</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="64" /><span class="True">      64:</span> 
+<a name="65" /><span class="True">      65:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="b">groups_alloc</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="66" /><span class="True">      66:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">group_info</span> <span class="b">init_groups</span><span class="f">;</span>
+<a name="67" /><span class="True">      67:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">groups_free</span><span class="f">(</span><span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="68" /><span class="True">      68:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">set_current_groups</span><span class="f">(</span><span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="69" /><span class="True">      69:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">set_groups</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">,</span> <span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="70" /><span class="True">      70:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">groups_search</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="f">,</span> <span class="b">kgid_t</span><span class="f">)</span><span class="f">;</span>
+<a name="71" /><span class="True">      71:</span> 
+<a name="72" /><span class="True">      72:</span> <span class="k">/* access the groups &quot;array&quot; with this macro */</span>
+<a name="73" /><span class="True">      73:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_R1JPVVBfQVRfMA__"><span class="b">GROUP_AT</span></a><span class="f">(</span><span class="b">gi</span><span class="f">,</span> <span class="b">i</span><span class="f">)</span> \
+<a name="74" /><span class="True">      74:</span>     <span class="f">(</span><span class="f">(</span><span class="b">gi</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">blocks</span><span class="f">[</span><span class="f">(</span><span class="b">i</span><span class="f">)</span> <span class="f">/</span> <a href="cpu.c_macros_noref.html#_TkdST1VQU19QRVJfQkxPQ0tfMA__"><span class="b">NGROUPS_PER_BLOCK</span></a><span class="f">]</span><span class="f">[</span><span class="f">(</span><span class="b">i</span><span class="f">)</span> <span class="f">%</span> <a href="cpu.c_macros_noref.html#_TkdST1VQU19QRVJfQkxPQ0tfMA__"><span class="b">NGROUPS_PER_BLOCK</span></a><span class="f">]</span><span class="f">)</span>
+<a name="75" /><span class="True">      75:</span> 
+<a name="76" /><span class="True">      76:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">in_group_p</span><span class="f">(</span><span class="b">kgid_t</span><span class="f">)</span><span class="f">;</span>
+<a name="77" /><span class="True">      77:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">in_egroup_p</span><span class="f">(</span><span class="b">kgid_t</span><span class="f">)</span><span class="f">;</span>
+<a name="78" /><span class="True">      78:</span> 
+<a name="79" /><span class="True">      79:</span> <span class="k">/*</span>
+<a name="80" /><span class="True">      80:</span> <span class="k"> * The security context of a task</span>
+<a name="81" /><span class="True">      81:</span> <span class="k"> *</span>
+<a name="82" /><span class="True">      82:</span> <span class="k"> * The parts of the context break down into two categories:</span>
+<a name="83" /><span class="True">      83:</span> <span class="k"> *</span>
+<a name="84" /><span class="True">      84:</span> <span class="k"> *  (1) The objective context of a task.  These parts are used when some other</span>
+<a name="85" /><span class="True">      85:</span> <span class="k"> *    task is attempting to affect this one.</span>
+<a name="86" /><span class="True">      86:</span> <span class="k"> *</span>
+<a name="87" /><span class="True">      87:</span> <span class="k"> *  (2) The subjective context.  These details are used when the task is acting</span>
+<a name="88" /><span class="True">      88:</span> <span class="k"> *    upon another object, be that a file, a task, a key or whatever.</span>
+<a name="89" /><span class="True">      89:</span> <span class="k"> *</span>
+<a name="90" /><span class="True">      90:</span> <span class="k"> * Note that some members of this structure belong to both categories - the</span>
+<a name="91" /><span class="True">      91:</span> <span class="k"> * LSM security pointer for instance.</span>
+<a name="92" /><span class="True">      92:</span> <span class="k"> *</span>
+<a name="93" /><span class="True">      93:</span> <span class="k"> * A task has two security pointers.  task-&gt;real_cred points to the objective</span>
+<a name="94" /><span class="True">      94:</span> <span class="k"> * context that defines that task&apos;s actual details.  The objective part of this</span>
+<a name="95" /><span class="True">      95:</span> <span class="k"> * context is used whenever that task is acted upon.</span>
+<a name="96" /><span class="True">      96:</span> <span class="k"> *</span>
+<a name="97" /><span class="True">      97:</span> <span class="k"> * task-&gt;cred points to the subjective context that defines the details of how</span>
+<a name="98" /><span class="True">      98:</span> <span class="k"> * that task is going to act upon another object.  This may be overridden</span>
+<a name="99" /><span class="True">      99:</span> <span class="k"> * temporarily to point to another security context, but normally points to the</span>
+<a name="100" /><span class="True">     100:</span> <span class="k"> * same context as task-&gt;real_cred.</span>
+<a name="101" /><span class="True">     101:</span> <span class="k"> */</span>
+<a name="102" /><span class="True">     102:</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">{</span>
+<a name="103" /><span class="True">     103:</span>     <span class="b">atomic_t</span>    <span class="b">usage</span><span class="f">;</span>
+<a name="104" /><span class="False">     104:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_CREDENTIALS</span>
+<a name="105" /><span class="False">     105:</span>     <span class="b">atomic_t</span>    <span class="b">subscribers</span><span class="f">;</span>    <span class="k">/* number of processes subscribed */</span>
+<a name="106" /><span class="False">     106:</span>     <span class="m">void</span>        <span class="f">*</span><span class="b">put_addr</span><span class="f">;</span>
+<a name="107" /><span class="False">     107:</span>     <span class="m">unsigned</span>    <span class="b">magic</span><span class="f">;</span>
+<a name="108" /><span class="False">     108:</span> <span class="f">#</span><span class="n">define</span> <span class="b">CRED_MAGIC</span>    <span class="c">0x43736564</span>
+<a name="109" /><span class="False">     109:</span> <span class="f">#</span><span class="n">define</span> <span class="b">CRED_MAGIC_DEAD</span>    <span class="c">0x44656144</span>
+<a name="110" /><span class="True">     110:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="111" /><span class="True">     111:</span>     <span class="b">kuid_t</span>        <span class="b">uid</span><span class="f">;</span>        <span class="k">/* real UID of the task */</span>
+<a name="112" /><span class="True">     112:</span>     <span class="b">kgid_t</span>        <span class="b">gid</span><span class="f">;</span>        <span class="k">/* real GID of the task */</span>
+<a name="113" /><span class="True">     113:</span>     <span class="b">kuid_t</span>        <span class="b">suid</span><span class="f">;</span>        <span class="k">/* saved UID of the task */</span>
+<a name="114" /><span class="True">     114:</span>     <span class="b">kgid_t</span>        <span class="b">sgid</span><span class="f">;</span>        <span class="k">/* saved GID of the task */</span>
+<a name="115" /><span class="True">     115:</span>     <span class="b">kuid_t</span>        <span class="b">euid</span><span class="f">;</span>        <span class="k">/* effective UID of the task */</span>
+<a name="116" /><span class="True">     116:</span>     <span class="b">kgid_t</span>        <span class="b">egid</span><span class="f">;</span>        <span class="k">/* effective GID of the task */</span>
+<a name="117" /><span class="True">     117:</span>     <span class="b">kuid_t</span>        <span class="b">fsuid</span><span class="f">;</span>        <span class="k">/* UID for VFS ops */</span>
+<a name="118" /><span class="True">     118:</span>     <span class="b">kgid_t</span>        <span class="b">fsgid</span><span class="f">;</span>        <span class="k">/* GID for VFS ops */</span>
+<a name="119" /><span class="True">     119:</span>     <span class="m">unsigned</span>    <span class="b">securebits</span><span class="f">;</span>    <span class="k">/* SUID-less security management */</span>
+<a name="120" /><span class="True">     120:</span>     <span class="b">kernel_cap_t</span>    <span class="b">cap_inheritable</span><span class="f">;</span> <span class="k">/* caps our children can inherit */</span>
+<a name="121" /><span class="True">     121:</span>     <span class="b">kernel_cap_t</span>    <span class="b">cap_permitted</span><span class="f">;</span>    <span class="k">/* caps we&apos;re permitted */</span>
+<a name="122" /><span class="True">     122:</span>     <span class="b">kernel_cap_t</span>    <span class="b">cap_effective</span><span class="f">;</span>    <span class="k">/* caps we can actually use */</span>
+<a name="123" /><span class="True">     123:</span>     <span class="b">kernel_cap_t</span>    <span class="b">cap_bset</span><span class="f">;</span>    <span class="k">/* capability bounding set */</span>
+<a name="124" /><span class="True">     124:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX0tFWVNfMA__"><span class="b">CONFIG_KEYS</span></a>
+<a name="125" /><span class="True">     125:</span>     <span class="m">unsigned</span> <span class="m">char</span>    <span class="b">jit_keyring</span><span class="f">;</span>    <span class="k">/* default keyring to attach requested</span>
+<a name="126" /><span class="True">     126:</span> <span class="k">                     * keys to */</span>
+<a name="127" /><span class="True">     127:</span>     <span class="m">struct</span> <span class="b">key</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a> <span class="f">*</span><span class="b">session_keyring</span><span class="f">;</span> <span class="k">/* keyring inherited over fork */</span>
+<a name="128" /><span class="True">     128:</span>     <span class="m">struct</span> <span class="b">key</span>    <span class="f">*</span><span class="b">process_keyring</span><span class="f">;</span> <span class="k">/* keyring private to this process */</span>
+<a name="129" /><span class="True">     129:</span>     <span class="m">struct</span> <span class="b">key</span>    <span class="f">*</span><span class="b">thread_keyring</span><span class="f">;</span> <span class="k">/* keyring private to this thread */</span>
+<a name="130" /><span class="True">     130:</span>     <span class="m">struct</span> <span class="b">key</span>    <span class="f">*</span><span class="b">request_key_auth</span><span class="f">;</span> <span class="k">/* assumed request_key authority */</span>
+<a name="131" /><span class="True">     131:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="132" /><span class="True">     132:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1NFQ1VSSVRZXzA_"><span class="b">CONFIG_SECURITY</span></a>
+<a name="133" /><span class="True">     133:</span>     <span class="m">void</span>        <span class="f">*</span><span class="b">security</span><span class="f">;</span>    <span class="k">/* subjective LSM security */</span>
+<a name="134" /><span class="True">     134:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="135" /><span class="True">     135:</span>     <span class="m">struct</span> <span class="b">user_struct</span> <span class="f">*</span><span class="b">user</span><span class="f">;</span>    <span class="k">/* real user ID subscription */</span>
+<a name="136" /><span class="True">     136:</span>     <span class="m">struct</span> <span class="b">user_namespace</span> <span class="f">*</span><span class="b">user_ns</span><span class="f">;</span> <span class="k">/* user_ns the caps and keyrings are relative to. */</span>
+<a name="137" /><span class="True">     137:</span>     <span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="b">group_info</span><span class="f">;</span>    <span class="k">/* supplementary groups for euid/fsgid */</span>
+<a name="138" /><span class="True">     138:</span>     <span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a>    <span class="b">rcu</span><span class="f">;</span>        <span class="k">/* RCU deletion hook */</span>
+<a name="139" /><span class="True">     139:</span> <span class="f">}</span><span class="f">;</span>
+<a name="140" /><span class="True">     140:</span> 
+<a name="141" /><span class="True">     141:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">__put_cred</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="142" /><span class="True">     142:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">exit_creds</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="143" /><span class="True">     143:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">copy_creds</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">;</span>
+<a name="144" /><span class="True">     144:</span> <span class="m">extern</span> <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">get_task_cred</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="145" /><span class="True">     145:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">cred_alloc_blank</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="146" /><span class="True">     146:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">prepare_creds</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="147" /><span class="True">     147:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">prepare_exec_creds</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="148" /><span class="True">     148:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">commit_creds</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="149" /><span class="True">     149:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">abort_creds</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="150" /><span class="True">     150:</span> <span class="m">extern</span> <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">override_creds</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="151" /><span class="True">     151:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">revert_creds</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="152" /><span class="True">     152:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">prepare_kernel_cred</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="153" /><span class="True">     153:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">change_create_files_as</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">,</span> <span class="m">struct</span> <span class="b">inode</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="154" /><span class="True">     154:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">set_security_override</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a><span class="f">)</span><span class="f">;</span>
+<a name="155" /><span class="True">     155:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">set_security_override_from_ctx</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">,</span> <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="156" /><span class="True">     156:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">set_create_files_as</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">,</span> <span class="m">struct</span> <span class="b">inode</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="157" /><span class="True">     157:</span> <span class="m">extern</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pbml0XzA_"><span class="b">__init</span></a> <span class="b">cred_init</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="158" /><span class="True">     158:</span> 
+<a name="159" /><span class="True">     159:</span> <span class="k">/*</span>
+<a name="160" /><span class="True">     160:</span> <span class="k"> * check for validity of credentials</span>
+<a name="161" /><span class="True">     161:</span> <span class="k"> */</span>
+<a name="162" /><span class="False">     162:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_CREDENTIALS</span>
+<a name="163" /><span class="False">     163:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">__invalid_creds</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">,</span> <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="f">,</span> <span class="m">unsigned</span><span class="f">)</span><span class="f">;</span>
+<a name="164" /><span class="False">     164:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">__validate_process_creds</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="f">,</span>
+<a name="165" /><span class="False">     165:</span>                      <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="f">,</span> <span class="m">unsigned</span><span class="f">)</span><span class="f">;</span>
+<a name="166" /><span class="False">     166:</span> 
+<a name="167" /><span class="False">     167:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">creds_are_invalid</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">cred</span><span class="f">)</span><span class="f">;</span>
+<a name="168" /><span class="False">     168:</span> 
+<a name="169" /><span class="False">     169:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">__validate_creds</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">cred</span><span class="f">,</span>
+<a name="170" /><span class="False">     170:</span>                     <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">file</span><span class="f">,</span> <span class="m">unsigned</span> <span class="b">line</span><span class="f">)</span>
+<a name="171" /><span class="False">     171:</span> <span class="f">{</span>
+<a name="172" /><span class="False">     172:</span>     <span class="m">if</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_dW5saWtlbHlfMA__"><span class="b">unlikely</span></a><span class="f">(</span><span class="b">creds_are_invalid</span><span class="f">(</span><span class="b">cred</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="173" /><span class="False">     173:</span>         <span class="b">__invalid_creds</span><span class="f">(</span><span class="b">cred</span><span class="f">,</span> <span class="b">file</span><span class="f">,</span> <span class="b">line</span><span class="f">)</span><span class="f">;</span>
+<a name="174" /><span class="False">     174:</span> <span class="f">}</span>
+<a name="175" /><span class="False">     175:</span> 
+<a name="176" /><span class="False">     176:</span> <span class="f">#</span><span class="n">define</span> <span class="b">validate_creds</span><span class="f">(</span><span class="b">cred</span><span class="f">)</span>                \
+<a name="177" /><span class="False">     177:</span> <span class="m">do</span> <span class="f">{</span>                            \
+<a name="178" /><span class="False">     178:</span>     <span class="b">__validate_creds</span><span class="f">(</span><span class="f">(</span><span class="b">cred</span><span class="f">)</span><span class="f">,</span> <span class="b">__FILE__</span><span class="f">,</span> <span class="b">__LINE__</span><span class="f">)</span><span class="f">;</span>    \
+<a name="179" /><span class="False">     179:</span> <span class="f">}</span> <span class="m">while</span><span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="180" /><span class="False">     180:</span> 
+<a name="181" /><span class="False">     181:</span> <span class="f">#</span><span class="n">define</span> <span class="b">validate_process_creds</span><span class="f">(</span><span class="f">)</span>                \
+<a name="182" /><span class="False">     182:</span> <span class="m">do</span> <span class="f">{</span>                                \
+<a name="183" /><span class="False">     183:</span>     <span class="b">__validate_process_creds</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Y3VycmVudF8w"><span class="b">current</span></a><span class="f">,</span> <span class="b">__FILE__</span><span class="f">,</span> <span class="b">__LINE__</span><span class="f">)</span><span class="f">;</span>    \
+<a name="184" /><span class="False">     184:</span> <span class="f">}</span> <span class="m">while</span><span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="185" /><span class="False">     185:</span> 
+<a name="186" /><span class="False">     186:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">validate_creds_for_do_exit</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="187" /><span class="True">     187:</span> <span class="f">#</span><span class="n">else</span>
+<a name="188" /><span class="True">     188:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">validate_creds</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">cred</span><span class="f">)</span>
+<a name="189" /><span class="True">     189:</span> <span class="f">{</span>
+<a name="190" /><span class="True">     190:</span> <span class="f">}</span>
+<a name="191" /><span class="True">     191:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">validate_creds_for_do_exit</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="b">tsk</span><span class="f">)</span>
+<a name="192" /><span class="True">     192:</span> <span class="f">{</span>
+<a name="193" /><span class="True">     193:</span> <span class="f">}</span>
+<a name="194" /><span class="True">     194:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">validate_process_creds</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="195" /><span class="True">     195:</span> <span class="f">{</span>
+<a name="196" /><span class="True">     196:</span> <span class="f">}</span>
+<a name="197" /><span class="True">     197:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="198" /><span class="True">     198:</span> 
+<a name="199" /><span class="True">     199:</span> <span class="k">/**</span>
+<a name="200" /><span class="True">     200:</span> <span class="k"> * get_new_cred - Get a reference on a new set of credentials</span>
+<a name="201" /><span class="True">     201:</span> <span class="k"> * @cred: The new credentials to reference</span>
+<a name="202" /><span class="True">     202:</span> <span class="k"> *</span>
+<a name="203" /><span class="True">     203:</span> <span class="k"> * Get a reference on the specified set of new credentials.  The caller must</span>
+<a name="204" /><span class="True">     204:</span> <span class="k"> * release the reference.</span>
+<a name="205" /><span class="True">     205:</span> <span class="k"> */</span>
+<a name="206" /><span class="True">     206:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">get_new_cred</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">cred</span><span class="f">)</span>
+<a name="207" /><span class="True">     207:</span> <span class="f">{</span>
+<a name="208" /><span class="True">     208:</span>     <span class="b">atomic_inc</span><span class="f">(</span><span class="f">&amp;</span><span class="b">cred</span><span class="f">-&gt;</span><span class="b">usage</span><span class="f">)</span><span class="f">;</span>
+<a name="209" /><span class="True">     209:</span>     <span class="m">return</span> <span class="b">cred</span><span class="f">;</span>
+<a name="210" /><span class="True">     210:</span> <span class="f">}</span>
+<a name="211" /><span class="True">     211:</span> 
+<a name="212" /><span class="True">     212:</span> <span class="k">/**</span>
+<a name="213" /><span class="True">     213:</span> <span class="k"> * get_cred - Get a reference on a set of credentials</span>
+<a name="214" /><span class="True">     214:</span> <span class="k"> * @cred: The credentials to reference</span>
+<a name="215" /><span class="True">     215:</span> <span class="k"> *</span>
+<a name="216" /><span class="True">     216:</span> <span class="k"> * Get a reference on the specified set of credentials.  The caller must</span>
+<a name="217" /><span class="True">     217:</span> <span class="k"> * release the reference.</span>
+<a name="218" /><span class="True">     218:</span> <span class="k"> *</span>
+<a name="219" /><span class="True">     219:</span> <span class="k"> * This is used to deal with a committed set of credentials.  Although the</span>
+<a name="220" /><span class="True">     220:</span> <span class="k"> * pointer is const, this will temporarily discard the const and increment the</span>
+<a name="221" /><span class="True">     221:</span> <span class="k"> * usage count.  The purpose of this is to attempt to catch at compile time the</span>
+<a name="222" /><span class="True">     222:</span> <span class="k"> * accidental alteration of a set of credentials that should be considered</span>
+<a name="223" /><span class="True">     223:</span> <span class="k"> * immutable.</span>
+<a name="224" /><span class="True">     224:</span> <span class="k"> */</span>
+<a name="225" /><span class="True">     225:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">get_cred</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">cred</span><span class="f">)</span>
+<a name="226" /><span class="True">     226:</span> <span class="f">{</span>
+<a name="227" /><span class="True">     227:</span>     <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">nonconst_cred</span> <span class="f">=</span> <span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span> <span class="b">cred</span><span class="f">;</span>
+<a name="228" /><span class="True">     228:</span>     <span class="b">validate_creds</span><span class="f">(</span><span class="b">cred</span><span class="f">)</span><span class="f">;</span>
+<a name="229" /><span class="True">     229:</span>     <span class="m">return</span> <span class="b">get_new_cred</span><span class="f">(</span><span class="b">nonconst_cred</span><span class="f">)</span><span class="f">;</span>
+<a name="230" /><span class="True">     230:</span> <span class="f">}</span>
+<a name="231" /><span class="True">     231:</span> 
+<a name="232" /><span class="True">     232:</span> <span class="k">/**</span>
+<a name="233" /><span class="True">     233:</span> <span class="k"> * put_cred - Release a reference to a set of credentials</span>
+<a name="234" /><span class="True">     234:</span> <span class="k"> * @cred: The credentials to release</span>
+<a name="235" /><span class="True">     235:</span> <span class="k"> *</span>
+<a name="236" /><span class="True">     236:</span> <span class="k"> * Release a reference to a set of credentials, deleting them when the last ref</span>
+<a name="237" /><span class="True">     237:</span> <span class="k"> * is released.</span>
+<a name="238" /><span class="True">     238:</span> <span class="k"> *</span>
+<a name="239" /><span class="True">     239:</span> <span class="k"> * This takes a const pointer to a set of credentials because the credentials</span>
+<a name="240" /><span class="True">     240:</span> <span class="k"> * on task_struct are attached by const pointers to prevent accidental</span>
+<a name="241" /><span class="True">     241:</span> <span class="k"> * alteration of otherwise immutable credential sets.</span>
+<a name="242" /><span class="True">     242:</span> <span class="k"> */</span>
+<a name="243" /><span class="True">     243:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">put_cred</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">_cred</span><span class="f">)</span>
+<a name="244" /><span class="True">     244:</span> <span class="f">{</span>
+<a name="245" /><span class="True">     245:</span>     <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">cred</span> <span class="f">=</span> <span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span> <span class="b">_cred</span><span class="f">;</span>
+<a name="246" /><span class="True">     246:</span> 
+<a name="247" /><span class="True">     247:</span>     <span class="b">validate_creds</span><span class="f">(</span><span class="b">cred</span><span class="f">)</span><span class="f">;</span>
+<a name="248" /><span class="True">     248:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">atomic_dec_and_test</span><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">cred</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">usage</span><span class="f">)</span><span class="f">)</span>
+<a name="249" /><span class="True">     249:</span>         <span class="b">__put_cred</span><span class="f">(</span><span class="b">cred</span><span class="f">)</span><span class="f">;</span>
+<a name="250" /><span class="True">     250:</span> <span class="f">}</span>
+<a name="251" /><span class="True">     251:</span> 
+<a name="252" /><span class="True">     252:</span> <span class="k">/**</span>
+<a name="253" /><span class="True">     253:</span> <span class="k"> * current_cred - Access the current task&apos;s subjective credentials</span>
+<a name="254" /><span class="True">     254:</span> <span class="k"> *</span>
+<a name="255" /><span class="True">     255:</span> <span class="k"> * Access the subjective credentials of the current task.  RCU-safe,</span>
+<a name="256" /><span class="True">     256:</span> <span class="k"> * since nobody else can modify it.</span>
+<a name="257" /><span class="True">     257:</span> <span class="k"> */</span>
+<a name="258" /><span class="True">     258:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span> \
+<a name="259" /><span class="True">     259:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3Byb3RlY3RlZF8w"><span class="b">rcu_dereference_protected</span></a><span class="f">(</span><a href="cpu.c_macros_ref.html#_Y3VycmVudF8w"><span class="b">current</span></a><span class="f">-&gt;</span><span class="b">cred</span><span class="f">,</span> <span class="c">1</span><span class="f">)</span>
+<a name="260" /><span class="True">     260:</span> 
+<a name="261" /><span class="True">     261:</span> <span class="k">/**</span>
+<a name="262" /><span class="True">     262:</span> <span class="k"> * __task_cred - Access a task&apos;s objective credentials</span>
+<a name="263" /><span class="True">     263:</span> <span class="k"> * @task: The task to query</span>
+<a name="264" /><span class="True">     264:</span> <span class="k"> *</span>
+<a name="265" /><span class="True">     265:</span> <span class="k"> * Access the objective credentials of a task.  The caller must hold the RCU</span>
+<a name="266" /><span class="True">     266:</span> <span class="k"> * readlock.</span>
+<a name="267" /><span class="True">     267:</span> <span class="k"> *</span>
+<a name="268" /><span class="True">     268:</span> <span class="k"> * The result of this function should not be passed directly to get_cred();</span>
+<a name="269" /><span class="True">     269:</span> <span class="k"> * rather get_task_cred() should be used instead.</span>
+<a name="270" /><span class="True">     270:</span> <span class="k"> */</span>
+<a name="271" /><span class="True">     271:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X190YXNrX2NyZWRfMA__"><span class="b">__task_cred</span></a><span class="f">(</span><span class="b">task</span><span class="f">)</span>    \
+<a name="272" /><span class="True">     272:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlXzA_"><span class="b">rcu_dereference</span></a><span class="f">(</span><span class="f">(</span><span class="b">task</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">real_cred</span><span class="f">)</span>
+<a name="273" /><span class="True">     273:</span> 
+<a name="274" /><span class="True">     274:</span> <span class="k">/**</span>
+<a name="275" /><span class="True">     275:</span> <span class="k"> * get_current_cred - Get the current task&apos;s subjective credentials</span>
+<a name="276" /><span class="True">     276:</span> <span class="k"> *</span>
+<a name="277" /><span class="True">     277:</span> <span class="k"> * Get the subjective credentials of the current task, pinning them so that</span>
+<a name="278" /><span class="True">     278:</span> <span class="k"> * they can&apos;t go away.  Accessing the current task&apos;s credentials directly is</span>
+<a name="279" /><span class="True">     279:</span> <span class="k"> * not permitted.</span>
+<a name="280" /><span class="True">     280:</span> <span class="k"> */</span>
+<a name="281" /><span class="True">     281:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Z2V0X2N1cnJlbnRfY3JlZF8w"><span class="b">get_current_cred</span></a><span class="f">(</span><span class="f">)</span>                \
+<a name="282" /><span class="True">     282:</span>     <span class="f">(</span><span class="b">get_cred</span><span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="283" /><span class="True">     283:</span> 
+<a name="284" /><span class="True">     284:</span> <span class="k">/**</span>
+<a name="285" /><span class="True">     285:</span> <span class="k"> * get_current_user - Get the current task&apos;s user_struct</span>
+<a name="286" /><span class="True">     286:</span> <span class="k"> *</span>
+<a name="287" /><span class="True">     287:</span> <span class="k"> * Get the user record of the current task, pinning it so that it can&apos;t go</span>
+<a name="288" /><span class="True">     288:</span> <span class="k"> * away.</span>
+<a name="289" /><span class="True">     289:</span> <span class="k"> */</span>
+<a name="290" /><span class="True">     290:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Z2V0X2N1cnJlbnRfdXNlcl8w"><span class="b">get_current_user</span></a><span class="f">(</span><span class="f">)</span>                \
+<a name="291" /><span class="True">     291:</span> <span class="f">(</span><span class="f">{</span>                            \
+<a name="292" /><span class="True">     292:</span>     <span class="m">struct</span> <span class="b">user_struct</span> <span class="f">*</span><span class="b">__u</span><span class="f">;</span>            \
+<a name="293" /><span class="True">     293:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">__cred</span><span class="f">;</span>            \
+<a name="294" /><span class="True">     294:</span>     <span class="b">__cred</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>            \
+<a name="295" /><span class="True">     295:</span>     <span class="b">__u</span> <span class="f">=</span> <span class="b">get_uid</span><span class="f">(</span><span class="b">__cred</span><span class="f">-&gt;</span><span class="b">user</span><span class="f">)</span><span class="f">;</span>            \
+<a name="296" /><span class="True">     296:</span>     <span class="b">__u</span><span class="f">;</span>                        \
+<a name="297" /><span class="True">     297:</span> <span class="f">}</span><span class="f">)</span>
+<a name="298" /><span class="True">     298:</span> 
+<a name="299" /><span class="True">     299:</span> <span class="k">/**</span>
+<a name="300" /><span class="True">     300:</span> <span class="k"> * get_current_groups - Get the current task&apos;s supplementary group list</span>
+<a name="301" /><span class="True">     301:</span> <span class="k"> *</span>
+<a name="302" /><span class="True">     302:</span> <span class="k"> * Get the supplementary group list of the current task, pinning it so that it</span>
+<a name="303" /><span class="True">     303:</span> <span class="k"> * can&apos;t go away.</span>
+<a name="304" /><span class="True">     304:</span> <span class="k"> */</span>
+<a name="305" /><span class="True">     305:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Z2V0X2N1cnJlbnRfZ3JvdXBzXzA_"><span class="b">get_current_groups</span></a><span class="f">(</span><span class="f">)</span>                \
+<a name="306" /><span class="True">     306:</span> <span class="f">(</span><span class="f">{</span>                            \
+<a name="307" /><span class="True">     307:</span>     <span class="m">struct</span> <span class="b">group_info</span> <span class="f">*</span><span class="b">__groups</span><span class="f">;</span>            \
+<a name="308" /><span class="True">     308:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">__cred</span><span class="f">;</span>            \
+<a name="309" /><span class="True">     309:</span>     <span class="b">__cred</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>            \
+<a name="310" /><span class="True">     310:</span>     <span class="b">__groups</span> <span class="f">=</span> <span class="b">get_group_info</span><span class="f">(</span><span class="b">__cred</span><span class="f">-&gt;</span><span class="b">group_info</span><span class="f">)</span><span class="f">;</span>    \
+<a name="311" /><span class="True">     311:</span>     <span class="b">__groups</span><span class="f">;</span>                    \
+<a name="312" /><span class="True">     312:</span> <span class="f">}</span><span class="f">)</span>
+<a name="313" /><span class="True">     313:</span> 
+<a name="314" /><span class="True">     314:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_dGFza19jcmVkX3h4eF8w"><span class="b">task_cred_xxx</span></a><span class="f">(</span><span class="b">task</span><span class="f">,</span> <span class="b">xxx</span><span class="f">)</span>            \
+<a name="315" /><span class="True">     315:</span> <span class="f">(</span><span class="f">{</span>                            \
+<a name="316" /><span class="True">     316:</span>     <span class="b">__typeof__</span><span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="f">)</span><a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">)</span><span class="f">-&gt;</span><span class="b">xxx</span><span class="f">)</span> <span class="b">___val</span><span class="f">;</span>    \
+<a name="317" /><span class="True">     317:</span>     <span class="b">rcu_read_lock</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>                \
+<a name="318" /><span class="True">     318:</span>     <span class="b">___val</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_X190YXNrX2NyZWRfMA__"><span class="b">__task_cred</span></a><span class="f">(</span><span class="f">(</span><span class="b">task</span><span class="f">)</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">xxx</span><span class="f">;</span>        \
+<a name="319" /><span class="True">     319:</span>     <span class="b">rcu_read_unlock</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>                \
+<a name="320" /><span class="True">     320:</span>     <span class="b">___val</span><span class="f">;</span>                        \
+<a name="321" /><span class="True">     321:</span> <span class="f">}</span><span class="f">)</span>
+<a name="322" /><span class="True">     322:</span> 
+<a name="323" /><span class="True">     323:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_dGFza191aWRfMA__"><span class="b">task_uid</span></a><span class="f">(</span><span class="b">task</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_dGFza19jcmVkX3h4eF8w"><span class="b">task_cred_xxx</span></a><span class="f">(</span><span class="f">(</span><span class="b">task</span><span class="f">)</span><span class="f">,</span> <span class="b">uid</span><span class="f">)</span><span class="f">)</span>
+<a name="324" /><span class="True">     324:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_dGFza19ldWlkXzA_"><span class="b">task_euid</span></a><span class="f">(</span><span class="b">task</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_dGFza19jcmVkX3h4eF8w"><span class="b">task_cred_xxx</span></a><span class="f">(</span><span class="f">(</span><span class="b">task</span><span class="f">)</span><span class="f">,</span> <span class="b">euid</span><span class="f">)</span><span class="f">)</span>
+<a name="325" /><span class="True">     325:</span> 
+<a name="326" /><span class="True">     326:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">xxx</span><span class="f">)</span>            \
+<a name="327" /><span class="True">     327:</span> <span class="f">(</span><span class="f">{</span>                        \
+<a name="328" /><span class="True">     328:</span>     <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">xxx</span><span class="f">;</span>            \
+<a name="329" /><span class="True">     329:</span> <span class="f">}</span><span class="f">)</span>
+<a name="330" /><span class="True">     330:</span> 
+<a name="331" /><span class="True">     331:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF91aWRfMA__"><span class="b">current_uid</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">uid</span><span class="f">)</span><span class="f">)</span>
+<a name="332" /><span class="True">     332:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9naWRfMA__"><span class="b">current_gid</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">gid</span><span class="f">)</span><span class="f">)</span>
+<a name="333" /><span class="True">     333:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9ldWlkXzA_"><span class="b">current_euid</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">euid</span><span class="f">)</span><span class="f">)</span>
+<a name="334" /><span class="True">     334:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9lZ2lkXzA_"><span class="b">current_egid</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">egid</span><span class="f">)</span><span class="f">)</span>
+<a name="335" /><span class="True">     335:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9zdWlkXzA_"><span class="b">current_suid</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">suid</span><span class="f">)</span><span class="f">)</span>
+<a name="336" /><span class="True">     336:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9zZ2lkXzA_"><span class="b">current_sgid</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">sgid</span><span class="f">)</span><span class="f">)</span>
+<a name="337" /><span class="True">     337:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9mc3VpZF8w"><span class="b">current_fsuid</span></a><span class="f">(</span><span class="f">)</span>     <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">fsuid</span><span class="f">)</span><span class="f">)</span>
+<a name="338" /><span class="True">     338:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9mc2dpZF8w"><span class="b">current_fsgid</span></a><span class="f">(</span><span class="f">)</span>     <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">fsgid</span><span class="f">)</span><span class="f">)</span>
+<a name="339" /><span class="True">     339:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jYXBfMA__"><span class="b">current_cap</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">cap_effective</span><span class="f">)</span><span class="f">)</span>
+<a name="340" /><span class="True">     340:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF91c2VyXzA_"><span class="b">current_user</span></a><span class="f">(</span><span class="f">)</span>        <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">user</span><span class="f">)</span><span class="f">)</span>
+<a name="341" /><span class="True">     341:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9zZWN1cml0eV8w"><span class="b">current_security</span></a><span class="f">(</span><span class="f">)</span>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">security</span><span class="f">)</span><span class="f">)</span>
+<a name="342" /><span class="True">     342:</span> 
+<a name="343" /><span class="True">     343:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">user_namespace</span> <span class="b">init_user_ns</span><span class="f">;</span>
+<a name="344" /><span class="False">     344:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_USER_NS</span>
+<a name="345" /><span class="False">     345:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF91c2VyX25zXzA_"><span class="b">current_user_ns</span></a><span class="f">(</span><span class="f">)</span>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkX3h4eF8w"><span class="b">current_cred_xxx</span></a><span class="f">(</span><span class="b">user_ns</span><span class="f">)</span><span class="f">)</span>
+<a name="346" /><span class="True">     346:</span> <span class="f">#</span><span class="n">else</span>
+<a name="347" /><span class="True">     347:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF91c2VyX25zXzA_"><span class="b">current_user_ns</span></a><span class="f">(</span><span class="f">)</span>    <span class="f">(</span><span class="f">&amp;</span><span class="b">init_user_ns</span><span class="f">)</span>
+<a name="348" /><span class="True">     348:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="349" /><span class="True">     349:</span> 
+<a name="350" /><span class="True">     350:</span> 
+<a name="351" /><span class="True">     351:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF91aWRfZ2lkXzA_"><span class="b">current_uid_gid</span></a><span class="f">(</span><span class="b">_uid</span><span class="f">,</span> <span class="b">_gid</span><span class="f">)</span>        \
+<a name="352" /><span class="True">     352:</span> <span class="m">do</span> <span class="f">{</span>                        \
+<a name="353" /><span class="True">     353:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">__cred</span><span class="f">;</span>        \
+<a name="354" /><span class="True">     354:</span>     <span class="b">__cred</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>        \
+<a name="355" /><span class="True">     355:</span>     <span class="f">*</span><span class="f">(</span><span class="b">_uid</span><span class="f">)</span> <span class="f">=</span> <span class="b">__cred</span><span class="f">-&gt;</span><span class="b">uid</span><span class="f">;</span>            \
+<a name="356" /><span class="True">     356:</span>     <span class="f">*</span><span class="f">(</span><span class="b">_gid</span><span class="f">)</span> <span class="f">=</span> <span class="b">__cred</span><span class="f">-&gt;</span><span class="b">gid</span><span class="f">;</span>            \
+<a name="357" /><span class="True">     357:</span> <span class="f">}</span> <span class="m">while</span><span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="358" /><span class="True">     358:</span> 
+<a name="359" /><span class="True">     359:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9ldWlkX2VnaWRfMA__"><span class="b">current_euid_egid</span></a><span class="f">(</span><span class="b">_euid</span><span class="f">,</span> <span class="b">_egid</span><span class="f">)</span>        \
+<a name="360" /><span class="True">     360:</span> <span class="m">do</span> <span class="f">{</span>                        \
+<a name="361" /><span class="True">     361:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">__cred</span><span class="f">;</span>        \
+<a name="362" /><span class="True">     362:</span>     <span class="b">__cred</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>        \
+<a name="363" /><span class="True">     363:</span>     <span class="f">*</span><span class="f">(</span><span class="b">_euid</span><span class="f">)</span> <span class="f">=</span> <span class="b">__cred</span><span class="f">-&gt;</span><span class="b">euid</span><span class="f">;</span>        \
+<a name="364" /><span class="True">     364:</span>     <span class="f">*</span><span class="f">(</span><span class="b">_egid</span><span class="f">)</span> <span class="f">=</span> <span class="b">__cred</span><span class="f">-&gt;</span><span class="b">egid</span><span class="f">;</span>        \
+<a name="365" /><span class="True">     365:</span> <span class="f">}</span> <span class="m">while</span><span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="366" /><span class="True">     366:</span> 
+<a name="367" /><span class="True">     367:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9mc3VpZF9mc2dpZF8w"><span class="b">current_fsuid_fsgid</span></a><span class="f">(</span><span class="b">_fsuid</span><span class="f">,</span> <span class="b">_fsgid</span><span class="f">)</span>    \
+<a name="368" /><span class="True">     368:</span> <span class="m">do</span> <span class="f">{</span>                        \
+<a name="369" /><span class="True">     369:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">cred</span> <span class="f">*</span><span class="b">__cred</span><span class="f">;</span>        \
+<a name="370" /><span class="True">     370:</span>     <span class="b">__cred</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_Y3VycmVudF9jcmVkXzA_"><span class="b">current_cred</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>        \
+<a name="371" /><span class="True">     371:</span>     <span class="f">*</span><span class="f">(</span><span class="b">_fsuid</span><span class="f">)</span> <span class="f">=</span> <span class="b">__cred</span><span class="f">-&gt;</span><span class="b">fsuid</span><span class="f">;</span>        \
+<a name="372" /><span class="True">     372:</span>     <span class="f">*</span><span class="f">(</span><span class="b">_fsgid</span><span class="f">)</span> <span class="f">=</span> <span class="b">__cred</span><span class="f">-&gt;</span><span class="b">fsgid</span><span class="f">;</span>        \
+<a name="373" /><span class="True">     373:</span> <span class="f">}</span> <span class="m">while</span><span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="374" /><span class="True">     374:</span> 
+<a name="375" /><span class="True">     375:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_CRED_H */</span>
+<a name="376" /><span class="True">     376:</span> </pre>
+  </body>
+</html>

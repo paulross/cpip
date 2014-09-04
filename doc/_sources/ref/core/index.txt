@@ -2,7 +2,7 @@
 .. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
 
 **************
-CPIP Core
+cpip.core
 **************
 
 CPIP Core contains the core code for pre-processing. The architecture is described here: :ref:`cpip.intro.architecture`.
@@ -14,7 +14,9 @@ CPIP Core contains the core code for pre-processing. The architecture is describ
     CppCond
     CppDiagnostic
     FileIncludeGraph
+    FileIncludeStack
     IncludeHandler
+    ItuToTokens
     MacroEnv
     PpDefine
     PpLexer

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,16 +27,16 @@ The idea here is to use the <defs> and <use> elements n SVG. It seems that any
 number of <defs> elements can be in an SVG document.
 
 The original text and the replacement text are paired within a <defs> element
-thus:
+thus::
 
-<defs>
-    <text id="original" font-family="Verdana" font-size="12" text-anchor="middle" x="250" y="250">Original text.</text>
-    <text id="original.alt" font-family="Courier" font-size="12" text-anchor="middle" x="250" y="250">
-        <tspan xml:space="preserve"> One</tspan>
-        <tspan x="250" dy="1em" xml:space="preserve"> Two</tspan>
-        <tspan x="250" dy="1em" xml:space="preserve">Three</tspan>
-    </text>
-</defs>
+    <defs>
+        <text id="original" font-family="Verdana" font-size="12" text-anchor="middle" x="250" y="250">Original text.</text>
+        <text id="original.alt" font-family="Courier" font-size="12" text-anchor="middle" x="250" y="250">
+            <tspan xml:space="preserve"> One</tspan>
+            <tspan x="250" dy="1em" xml:space="preserve"> Two</tspan>
+            <tspan x="250" dy="1em" xml:space="preserve">Three</tspan>
+        </text>
+    </defs>
 
 Important features using <defs>
 -------------------------------
@@ -56,9 +56,9 @@ Important features using <defs>
 Switching using <use>
 ---------------------
 The use element and event handlers will establish the initial conditions on
-document load:
+document load::
  
-<use xlink:href="#original" onmouseover="switch_to_alt(evt)" onmouseout="switch_from_alt(evt)" />
+    <use xlink:href="#original" onmouseover="switch_to_alt(evt)" onmouseout="switch_from_alt(evt)" />
 
 Generating ID values
 --------------------
@@ -69,79 +69,82 @@ latter.
 
 Javascript Event Handlers
 -------------------------
-Java script needs to be written within a script element thus:
-<script type="text/ecmascript">
-//<![CDATA[
-...
-// ]]>
-</script>
+Java script needs to be written within a script element thus::
+
+    <script type="text/ecmascript">
+    //<![CDATA[
+    ...
+    // ]]>
+    </script>
 
 Switch handlers work are like this (they are fairly defensive):
 
-These work for IE/Firefox:
-function switch_to_alt(evt) {
-    var myTextTgt = evt.target;
-    myOldLink = myTextTgt.getAttribute("xlink:href");
-    if (myOldLink.lastIndexOf(".alt") == -1) {
-        myTextTgt.setAttribute("xlink:href", myOldLink+".alt");
-    }
-}
+These work for IE/Firefox::
 
-function switch_from_alt(evt) {
-    var myTextTgt = evt.target;
-    myOldLink = myTextTgt.getAttribute("xlink:href");
-    if (myOldLink.lastIndexOf(".alt") != -1) {
-        myOldLink = myOldLink.substring(0, myOldLink.lastIndexOf(".alt"));
+    function switch_to_alt(evt) {
+        var myTextTgt = evt.target;
+        myOldLink = myTextTgt.getAttribute("xlink:href");
+        if (myOldLink.lastIndexOf(".alt") == -1) {
+            myTextTgt.setAttribute("xlink:href", myOldLink+".alt");
+        }
     }
-    myTextTgt.setAttribute("xlink:href", myOldLink);
-}
-
-function swap_id(evt, theId) {
-    var textTgt = evt.target;
-    textTgt.setAttribute("xlink:href", theId);
-}
+    
+    function switch_from_alt(evt) {
+        var myTextTgt = evt.target;
+        myOldLink = myTextTgt.getAttribute("xlink:href");
+        if (myOldLink.lastIndexOf(".alt") != -1) {
+            myOldLink = myOldLink.substring(0, myOldLink.lastIndexOf(".alt"));
+        }
+        myTextTgt.setAttribute("xlink:href", myOldLink);
+    }
+    
+    function swap_id(evt, theId) {
+        var textTgt = evt.target;
+        textTgt.setAttribute("xlink:href", theId);
+    }
 
 Opera
 =====
-This works for Opera: when called with:
-switch_to_alt(this)
-switch_from_alt(this)
-swap_id(this)
+This works for Opera: when called with::
 
-[swap_id() works with Firefox, none of this works with IE.]
-
-  <script type="text/ecmascript">
-//<![CDATA[
-var altSuffix = ".alt";
-
-function switch_to_alt(elem) {
-    myHref = elem.getAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href');
-    if (myHref.lastIndexOf(altSuffix) == -1) {
-        elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', myHref + altSuffix);
+    switch_to_alt(this)
+    switch_from_alt(this)
+    swap_id(this)
+    
+    [swap_id() works with Firefox, none of this works with IE.]
+    
+      <script type="text/ecmascript">
+    //<![CDATA[
+    var altSuffix = ".alt";
+    
+    function switch_to_alt(elem) {
+        myHref = elem.getAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href');
+        if (myHref.lastIndexOf(altSuffix) == -1) {
+            elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', myHref + altSuffix);
+        }
     }
-}
-
-function switch_from_alt(elem) {
-    myHref = elem.getAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href');
-    if (myHref.lastIndexOf(altSuffix) != -1) {
-        myHref = myHref.substring(0, myHref.lastIndexOf(altSuffix));
-        elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', myHref);
+    
+    function switch_from_alt(elem) {
+        myHref = elem.getAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href');
+        if (myHref.lastIndexOf(altSuffix) != -1) {
+            myHref = myHref.substring(0, myHref.lastIndexOf(altSuffix));
+            elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', myHref);
+        }
     }
-}
-
-function swap_id(elem, theId) {
-    elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', theId);
-}
-
-// ]]>
-</script>
+    
+    function swap_id(elem, theId) {
+        elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', theId);
+    }
+    
+    // ]]>
+    </script>
 
 """
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import sys
 import inspect
@@ -540,7 +543,7 @@ function scaleGraphic(scale, theId) {
     }
 }
 """)
-        theSvg.writeECMAScript(''.join(myScriptS))
+        theSvg.writeECMAScript(u''.join(myScriptS))
 
     def _writeAlternateText(self, theSvg, thePoint, theId, theText, theAltS, yOffs=Coord.Dim(0, 'pt')):
         """Composes and writes the (pop-up) alternate text.

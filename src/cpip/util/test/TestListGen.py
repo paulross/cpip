@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,10 +20,9 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import os
 import sys
 import time
 import logging
@@ -44,7 +43,7 @@ class TestListGen(unittest.TestCase):
         myList = list(range(5))
         myG = next(ListGen.ListAsGenerator(myList))
         self.assertEqual(myList, [x for x in myG])
-        self.assertRaises(StopIteration, myG.__next__)
+        self.assertRaises(StopIteration, next, myG)
 
     def testPassingGenerator(self):
         """ListAsGenerator: Passing a generator around yielding list of ints."""
@@ -56,7 +55,7 @@ class TestListGen(unittest.TestCase):
                 result.append(self._takeGenAndConsume(myG))
         except StopIteration:
             pass
-        self.assertRaises(StopIteration, myG.__next__)
+        self.assertRaises(StopIteration, next, myG)
         self.assertEqual(myList, result)
 
     def _takeGenAndConsume(self, theGen):
@@ -92,7 +91,7 @@ class TestListGen(unittest.TestCase):
                 PpToken.PpToken('\n',      'whitespace'),
                 next(myG)
             )
-        self.assertRaises(StopIteration, myG.__next__)
+        self.assertRaises(StopIteration, next, myG)
 
     def testContinuation(self):
         """ListAsGenerator: test of using a extra generator on a list of ints."""
@@ -103,7 +102,7 @@ class TestListGen(unittest.TestCase):
         self.assertEqual(
             [0, 1, 2, 3, 4, 'A', 'B', 'C', 'D', 'E', 'F'],
             [x for x in myG])
-        self.assertRaises(StopIteration, myG.__next__)
+        self.assertRaises(StopIteration, next, myG)
 
 class TestListGenUnget(unittest.TestCase):
     """Tests getting and ungetting a token."""
@@ -113,7 +112,7 @@ class TestListGenUnget(unittest.TestCase):
         myObj = ListGen.ListAsGenerator(list(range(8)))
         myGen = next(myObj)
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(8)))
 
     def testIncGen(self):
@@ -125,7 +124,7 @@ class TestListGenUnget(unittest.TestCase):
         self.assertEqual(myVal, 0)
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUnget(self):
         """ListAsGenerator: inc. gen. and single send()."""
@@ -140,7 +139,7 @@ class TestListGenUnget(unittest.TestCase):
         self.assertEqual(myVal, 0)
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetAtStart(self):
         """ListAsGenerator: inc. gen. and single send() before next()."""
@@ -152,7 +151,7 @@ class TestListGenUnget(unittest.TestCase):
         self.assertEqual(myVal, 0)
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetAtEnd(self):
         """ListAsGenerator: inc. gen. and single send() after last next()."""
@@ -166,7 +165,7 @@ class TestListGenUnget(unittest.TestCase):
         myGen.send(42)
         myVal = next(myGen)
         self.assertEqual(myVal, 42)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetOnEmptyList(self):
         """ListAsGenerator: inc. gen. and send() where the initialy empty."""
@@ -174,7 +173,7 @@ class TestListGenUnget(unittest.TestCase):
         myGen = next(myObj)
         # Try an insert
         self.assertRaises(TypeError, myGen.send, 127)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetMultipleCallsAtStart(self):
         """ListAsGenerator: inc. gen. where pairs of send() cancel each other."""
@@ -188,7 +187,7 @@ class TestListGenUnget(unittest.TestCase):
         # 84 is thrown away by the external loop of UnitGen.next()
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
 class TestContinuationGenUnget(unittest.TestCase):
     """Tests getting and ungetting a token."""
@@ -199,7 +198,7 @@ class TestContinuationGenUnget(unittest.TestCase):
         myObj = ListGen.ListAsGenerator(list(range(4)), next(myCont))
         myGen = next(myObj)
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(8)))
 
     def testContinuationSendOnAlternate(self):
@@ -215,7 +214,7 @@ class TestContinuationGenUnget(unittest.TestCase):
                 myResult.append(next(myGen))
             else:
                 myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(8)))
 
     def testContinuationSendOnAlternateInList(self):
@@ -231,7 +230,7 @@ class TestContinuationGenUnget(unittest.TestCase):
                 myResult.append(next(myGen))
             else:
                 myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(8)))
 
     def testContinuationSendOnAlternateInGen(self):
@@ -247,7 +246,7 @@ class TestContinuationGenUnget(unittest.TestCase):
                 myResult.append(next(myGen))
             else:
                 myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(8)))
 
     def testListIsEmpty_00(self):
@@ -260,7 +259,7 @@ class TestContinuationGenUnget(unittest.TestCase):
         for aVal in myGen:
             #print '%s  %s' % (myObj.listIsEmpty, aVal)
             myResult.append(aVal)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(4))+list('ABCDEFG'))
 
     def testListIsEmpty_01(self):
@@ -275,7 +274,7 @@ class TestContinuationGenUnget(unittest.TestCase):
                 if myObj.listIsEmpty:
                     break
         myRemainderResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(4)))
 
     def testListIsEmpty_02(self):
@@ -287,11 +286,11 @@ class TestContinuationGenUnget(unittest.TestCase):
         #print [x for x in myGen if myObj.listIsEmpty]
         #myResult = [x for x in myGen if myObj.listIsEmpty]
         if not myObj.listIsEmpty:
-            for aVal in myGen:
+            for _aVal in myGen:
                 if myObj.listIsEmpty:
                     break
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list('ABCDEFG'))
 
     def testListIsEmpty_03(self):
@@ -302,7 +301,7 @@ class TestContinuationGenUnget(unittest.TestCase):
         myResult = [x for x in myGen if myObj.listIsEmpty]
         #print
         #print myResult
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, [3,] + list('ABCDEFG'))
 
     def testListIsEmpty_04(self):
@@ -313,7 +312,7 @@ class TestContinuationGenUnget(unittest.TestCase):
         myResult = [x for x in myGen if not myObj.listIsEmpty]
         #print
         #print myResult
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, [0, 1,])
 
 class TestListIsEmpty_Special(unittest.TestCase):

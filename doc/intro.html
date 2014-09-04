@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CPIP Introduction &mdash; CPIP 0.8.1 documentation</title>
+    <title>CPIP Introduction &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.8.1',
+        URL_ROOT:    './',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="index.html" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="index.html" />
     <link rel="next" title="Installing CPIP" href="down_install.html" />
     <link rel="prev" title="Welcome to CPIP" href="index.html" /> 
   </head>
@@ -45,7 +43,7 @@
         <li class="right" >
           <a href="index.html" title="Welcome to CPIP"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -59,10 +57,10 @@
 <p>CPIP is a C/C++ pre-processor implemented in Python. Most pre-processors regard pre-processing as a dirty job that just has to be done as soon as possible. This can make it very hard to track down subtle defects at the pre-processing stage as pre-processors throw away a lot of useful information in favor of getting the result as cheaply as possible.</p>
 <p>Few developers really understand pre-processing, to many it is an obscure bit of black magic. CPIP aims to improve that and by recording every detail of preprocessing so CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on.</p>
 <p>CPIP is not designed to be a replacement for <tt class="docutils literal"><span class="pre">cpp</span></tt> (or any other established pre-processor), instead CPIP regards clarity and understanding as more important than speed of processing.</p>
-<p>CPIP takes its standard as C99 or, more formally, ISO/IEC 9899:1999 (E) <a class="footnote-reference" href="#id3" id="id1">[1]</a>.</p>
-<div class="section" id="pre-processing-c-c">
-<h2>Pre-processing C/C++<a class="headerlink" href="#pre-processing-c-c" title="Permalink to this headline">¶</a></h2>
-<p>The basic task of any preprocessor is to produce a <em>Translation Unit</em> for a compiler to work with. To do this the pre-processor has to do three inter-related tasks:</p>
+<p>CPIP takes its standard as C99 or, more formally, ISO/IEC 9899:1999 (E) <a class="footnote-reference" href="#id4" id="id1">[1]</a>.</p>
+<div class="section" id="pre-processing-c-and-c">
+<h2>Pre-processing C and C++<a class="headerlink" href="#pre-processing-c-and-c" title="Permalink to this headline">¶</a></h2>
+<p>The basic task of any preprocessor is to produce a <em>Translation Unit</em> for a compiler to work with. To do this the pre-processor has to do three inter-related tasks <a class="footnote-reference" href="#id5" id="id2">[2]</a>:</p>
 <ul class="simple">
 <li>File inclusion i.e. responding to <tt class="docutils literal"><span class="pre">#include</span></tt> commands.</li>
 <li>Conditional Compilation <tt class="docutils literal"><span class="pre">#if</span></tt>, <tt class="docutils literal"><span class="pre">#ifdef</span></tt> etc.</li>
@@ -96,7 +94,7 @@
 </pre></div>
 </div>
 <p>Which is it? Puzzled? Well the <cite>C</cite> standards body responded thus:</p>
-<p><em>&#8220;The C89 Committee intentionally left this behavior ambiguous as it saw no useful purpose in specifying all the quirks of preprocessing for such questionably useful constructs.&#8221;</em> <a class="footnote-reference" href="#id4" id="id2">[2]</a></p>
+<p><em>&#8220;The C89 Committee intentionally left this behavior ambiguous as it saw no useful purpose in specifying all the quirks of preprocessing for such questionably useful constructs.&#8221;</em> <a class="footnote-reference" href="#id6" id="id3">[3]</a></p>
 <p>So any pre-processor implementation could produce either result at <em>any time</em> and it would still be a compliant implementation.</p>
 </div>
 </div>
@@ -140,16 +138,22 @@
 <p>An extremely useful feature of CPIP is that the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> maintains all these data structures and provides an interface to them for the user. Some examples of what can be done with this information is here: <a class="reference internal" href="examples/examples.html#cpip-examples"><em>CPIPMain.py Examples</em></a>.</p>
 <img alt="CPIP Architecture." src="_images/CPIP_core_architrecture.png" />
 <p class="rubric">Footnotes</p>
-<table class="docutils footnote" frame="void" id="id3" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Other standards are of interest: &#8220;C++98&#8221; [ISO/IEC 14882:1998(E)] describes more limited pre-processing (no variadic macros for example). &#8220;C++0x&#8221; [ISO/IEC JTC 1/SC 22 N 4411 in draft] does not substantially change this. In any case CPIP attempts to emulate common custom and practice (yes, including variadic macros).</td></tr>
-</tbody>
-</table>
 <table class="docutils footnote" frame="void" id="id4" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Rationale for International Standard — Programming Languages — C Revision 5.10 April-2003 Sect. 6.10.3.4</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Other standards are of interest: &#8220;C++98&#8221; [ISO/IEC 14882:1998(E)] describes more limited pre-processing (no variadic macros for example). &#8220;C++11&#8221; [ISO/IEC JTC 1/SC 22 N 4411 in draft] and C++14 does not substantially change this. In any case CPIP attempts to emulate common custom and practice (yes, including variadic macros).</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id5" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Of course the preprocessor has to do many other minor tasks such as replacing trigraphs and removing comments.</td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id6" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Rationale for International Standard - Programming Languages - C Revision 5.10 April-2003 Sect. 6.10.3.4</td></tr>
 </tbody>
 </table>
 </div>
@@ -164,7 +168,7 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">CPIP Introduction</a><ul>
-<li><a class="reference internal" href="#pre-processing-c-c">Pre-processing C/C++</a><ul>
+<li><a class="reference internal" href="#pre-processing-c-and-c">Pre-processing C and C++</a><ul>
 <li><a class="reference internal" href="#file-inclusion">File Inclusion</a></li>
 <li><a class="reference internal" href="#conditional-compilation">Conditional Compilation</a></li>
 <li><a class="reference internal" href="#macro-replacement">Macro Replacement</a></li>
@@ -219,12 +223,12 @@
         <li class="right" >
           <a href="index.html" title="Welcome to CPIP"
              >previous</a> |</li>
-        <li><a href="index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

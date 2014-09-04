@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/auxvec.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/auxvec.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X1VBUElfTElOVVhfQVVYVkVDX0hfMA__"><span class="b">_UAPI_LINUX_AUXVEC_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X1VBUElfTElOVVhfQVVYVkVDX0hfMA__"><span class="b">_UAPI_LINUX_AUXVEC_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">auxvec</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="True">       5:</span> 
+<a name="6" /><span class="True">       6:</span> <span class="k">/* Symbolic values for the entries in the auxiliary table</span>
+<a name="7" /><span class="True">       7:</span> <span class="k">   put on the initial stack */</span>
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfTlVMTF8w"><span class="b">AT_NULL</span></a>   <span class="c">0</span>    <span class="k">/* end of vector */</span>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfSUdOT1JFXzA_"><span class="b">AT_IGNORE</span></a> <span class="c">1</span>    <span class="k">/* entry should be ignored */</span>
+<a name="10" /><span class="True">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRVhFQ0ZEXzA_"><span class="b">AT_EXECFD</span></a> <span class="c">2</span>    <span class="k">/* file descriptor of program */</span>
+<a name="11" /><span class="True">      11:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfUEhEUl8w"><span class="b">AT_PHDR</span></a>   <span class="c">3</span>    <span class="k">/* program headers for program */</span>
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfUEhFTlRfMA__"><span class="b">AT_PHENT</span></a>  <span class="c">4</span>    <span class="k">/* size of program header entry */</span>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfUEhOVU1fMA__"><span class="b">AT_PHNUM</span></a>  <span class="c">5</span>    <span class="k">/* number of program headers */</span>
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfUEFHRVNaXzA_"><span class="b">AT_PAGESZ</span></a> <span class="c">6</span>    <span class="k">/* system page size */</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfQkFTRV8w"><span class="b">AT_BASE</span></a>   <span class="c">7</span>    <span class="k">/* base address of interpreter */</span>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRkxBR1NfMA__"><span class="b">AT_FLAGS</span></a>  <span class="c">8</span>    <span class="k">/* flags */</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRU5UUllfMA__"><span class="b">AT_ENTRY</span></a>  <span class="c">9</span>    <span class="k">/* entry point of program */</span>
+<a name="18" /><span class="True">      18:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfTk9URUxGXzA_"><span class="b">AT_NOTELF</span></a> <span class="c">10</span>    <span class="k">/* program is not ELF */</span>
+<a name="19" /><span class="True">      19:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfVUlEXzA_"><span class="b">AT_UID</span></a>    <span class="c">11</span>    <span class="k">/* real uid */</span>
+<a name="20" /><span class="True">      20:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRVVJRF8w"><span class="b">AT_EUID</span></a>   <span class="c">12</span>    <span class="k">/* effective uid */</span>
+<a name="21" /><span class="True">      21:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfR0lEXzA_"><span class="b">AT_GID</span></a>    <span class="c">13</span>    <span class="k">/* real gid */</span>
+<a name="22" /><span class="True">      22:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRUdJRF8w"><span class="b">AT_EGID</span></a>   <span class="c">14</span>    <span class="k">/* effective gid */</span>
+<a name="23" /><span class="True">      23:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfUExBVEZPUk1fMA__"><span class="b">AT_PLATFORM</span></a> <span class="c">15</span>  <span class="k">/* string identifying CPU for optimizations */</span>
+<a name="24" /><span class="True">      24:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfSFdDQVBfMA__"><span class="b">AT_HWCAP</span></a>  <span class="c">16</span>    <span class="k">/* arch dependent hints at CPU capabilities */</span>
+<a name="25" /><span class="True">      25:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfQ0xLVENLXzA_"><span class="b">AT_CLKTCK</span></a> <span class="c">17</span>    <span class="k">/* frequency at which times() increments */</span>
+<a name="26" /><span class="True">      26:</span> <span class="k">/* AT_* values 18 through 22 are reserved */</span>
+<a name="27" /><span class="True">      27:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfU0VDVVJFXzA_"><span class="b">AT_SECURE</span></a> <span class="c">23</span>   <span class="k">/* secure mode boolean */</span>
+<a name="28" /><span class="True">      28:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfQkFTRV9QTEFURk9STV8w"><span class="b">AT_BASE_PLATFORM</span></a> <span class="c">24</span>    <span class="k">/* string identifying real platform, may</span>
+<a name="29" /><span class="True">      29:</span> <span class="k">                 * differ from AT_PLATFORM. */</span>
+<a name="30" /><span class="True">      30:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfUkFORE9NXzA_"><span class="b">AT_RANDOM</span></a> <span class="c">25</span>    <span class="k">/* address of 16 random bytes */</span>
+<a name="31" /><span class="True">      31:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfSFdDQVAyXzA_"><span class="b">AT_HWCAP2</span></a> <span class="c">26</span>    <span class="k">/* extension of AT_HWCAP */</span>
+<a name="32" /><span class="True">      32:</span> 
+<a name="33" /><span class="True">      33:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRVhFQ0ZOXzA_"><span class="b">AT_EXECFN</span></a>  <span class="c">31</span>    <span class="k">/* filename of program */</span>
+<a name="34" /><span class="True">      34:</span> 
+<a name="35" /><span class="True">      35:</span> 
+<a name="36" /><span class="True">      36:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _UAPI_LINUX_AUXVEC_H */</span>
+<a name="37" /><span class="True">      37:</span> </pre>
+  </body>
+</html>

@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>TreePlotTransform &mdash; CPIP 0.8.1 documentation</title>
+    <title>TreePlotTransform &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,9 +23,9 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
-    <link rel="up" title="CPIP Plot" href="../plot/index.html" />
-    <link rel="prev" title="SVGWriter" href="../plot/SVGWriter.html" /> 
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.plot" href="index.html" />
+    <link rel="prev" title="SVGWriter" href="SVGWriter.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,11 +38,11 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../plot/SVGWriter.html" title="SVGWriter"
+          <a href="SVGWriter.html" title="SVGWriter"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../plot/index.html" accesskey="U">CPIP Plot</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">cpip.plot</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -64,7 +62,7 @@ trees so that the the tree root can be top/left/bottom/right and the child
 order plotted anti-clockwise or clockwise.</p>
 <p>This can convert &#8216;logical&#8217; positions into &#8216;physical&#8217; positions. Where a
 &#8216;logical&#8217; position is one with the root of the tree at the top and the
-child nodes in left-to-right (i.e. anti-clockwise) order.
+child nodes below in left-to-right (i.e. anti-clockwise) order.
 A &#8216;physical&#8217; position is a plot-able position where the root of the tree is
 top/left/bottom or right and the child nodes are in anti-clockwise or
 clockwise order.</p>
@@ -73,15 +71,16 @@ clockwise order.</p>
 <p>If the first suffix is &#8216;l&#8217; this is the &#8220;logical&#8221; coordinate system.                                
 If the first suffix is &#8216;p&#8217; this is the &#8220;physical&#8221; coordinate system.</p>
 <p>Then:</p>
-<div class="highlight-python"><pre>C    The canvas dimension, Cpw is "Canvas physical width"                            
+<div class="highlight-python"><div class="highlight"><pre>C    The canvas dimension, Cpw is &quot;Canvas physical width&quot;                            
 W    Width dimension, physical and logical.                            
 D    Depth dimension, physical and logical.                            
-B    Box datum position ("top-left"), physical and logical, x and y.                            
-P    Arbitrary point, physical and logical, x and y.                            </pre>
+B    Box datum position (&quot;top-left&quot;), physical and logical, x and y.                            
+P    Arbitrary point, physical and logical, x and y.                            
+</pre></div>
 </div>
 <p>So this &#8220;logical view&#8221; of the tree graph (&#8216;top&#8217; and &#8216;-&#8216;):
 i.e. Root(s) is a top and children are written in an anti-clockwise.</p>
-<div class="highlight-python"><pre> ---&gt; x
+<div class="highlight-python"><div class="highlight"><pre> ---&gt; x
  |
  \/
  y
@@ -97,7 +96,8 @@ Cld                       *                 Dl    *
 |       Plx, Ply -&gt;.      *                  |    *
 |                         *************************
 |                             |        |       |
-|                        To C[0]  To C[c]   To C[C-1]</pre>
+|                        To C[0]  To C[c]   To C[C-1]
+</pre></div>
 </div>
 <p>Or:</p>
 <table border="1" class="docutils">
@@ -371,7 +371,7 @@ returns physical top dead centre of a box.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../plot/SVGWriter.html"
+  <p class="topless"><a href="SVGWriter.html"
                         title="previous chapter">SVGWriter</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -405,16 +405,16 @@ returns physical top dead centre of a box.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../plot/SVGWriter.html" title="SVGWriter"
+          <a href="SVGWriter.html" title="SVGWriter"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../plot/index.html" >CPIP Plot</a> &raquo;</li> 
+          <li><a href="index.html" >cpip.plot</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

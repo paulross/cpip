@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/auxvec.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/auxvec.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0FTTV9YODZfQVVYVkVDX0hfMA__"><span class="b">_ASM_X86_AUXVEC_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0FTTV9YODZfQVVYVkVDX0hfMA__"><span class="b">_ASM_X86_AUXVEC_H</span></a>
+<a name="3" /><span class="True">       3:</span> <span class="k">/*</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> * Architecture-neutral AT_ values in 0-17, leave some room</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * for more of them, start the x86-specific ones at 32.</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> */</span>
+<a name="7" /><span class="False">       7:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">__i386__</span>
+<a name="8" /><span class="False">       8:</span> <span class="f">#</span><span class="n">define</span> <span class="b">AT_SYSINFO</span>        <span class="c">32</span>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="10" /><span class="True">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfU1lTSU5GT19FSERSXzA_"><span class="b">AT_SYSINFO_EHDR</span></a>        <span class="c">33</span>
+<a name="11" /><span class="True">      11:</span> 
+<a name="12" /><span class="True">      12:</span> <span class="k">/* entries in ARCH_DLINFO: */</span>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX0lBMzJfRU1VTEFUSU9OXzA_"><span class="b">CONFIG_IA32_EMULATION</span></a><span class="f">)</span> <span class="f">||</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1g4Nl82NF8w"><span class="b">CONFIG_X86_64</span></a><span class="f">)</span>
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_ref.html#_QVRfVkVDVE9SX1NJWkVfQVJDSF8w"><span class="b">AT_VECTOR_SIZE_ARCH</span></a> <span class="c">2</span>
+<a name="15" /><span class="False">      15:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* else it&apos;s non-compat x86-64 */</span>
+<a name="16" /><span class="False">      16:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_ref.html#_QVRfVkVDVE9SX1NJWkVfQVJDSF8w"><span class="b">AT_VECTOR_SIZE_ARCH</span></a> <span class="c">1</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="18" /><span class="True">      18:</span> 
+<a name="19" /><span class="True">      19:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _ASM_X86_AUXVEC_H */</span>
+<a name="20" /><span class="True">      20:</span> </pre>
+  </body>
+</html>

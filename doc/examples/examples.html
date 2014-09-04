@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CPIPMain.py Examples &mdash; CPIP 0.8.1 documentation</title>
+    <title>CPIPMain.py Examples &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +23,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../index.html" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
     <link rel="next" title="Command Line Tools" href="../cmd_line_tools/index.html" />
     <link rel="prev" title="Installing CPIP" href="../down_install.html" /> 
   </head>
@@ -45,7 +43,7 @@
         <li class="right" >
           <a href="../down_install.html" title="Installing CPIP"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -68,11 +66,11 @@
 <img alt="The overall SVG diagram." class="align-center" src="../_images/HTMLLinux_cpu.c_Index.png" />
 <p>Each in the list of files preprocessed in this pass is linked to file specific page.</p>
 </div>
-<div class="section" id="file-specific-pages">
-<h3>File Specific Pages<a class="headerlink" href="#file-specific-pages" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="preprocessed-file-specific-page">
+<h3>Preprocessed File Specific Page<a class="headerlink" href="#preprocessed-file-specific-page" title="Permalink to this headline">¶</a></h3>
 <p>These describe the results of preprocessing a single file, it contains links to:</p>
 <ol class="arabic simple">
-<li>The final translation unit.</li>
+<li>The source and the translation unit as HTML.</li>
 <li>The results of file inclusion.</li>
 <li>The results of conditional compilation.</li>
 <li>Macro processing results.</li>
@@ -81,23 +79,27 @@
 </ol>
 <p>The top of the page includes links to these sections (described in detail below):</p>
 <img alt="The overall SVG diagram." class="align-center" src="../_images/HTMLLinux_cpu.c_Home_Top.png" />
-<p>Further down the page is a table showing what files were included and how many times:</p>
+<p>Further down the page is a table showing what files were included, from where and how many times:</p>
 <img alt="The overall SVG diagram." class="align-center" src="../_images/HTMLLinux_cpu.c_Home_Lower.png" />
-<div class="section" id="translation-unit-original-file">
-<h4>Translation Unit &amp; Original File<a class="headerlink" href="#translation-unit-original-file" title="Permalink to this headline">¶</a></h4>
+<p>Here is an explanation for the table:</p>
+<img alt="Files used." class="align-center" src="../_images/HTMLLinux_cpu.c_Home_Lower_Lower_edit.png" />
+<div class="section" id="original-file-and-the-translation-unit">
+<h4>Original File and the Translation Unit<a class="headerlink" href="#original-file-and-the-translation-unit" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="original-file">
+<h5>Original  File<a class="headerlink" href="#original-file" title="Permalink to this headline">¶</a></h5>
+<p>All processed source code (original file and and included files) is presented as syntax highlighted HTML.</p>
+<p>The syntax is the C pre-preprocessor language. Macro names are linked to their definition in the <a class="reference internal" href="#cpip-macro-page-example"><em>Macro Definitions</em></a> page.</p>
+<img alt="A individual file in HTML." class="align-center" src="../_images/HTMLLinux_cpu.c_ITU_edit.png" />
+</div>
 <div class="section" id="translation-unit">
 <h5>Translation Unit<a class="headerlink" href="#translation-unit" title="Permalink to this headline">¶</a></h5>
 <p>The preprocessed file and all its <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s become a <em>Translation Unit</em> which <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> represents as an HTML page.</p>
 <p>Each <tt class="docutils literal"><span class="pre">#include</span></tt> statement is represented in a nested fashion, any source code in the translation unit is presented syntax highlighted. The syntax is, of course, the C pre-processor language thus both <tt class="docutils literal"><span class="pre">typedef</span></tt> and <tt class="docutils literal"><span class="pre">char</span></tt> are pre-processor <em>identifiers</em> even if later on <tt class="docutils literal"><span class="pre">typedef</span></tt> is seen as a C keyword.</p>
 <p>The numbered links thus <tt class="docutils literal"><span class="pre">[</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="pre">19]</span></tt> are to an HTML representation of the orignal source code file/line.</p>
 <p>The other navigational element present is when the file path is the file being pre-processed a forward link is there to to the next part of this file, thus skipping over intermediate <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;d code.</p>
-<img alt="The complete translation unit represented in HTML." class="align-center" src="../_images/HTMLLinux_cpu.c_TU.png" />
-</div>
-<div class="section" id="original-file">
-<h5>Original  File<a class="headerlink" href="#original-file" title="Permalink to this headline">¶</a></h5>
-<p>All processed source code (original file and and included files) is presented as syntax highlighted HTML.</p>
-<p>The syntax is the C pre-preprocessor language. Macro names are linked to their definition in the <a class="reference internal" href="#cpip-macro-page-example"><em>Macro Definitions</em></a> page.</p>
-<img alt="A individual file in HTML." class="align-center" src="../_images/HTMLLinux_cpu.c_ITU.png" />
+<img alt="The complete translation unit represented in HTML." class="align-center" src="../_images/HTMLLinux_cpu.c_TU_edit.png" />
+<p>Further down you can see the actual code from <tt class="docutils literal"><span class="pre">cpu.c</span></tt>, notice the macro expansion on line 76.</p>
+<img alt="The complete translation unit represented in HTML." class="align-center" src="../_images/HTMLLinux_cpu.c_TU_Lower.png" />
 </div>
 </div>
 <div class="section" id="the-svg-include-graph">
@@ -105,43 +107,41 @@
 <p>The file specific page offers a link to an SVG visualisation of the file include graph.</p>
 <div class="section" id="the-overall-picture">
 <h5>The Overall Picture<a class="headerlink" href="#the-overall-picture" title="Permalink to this headline">¶</a></h5>
-<p>The diagram represents a tree with the root (the file being preprocessed) at center left. Increasing include depth is left-to-right and source code order (i.e. <tt class="docutils literal"><span class="pre">#include</span></tt> order) is top to bottom.</p>
-<p>A special case is that the may be a file <tt class="docutils literal"><span class="pre">&quot;Unnamed</span> <span class="pre">Pre-Include&quot;</span></tt> at the top left and joined to the preprocessed file with a thick light grey line. This &#8216;virtual&#8217; file contains the macro declarations made on the <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> command line.</p>
-<p>Each file is represented by a fixed width block, the depth is proportional to the number of preprocessing tokens produced by a file (and its <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s). Cyan coloured blocks represent files that are included but contain no effective content, probably because their header guards use conditional compilation to prevent re-inclusion.</p>
-<p>The diagram looks like this:</p>
-<img alt="The overall SVG diagram." class="align-center" src="../_images/SVGLinuxOverall.png" />
+<p>The diagram represents a tree with the root (the file being preprocessed) at center left. Each node represents a file and each edge represents an <tt class="docutils literal"><span class="pre">#include</span></tt> directive. Increasing include depth is left-to-right and source code order (i.e. order of the <tt class="docutils literal"><span class="pre">#include</span></tt> directives) is top to bottom.</p>
+<p>At the top are various zoom factors that you can use to view the graph, initially the page opens at the smallest scale factor to give you an impression of what is going on:</p>
+<img alt="The overall SVG diagram for cpu.c." class="align-center" src="../_images/SVG_CPU_OpeningPage.png" />
 </div>
 <div class="section" id="a-detailed-look">
 <h5>A Detailed Look<a class="headerlink" href="#a-detailed-look" title="Permalink to this headline">¶</a></h5>
-<p>Zooming in to a part of the diagram reveals a host of new information. This example (in the center of the diagram above) and represents the <tt class="file docutils literal"><span class="pre">arch/x86/include/asm/bitops.h</span></tt> file.</p>
-<p>In this picture the <tt class="file docutils literal"><span class="pre">arch/x86/include/asm/bitops.h</span></tt> file is represented on the left and the files that it <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s to its right.</p>
-<img alt="Detail of the SVG diagram." class="align-center" src="../_images/SVGLinuxDetail.png" />
+<p>Zooming in to 100% on one part of the graph gives a wealth of information. In this picture the <tt class="file docutils literal"><span class="pre">processor.h</span></tt> file is represented on the left and the files that it <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s to its right.:</p>
+<img alt="The overall SVG diagram for cpu.c." class="align-center" src="../_images/SVG_CPU_FileDetail.png" />
+<p>Each file is represented by a fixed width block, the height is proportional to the number of preprocessing tokens produced by a file (and its <tt class="docutils literal"><span class="pre">#include</span></tt>&#8216;s) <a class="footnote-reference" href="#id3" id="id1">[1]</a>. Cyan coloured blocks represent files that are included but contain no effective content, usually because it has already been included and the header guards use conditional compilation to prevent preprocessing more than once (<tt class="docutils literal"><span class="pre">types.h</span></tt> for example).</p>
+<p>The &#8216;V&#8217; symbol in the block represents the relative size of the file and its descendants, if the &#8216;V&#8217; touches top and bottom then all the tokens come from this file (<tt class="docutils literal"><span class="pre">personality.h</span></tt> for example). Where the &#8216;V&#8217; is closed, or almost so, it means the bulk of the tokens are coming from the descendent includes (<tt class="docutils literal"><span class="pre">msr.h</span></tt> for example).</p>
+<p>The coloured bars on the left represent the count of different token types, the left bar being the current file, the right bar being the total of the descendants. See below for which <a class="reference internal" href="#token-types"><em>Token Types</em></a> corespond to each colour.</p>
+<p>Many parts of this diagram can display additional information when moving the mouse over various bits of the file block.</p>
 <div class="section" id="file-path">
 <h6>File Path<a class="headerlink" href="#file-path" title="Permalink to this headline">¶</a></h6>
-<p>Many parts of this diagram can display additional information on a mouse over. For example mousing over the file name above the box shows the the absolute path of the file as a pop-up yellow block:</p>
-<img alt="The result of mousing over the file name." class="align-center" src="../_images/SVGFilePath.png" />
+<p>For example mousing over the file name above the box shows the the absolute path of the file stack as a pop-up yellow block. At the top of this list is the file we are preprocessing, then the stack of included files downwards to <tt class="docutils literal"><span class="pre">processor.h</span></tt>:</p>
+<img alt="The result of mousing over the file name." class="align-center" src="../_images/SVG_CPU_FileDetail_FileStack.png" />
 </div>
 <div class="section" id="how-it-was-included">
 <h6>How it was Included?<a class="headerlink" href="#how-it-was-included" title="Permalink to this headline">¶</a></h6>
-<p>Moving the mouse over the <tt class="docutils literal"><span class="pre">?</span></tt> to the left of the block reveals a host of information about the file inclusion process:</p>
-<img alt="The result of mousing over the left hand ``?``." class="align-center" src="../_images/SVGIncPath.png" />
+<p>Moving the mouse over to the left of the block reveals a host of information about the file inclusion process:</p>
+<img alt="The result of mousing over the left hand ``?``." class="align-center" src="../_images/SVG_CPU_FileDetail_WhereWhyHow.png" />
 <p>This pop-up yellow block contains the following:</p>
 <ul class="simple">
-<li><tt class="docutils literal"><span class="pre">Inc:</span></tt> <em>Where</em> this was included from. This <tt class="file docutils literal"><span class="pre">arch/x86/include/asm/bitops.h</span></tt> file is included from line 23 of the <tt class="file docutils literal"><span class="pre">kernel/bitops.h</span></tt> file.</li>
-<li><tt class="docutils literal"><span class="pre">As:</span></tt> <em>Why</em> it was included. This is the current state of the conditional compilation stack.</li>
-<li><tt class="docutils literal"><span class="pre">How:</span></tt> <em>How</em> this file was included. This string starts with the text that follows the <tt class="docutils literal"><span class="pre">#include</span></tt> statement, in this case <tt class="docutils literal"><span class="pre">&lt;asm/bitops.h&gt;</span></tt>. This is followed by the search results, in this case this file was found by searching the system includes (<tt class="docutils literal"><span class="pre">sys=</span></tt>) and was found in <tt class="file docutils literal"><span class="pre">arch/x86/include</span></tt>. There may be more than one search made as fallback mechanisms are used and a failure will be shown with <tt class="docutils literal"><span class="pre">None</span></tt>. For example <tt class="docutils literal"><span class="pre">usr=None</span> <span class="pre">sys=spam/eggs</span></tt> means that the user include directories were searched first and nothing came up, then the system include directories were searched and the file was found in <tt class="file docutils literal"><span class="pre">spam/eggs</span></tt>.</li>
+<li><tt class="docutils literal"><span class="pre">Where:</span></tt> <em>Where</em> this was included from. This file is included from line 22 of the <tt class="file docutils literal"><span class="pre">arch/x86/include/asm/thread_info.h</span></tt> file.</li>
+<li><tt class="docutils literal"><span class="pre">Why:</span></tt> <em>Why</em> it was included. This is the current state of the conditional compilation stack.</li>
+<li><tt class="docutils literal"><span class="pre">How:</span></tt> <em>How</em> this file was included. This string starts with the text that follows the <tt class="docutils literal"><span class="pre">#include</span></tt> statement, in this case <tt class="docutils literal"><span class="pre">#include</span> <span class="pre">&lt;asm/processor.h&gt;</span></tt>. This is followed by the search results, in this case this file was found by searching the system includes (<tt class="docutils literal"><span class="pre">sys=</span></tt>) and was found in <tt class="file docutils literal"><span class="pre">arch/x86/include</span></tt>. There may be more than one search made as fallback mechanisms are used and a failure will be shown with <tt class="docutils literal"><span class="pre">None</span></tt>. For example <tt class="docutils literal"><span class="pre">usr=None</span> <span class="pre">sys=spam/eggs</span></tt> means that the user include directories were searched first and nothing came up, then the system include directories were searched and the file was found in <tt class="file docutils literal"><span class="pre">spam/eggs</span></tt>. A special case; <tt class="docutils literal"><span class="pre">CP:</span></tt> means &#8216;the current place&#8217;.</li>
 </ul>
 </div>
 <div class="section" id="token-types">
-<h6>Token Types<a class="headerlink" href="#token-types" title="Permalink to this headline">¶</a></h6>
-<p>If you are interested in what types of preprocessor tokens were encountered than there is a host of information available to you. On the left hand side of each file block is a colour coded histogram of token types. If the file includes others then there will be two, the left hand one is for the file, the right hand one is for all the files it includes. Hovering over the <tt class="docutils literal"><span class="pre">?</span></tt> in either histogram pops up the legend thus:</p>
-<img alt="The legend for the histogram bars." class="align-center" src="../_images/SVGHistogramLegend.png" />
-<p>The actual count of tokens is seen when moving the mouse over the left of the three <tt class="docutils literal"><span class="pre">?</span></tt> characters within the box. There are two columns, the first is for all tokens and the second is for <em>significant</em> tokens, that is those that are not conditionally excluded by <tt class="docutils literal"><span class="pre">#if</span></tt> etc. statements:</p>
-<img alt="../_images/SVGTokensJustMe.png" class="align-center" src="../_images/SVGTokensJustMe.png" />
-<p>Similarly the token count for the files this file includes:</p>
-<img alt="../_images/SVGTokensChildren.png" class="align-center" src="../_images/SVGTokensChildren.png" />
-<p>And the combined token count:</p>
-<img alt="../_images/SVGTokensAll.png" class="align-center" src="../_images/SVGTokensAll.png" />
+<span id="id2"></span><h6>Token Types<a class="headerlink" href="#token-types" title="Permalink to this headline">¶</a></h6>
+<p>If you are interested in what types of preprocessor tokens were encountered than there is a host of information available to you. On the left hand side of each file block is a colour coded histogram of token types. If the file includes others then there will be two, the left hand one is for the file, the right hand one is for all the files it includes. Hovering over either histogram pops up the legend thus:</p>
+<img alt="The legend for the histogram bars." class="align-center" src="../_images/SVG_CPU_FileDetail_HistLegend.png" />
+<p>The actual count of tokens is seen when moving the mouse over the centre of the box. There are three sets of two columns, the left column of the set is total tokens, the right column is for <em>significant</em> tokens, that is those that are not conditionally excluded by <tt class="docutils literal"><span class="pre">#if</span></tt> etc. statements.</p>
+<p>The first set is for the specific file, the second set is the descendents and the third set is the total.</p>
+<img alt="Token counts." class="align-center" src="../_images/SVG_CPU_FileDetail_TokenCount.png" />
 </div>
 </div>
 </div>
@@ -157,22 +157,17 @@
 <p>CPIP retains all information about marcos during preprocessing and the file specific page containing macro information starts like this:</p>
 <img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Top.png" />
 <p>The contents starts with a list of links to macro information further down the page; the first set of links is alphabetical to all macros that are declared, even if they are not used. The second set is to any macros that are actually used in pre-processing this file.</p>
-<p>These are all linked to the main macro table further down the page that looks like this:</p>
-<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_TableStart.png" />
-<p>The table has the following columns:</p>
+<p>These are all linked to the macro details that looks like this, for example <tt class="docutils literal"><span class="pre">BITMAP_LAST_WORD_MASK</span></tt>:</p>
+<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Detail.png" />
+<p>Each macro description has the following:</p>
 <ul class="simple">
-<li>Macro name and its definition, this is on bold if the macro has been referenced.</li>
-<li>Where the macro was defined (NOTE: macros can be redefined and that would happen in a different place). This is linked to the source file.</li>
-<li>The reference count for the macro i.e. how many times the pre-processor was required to invoke the definition. This is linked to further down the page where the actual invocations are identified (see below).</li>
-<li>A boolean that says whether the macro is still defined at the end of procession the translation unit.</li>
+<li>The macro name followed by the reference count for the macro i.e. how many times the pre-processor was required to invoke the definition. This line ends with whether it is still defined at the end of preprocessing (True in this case).</li>
+<li>The macro definition (this is artificially wrapped for clarity).</li>
+<li>Following <tt class="docutils literal"><span class="pre">defined</span> <span class="pre">&#64;</span></tt> is where the macro was defined and a link to the source file where the the macro is defined.</li>
+<li>Then follows a table of locations that the macro was used. In this case it was referenced by <tt class="docutils literal"><span class="pre">include/linux/bitmap.h</span></tt> on line 176, column 20, then line 228, column 20 and so on. Each of these references is a link to the source file representation where the macro is used. NOTE: Where macros are defined in terms of other macros then this location will not necessarily have the literal macro name, it is implicit because of macro dependencies. For example if you look at the last entry <tt class="docutils literal"><span class="pre">kernel/cpu.c</span></tt> line 653, column 47 then you do not see <tt class="docutils literal"><span class="pre">BITMAP_LAST_WORD_MASK</span></tt>, instead you see <tt class="docutils literal"><span class="pre">CPU_BITS_ALL</span></tt> however <tt class="docutils literal"><span class="pre">CPU_BITS_ALL</span></tt> is defined in terms of <tt class="docutils literal"><span class="pre">BITMAP_LAST_WORD_MASK</span></tt>.</li>
+<li>After &#8220;I depend on these macros&#8221; is a table (a tree actually) of other macros (with links) that <tt class="docutils literal"><span class="pre">BITMAP_LAST_WORD_MASK</span></tt> depend on, in this case only one, <tt class="docutils literal"><span class="pre">BITS_PER_LONG</span></tt> as you can see in the definition.</li>
+<li>After &#8220;These macros depend on me&#8221; is another table (a tree) of other macros (with links) that depend on <tt class="docutils literal"><span class="pre">BITMAP_LAST_WORD_MASK</span></tt>.</li>
 </ul>
-<p>As an example let&#8217;s look at <tt class="docutils literal"><span class="pre">BITS_TO_LONGS(nr)</span></tt>. Here is the macro table entry:</p>
-<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Table_BITS.png" />
-<p>A link in the second column takes you to an HTML rendition of the file where the macro is defined.</p>
-<p>A link in the third column takes you down the page to a summary of <em>where</em> the macro was referenced.</p>
-<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Table_BITS_Usage.png" />
-<p>Each link in that table takes you to the source code that referenced this macro. For example take <tt class="docutils literal"><span class="pre">BITS_TO_LONGS(nr)</span></tt> and the file <tt class="file docutils literal"><span class="pre">linux_2.6.37/kernel/cpu.c</span></tt> there are a seven references which are of the form <tt class="docutils literal"><span class="pre">line-column</span></tt>. The link to <tt class="docutils literal"><span class="pre">508-53</span></tt> goes to here:</p>
-<img alt="Macro information." class="align-center" src="../_images/HTMLLinux_cpu.c_Macro_Table_BITS_ITU.png" />
 </div>
 <div class="section" id="a-most-powerful-feature">
 <h4>A Most Powerful Feature<a class="headerlink" href="#a-most-powerful-feature" title="Permalink to this headline">¶</a></h4>
@@ -183,13 +178,16 @@
 <div class="section" id="some-real-examples">
 <span id="cpip-examples-real"></span><h2>Some Real Examples<a class="headerlink" href="#some-real-examples" title="Permalink to this headline">¶</a></h2>
 <p>CPIPMain is a command line tool that you can invoke very much like your favorite pre-processor. CPIPMain produces a number of HTML pages and SVG files that make it easier to understand what is happening during preprocessing. This section shows some examples of the kind of thing that CPIP can do.</p>
-<div class="section" id="symbian-os">
-<h3>Symbian OS<a class="headerlink" href="#symbian-os" title="Permalink to this headline">¶</a></h3>
-<p>Symbian OS might have been killed off by Nokia but here is an example of <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> pre-processing one of Symbian&#8217;s most basic files: <a class="reference external" href="../copy_to_html/e32std/index.html">e32std.h</a>.</p>
-</div>
 <div class="section" id="the-linux-kernel">
 <h3>The Linux Kernel<a class="headerlink" href="#the-linux-kernel" title="Permalink to this headline">¶</a></h3>
-<p>A more complex example that shows the <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> pre-processing the <a class="reference external" href="../copy_to_html/cpu/index.html">cpu.c</a> file in the Linux Kernel.</p>
+<p>Here is <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> pre-processing the <a class="reference external" href="../copy_to_html/cpu/index.html">cpu.c</a> file from the Linux Kernel.</p>
+<p class="rubric">Footnotes</p>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>A special case is that the may be a file <tt class="docutils literal"><span class="pre">&quot;Unnamed</span> <span class="pre">Pre-Include&quot;</span></tt> at the top left and joined to the preprocessed file with a thick light grey line. This &#8216;virtual&#8217; file contains the macro declarations made on the <tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> command line.</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -205,10 +203,10 @@
 <li><a class="reference internal" href="#"><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples</a><ul>
 <li><a class="reference internal" href="#screenshots">Screenshots</a><ul>
 <li><a class="reference internal" href="#home-page">Home Page</a></li>
-<li><a class="reference internal" href="#file-specific-pages">File Specific Pages</a><ul>
-<li><a class="reference internal" href="#translation-unit-original-file">Translation Unit &amp; Original File</a><ul>
-<li><a class="reference internal" href="#translation-unit">Translation Unit</a></li>
+<li><a class="reference internal" href="#preprocessed-file-specific-page">Preprocessed File Specific Page</a><ul>
+<li><a class="reference internal" href="#original-file-and-the-translation-unit">Original File and the Translation Unit</a><ul>
 <li><a class="reference internal" href="#original-file">Original  File</a></li>
+<li><a class="reference internal" href="#translation-unit">Translation Unit</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#the-svg-include-graph">The SVG Include Graph</a><ul>
@@ -229,7 +227,6 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#some-real-examples">Some Real Examples</a><ul>
-<li><a class="reference internal" href="#symbian-os">Symbian OS</a></li>
 <li><a class="reference internal" href="#the-linux-kernel">The Linux Kernel</a></li>
 </ul>
 </li>
@@ -280,12 +277,12 @@
         <li class="right" >
           <a href="../down_install.html" title="Installing CPIP"
              >previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import sys
 #import os
@@ -357,8 +357,8 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
     
     def test_00(self):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines:    1"""
-        myPStr = '??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)'
-        myLStr = '#define arraycheck(a,b) a[b] || b[a]'
+        myPStr = u'??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)'
+        myLStr = u'#define arraycheck(a,b) a[b] || b[a]'
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
@@ -369,8 +369,8 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_01(self):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines:  128"""
-        myPStr = '??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n' * 128
-        myLStr = '#define arraycheck(a,b) a[b] || b[a]\n' * 128
+        myPStr = u'??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n' * 128
+        myLStr = u'#define arraycheck(a,b) a[b] || b[a]\n' * 128
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
@@ -381,8 +381,8 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_02(self):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines: 1024"""
-        myPStr = '??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n' * 1024
-        myLStr = '#define arraycheck(a,b) a[b] || b[a]\n' * 1024
+        myPStr = u'??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)\n' * 1024
+        myLStr = u'#define arraycheck(a,b) a[b] || b[a]\n' * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         myResult = [aVal for aVal in self.genPhase3()]
@@ -393,7 +393,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_10(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines:    1"""
-        myPStr = ' ' * 80 + '\n'
+        myPStr = u' ' * 80 + '\n'
         myLStr = myPStr
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
@@ -405,7 +405,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_11(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines:  128"""
-        myPStr = (' ' * 80 + '\n') * 128
+        myPStr = (u' ' * 80 + '\n') * 128
         #print myPStr
         myLStr = myPStr
         self._file = io.StringIO(myPStr)
@@ -418,7 +418,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_12(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         myLStr = myPStr
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
@@ -431,7 +431,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
 class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_00(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph.: whitespace, lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
@@ -440,7 +440,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_01(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph0: whitespace, lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
@@ -449,7 +449,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_02(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph1: whitespace, lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
@@ -458,7 +458,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_03(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph2: whitespace, lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
@@ -467,7 +467,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_04(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph3: whitespace, lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
@@ -476,7 +476,7 @@ class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
 
     def test_05(self):
         """TestMaximalMunchSimulPpTokeniser_00:     ph_: whitespace, lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
@@ -495,7 +495,7 @@ class TestMaximalMunchSimulPpTokeniser_Profile(TestMaximalMunchSimulPpTokeniserB
 
     def test_00(self):
         """TestMaximalMunchSimulPpTokeniser_Profile.test_00: MaxMunch.anyToken(), lines: 1024"""
-        myPStr = (' ' * 80 + '\n') * 1024
+        myPStr = (u' ' * 80 + '\n') * 1024
         self._file = io.StringIO(myPStr)
         self._size = len(myPStr)
         self._resetStart()
@@ -542,7 +542,7 @@ class TestMaximalMunchProfileNumbers(unittest.TestCase):
 
     def test_00(self):
         """TestMaximalMunchProfileNumbers.test_00: dec, oct and hex digit runs * 1024"""
-        myLine = '%s %s %s\n' % (string.octdigits, string.digits, string.hexdigits)
+        myLine = u'%s %s %s\n' % (string.octdigits, string.digits, string.hexdigits)
         myPStr = myLine * 4 * 1024
         myFile = io.StringIO(myPStr)
 

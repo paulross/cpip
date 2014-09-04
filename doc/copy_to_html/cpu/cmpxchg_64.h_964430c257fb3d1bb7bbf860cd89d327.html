@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/cmpxchg_64.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/cmpxchg_64.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0FTTV9YODZfQ01QWENIR182NF9IXzA_"><span class="b">_ASM_X86_CMPXCHG_64_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0FTTV9YODZfQ01QWENIR182NF9IXzA_"><span class="b">_ASM_X86_CMPXCHG_64_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">set_64bit</span><span class="f">(</span><span class="m">volatile</span> <span class="b">u64</span> <span class="f">*</span><span class="b">ptr</span><span class="f">,</span> <span class="b">u64</span> <span class="b">val</span><span class="f">)</span>
+<a name="5" /><span class="True">       5:</span> <span class="f">{</span>
+<a name="6" /><span class="True">       6:</span>     <span class="f">*</span><span class="b">ptr</span> <span class="f">=</span> <span class="b">val</span><span class="f">;</span>
+<a name="7" /><span class="True">       7:</span> <span class="f">}</span>
+<a name="8" /><span class="True">       8:</span> 
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19IQVZFX0FSQ0hfQ01QWENIR18w"><span class="b">__HAVE_ARCH_CMPXCHG</span></a> <span class="c">1</span>
+<a name="10" /><span class="True">      10:</span> 
+<a name="11" /><span class="True">      11:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y21weGNoZzY0XzA_"><span class="b">cmpxchg64</span></a><span class="f">(</span><span class="b">ptr</span><span class="f">,</span> <span class="b">o</span><span class="f">,</span> <span class="b">n</span><span class="f">)</span>                        \
+<a name="12" /><span class="True">      12:</span> <span class="f">(</span><span class="f">{</span>                                    \
+<a name="13" /><span class="True">      13:</span>     <a href="cpu.c_macros_ref.html#_QlVJTERfQlVHX09OXzA_"><span class="b">BUILD_BUG_ON</span></a><span class="f">(</span><span class="m">sizeof</span><span class="f">(</span><span class="f">*</span><span class="f">(</span><span class="b">ptr</span><span class="f">)</span><span class="f">)</span> <span class="f">!=</span> <span class="c">8</span><span class="f">)</span><span class="f">;</span>                \
+<a name="14" /><span class="True">      14:</span>     <a href="cpu.c_macros_ref.html#_Y21weGNoZ18w"><span class="b">cmpxchg</span></a><span class="f">(</span><span class="f">(</span><span class="b">ptr</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>                    \
+<a name="15" /><span class="True">      15:</span> <span class="f">}</span><span class="f">)</span>
+<a name="16" /><span class="True">      16:</span> 
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y21weGNoZzY0X2xvY2FsXzA_"><span class="b">cmpxchg64_local</span></a><span class="f">(</span><span class="b">ptr</span><span class="f">,</span> <span class="b">o</span><span class="f">,</span> <span class="b">n</span><span class="f">)</span>                    \
+<a name="18" /><span class="True">      18:</span> <span class="f">(</span><span class="f">{</span>                                    \
+<a name="19" /><span class="True">      19:</span>     <a href="cpu.c_macros_ref.html#_QlVJTERfQlVHX09OXzA_"><span class="b">BUILD_BUG_ON</span></a><span class="f">(</span><span class="m">sizeof</span><span class="f">(</span><span class="f">*</span><span class="f">(</span><span class="b">ptr</span><span class="f">)</span><span class="f">)</span> <span class="f">!=</span> <span class="c">8</span><span class="f">)</span><span class="f">;</span>                \
+<a name="20" /><span class="True">      20:</span>     <a href="cpu.c_macros_noref.html#_Y21weGNoZ19sb2NhbF8w"><span class="b">cmpxchg_local</span></a><span class="f">(</span><span class="f">(</span><span class="b">ptr</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>                    \
+<a name="21" /><span class="True">      21:</span> <span class="f">}</span><span class="f">)</span>
+<a name="22" /><span class="True">      22:</span> 
+<a name="23" /><span class="True">      23:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3lzdGVtX2hhc19jbXB4Y2hnX2RvdWJsZV8w"><span class="b">system_has_cmpxchg_double</span></a><span class="f">(</span><span class="f">)</span> <a href="cpu.c_macros_noref.html#_Y3B1X2hhc19jeDE2XzA_"><span class="b">cpu_has_cx16</span></a>
+<a name="24" /><span class="True">      24:</span> 
+<a name="25" /><span class="True">      25:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _ASM_X86_CMPXCHG_64_H */</span>
+<a name="26" /><span class="True">      26:</span> </pre>
+  </body>
+</html>

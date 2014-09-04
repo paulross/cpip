@@ -20,14 +20,14 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2012-03-26'
-__version__ = '0.8.1'
+__version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2012 Paul Ross'
 
 from distutils.core import setup
 
 setup(
     name='CPIP',
-    version='0.8.1',
+    version='0.9.1',
     description='A C Preprocessor implemented in Python.',
     author='Paul Ross',
     author_email='cpipdev@googlemail.com',

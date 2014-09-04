@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Part of TotalDepth: Petrophysical data processing and presentation
-# Copyright (C) 1999-2012 Paul Ross
+# Copyright (C) 1999-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 # Paul Ross: cpipdev@googlemail.com
 __author__  = 'Paul Ross'
 __date__    = '2009-09-15'
-__version__ = '0.8.0'
+__version__ = '0.9.1'
 __rights__  = 'Copyright (c) Paul Ross'
 
 """Treats XmlWrite."""
@@ -69,7 +69,7 @@ class TestXmlWrite(unittest.TestCase):
         with XmlWrite.XmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
                 with XmlWrite.Element(xS, 'A', {'attr_1' : '1'}):
-                    xS.characters('<&>')
+                    xS.characters(u'<&>')
         #print
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
@@ -125,14 +125,14 @@ class TestXmlWrite(unittest.TestCase):
             with XmlWrite.Element(xS, 'Root'):
                 with XmlWrite.Element(xS, 'A'):
                     xS.characters("""<&>"'""")
-                with XmlWrite.Element(xS, 'A'):
-                    xS.characters('%s' % chr(147))
-                with XmlWrite.Element(xS, 'A'):
-                    xS.characters(chr(65))
-                with XmlWrite.Element(xS, 'A'):
-                    xS.characters(chr(128))
-        print()
-        print(repr(myF.getvalue()))
+#                 with XmlWrite.Element(xS, 'A'):
+#                     xS.characters('%s' % chr(147))
+#                 with XmlWrite.Element(xS, 'A'):
+#                     xS.characters(chr(65))
+#                 with XmlWrite.Element(xS, 'A'):
+#                     xS.characters(chr(128))
+#         print()
+#         print(repr(myF.getvalue()))
         # FIXME: This test is correct
 #         self.assertEqual("""<?xml version='1.0' encoding="latin-1"?>
 # <Root>
@@ -150,7 +150,7 @@ class TestXmlWrite(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
-                xS.comment(' a comment ')
+                xS.comment(u' a comment ')
         #print
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
@@ -203,13 +203,13 @@ class TestXhtmlWrite(unittest.TestCase):
         with XmlWrite.XhtmlStream(myF) as xS:
             with XmlWrite.Element(xS, 'head'):
                 with XmlWrite.Element(xS, 'title'):
-                    xS.characters('Virtual Library')
+                    xS.characters(u'Virtual Library')
             with XmlWrite.Element(xS, 'body'):
                 with XmlWrite.Element(xS, 'p'):
-                    xS.characters('Moved to ')
+                    xS.characters(u'Moved to ')
                     with XmlWrite.Element(xS, 'a', {'href' : 'http://example.org/'}):
-                        xS.characters('example.org')
-                    xS.characters('.')
+                        xS.characters(u'example.org')
+                    xS.characters(u'.')
         #print
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
@@ -232,17 +232,17 @@ class TestXhtmlWrite(unittest.TestCase):
                 pass
             with XmlWrite.Element(xS, 'body'):
                 with XmlWrite.Element(xS, 'p'):
-                    xS.charactersWithBr('No break in this line.')
+                    xS.charactersWithBr(u'No break in this line.')
                 with XmlWrite.Element(xS, 'p'):
-                    xS.charactersWithBr("""Several
+                    xS.charactersWithBr(u"""Several
 breaks in
 this line.""")           
                 with XmlWrite.Element(xS, 'p'):
-                    xS.charactersWithBr('\nBreak at beginning.')
+                    xS.charactersWithBr(u'\nBreak at beginning.')
                 with XmlWrite.Element(xS, 'p'):
-                    xS.charactersWithBr('Break at end\n')
+                    xS.charactersWithBr(u'Break at end\n')
                 with XmlWrite.Element(xS, 'p'):
-                    xS.charactersWithBr('\nBreak at beginning\nmiddle and end\n')
+                    xS.charactersWithBr(u'\nBreak at beginning\nmiddle and end\n')
         #print
         #print myF.getvalue()
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>

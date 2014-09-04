@@ -17,7 +17,7 @@ For cpip will need to have installed (with links):
 
 Thats it!
 
-CPIP has been tested with Python 2.6, 2.7 and 3.2
+CPIP has been tested with Python 2.7 and 3.3. CPIP used to run just fine on Windows but I haven't had a recent opportunity (or reason) to test CPIP on a Windows box.
 
 *******************************************
 Download
@@ -68,7 +68,7 @@ To make sure that cpip can be imported from your ``$PYTHONPATH`` do this::
 	>>> dir(cpip)
 	['CPIP_VERSION', 'ExceptionCpip', 'RELEASE_NOTES', '__all__', '__author__', '__builtins__', '__cached__', '__date__', '__doc__', '__file__', '__name__', '__package__', '__path__', '__rights__', '__version__']
 	>>> cpip.CPIP_VERSION
-	(0, 8, 1)
+	(0, 9, 1)
 	>>> 
 
 Unit Testing
@@ -76,14 +76,14 @@ Unit Testing
 
 To run all the unit tests in the core::
 
-	$ cd <cpip>/core
-	$ python3 test/UnitTest.py
+	$ cd <cpip>
+	$ python3 core/test/UnitTest.py
 	
 	
 Testing the Demo Code
 --------------------------
 
-See the :ref:`cpip.tutorial.PpLexer` for an example of running a CPIP ``PpLexer`` on the demonstation code. This gives the core CPIP software a good workout.
+See the :ref:`cpip.tutorial.PpLexer` for an example of running a CPIP ``PpLexer`` on the demonstration code. This gives the core CPIP software a good workout.
 
 .. rubric:: Footnotes
 

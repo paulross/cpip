@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
 import time
@@ -62,7 +62,7 @@ def retPyModuleList():
 
 def unitTest(theVerbosity=0):
     myResult = TestResult(0, 0, 0)
-    print 'File:', __file__
+    print('File:', __file__)
     #print 'TRACE:', os.listdir(os.path.dirname(__file__))
     #print dir()
     #print globals()
@@ -76,23 +76,23 @@ def unitTest(theVerbosity=0):
         try:
             mod = __import__(aName)
             #print dir(mod)
-            print 'Testing %s' % aName
+            print('Testing %s' % aName)
             c = mod.unitTest(theVerbosity=theVerbosity) or (0, 0, 0)
             #print c
             myResult += TestResult(c[0], c[1], c[2])
-        except ImportError, err:
+        except ImportError as err:
             logging.error('Can not import "%s", error: %s' % (aName, err))
-        except AttributeError, err:
+        except AttributeError as err:
             logging.error('Can not run unittests on "%s", error: %s' % (aName, err))
-    print 'Results'
-    print myResult
+    print('Results')
+    print(myResult)
 
 ##################
 # End: Unit tests.
 ##################
 
 def usage():
-    print \
+    print(
 """spam.py -
 Usage:
 python spam.py [-hl: --help]
@@ -107,22 +107,22 @@ Options:
                 INFO        20
                 DEBUG       10
                 NOTSET      0
-"""
+""")
 
 def main():
-    print 'spam.py script version "%s", dated %s' % (__version__, __date__)
-    print 'Author: %s' % __author__
-    print __rights__
+    print('spam.py script version "%s", dated %s' % (__version__, __date__))
+    print('Author: %s' % __author__)
+    print(__rights__)
     print
     import sys, getopt
-    print 'Command line:'
-    print ' '.join(sys.argv)
-    print
+    print('Command line:')
+    print(' '.join(sys.argv))
+    print()
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hl:", ["help",])
-    except getopt.GetoptError, myErr:
+    except getopt.GetoptError as myErr:
         usage()
-        print 'ERROR: Invalid option: %s' % str(myErr)
+        print('ERROR: Invalid option: %s' % str(myErr))
         sys.exit(1)
     logLevel = logging.INFO
     for o, a in opts:
@@ -133,7 +133,7 @@ def main():
             logLevel = int(a)
     if len(args) != 0:
         usage()
-        print 'ERROR: Wrong number of arguments[%d]!' % len(args)
+        print('ERROR: Wrong number of arguments[%d]!' % len(args))
         sys.exit(1)
     clkStart = time.clock()
     # Initialise logging etc.
@@ -146,8 +146,8 @@ def main():
     #
     unitTest()
     clkExec = time.clock() - clkStart
-    print 'CPU time = %8.3f (S)' % clkExec
-    print 'Bye, bye!'
+    print('CPU time = %8.3f (S)' % clkExec)
+    print('Bye, bye!')
 
 if __name__ == "__main__":
     main()

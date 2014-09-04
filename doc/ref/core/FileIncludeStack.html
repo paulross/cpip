@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FileIncludeStack &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.core" href="index.html" />
+    <link rel="next" title="IncludeHandler" href="IncludeHandler.html" />
+    <link rel="prev" title="FileIncludeGraph" href="FileIncludeGraph.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="IncludeHandler.html" title="IncludeHandler"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="FileIncludeGraph.html" title="FileIncludeGraph"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">cpip.core</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.core.FileIncludeStack">
+<span id="fileincludestack"></span><span id="cpip-ref-fileincludestack"></span><h1>FileIncludeStack<a class="headerlink" href="#module-cpip.core.FileIncludeStack" title="Permalink to this headline">¶</a></h1>
+<p>This module represents a stack of file includes as used by the PpLexer</p>
+<dl class="exception">
+<dt id="cpip.core.FileIncludeStack.ExceptionFileIncludeStack">
+<em class="property">exception </em><tt class="descclassname">cpip.core.FileIncludeStack.</tt><tt class="descname">ExceptionFileIncludeStack</tt><a class="headerlink" href="#cpip.core.FileIncludeStack.ExceptionFileIncludeStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception for FileIncludeStack object.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeStack.FileInclude">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeStack.</tt><tt class="descname">FileInclude</tt><big>(</big><em>theFpo</em>, <em>theDiag</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileInclude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a single TU fragment with a PpTokeniser and a token counter.</p>
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileInclude.tokenCountInc">
+<tt class="descname">tokenCountInc</tt><big>(</big><em>tok</em>, <em>isUnCond</em>, <em>num=1</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileInclude.tokenCountInc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increment the token counter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileInclude.tokenCounterAdd">
+<tt class="descname">tokenCounterAdd</tt><big>(</big><em>theC</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileInclude.tokenCounterAdd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a token counter to my token counter (used when a macro is
+declared).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack">
+<em class="property">class </em><tt class="descclassname">cpip.core.FileIncludeStack.</tt><tt class="descname">FileIncludeStack</tt><big>(</big><em>theDiagnostic</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>This maintains information about the stack of file includes.
+This holds several stacks (or representations of them):
+self._ppts is a stack of PpTokeniser.PpTokeniser() objects.
+self._figr is a FileIncludeGraph.FileIncludeGraphRoot() for tracking the #include graph.
+self._fns is a stack of file IDs as strings (e.g. the file path).
+self._tcs is a PpTokenCount.PpTokenCountStack() object for counting tokens.</p>
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.currentFile">
+<tt class="descname">currentFile</tt><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.currentFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the file ID from the top of the stack.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.depth">
+<tt class="descname">depth</tt><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current include depth as an integer.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.fileIncludeGraphRoot">
+<tt class="descname">fileIncludeGraphRoot</tt><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.fileIncludeGraphRoot" title="Permalink to this definition">¶</a></dt>
+<dd><p>The FileIncludeGraph.FileIncludeGraphRoot() object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.fileLineCol">
+<tt class="descname">fileLineCol</tt><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.fileLineCol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an instance of FileLineCol from the current physical line column.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.fileStack">
+<tt class="descname">fileStack</tt><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.fileStack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the stack of file IDs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.finalise">
+<tt class="descname">finalise</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.finalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalisation, may raise an ExceptionFileIncludeStack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.includeFinish">
+<tt class="descname">includeFinish</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.includeFinish" title="Permalink to this definition">¶</a></dt>
+<dd><p>End an #include file, returns the file ID that has been finished.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.includeStart">
+<tt class="descname">includeStart</tt><big>(</big><em>theFpo</em>, <em>theLineNum</em>, <em>isUncond</em>, <em>condStr</em>, <em>incLogic</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.includeStart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start an #include file.
+theFpo     - A FilePathOrigin object that identifies the file.
+theLineNum - The integer line number of the file that includes (None if Root).
+isUncond   - A boolean that is the conditional compilation state.
+condStr    - A string of the conditional compilation stack.
+incLogic   - A string that describes the find include logic.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.ppt">
+<tt class="descname">ppt</tt><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.ppt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the PpTokeniser from the top of the stack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.tokenCountInc">
+<tt class="descname">tokenCountInc</tt><big>(</big><em>tok</em>, <em>isUnCond</em>, <em>num=1</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.tokenCountInc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Increment the token counter.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.tokenCounter">
+<tt class="descname">tokenCounter</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.tokenCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the Token Counter object at the tip of the stack.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.core.FileIncludeStack.FileIncludeStack.tokenCounterAdd">
+<tt class="descname">tokenCounterAdd</tt><big>(</big><em>theC</em><big>)</big><a class="headerlink" href="#cpip.core.FileIncludeStack.FileIncludeStack.tokenCounterAdd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a token counter to my token counter (used when a macro is
+declared).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="FileIncludeGraph.html"
+                        title="previous chapter">FileIncludeGraph</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="IncludeHandler.html"
+                        title="next chapter">IncludeHandler</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/core/FileIncludeStack.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="IncludeHandler.html" title="IncludeHandler"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="FileIncludeGraph.html" title="FileIncludeGraph"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" >cpip.core</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

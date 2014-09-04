@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>CPIP Reference &mdash; CPIP 0.8.1 documentation</title>
+    <title>CPIP Reference &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +23,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../index.html" />
-    <link rel="next" title="CPIP Core" href="core/index.html" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
+    <link rel="next" title="CPIPMain" href="CPIPMain.html" />
     <link rel="prev" title="FileIncludeGraph Tutorial" href="../tutorial/FileIncGraph.html" /> 
   </head>
   <body>
@@ -40,12 +38,12 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="core/index.html" title="CPIP Core"
+          <a href="CPIPMain.html" title="CPIPMain"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../tutorial/FileIncGraph.html" title="FileIncludeGraph Tutorial"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -58,12 +56,32 @@
 <h1>CPIP Reference<a class="headerlink" href="#cpip-reference" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="core/index.html">CPIP Core</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="CPIPMain.html">CPIPMain</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CppCondGraphToHtml.html">CppCondGraphToHtml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="IncGraphSVG.html">IncGraphSVG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="IncGraphSVGBase.html">IncGraphSVGBase</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="IncGraphSVGBase.html#writing-onmouseover-onmouseout-event-handlers-to-provide-additional-information">Writing onmouseover/onmouseout event handlers to provide additional information.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="IncGraphSVGBase.html#opera">Opera</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="IncGraphXML.html">IncGraphXML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="IncList.html">IncList</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ItuToHtml.html">ItuToHtml</a></li>
+<li class="toctree-l1"><a class="reference internal" href="MacroHistoryHtml.html">MacroHistoryHtml</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="MacroHistoryHtml.html#macro-html-ids">Macro HTML IDs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="TokenCss.html">TokenCss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tu2Html.html">Tu2Html</a></li>
+<li class="toctree-l1"><a class="reference internal" href="TuIndexer.html">TuIndexer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/index.html">cpip.core</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="core/ConstantExpression.html">ConstantExpression</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/CppCond.html">CppCond</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/CppDiagnostic.html">CppDiagnostic</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/FileIncludeGraph.html">FileIncludeGraph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/FileIncludeStack.html">FileIncludeStack</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/IncludeHandler.html">IncludeHandler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core/ItuToTokens.html">ItuToTokens</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/MacroEnv.html">MacroEnv</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/PpDefine.html">PpDefine</a></li>
 <li class="toctree-l2"><a class="reference internal" href="core/PpLexer.html">PpLexer</a></li>
@@ -74,17 +92,24 @@
 <li class="toctree-l2"><a class="reference internal" href="core/PragmaHandler.html">PragmaHandler</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="util/index.html">CPIP Utilities</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="util/index.html">cpip.util</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="util/BufGen.html">BufGen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util/CommonPrefix.html">CommonPrefix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="util/DictTree.html">DictTree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util/DirWalk.html">DirWalk</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util/DupeLines.html">DupeLines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util/FileStatus.html">FileStatus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util/HtmlUtils.html">HtmlUtils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="util/ListGen.html">ListGen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="util/MatrixRep.html">MatrixRep</a></li>
 <li class="toctree-l2"><a class="reference internal" href="util/MaxMunchGen.html">MaxMunchGen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util/OaS.html">OaS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="util/StrTree.html">StrTree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="util/Tree.html">Tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="util/XmlWrite.html">XmlWrite</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="plot/index.html">CPIP Plot</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="plot/index.html">cpip.plot</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="plot/Coord.html">Coord</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot/PlotNode.html">PlotNode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot/SVGWriter.html">SVGWriter</a></li>
@@ -105,8 +130,8 @@
   <p class="topless"><a href="../tutorial/FileIncGraph.html"
                         title="previous chapter">FileIncludeGraph Tutorial</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="core/index.html"
-                        title="next chapter">CPIP Core</a></p>
+  <p class="topless"><a href="CPIPMain.html"
+                        title="next chapter">CPIPMain</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../_sources/ref/index.txt"
@@ -139,17 +164,17 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="core/index.html" title="CPIP Core"
+          <a href="CPIPMain.html" title="CPIPMain"
              >next</a> |</li>
         <li class="right" >
           <a href="../tutorial/FileIncGraph.html" title="FileIncludeGraph Tutorial"
              >previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import re
 import sys
@@ -172,6 +172,13 @@ class FileIncludeGraph(object):
         #print 'TRACE FileIncludeGraph.__init__() with %s' % theCondition 
         self._condComp = theCondition
         self._findLogic = theLogic
+        # Somewhat hacky support for Python 2.x. Otherwise the __str__ appears as
+        #   sys/inc/spam.h [15, 10]:  True "" "[u\'<inc/spam.h>\', u\'CP=usr\']"
+        # rather than:
+        #   sys/inc/spam.h [15, 10]:  True "" "[\'<inc/spam.h>\', \'CP=usr\']"
+        if isinstance(self._findLogic, list) and len(self._findLogic) > 0 and sys.version_info.major == 2:
+            for i in range(len(self._findLogic)):
+                self._findLogic[i] = str(self._findLogic[i])
         # Recursive map of {line : class FileIncludeGraph, ...}
         # line is an integer type.
         self._graph = {}

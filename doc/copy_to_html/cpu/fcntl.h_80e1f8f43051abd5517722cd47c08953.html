@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/fcntl.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/fcntl.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X1VBUElfTElOVVhfRkNOVExfSF8w"><span class="b">_UAPI_LINUX_FCNTL_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X1VBUElfTElOVVhfRkNOVExfSF8w"><span class="b">_UAPI_LINUX_FCNTL_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">fcntl</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="True">       5:</span> 
+<a name="6" /><span class="True">       6:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Rl9TRVRMRUFTRV8w"><span class="b">F_SETLEASE</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Rl9MSU5VWF9TUEVDSUZJQ19CQVNFXzA_"><span class="b">F_LINUX_SPECIFIC_BASE</span></a> <span class="f">+</span> <span class="c">0</span><span class="f">)</span>
+<a name="7" /><span class="True">       7:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Rl9HRVRMRUFTRV8w"><span class="b">F_GETLEASE</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Rl9MSU5VWF9TUEVDSUZJQ19CQVNFXzA_"><span class="b">F_LINUX_SPECIFIC_BASE</span></a> <span class="f">+</span> <span class="c">1</span><span class="f">)</span>
+<a name="8" /><span class="True">       8:</span> 
+<a name="9" /><span class="True">       9:</span> <span class="k">/*</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * Cancel a blocking posix lock; internal use only until we expose an</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> * asynchronous lock api to userspace:</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> */</span>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Rl9DQU5DRUxMS18w"><span class="b">F_CANCELLK</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Rl9MSU5VWF9TUEVDSUZJQ19CQVNFXzA_"><span class="b">F_LINUX_SPECIFIC_BASE</span></a> <span class="f">+</span> <span class="c">5</span><span class="f">)</span>
+<a name="14" /><span class="True">      14:</span> 
+<a name="15" /><span class="True">      15:</span> <span class="k">/* Create a file descriptor with FD_CLOEXEC set. */</span>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Rl9EVVBGRF9DTE9FWEVDXzA_"><span class="b">F_DUPFD_CLOEXEC</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Rl9MSU5VWF9TUEVDSUZJQ19CQVNFXzA_"><span class="b">F_LINUX_SPECIFIC_BASE</span></a> <span class="f">+</span> <span class="c">6</span><span class="f">)</span>
+<a name="17" /><span class="True">      17:</span> 
+<a name="18" /><span class="True">      18:</span> <span class="k">/*</span>
+<a name="19" /><span class="True">      19:</span> <span class="k"> * Request nofications on a directory.</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * See below for events that may be notified.</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> */</span>
+<a name="22" /><span class="True">      22:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Rl9OT1RJRllfMA__"><span class="b">F_NOTIFY</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Rl9MSU5VWF9TUEVDSUZJQ19CQVNFXzA_"><span class="b">F_LINUX_SPECIFIC_BASE</span></a><span class="f">+</span><span class="c">2</span><span class="f">)</span>
+<a name="23" /><span class="True">      23:</span> 
+<a name="24" /><span class="True">      24:</span> <span class="k">/*</span>
+<a name="25" /><span class="True">      25:</span> <span class="k"> * Set and get of pipe page size array</span>
+<a name="26" /><span class="True">      26:</span> <span class="k"> */</span>
+<a name="27" /><span class="True">      27:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Rl9TRVRQSVBFX1NaXzA_"><span class="b">F_SETPIPE_SZ</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Rl9MSU5VWF9TUEVDSUZJQ19CQVNFXzA_"><span class="b">F_LINUX_SPECIFIC_BASE</span></a> <span class="f">+</span> <span class="c">7</span><span class="f">)</span>
+<a name="28" /><span class="True">      28:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Rl9HRVRQSVBFX1NaXzA_"><span class="b">F_GETPIPE_SZ</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_Rl9MSU5VWF9TUEVDSUZJQ19CQVNFXzA_"><span class="b">F_LINUX_SPECIFIC_BASE</span></a> <span class="f">+</span> <span class="c">8</span><span class="f">)</span>
+<a name="29" /><span class="True">      29:</span> 
+<a name="30" /><span class="True">      30:</span> <span class="k">/*</span>
+<a name="31" /><span class="True">      31:</span> <span class="k"> * Types of directory notifications that may be requested.</span>
+<a name="32" /><span class="True">      32:</span> <span class="k"> */</span>
+<a name="33" /><span class="True">      33:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RE5fQUNDRVNTXzA_"><span class="b">DN_ACCESS</span></a>    <span class="c">0x00000001</span>    <span class="k">/* File accessed */</span>
+<a name="34" /><span class="True">      34:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RE5fTU9ESUZZXzA_"><span class="b">DN_MODIFY</span></a>    <span class="c">0x00000002</span>    <span class="k">/* File modified */</span>
+<a name="35" /><span class="True">      35:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RE5fQ1JFQVRFXzA_"><span class="b">DN_CREATE</span></a>    <span class="c">0x00000004</span>    <span class="k">/* File created */</span>
+<a name="36" /><span class="True">      36:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RE5fREVMRVRFXzA_"><span class="b">DN_DELETE</span></a>    <span class="c">0x00000008</span>    <span class="k">/* File removed */</span>
+<a name="37" /><span class="True">      37:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RE5fUkVOQU1FXzA_"><span class="b">DN_RENAME</span></a>    <span class="c">0x00000010</span>    <span class="k">/* File renamed */</span>
+<a name="38" /><span class="True">      38:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RE5fQVRUUklCXzA_"><span class="b">DN_ATTRIB</span></a>    <span class="c">0x00000020</span>    <span class="k">/* File changed attibutes */</span>
+<a name="39" /><span class="True">      39:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RE5fTVVMVElTSE9UXzA_"><span class="b">DN_MULTISHOT</span></a>    <span class="c">0x80000000</span>    <span class="k">/* Don&apos;t remove notifier */</span>
+<a name="40" /><span class="True">      40:</span> 
+<a name="41" /><span class="True">      41:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRkRDV0RfMA__"><span class="b">AT_FDCWD</span></a>        <span class="f">-</span><span class="c">100</span>    <span class="k">/* Special value used to indicate</span>
+<a name="42" /><span class="True">      42:</span> <span class="k">                                           openat should use the current</span>
+<a name="43" /><span class="True">      43:</span> <span class="k">                                           working directory. */</span>
+<a name="44" /><span class="True">      44:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfU1lNTElOS19OT0ZPTExPV18w"><span class="b">AT_SYMLINK_NOFOLLOW</span></a>    <span class="c">0x100</span>   <span class="k">/* Do not follow symbolic links.  */</span>
+<a name="45" /><span class="True">      45:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfUkVNT1ZFRElSXzA_"><span class="b">AT_REMOVEDIR</span></a>        <span class="c">0x200</span>   <span class="k">/* Remove directory instead of</span>
+<a name="46" /><span class="True">      46:</span> <span class="k">                                           unlinking file.  */</span>
+<a name="47" /><span class="True">      47:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfU1lNTElOS19GT0xMT1dfMA__"><span class="b">AT_SYMLINK_FOLLOW</span></a>    <span class="c">0x400</span>   <span class="k">/* Follow symbolic links.  */</span>
+<a name="48" /><span class="True">      48:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfTk9fQVVUT01PVU5UXzA_"><span class="b">AT_NO_AUTOMOUNT</span></a>        <span class="c">0x800</span>    <span class="k">/* Suppress terminal automount traversal */</span>
+<a name="49" /><span class="True">      49:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVRfRU1QVFlfUEFUSF8w"><span class="b">AT_EMPTY_PATH</span></a>        <span class="c">0x1000</span>    <span class="k">/* Allow empty relative pathname */</span>
+<a name="50" /><span class="True">      50:</span> 
+<a name="51" /><span class="True">      51:</span> 
+<a name="52" /><span class="True">      52:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _UAPI_LINUX_FCNTL_H */</span>
+<a name="53" /><span class="True">      53:</span> </pre>
+  </body>
+</html>

@@ -2,16 +2,23 @@
 .. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
 
 ***********************************
-CPIP Utilities
+cpip.util
 ***********************************
 
 .. toctree::
 	:maxdepth: 2
 
 	BufGen
+	CommonPrefix
 	DictTree
+	DirWalk
+	DupeLines
+	FileStatus
+	HtmlUtils
 	ListGen
 	MatrixRep
 	MaxMunchGen
+	OaS
 	StrTree
+	Tree
 	XmlWrite

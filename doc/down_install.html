@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,15 +6,15 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Installing CPIP &mdash; CPIP 0.8.1 documentation</title>
+    <title>Installing CPIP &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '0.8.1',
+        URL_ROOT:    './',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="index.html" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="index.html" />
     <link rel="next" title="CPIPMain.py Examples" href="examples/examples.html" />
     <link rel="prev" title="CPIP Introduction" href="intro.html" /> 
   </head>
@@ -45,7 +43,7 @@
         <li class="right" >
           <a href="intro.html" title="CPIP Introduction"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -63,7 +61,7 @@
 <li><a class="reference external" href="http://www.python.org">Python</a></li>
 </ul>
 <p>Thats it!</p>
-<p>CPIP has been tested with Python 2.6, 2.7 and 3.2</p>
+<p>CPIP has been tested with Python 2.7 and 3.3. CPIP used to run just fine on Windows but I haven&#8217;t had a recent opportunity (or reason) to test CPIP on a Windows box.</p>
 </div>
 <div class="section" id="download">
 <h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
@@ -76,9 +74,10 @@
 <div class="section" id="from-the-hg-repo">
 <h3>From the Hg Repo<a class="headerlink" href="#from-the-hg-repo" title="Permalink to this headline">¶</a></h3>
 <p>The Mercurial repository has the most up-to-date code, get it with:</p>
-<div class="highlight-python"><pre>$ mkdir &lt;cpip&gt;
+<div class="highlight-python"><div class="highlight"><pre>$ mkdir &lt;cpip&gt;
 $ cd &lt;cpip&gt;
-$ hg clone http://hg.code.sf.net/p/cpip/code-0 .</pre>
+$ hg clone http://hg.code.sf.net/p/cpip/code-0 .
+</pre></div>
 </div>
 </div>
 </div>
@@ -95,27 +94,29 @@ $ hg clone http://hg.code.sf.net/p/cpip/code-0 .</pre>
 <div class="section" id="testing">
 <h3>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h3>
 <p>To make sure that cpip can be imported from your <tt class="docutils literal"><span class="pre">$PYTHONPATH</span></tt> do this:</p>
-<div class="highlight-python"><pre>$ python3
+<div class="highlight-python"><div class="highlight"><pre>$ python3
 Python 3.2 (r32:88452, Feb 20 2011, 11:12:31)
 [GCC 4.2.1 (Apple Inc. build 5664)] on darwin
-Type "help", "copyright", "credits" or "license" for more information.
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
 &gt;&gt;&gt; import cpip
 &gt;&gt;&gt; dir(cpip)
-['CPIP_VERSION', 'ExceptionCpip', 'RELEASE_NOTES', '__all__', '__author__', '__builtins__', '__cached__', '__date__', '__doc__', '__file__', '__name__', '__package__', '__path__', '__rights__', '__version__']
+[&#39;CPIP_VERSION&#39;, &#39;ExceptionCpip&#39;, &#39;RELEASE_NOTES&#39;, &#39;__all__&#39;, &#39;__author__&#39;, &#39;__builtins__&#39;, &#39;__cached__&#39;, &#39;__date__&#39;, &#39;__doc__&#39;, &#39;__file__&#39;, &#39;__name__&#39;, &#39;__package__&#39;, &#39;__path__&#39;, &#39;__rights__&#39;, &#39;__version__&#39;]
 &gt;&gt;&gt; cpip.CPIP_VERSION
-(0, 8, 1)
-&gt;&gt;&gt;</pre>
+(0, 9, 1)
+&gt;&gt;&gt;
+</pre></div>
 </div>
 <div class="section" id="unit-testing">
 <h4>Unit Testing<a class="headerlink" href="#unit-testing" title="Permalink to this headline">¶</a></h4>
 <p>To run all the unit tests in the core:</p>
-<div class="highlight-python"><pre>$ cd &lt;cpip&gt;/core
-$ python3 test/UnitTest.py</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ cd &lt;cpip&gt;
+$ python3 core/test/UnitTest.py
+</pre></div>
 </div>
 </div>
 <div class="section" id="testing-the-demo-code">
 <h4>Testing the Demo Code<a class="headerlink" href="#testing-the-demo-code" title="Permalink to this headline">¶</a></h4>
-<p>See the <a class="reference internal" href="tutorial/PpLexer.html#cpip-tutorial-pplexer"><em>PpLexer Tutorial</em></a> for an example of running a CPIP <tt class="docutils literal"><span class="pre">PpLexer</span></tt> on the demonstation code. This gives the core CPIP software a good workout.</p>
+<p>See the <a class="reference internal" href="tutorial/PpLexer.html#cpip-tutorial-pplexer"><em>PpLexer Tutorial</em></a> for an example of running a CPIP <tt class="docutils literal"><span class="pre">PpLexer</span></tt> on the demonstration code. This gives the core CPIP software a good workout.</p>
 <p class="rubric">Footnotes</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -164,7 +165,7 @@ $ python3 test/UnitTest.py</pre>
                         title="previous chapter">CPIP Introduction</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="examples/examples.html"
-                        title="next chapter"><tt class="file docutils literal docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples</a></p>
+                        title="next chapter"><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> Examples</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/down_install.txt"
@@ -202,12 +203,12 @@ $ python3 test/UnitTest.py</pre>
         <li class="right" >
           <a href="intro.html" title="CPIP Introduction"
              >previous</a> |</li>
-        <li><a href="index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

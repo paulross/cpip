@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/ipc.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/ipc.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0lQQ19IXzA_"><span class="b">_LINUX_IPC_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0lQQ19IXzA_"><span class="b">_LINUX_IPC_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">spinlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="True">       5:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">uidgid</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="True">       6:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">uapi</span><span class="f">/</span><span class="b">linux</span><span class="f">/</span><span class="b">ipc</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="7" /><span class="True">       7:</span> 
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SVBDTU5JXzA_"><span class="b">IPCMNI</span></a> <span class="c">32768</span>  <span class="k">/* &lt;= MAX_INT limit for ipc arrays (including sysctl changes) */</span>
+<a name="9" /><span class="True">       9:</span> 
+<a name="10" /><span class="True">      10:</span> <span class="k">/* used by in-kernel data structures */</span>
+<a name="11" /><span class="True">      11:</span> <span class="m">struct</span> <span class="b">kern_ipc_perm</span>
+<a name="12" /><span class="True">      12:</span> <span class="f">{</span>
+<a name="13" /><span class="True">      13:</span>     <span class="b">spinlock_t</span>    <span class="b">lock</span><span class="f">;</span>
+<a name="14" /><span class="True">      14:</span>     <span class="m">int</span>        <span class="b">deleted</span><span class="f">;</span>
+<a name="15" /><span class="True">      15:</span>     <span class="m">int</span>        <span class="b">id</span><span class="f">;</span>
+<a name="16" /><span class="True">      16:</span>     <span class="b">key_t</span>        <span class="b">key</span><span class="f">;</span>
+<a name="17" /><span class="True">      17:</span>     <span class="b">kuid_t</span>        <span class="b">uid</span><span class="f">;</span>
+<a name="18" /><span class="True">      18:</span>     <span class="b">kgid_t</span>        <span class="b">gid</span><span class="f">;</span>
+<a name="19" /><span class="True">      19:</span>     <span class="b">kuid_t</span>        <span class="b">cuid</span><span class="f">;</span>
+<a name="20" /><span class="True">      20:</span>     <span class="b">kgid_t</span>        <span class="b">cgid</span><span class="f">;</span>
+<a name="21" /><span class="True">      21:</span>     <span class="b">umode_t</span>        <span class="b">mode</span><span class="f">;</span> 
+<a name="22" /><span class="True">      22:</span>     <span class="m">unsigned</span> <span class="m">long</span>    <span class="b">seq</span><span class="f">;</span>
+<a name="23" /><span class="True">      23:</span>     <span class="m">void</span>        <span class="f">*</span><span class="b">security</span><span class="f">;</span>
+<a name="24" /><span class="True">      24:</span> <span class="f">}</span><span class="f">;</span>
+<a name="25" /><span class="True">      25:</span> 
+<a name="26" /><span class="True">      26:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_IPC_H */</span>
+<a name="27" /><span class="True">      27:</span> </pre>
+  </body>
+</html>

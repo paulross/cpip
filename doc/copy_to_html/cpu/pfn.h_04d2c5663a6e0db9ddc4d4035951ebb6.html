@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/pfn.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/pfn.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1BGTl9IX18w"><span class="b">_LINUX_PFN_H_</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1BGTl9IX18w"><span class="b">_LINUX_PFN_H_</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">__ASSEMBLY__</span>
+<a name="5" /><span class="Maybe">       5:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="Maybe">       6:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="7" /><span class="Maybe">       7:</span> 
+<a name="8" /><span class="Maybe">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UEZOX0FMSUdOXzA_"><span class="b">PFN_ALIGN</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="f">+</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_UEFHRV9TSVpFXzA_"><span class="b">PAGE_SIZE</span></a> <span class="f">-</span> <span class="c">1</span><span class="f">)</span><span class="f">)</span> <span class="f">&amp;</span> <a href="cpu.c_macros_ref.html#_UEFHRV9NQVNLXzA_"><span class="b">PAGE_MASK</span></a><span class="f">)</span>
+<a name="9" /><span class="Maybe">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UEZOX1VQXzA_"><span class="b">PFN_UP</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="f">+</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSVpFXzA_"><span class="b">PAGE_SIZE</span></a><span class="f">-</span><span class="c">1</span><span class="f">)</span> <span class="f">&gt;&gt;</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="10" /><span class="Maybe">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UEZOX0RPV05fMA__"><span class="b">PFN_DOWN</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="f">&gt;&gt;</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="11" /><span class="Maybe">      11:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_UEZOX1BIWVNfMA__"><span class="b">PFN_PHYS</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="b">phys_addr_t</span><span class="f">)</span><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="12" /><span class="Maybe">      12:</span> 
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="14" /><span class="True">      14:</span> </pre>
+  </body>
+</html>

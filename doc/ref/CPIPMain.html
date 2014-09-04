@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CPIPMain &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
+    <link rel="up" title="CPIP Reference" href="index.html" />
+    <link rel="next" title="cpip.core" href="core/index.html" />
+    <link rel="prev" title="CPIP Reference" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core/index.html" title="cpip.core"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="CPIP Reference"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.CPIPMain">
+<span id="cpipmain"></span><span id="cpip-ref-cpipmain"></span><h1>CPIPMain<a class="headerlink" href="#module-cpip.CPIPMain" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cpip.CPIPMain.FigVisitorDot">
+<em class="property">class </em><tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">FigVisitorDot</tt><big>(</big><em>lenPrefix=0</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.FigVisitorDot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple visitor that collects parent/child links for plotting the graph with dot.</p>
+<dl class="method">
+<dt id="cpip.CPIPMain.FigVisitorDot.visitGraph">
+<tt class="descname">visitGraph</tt><big>(</big><em>theFigNode</em>, <em>theDepth</em>, <em>theLine</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.FigVisitorDot.visitGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.CPIPMain.FigVisitorLargestCommanPrefix">
+<em class="property">class </em><tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">FigVisitorLargestCommanPrefix</tt><a class="headerlink" href="#cpip.CPIPMain.FigVisitorLargestCommanPrefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple visitor that walks the tree and finds the largest common file name prefix.</p>
+<dl class="method">
+<dt id="cpip.CPIPMain.FigVisitorLargestCommanPrefix.visitGraph">
+<tt class="descname">visitGraph</tt><big>(</big><em>theFigNode</em>, <em>theDepth</em>, <em>theLine</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.FigVisitorLargestCommanPrefix.visitGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Capture the file name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.CPIPMain.MainJobSpec">
+<em class="property">class </em><tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">MainJobSpec</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>MainJobSpec(incHandler, preDefMacros, preIncStr, preIncPaths, diagnostic, pragmaHandler, keepGoing, conditionalLevel, dumpList, helpMap, includeDOT, cmdLine)</p>
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.cmdLine">
+<tt class="descname">cmdLine</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.cmdLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 11</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.conditionalLevel">
+<tt class="descname">conditionalLevel</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.conditionalLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.diagnostic">
+<tt class="descname">diagnostic</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.diagnostic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.dumpList">
+<tt class="descname">dumpList</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.dumpList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.helpMap">
+<tt class="descname">helpMap</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.helpMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.incHandler">
+<tt class="descname">incHandler</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.incHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.includeDOT">
+<tt class="descname">includeDOT</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.includeDOT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 10</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.keepGoing">
+<tt class="descname">keepGoing</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.keepGoing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.pragmaHandler">
+<tt class="descname">pragmaHandler</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.pragmaHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.preDefMacros">
+<tt class="descname">preDefMacros</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.preDefMacros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.preIncPaths">
+<tt class="descname">preIncPaths</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.preIncPaths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.preIncStr">
+<tt class="descname">preIncStr</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.preIncStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.CPIPMain.PpProcessResult">
+<em class="property">class </em><tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">PpProcessResult</tt><a class="headerlink" href="#cpip.CPIPMain.PpProcessResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>PpProcessResult(ituPath, indexPath, tuIndexFileName)</p>
+<dl class="attribute">
+<dt id="cpip.CPIPMain.PpProcessResult.indexPath">
+<tt class="descname">indexPath</tt><a class="headerlink" href="#cpip.CPIPMain.PpProcessResult.indexPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.PpProcessResult.ituPath">
+<tt class="descname">ituPath</tt><a class="headerlink" href="#cpip.CPIPMain.PpProcessResult.ituPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.PpProcessResult.tuIndexFileName">
+<tt class="descname">tuIndexFileName</tt><a class="headerlink" href="#cpip.CPIPMain.PpProcessResult.tuIndexFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.CPIPMain.main">
+<tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">main</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.CPIPMain.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Processes command line to preprocess a file or a directory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.CPIPMain.preProcessFilesMP">
+<tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">preProcessFilesMP</tt><big>(</big><em>dIn</em>, <em>dOut</em>, <em>jobSpec</em>, <em>glob</em>, <em>recursive</em>, <em>jobs</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.preProcessFilesMP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiprocessing code to preprocess directories. Returns a count of ITUs
+processed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.CPIPMain.preprocessDirToOutput">
+<tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">preprocessDirToOutput</tt><big>(</big><em>inDir</em>, <em>outDir</em>, <em>jobSpec</em>, <em>globMatch</em>, <em>recursive</em>, <em>numJobs</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.preprocessDirToOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pre-process all the files in a directory. Returns a count of the TUs.
+This uses multiprocessing where possible.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.CPIPMain.preprocessFileToOutput">
+<tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">preprocessFileToOutput</tt><big>(</big><em>ituPath</em>, <em>outDir</em>, <em>jobSpec</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.preprocessFileToOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess a single file. May raise ExceptionCpip (or worse!).
+Returns a PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath)).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.CPIPMain.preprocessFileToOutputNoExcept">
+<tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">preprocessFileToOutputNoExcept</tt><big>(</big><em>ituPath</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.preprocessFileToOutputNoExcept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Preprocess a single file and catch all ExceptionCpip
+exceptions and log them.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.CPIPMain.retOptionMap">
+<tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">retOptionMap</tt><big>(</big><em>theOptParser</em>, <em>theOpts</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.retOptionMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns map of {opt_name : (value, help), ...} from the current options.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.CPIPMain.writeIndexHtml">
+<tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">writeIndexHtml</tt><big>(</big><em>theItuS</em>, <em>theOutDir</em>, <em>theJobSpec</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.writeIndexHtml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the top level index.html page for a pre-processed file.</p>
+<p>theOutDir - The output directory.</p>
+<p>theTuS - The list of translation units processed.</p>
+<p>theCmdLine - The command line as a string.</p>
+<p>theOptMap is a map of {opt_name : (value, help), ...} from the
+command line options.
+TODO: This is fine but has too many levels of indent.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">CPIP Reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="core/index.html"
+                        title="next chapter">cpip.core</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/ref/CPIPMain.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core/index.html" title="cpip.core"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="CPIP Reference"
+             >previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

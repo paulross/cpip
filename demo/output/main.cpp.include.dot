@@ -1,8 +1,0 @@
-digraph FigVisitorDot {
-"../demo/src/main.cpp" [color=limegreen,style=filled,label="../demo/src/main.cpp"];
-"../demo/sys/system.h" [color=yellow,style=filled,label="../demo/sys/system.h"];
-"../demo/usr/user.h" [color=yellow,style=filled,label="../demo/usr/user.h"];
-"../demo/src/main.cpp" -> "../demo/usr/user.h";
-"../demo/usr/user.h" -> "../demo/sys/system.h";
-"../demo/sys/system.h";
-}

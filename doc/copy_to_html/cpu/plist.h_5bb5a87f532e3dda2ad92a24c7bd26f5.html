@@ -1,0 +1,267 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/plist.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/plist.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> * Descending-priority-sorted double-linked list</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> *</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> * (C) 2002-2003 Intel Corp</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * Inaky Perez-Gonzalez &lt;inaky.perez-gonzalez@intel.com&gt;.</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> *</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * 2001-2005 (c) MontaVista Software, Inc.</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> * Daniel Walker &lt;dwalker@mvista.com&gt;</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> *</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * (C) 2005 Thomas Gleixner &lt;tglx@linutronix.de&gt;</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> *</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> * Simplifications of the original code by</span>
+<a name="13" /><span class="True">      13:</span> <span class="k"> * Oleg Nesterov &lt;oleg@tv-sign.ru&gt;</span>
+<a name="14" /><span class="True">      14:</span> <span class="k"> *</span>
+<a name="15" /><span class="True">      15:</span> <span class="k"> * Licensed under the FSF&apos;s GNU Public License v2 or later.</span>
+<a name="16" /><span class="True">      16:</span> <span class="k"> *</span>
+<a name="17" /><span class="True">      17:</span> <span class="k"> * Based on simple lists (include/linux/list.h).</span>
+<a name="18" /><span class="True">      18:</span> <span class="k"> *</span>
+<a name="19" /><span class="True">      19:</span> <span class="k"> * This is a priority-sorted list of nodes; each node has a</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * priority from INT_MIN (highest) to INT_MAX (lowest).</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> *</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> * Addition is O(K), removal is O(1), change of priority of a node is</span>
+<a name="23" /><span class="True">      23:</span> <span class="k"> * O(K) and K is the number of RT priority levels used in the system.</span>
+<a name="24" /><span class="True">      24:</span> <span class="k"> * (1 &lt;= K &lt;= 99)</span>
+<a name="25" /><span class="True">      25:</span> <span class="k"> *</span>
+<a name="26" /><span class="True">      26:</span> <span class="k"> * This list is really a list of lists:</span>
+<a name="27" /><span class="True">      27:</span> <span class="k"> *</span>
+<a name="28" /><span class="True">      28:</span> <span class="k"> *  - The tier 1 list is the prio_list, different priority nodes.</span>
+<a name="29" /><span class="True">      29:</span> <span class="k"> *</span>
+<a name="30" /><span class="True">      30:</span> <span class="k"> *  - The tier 2 list is the node_list, serialized nodes.</span>
+<a name="31" /><span class="True">      31:</span> <span class="k"> *</span>
+<a name="32" /><span class="True">      32:</span> <span class="k"> * Simple ASCII art explanation:</span>
+<a name="33" /><span class="True">      33:</span> <span class="k"> *</span>
+<a name="34" /><span class="True">      34:</span> <span class="k"> * pl:prio_list (only for plist_node)</span>
+<a name="35" /><span class="True">      35:</span> <span class="k"> * nl:node_list</span>
+<a name="36" /><span class="True">      36:</span> <span class="k"> *   HEAD|             NODE(S)</span>
+<a name="37" /><span class="True">      37:</span> <span class="k"> *       |</span>
+<a name="38" /><span class="True">      38:</span> <span class="k"> *       ||------------------------------------|</span>
+<a name="39" /><span class="True">      39:</span> <span class="k"> *       ||-&gt;|pl|&lt;-&gt;|pl|&lt;---------------&gt;|pl|&lt;-|</span>
+<a name="40" /><span class="True">      40:</span> <span class="k"> *       |   |10|   |21|   |21|   |21|   |40|   (prio)</span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> *       |   |  |   |  |   |  |   |  |   |  |</span>
+<a name="42" /><span class="True">      42:</span> <span class="k"> *       |   |  |   |  |   |  |   |  |   |  |</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"> * |-&gt;|nl|&lt;-&gt;|nl|&lt;-&gt;|nl|&lt;-&gt;|nl|&lt;-&gt;|nl|&lt;-&gt;|nl|&lt;-|</span>
+<a name="44" /><span class="True">      44:</span> <span class="k"> * |-------------------------------------------|</span>
+<a name="45" /><span class="True">      45:</span> <span class="k"> *</span>
+<a name="46" /><span class="True">      46:</span> <span class="k"> * The nodes on the prio_list list are sorted by priority to simplify</span>
+<a name="47" /><span class="True">      47:</span> <span class="k"> * the insertion of new nodes. There are no nodes with duplicate</span>
+<a name="48" /><span class="True">      48:</span> <span class="k"> * priorites on the list.</span>
+<a name="49" /><span class="True">      49:</span> <span class="k"> *</span>
+<a name="50" /><span class="True">      50:</span> <span class="k"> * The nodes on the node_list are ordered by priority and can contain</span>
+<a name="51" /><span class="True">      51:</span> <span class="k"> * entries which have the same priority. Those entries are ordered</span>
+<a name="52" /><span class="True">      52:</span> <span class="k"> * FIFO</span>
+<a name="53" /><span class="True">      53:</span> <span class="k"> *</span>
+<a name="54" /><span class="True">      54:</span> <span class="k"> * Addition means: look for the prio_list node in the prio_list</span>
+<a name="55" /><span class="True">      55:</span> <span class="k"> * for the priority of the node and insert it before the node_list</span>
+<a name="56" /><span class="True">      56:</span> <span class="k"> * entry of the next prio_list node. If it is the first node of</span>
+<a name="57" /><span class="True">      57:</span> <span class="k"> * that priority, add it to the prio_list in the right position and</span>
+<a name="58" /><span class="True">      58:</span> <span class="k"> * insert it into the serialized node_list list</span>
+<a name="59" /><span class="True">      59:</span> <span class="k"> *</span>
+<a name="60" /><span class="True">      60:</span> <span class="k"> * Removal means remove it from the node_list and remove it from</span>
+<a name="61" /><span class="True">      61:</span> <span class="k"> * the prio_list if the node_list list_head is non empty. In case</span>
+<a name="62" /><span class="True">      62:</span> <span class="k"> * of removal from the prio_list it must be checked whether other</span>
+<a name="63" /><span class="True">      63:</span> <span class="k"> * entries of the same priority are on the list or not. If there</span>
+<a name="64" /><span class="True">      64:</span> <span class="k"> * is another entry of the same priority then this entry has to</span>
+<a name="65" /><span class="True">      65:</span> <span class="k"> * replace the removed entry on the prio_list. If the entry which</span>
+<a name="66" /><span class="True">      66:</span> <span class="k"> * is removed is the only entry of this priority then a simple</span>
+<a name="67" /><span class="True">      67:</span> <span class="k"> * remove from both list is sufficient.</span>
+<a name="68" /><span class="True">      68:</span> <span class="k"> *</span>
+<a name="69" /><span class="True">      69:</span> <span class="k"> * INT_MIN is the highest priority, 0 is the medium highest, INT_MAX</span>
+<a name="70" /><span class="True">      70:</span> <span class="k"> * is lowest priority.</span>
+<a name="71" /><span class="True">      71:</span> <span class="k"> *</span>
+<a name="72" /><span class="True">      72:</span> <span class="k"> * No locking is done, up to the caller.</span>
+<a name="73" /><span class="True">      73:</span> <span class="k"> *</span>
+<a name="74" /><span class="True">      74:</span> <span class="k"> */</span>
+<a name="75" /><span class="True">      75:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX1BMSVNUX0hfXzA_"><span class="b">_LINUX_PLIST_H_</span></a>
+<a name="76" /><span class="True">      76:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX1BMSVNUX0hfXzA_"><span class="b">_LINUX_PLIST_H_</span></a>
+<a name="77" /><span class="True">      77:</span> 
+<a name="78" /><span class="True">      78:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">kernel</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="79" /><span class="True">      79:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">list</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="80" /><span class="True">      80:</span> 
+<a name="81" /><span class="True">      81:</span> <span class="m">struct</span> <span class="b">plist_head</span> <span class="f">{</span>
+<a name="82" /><span class="True">      82:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">node_list</span><span class="f">;</span>
+<a name="83" /><span class="True">      83:</span> <span class="f">}</span><span class="f">;</span>
+<a name="84" /><span class="True">      84:</span> 
+<a name="85" /><span class="True">      85:</span> <span class="m">struct</span> <span class="b">plist_node</span> <span class="f">{</span>
+<a name="86" /><span class="True">      86:</span>     <span class="m">int</span>            <span class="b">prio</span><span class="f">;</span>
+<a name="87" /><span class="True">      87:</span>     <span class="m">struct</span> <span class="b">list_head</span>    <span class="b">prio_list</span><span class="f">;</span>
+<a name="88" /><span class="True">      88:</span>     <span class="m">struct</span> <span class="b">list_head</span>    <span class="b">node_list</span><span class="f">;</span>
+<a name="89" /><span class="True">      89:</span> <span class="f">}</span><span class="f">;</span>
+<a name="90" /><span class="True">      90:</span> 
+<a name="91" /><span class="True">      91:</span> <span class="k">/**</span>
+<a name="92" /><span class="True">      92:</span> <span class="k"> * PLIST_HEAD_INIT - static struct plist_head initializer</span>
+<a name="93" /><span class="True">      93:</span> <span class="k"> * @head:    struct plist_head variable name</span>
+<a name="94" /><span class="True">      94:</span> <span class="k"> */</span>
+<a name="95" /><span class="True">      95:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UExJU1RfSEVBRF9JTklUXzA_"><span class="b">PLIST_HEAD_INIT</span></a><span class="f">(</span><span class="b">head</span><span class="f">)</span>                \
+<a name="96" /><span class="True">      96:</span> <span class="f">{</span>                            \
+<a name="97" /><span class="True">      97:</span>     <span class="f">.</span><span class="b">node_list</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_TElTVF9IRUFEX0lOSVRfMA__"><span class="b">LIST_HEAD_INIT</span></a><span class="f">(</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">.</span><span class="b">node_list</span><span class="f">)</span>    \
+<a name="98" /><span class="True">      98:</span> <span class="f">}</span>
+<a name="99" /><span class="True">      99:</span> 
+<a name="100" /><span class="True">     100:</span> <span class="k">/**</span>
+<a name="101" /><span class="True">     101:</span> <span class="k"> * PLIST_NODE_INIT - static struct plist_node initializer</span>
+<a name="102" /><span class="True">     102:</span> <span class="k"> * @node:    struct plist_node variable name</span>
+<a name="103" /><span class="True">     103:</span> <span class="k"> * @__prio:    initial node priority</span>
+<a name="104" /><span class="True">     104:</span> <span class="k"> */</span>
+<a name="105" /><span class="True">     105:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UExJU1RfTk9ERV9JTklUXzA_"><span class="b">PLIST_NODE_INIT</span></a><span class="f">(</span><span class="b">node</span><span class="f">,</span> <span class="b">__prio</span><span class="f">)</span>            \
+<a name="106" /><span class="True">     106:</span> <span class="f">{</span>                            \
+<a name="107" /><span class="True">     107:</span>     <span class="f">.</span><span class="b">prio</span>  <span class="f">=</span> <span class="f">(</span><span class="b">__prio</span><span class="f">)</span><span class="f">,</span>                \
+<a name="108" /><span class="True">     108:</span>     <span class="f">.</span><span class="b">prio_list</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_TElTVF9IRUFEX0lOSVRfMA__"><span class="b">LIST_HEAD_INIT</span></a><span class="f">(</span><span class="f">(</span><span class="b">node</span><span class="f">)</span><span class="f">.</span><span class="b">prio_list</span><span class="f">)</span><span class="f">,</span>    \
+<a name="109" /><span class="True">     109:</span>     <span class="f">.</span><span class="b">node_list</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_TElTVF9IRUFEX0lOSVRfMA__"><span class="b">LIST_HEAD_INIT</span></a><span class="f">(</span><span class="f">(</span><span class="b">node</span><span class="f">)</span><span class="f">.</span><span class="b">node_list</span><span class="f">)</span><span class="f">,</span>    \
+<a name="110" /><span class="True">     110:</span> <span class="f">}</span>
+<a name="111" /><span class="True">     111:</span> 
+<a name="112" /><span class="True">     112:</span> <span class="k">/**</span>
+<a name="113" /><span class="True">     113:</span> <span class="k"> * plist_head_init - dynamic struct plist_head initializer</span>
+<a name="114" /><span class="True">     114:</span> <span class="k"> * @head:    &amp;struct plist_head pointer</span>
+<a name="115" /><span class="True">     115:</span> <span class="k"> */</span>
+<a name="116" /><span class="True">     116:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span>
+<a name="117" /><span class="True">     117:</span> <span class="b">plist_head_init</span><span class="f">(</span><span class="m">struct</span> <span class="b">plist_head</span> <span class="f">*</span><span class="b">head</span><span class="f">)</span>
+<a name="118" /><span class="True">     118:</span> <span class="f">{</span>
+<a name="119" /><span class="True">     119:</span>     <span class="b">INIT_LIST_HEAD</span><span class="f">(</span><span class="f">&amp;</span><span class="b">head</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">)</span><span class="f">;</span>
+<a name="120" /><span class="True">     120:</span> <span class="f">}</span>
+<a name="121" /><span class="True">     121:</span> 
+<a name="122" /><span class="True">     122:</span> <span class="k">/**</span>
+<a name="123" /><span class="True">     123:</span> <span class="k"> * plist_node_init - Dynamic struct plist_node initializer</span>
+<a name="124" /><span class="True">     124:</span> <span class="k"> * @node:    &amp;struct plist_node pointer</span>
+<a name="125" /><span class="True">     125:</span> <span class="k"> * @prio:    initial node priority</span>
+<a name="126" /><span class="True">     126:</span> <span class="k"> */</span>
+<a name="127" /><span class="True">     127:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">plist_node_init</span><span class="f">(</span><span class="m">struct</span> <span class="b">plist_node</span> <span class="f">*</span><span class="b">node</span><span class="f">,</span> <span class="m">int</span> <span class="b">prio</span><span class="f">)</span>
+<a name="128" /><span class="True">     128:</span> <span class="f">{</span>
+<a name="129" /><span class="True">     129:</span>     <span class="b">node</span><span class="f">-&gt;</span><span class="b">prio</span> <span class="f">=</span> <span class="b">prio</span><span class="f">;</span>
+<a name="130" /><span class="True">     130:</span>     <span class="b">INIT_LIST_HEAD</span><span class="f">(</span><span class="f">&amp;</span><span class="b">node</span><span class="f">-&gt;</span><span class="b">prio_list</span><span class="f">)</span><span class="f">;</span>
+<a name="131" /><span class="True">     131:</span>     <span class="b">INIT_LIST_HEAD</span><span class="f">(</span><span class="f">&amp;</span><span class="b">node</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">)</span><span class="f">;</span>
+<a name="132" /><span class="True">     132:</span> <span class="f">}</span>
+<a name="133" /><span class="True">     133:</span> 
+<a name="134" /><span class="True">     134:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">plist_add</span><span class="f">(</span><span class="m">struct</span> <span class="b">plist_node</span> <span class="f">*</span><span class="b">node</span><span class="f">,</span> <span class="m">struct</span> <span class="b">plist_head</span> <span class="f">*</span><span class="b">head</span><span class="f">)</span><span class="f">;</span>
+<a name="135" /><span class="True">     135:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">plist_del</span><span class="f">(</span><span class="m">struct</span> <span class="b">plist_node</span> <span class="f">*</span><span class="b">node</span><span class="f">,</span> <span class="m">struct</span> <span class="b">plist_head</span> <span class="f">*</span><span class="b">head</span><span class="f">)</span><span class="f">;</span>
+<a name="136" /><span class="True">     136:</span> 
+<a name="137" /><span class="True">     137:</span> <span class="k">/**</span>
+<a name="138" /><span class="True">     138:</span> <span class="k"> * plist_for_each - iterate over the plist</span>
+<a name="139" /><span class="True">     139:</span> <span class="k"> * @pos:    the type * to use as a loop counter</span>
+<a name="140" /><span class="True">     140:</span> <span class="k"> * @head:    the head for your list</span>
+<a name="141" /><span class="True">     141:</span> <span class="k"> */</span>
+<a name="142" /><span class="True">     142:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfZm9yX2VhY2hfMA__"><span class="b">plist_for_each</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="b">head</span><span class="f">)</span>    \
+<a name="143" /><span class="True">     143:</span>      <a href="cpu.c_macros_noref.html#_bGlzdF9mb3JfZWFjaF9lbnRyeV8w"><span class="b">list_for_each_entry</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="f">&amp;</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">,</span> <span class="b">node_list</span><span class="f">)</span>
+<a name="144" /><span class="True">     144:</span> 
+<a name="145" /><span class="True">     145:</span> <span class="k">/**</span>
+<a name="146" /><span class="True">     146:</span> <span class="k"> * plist_for_each_safe - iterate safely over a plist of given type</span>
+<a name="147" /><span class="True">     147:</span> <span class="k"> * @pos:    the type * to use as a loop counter</span>
+<a name="148" /><span class="True">     148:</span> <span class="k"> * @n:    another type * to use as temporary storage</span>
+<a name="149" /><span class="True">     149:</span> <span class="k"> * @head:    the head for your list</span>
+<a name="150" /><span class="True">     150:</span> <span class="k"> *</span>
+<a name="151" /><span class="True">     151:</span> <span class="k"> * Iterate over a plist of given type, safe against removal of list entry.</span>
+<a name="152" /><span class="True">     152:</span> <span class="k"> */</span>
+<a name="153" /><span class="True">     153:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfZm9yX2VhY2hfc2FmZV8w"><span class="b">plist_for_each_safe</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="b">n</span><span class="f">,</span> <span class="b">head</span><span class="f">)</span>    \
+<a name="154" /><span class="True">     154:</span>      <a href="cpu.c_macros_ref.html#_bGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlXzA_"><span class="b">list_for_each_entry_safe</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="b">n</span><span class="f">,</span> <span class="f">&amp;</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">,</span> <span class="b">node_list</span><span class="f">)</span>
+<a name="155" /><span class="True">     155:</span> 
+<a name="156" /><span class="True">     156:</span> <span class="k">/**</span>
+<a name="157" /><span class="True">     157:</span> <span class="k"> * plist_for_each_entry    - iterate over list of given type</span>
+<a name="158" /><span class="True">     158:</span> <span class="k"> * @pos:    the type * to use as a loop counter</span>
+<a name="159" /><span class="True">     159:</span> <span class="k"> * @head:    the head for your list</span>
+<a name="160" /><span class="True">     160:</span> <span class="k"> * @mem:    the name of the list_struct within the struct</span>
+<a name="161" /><span class="True">     161:</span> <span class="k"> */</span>
+<a name="162" /><span class="True">     162:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfZm9yX2VhY2hfZW50cnlfMA__"><span class="b">plist_for_each_entry</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="b">head</span><span class="f">,</span> <span class="b">mem</span><span class="f">)</span>    \
+<a name="163" /><span class="True">     163:</span>      <a href="cpu.c_macros_noref.html#_bGlzdF9mb3JfZWFjaF9lbnRyeV8w"><span class="b">list_for_each_entry</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="f">&amp;</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">,</span> <span class="b">mem</span><span class="f">.</span><span class="b">node_list</span><span class="f">)</span>
+<a name="164" /><span class="True">     164:</span> 
+<a name="165" /><span class="True">     165:</span> <span class="k">/**</span>
+<a name="166" /><span class="True">     166:</span> <span class="k"> * plist_for_each_entry_safe - iterate safely over list of given type</span>
+<a name="167" /><span class="True">     167:</span> <span class="k"> * @pos:    the type * to use as a loop counter</span>
+<a name="168" /><span class="True">     168:</span> <span class="k"> * @n:        another type * to use as temporary storage</span>
+<a name="169" /><span class="True">     169:</span> <span class="k"> * @head:    the head for your list</span>
+<a name="170" /><span class="True">     170:</span> <span class="k"> * @m:        the name of the list_struct within the struct</span>
+<a name="171" /><span class="True">     171:</span> <span class="k"> *</span>
+<a name="172" /><span class="True">     172:</span> <span class="k"> * Iterate over list of given type, safe against removal of list entry.</span>
+<a name="173" /><span class="True">     173:</span> <span class="k"> */</span>
+<a name="174" /><span class="True">     174:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZV8w"><span class="b">plist_for_each_entry_safe</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="b">n</span><span class="f">,</span> <span class="b">head</span><span class="f">,</span> <span class="b">m</span><span class="f">)</span>    \
+<a name="175" /><span class="True">     175:</span>     <a href="cpu.c_macros_ref.html#_bGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlXzA_"><span class="b">list_for_each_entry_safe</span></a><span class="f">(</span><span class="b">pos</span><span class="f">,</span> <span class="b">n</span><span class="f">,</span> <span class="f">&amp;</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">,</span> <span class="b">m</span><span class="f">.</span><span class="b">node_list</span><span class="f">)</span>
+<a name="176" /><span class="True">     176:</span> 
+<a name="177" /><span class="True">     177:</span> <span class="k">/**</span>
+<a name="178" /><span class="True">     178:</span> <span class="k"> * plist_head_empty - return !0 if a plist_head is empty</span>
+<a name="179" /><span class="True">     179:</span> <span class="k"> * @head:    &amp;struct plist_head pointer</span>
+<a name="180" /><span class="True">     180:</span> <span class="k"> */</span>
+<a name="181" /><span class="True">     181:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">plist_head_empty</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">plist_head</span> <span class="f">*</span><span class="b">head</span><span class="f">)</span>
+<a name="182" /><span class="True">     182:</span> <span class="f">{</span>
+<a name="183" /><span class="True">     183:</span>     <span class="m">return</span> <span class="b">list_empty</span><span class="f">(</span><span class="f">&amp;</span><span class="b">head</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">)</span><span class="f">;</span>
+<a name="184" /><span class="True">     184:</span> <span class="f">}</span>
+<a name="185" /><span class="True">     185:</span> 
+<a name="186" /><span class="True">     186:</span> <span class="k">/**</span>
+<a name="187" /><span class="True">     187:</span> <span class="k"> * plist_node_empty - return !0 if plist_node is not on a list</span>
+<a name="188" /><span class="True">     188:</span> <span class="k"> * @node:    &amp;struct plist_node pointer</span>
+<a name="189" /><span class="True">     189:</span> <span class="k"> */</span>
+<a name="190" /><span class="True">     190:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">plist_node_empty</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">plist_node</span> <span class="f">*</span><span class="b">node</span><span class="f">)</span>
+<a name="191" /><span class="True">     191:</span> <span class="f">{</span>
+<a name="192" /><span class="True">     192:</span>     <span class="m">return</span> <span class="b">list_empty</span><span class="f">(</span><span class="f">&amp;</span><span class="b">node</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">)</span><span class="f">;</span>
+<a name="193" /><span class="True">     193:</span> <span class="f">}</span>
+<a name="194" /><span class="True">     194:</span> 
+<a name="195" /><span class="True">     195:</span> <span class="k">/* All functions below assume the plist_head is not empty. */</span>
+<a name="196" /><span class="True">     196:</span> 
+<a name="197" /><span class="True">     197:</span> <span class="k">/**</span>
+<a name="198" /><span class="True">     198:</span> <span class="k"> * plist_first_entry - get the struct for the first entry</span>
+<a name="199" /><span class="True">     199:</span> <span class="k"> * @head:    the &amp;struct plist_head pointer</span>
+<a name="200" /><span class="True">     200:</span> <span class="k"> * @type:    the type of the struct this is embedded in</span>
+<a name="201" /><span class="True">     201:</span> <span class="k"> * @member:    the name of the list_struct within the struct</span>
+<a name="202" /><span class="True">     202:</span> <span class="k"> */</span>
+<a name="203" /><span class="False">     203:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_PI_LIST</span>
+<a name="204" /><span class="False">     204:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfZmlyc3RfZW50cnlfMA__"><span class="b">plist_first_entry</span></a><span class="f">(</span><span class="b">head</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span>    \
+<a name="205" /><span class="False">     205:</span> <span class="f">(</span><span class="f">{</span> \
+<a name="206" /><span class="False">     206:</span>     <a href="cpu.c_macros_ref.html#_V0FSTl9PTl8w"><span class="b">WARN_ON</span></a><span class="f">(</span><span class="b">plist_head_empty</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">)</span><span class="f">;</span> \
+<a name="207" /><span class="False">     207:</span>     <a href="cpu.c_macros_ref.html#_Y29udGFpbmVyX29mXzA_"><span class="b">container_of</span></a><span class="f">(</span><span class="b">plist_first</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span><span class="f">;</span> \
+<a name="208" /><span class="False">     208:</span> <span class="f">}</span><span class="f">)</span>
+<a name="209" /><span class="True">     209:</span> <span class="f">#</span><span class="n">else</span>
+<a name="210" /><span class="True">     210:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfZmlyc3RfZW50cnlfMA__"><span class="b">plist_first_entry</span></a><span class="f">(</span><span class="b">head</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span>    \
+<a name="211" /><span class="True">     211:</span>     <a href="cpu.c_macros_ref.html#_Y29udGFpbmVyX29mXzA_"><span class="b">container_of</span></a><span class="f">(</span><span class="b">plist_first</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span>
+<a name="212" /><span class="True">     212:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="213" /><span class="True">     213:</span> 
+<a name="214" /><span class="True">     214:</span> <span class="k">/**</span>
+<a name="215" /><span class="True">     215:</span> <span class="k"> * plist_last_entry - get the struct for the last entry</span>
+<a name="216" /><span class="True">     216:</span> <span class="k"> * @head:    the &amp;struct plist_head pointer</span>
+<a name="217" /><span class="True">     217:</span> <span class="k"> * @type:    the type of the struct this is embedded in</span>
+<a name="218" /><span class="True">     218:</span> <span class="k"> * @member:    the name of the list_struct within the struct</span>
+<a name="219" /><span class="True">     219:</span> <span class="k"> */</span>
+<a name="220" /><span class="False">     220:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_PI_LIST</span>
+<a name="221" /><span class="False">     221:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfbGFzdF9lbnRyeV8w"><span class="b">plist_last_entry</span></a><span class="f">(</span><span class="b">head</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span>    \
+<a name="222" /><span class="False">     222:</span> <span class="f">(</span><span class="f">{</span> \
+<a name="223" /><span class="False">     223:</span>     <a href="cpu.c_macros_ref.html#_V0FSTl9PTl8w"><span class="b">WARN_ON</span></a><span class="f">(</span><span class="b">plist_head_empty</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">)</span><span class="f">;</span> \
+<a name="224" /><span class="False">     224:</span>     <a href="cpu.c_macros_ref.html#_Y29udGFpbmVyX29mXzA_"><span class="b">container_of</span></a><span class="f">(</span><span class="b">plist_last</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span><span class="f">;</span> \
+<a name="225" /><span class="False">     225:</span> <span class="f">}</span><span class="f">)</span>
+<a name="226" /><span class="True">     226:</span> <span class="f">#</span><span class="n">else</span>
+<a name="227" /><span class="True">     227:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_cGxpc3RfbGFzdF9lbnRyeV8w"><span class="b">plist_last_entry</span></a><span class="f">(</span><span class="b">head</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span>    \
+<a name="228" /><span class="True">     228:</span>     <a href="cpu.c_macros_ref.html#_Y29udGFpbmVyX29mXzA_"><span class="b">container_of</span></a><span class="f">(</span><span class="b">plist_last</span><span class="f">(</span><span class="b">head</span><span class="f">)</span><span class="f">,</span> <span class="b">type</span><span class="f">,</span> <span class="b">member</span><span class="f">)</span>
+<a name="229" /><span class="True">     229:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="230" /><span class="True">     230:</span> 
+<a name="231" /><span class="True">     231:</span> <span class="k">/**</span>
+<a name="232" /><span class="True">     232:</span> <span class="k"> * plist_first - return the first node (and thus, highest priority)</span>
+<a name="233" /><span class="True">     233:</span> <span class="k"> * @head:    the &amp;struct plist_head pointer</span>
+<a name="234" /><span class="True">     234:</span> <span class="k"> *</span>
+<a name="235" /><span class="True">     235:</span> <span class="k"> * Assumes the plist is _not_ empty.</span>
+<a name="236" /><span class="True">     236:</span> <span class="k"> */</span>
+<a name="237" /><span class="True">     237:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">plist_node</span> <span class="f">*</span><span class="b">plist_first</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">plist_head</span> <span class="f">*</span><span class="b">head</span><span class="f">)</span>
+<a name="238" /><span class="True">     238:</span> <span class="f">{</span>
+<a name="239" /><span class="True">     239:</span>     <span class="m">return</span> <a href="cpu.c_macros_ref.html#_bGlzdF9lbnRyeV8w"><span class="b">list_entry</span></a><span class="f">(</span><span class="b">head</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">.</span><span class="b">next</span><span class="f">,</span>
+<a name="240" /><span class="True">     240:</span>               <span class="m">struct</span> <span class="b">plist_node</span><span class="f">,</span> <span class="b">node_list</span><span class="f">)</span><span class="f">;</span>
+<a name="241" /><span class="True">     241:</span> <span class="f">}</span>
+<a name="242" /><span class="True">     242:</span> 
+<a name="243" /><span class="True">     243:</span> <span class="k">/**</span>
+<a name="244" /><span class="True">     244:</span> <span class="k"> * plist_last - return the last node (and thus, lowest priority)</span>
+<a name="245" /><span class="True">     245:</span> <span class="k"> * @head:    the &amp;struct plist_head pointer</span>
+<a name="246" /><span class="True">     246:</span> <span class="k"> *</span>
+<a name="247" /><span class="True">     247:</span> <span class="k"> * Assumes the plist is _not_ empty.</span>
+<a name="248" /><span class="True">     248:</span> <span class="k"> */</span>
+<a name="249" /><span class="True">     249:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">plist_node</span> <span class="f">*</span><span class="b">plist_last</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">plist_head</span> <span class="f">*</span><span class="b">head</span><span class="f">)</span>
+<a name="250" /><span class="True">     250:</span> <span class="f">{</span>
+<a name="251" /><span class="True">     251:</span>     <span class="m">return</span> <a href="cpu.c_macros_ref.html#_bGlzdF9lbnRyeV8w"><span class="b">list_entry</span></a><span class="f">(</span><span class="b">head</span><span class="f">-&gt;</span><span class="b">node_list</span><span class="f">.</span><span class="b">prev</span><span class="f">,</span>
+<a name="252" /><span class="True">     252:</span>               <span class="m">struct</span> <span class="b">plist_node</span><span class="f">,</span> <span class="b">node_list</span><span class="f">)</span><span class="f">;</span>
+<a name="253" /><span class="True">     253:</span> <span class="f">}</span>
+<a name="254" /><span class="True">     254:</span> 
+<a name="255" /><span class="True">     255:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="256" /><span class="True">     256:</span> </pre>
+  </body>
+</html>

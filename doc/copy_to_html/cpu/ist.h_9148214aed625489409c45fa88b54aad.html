@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/ist.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/ist.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> * Include file for the interface to IST BIOS</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> * Copyright 2002 Andy Grover &lt;andrew.grover@intel.com&gt;</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> *</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * This program is free software; you can redistribute it and/or modify it</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> * under the terms of the GNU General Public License as published by the</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * Free Software Foundation; either version 2, or (at your option) any</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> * later version.</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> *</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * This program is distributed in the hope that it will be useful, but</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> * WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU</span>
+<a name="13" /><span class="True">      13:</span> <span class="k"> * General Public License for more details.</span>
+<a name="14" /><span class="True">      14:</span> <span class="k"> */</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X1VBUElfQVNNX1g4Nl9JU1RfSF8w"><span class="b">_UAPI_ASM_X86_IST_H</span></a>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X1VBUElfQVNNX1g4Nl9JU1RfSF8w"><span class="b">_UAPI_ASM_X86_IST_H</span></a>
+<a name="17" /><span class="True">      17:</span> 
+<a name="18" /><span class="True">      18:</span> 
+<a name="19" /><span class="True">      19:</span> 
+<a name="20" /><span class="True">      20:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="21" /><span class="True">      21:</span> 
+<a name="22" /><span class="True">      22:</span> <span class="m">struct</span> <span class="b">ist_info</span> <span class="f">{</span>
+<a name="23" /><span class="True">      23:</span>     <span class="b">__u32</span> <span class="b">signature</span><span class="f">;</span>
+<a name="24" /><span class="True">      24:</span>     <span class="b">__u32</span> <span class="b">command</span><span class="f">;</span>
+<a name="25" /><span class="True">      25:</span>     <span class="b">__u32</span> <span class="b">event</span><span class="f">;</span>
+<a name="26" /><span class="True">      26:</span>     <span class="b">__u32</span> <span class="b">perf_level</span><span class="f">;</span>
+<a name="27" /><span class="True">      27:</span> <span class="f">}</span><span class="f">;</span>
+<a name="28" /><span class="True">      28:</span> 
+<a name="29" /><span class="True">      29:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _UAPI_ASM_X86_IST_H */</span>
+<a name="30" /><span class="True">      30:</span> </pre>
+  </body>
+</html>

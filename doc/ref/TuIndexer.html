@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TuIndexer &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
+    <link rel="up" title="CPIP Reference" href="index.html" />
+    <link rel="next" title="cpip.core" href="core/index.html" />
+    <link rel="prev" title="Tu2Html" href="Tu2Html.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core/index.html" title="cpip.core"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Tu2Html.html" title="Tu2Html"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.TuIndexer">
+<span id="tuindexer"></span><span id="cpip-ref-tuindexer"></span><h1>TuIndexer<a class="headerlink" href="#module-cpip.TuIndexer" title="Permalink to this headline">¶</a></h1>
+<p>Provides a means of linking to a translation unit to HTML.</p>
+<dl class="exception">
+<dt id="cpip.TuIndexer.ExceptionTuIndexer">
+<em class="property">exception </em><tt class="descclassname">cpip.TuIndexer.</tt><tt class="descname">ExceptionTuIndexer</tt><a class="headerlink" href="#cpip.TuIndexer.ExceptionTuIndexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception when handling PpLexer object.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.TuIndexer.TuIndexer">
+<em class="property">class </em><tt class="descclassname">cpip.TuIndexer.</tt><tt class="descname">TuIndexer</tt><big>(</big><em>tuFileName</em><big>)</big><a class="headerlink" href="#cpip.TuIndexer.TuIndexer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a means of indexing into a TU html file.</p>
+<dl class="method">
+<dt id="cpip.TuIndexer.TuIndexer.add">
+<tt class="descname">add</tt><big>(</big><em>theTuIndex</em><big>)</big><a class="headerlink" href="#cpip.TuIndexer.TuIndexer.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds an integer index to the list of markers, returns the href name.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.TuIndexer.TuIndexer.href">
+<tt class="descname">href</tt><big>(</big><em>theTuIndex</em>, <em>isLB</em><big>)</big><a class="headerlink" href="#cpip.TuIndexer.TuIndexer.href" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an href string for the TuIndex. If isLB is true returns
+the nearest lower bound, otherwise the nearest upper bound.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Tu2Html.html"
+                        title="previous chapter">Tu2Html</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="core/index.html"
+                        title="next chapter">cpip.core</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/ref/TuIndexer.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="core/index.html" title="cpip.core"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Tu2Html.html" title="Tu2Html"
+             >previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

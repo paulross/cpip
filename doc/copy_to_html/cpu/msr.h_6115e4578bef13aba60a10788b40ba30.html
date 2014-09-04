@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/msr.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/msr.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X1VBUElfQVNNX1g4Nl9NU1JfSF8w"><span class="b">_UAPI_ASM_X86_MSR_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X1VBUElfQVNNX1g4Nl9NU1JfSF8w"><span class="b">_UAPI_ASM_X86_MSR_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">msr</span><span class="f">-</span><span class="b">index</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="Maybe">       5:</span> 
+<a name="6" /><span class="Maybe">       6:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">__ASSEMBLY__</span>
+<a name="7" /><span class="Maybe">       7:</span> 
+<a name="8" /><span class="Maybe">       8:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="9" /><span class="Maybe">       9:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">ioctl</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="10" /><span class="Maybe">      10:</span> 
+<a name="11" /><span class="Maybe">      11:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_WDg2X0lPQ19SRE1TUl9SRUdTXzA_"><span class="b">X86_IOC_RDMSR_REGS</span></a>    <a href="cpu.c_macros_noref.html#_X0lPV1JfMA__"><span class="b">_IOWR</span></a><span class="f">(</span><span class="d">&apos;c&apos;</span><span class="f">,</span> <span class="c">0xA0</span><span class="f">,</span> <span class="b">__u32</span><span class="f">[</span><span class="c">8</span><span class="f">]</span><span class="f">)</span>
+<a name="12" /><span class="Maybe">      12:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_WDg2X0lPQ19XUk1TUl9SRUdTXzA_"><span class="b">X86_IOC_WRMSR_REGS</span></a>    <a href="cpu.c_macros_noref.html#_X0lPV1JfMA__"><span class="b">_IOWR</span></a><span class="f">(</span><span class="d">&apos;c&apos;</span><span class="f">,</span> <span class="c">0xA1</span><span class="f">,</span> <span class="b">__u32</span><span class="f">[</span><span class="c">8</span><span class="f">]</span><span class="f">)</span>
+<a name="13" /><span class="Maybe">      13:</span> 
+<a name="14" /><span class="Maybe">      14:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* __ASSEMBLY__ */</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _UAPI_ASM_X86_MSR_H */</span>
+<a name="16" /><span class="True">      16:</span> </pre>
+  </body>
+</html>

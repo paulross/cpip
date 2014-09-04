@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import unittest
 import sys
@@ -171,12 +171,12 @@ class TestPpTokenCountMerge(TestPpDefine.TestPpDefine):
         """TestPpTokenCount __iadd__ less simple."""
         #print
         cntrAll = cntrUncond = 0
-        for t in self.stringToTokens('#define SPAM 42\n'):
+        for t in self.stringToTokens(u'#define SPAM 42\n'):
             self._ptc_1.inc(t, True)
             self._ptc_2.inc(t, True)
             cntrAll += 1
             cntrUncond += 1
-        for t in self.stringToTokens('#define EGGS SPAM\n'):
+        for t in self.stringToTokens(u'#define EGGS SPAM\n'):
             self._ptc_1.inc(t, False)
             self._ptc_2.inc(t, False)
             cntrAll += 1
@@ -271,11 +271,11 @@ class TestPpTokenCountStack(TestPpDefine.TestPpDefine):
         self._ptcs.push()
         self._ptcs.counter()
         cntrAll = cntrUncond = 0
-        for t in self.stringToTokens('#define SPAM 42\n'):
+        for t in self.stringToTokens(u'#define SPAM 42\n'):
             self._ptcs.counter().inc(t, True)
             cntrAll += 1
             cntrUncond += 1
-        for t in self.stringToTokens('#define EGGS SPAM\n'):
+        for t in self.stringToTokens(u'#define EGGS SPAM\n'):
             self._ptcs.counter().inc(t, False)
             cntrAll += 1
         self.assertEqual(cntrAll,               self._ptcs.counter().totalAll)
@@ -302,11 +302,11 @@ class TestPpTokenCountStack(TestPpDefine.TestPpDefine):
         self._ptcs.push()
         self._ptcs.push()
         cntrAll = cntrUncond = 0
-        for t in self.stringToTokens('#define SPAM 42\n'):
+        for t in self.stringToTokens(u'#define SPAM 42\n'):
             self._ptcs.counter().inc(t, True)
             cntrAll += 1
             cntrUncond += 1
-        for t in self.stringToTokens('#define EGGS SPAM\n'):
+        for t in self.stringToTokens(u'#define EGGS SPAM\n'):
             self._ptcs.counter().inc(t, False)
             cntrAll += 1
         self.assertEqual(cntrAll,               self._ptcs.counter().totalAll)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import time
 import logging
@@ -56,7 +56,7 @@ class TestPpLexerCtor(TestPpLexer):
         """Default construction and finalisation."""
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  )
         myToks = [t for t in myLexer.ppTokens()]
         self.assertEqual([], myToks)
@@ -66,7 +66,7 @@ class TestPpLexerCtor(TestPpLexer):
         """Simple construction and finalisation."""
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=None,
                  diagnostic=None,
                  )
@@ -78,7 +78,7 @@ class TestPpLexerCtor(TestPpLexer):
         """Simple construction and finalisation with two calls to ppTokens()."""
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=None,
                  diagnostic=None,
                  )
@@ -96,9 +96,9 @@ class TestPpLexerLowLevel(TestPpLexer):
         """TestPpLexerLowLevel.test_retListReplacedTokens_00(): Token replacement of a list."""
         myLexer = PpLexer.PpLexer(
             'mt.h',
-            CppIncludeStringIO([], [], '', {}),
+            CppIncludeStringIO([], [], u'', {}),
             preIncFiles=[
-                io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                io.StringIO(u'#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
             ],
             diagnostic=None,
         )
@@ -182,9 +182,9 @@ class TestPpLexerLowLevel(TestPpLexer):
         """TestPpLexerLowLevel.test_retCountNonWsTokens_00(): Whitespace token count in a list."""
         myLexer = PpLexer.PpLexer(
             'mt.h',
-            CppIncludeStringIO([], [], '', {}),
+            CppIncludeStringIO([], [], u'', {}),
             preIncFiles=[
-                io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                io.StringIO(u'#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
                          ],
             diagnostic=None,
         )
@@ -240,12 +240,12 @@ class TestPpLexerPreDefine(TestPpLexer):
     def test_00_00(self):
         """TestPpLexerPreDefine.test_00_00(): Ctor and finalisation with simple, single, predefined macro."""
         myPiS = [
-                 """#define SPAM 1
+                 u"""#define SPAM 1
 """,
         ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -276,10 +276,10 @@ mt.h [0, 0]:  True "" \"\"""",
 
     def test_00_01(self):
         """TestPpLexerPreDefine.test_00_01(): Ctor and finalisation with empty predefine."""
-        myPiS = ['', ]
+        myPiS = [u'', ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -305,10 +305,10 @@ mt.h [0, 0]:  True "" \"\"""",
 
     def test_00_02(self):
         """TestPpLexerPreDefine.test_00_02(): Ctor and finalisation with predefine as single newline."""
-        myPiS = ['\n', ]
+        myPiS = [u'\n', ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -338,17 +338,17 @@ mt.h [0, 0]:  True "" \"\"""",
     def test_00_03(self):
         """TestPpLexerPreDefine.test_00_03(): Ctor and finalisation with multiple predefines as empty or newlines."""
         myPiS = [
-                 '\n',
-                 '',
-                 '\n\n\n\n',
-                 '',
-                 '\n',
-                 '',
-                 '\n\n',
+                 u'\n',
+                 u'',
+                 u'\n\n\n\n',
+                 u'',
+                 u'\n',
+                 u'',
+                 u'\n\n',
                  ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -387,13 +387,13 @@ mt.h [0, 0]:  True "" \"\"""",
     def test_00(self):
         """TestPpLexerPreDefine.test_00(): Ctor and finalisation with simple predefined macros."""
         myPiS = [
-                 """#define SPAM(x,y) x+y
+                 u"""#define SPAM(x,y) x+y
 #define EGGS SPAM
 """,
         ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -424,14 +424,14 @@ mt.h [0, 0]:  True "" \"\"""")
     def test_01(self):
         """TestPpLexerPreDefine.test_01(): Ctor and finalisation, whitespace handling."""
         myPiS = [
-                """#define SPAM(x,y) x+y
+                u"""#define SPAM(x,y) x+y
 #    define EGGS SPAM
 #    define       CHIPS      EGGS
 """,
         ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -468,13 +468,13 @@ mt.h [0, 0]:  True "" \"\"""")
         # NOTE: this does not raise an exception (neither does cpp.exe) because
         # 'define' is just seen as another identifier
         myPiS = [
-                """define SPAM 1
+                u"""define SPAM 1
  """,
         ]
         #print 'WTF', [StringIO.StringIO(x) for x in myPiS]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -509,11 +509,11 @@ mt.h [0, 0]:  True "" \"\"""")
     def test_03(self):
         """TestPpLexerPreDefine.test_03(): Ctor and finalisation, missing "define" in pre-define."""
         preDefMacros= [
-               '# SPAM 1\n',
+               u'# SPAM 1\n',
                ]
         myLexer = PpLexer.PpLexer(
             'mt.h',
-            CppIncludeStringIO([], [], '', {}),
+            CppIncludeStringIO([], [], u'', {}),
             preIncFiles=[
                           io.StringIO(x) for x in preDefMacros
                           ],
@@ -530,11 +530,11 @@ mt.h [0, 0]:  True "" \"\"""")
         # NOTE: this does not raise an exception (neither does cpp.exe) because
         # SPAM is just seen as another identifier
         preDefMacros=[
-           'SPAM 1\n',
+           u'SPAM 1\n',
            ]
         myLexer = PpLexer.PpLexer(
             'mt.h',
-            CppIncludeStringIO([], [], '', {}),
+            CppIncludeStringIO([], [], u'', {}),
             preIncFiles=[
                           io.StringIO(x) for x in preDefMacros
                           ],
@@ -554,11 +554,11 @@ mt.h [0, 0]:  True "" \"\"""")
     def test_05(self):
         """TestPpLexerPreDefine.test_05(): Ctor and finalisation, missing \\n in pre-define."""
         preDefMacros=[
-           '#define SPAM 1',
+           u'#define SPAM 1',
            ]
         myLexer = PpLexer.PpLexer(
             'mt.h',
-            CppIncludeStringIO([], [], '', {}),
+            CppIncludeStringIO([], [], u'', {}),
             preIncFiles=[
                           io.StringIO(x) for x in preDefMacros
                           ],
@@ -573,11 +573,11 @@ mt.h [0, 0]:  True "" \"\"""")
     def test_06(self):
         """TestPpLexerPreDefine.test_06(): Ctor and finalisation, empty string in pre-define."""
         preDefMacros=[
-               '\n',
+               u'\n',
                ]
         myLexer = PpLexer.PpLexer(
             'mt.h',
-            CppIncludeStringIO([], [], '', {}),
+            CppIncludeStringIO([], [], u'', {}),
             preIncFiles=[
                           io.StringIO(x) for x in preDefMacros
                           ],
@@ -594,12 +594,12 @@ mt.h [0, 0]:  True "" \"\"""")
         """TestPpLexerPreDefine.test_07(): Ctor and finalisation with multiple predefined macros in multiple predefined files."""
         # In this case we have two predefined files each with their own macro
         myPiS = [
-                 '#define SPAM(x,y) x+y\n',
-                 '#define EGGS SPAM\n'
+                 u'#define SPAM(x,y) x+y\n',
+                 u'#define EGGS SPAM\n'
         ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -635,12 +635,12 @@ mt.h [0, 0]:  True "" \"\"""")
         """TestPpLexerPreDefine.test_07(): Ctor and finalisation with multiple predefined macros in multiple predefined files (spurious newlines)."""
         # In this case we have two predefined files each with their own macro
         myPiS = [
-                 '\n\n\n#define SPAM(x,y) x+y\n',
-                 '\n#define EGGS SPAM\n'
+                 u'\n\n\n#define SPAM(x,y) x+y\n',
+                 u'\n#define EGGS SPAM\n'
         ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  preIncFiles=[
                               io.StringIO(x) for x in myPiS
                               ],
@@ -683,12 +683,12 @@ class TestPpLexerNull(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#
+                    u"""#
 """,
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """
 """)
         myLexer.finalise()
@@ -702,12 +702,12 @@ class TestPpLexerInvalidDirective(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#"hello"
+                    u"""#"hello"
 """,
                     {}),
                  )
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined:
             pass
@@ -722,12 +722,12 @@ class TestPpLexerInvalidDirective(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#hello
+                    u"""#hello
 """,
                     {}),
                  )
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined:
             pass
@@ -744,13 +744,13 @@ class TestPpLexerDefine(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define SPAM 5
+                    u"""#define SPAM 5
 SPAM
 """,
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """
 5
 """)
@@ -763,7 +763,7 @@ SPAM
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define SPAM 5
+                    u"""#define SPAM 5
 #undef SPAM
 #define SPAM 10
 SPAM
@@ -772,7 +772,7 @@ SPAM
                     ),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """
 
 
@@ -787,7 +787,7 @@ SPAM
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#DefINE SPAM 5
+                    u"""#DefINE SPAM 5
 SPAM
 """,
                     {},
@@ -795,7 +795,7 @@ SPAM
                  )
 
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('CppDiagnostic.ExceptionCppDiagnosticUndefined not raised.')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined as err:
             self.assertEqual(
@@ -812,7 +812,7 @@ class TestPpLexerDefineFromStandard(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define hash_hash # ## #
+                    u"""#define hash_hash # ## #
 #define mkstr(a) # a
 #define in_between(a) mkstr(a)
 #define join(c, d) in_between(c hash_hash d)
@@ -821,7 +821,7 @@ char p[] = join(x, y);
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """
 
 
@@ -837,7 +837,7 @@ char p[] =  "x ## y";
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define x 3
+                    u"""#define x 3
 #define f(a) f(x * (a))
 #undef x
 #define x 2
@@ -860,8 +860,8 @@ char c[2][6] = { str(hello), str() };
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\n\n\n\n\n\n\n\n\n\n\n
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\n\n\n\n\n\n\n\n\n\n\n
 f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
 f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
 int i[] = { 1, 23, 4, 5,  };
@@ -878,7 +878,7 @@ char c[2][6] = {  "hello",  "" };
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define str(s) # s
+                    u"""#define str(s) # s
 #define xstr(s) str(s)
 #define debug(s, t) printf("x" # s "= %d, x" # t "= %s", \\
 x ## s, x ## t)
@@ -892,8 +892,8 @@ debug(1, 2);
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\n\n\n\n\n
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\n\n\n\n\n
 printf("x"  "1" "= %d, x"  "2" "= %s", x1, x2);
 """
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
@@ -907,7 +907,7 @@ printf("x"  "1" "= %d, x"  "2" "= %s", x1, x2);
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define str(s) # s
+                    u"""#define str(s) # s
 #define xstr(s) str(s)
 #define debug(s, t) printf("x" # s "= %d, x" # t "= %s", \\
 x ## s, x ## t)
@@ -922,13 +922,13 @@ fputs(str(strncmp("abc\\0d", "abc", '\\4') // this goes away
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         # cpp:
         # fputs("strncmp(\"abc\\0d\", \"abc\", '\\4') == 0" ": @\\n", s);
-#        expectedResult = """\n\n\n\n\n\n\n\n
+#        expectedResult = u"""\n\n\n\n\n\n\n\n
 #fputs( "strncmp(\\"abc\\u0000d\\", \\"abc\\", '\\u0004') == 0"  ": @\n", s);
 #"""
-        expectedResult = """\n\n\n\n\n\n\n
+        expectedResult = u"""\n\n\n\n\n\n\n
 fputs( "strncmp(\\"abc\\0d\\", \\"abc\\", \'\\4\') == 0"  ": @\\n", s);
 """
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
@@ -942,7 +942,7 @@ fputs( "strncmp(\\"abc\\0d\\", \\"abc\\", \'\\4\') == 0"  ": @\\n", s);
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define str(s) # s
+                    u"""#define str(s) # s
 #define xstr(s) str(s)
 #define debug(s, t) printf("x" # s "= %d, x" # t "= %s", \\
 x ## s, x ## t)
@@ -954,14 +954,14 @@ x ## s, x ## t)
 #include xstr(INCFILE(2).h)
 """,
                     {
-                        "vers2.h" : """CONTENTS_OF_VERS2.H
+                        "vers2.h" : u"""CONTENTS_OF_VERS2.H
 """,
                     }
                     ),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\n\n\n\n\n
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\n\n\n\n\n
 CONTENTS_OF_VERS2.H
 
 """
@@ -976,7 +976,7 @@ CONTENTS_OF_VERS2.H
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define str(s) # s
+                    u"""#define str(s) # s
 #define xstr(s) str(s)
 #define debug(s, t) printf("x" # s "= %d, x" # t "= %s", \\
 x ## s, x ## t)
@@ -991,8 +991,8 @@ xglue(HIGH, LOW)
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\n\n\n\n\n
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\n\n\n\n\n
 "hello";
 "hello" ", world"
 """
@@ -1007,7 +1007,7 @@ xglue(HIGH, LOW)
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define str(s) # s
+                    u"""#define str(s) # s
 #define xstr(s) str(s)
 #define debug(s, t) printf("x" # s "= %d, x" # t "= %s", \\
 x ## s, x ## t)
@@ -1024,15 +1024,15 @@ glue(HIGH, LOW);
 xglue(HIGH, LOW)
 """,
                     {
-                        "vers2.h" : """CONTENTS_OF_VERS2.H
+                        "vers2.h" : u"""CONTENTS_OF_VERS2.H
 """,
                     }
                     ),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         #
-        expectedResult = """\n\n\n\n\n\n\n
+        expectedResult = u"""\n\n\n\n\n\n\n
 printf("x"  "1" "= %d, x"  "2" "= %s", x1, x2);
 fputs( "strncmp(\\"abc\\0d\\", \\"abc\\", \'\\4\') == 0"  ": @\\n", s);
 CONTENTS_OF_VERS2.H
@@ -1053,15 +1053,15 @@ CONTENTS_OF_VERS2.H
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define t(x,y,z) x ## y ## z
+                    u"""#define t(x,y,z) x ## y ## z
 int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
 t(10,,), t(,11,), t(,,12), t(,,) };
 """,
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""
 int j[] = { 123, 45, 67, 89,
 10, 11, 12,  };
 """
@@ -1076,7 +1076,7 @@ int j[] = { 123, 45, 67, 89,
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define OBJ_LIKE (1-1)
+                    u"""#define OBJ_LIKE (1-1)
 #define OBJ_LIKE /* white space */ (1-1) /* other */
 #define FUNC_LIKE(a) ( a )
 #define FUNC_LIKE( a )( /* note the white space */ \
@@ -1085,8 +1085,8 @@ a /* other stuff on this line */ )
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1098,7 +1098,7 @@ a /* other stuff on this line */ )
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define debug(...) fprintf(stderr, __VA_ARGS__)
+                    u"""#define debug(...) fprintf(stderr, __VA_ARGS__)
 #define showlist(...) puts(#__VA_ARGS__)
 #define report(test, ...) ((test)?puts(#test):\
 printf(__VA_ARGS__))
@@ -1109,8 +1109,8 @@ report(x>y, "x is %d but y is %d", x, y);
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\nfprintf(stderr, "Flag");
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\nfprintf(stderr, "Flag");
 fprintf(stderr, "X = %d\n",x);
 puts("The first,second,and third items.");
 ((x>y)?puts("x>y"):printf("x is %d but y is %d",x,y));\n"""
@@ -1125,12 +1125,12 @@ puts("The first,second,and third items.");
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define showlist(...) puts(#__VA_ARGS__)
+                    u"""#define showlist(...) puts(#__VA_ARGS__)
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1165,10 +1165,10 @@ class TestIncludeHandler_Simple(TestIncludeHandlerBase):
     def __init__(self, *args):
         self._pathsUsr = []
         self._pathsSys = []
-        self._initialTuContents = """#include "spam.h"
+        self._initialTuContents = u"""#include "spam.h"
 """
         self._incFileMap = {
-            os.path.join('src', 'spam.h') : """\"Content of:\" CP, spam.h
+            os.path.join('src', 'spam.h') : u"""\"Content of:\" CP, spam.h
 """,
         }
         super(TestIncludeHandler_Simple, self).__init__(*args)
@@ -1178,8 +1178,8 @@ class TestIncludeHandler_Simple(TestIncludeHandlerBase):
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
         #for aTok in myLexer.ppTokens():
         #    print 'HI', aTok, myLexer.fileStack
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """"Content of:" CP, spam.h\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u""""Content of:" CP, spam.h\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         self.assertEqual([], myLexer.fileStack)
@@ -1190,10 +1190,10 @@ class TestIncludeHandler_NotFound(TestIncludeHandlerBase):
     def __init__(self, *args):
         self._pathsUsr = []
         self._pathsSys = []
-        self._initialTuContents = """#include "eggs.h"
+        self._initialTuContents = u"""#include "eggs.h"
 """
         self._incFileMap = {
-            os.path.join('src', 'spam.h') : """\"Content of:\" CP, spam.h
+            os.path.join('src', 'spam.h') : u"""\"Content of:\" CP, spam.h
 """,
         }
         super(TestIncludeHandler_NotFound, self).__init__(*args)
@@ -1203,8 +1203,8 @@ class TestIncludeHandler_NotFound(TestIncludeHandlerBase):
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
         #for aTok in myLexer.ppTokens():
         #    print 'HI', aTok, myLexer.fileStack
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         self.assertEqual([], myLexer.fileStack)
@@ -1215,10 +1215,10 @@ class TestIncludeHandler_IllFormed(TestIncludeHandlerBase):
     def __init__(self, *args):
         self._pathsUsr = []
         self._pathsSys = []
-        self._initialTuContents = """#include SPAM.H
+        self._initialTuContents = u"""#include SPAM.H
 """
         self._incFileMap = {
-            os.path.join('src', 'spam.h') : """\"Content of:\" CP, spam.h
+            os.path.join('src', 'spam.h') : u"""\"Content of:\" CP, spam.h
 """,
         }
         super(TestIncludeHandler_IllFormed, self).__init__(*args)
@@ -1228,8 +1228,8 @@ class TestIncludeHandler_IllFormed(TestIncludeHandlerBase):
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
         #for aTok in myLexer.ppTokens():
         #    print 'HI', aTok, myLexer.fileStack
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         self.assertEqual([], myLexer.fileStack)
@@ -1247,19 +1247,19 @@ class TestIncludeHandler_UsrSys(TestIncludeHandlerBase):
                 os.path.join('sys'),
                 os.path.join('sys', 'inc'),
                 ]
-        self._initialTuContents = """#include "spam.h"
+        self._initialTuContents = u"""#include "spam.h"
 #include "inc/spam.h"
 #include <spam.h>
 #include <inc/spam.h>
 """
         self._incFileMap = {
-                os.path.join('usr', 'spam.h') : """Content of: user, spam.h
+                os.path.join('usr', 'spam.h') : u"""Content of: user, spam.h
 """,
-                os.path.join('usr', 'inc', 'spam.h') : """Content of: user, include, spam.h
+                os.path.join('usr', 'inc', 'spam.h') : u"""Content of: user, include, spam.h
 """,
-                os.path.join('sys', 'spam.h') : """Content of: system, spam.h
+                os.path.join('sys', 'spam.h') : u"""Content of: system, spam.h
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
 """,
             }
         super(TestIncludeHandler_UsrSys, self).__init__(*args)
@@ -1267,8 +1267,8 @@ class TestIncludeHandler_UsrSys(TestIncludeHandlerBase):
     def testSimpleInclude(self):
         """TestIncludeHandler_CpUsrSys.testSimpleInclude(): Tests multiple #include statements that resolve to usr/sys."""
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """Content of: user, spam.h
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""Content of: user, spam.h
 
 Content of: user, include, spam.h
 
@@ -1305,7 +1305,7 @@ class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
                 os.path.join('sys'),
                 os.path.join('sys', 'inc'),
                 ]
-        self._initialTuContents = """#if INC == 0
+        self._initialTuContents = u"""#if INC == 0
 #include "spam.h"
 #elif INC == 1
 #include "inc/spam.h"
@@ -1316,13 +1316,13 @@ class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
 #endif
 """
         self._incFileMap = {
-                os.path.join('usr', 'spam.h') : """Content of: user, spam.h
+                os.path.join('usr', 'spam.h') : u"""Content of: user, spam.h
 """,
-                os.path.join('usr', 'inc', 'spam.h') : """Content of: user, include, spam.h
+                os.path.join('usr', 'inc', 'spam.h') : u"""Content of: user, include, spam.h
 """,
-                os.path.join('sys', 'spam.h') : """Content of: system, spam.h
+                os.path.join('sys', 'spam.h') : u"""Content of: system, spam.h
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
 """,
             }
         super(TestIncludeHandler_UsrSys_Conditional, self).__init__(*args)
@@ -1331,7 +1331,7 @@ class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_00(): Tests conditional #include statements."""
         # Note: Using line splicing in the predef
         preDefMacros=[
-                      """#define INC \\
+                      u"""#define INC \\
 0
 """,
                       ]
@@ -1342,8 +1342,8 @@ class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
                                                io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nContent of: user, spam.h\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nContent of: user, spam.h\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1359,7 +1359,7 @@ src/spam.c [0, 0]:  True "" ""
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_01(): Tests conditional #include statements."""
         # Note using comments in the predef
         preDefMacros=[
-                      """#define INC /* comment */ 1
+                      u"""#define INC /* comment */ 1
 """,
                       ]
         myLexer = PpLexer.PpLexer(
@@ -1369,8 +1369,8 @@ src/spam.c [0, 0]:  True "" ""
                                                io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nContent of: user, include, spam.h\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nContent of: user, include, spam.h\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1386,7 +1386,7 @@ src/spam.c [0, 0]:  True "" ""
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_02(): Tests conditional #include statements."""
         # Note using comments and line splicing in the predef
         preDefMacros=[
-                      """#define /* C comment */ INC \\
+                      u"""#define /* C comment */ INC \\
  2
 // C++ comment
 """,
@@ -1398,8 +1398,8 @@ src/spam.c [0, 0]:  True "" ""
                                                io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n \n\nContent of: system, spam.h\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n \n\nContent of: system, spam.h\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1414,7 +1414,7 @@ src/spam.c [0, 0]:  True "" ""
     def testSimpleInclude_03(self):
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_03(): Tests conditional #include statements."""
         preDefMacros=[
-                      """#define INC 3
+                      u"""#define INC 3
 """,
                       ]
         myLexer = PpLexer.PpLexer(
@@ -1424,8 +1424,8 @@ src/spam.c [0, 0]:  True "" ""
                                                io.StringIO(x) for x in preDefMacros
                                                ],
                                   )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nContent of: system, include, spam.h\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nContent of: system, include, spam.h\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1448,19 +1448,19 @@ class TestIncludeHandler_PreInclude_Includes(TestIncludeHandlerBase):
                 os.path.join('sys'),
                 os.path.join('sys', 'inc'),
                 ]
-        self._initialTuContents = """#include "spam.h"
+        self._initialTuContents = u"""#include "spam.h"
 #include "inc/spam.h"
 #include <spam.h>
 #include <inc/spam.h>
 """
         self._incFileMap = {
-                os.path.join('usr', 'spam.h') : """Content of: user, spam.h
+                os.path.join('usr', 'spam.h') : u"""Content of: user, spam.h
 """,
-                os.path.join('usr', 'inc', 'spam.h') : """Content of: user, include, spam.h
+                os.path.join('usr', 'inc', 'spam.h') : u"""Content of: user, include, spam.h
 """,
-                os.path.join('sys', 'spam.h') : """Content of: system, spam.h
+                os.path.join('sys', 'spam.h') : u"""Content of: system, spam.h
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
 """,
             }
         super(TestIncludeHandler_PreInclude_Includes, self).__init__(*args)
@@ -1469,7 +1469,7 @@ class TestIncludeHandler_PreInclude_Includes(TestIncludeHandlerBase):
         """TestIncludeHandler_PreInclude_Includes.testPreInclude_00(): Failure StringIO tries to include file."""
         # TODO: Test with HcharString.
         preIncludeS=[
-                      """
+                      u"""
 #include "somefile.h"
 """,
                       ]
@@ -1481,12 +1481,12 @@ class TestIncludeHandler_PreInclude_Includes(TestIncludeHandlerBase):
                                                ],
                                   )
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('Failed to raise ExceptionPpLexerPreIncludeIncNoCp')
         except PpLexer.ExceptionPpLexerPreIncludeIncNoCp:
             pass
         return
-        expectedResult = """\n\nContent of: user, spam.h\n\n\n"""
+        expectedResult = u"""\n\nContent of: user, spam.h\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1514,13 +1514,13 @@ class TestIncludeHandlerMacroBase(TestIncludeHandlerBase):
         # Child classes inplement this
         #self._initialTuContents = ...
         self._incFileMap = {
-                os.path.join('usr', 'spam.h') : """Content of: user, spam.h
+                os.path.join('usr', 'spam.h') : u"""Content of: user, spam.h
 """,
-                os.path.join('usr', 'inc', 'spam.h') : """Content of: user, include, spam.h
+                os.path.join('usr', 'inc', 'spam.h') : u"""Content of: user, include, spam.h
 """,
-                os.path.join('sys', 'spam.h') : """Content of: system, spam.h
+                os.path.join('sys', 'spam.h') : u"""Content of: system, spam.h
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
 """,
             }
         super(TestIncludeHandlerMacroBase, self).__init__(*args)
@@ -1529,7 +1529,7 @@ class TestIncludeHandlerMacro_Simple(TestIncludeHandlerMacroBase):
     """Tests #include statements. Note: This is similar to stuff
     in TestIncludeHandler.py"""
     def __init__(self, *args):
-        self._initialTuContents = """#define FILE "spam.h"
+        self._initialTuContents = u"""#define FILE "spam.h"
 #include FILE
 """
         super(TestIncludeHandlerMacro_Simple, self).__init__(*args)
@@ -1537,8 +1537,8 @@ class TestIncludeHandlerMacro_Simple(TestIncludeHandlerMacroBase):
     def testSimpleInclude(self):
         """TestIncludeHandlerMacro_Simple.testSimpleInclude(): Tests multiple #include statements that resolve to usr/sys when expanded."""
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""
 Content of: user, spam.h
 
 """
@@ -1552,7 +1552,7 @@ class TestIncludeHandlerMacro_SimpleUndef(TestIncludeHandlerMacroBase):
     """Tests #include statements. Note: This is similar to stuff
     in TestIncludeHandler.py"""
     def __init__(self, *args):
-        self._initialTuContents = """#define FILE "spam.h"
+        self._initialTuContents = u"""#define FILE "spam.h"
 #include FILE
 #undef FILE
 #define FILE "inc/spam.h"
@@ -1563,8 +1563,8 @@ class TestIncludeHandlerMacro_SimpleUndef(TestIncludeHandlerMacroBase):
     def testSimpleInclude(self):
         """TestIncludeHandlerMacro_SimpleUndef.testSimpleInclude(): Tests multiple #include statements that resolve to usr/sys when expanded."""
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""
 Content of: user, spam.h
 
 
@@ -1582,7 +1582,7 @@ class TestIncludeHandler_UsrSys_MacroObject(TestIncludeHandlerMacroBase):
     """Tests #include statements using object-like macros. Note: This is similar to stuff
     in TestIncludeHandler.py"""
     def __init__(self, *args):
-        self._initialTuContents = """#define FILE "spam.h"
+        self._initialTuContents = u"""#define FILE "spam.h"
 #include FILE
 #undef FILE
 #define FILE "inc/spam.h"
@@ -1599,8 +1599,8 @@ class TestIncludeHandler_UsrSys_MacroObject(TestIncludeHandlerMacroBase):
     def testSimpleInclude(self):
         """TestIncludeHandler_UsrSys_MacroObject.testSimpleInclude(): Tests multiple #include statements with object-like macros."""
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""
 Content of: user, spam.h
 \n\n
 Content of: user, include, spam.h
@@ -1619,7 +1619,7 @@ class TestIncludeHandler_UsrSys_MacroFunction(TestIncludeHandlerMacroBase):
     """Tests #include statements. Note: This is similar to stuff
     in TestIncludeHandler.py"""
     def __init__(self, *args):
-        self._initialTuContents = """#define FILE(f) # f
+        self._initialTuContents = u"""#define FILE(f) # f
 #include FILE(spam.h)
 #include FILE(inc/spam.h)
 #undef FILE
@@ -1632,8 +1632,8 @@ class TestIncludeHandler_UsrSys_MacroFunction(TestIncludeHandlerMacroBase):
     def testSimpleInclude(self):
         """TestIncludeHandler_UsrSys_MacroFunction.testSimpleInclude(): Tests multiple #include statements with function-like macros."""
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""
 Content of: user, spam.h
 
 Content of: user, include, spam.h
@@ -1667,16 +1667,16 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
         #               |-> sys/inc/spam.h
         #                   |-> "Content of: system, include, spam.h"
         # Initial TU:
-        self._initialTuContents = """#include "spam.h"
+        self._initialTuContents = u"""#include "spam.h"
 """
         self._incFileMap = {
-                os.path.join('usr', 'spam.h') : """#include "inc/spam.h"
+                os.path.join('usr', 'spam.h') : u"""#include "inc/spam.h"
 """,
-                os.path.join('usr', 'inc', 'spam.h') : """#include <spam.h>
+                os.path.join('usr', 'inc', 'spam.h') : u"""#include <spam.h>
 """,
-                os.path.join('sys', 'spam.h') : """#include <inc/spam.h>
+                os.path.join('sys', 'spam.h') : u"""#include <inc/spam.h>
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
 """,
             }
         super(TestIncludeHandler_UsrSys_MultipleDepth, self).__init__(*args)
@@ -1685,8 +1685,8 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
         """TestIncludeHandler_UsrSys_MultipleDepth.testSimpleInclude(): Tests multiple depth #include statements that resolve to usr/sys."""
         #print
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """Content of: system, include, spam.h\n\n\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""Content of: system, include, spam.h\n\n\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1705,7 +1705,7 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
 
     def testSimpleIncludeTwice(self):
         """TestIncludeHandler_UsrSys_MultipleDepth.testSimpleInclude(): Tests multiple depth #include statements that resolve to usr/sys invoked twice."""
-        expectedResult = """Content of: system, include, spam.h\n\n\n\n\n"""
+        expectedResult = u"""Content of: system, include, spam.h\n\n\n\n\n"""
         expGraph = """src/spam.c [0, 0]:  True "" ""
 000001: #include usr/spam.h
   usr/spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
@@ -1716,7 +1716,7 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
       000001: #include sys/inc/spam.h
         sys/inc/spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1725,7 +1725,7 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
         # Do it again, this should raise
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('Failed to raise ExceptionPpLexerAlreadyGenerating')
         except PpLexer.ExceptionPpLexerAlreadyGenerating:
             pass
@@ -1735,11 +1735,11 @@ class TestIncludeHandler_HeaderGuard(TestIncludeHandlerBase):
     def __init__(self, *args):
         self._pathsUsr = []
         self._pathsSys = []
-        self._initialTuContents = """#include "spam.h"
+        self._initialTuContents = u"""#include "spam.h"
 #include "spam.h"
 """
         self._incFileMap = {
-            os.path.join('spam.h') : """#ifndef __SPAM_H__
+            os.path.join('spam.h') : u"""#ifndef __SPAM_H__
 #define __SPAM_H__
 ONCE
 #endif
@@ -1750,8 +1750,8 @@ ONCE
     def test_00(self):
         """TestIncludeHandler_HeaderGuard.test_00(): Tests a two #include statements with header guards."""
         myLexer = PpLexer.PpLexer('spam.c', self._incSim)
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nONCE\n\n\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nONCE\n\n\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         self.assertEqual([], myLexer.fileStack)
@@ -1770,28 +1770,28 @@ class TestPpLexerConditional_LowLevel(TestPpLexer):
     def test_00(self):
         """TestPpLexerConditional_LowLevel.test_00(): test _retDefinedSubstitution()"""
         preDefMacros=[
-            '#define SPAM\n',
-            '#define EGGS\n',
+            u'#define SPAM\n',
+            u'#define EGGS\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """\n""",
+                    u"""\n""",
                     {}
                     ),
                  preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  diagnostic=None,
                  )
         myTestS = (
-            ('defined SPAM\n', self.stringToTokens(' 1\n')),
-            ('defined EGGS\n', self.stringToTokens(' 1\n')),
-            ('defined NOWT\n', self.stringToTokens(' 0\n')),
-            ('!defined SPAM\n', self.stringToTokens(' 0\n')),
-            ('!defined EGGS\n', self.stringToTokens(' 0\n')),
-            ('!defined NOWT\n', self.stringToTokens(' 1\n')),
-            ('   ! defined SPAM\n',
+            (u'defined SPAM\n', self.stringToTokens(u' 1\n')),
+            (u'defined EGGS\n', self.stringToTokens(u' 1\n')),
+            (u'defined NOWT\n', self.stringToTokens(u' 0\n')),
+            (u'!defined SPAM\n', self.stringToTokens(u' 0\n')),
+            (u'!defined EGGS\n', self.stringToTokens(u' 0\n')),
+            (u'!defined NOWT\n', self.stringToTokens(u' 1\n')),
+            (u'   ! defined SPAM\n',
                 [
                     PpToken.PpToken('   ',         'whitespace'),
                     PpToken.PpToken(' ',           'whitespace'),
@@ -1800,10 +1800,10 @@ class TestPpLexerConditional_LowLevel(TestPpLexer):
                     PpToken.PpToken('\n',          'whitespace'),
                 ],
             ),
-            ('(defined(SPAM))\n', self.stringToTokens('((1))\n')),
-            ('!(defined(SPAM))\n', self.stringToTokens('((0))\n')),
-            ('(!defined(SPAM))\n', self.stringToTokens('((0))\n')),
-            ('(((defined(((SPAM))))))\n', self.stringToTokens('((((((1))))))\n')),
+            (u'(defined(SPAM))\n', self.stringToTokens(u'((1))\n')),
+            (u'!(defined(SPAM))\n', self.stringToTokens(u'((0))\n')),
+            (u'(!defined(SPAM))\n', self.stringToTokens(u'((0))\n')),
+            (u'(((defined(((SPAM))))))\n', self.stringToTokens(u'((((((1))))))\n')),
             )
         # Need to provoke ppTokens() to read the pre-includes and the ITU
         # that sets the macro envorinment up
@@ -1832,7 +1832,7 @@ class TestPpLexerConditional(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1
+                    u"""#if 1
 PASS
 #else
 FAIL
@@ -1841,8 +1841,8 @@ FAIL
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1859,7 +1859,7 @@ FAIL
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 0
+                    u"""#if 0
 PASS
 #else
 FAIL
@@ -1868,8 +1868,8 @@ FAIL
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\nFAIL\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nFAIL\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1881,13 +1881,13 @@ FAIL
 
     def test_02(self):
         """TestPpLexerConditional.test_02(): Simple #if SPAM when SPAM is defined as 1"""
-        preDefMacros = ['#define SPAM 1\n',]
+        preDefMacros = [u'#define SPAM 1\n',]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if SPAM
+                    u"""#if SPAM
 PASS
 #else
 FAIL
@@ -1897,21 +1897,21 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
 
     def test_03(self):
         """TestPpLexerConditional.test_03(): Simple #if SPAM when SPAM is defined as 0"""
-        preDefMacros = ['#define SPAM 0\n',]
+        preDefMacros = [u'#define SPAM 0\n',]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if SPAM
+                    u"""#if SPAM
 PASS
 #else
 FAIL
@@ -1921,8 +1921,8 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nFAIL\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nFAIL\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1930,15 +1930,15 @@ FAIL
     def test_04(self):
         """TestPpLexerConditional.test_04(): #if SPAM #elif EGGS when SPAM 0, EGGS 1"""
         preDefMacros = [
-            '#define SPAM 0\n',
-            '#define EGGS 1\n',
+            u'#define SPAM 0\n',
+            u'#define EGGS 1\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if SPAM
+                    u"""#if SPAM
 FAIL
 #elif EGGS
 PASS
@@ -1950,8 +1950,8 @@ FAIL
                     ),
                     preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1959,15 +1959,15 @@ FAIL
     def test_05(self):
         """TestPpLexerConditional.test_05(): #if SPAM < EGGS when SPAM 0, EGGS 1"""
         preDefMacros = [
-                    '#define SPAM 0\n',
-                    '#define EGGS 1\n',
+                    u'#define SPAM 0\n',
+                    u'#define EGGS 1\n',
                     ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if SPAM < EGGS
+                    u"""#if SPAM < EGGS
 PASS
 #else
 FAIL
@@ -1977,8 +1977,8 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -1986,15 +1986,15 @@ FAIL
     def test_06(self):
         """TestPpLexerConditional.test_06(): compare SPAM and EGGS when SPAM 1, EGGS 2"""
         preDefMacros = [
-            '#define SPAM 1\n',
-            '#define EGGS 2\n',
+            u'#define SPAM 1\n',
+            u'#define EGGS 2\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if SPAM < EGGS
+                    u"""#if SPAM < EGGS
 PASS
 #else
 FAIL
@@ -2034,8 +2034,8 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2043,14 +2043,14 @@ FAIL
     def test_07_00(self):
         """TestPpLexerConditional.test_07_00(): #ifdef and #else with SPAM defined."""
         preDefMacros = [
-            '#define SPAM\n',
+            u'#define SPAM\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#ifdef SPAM
+                    u"""#ifdef SPAM
 PASS
 #else
 FAIL
@@ -2066,8 +2066,8 @@ PASS
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2075,14 +2075,14 @@ PASS
     def test_07_01(self):
         """TestPpLexerConditional.test_07_01(): #ifdef and #ifndef with SPAM defined."""
         preDefMacros = [
-            '#define SPAM\n',
+            u'#define SPAM\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#ifdef SPAM
+                    u"""#ifdef SPAM
 PASS
 #else
 FAIL
@@ -2110,8 +2110,8 @@ PASS
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n\nPASS\n\n\nPASS\n\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2119,14 +2119,14 @@ PASS
     def test_08(self):
         """TestPpLexerConditional.test_08(): #if defined SPAM."""
         preDefMacros = [
-            '#define SPAM\n',
+            u'#define SPAM\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if defined SPAM
+                    u"""#if defined SPAM
 PASS
 #else
 FAIL
@@ -2136,8 +2136,8 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2145,14 +2145,14 @@ FAIL
     def test_09(self):
         """TestPpLexerConditional.test_09(): #if !defined SPAM."""
         preDefMacros = [
-            '#define SPAM\n',
+            u'#define SPAM\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if !defined SPAM
+                    u"""#if !defined SPAM
 FAIL
 #else
 PASS
@@ -2162,8 +2162,8 @@ PASS
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2171,14 +2171,14 @@ PASS
     def test_10(self):
         """TestPpLexerConditional.test_10(): #if !defined NOWT."""
         preDefMacros = [
-            '#define SPAM\n',
+            u'#define SPAM\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if !defined NOWT
+                    u"""#if !defined NOWT
 PASS
 #else
 FAIL
@@ -2188,8 +2188,8 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2197,14 +2197,14 @@ FAIL
     def test_11(self):
         """TestPpLexerConditional.test_11(): #if ((defined (SPAM)))."""
         preDefMacros = [
-            '#define SPAM\n',
+            u'#define SPAM\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if ((defined (SPAM)))
+                    u"""#if ((defined (SPAM)))
 PASS
 #else
 FAIL
@@ -2214,8 +2214,8 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2223,14 +2223,14 @@ FAIL
     def test_12(self):
         """TestPpLexerConditional.test_12(): #if ((defined (SPAM))) && (!defined NOWT)."""
         preDefMacros = [
-            '#define SPAM\n',
+            u'#define SPAM\n',
             ]
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if ((defined (SPAM))) && (!defined NOWT)
+                    u"""#if ((defined (SPAM))) && (!defined NOWT)
 PASS
 #else
 FAIL
@@ -2240,8 +2240,8 @@ FAIL
                     ),
                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
                 )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2253,7 +2253,7 @@ FAIL
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1
+                    u"""#if 1
 PASS
 #elif 0
 FAIL_0
@@ -2264,8 +2264,8 @@ FAIL_1
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2277,7 +2277,7 @@ FAIL_1
                  CppIncludeStringIO(
                     [],
                     [],
-                    """           #if 0
+                    u"""           #if 0
 FAIL
      #else
 PASS
@@ -2287,8 +2287,8 @@ PASS
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """           \nPASS\n    \n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""           \nPASS\n    \n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2300,7 +2300,7 @@ PASS
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define ONE 1
+                    u"""#define ONE 1
            #if (ONE + 1) < 2
 FAIL
    #elif (ONE + 1) > 2
@@ -2312,8 +2312,8 @@ PASS
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\nPASS\n    \n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\nPASS\n    \n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2328,14 +2328,14 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if defned NOT_DEFINED
+                    u"""#if defned NOT_DEFINED
 #endif
 """,
                     {}
                     ),
                  )
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined:
             self.assertTrue(True)
@@ -2348,15 +2348,15 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if defned NOT_DEFINED
+                    u"""#if defned NOT_DEFINED
 #endif
 """,
                     {}
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -2369,14 +2369,14 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1 2
+                    u"""#if 1 2
 #endif
 """,
                     {}
                     ),
                  )
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined:
             self.assertTrue(True)
@@ -2389,20 +2389,20 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1 2
+                    u"""#if 1 2
 #endif
 """,
                     {}
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
 #        try:
-#            result = ''.join([t.t for t in myLexer.ppTokens()])
+#            result = u''.join([t.t for t in myLexer.ppTokens()])
 #            self.fail('CppCond.ExceptionCppCond not raised')
 #        except CppCond.ExceptionCppCond:
 #            self.assertTrue(True)
@@ -2415,7 +2415,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 0
+                    u"""#if 0
 #elif defned NOT_DEFINED
 #endif
 """,
@@ -2423,7 +2423,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  )
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined:
             self.assertTrue(True)
@@ -2435,7 +2435,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 0
+                    u"""#if 0
 #elif defned NOT_DEFINED
 #endif
 """,
@@ -2443,7 +2443,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         #print
         #print 'Result:'
         #print result
@@ -2456,7 +2456,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 0
+                    u"""#if 0
 #elif 1 2
 #endif
 """,
@@ -2464,7 +2464,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  )
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined:
             self.assertTrue(True)
@@ -2477,7 +2477,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 0
+                    u"""#if 0
 #elif 1 2
 #endif
 """,
@@ -2485,7 +2485,7 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEquals('\n', result)
                         
 class TestPpLexerConditionalWithState(TestPpLexer):
@@ -2497,7 +2497,7 @@ class TestPpLexerConditionalWithState(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1
+                    u"""#if 1
 PASS
 #elif 0
 FAIL_0
@@ -2584,7 +2584,7 @@ FAIL_1
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1
+                    u"""#if 1
 #define ONE_
 #elif 0
 #define ELIF_0
@@ -2648,7 +2648,7 @@ FAIL_1
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define ONE 1
+                    u"""#define ONE 1
 #if 0
 #undef ONE
 #else
@@ -2704,7 +2704,7 @@ PASS
     def test_10(self):
         """TestPpLexerConditionalWithState.test_10(): Simple #if/#else/#endif state is correct."""
         # Simulating this, should process to: TRUE TRUE TRUE
-        src = """TRUE
+        src = u"""TRUE
 #if 1
 TRUE
 #else
@@ -2783,7 +2783,7 @@ class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
                 os.path.join('sys'),
                 os.path.join('sys', 'inc'),
                 ]
-        self._initialTuContents = """#if INC == 0
+        self._initialTuContents = u"""#if INC == 0
 // Normally not examined
 "Including spam.h when INC == 0"
 #include "spam.h"
@@ -2798,13 +2798,13 @@ class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
 #endif
 """
         self._incFileMap = {
-                os.path.join('usr', 'spam.h') : """Content of: user, spam.h
+                os.path.join('usr', 'spam.h') : u"""Content of: user, spam.h
 """,
-                os.path.join('usr', 'inc', 'spam.h') : """Content of: user, include, spam.h
+                os.path.join('usr', 'inc', 'spam.h') : u"""Content of: user, include, spam.h
 """,
-                os.path.join('sys', 'spam.h') : """Content of: sys, include, spam.h
+                os.path.join('sys', 'spam.h') : u"""Content of: sys, include, spam.h
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
 """,
             }
         super(TestPpLexerConditionalAllIncludes, self).__init__(*args)
@@ -2813,7 +2813,7 @@ class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
         """TestPpLexerConditionalAllIncludes.test_00(): Tests conditional #include statements; INC = 0, condLevel=0."""
         # Note: Using line splicing in the predef
         preDefMacros=[
-                      """#define INC 0
+                      u"""#define INC 0
 """,
                       ]
         myLexer = PpLexer.PpLexer(
@@ -2869,7 +2869,7 @@ src/spam.c [12, 1]:  True "" ""
         """TestPpLexerConditionalAllIncludes.test_01(): Tests conditional #include statements; INC = 1, condLevel=0."""
         # Note: Using line splicing in the predef
         preDefMacros=[
-                      """#define INC 1
+                      u"""#define INC 1
 """,
                       ]
         myLexer = PpLexer.PpLexer(
@@ -2930,12 +2930,12 @@ class TestPpLexerError(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#error some kind of error message
+                    u"""#error some kind of error message
 """,
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """
 """)
         myLexer.finalise()
@@ -2943,40 +2943,40 @@ class TestPpLexerError(TestPpLexer):
     def test_01(self):
         """TestPpLexerError - error message with object-like macro substitution."""
         preDefMacros = [
-                        '#define MY_ERROR SOME MACRO STUFF\n',
+                        u'#define MY_ERROR SOME MACRO STUFF\n',
                         ]
         myLexer = PpLexer.PpLexer(
                  'define.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#error some kind of MY_ERROR message
+                    u"""#error some kind of MY_ERROR message
 """,
                     {}),
                  preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, '\n\n')
         myLexer.finalise()
 
     def test_02(self):
         """TestPpLexerError - error message with function-like macro substitution."""
         preDefMacros = [
-                        '#define MY_ERROR(x) # x\n',
+                        u'#define MY_ERROR(x) # x\n',
                         ]
         myLexer = PpLexer.PpLexer(
                  'define.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#error some kind of MY_ERROR(wtf) message
+                    u"""#error some kind of MY_ERROR(wtf) message
 """,
                     {}),
                  preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, '\n\n')
         myLexer.finalise()
 
@@ -2998,12 +2998,12 @@ class TestPpLexerWarning(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#warning some kind of warning message
+                    u"""#warning some kind of warning message
 """,
                     {}),
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """
 """)
         myLexer.finalise()
@@ -3011,40 +3011,40 @@ class TestPpLexerWarning(TestPpLexer):
     def test_01(self):
         """TestPpLexerWarning - error message with object-like macro substitution."""
         preDefMacros = [
-                        '#define MY_WARN SOME MACRO STUFF\n',
+                        u'#define MY_WARN SOME MACRO STUFF\n',
                         ]
         myLexer = PpLexer.PpLexer(
                  'define.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#warning some kind of MY_WARN message
+                    u"""#warning some kind of MY_WARN message
 """,
                     {}),
                  preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, '\n\n')
         myLexer.finalise()
 
     def test_02(self):
         """TestPpLexerWarning - error message with function-like macro substitution."""
         preDefMacros = [
-                        '#define MY_WARN(x) # x\n',
+                        u'#define MY_WARN(x) # x\n',
                         ]
         myLexer = PpLexer.PpLexer(
                  'define.h',
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#warning some kind of MY_WARN(wtf) message
+                    u"""#warning some kind of MY_WARN(wtf) message
 """,
                     {}),
                  preIncFiles=[io.StringIO(x) for x in preDefMacros],
                  )
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, '\n\n')
         myLexer.finalise()
 
@@ -3057,13 +3057,13 @@ class TestPpLexerBadMacroDirective(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """# "hello"
+                    u"""# "hello"
 """,
                     {}),
                  )
 
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except CppDiagnostic.ExceptionCppDiagnosticUndefined:
             self.assertTrue(True)
@@ -3075,12 +3075,12 @@ class TestPpLexerBadMacroDirective(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """# "hello"
+                    u"""# "hello"
 """,
                     {}),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing())
 
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """# "hello"
 """)
         myLexer.finalise()
@@ -3094,14 +3094,14 @@ class C99Rationale(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define BLAH 1
+                    u"""#define BLAH 1
 /* here a comment */ #if BLAH
 PASS
 #endif
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n  \nPASS\n\n""")
         myLexer.finalise()
 
@@ -3112,7 +3112,7 @@ PASS
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define BLAH 1
+                    u"""#define BLAH 1
 #/* there a comment */ if BLAH
 PASS
 #endif
@@ -3120,7 +3120,7 @@ PASS
  where a comment */ BLAH""",
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n""")
         myLexer.finalise()
 
@@ -3131,7 +3131,7 @@ PASS
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define BLAH 1
+                    u"""#define BLAH 1
 # if /* every-
  where a comment */ BLAH
 PASS
@@ -3139,7 +3139,7 @@ PASS
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n""")
         myLexer.finalise()
 
@@ -3150,7 +3150,7 @@ PASS
                  CppIncludeStringIO(
                     [],
                     [],
-                    """# ifndef xxx
+                    u"""# ifndef xxx
 # define xxx "abc"
 PASS
 # elif xxx > 0
@@ -3159,7 +3159,7 @@ FAIL
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n""")
         myLexer.finalise()
 
@@ -3170,12 +3170,12 @@ FAIL
                  CppIncludeStringIO(
                     [],
                     [],
-                    """# define NUFS 10
+                    u"""# define NUFS 10
 # define NUFS 12
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
 #        print myLexer.macroEnvironment
         self.assertTrue(myLexer.macroEnvironment.hasMacro('NUFS'))
         self.assertEqual('#define NUFS 10 /* spam.h#1 Ref: 0 True */', str(myLexer.macroEnvironment.macro('NUFS')))
@@ -3187,12 +3187,12 @@ FAIL
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define NULL_DEV /* the first time */ 0
+                    u"""#define NULL_DEV /* the first time */ 0
 #define NULL_DEV /* the second time */ 0
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\n""")
         myLexer.finalise()
 
@@ -3203,7 +3203,7 @@ FAIL
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define TENTH 0.1
+                    u"""#define TENTH 0.1
 #define F f
 #define D // expands into no preprocessing tokens
 #define LD L
@@ -3215,8 +3215,8 @@ long double ld = xglue(TENTH, LD);
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        myExpResult = """\n\n\n\n\n\nfloat f = 0.1f ;
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        myExpResult = u"""\n\n\n\n\n\nfloat f = 0.1f ;
 double d = 0.1 ;
 long double ld = 0.1L;
 """
@@ -3231,7 +3231,7 @@ long double ld = 0.1L;
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#ifdef DEBUG
+                    u"""#ifdef DEBUG
 #define dfprintf(stream, ...) \
 fprintf(stream, "DEBUG: " __VA_ARGS__)
 #else
@@ -3242,8 +3242,8 @@ dprintf("X = %d\n", x);
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        myExpResult = """\n\n\n
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        myExpResult = u"""\n\n\n
 ((stderr, "X = %d\n",x, 0));
 """
         self._printDiff(self.stringToTokens(result), self.stringToTokens(myExpResult))
@@ -3257,7 +3257,7 @@ dprintf("X = %d\n", x);
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define DEBUG
+                    u"""#define DEBUG
 #ifdef DEBUG
 #define dfprintf(stream, ...) \
 fprintf(stream, "DEBUG: " __VA_ARGS__)
@@ -3269,8 +3269,8 @@ dprintf("X = %d\n", x);
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        myExpResult = """\n\n\n\n
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        myExpResult = u"""\n\n\n\n
 fprintf(stderr, "DEBUG: " "X = %d\n",x);
 """
         self._printDiff(self.stringToTokens(result), self.stringToTokens(myExpResult))
@@ -3284,13 +3284,13 @@ fprintf(stderr, "DEBUG: " "X = %d\n",x);
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define a(n) aaa ## n
+                    u"""#define a(n) aaa ## n
 #define b 2
 a(b)
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\naaab\n""")
         myLexer.finalise()
 
@@ -3301,13 +3301,13 @@ a(b)
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define f(a) a*g
+                    u"""#define f(a) a*g
 #define g f
 f(2)(9)
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\n2*f(9)\n""")
         myLexer.finalise()
 
@@ -3318,13 +3318,13 @@ f(2)(9)
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define f(a) a*g
+                    u"""#define f(a) a*g
 #define g(a) f(a)
 f(2)(9)
 """,
                     {}),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\n2*f(9)\n""")
         myLexer.finalise()
 
@@ -3337,7 +3337,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define INC 1
+                    u"""#define INC 1
 #if INC == 1
 #include "spam.h"
 #else
@@ -3345,12 +3345,12 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
 #endif
 """,
                     {
-                     'spam.h'   : """PASS\n""",
-                     'eggs.h'   : """FAIL\n""",
+                     'spam.h'   : u"""PASS\n""",
+                     'eggs.h'   : u"""FAIL\n""",
                      }
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n\n""")
         myLexer.finalise()
         #print 'FileIncludeGraph:'
@@ -3367,7 +3367,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define INC 1
+                    u"""#define INC 1
 #if defined INC
 #include "spam.h"
 #else
@@ -3375,12 +3375,12 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
 #endif
 """,
                     {
-                     'spam.h'   : """PASS\n""",
-                     'eggs.h'   : """FAIL\n""",
+                     'spam.h'   : u"""PASS\n""",
+                     'eggs.h'   : u"""FAIL\n""",
                      }
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n\n""")
         myLexer.finalise()
         #print 'FileIncludeGraph:'
@@ -3397,7 +3397,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define INC 1
+                    u"""#define INC 1
 #if !defined UNDEF
 #include "spam.h"
 #else
@@ -3405,12 +3405,12 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
 #endif
 """,
                     {
-                     'spam.h'   : """PASS\n""",
-                     'eggs.h'   : """FAIL\n""",
+                     'spam.h'   : u"""PASS\n""",
+                     'eggs.h'   : u"""FAIL\n""",
                      }
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n\n""")
         myLexer.finalise()
         #print 'FileIncludeGraph:'
@@ -3427,7 +3427,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define INC 1
+                    u"""#define INC 1
 #if UNDEF == 0
 #include "spam.h"
 #else
@@ -3435,12 +3435,12 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
 #endif
 """,
                     {
-                     'spam.h'   : """PASS\n""",
-                     'eggs.h'   : """FAIL\n""",
+                     'spam.h'   : u"""PASS\n""",
+                     'eggs.h'   : u"""FAIL\n""",
                      }
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n\n""")
         myLexer.finalise()
         #print 'FileIncludeGraph:'
@@ -3457,7 +3457,7 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define INC 1
+                    u"""#define INC 1
 #if ! UNDEF
 #include "spam.h"
 #else
@@ -3465,12 +3465,12 @@ class TestPpLexerFileIncludeGraph(TestPpLexer):
 #endif
 """,
                     {
-                     'spam.h'   : """PASS\n""",
-                     'eggs.h'   : """FAIL\n""",
+                     'spam.h'   : u"""PASS\n""",
+                     'eggs.h'   : u"""FAIL\n""",
                      }
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         self.assertEqual(result, """\n\nPASS\n\n\n""")
         myLexer.finalise()
         #print 'FileIncludeGraph:'
@@ -3489,7 +3489,7 @@ class TestPpLexerFileIncludeGraphReplacement(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define SPAM Original in ITU.h
+                    u"""#define SPAM Original in ITU.h
 #if defined SPAM
 PASS
 #else
@@ -3540,13 +3540,13 @@ print SPAM
 EOF
 """,
                     {
-                     'spam_undef.h'   : """SOF: spam_undef.h
+                     'spam_undef.h'   : u"""SOF: spam_undef.h
 #if defined SPAM
 #undef SPAM
 #endif
 EOF: spam_undef.h
 """,
-                     'spam_redef.h'   : """SOF: spam_redef.h
+                     'spam_redef.h'   : u"""SOF: spam_redef.h
 #if defined SPAM
 #undef SPAM
 #endif
@@ -3558,11 +3558,11 @@ EOF: spam_redef.h
                     autoDefineDateTime=False,
                  )
         #print
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         #print 'Result:'
         #print result
         #print '---'
-        expResult = """
+        expResult = u"""
 
 PASS
 
@@ -3648,7 +3648,7 @@ class TestPpLexerConditionalSpurious(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1
+                    u"""#if 1
 PASS
 #else spurious #else
 FAIL
@@ -3657,8 +3657,8 @@ FAIL
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -3670,7 +3670,7 @@ FAIL
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1
+                    u"""#if 1
 PASS
 #else     
 FAIL
@@ -3679,8 +3679,8 @@ FAIL
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -3692,7 +3692,7 @@ FAIL
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#if 1
+                    u"""#if 1
 PASS
 #else     and something
 FAIL
@@ -3701,8 +3701,8 @@ FAIL
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\nPASS\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nPASS\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -3717,10 +3717,10 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#include "recusive.h"
+                    u"""#include "recusive.h"
 """,
                     {
-                     'recusive.h'   : """#include "recusive.h"\n""",
+                     'recusive.h'   : u"""#include "recusive.h"\n""",
                      }
                     ),
                  )
@@ -3740,11 +3740,11 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#include "a.h"
+                    u"""#include "a.h"
 """,
                     {
-                     'a.h'   : """#include "b.h"\n""",
-                     'b.h'   : """#include "a.h"\n""",
+                     'a.h'   : u"""#include "b.h"\n""",
+                     'b.h'   : u"""#include "a.h"\n""",
                      }
                     ),
                  )
@@ -3763,12 +3763,12 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#include "a.h"
+                    u"""#include "a.h"
 """,
                     {
-                     'a.h'   : """#include "b.h"\n""",
-                     'b.h'   : """#include "c.h"\n""",
-                     'c.h'   : """#include "a.h"\n""",
+                     'a.h'   : u"""#include "b.h"\n""",
+                     'b.h'   : u"""#include "c.h"\n""",
+                     'c.h'   : u"""#include "a.h"\n""",
                      }
                     ),
                  )
@@ -3787,13 +3787,13 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#include "a.h"
+                    u"""#include "a.h"
 """,
                     {
-                     'a.h'   : """#include "b.h"\n""",
-                     'b.h'   : """#include "c.h"\n""",
-                     'c.h'   : """#include "d.h"\n""",
-                     'd.h'   : """#include "a.h"\n""",
+                     'a.h'   : u"""#include "b.h"\n""",
+                     'b.h'   : u"""#include "c.h"\n""",
+                     'c.h'   : u"""#include "d.h"\n""",
+                     'd.h'   : u"""#include "a.h"\n""",
                      }
                     ),
                  )
@@ -3812,14 +3812,14 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#include "a.h"
+                    u"""#include "a.h"
 """,
                     {
-                     'a.h'   : """#include "b.h"\n""",
-                     'b.h'   : """#include "c.h"\n""",
-                     'c.h'   : """#include "d.h"\n""",
-                     'd.h'   : """#include "e.h"\n""",
-                     'e.h'   : """#include "a.h"\n""",
+                     'a.h'   : u"""#include "b.h"\n""",
+                     'b.h'   : u"""#include "c.h"\n""",
+                     'c.h'   : u"""#include "d.h"\n""",
+                     'd.h'   : u"""#include "e.h"\n""",
+                     'e.h'   : u"""#include "a.h"\n""",
                      }
                     ),
                  )
@@ -3838,15 +3838,15 @@ class TestPpLexerFileIncludeRecursion(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#include "a.h"
+                    u"""#include "a.h"
 """,
                     {
-                     'a.h'   : """#include "b.h"\n""",
-                     'b.h'   : """#include "c.h"\n""",
-                     'c.h'   : """#include "d.h"\n""",
-                     'd.h'   : """#include "e.h"\n""",
-                     'e.h'   : """#include "f.h"\n""",
-                     'f.h'   : """#include "a.h"\n""",
+                     'a.h'   : u"""#include "b.h"\n""",
+                     'b.h'   : u"""#include "c.h"\n""",
+                     'c.h'   : u"""#include "d.h"\n""",
+                     'd.h'   : u"""#include "e.h"\n""",
+                     'e.h'   : u"""#include "f.h"\n""",
+                     'f.h'   : u"""#include "a.h"\n""",
                      }
                     ),
                  )
@@ -3876,16 +3876,16 @@ class TestPpLexerRaiseOnError(TestIncludeHandlerBase):
         #               |-> sys/inc/spam.h
         #                   |-> "Content of: system, include, spam.h"
         # Initial TU:
-        self._initialTuContents = """#include "spam.h"
+        self._initialTuContents = u"""#include "spam.h"
 """
         self._incFileMap = {
-                os.path.join('usr', 'spam.h') : """#include "inc/spam.h"
+                os.path.join('usr', 'spam.h') : u"""#include "inc/spam.h"
 """,
-                os.path.join('usr', 'inc', 'spam.h') : """#include <spam.h>
+                os.path.join('usr', 'inc', 'spam.h') : u"""#include <spam.h>
 """,
-                os.path.join('sys', 'spam.h') : """#include <inc/spam.h>
+                os.path.join('sys', 'spam.h') : u"""#include <inc/spam.h>
 """,
-                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
 #error Error in system, include, spam.h
 """,
             }
@@ -3900,7 +3900,7 @@ class TestPpLexerRaiseOnError(TestIncludeHandlerBase):
                                   )
         # This should fail!
         try:
-            result = ''.join([t.t for t in myLexer.ppTokens()])
+            result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('CppDiagnostic.ExceptionCppDiagnostic not raised')
         except CppDiagnostic.ExceptionCppDiagnostic:
             myLexer._includeHandler.clearHistory()
@@ -3926,7 +3926,7 @@ class PpLexerReadOnly(TestPpLexer):
     """Tests access of read only attributes while lexing."""
     def test_00(self):
         """PpLexerReadOnly - fileName."""
-        myStr = """int main()
+        myStr = u"""int main()
 {
     printf("Hello WOrld.");
     return 0;
@@ -3940,7 +3940,7 @@ class PpLexerReadOnly(TestPpLexer):
 
     def test_01(self):
         """PpLexerReadOnly - lineNUm, colNum."""
-        myStr = """int main()
+        myStr = u"""int main()
 {
     printf("Hello WOrld.");
     return 0;
@@ -3966,7 +3966,7 @@ class PpLexerPragma(TestPpLexer):
     """Tests #pragma processing while lexing."""
     def test_none_00(self):
         """PpLexerPragma - no pragma handler"""
-        myStr = """#pragma STDC FP_CONTRACT ON
+        myStr = u"""#pragma STDC FP_CONTRACT ON
 """
         myLexer = PpLexer.PpLexer(
                     'hello.c',
@@ -3989,7 +3989,7 @@ class PpLexerPragma(TestPpLexer):
 
     def test_STDC_00(self):
         """PpLexerPragma - STDC."""
-        myStr = """#pragma STDC FP_CONTRACT ON
+        myStr = u"""#pragma STDC FP_CONTRACT ON
 """
         myLexer = PpLexer.PpLexer(
                     'hello.c',
@@ -4017,7 +4017,7 @@ class PpLexerPragma(TestPpLexer):
 
     def test_pragma_raises_00(self):
         """PpLexerPragma - raising ExceptionPragmaHandler."""
-        myStr = """#pragma STDC FP_CONTRACT ON
+        myStr = u"""#pragma STDC FP_CONTRACT ON
 """
         class PragmaHandlerRaises(PragmaHandler.PragmaHandlerABC):
             @property
@@ -4046,7 +4046,7 @@ class MinimalWhitespace(TestPpLexer):
                  CppIncludeStringIO(
                     [],
                     [],
-                    """float f       = xglue(TENTH, F) ;
+                    u"""float f       = xglue(TENTH, F) ;
 
 double d = xglue(TENTH,     D  ) ;
 
@@ -4056,7 +4056,7 @@ long double ld = xglue(TENTH,
 """,
                     {}),
                  preIncFiles=[
-                              io.StringIO("""#define TENTH 0.1
+                              io.StringIO(u"""#define TENTH 0.1
 
 #define F f
 a
@@ -4071,8 +4071,8 @@ b
 """),
                               ],
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        myExpResult = """\n
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        myExpResult = u"""\n
 a
 \n\n\n
 b
@@ -4094,7 +4094,7 @@ long double ld = 0.1L   ;
                  CppIncludeStringIO(
                     [],
                     [],
-                    """float f       = xglue(TENTH, F) ;
+                    u"""float f       = xglue(TENTH, F) ;
 
 double d = xglue(TENTH,     D  ) ;
 
@@ -4104,7 +4104,7 @@ long double ld = xglue(TENTH,
 """,
                     {}),
                  preIncFiles=[
-                              io.StringIO("""#define TENTH 0.1
+                              io.StringIO(u"""#define TENTH 0.1
 
 #define F f
 a
@@ -4119,8 +4119,8 @@ b
 """),
                               ],
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens(minWs=True)])
-        myExpResult = """
+        result = u''.join([t.t for t in myLexer.ppTokens(minWs=True)])
+        myExpResult = u"""
 a
 b
 float f = 0.1f ;
@@ -4136,7 +4136,7 @@ class Unmaintainable(TestPpLexer):
     """From: http://mindprod.com/jgloss/unmaincamouflage.html"""
     def test_00(self):
         """Unmaintainable.test_00() from http://mindprod.com/jgloss/unmaincamouflage.html"""
-        myStr = """#ifndef DONE
+        myStr = u"""#ifndef DONE
 #ifdef TWICE
 // put stuff here to declare 3rd time around
 void g(char* str);
@@ -4162,8 +4162,8 @@ void g(std::string str);
         #for t in myLexer.ppTokens():
         #    print i, t
         #    i += 1
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\n \nvoid g(std::string str);\n\n\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\n \nvoid g(std::string str);\n\n\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4191,13 +4191,13 @@ class TestPpLexerErrorInCondStack(TestPpLexer):
                 ],
             [
                 ],
-            """#ifndef UNDEFINED
+            u"""#ifndef UNDEFINED
 #include "user.h"
 #endif
 """,
             # Map of paths to contents
             {
-                os.path.join('usr', 'user.h') : """#ifndef __USER_H__
+                os.path.join('usr', 'user.h') : u"""#ifndef __USER_H__
 #define __USER_H__
 USER
 #endif // __USER_H__""",
@@ -4208,8 +4208,8 @@ USER
                  myIncHandler,
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing(),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\nUSER\n\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\nUSER\n\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         #print
@@ -4226,24 +4226,24 @@ USER
                 os.path.join('sys'),
                 os.path.join('sys', 'inc'),
                 ],
-            """#ifndef UNDEFINED
+            u"""#ifndef UNDEFINED
 #include "user.h"
 #endif // UNDEFINED""",
             # Map of paths to contents
             {
-                os.path.join('usr', 'user.h') : """#ifndef __USER_H__
+                os.path.join('usr', 'user.h') : u"""#ifndef __USER_H__
 #define __USER_H__
 #include "user_inc.h"
 #endif // __USER_H__""",
-                os.path.join('usr', 'inc', 'user_inc.h') : """#ifndef __USER_INC_H__
+                os.path.join('usr', 'inc', 'user_inc.h') : u"""#ifndef __USER_INC_H__
 #define __USER_INC_H__
 #include <system.h>
 #endif // __USER_INC_H__""",
-                os.path.join('sys', 'system.h') : """#ifndef __SYSTEM_H__
+                os.path.join('sys', 'system.h') : u"""#ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 #include <system_inc.h>
 #endif // __SYSTEM_H__""",
-                os.path.join('sys', 'inc', 'system_inc.h') : """#ifndef __SYSTEM_INC_H__
+                os.path.join('sys', 'inc', 'system_inc.h') : u"""#ifndef __SYSTEM_INC_H__
 #define __SYSTEM_INC_H__
 SYSTEM_INC
 #endif // __SYSTEM_INC_H__""",
@@ -4258,8 +4258,8 @@ SYSTEM_INC
         #for t in myLexer.ppTokens():
         #    print i, t
         #    i += 1
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """\n\n\n\n\n\n\n\n\nSYSTEM_INC\n\n\n\n\n\n\n\n\n\n"""
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\n\n\n\n\n\n\n\n\nSYSTEM_INC\n\n\n\n\n\n\n\n\n\n"""
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         #print
@@ -4273,14 +4273,14 @@ class TestDefineEMPTY(TestPpLexer):
                  CppIncludeStringIO(
                     ['.'],
                     ['.'],
-                    """#define EMPTY
+                    u"""#define EMPTY
 EMPTY #include <file.h>
 """,
-                    {'file.h' : 'Content of file.h\n'}
+                    {'file.h' : u'Content of file.h\n'}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n #include <file.h>'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n #include <file.h>'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4292,14 +4292,14 @@ EMPTY #include <file.h>
                  CppIncludeStringIO(
                     ['.'],
                     ['.'],
-                    """#define EMPTY
+                    u"""#define EMPTY
 EMPTY#include <file.h>
 """,
-                    {'file.h' : 'Content of file.h\n'}
+                    {'file.h' : u'Content of file.h\n'}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n #include <file.h>'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n #include <file.h>'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4311,14 +4311,14 @@ EMPTY#include <file.h>
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define EMPTY
+                    u"""#define EMPTY
 EMPTY #include "file.h"
 """,
-                    {'file.h' : 'Content of file.h\n'}
+                    {'file.h' : u'Content of file.h\n'}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4330,17 +4330,17 @@ EMPTY #include "file.h"
                  CppIncludeStringIO(
                     [],
                     [],
-                    """#define EMPTY
+                    u"""#define EMPTY
 EMPTY #define NOT_EMPTY
 """,
                     {}
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         #print myLexer.macroEnvironment
         #print myLexer.macroEnvironment.macros()
         self.assertEqual('EMPTY', myLexer.macroEnvironment.macros())
-        expectedResult = '\n'
+        expectedResult = u'\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4354,7 +4354,7 @@ class TestPpLexerMacroLineContinuation(TestPpLexer):
     def test_00(self):
         """TestPpLexerMacroLineContinuation.test_00() """
         # NOTE: Use of \\ or raw string
-        myStr = """#define __SWITCH_TO_ARM        asm("push {r0} ");\\
+        myStr = u"""#define __SWITCH_TO_ARM        asm("push {r0} ");\\
                             asm("add r0, pc, #4 ");\\
                             asm("bx r0 ");\\
                             asm("nop ");\\
@@ -4363,15 +4363,15 @@ class TestPpLexerMacroLineContinuation(TestPpLexer):
                             asm("ldr r0, [sp], #4 ")
 #define __END_ARM            asm(".code 16 ")
 """
-        myStr = r"""#define __SWITCH_TO_ARM        asm("push {r0} ");\
-                            asm("add r0, pc, #4 ");\
-                            asm("bx r0 ");\
-                            asm("nop ");\
-                            asm(".align 2 ");\
-                            asm(".code 32 ");\
-                            asm("ldr r0, [sp], #4 ")
-#define __END_ARM            asm(".code 16 ")
-"""
+#         myStr = r"""#define __SWITCH_TO_ARM        asm("push {r0} ");\
+#                             asm("add r0, pc, #4 ");\
+#                             asm("bx r0 ");\
+#                             asm("nop ");\
+#                             asm(".align 2 ");\
+#                             asm(".code 32 ");\
+#                             asm("ldr r0, [sp], #4 ")
+# #define __END_ARM            asm(".code 16 ")
+# """
         
         #print
         #print myStr
@@ -4383,8 +4383,8 @@ class TestPpLexerMacroLineContinuation(TestPpLexer):
         #for t in myLexer.ppTokens():
         #    print i, t
         #    i += 1
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n\n'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         #print
@@ -4408,21 +4408,21 @@ class TestPpLexerHeaderName(TestPpLexer):
     """Tests #include statememts when a \\ is used."""
     def test_00(self):
         """TestPpLexerHeaderName.test_00(): #include "codeanalysis/sourceannotations.h"."""
-        myStr = """This include:
+        myStr = u"""This include:
 #include "codeanalysis/sourceannotations.h"
 ok.
 """
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO([], [], myStr, {
-                        os.path.join('codeanalysis', 'sourceannotations.h') : 'WORKS\n',
+                        os.path.join('codeanalysis', 'sourceannotations.h') : u'WORKS\n',
                                                     }),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         #print
         #print result
         #print self.pprintTokensAsCtors(result)
-        expStr = """This include:
+        expStr = u"""This include:
 WORKS
 
 ok.
@@ -4432,21 +4432,21 @@ ok.
 
     def test_01(self):
         """TestPpLexerHeaderName.test_01(): #include "codeanalysis\\sourceannotations.h"."""
-        myStr = """This include:
+        myStr = u"""This include:
 #include "codeanalysis\\sourceannotations.h"
 Fails because of backslash.
 """
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO([], [], myStr, {
-                        os.path.join('codeanalysis', 'sourceannotations.h') : 'FAILS\n',
+                        os.path.join('codeanalysis', 'sourceannotations.h') : u'FAILS\n',
                                                     }),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         #print
         #print result
         #print self.pprintTokensAsCtors(result)
-        expStr = """This include:
+        expStr = u"""This include:
 
 Fails because of backslash.
 """
@@ -4455,21 +4455,21 @@ Fails because of backslash.
 
     def test_02(self):
         """TestPpLexerHeaderName.test_02(): #include "codeanalysis\\sourceannotations.h" fails as bad backslash."""
-        myStr = """This include:
+        myStr = u"""This include:
 #include "codeanalysis\\sourceannotations.h"
 not OK.
 """
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO([], [], myStr, {
-                        os.path.join('codeanalysis', 'sourceannotations.h') : 'WORKS as fixBsInHdr=True\n',
+                        os.path.join('codeanalysis', 'sourceannotations.h') : u'WORKS as fixBsInHdr=True\n',
                                                     }),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
+        result = u''.join([t.t for t in myLexer.ppTokens()])
 #        print
 #        print result
 #        print self.pprintTokensAsCtors(result)
-        expStr = """This include:
+        expStr = u"""This include:
 
 not OK.
 """
@@ -4480,11 +4480,11 @@ not OK.
         """TestPpLexerHeaderName.test_10(): _retHeaderName(' "codeanalysis/sourceannotations.h" ') etc."""
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  )
         # Qstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO(' "codeanalysis/sourceannotations.h" \n')
+            theFileObj=io.StringIO(u' "codeanalysis/sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         #print
@@ -4492,13 +4492,13 @@ not OK.
         self.assertEqual(myResult, PpToken.PpToken('"codeanalysis/sourceannotations.h"', 'header-name'),)
         # Hstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO(' <codeanalysis/sourceannotations.h> \n')
+            theFileObj=io.StringIO(u' <codeanalysis/sourceannotations.h> \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         self.assertEqual(myResult, PpToken.PpToken('<codeanalysis/sourceannotations.h>', 'header-name'),)
         # Qstring with \\
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO(' "codeanalysis\\sourceannotations.h" \n')
+            theFileObj=io.StringIO(u' "codeanalysis\\sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         #print
@@ -4509,23 +4509,23 @@ not OK.
         """TestPpLexerHeaderName.test_11(): _retHeaderName(' "codeanalysis/sourceannotations.h" ') etc. works correctly."""
         myLexer = PpLexer.PpLexer(
                  'mt.h',
-                 CppIncludeStringIO([], [], '', {}),
+                 CppIncludeStringIO([], [], u'', {}),
                  )
         # Qstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO(' "codeanalysis/sourceannotations.h" \n')
+            theFileObj=io.StringIO(u' "codeanalysis/sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         self.assertEqual(myResult, PpToken.PpToken('"codeanalysis/sourceannotations.h"', 'header-name'),)
         # Hstring
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO(' <codeanalysis/sourceannotations.h> \n')
+            theFileObj=io.StringIO(u' <codeanalysis/sourceannotations.h> \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         self.assertEqual(myResult, PpToken.PpToken('<codeanalysis/sourceannotations.h>', 'header-name'),)
         # Qstring with \\
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO(' "codeanalysis\\sourceannotations.h" \n')
+            theFileObj=io.StringIO(u' "codeanalysis\\sourceannotations.h" \n')
             )
         myResult = myLexer._retHeaderName(myCpp.next())
         #print
@@ -4534,7 +4534,7 @@ not OK.
 
 class TestLinux(TestPpLexer):
     """Various tests thrown up when processing the Linux Kernel."""
-    FILE_STRINGIFY_H = """#ifndef __LINUX_STRINGIFY_H
+    FILE_STRINGIFY_H = u"""#ifndef __LINUX_STRINGIFY_H
 #define __LINUX_STRINGIFY_H
 
 /* Indirect stringification.  Doing two levels allows the parameter to be a
@@ -4550,7 +4550,7 @@ class TestLinux(TestPpLexer):
     # This is from include/trace/define_trace.h
     # It has been edited so that the #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
     # line is tested
-    FILE_DEFINE_TRACE_H = """#include <linux/stringify.h>
+    FILE_DEFINE_TRACE_H = u"""#include <linux/stringify.h>
 
 #undef TRACE_INCLUDE
 #undef __TRACE_INCLUDE
@@ -4573,7 +4573,7 @@ class TestLinux(TestPpLexer):
 """
 
     # Based (loosly) on asm-generic/div64.h
-    FILE_DEFINE_DIV64_H = """
+    FILE_DEFINE_DIV64_H = u"""
 #if BITS_PER_LONG == 64
 
 # define do_div(n,base) ({                    \
@@ -4622,8 +4622,8 @@ class TestLinux(TestPpLexer):
                     {},
                     ),
                  )
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = '\n\n \n\n\n\n\n'
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u'\n\n \n\n\n\n\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4642,14 +4642,14 @@ class TestLinux(TestPpLexer):
                     self.FILE_DEFINE_TRACE_H,
                     {
                         os.path.join('.', 'linux', 'stringify.h') : self.FILE_STRINGIFY_H,
-                        os.path.join('.', 'trace', 'events', 'TRACE_SYSTEM.h') : """Contents
+                        os.path.join('.', 'trace', 'events', 'TRACE_SYSTEM.h') : u"""Contents
 of
 system.
 """,
                     }
                     ),
                  )
-#        result = ''.join([t.t for t in myLexer.ppTokens()])
+#        result = u''.join([t.t for t in myLexer.ppTokens()])
         result = [t for t in myLexer.ppTokens()]
         resultStr = self.tokensToString(result)
         expTokS = [
@@ -4701,7 +4701,7 @@ system.
                     {},
                 ),
                 preIncFiles=[
-                    io.StringIO("#define BITS_PER_LONG 32\n")
+                    io.StringIO(u"#define BITS_PER_LONG 32\n")
                 ],
             )
         resTokS = [t for t in myLexer.ppTokens()]
@@ -4733,7 +4733,7 @@ system.
                     {},
                 ),
                 preIncFiles=[
-                    io.StringIO("\n")
+                    io.StringIO(u"\n")
                 ],
             )
         resTokS = [t for t in myLexer.ppTokens()]
@@ -4760,7 +4760,7 @@ class TestLinuxMacroInclude(TestPpLexer):
                  CppIncludeStringIO(
                     ['.'],
                     ['.'],
-                    """
+                    u"""
 /*
 This contains a #include statment that uses a macro.
 That macro is undefined.
@@ -4791,7 +4791,7 @@ That macro is undefined.
                  CppIncludeStringIO(
                     ['.'],
                     ['.'],
-                    """
+                    u"""
 /*
 This conditionally contains a #include statment that uses a macro.
 That macro is undefined.
@@ -4824,7 +4824,7 @@ That macro is undefined.
                  CppIncludeStringIO(
                     ['.'],
                     ['.'],
-                    """
+                    u"""
 /*
 This conditionally contains a #include statment that uses a macro.
 That macro is undefined.
@@ -4852,7 +4852,7 @@ That macro is undefined.
 
     def test_03(self):
         """TestLinuxMacroInclude.test_03(): #including using a defined macro conditional on itself, there should be no warning."""
-        myStr = """
+        myStr = u"""
 /*
 This conditionally contains a #include statment that uses a macro.
 That include macro is defined.
@@ -4870,7 +4870,7 @@ That include macro is defined.
                     ['.'],
                     myStr,
                     {
-                        os.path.join('.', 'spam.h') : """Contents
+                        os.path.join('.', 'spam.h') : u"""Contents
 of
 spam.h
 """,
@@ -4904,7 +4904,7 @@ spam.h
 
     def test_04(self):
         """TestLinuxMacroInclude.test_04() - Macro replacement does not happen in h-str or q-str."""
-        myStr = """#define current get_current()
+        myStr = u"""#define current get_current()
 #include <asm/current.h>
 """
         myLexer = PpLexer.PpLexer(
@@ -4914,7 +4914,7 @@ spam.h
                     ['.'],
                     myStr,
                     {
-                        os.path.join('.', 'asm', 'current.h') : """Contents of current header
+                        os.path.join('.', 'asm', 'current.h') : u"""Contents of current header
 """,
                     }
                     ),
@@ -4948,7 +4948,7 @@ spam.h
 
 class TestLinuxMacroInTypesH(TestPpLexer):
     """Linux Kernel include/types.h warning that should not be there."""
-    ITU_CONTENT = """#ifndef _LINUX_TYPES_H
+    ITU_CONTENT = u"""#ifndef _LINUX_TYPES_H
 #define _LINUX_TYPES_H
 #ifndef __ASSEMBLY__
 #ifdef    __KERNEL__
@@ -4973,7 +4973,7 @@ class TestLinuxMacroInTypesH(TestPpLexer):
                     {},
                     ),
                 preIncFiles=[
-                    io.StringIO("\n")
+                    io.StringIO(u"\n")
                 ],
                 diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
             )
@@ -5010,7 +5010,7 @@ class TestLinuxMacroInTypesH(TestPpLexer):
                     {},
                     ),
                 preIncFiles=[
-                    io.StringIO("#define __EXPORTED_HEADERS__\n")
+                    io.StringIO(u"#define __EXPORTED_HEADERS__\n")
                 ],
                 diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
 #                diagnostic=None
@@ -5041,7 +5041,7 @@ class TestLinuxOther(TestPpLexer):
 class TestLinuxEvalProblem(TestPpLexer):
     def test_00(self):
         """Testing error in processing linux-3.13/arch/x86/include/asm/irq_vectors.h"""
-        content = """#define SPURIOUS_APIC_VECTOR            0xff
+        content = u"""#define SPURIOUS_APIC_VECTOR            0xff
 /*
  * Sanity check
  */
@@ -5061,19 +5061,19 @@ class TestLinuxEvalProblem(TestPpLexer):
         tokS = []
         for t in myLexer.ppTokens():
             tokS.append(t)
-        result = ''.join([t.t for t in tokS])
+        result = u''.join([t.t for t in tokS])
 #        self.pprintTokensAsCtors(tokS)
 #        print('WTF')
 #        print(result)
 #        print('WTF')
-        expectedResult = '\n \n\n'
+        expectedResult = u'\n \n\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
         
     def test_01(self):
         """Testing error in processing linux-3.13/include/linux/mm_types.h"""
-        content = """#define BITS_PER_LONG 32
+        content = u"""#define BITS_PER_LONG 32
 #define __AC(X,Y)    (X##Y)
 #define _AC(X,Y) __AC(X,Y)
 #define PAGE_SIZE (_AC(1,UL) << PAGE_SHIFT)
@@ -5101,7 +5101,7 @@ struct page_frag {
         tokS = []
         for t in myLexer.ppTokens():
             tokS.append(t)
-        result = ''.join([t.t for t in tokS])
+        result = u''.join([t.t for t in tokS])
 #        print('Result:\n', result)
 #        self.pprintTokensAsCtors(tokS)
         expTokS = [
@@ -5146,7 +5146,7 @@ struct page_frag {
 class Special(TestPpLexer):
     def test_00(self):
         """Sepecial.test_00()."""
-        myStr = """    Debug::print(Debug::Classes,0,"  New class `%s' (sec=0x%08x)! #tArgLists=%d\\n",
+        myStr = u"""    Debug::print(Debug::Classes,0,"  New class `%s' (sec=0x%08x)! #tArgLists=%d\\n",
         fullName.data(),root->section,root->tArgLists ? (int)root->tArgLists->count() : -1);
 """
         myLexer = PpLexer.PpLexer(
@@ -5157,8 +5157,8 @@ class Special(TestPpLexer):
         #for t in myLexer.ppTokens():
         #    print i, t
         #    i += 1
-        result = ''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = """    Debug::print(Debug::Classes,0,"  New class `%s' (sec=0x%08x)! #tArgLists=%d\\n",
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""    Debug::print(Debug::Classes,0,"  New class `%s' (sec=0x%08x)! #tArgLists=%d\\n",
         fullName.data(),root->section,root->tArgLists ? (int)root->tArgLists->count() : -1);
 """
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))

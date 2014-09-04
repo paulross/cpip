@@ -1,0 +1,1044 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/rcupdate.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/rcupdate.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> * Read-Copy Update mechanism for mutual exclusion</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> *</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> * This program is free software; you can redistribute it and/or modify</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * it under the terms of the GNU General Public License as published by</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> * the Free Software Foundation; either version 2 of the License, or</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * (at your option) any later version.</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> *</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> * This program is distributed in the hope that it will be useful,</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> * GNU General Public License for more details.</span>
+<a name="13" /><span class="True">      13:</span> <span class="k"> *</span>
+<a name="14" /><span class="True">      14:</span> <span class="k"> * You should have received a copy of the GNU General Public License</span>
+<a name="15" /><span class="True">      15:</span> <span class="k"> * along with this program; if not, write to the Free Software</span>
+<a name="16" /><span class="True">      16:</span> <span class="k"> * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</span>
+<a name="17" /><span class="True">      17:</span> <span class="k"> *</span>
+<a name="18" /><span class="True">      18:</span> <span class="k"> * Copyright IBM Corporation, 2001</span>
+<a name="19" /><span class="True">      19:</span> <span class="k"> *</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * Author: Dipankar Sarma &lt;dipankar@in.ibm.com&gt;</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> *</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> * Based on the original work by Paul McKenney &lt;paulmck@us.ibm.com&gt;</span>
+<a name="23" /><span class="True">      23:</span> <span class="k"> * and inputs from Rusty Russell, Andrea Arcangeli and Andi Kleen.</span>
+<a name="24" /><span class="True">      24:</span> <span class="k"> * Papers:</span>
+<a name="25" /><span class="True">      25:</span> <span class="k"> * http://www.rdrop.com/users/paulmck/paper/rclockpdcsproof.pdf</span>
+<a name="26" /><span class="True">      26:</span> <span class="k"> * http://lse.sourceforge.net/locking/rclock_OLS.2001.05.01c.sc.pdf (OLS2001)</span>
+<a name="27" /><span class="True">      27:</span> <span class="k"> *</span>
+<a name="28" /><span class="True">      28:</span> <span class="k"> * For detailed explanation of Read-Copy Update mechanism see -</span>
+<a name="29" /><span class="True">      29:</span> <span class="k"> *        http://lse.sourceforge.net/locking/rcupdate.html</span>
+<a name="30" /><span class="True">      30:</span> <span class="k"> *</span>
+<a name="31" /><span class="True">      31:</span> <span class="k"> */</span>
+<a name="32" /><span class="True">      32:</span> 
+<a name="33" /><span class="Maybe">      33:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X19MSU5VWF9SQ1VQREFURV9IXzA_"><span class="b">__LINUX_RCUPDATE_H</span></a>
+<a name="34" /><span class="Maybe">      34:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19MSU5VWF9SQ1VQREFURV9IXzA_"><span class="b">__LINUX_RCUPDATE_H</span></a>
+<a name="35" /><span class="Maybe">      35:</span> 
+<a name="36" /><span class="Maybe">      36:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="37" /><span class="Maybe">      37:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">cache</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="38" /><span class="Maybe">      38:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">spinlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="39" /><span class="Maybe">      39:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">threads</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="40" /><span class="Maybe">      40:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">cpumask</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="41" /><span class="Maybe">      41:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">seqlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="42" /><span class="Maybe">      42:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">lockdep</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="43" /><span class="Maybe">      43:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">completion</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="44" /><span class="Maybe">      44:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">debugobjects</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="45" /><span class="Maybe">      45:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">bug</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="46" /><span class="Maybe">      46:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">compiler</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="47" /><span class="Maybe">      47:</span> 
+<a name="48" /><span class="False">      48:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_RCU_TORTURE_TEST</span>
+<a name="49" /><span class="False">      49:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">rcutorture_runnable</span><span class="f">;</span> <span class="k">/* for sysctl */</span>
+<a name="50" /><span class="Maybe">      50:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #ifdef CONFIG_RCU_TORTURE_TEST */</span>
+<a name="51" /><span class="Maybe">      51:</span> 
+<a name="52" /><span class="Maybe">      52:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1RSRUVfUkNVXzA_"><span class="b">CONFIG_TREE_RCU</span></a><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_TREE_PREEMPT_RCU</span><span class="f">)</span>
+<a name="53" /><span class="Maybe">      53:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcutorture_record_test_transition</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="54" /><span class="Maybe">      54:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcutorture_record_progress</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">vernum</span><span class="f">)</span><span class="f">;</span>
+<a name="55" /><span class="Maybe">      55:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">do_trace_rcu_torture_read</span><span class="f">(</span><span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">rcutorturename</span><span class="f">,</span>
+<a name="56" /><span class="Maybe">      56:</span>                       <span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">rhp</span><span class="f">,</span>
+<a name="57" /><span class="Maybe">      57:</span>                       <span class="m">unsigned</span> <span class="m">long</span> <span class="b">secs</span><span class="f">,</span>
+<a name="58" /><span class="Maybe">      58:</span>                       <span class="m">unsigned</span> <span class="m">long</span> <span class="b">c_old</span><span class="f">,</span>
+<a name="59" /><span class="Maybe">      59:</span>                       <span class="m">unsigned</span> <span class="m">long</span> <span class="b">c</span><span class="f">)</span><span class="f">;</span>
+<a name="60" /><span class="False">      60:</span> <span class="f">#</span><span class="n">else</span>
+<a name="61" /><span class="False">      61:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcutorture_record_test_transition</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="62" /><span class="False">      62:</span> <span class="f">{</span>
+<a name="63" /><span class="False">      63:</span> <span class="f">}</span>
+<a name="64" /><span class="False">      64:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcutorture_record_progress</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">vernum</span><span class="f">)</span>
+<a name="65" /><span class="False">      65:</span> <span class="f">{</span>
+<a name="66" /><span class="False">      66:</span> <span class="f">}</span>
+<a name="67" /><span class="False">      67:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_RCU_TRACE</span>
+<a name="68" /><span class="False">      68:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">do_trace_rcu_torture_read</span><span class="f">(</span><span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">rcutorturename</span><span class="f">,</span>
+<a name="69" /><span class="False">      69:</span>                       <span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">rhp</span><span class="f">,</span>
+<a name="70" /><span class="False">      70:</span>                       <span class="m">unsigned</span> <span class="m">long</span> <span class="b">secs</span><span class="f">,</span>
+<a name="71" /><span class="False">      71:</span>                       <span class="m">unsigned</span> <span class="m">long</span> <span class="b">c_old</span><span class="f">,</span>
+<a name="72" /><span class="False">      72:</span>                       <span class="m">unsigned</span> <span class="m">long</span> <span class="b">c</span><span class="f">)</span><span class="f">;</span>
+<a name="73" /><span class="False">      73:</span> <span class="f">#</span><span class="n">else</span>
+<a name="74" /><span class="False">      74:</span> <span class="f">#</span><span class="n">define</span> <span class="b">do_trace_rcu_torture_read</span><span class="f">(</span><span class="b">rcutorturename</span><span class="f">,</span> <span class="b">rhp</span><span class="f">,</span> <span class="b">secs</span><span class="f">,</span> <span class="b">c_old</span><span class="f">,</span> <span class="b">c</span><span class="f">)</span> \
+<a name="75" /><span class="False">      75:</span>     <span class="m">do</span> <span class="f">{</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="76" /><span class="False">      76:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="77" /><span class="Maybe">      77:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="78" /><span class="Maybe">      78:</span> 
+<a name="79" /><span class="Maybe">      79:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_VUlOVF9DTVBfR0VfMA__"><span class="b">UINT_CMP_GE</span></a><span class="f">(</span><span class="b">a</span><span class="f">,</span> <span class="b">b</span><span class="f">)</span>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_VUlOVF9NQVhfMA__"><span class="b">UINT_MAX</span></a> <span class="f">/</span> <span class="c">2</span> <span class="f">&gt;=</span> <span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">-</span> <span class="f">(</span><span class="b">b</span><span class="f">)</span><span class="f">)</span>
+<a name="80" /><span class="Maybe">      80:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_VUlOVF9DTVBfTFRfMA__"><span class="b">UINT_CMP_LT</span></a><span class="f">(</span><span class="b">a</span><span class="f">,</span> <span class="b">b</span><span class="f">)</span>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_VUlOVF9NQVhfMA__"><span class="b">UINT_MAX</span></a> <span class="f">/</span> <span class="c">2</span> <span class="f">&lt;</span> <span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">-</span> <span class="f">(</span><span class="b">b</span><span class="f">)</span><span class="f">)</span>
+<a name="81" /><span class="Maybe">      81:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_VUxPTkdfQ01QX0dFXzA_"><span class="b">ULONG_CMP_GE</span></a><span class="f">(</span><span class="b">a</span><span class="f">,</span> <span class="b">b</span><span class="f">)</span>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_VUxPTkdfTUFYXzA_"><span class="b">ULONG_MAX</span></a> <span class="f">/</span> <span class="c">2</span> <span class="f">&gt;=</span> <span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">-</span> <span class="f">(</span><span class="b">b</span><span class="f">)</span><span class="f">)</span>
+<a name="82" /><span class="Maybe">      82:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_VUxPTkdfQ01QX0xUXzA_"><span class="b">ULONG_CMP_LT</span></a><span class="f">(</span><span class="b">a</span><span class="f">,</span> <span class="b">b</span><span class="f">)</span>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_VUxPTkdfTUFYXzA_"><span class="b">ULONG_MAX</span></a> <span class="f">/</span> <span class="c">2</span> <span class="f">&lt;</span> <span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">-</span> <span class="f">(</span><span class="b">b</span><span class="f">)</span><span class="f">)</span>
+<a name="83" /><span class="Maybe">      83:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_dWxvbmcybG9uZ18w"><span class="b">ulong2long</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span>        <span class="f">(</span><span class="f">*</span><span class="f">(</span><span class="m">long</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">a</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="84" /><span class="Maybe">      84:</span> 
+<a name="85" /><span class="Maybe">      85:</span> <span class="k">/* Exported common interfaces */</span>
+<a name="86" /><span class="Maybe">      86:</span> 
+<a name="87" /><span class="False">      87:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_PREEMPT_RCU</span>
+<a name="88" /><span class="False">      88:</span> 
+<a name="89" /><span class="False">      89:</span> <span class="k">/**</span>
+<a name="90" /><span class="False">      90:</span> <span class="k"> * call_rcu() - Queue an RCU callback for invocation after a grace period.</span>
+<a name="91" /><span class="False">      91:</span> <span class="k"> * @head: structure to be used for queueing the RCU updates.</span>
+<a name="92" /><span class="False">      92:</span> <span class="k"> * @func: actual callback function to be invoked after the grace period</span>
+<a name="93" /><span class="False">      93:</span> <span class="k"> *</span>
+<a name="94" /><span class="False">      94:</span> <span class="k"> * The callback function will be invoked some time after a full grace</span>
+<a name="95" /><span class="False">      95:</span> <span class="k"> * period elapses, in other words after all pre-existing RCU read-side</span>
+<a name="96" /><span class="False">      96:</span> <span class="k"> * critical sections have completed.  However, the callback function</span>
+<a name="97" /><span class="False">      97:</span> <span class="k"> * might well execute concurrently with RCU read-side critical sections</span>
+<a name="98" /><span class="False">      98:</span> <span class="k"> * that started after call_rcu() was invoked.  RCU read-side critical</span>
+<a name="99" /><span class="False">      99:</span> <span class="k"> * sections are delimited by rcu_read_lock() and rcu_read_unlock(),</span>
+<a name="100" /><span class="False">     100:</span> <span class="k"> * and may be nested.</span>
+<a name="101" /><span class="False">     101:</span> <span class="k"> *</span>
+<a name="102" /><span class="False">     102:</span> <span class="k"> * Note that all CPUs must agree that the grace period extended beyond</span>
+<a name="103" /><span class="False">     103:</span> <span class="k"> * all pre-existing RCU read-side critical section.  On systems with more</span>
+<a name="104" /><span class="False">     104:</span> <span class="k"> * than one CPU, this means that when &quot;func()&quot; is invoked, each CPU is</span>
+<a name="105" /><span class="False">     105:</span> <span class="k"> * guaranteed to have executed a full memory barrier since the end of its</span>
+<a name="106" /><span class="False">     106:</span> <span class="k"> * last RCU read-side critical section whose beginning preceded the call</span>
+<a name="107" /><span class="False">     107:</span> <span class="k"> * to call_rcu().  It also means that each CPU executing an RCU read-side</span>
+<a name="108" /><span class="False">     108:</span> <span class="k"> * critical section that continues beyond the start of &quot;func()&quot; must have</span>
+<a name="109" /><span class="False">     109:</span> <span class="k"> * executed a memory barrier after the call_rcu() but before the beginning</span>
+<a name="110" /><span class="False">     110:</span> <span class="k"> * of that RCU read-side critical section.  Note that these guarantees</span>
+<a name="111" /><span class="False">     111:</span> <span class="k"> * include CPUs that are offline, idle, or executing in user mode, as</span>
+<a name="112" /><span class="False">     112:</span> <span class="k"> * well as CPUs that are executing in the kernel.</span>
+<a name="113" /><span class="False">     113:</span> <span class="k"> *</span>
+<a name="114" /><span class="False">     114:</span> <span class="k"> * Furthermore, if CPU A invoked call_rcu() and CPU B invoked the</span>
+<a name="115" /><span class="False">     115:</span> <span class="k"> * resulting RCU callback function &quot;func()&quot;, then both CPU A and CPU B are</span>
+<a name="116" /><span class="False">     116:</span> <span class="k"> * guaranteed to execute a full memory barrier during the time interval</span>
+<a name="117" /><span class="False">     117:</span> <span class="k"> * between the call to call_rcu() and the invocation of &quot;func()&quot; -- even</span>
+<a name="118" /><span class="False">     118:</span> <span class="k"> * if CPU A and CPU B are the same CPU (but again only if the system has</span>
+<a name="119" /><span class="False">     119:</span> <span class="k"> * more than one CPU).</span>
+<a name="120" /><span class="False">     120:</span> <span class="k"> */</span>
+<a name="121" /><span class="False">     121:</span> <span class="m">extern</span> <span class="m">void</span> <a href="cpu.c_macros_noref.html#_Y2FsbF9yY3VfMA__"><span class="b">call_rcu</span></a><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">,</span>
+<a name="122" /><span class="False">     122:</span>                   <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">func</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="123" /><span class="False">     123:</span> 
+<a name="124" /><span class="Maybe">     124:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_PREEMPT_RCU */</span>
+<a name="125" /><span class="Maybe">     125:</span> 
+<a name="126" /><span class="Maybe">     126:</span> <span class="k">/* In classic RCU, call_rcu() is just call_rcu_sched(). */</span>
+<a name="127" /><span class="Maybe">     127:</span> <span class="f">#</span><span class="n">define</span>    <a href="cpu.c_macros_noref.html#_Y2FsbF9yY3VfMA__"><span class="b">call_rcu</span></a>    <span class="b">call_rcu_sched</span>
+<a name="128" /><span class="Maybe">     128:</span> 
+<a name="129" /><span class="Maybe">     129:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_PREEMPT_RCU */</span>
+<a name="130" /><span class="Maybe">     130:</span> 
+<a name="131" /><span class="Maybe">     131:</span> <span class="k">/**</span>
+<a name="132" /><span class="Maybe">     132:</span> <span class="k"> * call_rcu_bh() - Queue an RCU for invocation after a quicker grace period.</span>
+<a name="133" /><span class="Maybe">     133:</span> <span class="k"> * @head: structure to be used for queueing the RCU updates.</span>
+<a name="134" /><span class="Maybe">     134:</span> <span class="k"> * @func: actual callback function to be invoked after the grace period</span>
+<a name="135" /><span class="Maybe">     135:</span> <span class="k"> *</span>
+<a name="136" /><span class="Maybe">     136:</span> <span class="k"> * The callback function will be invoked some time after a full grace</span>
+<a name="137" /><span class="Maybe">     137:</span> <span class="k"> * period elapses, in other words after all currently executing RCU</span>
+<a name="138" /><span class="Maybe">     138:</span> <span class="k"> * read-side critical sections have completed. call_rcu_bh() assumes</span>
+<a name="139" /><span class="Maybe">     139:</span> <span class="k"> * that the read-side critical sections end on completion of a softirq</span>
+<a name="140" /><span class="Maybe">     140:</span> <span class="k"> * handler. This means that read-side critical sections in process</span>
+<a name="141" /><span class="Maybe">     141:</span> <span class="k"> * context must not be interrupted by softirqs. This interface is to be</span>
+<a name="142" /><span class="Maybe">     142:</span> <span class="k"> * used when most of the read-side critical sections are in softirq context.</span>
+<a name="143" /><span class="Maybe">     143:</span> <span class="k"> * RCU read-side critical sections are delimited by :</span>
+<a name="144" /><span class="Maybe">     144:</span> <span class="k"> *  - rcu_read_lock() and  rcu_read_unlock(), if in interrupt context.</span>
+<a name="145" /><span class="Maybe">     145:</span> <span class="k"> *  OR</span>
+<a name="146" /><span class="Maybe">     146:</span> <span class="k"> *  - rcu_read_lock_bh() and rcu_read_unlock_bh(), if in process context.</span>
+<a name="147" /><span class="Maybe">     147:</span> <span class="k"> *  These may be nested.</span>
+<a name="148" /><span class="Maybe">     148:</span> <span class="k"> *</span>
+<a name="149" /><span class="Maybe">     149:</span> <span class="k"> * See the description of call_rcu() for more detailed information on</span>
+<a name="150" /><span class="Maybe">     150:</span> <span class="k"> * memory ordering guarantees.</span>
+<a name="151" /><span class="Maybe">     151:</span> <span class="k"> */</span>
+<a name="152" /><span class="Maybe">     152:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">call_rcu_bh</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">,</span>
+<a name="153" /><span class="Maybe">     153:</span>             <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">func</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="154" /><span class="Maybe">     154:</span> 
+<a name="155" /><span class="Maybe">     155:</span> <span class="k">/**</span>
+<a name="156" /><span class="Maybe">     156:</span> <span class="k"> * call_rcu_sched() - Queue an RCU for invocation after sched grace period.</span>
+<a name="157" /><span class="Maybe">     157:</span> <span class="k"> * @head: structure to be used for queueing the RCU updates.</span>
+<a name="158" /><span class="Maybe">     158:</span> <span class="k"> * @func: actual callback function to be invoked after the grace period</span>
+<a name="159" /><span class="Maybe">     159:</span> <span class="k"> *</span>
+<a name="160" /><span class="Maybe">     160:</span> <span class="k"> * The callback function will be invoked some time after a full grace</span>
+<a name="161" /><span class="Maybe">     161:</span> <span class="k"> * period elapses, in other words after all currently executing RCU</span>
+<a name="162" /><span class="Maybe">     162:</span> <span class="k"> * read-side critical sections have completed. call_rcu_sched() assumes</span>
+<a name="163" /><span class="Maybe">     163:</span> <span class="k"> * that the read-side critical sections end on enabling of preemption</span>
+<a name="164" /><span class="Maybe">     164:</span> <span class="k"> * or on voluntary preemption.</span>
+<a name="165" /><span class="Maybe">     165:</span> <span class="k"> * RCU read-side critical sections are delimited by :</span>
+<a name="166" /><span class="Maybe">     166:</span> <span class="k"> *  - rcu_read_lock_sched() and  rcu_read_unlock_sched(),</span>
+<a name="167" /><span class="Maybe">     167:</span> <span class="k"> *  OR</span>
+<a name="168" /><span class="Maybe">     168:</span> <span class="k"> *  anything that disables preemption.</span>
+<a name="169" /><span class="Maybe">     169:</span> <span class="k"> *  These may be nested.</span>
+<a name="170" /><span class="Maybe">     170:</span> <span class="k"> *</span>
+<a name="171" /><span class="Maybe">     171:</span> <span class="k"> * See the description of call_rcu() for more detailed information on</span>
+<a name="172" /><span class="Maybe">     172:</span> <span class="k"> * memory ordering guarantees.</span>
+<a name="173" /><span class="Maybe">     173:</span> <span class="k"> */</span>
+<a name="174" /><span class="Maybe">     174:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">call_rcu_sched</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">,</span>
+<a name="175" /><span class="Maybe">     175:</span>                <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">func</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">rcu</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="176" /><span class="Maybe">     176:</span> 
+<a name="177" /><span class="Maybe">     177:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">synchronize_sched</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="178" /><span class="Maybe">     178:</span> 
+<a name="179" /><span class="False">     179:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_PREEMPT_RCU</span>
+<a name="180" /><span class="False">     180:</span> 
+<a name="181" /><span class="False">     181:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">__rcu_read_lock</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="182" /><span class="False">     182:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">__rcu_read_unlock</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="183" /><span class="False">     183:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_read_unlock_special</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="b">t</span><span class="f">)</span><span class="f">;</span>
+<a name="184" /><span class="False">     184:</span> <span class="m">void</span> <span class="b">synchronize_rcu</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="185" /><span class="False">     185:</span> 
+<a name="186" /><span class="False">     186:</span> <span class="k">/*</span>
+<a name="187" /><span class="False">     187:</span> <span class="k"> * Defined as a macro as it is a very low level header included from</span>
+<a name="188" /><span class="False">     188:</span> <span class="k"> * areas that don&apos;t even know about current.  This gives the rcu_read_lock()</span>
+<a name="189" /><span class="False">     189:</span> <span class="k"> * nesting depth, but makes sense only if CONFIG_PREEMPT_RCU -- in other</span>
+<a name="190" /><span class="False">     190:</span> <span class="k"> * types of kernel builds, the rcu_read_lock() nesting depth is unknowable.</span>
+<a name="191" /><span class="False">     191:</span> <span class="k"> */</span>
+<a name="192" /><span class="False">     192:</span> <span class="f">#</span><span class="n">define</span> <span class="b">rcu_preempt_depth</span><span class="f">(</span><span class="f">)</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_Y3VycmVudF8w"><span class="b">current</span></a><span class="f">-&gt;</span><span class="b">rcu_read_lock_nesting</span><span class="f">)</span>
+<a name="193" /><span class="False">     193:</span> 
+<a name="194" /><span class="Maybe">     194:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_PREEMPT_RCU */</span>
+<a name="195" /><span class="Maybe">     195:</span> 
+<a name="196" /><span class="Maybe">     196:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">__rcu_read_lock</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="197" /><span class="Maybe">     197:</span> <span class="f">{</span>
+<a name="198" /><span class="Maybe">     198:</span>     <a href="cpu.c_macros_ref.html#_cHJlZW1wdF9kaXNhYmxlXzA_"><span class="b">preempt_disable</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="199" /><span class="Maybe">     199:</span> <span class="f">}</span>
+<a name="200" /><span class="Maybe">     200:</span> 
+<a name="201" /><span class="Maybe">     201:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">__rcu_read_unlock</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="202" /><span class="Maybe">     202:</span> <span class="f">{</span>
+<a name="203" /><span class="Maybe">     203:</span>     <a href="cpu.c_macros_ref.html#_cHJlZW1wdF9lbmFibGVfMA__"><span class="b">preempt_enable</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="204" /><span class="Maybe">     204:</span> <span class="f">}</span>
+<a name="205" /><span class="Maybe">     205:</span> 
+<a name="206" /><span class="Maybe">     206:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">synchronize_rcu</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="207" /><span class="Maybe">     207:</span> <span class="f">{</span>
+<a name="208" /><span class="Maybe">     208:</span>     <span class="b">synchronize_sched</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="209" /><span class="Maybe">     209:</span> <span class="f">}</span>
+<a name="210" /><span class="Maybe">     210:</span> 
+<a name="211" /><span class="Maybe">     211:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_preempt_depth</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="212" /><span class="Maybe">     212:</span> <span class="f">{</span>
+<a name="213" /><span class="Maybe">     213:</span>     <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="214" /><span class="Maybe">     214:</span> <span class="f">}</span>
+<a name="215" /><span class="Maybe">     215:</span> 
+<a name="216" /><span class="Maybe">     216:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_PREEMPT_RCU */</span>
+<a name="217" /><span class="Maybe">     217:</span> 
+<a name="218" /><span class="Maybe">     218:</span> <span class="k">/* Internal to kernel */</span>
+<a name="219" /><span class="Maybe">     219:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_init</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="220" /><span class="Maybe">     220:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_sched_qs</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span><span class="f">;</span>
+<a name="221" /><span class="Maybe">     221:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_bh_qs</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span><span class="f">;</span>
+<a name="222" /><span class="Maybe">     222:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_check_callbacks</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">int</span> <span class="b">user</span><span class="f">)</span><span class="f">;</span>
+<a name="223" /><span class="Maybe">     223:</span> <span class="m">struct</span> <span class="b">notifier_block</span><span class="f">;</span>
+<a name="224" /><span class="Maybe">     224:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_idle_enter</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="225" /><span class="Maybe">     225:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_idle_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="226" /><span class="Maybe">     226:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_irq_enter</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="227" /><span class="Maybe">     227:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_irq_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="228" /><span class="Maybe">     228:</span> 
+<a name="229" /><span class="False">     229:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_RCU_USER_QS</span>
+<a name="230" /><span class="False">     230:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_user_enter</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="231" /><span class="False">     231:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_user_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="232" /><span class="Maybe">     232:</span> <span class="f">#</span><span class="n">else</span>
+<a name="233" /><span class="Maybe">     233:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_user_enter</span><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="234" /><span class="Maybe">     234:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_user_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="235" /><span class="Maybe">     235:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_user_hooks_switch</span><span class="f">(</span><span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="b">prev</span><span class="f">,</span>
+<a name="236" /><span class="Maybe">     236:</span>                      <span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="b">next</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="237" /><span class="Maybe">     237:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_RCU_USER_QS */</span>
+<a name="238" /><span class="Maybe">     238:</span> 
+<a name="239" /><span class="Maybe">     239:</span> <span class="k">/**</span>
+<a name="240" /><span class="Maybe">     240:</span> <span class="k"> * RCU_NONIDLE - Indicate idle-loop code that needs RCU readers</span>
+<a name="241" /><span class="Maybe">     241:</span> <span class="k"> * @a: Code that RCU needs to pay attention to.</span>
+<a name="242" /><span class="Maybe">     242:</span> <span class="k"> *</span>
+<a name="243" /><span class="Maybe">     243:</span> <span class="k"> * RCU, RCU-bh, and RCU-sched read-side critical sections are forbidden</span>
+<a name="244" /><span class="Maybe">     244:</span> <span class="k"> * in the inner idle loop, that is, between the rcu_idle_enter() and</span>
+<a name="245" /><span class="Maybe">     245:</span> <span class="k"> * the rcu_idle_exit() -- RCU will happily ignore any such read-side</span>
+<a name="246" /><span class="Maybe">     246:</span> <span class="k"> * critical sections.  However, things like powertop need tracepoints</span>
+<a name="247" /><span class="Maybe">     247:</span> <span class="k"> * in the inner idle loop.</span>
+<a name="248" /><span class="Maybe">     248:</span> <span class="k"> *</span>
+<a name="249" /><span class="Maybe">     249:</span> <span class="k"> * This macro provides the way out:  RCU_NONIDLE(do_something_with_RCU())</span>
+<a name="250" /><span class="Maybe">     250:</span> <span class="k"> * will tell RCU that it needs to pay attending, invoke its argument</span>
+<a name="251" /><span class="Maybe">     251:</span> <span class="k"> * (in this example, a call to the do_something_with_RCU() function),</span>
+<a name="252" /><span class="Maybe">     252:</span> <span class="k"> * and then tell RCU to go back to ignoring this CPU.  It is permissible</span>
+<a name="253" /><span class="Maybe">     253:</span> <span class="k"> * to nest RCU_NONIDLE() wrappers, but the nesting level is currently</span>
+<a name="254" /><span class="Maybe">     254:</span> <span class="k"> * quite limited.  If deeper nesting is required, it will be necessary</span>
+<a name="255" /><span class="Maybe">     255:</span> <span class="k"> * to adjust DYNTICK_TASK_NESTING_VALUE accordingly.</span>
+<a name="256" /><span class="Maybe">     256:</span> <span class="k"> */</span>
+<a name="257" /><span class="Maybe">     257:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UkNVX05PTklETEVfMA__"><span class="b">RCU_NONIDLE</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span> \
+<a name="258" /><span class="Maybe">     258:</span>     <span class="m">do</span> <span class="f">{</span> \
+<a name="259" /><span class="Maybe">     259:</span>         <span class="b">rcu_irq_enter</span><span class="f">(</span><span class="f">)</span><span class="f">;</span> \
+<a name="260" /><span class="Maybe">     260:</span>         <span class="m">do</span> <span class="f">{</span> <span class="b">a</span><span class="f">;</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span><span class="f">;</span> \
+<a name="261" /><span class="Maybe">     261:</span>         <span class="b">rcu_irq_exit</span><span class="f">(</span><span class="f">)</span><span class="f">;</span> \
+<a name="262" /><span class="Maybe">     262:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="263" /><span class="Maybe">     263:</span> 
+<a name="264" /><span class="Maybe">     264:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_DEBUG_LOCK_ALLOC</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_RCU_TRACE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1NNUF8w"><span class="b">CONFIG_SMP</span></a><span class="f">)</span>
+<a name="265" /><span class="Maybe">     265:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">__rcu_is_watching</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="266" /><span class="Maybe">     266:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #if defined(CONFIG_DEBUG_LOCK_ALLOC) || defined(CONFIG_RCU_TRACE) || defined(CONFIG_SMP) */</span>
+<a name="267" /><span class="Maybe">     267:</span> 
+<a name="268" /><span class="Maybe">     268:</span> <span class="k">/*</span>
+<a name="269" /><span class="Maybe">     269:</span> <span class="k"> * Infrastructure to implement the synchronize_() primitives in</span>
+<a name="270" /><span class="Maybe">     270:</span> <span class="k"> * TREE_RCU and rcu_barrier_() primitives in TINY_RCU.</span>
+<a name="271" /><span class="Maybe">     271:</span> <span class="k"> */</span>
+<a name="272" /><span class="Maybe">     272:</span> 
+<a name="273" /><span class="Maybe">     273:</span> <span class="m">typedef</span> <span class="m">void</span> <span class="b">call_rcu_func_t</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">,</span>
+<a name="274" /><span class="Maybe">     274:</span>                  <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">func</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="275" /><span class="Maybe">     275:</span> <span class="m">void</span> <span class="b">wait_rcu_gp</span><span class="f">(</span><span class="b">call_rcu_func_t</span> <span class="b">crf</span><span class="f">)</span><span class="f">;</span>
+<a name="276" /><span class="Maybe">     276:</span> 
+<a name="277" /><span class="Maybe">     277:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1RSRUVfUkNVXzA_"><span class="b">CONFIG_TREE_RCU</span></a><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_TREE_PREEMPT_RCU</span><span class="f">)</span>
+<a name="278" /><span class="Maybe">     278:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">rcutree</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="279" /><span class="False">     279:</span> <span class="f">#</span><span class="n">elif</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_TINY_RCU</span><span class="f">)</span>
+<a name="280" /><span class="False">     280:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">rcutiny</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="281" /><span class="False">     281:</span> <span class="f">#</span><span class="n">else</span>
+<a name="282" /><span class="False">     282:</span> <span class="f">#</span><span class="n">error</span> <span class="e">&quot;Unknown RCU implementation specified to kernel configuration&quot;</span>
+<a name="283" /><span class="Maybe">     283:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="284" /><span class="Maybe">     284:</span> 
+<a name="285" /><span class="Maybe">     285:</span> <span class="k">/*</span>
+<a name="286" /><span class="Maybe">     286:</span> <span class="k"> * init_rcu_head_on_stack()/destroy_rcu_head_on_stack() are needed for dynamic</span>
+<a name="287" /><span class="Maybe">     287:</span> <span class="k"> * initialization and destruction of rcu_head on the stack. rcu_head structures</span>
+<a name="288" /><span class="Maybe">     288:</span> <span class="k"> * allocated dynamically in the heap or defined statically don&apos;t need any</span>
+<a name="289" /><span class="Maybe">     289:</span> <span class="k"> * initialization.</span>
+<a name="290" /><span class="Maybe">     290:</span> <span class="k"> */</span>
+<a name="291" /><span class="False">     291:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_OBJECTS_RCU_HEAD</span>
+<a name="292" /><span class="False">     292:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">init_rcu_head_on_stack</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">)</span><span class="f">;</span>
+<a name="293" /><span class="False">     293:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">destroy_rcu_head_on_stack</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">)</span><span class="f">;</span>
+<a name="294" /><span class="Maybe">     294:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* !CONFIG_DEBUG_OBJECTS_RCU_HEAD */</span>
+<a name="295" /><span class="Maybe">     295:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">init_rcu_head_on_stack</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">)</span>
+<a name="296" /><span class="Maybe">     296:</span> <span class="f">{</span>
+<a name="297" /><span class="Maybe">     297:</span> <span class="f">}</span>
+<a name="298" /><span class="Maybe">     298:</span> 
+<a name="299" /><span class="Maybe">     299:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">destroy_rcu_head_on_stack</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="b">head</span><span class="f">)</span>
+<a name="300" /><span class="Maybe">     300:</span> <span class="f">{</span>
+<a name="301" /><span class="Maybe">     301:</span> <span class="f">}</span>
+<a name="302" /><span class="Maybe">     302:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* #else !CONFIG_DEBUG_OBJECTS_RCU_HEAD */</span>
+<a name="303" /><span class="Maybe">     303:</span> 
+<a name="304" /><span class="False">     304:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX0hPVFBMVUdfQ1BVXzA_"><span class="b">CONFIG_HOTPLUG_CPU</span></a><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_PROVE_RCU</span><span class="f">)</span>
+<a name="305" /><span class="False">     305:</span> <span class="m">bool</span> <span class="b">rcu_lockdep_current_cpu_online</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="306" /><span class="Maybe">     306:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #if defined(CONFIG_HOTPLUG_CPU) &amp;&amp; defined(CONFIG_PROVE_RCU) */</span>
+<a name="307" /><span class="Maybe">     307:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">rcu_lockdep_current_cpu_online</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="308" /><span class="Maybe">     308:</span> <span class="f">{</span>
+<a name="309" /><span class="Maybe">     309:</span>     <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="310" /><span class="Maybe">     310:</span> <span class="f">}</span>
+<a name="311" /><span class="Maybe">     311:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #if defined(CONFIG_HOTPLUG_CPU) &amp;&amp; defined(CONFIG_PROVE_RCU) */</span>
+<a name="312" /><span class="Maybe">     312:</span> 
+<a name="313" /><span class="False">     313:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_LOCK_ALLOC</span>
+<a name="314" /><span class="False">     314:</span> 
+<a name="315" /><span class="False">     315:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfYWNxdWlyZV8w"><span class="b">rcu_lock_acquire</span></a><span class="f">(</span><span class="m">struct</span> <span class="b">lockdep_map</span> <span class="f">*</span><span class="b">map</span><span class="f">)</span>
+<a name="316" /><span class="False">     316:</span> <span class="f">{</span>
+<a name="317" /><span class="False">     317:</span>     <a href="cpu.c_macros_ref.html#_bG9ja19hY3F1aXJlXzA_"><span class="b">lock_acquire</span></a><span class="f">(</span><span class="b">map</span><span class="f">,</span> <span class="c">0</span><span class="f">,</span> <span class="c">0</span><span class="f">,</span> <span class="c">2</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">,</span> <a href="cpu.c_macros_noref.html#_X1RISVNfSVBfXzA_"><span class="b">_THIS_IP_</span></a><span class="f">)</span><span class="f">;</span>
+<a name="318" /><span class="False">     318:</span> <span class="f">}</span>
+<a name="319" /><span class="False">     319:</span> 
+<a name="320" /><span class="False">     320:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfcmVsZWFzZV8w"><span class="b">rcu_lock_release</span></a><span class="f">(</span><span class="m">struct</span> <span class="b">lockdep_map</span> <span class="f">*</span><span class="b">map</span><span class="f">)</span>
+<a name="321" /><span class="False">     321:</span> <span class="f">{</span>
+<a name="322" /><span class="False">     322:</span>     <a href="cpu.c_macros_ref.html#_bG9ja19yZWxlYXNlXzA_"><span class="b">lock_release</span></a><span class="f">(</span><span class="b">map</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <a href="cpu.c_macros_noref.html#_X1RISVNfSVBfXzA_"><span class="b">_THIS_IP_</span></a><span class="f">)</span><span class="f">;</span>
+<a name="323" /><span class="False">     323:</span> <span class="f">}</span>
+<a name="324" /><span class="False">     324:</span> 
+<a name="325" /><span class="False">     325:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">lockdep_map</span> <span class="b">rcu_lock_map</span><span class="f">;</span>
+<a name="326" /><span class="False">     326:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">lockdep_map</span> <span class="b">rcu_bh_lock_map</span><span class="f">;</span>
+<a name="327" /><span class="False">     327:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">lockdep_map</span> <span class="b">rcu_sched_lock_map</span><span class="f">;</span>
+<a name="328" /><span class="False">     328:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">debug_lockdep_rcu_enabled</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="329" /><span class="False">     329:</span> 
+<a name="330" /><span class="False">     330:</span> <span class="k">/**</span>
+<a name="331" /><span class="False">     331:</span> <span class="k"> * rcu_read_lock_held() - might we be in RCU read-side critical section?</span>
+<a name="332" /><span class="False">     332:</span> <span class="k"> *</span>
+<a name="333" /><span class="False">     333:</span> <span class="k"> * If CONFIG_DEBUG_LOCK_ALLOC is selected, returns nonzero iff in an RCU</span>
+<a name="334" /><span class="False">     334:</span> <span class="k"> * read-side critical section.  In absence of CONFIG_DEBUG_LOCK_ALLOC,</span>
+<a name="335" /><span class="False">     335:</span> <span class="k"> * this assumes we are in an RCU read-side critical section unless it can</span>
+<a name="336" /><span class="False">     336:</span> <span class="k"> * prove otherwise.  This is useful for debug checks in functions that</span>
+<a name="337" /><span class="False">     337:</span> <span class="k"> * require that they be called within an RCU read-side critical section.</span>
+<a name="338" /><span class="False">     338:</span> <span class="k"> *</span>
+<a name="339" /><span class="False">     339:</span> <span class="k"> * Checks debug_lockdep_rcu_enabled() to prevent false positives during boot</span>
+<a name="340" /><span class="False">     340:</span> <span class="k"> * and while lockdep is disabled.</span>
+<a name="341" /><span class="False">     341:</span> <span class="k"> *</span>
+<a name="342" /><span class="False">     342:</span> <span class="k"> * Note that rcu_read_lock() and the matching rcu_read_unlock() must</span>
+<a name="343" /><span class="False">     343:</span> <span class="k"> * occur in the same context, for example, it is illegal to invoke</span>
+<a name="344" /><span class="False">     344:</span> <span class="k"> * rcu_read_unlock() in process context if the matching rcu_read_lock()</span>
+<a name="345" /><span class="False">     345:</span> <span class="k"> * was invoked from within an irq handler.</span>
+<a name="346" /><span class="False">     346:</span> <span class="k"> *</span>
+<a name="347" /><span class="False">     347:</span> <span class="k"> * Note that rcu_read_lock() is disallowed if the CPU is either idle or</span>
+<a name="348" /><span class="False">     348:</span> <span class="k"> * offline from an RCU perspective, so check for those as well.</span>
+<a name="349" /><span class="False">     349:</span> <span class="k"> */</span>
+<a name="350" /><span class="False">     350:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_read_lock_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="351" /><span class="False">     351:</span> <span class="f">{</span>
+<a name="352" /><span class="False">     352:</span>     <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">debug_lockdep_rcu_enabled</span><span class="f">(</span><span class="f">)</span><span class="f">)</span>
+<a name="353" /><span class="False">     353:</span>         <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="354" /><span class="False">     354:</span>     <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">)</span>
+<a name="355" /><span class="False">     355:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="356" /><span class="False">     356:</span>     <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">rcu_lockdep_current_cpu_online</span><span class="f">(</span><span class="f">)</span><span class="f">)</span>
+<a name="357" /><span class="False">     357:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="358" /><span class="False">     358:</span>     <span class="m">return</span> <span class="b">lock_is_held</span><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="359" /><span class="False">     359:</span> <span class="f">}</span>
+<a name="360" /><span class="False">     360:</span> 
+<a name="361" /><span class="False">     361:</span> <span class="k">/*</span>
+<a name="362" /><span class="False">     362:</span> <span class="k"> * rcu_read_lock_bh_held() is defined out of line to avoid #include-file</span>
+<a name="363" /><span class="False">     363:</span> <span class="k"> * hell.</span>
+<a name="364" /><span class="False">     364:</span> <span class="k"> */</span>
+<a name="365" /><span class="False">     365:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">rcu_read_lock_bh_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="366" /><span class="False">     366:</span> 
+<a name="367" /><span class="False">     367:</span> <span class="k">/**</span>
+<a name="368" /><span class="False">     368:</span> <span class="k"> * rcu_read_lock_sched_held() - might we be in RCU-sched read-side critical section?</span>
+<a name="369" /><span class="False">     369:</span> <span class="k"> *</span>
+<a name="370" /><span class="False">     370:</span> <span class="k"> * If CONFIG_DEBUG_LOCK_ALLOC is selected, returns nonzero iff in an</span>
+<a name="371" /><span class="False">     371:</span> <span class="k"> * RCU-sched read-side critical section.  In absence of</span>
+<a name="372" /><span class="False">     372:</span> <span class="k"> * CONFIG_DEBUG_LOCK_ALLOC, this assumes we are in an RCU-sched read-side</span>
+<a name="373" /><span class="False">     373:</span> <span class="k"> * critical section unless it can prove otherwise.  Note that disabling</span>
+<a name="374" /><span class="False">     374:</span> <span class="k"> * of preemption (including disabling irqs) counts as an RCU-sched</span>
+<a name="375" /><span class="False">     375:</span> <span class="k"> * read-side critical section.  This is useful for debug checks in functions</span>
+<a name="376" /><span class="False">     376:</span> <span class="k"> * that required that they be called within an RCU-sched read-side</span>
+<a name="377" /><span class="False">     377:</span> <span class="k"> * critical section.</span>
+<a name="378" /><span class="False">     378:</span> <span class="k"> *</span>
+<a name="379" /><span class="False">     379:</span> <span class="k"> * Check debug_lockdep_rcu_enabled() to prevent false positives during boot</span>
+<a name="380" /><span class="False">     380:</span> <span class="k"> * and while lockdep is disabled.</span>
+<a name="381" /><span class="False">     381:</span> <span class="k"> *</span>
+<a name="382" /><span class="False">     382:</span> <span class="k"> * Note that if the CPU is in the idle loop from an RCU point of</span>
+<a name="383" /><span class="False">     383:</span> <span class="k"> * view (ie: that we are in the section between rcu_idle_enter() and</span>
+<a name="384" /><span class="False">     384:</span> <span class="k"> * rcu_idle_exit()) then rcu_read_lock_held() returns false even if the CPU</span>
+<a name="385" /><span class="False">     385:</span> <span class="k"> * did an rcu_read_lock().  The reason for this is that RCU ignores CPUs</span>
+<a name="386" /><span class="False">     386:</span> <span class="k"> * that are in such a section, considering these as in extended quiescent</span>
+<a name="387" /><span class="False">     387:</span> <span class="k"> * state, so such a CPU is effectively never in an RCU read-side critical</span>
+<a name="388" /><span class="False">     388:</span> <span class="k"> * section regardless of what RCU primitives it invokes.  This state of</span>
+<a name="389" /><span class="False">     389:</span> <span class="k"> * affairs is required --- we need to keep an RCU-free window in idle</span>
+<a name="390" /><span class="False">     390:</span> <span class="k"> * where the CPU may possibly enter into low power mode. This way we can</span>
+<a name="391" /><span class="False">     391:</span> <span class="k"> * notice an extended quiescent state to other CPUs that started a grace</span>
+<a name="392" /><span class="False">     392:</span> <span class="k"> * period. Otherwise we would delay any grace period as long as we run in</span>
+<a name="393" /><span class="False">     393:</span> <span class="k"> * the idle task.</span>
+<a name="394" /><span class="False">     394:</span> <span class="k"> *</span>
+<a name="395" /><span class="False">     395:</span> <span class="k"> * Similarly, we avoid claiming an SRCU read lock held if the current</span>
+<a name="396" /><span class="False">     396:</span> <span class="k"> * CPU is offline.</span>
+<a name="397" /><span class="False">     397:</span> <span class="k"> */</span>
+<a name="398" /><span class="False">     398:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_PREEMPT_COUNT</span>
+<a name="399" /><span class="False">     399:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_read_lock_sched_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="400" /><span class="False">     400:</span> <span class="f">{</span>
+<a name="401" /><span class="False">     401:</span>     <span class="m">int</span> <span class="b">lockdep_opinion</span> <span class="f">=</span> <span class="c">0</span><span class="f">;</span>
+<a name="402" /><span class="False">     402:</span> 
+<a name="403" /><span class="False">     403:</span>     <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">debug_lockdep_rcu_enabled</span><span class="f">(</span><span class="f">)</span><span class="f">)</span>
+<a name="404" /><span class="False">     404:</span>         <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="405" /><span class="False">     405:</span>     <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">)</span>
+<a name="406" /><span class="False">     406:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="407" /><span class="False">     407:</span>     <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">rcu_lockdep_current_cpu_online</span><span class="f">(</span><span class="f">)</span><span class="f">)</span>
+<a name="408" /><span class="False">     408:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="409" /><span class="False">     409:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">debug_locks</span><span class="f">)</span>
+<a name="410" /><span class="False">     410:</span>         <span class="b">lockdep_opinion</span> <span class="f">=</span> <span class="b">lock_is_held</span><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_sched_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="411" /><span class="False">     411:</span>     <span class="m">return</span> <span class="b">lockdep_opinion</span> <span class="f">||</span> <span class="b">preempt_count</span><span class="f">(</span><span class="f">)</span> <span class="f">!=</span> <span class="c">0</span> <span class="f">||</span> <a href="cpu.c_macros_noref.html#_aXJxc19kaXNhYmxlZF8w"><span class="b">irqs_disabled</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="412" /><span class="False">     412:</span> <span class="f">}</span>
+<a name="413" /><span class="False">     413:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_PREEMPT_COUNT */</span>
+<a name="414" /><span class="False">     414:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_read_lock_sched_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="415" /><span class="False">     415:</span> <span class="f">{</span>
+<a name="416" /><span class="False">     416:</span>     <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="417" /><span class="False">     417:</span> <span class="f">}</span>
+<a name="418" /><span class="False">     418:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_PREEMPT_COUNT */</span>
+<a name="419" /><span class="False">     419:</span> 
+<a name="420" /><span class="Maybe">     420:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_DEBUG_LOCK_ALLOC */</span>
+<a name="421" /><span class="Maybe">     421:</span> 
+<a name="422" /><span class="Maybe">     422:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfYWNxdWlyZV8w"><span class="b">rcu_lock_acquire</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span>        <span class="m">do</span> <span class="f">{</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="423" /><span class="Maybe">     423:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfcmVsZWFzZV8w"><span class="b">rcu_lock_release</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span>        <span class="m">do</span> <span class="f">{</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="424" /><span class="Maybe">     424:</span> 
+<a name="425" /><span class="Maybe">     425:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_read_lock_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="426" /><span class="Maybe">     426:</span> <span class="f">{</span>
+<a name="427" /><span class="Maybe">     427:</span>     <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="428" /><span class="Maybe">     428:</span> <span class="f">}</span>
+<a name="429" /><span class="Maybe">     429:</span> 
+<a name="430" /><span class="Maybe">     430:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_read_lock_bh_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="431" /><span class="Maybe">     431:</span> <span class="f">{</span>
+<a name="432" /><span class="Maybe">     432:</span>     <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="433" /><span class="Maybe">     433:</span> <span class="f">}</span>
+<a name="434" /><span class="Maybe">     434:</span> 
+<a name="435" /><span class="False">     435:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_PREEMPT_COUNT</span>
+<a name="436" /><span class="False">     436:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_read_lock_sched_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="437" /><span class="False">     437:</span> <span class="f">{</span>
+<a name="438" /><span class="False">     438:</span>     <span class="m">return</span> <span class="b">preempt_count</span><span class="f">(</span><span class="f">)</span> <span class="f">!=</span> <span class="c">0</span> <span class="f">||</span> <a href="cpu.c_macros_noref.html#_aXJxc19kaXNhYmxlZF8w"><span class="b">irqs_disabled</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="439" /><span class="False">     439:</span> <span class="f">}</span>
+<a name="440" /><span class="Maybe">     440:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_PREEMPT_COUNT */</span>
+<a name="441" /><span class="Maybe">     441:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">rcu_read_lock_sched_held</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="442" /><span class="Maybe">     442:</span> <span class="f">{</span>
+<a name="443" /><span class="Maybe">     443:</span>     <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="444" /><span class="Maybe">     444:</span> <span class="f">}</span>
+<a name="445" /><span class="Maybe">     445:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_PREEMPT_COUNT */</span>
+<a name="446" /><span class="Maybe">     446:</span> 
+<a name="447" /><span class="Maybe">     447:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */</span>
+<a name="448" /><span class="Maybe">     448:</span> 
+<a name="449" /><span class="False">     449:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_PROVE_RCU</span>
+<a name="450" /><span class="False">     450:</span> 
+<a name="451" /><span class="False">     451:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">rcu_my_thread_group_empty</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="452" /><span class="False">     452:</span> 
+<a name="453" /><span class="False">     453:</span> <span class="k">/**</span>
+<a name="454" /><span class="False">     454:</span> <span class="k"> * rcu_lockdep_assert - emit lockdep splat if specified condition not met</span>
+<a name="455" /><span class="False">     455:</span> <span class="k"> * @c: condition to check</span>
+<a name="456" /><span class="False">     456:</span> <span class="k"> * @s: informative message</span>
+<a name="457" /><span class="False">     457:</span> <span class="k"> */</span>
+<a name="458" /><span class="False">     458:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">c</span><span class="f">,</span> <span class="b">s</span><span class="f">)</span>                    \
+<a name="459" /><span class="False">     459:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="460" /><span class="False">     460:</span>         <span class="m">static</span> <span class="m">bool</span> <a href="cpu.c_macros_ref.html#_X19zZWN0aW9uXzA_"><span class="b">__section</span></a><span class="f">(</span><span class="f">.</span><span class="b">data</span><span class="f">.</span><a href="cpu.c_macros_ref.html#_dW5saWtlbHlfMA__"><span class="b">unlikely</span></a><span class="f">)</span> <span class="b">__warned</span><span class="f">;</span>        \
+<a name="461" /><span class="False">     461:</span>         <span class="m">if</span> <span class="f">(</span><span class="b">debug_lockdep_rcu_enabled</span><span class="f">(</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="f">!</span><span class="b">__warned</span> <span class="f">&amp;&amp;</span> <span class="f">!</span><span class="f">(</span><span class="b">c</span><span class="f">)</span><span class="f">)</span> <span class="f">{</span>    \
+<a name="462" /><span class="False">     462:</span>             <span class="b">__warned</span> <span class="f">=</span> <span class="m">true</span><span class="f">;</span>                \
+<a name="463" /><span class="False">     463:</span>             <span class="b">lockdep_rcu_suspicious</span><span class="f">(</span><span class="b">__FILE__</span><span class="f">,</span> <span class="b">__LINE__</span><span class="f">,</span> <span class="b">s</span><span class="f">)</span><span class="f">;</span>    \
+<a name="464" /><span class="False">     464:</span>         <span class="f">}</span>                            \
+<a name="465" /><span class="False">     465:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="466" /><span class="False">     466:</span> 
+<a name="467" /><span class="False">     467:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_PROVE_RCU</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_PREEMPT_RCU</span><span class="f">)</span>
+<a name="468" /><span class="False">     468:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_preempt_sleep_check</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="469" /><span class="False">     469:</span> <span class="f">{</span>
+<a name="470" /><span class="False">     470:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="f">!</span><span class="b">lock_is_held</span><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_lock_map</span><span class="f">)</span><span class="f">,</span>
+<a name="471" /><span class="False">     471:</span>                <span class="e">&quot;Illegal context switch in RCU read-side critical section&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="472" /><span class="False">     472:</span> <span class="f">}</span>
+<a name="473" /><span class="False">     473:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_PROVE_RCU */</span>
+<a name="474" /><span class="False">     474:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_preempt_sleep_check</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="475" /><span class="False">     475:</span> <span class="f">{</span>
+<a name="476" /><span class="False">     476:</span> <span class="f">}</span>
+<a name="477" /><span class="False">     477:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_PROVE_RCU */</span>
+<a name="478" /><span class="False">     478:</span> 
+<a name="479" /><span class="False">     479:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X3NsZWVwX2NoZWNrXzA_"><span class="b">rcu_sleep_check</span></a><span class="f">(</span><span class="f">)</span>                        \
+<a name="480" /><span class="False">     480:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="481" /><span class="False">     481:</span>         <span class="b">rcu_preempt_sleep_check</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>                \
+<a name="482" /><span class="False">     482:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="f">!</span><span class="b">lock_is_held</span><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_bh_lock_map</span><span class="f">)</span><span class="f">,</span>    \
+<a name="483" /><span class="False">     483:</span>                    <span class="e">&quot;Illegal context switch in RCU-bh&quot;</span>    \
+<a name="484" /><span class="False">     484:</span>                    <span class="e">&quot; read-side critical section&quot;</span><span class="f">)</span><span class="f">;</span>    \
+<a name="485" /><span class="False">     485:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="f">!</span><span class="b">lock_is_held</span><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_sched_lock_map</span><span class="f">)</span><span class="f">,</span>    \
+<a name="486" /><span class="False">     486:</span>                    <span class="e">&quot;Illegal context switch in RCU-sched&quot;</span><span class="o">\
+</span>                   <span class="e">&quot; read-side critical section&quot;</span><span class="f">)</span><span class="f">;</span>    \
+<a name="488" /><span class="False">     488:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="489" /><span class="False">     489:</span> 
+<a name="490" /><span class="Maybe">     490:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_PROVE_RCU */</span>
+<a name="491" /><span class="Maybe">     491:</span> 
+<a name="492" /><span class="Maybe">     492:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">c</span><span class="f">,</span> <span class="b">s</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="493" /><span class="Maybe">     493:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X3NsZWVwX2NoZWNrXzA_"><span class="b">rcu_sleep_check</span></a><span class="f">(</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="494" /><span class="Maybe">     494:</span> 
+<a name="495" /><span class="Maybe">     495:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_PROVE_RCU */</span>
+<a name="496" /><span class="Maybe">     496:</span> 
+<a name="497" /><span class="Maybe">     497:</span> <span class="k">/*</span>
+<a name="498" /><span class="Maybe">     498:</span> <span class="k"> * Helper functions for rcu_dereference_check(), rcu_dereference_protected()</span>
+<a name="499" /><span class="Maybe">     499:</span> <span class="k"> * and rcu_assign_pointer().  Some of these could be folded into their</span>
+<a name="500" /><span class="Maybe">     500:</span> <span class="k"> * callers, but they are left separate in order to ease introduction of</span>
+<a name="501" /><span class="Maybe">     501:</span> <span class="k"> * multiple flavors of pointers to match the multiple flavors of RCU</span>
+<a name="502" /><span class="Maybe">     502:</span> <span class="k"> * (e.g., __rcu_bh, * __rcu_sched, and __srcu), should this make sense in</span>
+<a name="503" /><span class="Maybe">     503:</span> <span class="k"> * the future.</span>
+<a name="504" /><span class="Maybe">     504:</span> <span class="k"> */</span>
+<a name="505" /><span class="Maybe">     505:</span> 
+<a name="506" /><span class="False">     506:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">__CHECKER__</span>
+<a name="507" /><span class="False">     507:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3NwYXJzZV8w"><span class="b">rcu_dereference_sparse</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span> \
+<a name="508" /><span class="False">     508:</span>     <span class="f">(</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span> <span class="b">space</span> <span class="f">*</span><span class="f">)</span><span class="b">p</span><span class="f">)</span> <span class="f">==</span> <span class="b">p</span><span class="f">)</span><span class="f">)</span>
+<a name="509" /><span class="Maybe">     509:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef __CHECKER__ */</span>
+<a name="510" /><span class="Maybe">     510:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3NwYXJzZV8w"><span class="b">rcu_dereference_sparse</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span>
+<a name="511" /><span class="Maybe">     511:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef __CHECKER__ */</span>
+<a name="512" /><span class="Maybe">     512:</span> 
+<a name="513" /><span class="Maybe">     513:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19yY3VfYWNjZXNzX3BvaW50ZXJfMA__"><span class="b">__rcu_access_pointer</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span> \
+<a name="514" /><span class="Maybe">     514:</span>     <span class="f">(</span><span class="f">{</span> \
+<a name="515" /><span class="Maybe">     515:</span>         <span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span> <span class="f">*</span><span class="b">_________p1</span> <span class="f">=</span> <span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span><span class="f">*</span><a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <span class="f">)</span><a href="cpu.c_macros_ref.html#_QUNDRVNTX09OQ0VfMA__"><span class="b">ACCESS_ONCE</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">;</span> \
+<a name="516" /><span class="Maybe">     516:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3NwYXJzZV8w"><span class="b">rcu_dereference_sparse</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span><span class="f">;</span> \
+<a name="517" /><span class="Maybe">     517:</span>         <span class="f">(</span><span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <a href="cpu.c_macros_ref.html#_X19rZXJuZWxfMA__"><span class="b">__kernel</span></a> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">_________p1</span><span class="f">)</span><span class="f">)</span><span class="f">;</span> \
+<a name="518" /><span class="Maybe">     518:</span>     <span class="f">}</span><span class="f">)</span>
+<a name="519" /><span class="Maybe">     519:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19yY3VfZGVyZWZlcmVuY2VfY2hlY2tfMA__"><span class="b">__rcu_dereference_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span> \
+<a name="520" /><span class="Maybe">     520:</span>     <span class="f">(</span><span class="f">{</span> \
+<a name="521" /><span class="Maybe">     521:</span>         <span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span> <span class="f">*</span><span class="b">_________p1</span> <span class="f">=</span> <span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span><span class="f">*</span><a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <span class="f">)</span><a href="cpu.c_macros_ref.html#_QUNDRVNTX09OQ0VfMA__"><span class="b">ACCESS_ONCE</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">;</span> \
+<a name="522" /><span class="Maybe">     522:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">c</span><span class="f">,</span> <span class="e">&quot;suspicious rcu_dereference_check()&quot;</span> \
+<a name="523" /><span class="Maybe">     523:</span>                       <span class="e">&quot; usage&quot;</span><span class="f">)</span><span class="f">;</span> \
+<a name="524" /><span class="Maybe">     524:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3NwYXJzZV8w"><span class="b">rcu_dereference_sparse</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span><span class="f">;</span> \
+<a name="525" /><span class="Maybe">     525:</span>         <a href="cpu.c_macros_ref.html#_c21wX3JlYWRfYmFycmllcl9kZXBlbmRzXzA_"><span class="b">smp_read_barrier_depends</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span> \
+<a name="526" /><span class="Maybe">     526:</span>         <span class="f">(</span><span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <a href="cpu.c_macros_ref.html#_X19rZXJuZWxfMA__"><span class="b">__kernel</span></a> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">_________p1</span><span class="f">)</span><span class="f">)</span><span class="f">;</span> \
+<a name="527" /><span class="Maybe">     527:</span>     <span class="f">}</span><span class="f">)</span>
+<a name="528" /><span class="Maybe">     528:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19yY3VfZGVyZWZlcmVuY2VfcHJvdGVjdGVkXzA_"><span class="b">__rcu_dereference_protected</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span> \
+<a name="529" /><span class="Maybe">     529:</span>     <span class="f">(</span><span class="f">{</span> \
+<a name="530" /><span class="Maybe">     530:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">c</span><span class="f">,</span> <span class="e">&quot;suspicious rcu_dereference_protected()&quot;</span> \
+<a name="531" /><span class="Maybe">     531:</span>                       <span class="e">&quot; usage&quot;</span><span class="f">)</span><span class="f">;</span> \
+<a name="532" /><span class="Maybe">     532:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3NwYXJzZV8w"><span class="b">rcu_dereference_sparse</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span><span class="f">;</span> \
+<a name="533" /><span class="Maybe">     533:</span>         <span class="f">(</span><span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <a href="cpu.c_macros_ref.html#_X19rZXJuZWxfMA__"><span class="b">__kernel</span></a> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">)</span><span class="f">;</span> \
+<a name="534" /><span class="Maybe">     534:</span>     <span class="f">}</span><span class="f">)</span>
+<a name="535" /><span class="Maybe">     535:</span> 
+<a name="536" /><span class="Maybe">     536:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19yY3VfYWNjZXNzX2luZGV4XzA_"><span class="b">__rcu_access_index</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span> \
+<a name="537" /><span class="Maybe">     537:</span>     <span class="f">(</span><span class="f">{</span> \
+<a name="538" /><span class="Maybe">     538:</span>         <span class="b">typeof</span><span class="f">(</span><span class="b">p</span><span class="f">)</span> <span class="b">_________p1</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_QUNDRVNTX09OQ0VfMA__"><span class="b">ACCESS_ONCE</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">;</span> \
+<a name="539" /><span class="Maybe">     539:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3NwYXJzZV8w"><span class="b">rcu_dereference_sparse</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span><span class="f">;</span> \
+<a name="540" /><span class="Maybe">     540:</span>         <span class="f">(</span><span class="b">_________p1</span><span class="f">)</span><span class="f">;</span> \
+<a name="541" /><span class="Maybe">     541:</span>     <span class="f">}</span><span class="f">)</span>
+<a name="542" /><span class="Maybe">     542:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19yY3VfZGVyZWZlcmVuY2VfaW5kZXhfY2hlY2tfMA__"><span class="b">__rcu_dereference_index_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">)</span> \
+<a name="543" /><span class="Maybe">     543:</span>     <span class="f">(</span><span class="f">{</span> \
+<a name="544" /><span class="Maybe">     544:</span>         <span class="b">typeof</span><span class="f">(</span><span class="b">p</span><span class="f">)</span> <span class="b">_________p1</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_QUNDRVNTX09OQ0VfMA__"><span class="b">ACCESS_ONCE</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">;</span> \
+<a name="545" /><span class="Maybe">     545:</span>         <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">c</span><span class="f">,</span> \
+<a name="546" /><span class="Maybe">     546:</span>                    <span class="e">&quot;suspicious rcu_dereference_index_check()&quot;</span> \
+<a name="547" /><span class="Maybe">     547:</span>                    <span class="e">&quot; usage&quot;</span><span class="f">)</span><span class="f">;</span> \
+<a name="548" /><span class="Maybe">     548:</span>         <a href="cpu.c_macros_ref.html#_c21wX3JlYWRfYmFycmllcl9kZXBlbmRzXzA_"><span class="b">smp_read_barrier_depends</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span> \
+<a name="549" /><span class="Maybe">     549:</span>         <span class="f">(</span><span class="b">_________p1</span><span class="f">)</span><span class="f">;</span> \
+<a name="550" /><span class="Maybe">     550:</span>     <span class="f">}</span><span class="f">)</span>
+<a name="551" /><span class="Maybe">     551:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19yY3VfYXNzaWduX3BvaW50ZXJfMA__"><span class="b">__rcu_assign_pointer</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">v</span><span class="f">,</span> <span class="b">space</span><span class="f">)</span> \
+<a name="552" /><span class="Maybe">     552:</span>     <span class="m">do</span> <span class="f">{</span> \
+<a name="553" /><span class="Maybe">     553:</span>         <a href="cpu.c_macros_ref.html#_c21wX3dtYl8w"><span class="b">smp_wmb</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span> \
+<a name="554" /><span class="Maybe">     554:</span>         <span class="f">(</span><span class="b">p</span><span class="f">)</span> <span class="f">=</span> <span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">v</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <span class="b">space</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">v</span><span class="f">)</span><span class="f">;</span> \
+<a name="555" /><span class="Maybe">     555:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="556" /><span class="Maybe">     556:</span> 
+<a name="557" /><span class="Maybe">     557:</span> 
+<a name="558" /><span class="Maybe">     558:</span> <span class="k">/**</span>
+<a name="559" /><span class="Maybe">     559:</span> <span class="k"> * rcu_access_pointer() - fetch RCU pointer with no dereferencing</span>
+<a name="560" /><span class="Maybe">     560:</span> <span class="k"> * @p: The pointer to read</span>
+<a name="561" /><span class="Maybe">     561:</span> <span class="k"> *</span>
+<a name="562" /><span class="Maybe">     562:</span> <span class="k"> * Return the value of the specified RCU-protected pointer, but omit the</span>
+<a name="563" /><span class="Maybe">     563:</span> <span class="k"> * smp_read_barrier_depends() and keep the ACCESS_ONCE().  This is useful</span>
+<a name="564" /><span class="Maybe">     564:</span> <span class="k"> * when the value of this pointer is accessed, but the pointer is not</span>
+<a name="565" /><span class="Maybe">     565:</span> <span class="k"> * dereferenced, for example, when testing an RCU-protected pointer against</span>
+<a name="566" /><span class="Maybe">     566:</span> <span class="k"> * NULL.  Although rcu_access_pointer() may also be used in cases where</span>
+<a name="567" /><span class="Maybe">     567:</span> <span class="k"> * update-side locks prevent the value of the pointer from changing, you</span>
+<a name="568" /><span class="Maybe">     568:</span> <span class="k"> * should instead use rcu_dereference_protected() for this use case.</span>
+<a name="569" /><span class="Maybe">     569:</span> <span class="k"> *</span>
+<a name="570" /><span class="Maybe">     570:</span> <span class="k"> * It is also permissible to use rcu_access_pointer() when read-side</span>
+<a name="571" /><span class="Maybe">     571:</span> <span class="k"> * access to the pointer was removed at least one grace period ago, as</span>
+<a name="572" /><span class="Maybe">     572:</span> <span class="k"> * is the case in the context of the RCU callback that is freeing up</span>
+<a name="573" /><span class="Maybe">     573:</span> <span class="k"> * the data, or after a synchronize_rcu() returns.  This can be useful</span>
+<a name="574" /><span class="Maybe">     574:</span> <span class="k"> * when tearing down multi-linked structures after a grace period</span>
+<a name="575" /><span class="Maybe">     575:</span> <span class="k"> * has elapsed.</span>
+<a name="576" /><span class="Maybe">     576:</span> <span class="k"> */</span>
+<a name="577" /><span class="Maybe">     577:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2FjY2Vzc19wb2ludGVyXzA_"><span class="b">rcu_access_pointer</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_noref.html#_X19yY3VfYWNjZXNzX3BvaW50ZXJfMA__"><span class="b">__rcu_access_pointer</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="578" /><span class="Maybe">     578:</span> 
+<a name="579" /><span class="Maybe">     579:</span> <span class="k">/**</span>
+<a name="580" /><span class="Maybe">     580:</span> <span class="k"> * rcu_dereference_check() - rcu_dereference with debug checking</span>
+<a name="581" /><span class="Maybe">     581:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="582" /><span class="Maybe">     582:</span> <span class="k"> * @c: The conditions under which the dereference will take place</span>
+<a name="583" /><span class="Maybe">     583:</span> <span class="k"> *</span>
+<a name="584" /><span class="Maybe">     584:</span> <span class="k"> * Do an rcu_dereference(), but check that the conditions under which the</span>
+<a name="585" /><span class="Maybe">     585:</span> <span class="k"> * dereference will take place are correct.  Typically the conditions</span>
+<a name="586" /><span class="Maybe">     586:</span> <span class="k"> * indicate the various locking conditions that should be held at that</span>
+<a name="587" /><span class="Maybe">     587:</span> <span class="k"> * point.  The check should return true if the conditions are satisfied.</span>
+<a name="588" /><span class="Maybe">     588:</span> <span class="k"> * An implicit check for being in an RCU read-side critical section</span>
+<a name="589" /><span class="Maybe">     589:</span> <span class="k"> * (rcu_read_lock()) is included.</span>
+<a name="590" /><span class="Maybe">     590:</span> <span class="k"> *</span>
+<a name="591" /><span class="Maybe">     591:</span> <span class="k"> * For example:</span>
+<a name="592" /><span class="Maybe">     592:</span> <span class="k"> *</span>
+<a name="593" /><span class="Maybe">     593:</span> <span class="k"> *    bar = rcu_dereference_check(foo-&gt;bar, lockdep_is_held(&amp;foo-&gt;lock));</span>
+<a name="594" /><span class="Maybe">     594:</span> <span class="k"> *</span>
+<a name="595" /><span class="Maybe">     595:</span> <span class="k"> * could be used to indicate to lockdep that foo-&gt;bar may only be dereferenced</span>
+<a name="596" /><span class="Maybe">     596:</span> <span class="k"> * if either rcu_read_lock() is held, or that the lock required to replace</span>
+<a name="597" /><span class="Maybe">     597:</span> <span class="k"> * the bar struct at foo-&gt;bar is held.</span>
+<a name="598" /><span class="Maybe">     598:</span> <span class="k"> *</span>
+<a name="599" /><span class="Maybe">     599:</span> <span class="k"> * Note that the list of conditions may also include indications of when a lock</span>
+<a name="600" /><span class="Maybe">     600:</span> <span class="k"> * need not be held, for example during initialisation or destruction of the</span>
+<a name="601" /><span class="Maybe">     601:</span> <span class="k"> * target struct:</span>
+<a name="602" /><span class="Maybe">     602:</span> <span class="k"> *</span>
+<a name="603" /><span class="Maybe">     603:</span> <span class="k"> *    bar = rcu_dereference_check(foo-&gt;bar, lockdep_is_held(&amp;foo-&gt;lock) ||</span>
+<a name="604" /><span class="Maybe">     604:</span> <span class="k"> *                          atomic_read(&amp;foo-&gt;usage) == 0);</span>
+<a name="605" /><span class="Maybe">     605:</span> <span class="k"> *</span>
+<a name="606" /><span class="Maybe">     606:</span> <span class="k"> * Inserts memory barriers on architectures that require them</span>
+<a name="607" /><span class="Maybe">     607:</span> <span class="k"> * (currently only the Alpha), prevents the compiler from refetching</span>
+<a name="608" /><span class="Maybe">     608:</span> <span class="k"> * (and from merging fetches), and, more importantly, documents exactly</span>
+<a name="609" /><span class="Maybe">     609:</span> <span class="k"> * which pointers are protected by RCU and checks that the pointer is</span>
+<a name="610" /><span class="Maybe">     610:</span> <span class="k"> * annotated as __rcu.</span>
+<a name="611" /><span class="Maybe">     611:</span> <span class="k"> */</span>
+<a name="612" /><span class="Maybe">     612:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX2NoZWNrXzA_"><span class="b">rcu_dereference_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">)</span> \
+<a name="613" /><span class="Maybe">     613:</span>     <a href="cpu.c_macros_ref.html#_X19yY3VfZGVyZWZlcmVuY2VfY2hlY2tfMA__"><span class="b">__rcu_dereference_check</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <span class="b">rcu_read_lock_held</span><span class="f">(</span><span class="f">)</span> <span class="f">||</span> <span class="f">(</span><span class="b">c</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="614" /><span class="Maybe">     614:</span> 
+<a name="615" /><span class="Maybe">     615:</span> <span class="k">/**</span>
+<a name="616" /><span class="Maybe">     616:</span> <span class="k"> * rcu_dereference_bh_check() - rcu_dereference_bh with debug checking</span>
+<a name="617" /><span class="Maybe">     617:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="618" /><span class="Maybe">     618:</span> <span class="k"> * @c: The conditions under which the dereference will take place</span>
+<a name="619" /><span class="Maybe">     619:</span> <span class="k"> *</span>
+<a name="620" /><span class="Maybe">     620:</span> <span class="k"> * This is the RCU-bh counterpart to rcu_dereference_check().</span>
+<a name="621" /><span class="Maybe">     621:</span> <span class="k"> */</span>
+<a name="622" /><span class="Maybe">     622:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX2JoX2NoZWNrXzA_"><span class="b">rcu_dereference_bh_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">)</span> \
+<a name="623" /><span class="Maybe">     623:</span>     <a href="cpu.c_macros_ref.html#_X19yY3VfZGVyZWZlcmVuY2VfY2hlY2tfMA__"><span class="b">__rcu_dereference_check</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <span class="b">rcu_read_lock_bh_held</span><span class="f">(</span><span class="f">)</span> <span class="f">||</span> <span class="f">(</span><span class="b">c</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="624" /><span class="Maybe">     624:</span> 
+<a name="625" /><span class="Maybe">     625:</span> <span class="k">/**</span>
+<a name="626" /><span class="Maybe">     626:</span> <span class="k"> * rcu_dereference_sched_check() - rcu_dereference_sched with debug checking</span>
+<a name="627" /><span class="Maybe">     627:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="628" /><span class="Maybe">     628:</span> <span class="k"> * @c: The conditions under which the dereference will take place</span>
+<a name="629" /><span class="Maybe">     629:</span> <span class="k"> *</span>
+<a name="630" /><span class="Maybe">     630:</span> <span class="k"> * This is the RCU-sched counterpart to rcu_dereference_check().</span>
+<a name="631" /><span class="Maybe">     631:</span> <span class="k"> */</span>
+<a name="632" /><span class="Maybe">     632:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX3NjaGVkX2NoZWNrXzA_"><span class="b">rcu_dereference_sched_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">)</span> \
+<a name="633" /><span class="Maybe">     633:</span>     <a href="cpu.c_macros_ref.html#_X19yY3VfZGVyZWZlcmVuY2VfY2hlY2tfMA__"><span class="b">__rcu_dereference_check</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <span class="b">rcu_read_lock_sched_held</span><span class="f">(</span><span class="f">)</span> <span class="f">||</span> <span class="f">(</span><span class="b">c</span><span class="f">)</span><span class="f">,</span> \
+<a name="634" /><span class="Maybe">     634:</span>                 <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="635" /><span class="Maybe">     635:</span> 
+<a name="636" /><span class="Maybe">     636:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3Jhd18w"><span class="b">rcu_dereference_raw</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX2NoZWNrXzA_"><span class="b">rcu_dereference_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="c">1</span><span class="f">)</span> <span class="k">/*@@@ needed? @@@*/</span>
+<a name="637" /><span class="Maybe">     637:</span> 
+<a name="638" /><span class="Maybe">     638:</span> <span class="k">/*</span>
+<a name="639" /><span class="Maybe">     639:</span> <span class="k"> * The tracing infrastructure traces RCU (we want that), but unfortunately</span>
+<a name="640" /><span class="Maybe">     640:</span> <span class="k"> * some of the RCU checks causes tracing to lock up the system.</span>
+<a name="641" /><span class="Maybe">     641:</span> <span class="k"> *</span>
+<a name="642" /><span class="Maybe">     642:</span> <span class="k"> * The tracing version of rcu_dereference_raw() must not call</span>
+<a name="643" /><span class="Maybe">     643:</span> <span class="k"> * rcu_read_lock_held().</span>
+<a name="644" /><span class="Maybe">     644:</span> <span class="k"> */</span>
+<a name="645" /><span class="Maybe">     645:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX3Jhd19ub3RyYWNlXzA_"><span class="b">rcu_dereference_raw_notrace</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19yY3VfZGVyZWZlcmVuY2VfY2hlY2tfMA__"><span class="b">__rcu_dereference_check</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="646" /><span class="Maybe">     646:</span> 
+<a name="647" /><span class="Maybe">     647:</span> <span class="k">/**</span>
+<a name="648" /><span class="Maybe">     648:</span> <span class="k"> * rcu_access_index() - fetch RCU index with no dereferencing</span>
+<a name="649" /><span class="Maybe">     649:</span> <span class="k"> * @p: The index to read</span>
+<a name="650" /><span class="Maybe">     650:</span> <span class="k"> *</span>
+<a name="651" /><span class="Maybe">     651:</span> <span class="k"> * Return the value of the specified RCU-protected index, but omit the</span>
+<a name="652" /><span class="Maybe">     652:</span> <span class="k"> * smp_read_barrier_depends() and keep the ACCESS_ONCE().  This is useful</span>
+<a name="653" /><span class="Maybe">     653:</span> <span class="k"> * when the value of this index is accessed, but the index is not</span>
+<a name="654" /><span class="Maybe">     654:</span> <span class="k"> * dereferenced, for example, when testing an RCU-protected index against</span>
+<a name="655" /><span class="Maybe">     655:</span> <span class="k"> * -1.  Although rcu_access_index() may also be used in cases where</span>
+<a name="656" /><span class="Maybe">     656:</span> <span class="k"> * update-side locks prevent the value of the index from changing, you</span>
+<a name="657" /><span class="Maybe">     657:</span> <span class="k"> * should instead use rcu_dereference_index_protected() for this use case.</span>
+<a name="658" /><span class="Maybe">     658:</span> <span class="k"> */</span>
+<a name="659" /><span class="Maybe">     659:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2FjY2Vzc19pbmRleF8w"><span class="b">rcu_access_index</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_noref.html#_X19yY3VfYWNjZXNzX2luZGV4XzA_"><span class="b">__rcu_access_index</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="660" /><span class="Maybe">     660:</span> 
+<a name="661" /><span class="Maybe">     661:</span> <span class="k">/**</span>
+<a name="662" /><span class="Maybe">     662:</span> <span class="k"> * rcu_dereference_index_check() - rcu_dereference for indices with debug checking</span>
+<a name="663" /><span class="Maybe">     663:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="664" /><span class="Maybe">     664:</span> <span class="k"> * @c: The conditions under which the dereference will take place</span>
+<a name="665" /><span class="Maybe">     665:</span> <span class="k"> *</span>
+<a name="666" /><span class="Maybe">     666:</span> <span class="k"> * Similar to rcu_dereference_check(), but omits the sparse checking.</span>
+<a name="667" /><span class="Maybe">     667:</span> <span class="k"> * This allows rcu_dereference_index_check() to be used on integers,</span>
+<a name="668" /><span class="Maybe">     668:</span> <span class="k"> * which can then be used as array indices.  Attempting to use</span>
+<a name="669" /><span class="Maybe">     669:</span> <span class="k"> * rcu_dereference_check() on an integer will give compiler warnings</span>
+<a name="670" /><span class="Maybe">     670:</span> <span class="k"> * because the sparse address-space mechanism relies on dereferencing</span>
+<a name="671" /><span class="Maybe">     671:</span> <span class="k"> * the RCU-protected pointer.  Dereferencing integers is not something</span>
+<a name="672" /><span class="Maybe">     672:</span> <span class="k"> * that even gcc will put up with.</span>
+<a name="673" /><span class="Maybe">     673:</span> <span class="k"> *</span>
+<a name="674" /><span class="Maybe">     674:</span> <span class="k"> * Note that this function does not implicitly check for RCU read-side</span>
+<a name="675" /><span class="Maybe">     675:</span> <span class="k"> * critical sections.  If this function gains lots of uses, it might</span>
+<a name="676" /><span class="Maybe">     676:</span> <span class="k"> * make sense to provide versions for each flavor of RCU, but it does</span>
+<a name="677" /><span class="Maybe">     677:</span> <span class="k"> * not make sense as of early 2010.</span>
+<a name="678" /><span class="Maybe">     678:</span> <span class="k"> */</span>
+<a name="679" /><span class="Maybe">     679:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX2luZGV4X2NoZWNrXzA_"><span class="b">rcu_dereference_index_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">)</span> \
+<a name="680" /><span class="Maybe">     680:</span>     <a href="cpu.c_macros_noref.html#_X19yY3VfZGVyZWZlcmVuY2VfaW5kZXhfY2hlY2tfMA__"><span class="b">__rcu_dereference_index_check</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">c</span><span class="f">)</span><span class="f">)</span>
+<a name="681" /><span class="Maybe">     681:</span> 
+<a name="682" /><span class="Maybe">     682:</span> <span class="k">/**</span>
+<a name="683" /><span class="Maybe">     683:</span> <span class="k"> * rcu_dereference_protected() - fetch RCU pointer when updates prevented</span>
+<a name="684" /><span class="Maybe">     684:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="685" /><span class="Maybe">     685:</span> <span class="k"> * @c: The conditions under which the dereference will take place</span>
+<a name="686" /><span class="Maybe">     686:</span> <span class="k"> *</span>
+<a name="687" /><span class="Maybe">     687:</span> <span class="k"> * Return the value of the specified RCU-protected pointer, but omit</span>
+<a name="688" /><span class="Maybe">     688:</span> <span class="k"> * both the smp_read_barrier_depends() and the ACCESS_ONCE().  This</span>
+<a name="689" /><span class="Maybe">     689:</span> <span class="k"> * is useful in cases where update-side locks prevent the value of the</span>
+<a name="690" /><span class="Maybe">     690:</span> <span class="k"> * pointer from changing.  Please note that this primitive does -not-</span>
+<a name="691" /><span class="Maybe">     691:</span> <span class="k"> * prevent the compiler from repeating this reference or combining it</span>
+<a name="692" /><span class="Maybe">     692:</span> <span class="k"> * with other references, so it should not be used without protection</span>
+<a name="693" /><span class="Maybe">     693:</span> <span class="k"> * of appropriate locks.</span>
+<a name="694" /><span class="Maybe">     694:</span> <span class="k"> *</span>
+<a name="695" /><span class="Maybe">     695:</span> <span class="k"> * This function is only for update-side use.  Using this function</span>
+<a name="696" /><span class="Maybe">     696:</span> <span class="k"> * when protected only by rcu_read_lock() will result in infrequent</span>
+<a name="697" /><span class="Maybe">     697:</span> <span class="k"> * but very ugly failures.</span>
+<a name="698" /><span class="Maybe">     698:</span> <span class="k"> */</span>
+<a name="699" /><span class="Maybe">     699:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX3Byb3RlY3RlZF8w"><span class="b">rcu_dereference_protected</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">c</span><span class="f">)</span> \
+<a name="700" /><span class="Maybe">     700:</span>     <a href="cpu.c_macros_ref.html#_X19yY3VfZGVyZWZlcmVuY2VfcHJvdGVjdGVkXzA_"><span class="b">__rcu_dereference_protected</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">c</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="701" /><span class="Maybe">     701:</span> 
+<a name="702" /><span class="Maybe">     702:</span> 
+<a name="703" /><span class="Maybe">     703:</span> <span class="k">/**</span>
+<a name="704" /><span class="Maybe">     704:</span> <span class="k"> * rcu_dereference() - fetch RCU-protected pointer for dereferencing</span>
+<a name="705" /><span class="Maybe">     705:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="706" /><span class="Maybe">     706:</span> <span class="k"> *</span>
+<a name="707" /><span class="Maybe">     707:</span> <span class="k"> * This is a simple wrapper around rcu_dereference_check().</span>
+<a name="708" /><span class="Maybe">     708:</span> <span class="k"> */</span>
+<a name="709" /><span class="Maybe">     709:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlXzA_"><span class="b">rcu_dereference</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_cmN1X2RlcmVmZXJlbmNlX2NoZWNrXzA_"><span class="b">rcu_dereference_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span>
+<a name="710" /><span class="Maybe">     710:</span> 
+<a name="711" /><span class="Maybe">     711:</span> <span class="k">/**</span>
+<a name="712" /><span class="Maybe">     712:</span> <span class="k"> * rcu_dereference_bh() - fetch an RCU-bh-protected pointer for dereferencing</span>
+<a name="713" /><span class="Maybe">     713:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="714" /><span class="Maybe">     714:</span> <span class="k"> *</span>
+<a name="715" /><span class="Maybe">     715:</span> <span class="k"> * Makes rcu_dereference_check() do the dirty work.</span>
+<a name="716" /><span class="Maybe">     716:</span> <span class="k"> */</span>
+<a name="717" /><span class="Maybe">     717:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX2JoXzA_"><span class="b">rcu_dereference_bh</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX2JoX2NoZWNrXzA_"><span class="b">rcu_dereference_bh_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span>
+<a name="718" /><span class="Maybe">     718:</span> 
+<a name="719" /><span class="Maybe">     719:</span> <span class="k">/**</span>
+<a name="720" /><span class="Maybe">     720:</span> <span class="k"> * rcu_dereference_sched() - fetch RCU-sched-protected pointer for dereferencing</span>
+<a name="721" /><span class="Maybe">     721:</span> <span class="k"> * @p: The pointer to read, prior to dereferencing</span>
+<a name="722" /><span class="Maybe">     722:</span> <span class="k"> *</span>
+<a name="723" /><span class="Maybe">     723:</span> <span class="k"> * Makes rcu_dereference_check() do the dirty work.</span>
+<a name="724" /><span class="Maybe">     724:</span> <span class="k"> */</span>
+<a name="725" /><span class="Maybe">     725:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX3NjaGVkXzA_"><span class="b">rcu_dereference_sched</span></a><span class="f">(</span><span class="b">p</span><span class="f">)</span> <a href="cpu.c_macros_noref.html#_cmN1X2RlcmVmZXJlbmNlX3NjaGVkX2NoZWNrXzA_"><span class="b">rcu_dereference_sched_check</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span>
+<a name="726" /><span class="Maybe">     726:</span> 
+<a name="727" /><span class="Maybe">     727:</span> <span class="k">/**</span>
+<a name="728" /><span class="Maybe">     728:</span> <span class="k"> * rcu_read_lock() - mark the beginning of an RCU read-side critical section</span>
+<a name="729" /><span class="Maybe">     729:</span> <span class="k"> *</span>
+<a name="730" /><span class="Maybe">     730:</span> <span class="k"> * When synchronize_rcu() is invoked on one CPU while other CPUs</span>
+<a name="731" /><span class="Maybe">     731:</span> <span class="k"> * are within RCU read-side critical sections, then the</span>
+<a name="732" /><span class="Maybe">     732:</span> <span class="k"> * synchronize_rcu() is guaranteed to block until after all the other</span>
+<a name="733" /><span class="Maybe">     733:</span> <span class="k"> * CPUs exit their critical sections.  Similarly, if call_rcu() is invoked</span>
+<a name="734" /><span class="Maybe">     734:</span> <span class="k"> * on one CPU while other CPUs are within RCU read-side critical</span>
+<a name="735" /><span class="Maybe">     735:</span> <span class="k"> * sections, invocation of the corresponding RCU callback is deferred</span>
+<a name="736" /><span class="Maybe">     736:</span> <span class="k"> * until after the all the other CPUs exit their critical sections.</span>
+<a name="737" /><span class="Maybe">     737:</span> <span class="k"> *</span>
+<a name="738" /><span class="Maybe">     738:</span> <span class="k"> * Note, however, that RCU callbacks are permitted to run concurrently</span>
+<a name="739" /><span class="Maybe">     739:</span> <span class="k"> * with new RCU read-side critical sections.  One way that this can happen</span>
+<a name="740" /><span class="Maybe">     740:</span> <span class="k"> * is via the following sequence of events: (1) CPU 0 enters an RCU</span>
+<a name="741" /><span class="Maybe">     741:</span> <span class="k"> * read-side critical section, (2) CPU 1 invokes call_rcu() to register</span>
+<a name="742" /><span class="Maybe">     742:</span> <span class="k"> * an RCU callback, (3) CPU 0 exits the RCU read-side critical section,</span>
+<a name="743" /><span class="Maybe">     743:</span> <span class="k"> * (4) CPU 2 enters a RCU read-side critical section, (5) the RCU</span>
+<a name="744" /><span class="Maybe">     744:</span> <span class="k"> * callback is invoked.  This is legal, because the RCU read-side critical</span>
+<a name="745" /><span class="Maybe">     745:</span> <span class="k"> * section that was running concurrently with the call_rcu() (and which</span>
+<a name="746" /><span class="Maybe">     746:</span> <span class="k"> * therefore might be referencing something that the corresponding RCU</span>
+<a name="747" /><span class="Maybe">     747:</span> <span class="k"> * callback would free up) has completed before the corresponding</span>
+<a name="748" /><span class="Maybe">     748:</span> <span class="k"> * RCU callback is invoked.</span>
+<a name="749" /><span class="Maybe">     749:</span> <span class="k"> *</span>
+<a name="750" /><span class="Maybe">     750:</span> <span class="k"> * RCU read-side critical sections may be nested.  Any deferred actions</span>
+<a name="751" /><span class="Maybe">     751:</span> <span class="k"> * will be deferred until the outermost RCU read-side critical section</span>
+<a name="752" /><span class="Maybe">     752:</span> <span class="k"> * completes.</span>
+<a name="753" /><span class="Maybe">     753:</span> <span class="k"> *</span>
+<a name="754" /><span class="Maybe">     754:</span> <span class="k"> * You can avoid reading and understanding the next paragraph by</span>
+<a name="755" /><span class="Maybe">     755:</span> <span class="k"> * following this rule: don&apos;t put anything in an rcu_read_lock() RCU</span>
+<a name="756" /><span class="Maybe">     756:</span> <span class="k"> * read-side critical section that would block in a !PREEMPT kernel.</span>
+<a name="757" /><span class="Maybe">     757:</span> <span class="k"> * But if you want the full story, read on!</span>
+<a name="758" /><span class="Maybe">     758:</span> <span class="k"> *</span>
+<a name="759" /><span class="Maybe">     759:</span> <span class="k"> * In non-preemptible RCU implementations (TREE_RCU and TINY_RCU), it</span>
+<a name="760" /><span class="Maybe">     760:</span> <span class="k"> * is illegal to block while in an RCU read-side critical section.  In</span>
+<a name="761" /><span class="Maybe">     761:</span> <span class="k"> * preemptible RCU implementations (TREE_PREEMPT_RCU and TINY_PREEMPT_RCU)</span>
+<a name="762" /><span class="Maybe">     762:</span> <span class="k"> * in CONFIG_PREEMPT kernel builds, RCU read-side critical sections may</span>
+<a name="763" /><span class="Maybe">     763:</span> <span class="k"> * be preempted, but explicit blocking is illegal.  Finally, in preemptible</span>
+<a name="764" /><span class="Maybe">     764:</span> <span class="k"> * RCU implementations in real-time (with -rt patchset) kernel builds,</span>
+<a name="765" /><span class="Maybe">     765:</span> <span class="k"> * RCU read-side critical sections may be preempted and they may also</span>
+<a name="766" /><span class="Maybe">     766:</span> <span class="k"> * block, but only when acquiring spinlocks that are subject to priority</span>
+<a name="767" /><span class="Maybe">     767:</span> <span class="k"> * inheritance.</span>
+<a name="768" /><span class="Maybe">     768:</span> <span class="k"> */</span>
+<a name="769" /><span class="Maybe">     769:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_read_lock</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="770" /><span class="Maybe">     770:</span> <span class="f">{</span>
+<a name="771" /><span class="Maybe">     771:</span>     <span class="b">__rcu_read_lock</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="772" /><span class="Maybe">     772:</span>     <a href="cpu.c_macros_ref.html#_X19hY3F1aXJlXzA_"><span class="b">__acquire</span></a><span class="f">(</span><span class="b">RCU</span><span class="f">)</span><span class="f">;</span>
+<a name="773" /><span class="Maybe">     773:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfYWNxdWlyZV8w"><span class="b">rcu_lock_acquire</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="774" /><span class="Maybe">     774:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">,</span>
+<a name="775" /><span class="Maybe">     775:</span>                <span class="e">&quot;rcu_read_lock() used illegally while idle&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="776" /><span class="Maybe">     776:</span> <span class="f">}</span>
+<a name="777" /><span class="Maybe">     777:</span> 
+<a name="778" /><span class="Maybe">     778:</span> <span class="k">/*</span>
+<a name="779" /><span class="Maybe">     779:</span> <span class="k"> * So where is rcu_write_lock()?  It does not exist, as there is no</span>
+<a name="780" /><span class="Maybe">     780:</span> <span class="k"> * way for writers to lock out RCU readers.  This is a feature, not</span>
+<a name="781" /><span class="Maybe">     781:</span> <span class="k"> * a bug -- this property is what provides RCU&apos;s performance benefits.</span>
+<a name="782" /><span class="Maybe">     782:</span> <span class="k"> * Of course, writers must coordinate with each other.  The normal</span>
+<a name="783" /><span class="Maybe">     783:</span> <span class="k"> * spinlock primitives work well for this, but any other technique may be</span>
+<a name="784" /><span class="Maybe">     784:</span> <span class="k"> * used as well.  RCU does not care how the writers keep out of each</span>
+<a name="785" /><span class="Maybe">     785:</span> <span class="k"> * others&apos; way, as long as they do so.</span>
+<a name="786" /><span class="Maybe">     786:</span> <span class="k"> */</span>
+<a name="787" /><span class="Maybe">     787:</span> 
+<a name="788" /><span class="Maybe">     788:</span> <span class="k">/**</span>
+<a name="789" /><span class="Maybe">     789:</span> <span class="k"> * rcu_read_unlock() - marks the end of an RCU read-side critical section.</span>
+<a name="790" /><span class="Maybe">     790:</span> <span class="k"> *</span>
+<a name="791" /><span class="Maybe">     791:</span> <span class="k"> * See rcu_read_lock() for more information.</span>
+<a name="792" /><span class="Maybe">     792:</span> <span class="k"> */</span>
+<a name="793" /><span class="Maybe">     793:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_read_unlock</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="794" /><span class="Maybe">     794:</span> <span class="f">{</span>
+<a name="795" /><span class="Maybe">     795:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">,</span>
+<a name="796" /><span class="Maybe">     796:</span>                <span class="e">&quot;rcu_read_unlock() used illegally while idle&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="797" /><span class="Maybe">     797:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfcmVsZWFzZV8w"><span class="b">rcu_lock_release</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="798" /><span class="Maybe">     798:</span>     <a href="cpu.c_macros_ref.html#_X19yZWxlYXNlXzA_"><span class="b">__release</span></a><span class="f">(</span><span class="b">RCU</span><span class="f">)</span><span class="f">;</span>
+<a name="799" /><span class="Maybe">     799:</span>     <span class="b">__rcu_read_unlock</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="800" /><span class="Maybe">     800:</span> <span class="f">}</span>
+<a name="801" /><span class="Maybe">     801:</span> 
+<a name="802" /><span class="Maybe">     802:</span> <span class="k">/**</span>
+<a name="803" /><span class="Maybe">     803:</span> <span class="k"> * rcu_read_lock_bh() - mark the beginning of an RCU-bh critical section</span>
+<a name="804" /><span class="Maybe">     804:</span> <span class="k"> *</span>
+<a name="805" /><span class="Maybe">     805:</span> <span class="k"> * This is equivalent of rcu_read_lock(), but to be used when updates</span>
+<a name="806" /><span class="Maybe">     806:</span> <span class="k"> * are being done using call_rcu_bh() or synchronize_rcu_bh(). Since</span>
+<a name="807" /><span class="Maybe">     807:</span> <span class="k"> * both call_rcu_bh() and synchronize_rcu_bh() consider completion of a</span>
+<a name="808" /><span class="Maybe">     808:</span> <span class="k"> * softirq handler to be a quiescent state, a process in RCU read-side</span>
+<a name="809" /><span class="Maybe">     809:</span> <span class="k"> * critical section must be protected by disabling softirqs. Read-side</span>
+<a name="810" /><span class="Maybe">     810:</span> <span class="k"> * critical sections in interrupt context can use just rcu_read_lock(),</span>
+<a name="811" /><span class="Maybe">     811:</span> <span class="k"> * though this should at least be commented to avoid confusing people</span>
+<a name="812" /><span class="Maybe">     812:</span> <span class="k"> * reading the code.</span>
+<a name="813" /><span class="Maybe">     813:</span> <span class="k"> *</span>
+<a name="814" /><span class="Maybe">     814:</span> <span class="k"> * Note that rcu_read_lock_bh() and the matching rcu_read_unlock_bh()</span>
+<a name="815" /><span class="Maybe">     815:</span> <span class="k"> * must occur in the same context, for example, it is illegal to invoke</span>
+<a name="816" /><span class="Maybe">     816:</span> <span class="k"> * rcu_read_unlock_bh() from one task if the matching rcu_read_lock_bh()</span>
+<a name="817" /><span class="Maybe">     817:</span> <span class="k"> * was invoked from some other task.</span>
+<a name="818" /><span class="Maybe">     818:</span> <span class="k"> */</span>
+<a name="819" /><span class="Maybe">     819:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_read_lock_bh</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="820" /><span class="Maybe">     820:</span> <span class="f">{</span>
+<a name="821" /><span class="Maybe">     821:</span>     <span class="b">local_bh_disable</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="822" /><span class="Maybe">     822:</span>     <a href="cpu.c_macros_ref.html#_X19hY3F1aXJlXzA_"><span class="b">__acquire</span></a><span class="f">(</span><span class="b">RCU_BH</span><span class="f">)</span><span class="f">;</span>
+<a name="823" /><span class="Maybe">     823:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfYWNxdWlyZV8w"><span class="b">rcu_lock_acquire</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_bh_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="824" /><span class="Maybe">     824:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">,</span>
+<a name="825" /><span class="Maybe">     825:</span>                <span class="e">&quot;rcu_read_lock_bh() used illegally while idle&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="826" /><span class="Maybe">     826:</span> <span class="f">}</span>
+<a name="827" /><span class="Maybe">     827:</span> 
+<a name="828" /><span class="Maybe">     828:</span> <span class="k">/*</span>
+<a name="829" /><span class="Maybe">     829:</span> <span class="k"> * rcu_read_unlock_bh - marks the end of a softirq-only RCU critical section</span>
+<a name="830" /><span class="Maybe">     830:</span> <span class="k"> *</span>
+<a name="831" /><span class="Maybe">     831:</span> <span class="k"> * See rcu_read_lock_bh() for more information.</span>
+<a name="832" /><span class="Maybe">     832:</span> <span class="k"> */</span>
+<a name="833" /><span class="Maybe">     833:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_read_unlock_bh</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="834" /><span class="Maybe">     834:</span> <span class="f">{</span>
+<a name="835" /><span class="Maybe">     835:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">,</span>
+<a name="836" /><span class="Maybe">     836:</span>                <span class="e">&quot;rcu_read_unlock_bh() used illegally while idle&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="837" /><span class="Maybe">     837:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfcmVsZWFzZV8w"><span class="b">rcu_lock_release</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_bh_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="838" /><span class="Maybe">     838:</span>     <a href="cpu.c_macros_ref.html#_X19yZWxlYXNlXzA_"><span class="b">__release</span></a><span class="f">(</span><span class="b">RCU_BH</span><span class="f">)</span><span class="f">;</span>
+<a name="839" /><span class="Maybe">     839:</span>     <span class="b">local_bh_enable</span><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="840" /><span class="Maybe">     840:</span> <span class="f">}</span>
+<a name="841" /><span class="Maybe">     841:</span> 
+<a name="842" /><span class="Maybe">     842:</span> <span class="k">/**</span>
+<a name="843" /><span class="Maybe">     843:</span> <span class="k"> * rcu_read_lock_sched() - mark the beginning of a RCU-sched critical section</span>
+<a name="844" /><span class="Maybe">     844:</span> <span class="k"> *</span>
+<a name="845" /><span class="Maybe">     845:</span> <span class="k"> * This is equivalent of rcu_read_lock(), but to be used when updates</span>
+<a name="846" /><span class="Maybe">     846:</span> <span class="k"> * are being done using call_rcu_sched() or synchronize_rcu_sched().</span>
+<a name="847" /><span class="Maybe">     847:</span> <span class="k"> * Read-side critical sections can also be introduced by anything that</span>
+<a name="848" /><span class="Maybe">     848:</span> <span class="k"> * disables preemption, including local_irq_disable() and friends.</span>
+<a name="849" /><span class="Maybe">     849:</span> <span class="k"> *</span>
+<a name="850" /><span class="Maybe">     850:</span> <span class="k"> * Note that rcu_read_lock_sched() and the matching rcu_read_unlock_sched()</span>
+<a name="851" /><span class="Maybe">     851:</span> <span class="k"> * must occur in the same context, for example, it is illegal to invoke</span>
+<a name="852" /><span class="Maybe">     852:</span> <span class="k"> * rcu_read_unlock_sched() from process context if the matching</span>
+<a name="853" /><span class="Maybe">     853:</span> <span class="k"> * rcu_read_lock_sched() was invoked from an NMI handler.</span>
+<a name="854" /><span class="Maybe">     854:</span> <span class="k"> */</span>
+<a name="855" /><span class="Maybe">     855:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_read_lock_sched</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="856" /><span class="Maybe">     856:</span> <span class="f">{</span>
+<a name="857" /><span class="Maybe">     857:</span>     <a href="cpu.c_macros_ref.html#_cHJlZW1wdF9kaXNhYmxlXzA_"><span class="b">preempt_disable</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="858" /><span class="Maybe">     858:</span>     <a href="cpu.c_macros_ref.html#_X19hY3F1aXJlXzA_"><span class="b">__acquire</span></a><span class="f">(</span><span class="b">RCU_SCHED</span><span class="f">)</span><span class="f">;</span>
+<a name="859" /><span class="Maybe">     859:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfYWNxdWlyZV8w"><span class="b">rcu_lock_acquire</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_sched_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="860" /><span class="Maybe">     860:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">,</span>
+<a name="861" /><span class="Maybe">     861:</span>                <span class="e">&quot;rcu_read_lock_sched() used illegally while idle&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="862" /><span class="Maybe">     862:</span> <span class="f">}</span>
+<a name="863" /><span class="Maybe">     863:</span> 
+<a name="864" /><span class="Maybe">     864:</span> <span class="k">/* Used by lockdep and tracing: cannot be traced, cannot call lockdep. */</span>
+<a name="865" /><span class="Maybe">     865:</span> <span class="m">static</span> <span class="m">inline</span> <a href="cpu.c_macros_ref.html#_bm90cmFjZV8x"><span class="b">notrace</span></a> <span class="m">void</span> <span class="b">rcu_read_lock_sched_notrace</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="866" /><span class="Maybe">     866:</span> <span class="f">{</span>
+<a name="867" /><span class="Maybe">     867:</span>     <a href="cpu.c_macros_ref.html#_cHJlZW1wdF9kaXNhYmxlX25vdHJhY2VfMA__"><span class="b">preempt_disable_notrace</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="868" /><span class="Maybe">     868:</span>     <a href="cpu.c_macros_ref.html#_X19hY3F1aXJlXzA_"><span class="b">__acquire</span></a><span class="f">(</span><span class="b">RCU_SCHED</span><span class="f">)</span><span class="f">;</span>
+<a name="869" /><span class="Maybe">     869:</span> <span class="f">}</span>
+<a name="870" /><span class="Maybe">     870:</span> 
+<a name="871" /><span class="Maybe">     871:</span> <span class="k">/*</span>
+<a name="872" /><span class="Maybe">     872:</span> <span class="k"> * rcu_read_unlock_sched - marks the end of a RCU-classic critical section</span>
+<a name="873" /><span class="Maybe">     873:</span> <span class="k"> *</span>
+<a name="874" /><span class="Maybe">     874:</span> <span class="k"> * See rcu_read_lock_sched for more information.</span>
+<a name="875" /><span class="Maybe">     875:</span> <span class="k"> */</span>
+<a name="876" /><span class="Maybe">     876:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_read_unlock_sched</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="877" /><span class="Maybe">     877:</span> <span class="f">{</span>
+<a name="878" /><span class="Maybe">     878:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tkZXBfYXNzZXJ0XzA_"><span class="b">rcu_lockdep_assert</span></a><span class="f">(</span><span class="b">rcu_is_watching</span><span class="f">(</span><span class="f">)</span><span class="f">,</span>
+<a name="879" /><span class="Maybe">     879:</span>                <span class="e">&quot;rcu_read_unlock_sched() used illegally while idle&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="880" /><span class="Maybe">     880:</span>     <a href="cpu.c_macros_ref.html#_cmN1X2xvY2tfcmVsZWFzZV8w"><span class="b">rcu_lock_release</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">rcu_sched_lock_map</span><span class="f">)</span><span class="f">;</span>
+<a name="881" /><span class="Maybe">     881:</span>     <a href="cpu.c_macros_ref.html#_X19yZWxlYXNlXzA_"><span class="b">__release</span></a><span class="f">(</span><span class="b">RCU_SCHED</span><span class="f">)</span><span class="f">;</span>
+<a name="882" /><span class="Maybe">     882:</span>     <a href="cpu.c_macros_ref.html#_cHJlZW1wdF9lbmFibGVfMA__"><span class="b">preempt_enable</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="883" /><span class="Maybe">     883:</span> <span class="f">}</span>
+<a name="884" /><span class="Maybe">     884:</span> 
+<a name="885" /><span class="Maybe">     885:</span> <span class="k">/* Used by lockdep and tracing: cannot be traced, cannot call lockdep. */</span>
+<a name="886" /><span class="Maybe">     886:</span> <span class="m">static</span> <span class="m">inline</span> <a href="cpu.c_macros_ref.html#_bm90cmFjZV8x"><span class="b">notrace</span></a> <span class="m">void</span> <span class="b">rcu_read_unlock_sched_notrace</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="887" /><span class="Maybe">     887:</span> <span class="f">{</span>
+<a name="888" /><span class="Maybe">     888:</span>     <a href="cpu.c_macros_ref.html#_X19yZWxlYXNlXzA_"><span class="b">__release</span></a><span class="f">(</span><span class="b">RCU_SCHED</span><span class="f">)</span><span class="f">;</span>
+<a name="889" /><span class="Maybe">     889:</span>     <a href="cpu.c_macros_ref.html#_cHJlZW1wdF9lbmFibGVfbm90cmFjZV8w"><span class="b">preempt_enable_notrace</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="890" /><span class="Maybe">     890:</span> <span class="f">}</span>
+<a name="891" /><span class="Maybe">     891:</span> 
+<a name="892" /><span class="Maybe">     892:</span> <span class="k">/**</span>
+<a name="893" /><span class="Maybe">     893:</span> <span class="k"> * rcu_assign_pointer() - assign to RCU-protected pointer</span>
+<a name="894" /><span class="Maybe">     894:</span> <span class="k"> * @p: pointer to assign to</span>
+<a name="895" /><span class="Maybe">     895:</span> <span class="k"> * @v: value to assign (publish)</span>
+<a name="896" /><span class="Maybe">     896:</span> <span class="k"> *</span>
+<a name="897" /><span class="Maybe">     897:</span> <span class="k"> * Assigns the specified value to the specified RCU-protected</span>
+<a name="898" /><span class="Maybe">     898:</span> <span class="k"> * pointer, ensuring that any concurrent RCU readers will see</span>
+<a name="899" /><span class="Maybe">     899:</span> <span class="k"> * any prior initialization.</span>
+<a name="900" /><span class="Maybe">     900:</span> <span class="k"> *</span>
+<a name="901" /><span class="Maybe">     901:</span> <span class="k"> * Inserts memory barriers on architectures that require them</span>
+<a name="902" /><span class="Maybe">     902:</span> <span class="k"> * (which is most of them), and also prevents the compiler from</span>
+<a name="903" /><span class="Maybe">     903:</span> <span class="k"> * reordering the code that initializes the structure after the pointer</span>
+<a name="904" /><span class="Maybe">     904:</span> <span class="k"> * assignment.  More importantly, this call documents which pointers</span>
+<a name="905" /><span class="Maybe">     905:</span> <span class="k"> * will be dereferenced by RCU read-side code.</span>
+<a name="906" /><span class="Maybe">     906:</span> <span class="k"> *</span>
+<a name="907" /><span class="Maybe">     907:</span> <span class="k"> * In some special cases, you may use RCU_INIT_POINTER() instead</span>
+<a name="908" /><span class="Maybe">     908:</span> <span class="k"> * of rcu_assign_pointer().  RCU_INIT_POINTER() is a bit faster due</span>
+<a name="909" /><span class="Maybe">     909:</span> <span class="k"> * to the fact that it does not constrain either the CPU or the compiler.</span>
+<a name="910" /><span class="Maybe">     910:</span> <span class="k"> * That said, using RCU_INIT_POINTER() when you should have used</span>
+<a name="911" /><span class="Maybe">     911:</span> <span class="k"> * rcu_assign_pointer() is a very bad thing that results in</span>
+<a name="912" /><span class="Maybe">     912:</span> <span class="k"> * impossible-to-diagnose memory corruption.  So please be careful.</span>
+<a name="913" /><span class="Maybe">     913:</span> <span class="k"> * See the RCU_INIT_POINTER() comment header for details.</span>
+<a name="914" /><span class="Maybe">     914:</span> <span class="k"> */</span>
+<a name="915" /><span class="Maybe">     915:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_cmN1X2Fzc2lnbl9wb2ludGVyXzA_"><span class="b">rcu_assign_pointer</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">v</span><span class="f">)</span> \
+<a name="916" /><span class="Maybe">     916:</span>     <a href="cpu.c_macros_ref.html#_X19yY3VfYXNzaWduX3BvaW50ZXJfMA__"><span class="b">__rcu_assign_pointer</span></a><span class="f">(</span><span class="f">(</span><span class="b">p</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">v</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a><span class="f">)</span>
+<a name="917" /><span class="Maybe">     917:</span> 
+<a name="918" /><span class="Maybe">     918:</span> <span class="k">/**</span>
+<a name="919" /><span class="Maybe">     919:</span> <span class="k"> * RCU_INIT_POINTER() - initialize an RCU protected pointer</span>
+<a name="920" /><span class="Maybe">     920:</span> <span class="k"> *</span>
+<a name="921" /><span class="Maybe">     921:</span> <span class="k"> * Initialize an RCU-protected pointer in special cases where readers</span>
+<a name="922" /><span class="Maybe">     922:</span> <span class="k"> * do not need ordering constraints on the CPU or the compiler.  These</span>
+<a name="923" /><span class="Maybe">     923:</span> <span class="k"> * special cases are:</span>
+<a name="924" /><span class="Maybe">     924:</span> <span class="k"> *</span>
+<a name="925" /><span class="Maybe">     925:</span> <span class="k"> * 1.    This use of RCU_INIT_POINTER() is NULLing out the pointer -or-</span>
+<a name="926" /><span class="Maybe">     926:</span> <span class="k"> * 2.    The caller has taken whatever steps are required to prevent</span>
+<a name="927" /><span class="Maybe">     927:</span> <span class="k"> *    RCU readers from concurrently accessing this pointer -or-</span>
+<a name="928" /><span class="Maybe">     928:</span> <span class="k"> * 3.    The referenced data structure has already been exposed to</span>
+<a name="929" /><span class="Maybe">     929:</span> <span class="k"> *    readers either at compile time or via rcu_assign_pointer() -and-</span>
+<a name="930" /><span class="Maybe">     930:</span> <span class="k"> *    a.    You have not made -any- reader-visible changes to</span>
+<a name="931" /><span class="Maybe">     931:</span> <span class="k"> *        this structure since then -or-</span>
+<a name="932" /><span class="Maybe">     932:</span> <span class="k"> *    b.    It is OK for readers accessing this structure from its</span>
+<a name="933" /><span class="Maybe">     933:</span> <span class="k"> *        new location to see the old state of the structure.  (For</span>
+<a name="934" /><span class="Maybe">     934:</span> <span class="k"> *        example, the changes were to statistical counters or to</span>
+<a name="935" /><span class="Maybe">     935:</span> <span class="k"> *        other state where exact synchronization is not required.)</span>
+<a name="936" /><span class="Maybe">     936:</span> <span class="k"> *</span>
+<a name="937" /><span class="Maybe">     937:</span> <span class="k"> * Failure to follow these rules governing use of RCU_INIT_POINTER() will</span>
+<a name="938" /><span class="Maybe">     938:</span> <span class="k"> * result in impossible-to-diagnose memory corruption.  As in the structures</span>
+<a name="939" /><span class="Maybe">     939:</span> <span class="k"> * will look OK in crash dumps, but any concurrent RCU readers might</span>
+<a name="940" /><span class="Maybe">     940:</span> <span class="k"> * see pre-initialized values of the referenced data structure.  So</span>
+<a name="941" /><span class="Maybe">     941:</span> <span class="k"> * please be very careful how you use RCU_INIT_POINTER()!!!</span>
+<a name="942" /><span class="Maybe">     942:</span> <span class="k"> *</span>
+<a name="943" /><span class="Maybe">     943:</span> <span class="k"> * If you are creating an RCU-protected linked structure that is accessed</span>
+<a name="944" /><span class="Maybe">     944:</span> <span class="k"> * by a single external-to-structure RCU-protected pointer, then you may</span>
+<a name="945" /><span class="Maybe">     945:</span> <span class="k"> * use RCU_INIT_POINTER() to initialize the internal RCU-protected</span>
+<a name="946" /><span class="Maybe">     946:</span> <span class="k"> * pointers, but you must use rcu_assign_pointer() to initialize the</span>
+<a name="947" /><span class="Maybe">     947:</span> <span class="k"> * external-to-structure pointer -after- you have completely initialized</span>
+<a name="948" /><span class="Maybe">     948:</span> <span class="k"> * the reader-accessible portions of the linked structure.</span>
+<a name="949" /><span class="Maybe">     949:</span> <span class="k"> */</span>
+<a name="950" /><span class="Maybe">     950:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UkNVX0lOSVRfUE9JTlRFUl8w"><span class="b">RCU_INIT_POINTER</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">v</span><span class="f">)</span> \
+<a name="951" /><span class="Maybe">     951:</span>     <span class="m">do</span> <span class="f">{</span> \
+<a name="952" /><span class="Maybe">     952:</span>         <span class="b">p</span> <span class="f">=</span> <span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">v</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">v</span><span class="f">)</span><span class="f">;</span> \
+<a name="953" /><span class="Maybe">     953:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="954" /><span class="Maybe">     954:</span> 
+<a name="955" /><span class="Maybe">     955:</span> <span class="k">/**</span>
+<a name="956" /><span class="Maybe">     956:</span> <span class="k"> * RCU_POINTER_INITIALIZER() - statically initialize an RCU protected pointer</span>
+<a name="957" /><span class="Maybe">     957:</span> <span class="k"> *</span>
+<a name="958" /><span class="Maybe">     958:</span> <span class="k"> * GCC-style initialization for an RCU-protected pointer in a structure field.</span>
+<a name="959" /><span class="Maybe">     959:</span> <span class="k"> */</span>
+<a name="960" /><span class="Maybe">     960:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UkNVX1BPSU5URVJfSU5JVElBTElaRVJfMA__"><span class="b">RCU_POINTER_INITIALIZER</span></a><span class="f">(</span><span class="b">p</span><span class="f">,</span> <span class="b">v</span><span class="f">)</span> \
+<a name="961" /><span class="Maybe">     961:</span>         <span class="f">.</span><span class="b">p</span> <span class="f">=</span> <span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="b">v</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19mb3JjZV8w"><span class="b">__force</span></a> <a href="cpu.c_macros_ref.html#_X19yY3VfMA__"><span class="b">__rcu</span></a> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">v</span><span class="f">)</span>
+<a name="962" /><span class="Maybe">     962:</span> 
+<a name="963" /><span class="Maybe">     963:</span> <span class="k">/*</span>
+<a name="964" /><span class="Maybe">     964:</span> <span class="k"> * Does the specified offset indicate that the corresponding rcu_head</span>
+<a name="965" /><span class="Maybe">     965:</span> <span class="k"> * structure can be handled by kfree_rcu()?</span>
+<a name="966" /><span class="Maybe">     966:</span> <span class="k"> */</span>
+<a name="967" /><span class="Maybe">     967:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19pc19rZnJlZV9yY3Vfb2Zmc2V0XzA_"><span class="b">__is_kfree_rcu_offset</span></a><span class="f">(</span><span class="b">offset</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="b">offset</span><span class="f">)</span> <span class="f">&lt;</span> <span class="c">4096</span><span class="f">)</span>
+<a name="968" /><span class="Maybe">     968:</span> 
+<a name="969" /><span class="Maybe">     969:</span> <span class="k">/*</span>
+<a name="970" /><span class="Maybe">     970:</span> <span class="k"> * Helper macro for kfree_rcu() to prevent argument-expansion eyestrain.</span>
+<a name="971" /><span class="Maybe">     971:</span> <span class="k"> */</span>
+<a name="972" /><span class="Maybe">     972:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19rZnJlZV9yY3VfMA__"><span class="b">__kfree_rcu</span></a><span class="f">(</span><span class="b">head</span><span class="f">,</span> <span class="b">offset</span><span class="f">)</span> \
+<a name="973" /><span class="Maybe">     973:</span>     <span class="m">do</span> <span class="f">{</span> \
+<a name="974" /><span class="Maybe">     974:</span>         <a href="cpu.c_macros_ref.html#_QlVJTERfQlVHX09OXzA_"><span class="b">BUILD_BUG_ON</span></a><span class="f">(</span><span class="f">!</span><a href="cpu.c_macros_noref.html#_X19pc19rZnJlZV9yY3Vfb2Zmc2V0XzA_"><span class="b">__is_kfree_rcu_offset</span></a><span class="f">(</span><span class="b">offset</span><span class="f">)</span><span class="f">)</span><span class="f">;</span> \
+<a name="975" /><span class="Maybe">     975:</span>         <span class="b">kfree_call_rcu</span><span class="f">(</span><span class="b">head</span><span class="f">,</span> <span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a> <span class="f">*</span><span class="f">)</span><span class="f">)</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">offset</span><span class="f">)</span><span class="f">)</span><span class="f">;</span> \
+<a name="976" /><span class="Maybe">     976:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="977" /><span class="Maybe">     977:</span> 
+<a name="978" /><span class="Maybe">     978:</span> <span class="k">/**</span>
+<a name="979" /><span class="Maybe">     979:</span> <span class="k"> * kfree_rcu() - kfree an object after a grace period.</span>
+<a name="980" /><span class="Maybe">     980:</span> <span class="k"> * @ptr:    pointer to kfree</span>
+<a name="981" /><span class="Maybe">     981:</span> <span class="k"> * @rcu_head:    the name of the struct rcu_head within the type of @ptr.</span>
+<a name="982" /><span class="Maybe">     982:</span> <span class="k"> *</span>
+<a name="983" /><span class="Maybe">     983:</span> <span class="k"> * Many rcu callbacks functions just call kfree() on the base structure.</span>
+<a name="984" /><span class="Maybe">     984:</span> <span class="k"> * These functions are trivial, but their size adds up, and furthermore</span>
+<a name="985" /><span class="Maybe">     985:</span> <span class="k"> * when they are used in a kernel module, that module must invoke the</span>
+<a name="986" /><span class="Maybe">     986:</span> <span class="k"> * high-latency rcu_barrier() function at module-unload time.</span>
+<a name="987" /><span class="Maybe">     987:</span> <span class="k"> *</span>
+<a name="988" /><span class="Maybe">     988:</span> <span class="k"> * The kfree_rcu() function handles this issue.  Rather than encoding a</span>
+<a name="989" /><span class="Maybe">     989:</span> <span class="k"> * function address in the embedded rcu_head structure, kfree_rcu() instead</span>
+<a name="990" /><span class="Maybe">     990:</span> <span class="k"> * encodes the offset of the rcu_head structure within the base structure.</span>
+<a name="991" /><span class="Maybe">     991:</span> <span class="k"> * Because the functions are not allowed in the low-order 4096 bytes of</span>
+<a name="992" /><span class="Maybe">     992:</span> <span class="k"> * kernel virtual memory, offsets up to 4095 bytes can be accommodated.</span>
+<a name="993" /><span class="Maybe">     993:</span> <span class="k"> * If the offset is larger than 4095 bytes, a compile-time error will</span>
+<a name="994" /><span class="Maybe">     994:</span> <span class="k"> * be generated in __kfree_rcu().  If this error is triggered, you can</span>
+<a name="995" /><span class="Maybe">     995:</span> <span class="k"> * either fall back to use of call_rcu() or rearrange the structure to</span>
+<a name="996" /><span class="Maybe">     996:</span> <span class="k"> * position the rcu_head structure into the first 4096 bytes.</span>
+<a name="997" /><span class="Maybe">     997:</span> <span class="k"> *</span>
+<a name="998" /><span class="Maybe">     998:</span> <span class="k"> * Note that the allowable offset might decrease in the future, for example,</span>
+<a name="999" /><span class="Maybe">     999:</span> <span class="k"> * to allow something like kmem_cache_free_rcu().</span>
+<a name="1000" /><span class="Maybe">    1000:</span> <span class="k"> *</span>
+<a name="1001" /><span class="Maybe">    1001:</span> <span class="k"> * The BUILD_BUG_ON check must not involve any function calls, hence the</span>
+<a name="1002" /><span class="Maybe">    1002:</span> <span class="k"> * checks are done in macros here.</span>
+<a name="1003" /><span class="Maybe">    1003:</span> <span class="k"> */</span>
+<a name="1004" /><span class="Maybe">    1004:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_a2ZyZWVfcmN1XzA_"><span class="b">kfree_rcu</span></a><span class="f">(</span><span class="b">ptr</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a><span class="f">)</span>                    \
+<a name="1005" /><span class="Maybe">    1005:</span>     <a href="cpu.c_macros_noref.html#_X19rZnJlZV9yY3VfMA__"><span class="b">__kfree_rcu</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="f">(</span><span class="b">ptr</span><span class="f">)</span><span class="f">-&gt;</span><a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_b2Zmc2V0b2ZfMA__"><span class="b">offsetof</span></a><span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="f">*</span><span class="f">(</span><span class="b">ptr</span><span class="f">)</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_cmN1X2hlYWRfMA__"><span class="b">rcu_head</span></a><span class="f">)</span><span class="f">)</span>
+<a name="1006" /><span class="Maybe">    1006:</span> 
+<a name="1007" /><span class="False">    1007:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_RCU_NOCB_CPU</span>
+<a name="1008" /><span class="False">    1008:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">rcu_is_nocb_cpu</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span><span class="f">;</span>
+<a name="1009" /><span class="Maybe">    1009:</span> <span class="f">#</span><span class="n">else</span>
+<a name="1010" /><span class="Maybe">    1010:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">rcu_is_nocb_cpu</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span> <span class="f">{</span> <span class="m">return</span> <span class="m">false</span><span class="f">;</span> <span class="f">}</span>
+<a name="1011" /><span class="Maybe">    1011:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_RCU_NOCB_CPU */</span>
+<a name="1012" /><span class="Maybe">    1012:</span> 
+<a name="1013" /><span class="Maybe">    1013:</span> 
+<a name="1014" /><span class="Maybe">    1014:</span> <span class="k">/* Only for use by adaptive-ticks code. */</span>
+<a name="1015" /><span class="False">    1015:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_NO_HZ_FULL_SYSIDLE</span>
+<a name="1016" /><span class="False">    1016:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">rcu_sys_is_idle</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="1017" /><span class="False">    1017:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">rcu_sysidle_force_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="1018" /><span class="Maybe">    1018:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* #ifdef CONFIG_NO_HZ_FULL_SYSIDLE */</span>
+<a name="1019" /><span class="Maybe">    1019:</span> 
+<a name="1020" /><span class="Maybe">    1020:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">rcu_sys_is_idle</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="1021" /><span class="Maybe">    1021:</span> <span class="f">{</span>
+<a name="1022" /><span class="Maybe">    1022:</span>     <span class="m">return</span> <span class="m">false</span><span class="f">;</span>
+<a name="1023" /><span class="Maybe">    1023:</span> <span class="f">}</span>
+<a name="1024" /><span class="Maybe">    1024:</span> 
+<a name="1025" /><span class="Maybe">    1025:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">rcu_sysidle_force_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="1026" /><span class="Maybe">    1026:</span> <span class="f">{</span>
+<a name="1027" /><span class="Maybe">    1027:</span> <span class="f">}</span>
+<a name="1028" /><span class="Maybe">    1028:</span> 
+<a name="1029" /><span class="Maybe">    1029:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #else #ifdef CONFIG_NO_HZ_FULL_SYSIDLE */</span>
+<a name="1030" /><span class="Maybe">    1030:</span> 
+<a name="1031" /><span class="Maybe">    1031:</span> 
+<a name="1032" /><span class="True">    1032:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* __LINUX_RCUPDATE_H */</span>
+<a name="1033" /><span class="True">    1033:</span> </pre>
+  </body>
+</html>

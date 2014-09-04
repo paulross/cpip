@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
 import sys
 import time
 import logging
-import pprint
+# import pprint
 
 from cpip.util import DictTree
 
@@ -349,9 +349,17 @@ class TestDictTreeAddSet(unittest.TestCase):
             pass
         #print
         #print self._dt.indentedStr()
-        self.assertEqual("""0
+        expTxt = None
+        if sys.version_info.major == 2:
+            expTxt = """0
   1
-    {'one'}""",
+    set(['one'])"""
+        elif sys.version_info.major == 3:
+            expTxt = """0
+  1
+    {'one'}"""
+        self.assertEqual(
+            expTxt,
             self._dt.indentedStr()
         )
         self._dt.remove(list(range(2)), 'one')
@@ -359,9 +367,17 @@ class TestDictTreeAddSet(unittest.TestCase):
         self.assertEqual(set([]), self._dt.value(list(range(2))))
         #print
         #print self._dt.indentedStr()
-        self.assertEqual("""0
+        expTxt = None
+        if sys.version_info.major == 2:
+            expTxt = """0
   1
-    set()""",
+    set([])"""
+        elif sys.version_info.major == 3:
+            expTxt = """0
+  1
+    set()"""
+        self.assertEqual(
+            expTxt,
             self._dt.indentedStr()
         )
         # Remove the key completely
