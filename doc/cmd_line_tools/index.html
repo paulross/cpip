@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Command Line Tools &mdash; CPIP 0.8.1 documentation</title>
+    <title>Command Line Tools &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +23,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../index.html" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
     <link rel="next" title="CPIP Tutorials" href="../tutorial/index.html" />
     <link rel="prev" title="CPIPMain.py Examples" href="../examples/examples.html" /> 
   </head>
@@ -45,7 +43,7 @@
         <li class="right" >
           <a href="../examples/examples.html" title="CPIPMain.py Examples"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -62,11 +60,11 @@
 <p><tt class="file docutils literal"><span class="pre">CPIPMain.py</span></tt> acts very much like a normal pre-processor but, instead of writing out a Translation Unit as test it emits a host of HTML and SVG pages about each file to be pre-processed. Here are <a class="reference internal" href="../examples/examples.html#cpip-examples-real"><em>Some Real Examples</em></a>.</p>
 <div class="section" id="usage">
 <h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-python"><pre>Usage: CPIPMain.py [options] files...
-Preprocess the files.
+<div class="highlight-python"><div class="highlight"><pre>Usage: CPIPMain.py [options] path
+Preprocess the file or the files in the directory.
 
 Options:
-  --version             show program's version number and exit
+  --version             show program&#39;s version number and exit
   -h, --help            show this help message and exit
   -c                    Add conditionally included files to the plots.
                         [default: False]
@@ -75,29 +73,41 @@ Options:
                         their count. I - Include graph. M - Macro environment.
                         T - Token count. R - Macro dependencies as an input to
                         DOT. [default: []]
+  -g GLOB, --glob=GLOB  Pattern match to use when processing directories.
+                        [default: *.*]
   --heap                Profile memory usage. [default: False]
-  -j JOBS, --jobs=JOBS  Max processes when multiprocessing. Zero uses number
-                        of native CPUs [8] [default: 0]
-  -k                    Keep going. [default: False]
+  -j JOBS, --jobs=JOBS  Max simultaneous processes when pre-processing
+                        directories. Zero uses number of native CPUs [4]. 1
+                        means no multiprocessing. [default: 0]
+  -k, --keep-going      Keep going. [default: False]
   -l LOGLEVEL, --loglevel=LOGLEVEL
                         Log Level (debug=10, info=20, warning=30, error=40,
                         critical=50) [default: 30]
-  -n                    Nervous mode (do no harm). [default: False]
   -o OUTPUT, --output=OUTPUT
                         Output directory. [default: out]
   -p                    Ignore pragma statements. [default: False]
+  -r, --recursive       Recursively process directories. [default: False]
+  -t, --dot             Write an DOT include dependency table and execute DOT
+                        on it to create a SVG file. [default: False]
   -I INCUSR, --usr=INCUSR
                         Add user include search path. [default: []]
   -J INCSYS, --sys=INCSYS
                         Add system include search path. [default: []]
+  -S PREDEFINES, --predefine=PREDEFINES
+                        Add standard predefined macro defintions of the form
+                        name&lt;=defintion&gt;. These are introduced into the
+                        environment before anything else. These macros can not
+                        be redefined. __DATE__ and __TIME__ will be
+                        automatically allocated in here. [default: []]
+  -D DEFINES, --define=DEFINES
+                        Add macro defintions of the form name&lt;=defintion&gt;.
+                        These are introduced into the environment before
+                        any pre-include. [default: []]
   -P PREINC, --pre=PREINC
                         Add pre-include file path. [default: []]
-  -D DEFINES, --define=DEFINES
-                        Add macro definitions of the form name&lt;=definition&gt;.
-                        These are introduced into the environment before any
-                        pre-include. [default: []]
-Usage: CPIPMain.py [options] files...
-Preprocess the files.</pre>
+Usage: CPIPMain.py [options] path
+Preprocess the file or the files in the directory.
+</pre></div>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -129,21 +139,21 @@ This is experimental so use it at your own risk! [default False]</td>
 <tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-d</span> <span class="pre">DUMP,</span> <span class="pre">--dump=DUMP</span></tt></td>
 <td>Dump various outputs to stdout (see below). [default: []]</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">--heap</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">-g</span> <span class="pre">GLOB,</span> <span class="pre">--glob=GLOB</span></tt></td>
+<td>Pattern to use when searching directories (ignored for #includes. [default: <em>.</em>]</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">--heap</span></tt></td>
 <td>Profile memory usage (requires <tt class="docutils literal"><span class="pre">guppy</span></tt> to be installed). [default: False]</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-j</span> <span class="pre">JOBS,</span> <span class="pre">--jobs=JOBS</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">-j</span> <span class="pre">JOBS,</span> <span class="pre">--jobs=JOBS</span></tt></td>
 <td>Max processes when multiprocessing. Zero uses number of native CPUs [8].
 -1 disables multiprocessing. [default: -1]</td>
 </tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">-k</span></tt></td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-k</span></tt></td>
 <td>Keep going as far as sensible. [default: False]</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-l</span> <span class="pre">LOGLEVEL,</span> <span class="pre">--loglevel=LOGLEVEL</span></tt></td>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">-l</span> <span class="pre">LOGLEVEL,</span> <span class="pre">--loglevel=LOGLEVEL</span></tt></td>
 <td>Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: 30]</td>
-</tr>
-<tr class="row-even"><td><tt class="docutils literal"><span class="pre">-n</span></tt></td>
-<td>Nervous mode (do no harm). [default: False]</td>
 </tr>
 <tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-o</span> <span class="pre">OUTPUT,</span> <span class="pre">--output=OUTPUT</span></tt></td>
 <td>Output directory [default: &#8220;out&#8221;]</td>
@@ -151,19 +161,33 @@ This is experimental so use it at your own risk! [default False]</td>
 <tr class="row-even"><td><tt class="docutils literal"><span class="pre">-p</span></tt></td>
 <td>Ignore pragma statements. [default: False]</td>
 </tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-r</span></tt></td>
+<td>Recursively provesses directories. [default: False]</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">-t,</span> <span class="pre">--dot</span></tt></td>
+<td>Write an DOT include dependency table and execute DOT on it to create a SVG
+file. [default: False]</td>
+</tr>
 <tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-I</span> <span class="pre">INCUSR,</span> <span class="pre">--usr=INCUSR</span></tt></td>
 <td>Add user include search path (additive). [default: []]</td>
 </tr>
 <tr class="row-even"><td><tt class="docutils literal"><span class="pre">-J</span> <span class="pre">INCSYS,</span> <span class="pre">--sys=INCSYS</span></tt></td>
 <td>Add system include search path (additive). [default: []]</td>
 </tr>
-<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-P</span> <span class="pre">PREINC,</span> <span class="pre">--pre=PREINC</span></tt></td>
-<td>Add pre-include file, this will be included before any header (additive).
-[default: []]</td>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-S</span> <span class="pre">PREDEFINES,</span></tt>
+<tt class="docutils literal"><span class="pre">--predefine=PREDEFINES</span></tt></td>
+<td>Add standard predefined macro defintions of the form <tt class="docutils literal"><span class="pre">name&lt;=defintion&gt;</span></tt>.
+These are introduced into the environment before anything else. These macros
+can not be redefined. <tt class="docutils literal"><span class="pre">__DATE__</span></tt> and <tt class="docutils literal"><span class="pre">__TIME__</span></tt> will be automatically
+defined. [default: []]</td>
 </tr>
 <tr class="row-even"><td><tt class="docutils literal"><span class="pre">-D</span> <span class="pre">DEFINES,</span> <span class="pre">--define=DEFINES</span></tt></td>
 <td>Add macro definitions of the form name&lt;=definition&gt;. These are introduced into
 the environment before any pre-include. [default: []]</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">-P</span> <span class="pre">PREINC,</span> <span class="pre">--pre=PREINC</span></tt></td>
+<td>Add pre-include file, this will be included before any header (additive).
+[default: []]</td>
 </tr>
 </tbody>
 </table>
@@ -217,7 +241,7 @@ the environment before any pre-include. [default: []]</td>
 <li><tt class="docutils literal"><span class="pre">-I</span></tt> is used to set a single user include as <tt class="file docutils literal"><span class="pre">../../demo/usr/</span></tt></li>
 </ul>
 <p>We are processing <tt class="file docutils literal"><span class="pre">../../demo/src/main.cpp</span></tt> and stdout is something like this:</p>
-<div class="highlight-python"><pre>$ python3 CPIPMain.py -l 20 -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp
+<div class="highlight-python"><div class="highlight"><pre>$ python3 CPIPMain.py -l 20 -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp
 2012-03-20 07:41:38,655 INFO     TU in HTML:
 2012-03-20 07:41:38,655 INFO       ../../demo/output_00/main.cpp.html
 2012-03-20 07:41:38,664 INFO     Processing TU done.
@@ -240,56 +264,61 @@ the environment before any pre-include. [default: []]</td>
 2012-03-20 07:41:38,711 INFO     ITU in HTML: ...\user.h
 2012-03-20 07:41:38,716 INFO     All done.
 CPU time =    0.051 (S)
-Bye, bye!</pre>
+Bye, bye!
+</pre></div>
 </div>
 <p>In the output directory will be the HTML and SVG results.</p>
 <div class="section" id="using-d-option">
 <span id="cmdline-cpipmain-dump"></span><h4>Using <tt class="docutils literal"><span class="pre">-d</span></tt> Option<a class="headerlink" href="#using-d-option" title="Permalink to this headline">¶</a></h4>
 <p>All these are using the following command where <tt class="docutils literal"><span class="pre">?</span></tt> is replace with a letter:</p>
-<div class="highlight-python"><pre>$ python3 CPIPMain.py -d? -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp</pre>
+<div class="highlight-python"><div class="highlight"><pre>$ python3 CPIPMain.py -d? -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp
+</pre></div>
 </div>
 <p>Multiple outputs are obtained with, for example, <tt class="docutils literal"><span class="pre">-dC</span> <span class="pre">-dF</span></tt></p>
 <div class="section" id="d-c">
 <h5><tt class="docutils literal"><span class="pre">-d</span></tt> C<a class="headerlink" href="#d-c" title="Permalink to this headline">¶</a></h5>
 <p>Conditional compilation graph:</p>
-<div class="highlight-python"><pre>---------------------- Conditional Compilation Graph ----------------------
-#ifndef __USER_H__ /* True "../../demo/usr/user.h" 1 0 */
-    #ifndef __SYSTEM_H__ /* True "../../demo/sys/system.h" 1 4 */
-    #endif /* True "../../demo/sys/system.h" 6 13 */
-#endif /* True "../../demo/usr/user.h" 7 20 */
-#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH) /* True "../../demo/src/main.cpp" 5 69 */
-#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN) /* False "../../demo/src/main.cpp" 7 110 */
-#else /* False "../../demo/src/main.cpp" 9 117 */
-#endif /* False "../../demo/src/main.cpp" 11 124 */
--------------------- END Conditional Compilation Graph --------------------</pre>
+<div class="highlight-python"><div class="highlight"><pre>---------------------- Conditional Compilation Graph ----------------------
+#ifndef __USER_H__ /* True &quot;../../demo/usr/user.h&quot; 1 0 */
+    #ifndef __SYSTEM_H__ /* True &quot;../../demo/sys/system.h&quot; 1 4 */
+    #endif /* True &quot;../../demo/sys/system.h&quot; 6 13 */
+#endif /* True &quot;../../demo/usr/user.h&quot; 7 20 */
+#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH) /* True &quot;../../demo/src/main.cpp&quot; 5 69 */
+#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN) /* False &quot;../../demo/src/main.cpp&quot; 7 110 */
+#else /* False &quot;../../demo/src/main.cpp&quot; 9 117 */
+#endif /* False &quot;../../demo/src/main.cpp&quot; 11 124 */
+-------------------- END Conditional Compilation Graph --------------------
+</pre></div>
 </div>
 </div>
 <div class="section" id="d-f">
 <h5><tt class="docutils literal"><span class="pre">-d</span></tt> F<a class="headerlink" href="#d-f" title="Permalink to this headline">¶</a></h5>
 <p>Files encountered and how many times processed:</p>
-<div class="highlight-python"><pre>------------------------ Count of files encountered -----------------------
+<div class="highlight-python"><div class="highlight"><pre>------------------------ Count of files encountered -----------------------
    1  ../../demo/src/main.cpp
    1  ../../demo/sys/system.h
    1  ../../demo/usr/user.h
----------------------- END Count of files encountered ---------------------</pre>
+---------------------- END Count of files encountered ---------------------
+</pre></div>
 </div>
 </div>
 <div class="section" id="d-i">
 <h5><tt class="docutils literal"><span class="pre">-d</span></tt> I<a class="headerlink" href="#d-i" title="Permalink to this headline">¶</a></h5>
 <p>The include graph:</p>
-<div class="highlight-python"><pre>------------------------------ Include Graph ------------------------------
-../../demo/src/main.cpp [43, 21]:  True "" ""
+<div class="highlight-python"><div class="highlight"><pre>------------------------------ Include Graph ------------------------------
+../../demo/src/main.cpp [43, 21]:  True &quot;&quot; &quot;&quot;
 000002: #include ../../demo/usr/user.h
-        ../../demo/usr/user.h [10, 6]:  True "" "['"user.h"', 'CP=None', 'usr=../../demo/usr/']"
+        ../../demo/usr/user.h [10, 6]:  True &quot;&quot; &quot;[&#39;&quot;user.h&quot;&#39;, &#39;CP=None&#39;, &#39;usr=../../demo/usr/&#39;]&quot;
         000004: #include ../../demo/sys/system.h
-                ../../demo/sys/system.h [10, 6]:  True "!def __USER_H__" "['&lt;system.h&gt;', 'sys=../../demo/sys/']"
----------------------------- END Include Graph ----------------------------</pre>
+                ../../demo/sys/system.h [10, 6]:  True &quot;!def __USER_H__&quot; &quot;[&#39;&lt;system.h&gt;&#39;, &#39;sys=../../demo/sys/&#39;]&quot;
+---------------------------- END Include Graph ----------------------------
+</pre></div>
 </div>
 </div>
 <div class="section" id="d-m">
 <h5><tt class="docutils literal"><span class="pre">-d</span></tt> M<a class="headerlink" href="#d-m" title="Permalink to this headline">¶</a></h5>
 <p>The macro environment and history:</p>
-<div class="highlight-python"><pre>---------------------- Macro Environment and History ----------------------
+<div class="highlight-python"><div class="highlight"><pre>---------------------- Macro Environment and History ----------------------
 Macro Environment:
 #define FRENCH /* ../../demo/usr/user.h#5 Ref: 1 True */
 #define LANG_SUPPORT /* ../../demo/sys/system.h#4 Ref: 2 True */
@@ -303,13 +332,14 @@ In scope:
 #define LANG_SUPPORT /* ../../demo/sys/system.h#4 Ref: 2 True */
     ../../demo/src/main.cpp 5 13
     ../../demo/src/main.cpp 7 15
--------------------- END Macro Environment and History --------------------</pre>
+-------------------- END Macro Environment and History --------------------
+</pre></div>
 </div>
 </div>
 <div class="section" id="d-t">
 <h5><tt class="docutils literal"><span class="pre">-d</span></tt> T<a class="headerlink" href="#d-t" title="Permalink to this headline">¶</a></h5>
 <p>The token count:</p>
-<div class="highlight-python"><pre>------------------------------- Token count -------------------------------
+<div class="highlight-python"><div class="highlight"><pre>------------------------------- Token count -------------------------------
        0  header-name
        8  identifier
        1  pp-number
@@ -320,7 +350,8 @@ In scope:
       11  whitespace
        0  concat
       32  TOTAL
------------------------------ END Token count -----------------------------</pre>
+----------------------------- END Token count -----------------------------
+</pre></div>
 </div>
 </div>
 </div>
@@ -403,12 +434,12 @@ In scope:
         <li class="right" >
           <a href="../examples/examples.html" title="CPIPMain.py Examples"
              >previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

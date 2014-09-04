@@ -1,0 +1,203 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MacroHistoryHtml &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
+    <link rel="up" title="CPIP Reference" href="index.html" />
+    <link rel="next" title="TokenCss" href="TokenCss.html" />
+    <link rel="prev" title="ItuToHtml" href="ItuToHtml.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="TokenCss.html" title="TokenCss"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ItuToHtml.html" title="ItuToHtml"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.MacroHistoryHtml">
+<span id="macrohistoryhtml"></span><span id="cpip-ref-macrohistoryhtml"></span><h1>MacroHistoryHtml<a class="headerlink" href="#module-cpip.MacroHistoryHtml" title="Permalink to this headline">¶</a></h1>
+<p>Writes out a macro history in HTML.</p>
+<p>Macros can be:
+Active - In scope at the end of processing a translation unit (one per identifier). 
+Inactive - Not in scope at the end of processing a translation unit (&gt;=0 per identifier). 
+And:
+Referenced - Have had some influence over the processing of the translation unit.
+Not Referenced - No influence over the processing of the translation unit.</p>
+<p>Example test:</p>
+<div class="highlight-python"><div class="highlight"><pre>/* Source         Active?    Refs    ID   */
+#define FOO    /*     N        0    FOO_0 */
+#undef FOO
+#define FOO    /*     N        2    FOO_1 */
+FOO
+FOO
+#undef FOO
+#define FOO    /*     Y        1    FOO_2 */
+FOO
+#define BAR    /*     Y        0    BAR_0 */
+</pre></div>
+</div>
+<p>Macros with reference counts of zero are not that interesting so they are
+relegated to a page (&lt;file&gt;_macros_noref.html) that just describes their
+definition and where they where defined.</p>
+<p>Macros _with_ reference counts are presented on a page (&lt;file&gt;_macros_ref.html)
+with one section per macro. The section has:
+definition, where defined,
+[This macro depends on the following macros:],
+[Macros that depend on this macro:],</p>
+<p>These two HTML pages are joined by a &lt;file&gt;_macros.html this lists (and links to)
+the identifiers in this order:
+- Active, ref count &gt;0
+- Inactive, ref count &gt;0
+- Active, ref count =0
+- Inactive, ref count =0</p>
+<div class="section" id="macro-html-ids">
+<h2>Macro HTML IDs<a class="headerlink" href="#macro-html-ids" title="Permalink to this headline">¶</a></h2>
+<p>This is identifier + &#8216;_&#8217; + n
+For any active macro the value of n is the number of previously defined macros.
+Current code is like this:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">myUndefIdxS</span><span class="p">,</span> <span class="n">isDefined</span> <span class="o">=</span> <span class="n">myMacroMap</span><span class="p">[</span><span class="n">aMacroName</span><span class="p">]</span>
+<span class="c"># Write the undefined ones</span>
+<span class="k">for</span> <span class="n">anIndex</span> <span class="ow">in</span> <span class="n">myUndefIdxS</span><span class="p">:</span>
+    <span class="n">myMacro</span> <span class="o">=</span> <span class="n">theEnv</span><span class="o">.</span><span class="n">getUndefMacro</span><span class="p">(</span><span class="n">anIndex</span><span class="p">)</span>
+    <span class="n">startLetter</span> <span class="o">=</span> <span class="n">_writeTrMacro</span><span class="p">(</span><span class="n">theS</span><span class="p">,</span> <span class="n">theHtmlPath</span><span class="p">,</span> <span class="n">myMacro</span><span class="p">,</span>
+                               <span class="n">anIndex</span><span class="p">,</span> <span class="n">startLetter</span><span class="p">,</span> <span class="n">retVal</span><span class="p">)</span> 
+<span class="c"># Now the defined one</span>
+<span class="k">if</span> <span class="n">isDefined</span><span class="p">:</span>
+    <span class="n">myMacro</span> <span class="o">=</span> <span class="n">theEnv</span><span class="o">.</span><span class="n">macro</span><span class="p">(</span><span class="n">aMacroName</span><span class="p">)</span>
+    <span class="n">startLetter</span> <span class="o">=</span> <span class="n">_writeTrMacro</span><span class="p">(</span><span class="n">theS</span><span class="p">,</span> <span class="n">theHtmlPath</span><span class="p">,</span> <span class="n">myMacro</span><span class="p">,</span>
+                               <span class="nb">len</span><span class="p">(</span><span class="n">myUndefIdxS</span><span class="p">),</span> <span class="n">startLetter</span><span class="p">,</span> <span class="n">retVal</span><span class="p">)</span> 
+</pre></div>
+</div>
+<dl class="function">
+<dt id="cpip.MacroHistoryHtml.processMacroHistoryToHtml">
+<tt class="descclassname">cpip.MacroHistoryHtml.</tt><tt class="descname">processMacroHistoryToHtml</tt><big>(</big><em>theLex</em>, <em>theHtmlPath</em>, <em>theItu</em>, <em>theIndexPath</em><big>)</big><a class="headerlink" href="#cpip.MacroHistoryHtml.processMacroHistoryToHtml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out the macro history from the PpLexer as HTML.
+Returns a map of:
+{identifier : [(fileId, lineNum, href_name), ...], ...}
+which can be used by src-&gt;html generator for providing links to macro pages.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.MacroHistoryHtml.splitLine">
+<tt class="descclassname">cpip.MacroHistoryHtml.</tt><tt class="descname">splitLine</tt><big>(</big><em>theStr</em>, <em>splitLen=60</em>, <em>splitLenHard=80</em><big>)</big><a class="headerlink" href="#cpip.MacroHistoryHtml.splitLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a long string into string that is a set of lines with continuation
+characters.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.MacroHistoryHtml.splitLineToList">
+<tt class="descclassname">cpip.MacroHistoryHtml.</tt><tt class="descname">splitLineToList</tt><big>(</big><em>sIn</em>, <em>splitLen=60</em>, <em>splitLenHard=80</em><big>)</big><a class="headerlink" href="#cpip.MacroHistoryHtml.splitLineToList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a long string into a list of lines. This tries to do it nicely at
+whitespaces but will force a split if necessary.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MacroHistoryHtml</a><ul>
+<li><a class="reference internal" href="#macro-html-ids">Macro HTML IDs</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ItuToHtml.html"
+                        title="previous chapter">ItuToHtml</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="TokenCss.html"
+                        title="next chapter">TokenCss</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/ref/MacroHistoryHtml.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="TokenCss.html" title="TokenCss"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ItuToHtml.html" title="ItuToHtml"
+             >previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

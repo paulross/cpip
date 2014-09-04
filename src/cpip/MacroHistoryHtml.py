@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,18 +27,18 @@ And:
 Referenced - Have had some influence over the processing of the translation unit.
 Not Referenced - No influence over the processing of the translation unit.
 
-Example test:
+Example test::
 
-/* Source         Active?    Refs    ID   */
-#define FOO    /*     N        0    FOO_0 */
-#undef FOO
-#define FOO    /*     N        2    FOO_1 */
-FOO
-FOO
-#undef FOO
-#define FOO    /*     Y        1    FOO_2 */
-FOO
-#define BAR    /*     Y        0    BAR_0 */
+    /* Source         Active?    Refs    ID   */
+    #define FOO    /*     N        0    FOO_0 */
+    #undef FOO
+    #define FOO    /*     N        2    FOO_1 */
+    FOO
+    FOO
+    #undef FOO
+    #define FOO    /*     Y        1    FOO_2 */
+    FOO
+    #define BAR    /*     Y        0    BAR_0 */
 
 Macros with reference counts of zero are not that interesting so they are
 relegated to a page (<file>_macros_noref.html) that just describes their
@@ -61,25 +61,25 @@ Macro HTML IDs
 --------------
 This is identifier + '_' + n
 For any active macro the value of n is the number of previously defined macros.
-Current code is like this:
+Current code is like this::
 
-myUndefIdxS, isDefined = myMacroMap[aMacroName]
-# Write the undefined ones
-for anIndex in myUndefIdxS:
-    myMacro = theEnv.getUndefMacro(anIndex)
-    startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
-                               anIndex, startLetter, retVal) 
-# Now the defined one
-if isDefined:
-    myMacro = theEnv.macro(aMacroName)
-    startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
-                               len(myUndefIdxS), startLetter, retVal) 
+    myUndefIdxS, isDefined = myMacroMap[aMacroName]
+    # Write the undefined ones
+    for anIndex in myUndefIdxS:
+        myMacro = theEnv.getUndefMacro(anIndex)
+        startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
+                                   anIndex, startLetter, retVal) 
+    # Now the defined one
+    if isDefined:
+        myMacro = theEnv.macro(aMacroName)
+        startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
+                                   len(myUndefIdxS), startLetter, retVal) 
 """
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
 import collections

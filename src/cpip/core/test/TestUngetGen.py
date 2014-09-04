@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@ and so on."""
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import time
 import logging
@@ -60,6 +60,9 @@ class UngetGen(object):
                 # Only one send() between next() calls so we continue
                 # with the iteration...
 
+    # Python 2.x compatibility
+    next = __next__
+
 ######################
 # Section: Unit tests.
 ######################
@@ -73,7 +76,7 @@ class TestUngetGen(unittest.TestCase):
         myObj = UngetGen(list(range(8)))
         myGen = next(myObj)
         myResult = [x for x in myGen]
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(myResult, list(range(8)))
 
     def testIncGen(self):
@@ -85,7 +88,7 @@ class TestUngetGen(unittest.TestCase):
         self.assertEqual(myVal, 0)
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUnget(self):
         """Tests UngetGen with incremental generation and single send()."""
@@ -100,7 +103,7 @@ class TestUngetGen(unittest.TestCase):
         self.assertEqual(myVal, 0)
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetAtStart(self):
         """Tests UngetGen with incremental generation and single send() before next()."""
@@ -112,7 +115,7 @@ class TestUngetGen(unittest.TestCase):
         self.assertEqual(myVal, 0)
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetAtEnd(self):
         """Tests UngetGen with incremental generation and single send() after last next()."""
@@ -126,7 +129,7 @@ class TestUngetGen(unittest.TestCase):
         myGen.send(42)
         myVal = next(myGen)
         self.assertEqual(myVal, 42)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetOnEmptyList(self):
         """Tests UngetGen with incremental generation and send() where the initial list is empty."""
@@ -134,7 +137,7 @@ class TestUngetGen(unittest.TestCase):
         myGen = next(myObj)
         # Try an insert
         self.assertRaises(TypeError, myGen.send, 127)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
     def testIncGenUngetMultipleCallsAtStart(self):
         """Tests UngetGen with incremental generation where pairs of send() cancel each other."""
@@ -148,7 +151,7 @@ class TestUngetGen(unittest.TestCase):
         # 84 is thrown away by the external loop of UnitGen.next()
         myVal = next(myGen)
         self.assertEqual(myVal, 1)
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
 
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestUngetGen)

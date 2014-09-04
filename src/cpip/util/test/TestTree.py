@@ -23,7 +23,7 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2014-03-06'
-__version__ = '0.8.0'
+__version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os

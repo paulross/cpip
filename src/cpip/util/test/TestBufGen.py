@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import sys
 import os
@@ -45,6 +45,9 @@ class StrGen(object):
             yield self._str[i]
             i += 1
 
+    # Backward compatibility with Python 2.x
+    next = __next__
+
 class TestBufGen(unittest.TestCase):
     def setUp(self):
         pass
@@ -54,7 +57,7 @@ class TestBufGen(unittest.TestCase):
         myStrGen = StrGen('abc')
         myBg = BufGen.BufGen(next(myStrGen))
         myGen = myBg.gen()
-        for a in myGen:
+        for _a in myGen:
             pass
             #print a
         self.assertEquals(3, myBg.lenBuf)

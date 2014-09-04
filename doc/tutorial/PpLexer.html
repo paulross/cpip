@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PpLexer Tutorial &mdash; CPIP 0.8.1 documentation</title>
+    <title>PpLexer Tutorial &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +23,7 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../index.html" />
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
     <link rel="up" title="CPIP Tutorials" href="index.html" />
     <link rel="next" title="FileIncludeGraph Tutorial" href="FileIncGraph.html" />
     <link rel="prev" title="CPIP Tutorials" href="index.html" /> 
@@ -46,7 +44,7 @@
         <li class="right" >
           <a href="index.html" title="CPIP Tutorials"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">CPIP Tutorials</a> &raquo;</li> 
       </ul>
     </div>  
@@ -65,7 +63,7 @@
 <span id="pplexer-tutorial-files"></span><h3>Files to Pre-Process<a class="headerlink" href="#files-to-pre-process" title="Permalink to this headline">¶</a></h3>
 <p>First let&#8217;s get some demonstration code to pre-process. You can find this
 at <em>cpip/demo/</em> and the directory structure looks like this:</p>
-<div class="highlight-python"><pre>\---demo/
+<div class="highlight-python"><div class="highlight"><pre>\---demo/
     |   cpip.py
     |
     \---proj/
@@ -76,7 +74,8 @@ at <em>cpip/demo/</em> and the directory structure looks like this:</p>
         |       system.h
         |
         \---usr/
-                user.h</pre>
+                user.h
+</pre></div>
 </div>
 <p>In <tt class="file docutils literal"><span class="pre">proj/</span></tt> is some source code that includes files from <tt class="file docutils literal"><span class="pre">usr/</span></tt> and <tt class="file docutils literal"><span class="pre">sys/</span></tt>.
 This tutorial will take you through writing cpip.py to use PpLexer to
@@ -130,19 +129,27 @@ CPIP knows all about. First we need to create a <tt class="xref py py-class docu
 <h3>Creating a PpLexer<a class="headerlink" href="#creating-a-pplexer" title="Permalink to this headline">¶</a></h3>
 <p>This is the template that we will use for the tutorial, it just takes a
 single argument from the command line <tt class="docutils literal"><span class="pre">sys.argv[1]</span></tt>:</p>
-<div class="highlight-c"><pre>import sys
+<div class="highlight-c"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7
+8</pre></div></td><td class="code"><div class="highlight"><pre>import sys
 
 def main():
-    print('Processing:', sys.argv[1])
+    print(&#39;Processing:&#39;, sys.argv[1])
     # Your code here
 
-if __name__ == "__main__":
+if __name__ == &quot;__main__&quot;:
     main()
-</pre>
-</div>
+</pre></div>
+</td></tr></table></div>
 <p>Of course this doesn&#8217;t do much yet, invoking it just gives:</p>
-<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
-Processing: proj/src/main.cpp</pre>
+<div class="highlight-c"><div class="highlight"><pre>$ python cpip.py proj/src/main.cpp
+Processing: proj/src/main.cpp
+</pre></div>
 </div>
 <p>We now need to import and create and <tt class="xref py py-class docutils literal"><span class="pre">PpLexer.PpLexer</span></tt> object, and this
 takes at least two arguments; firstly the file to pre-process, the secondly an
@@ -173,8 +180,9 @@ search paths to the system include directories. With this we can construct a
 </pre></div>
 </div>
 <p>This still doesn&#8217;t do much yet, invoking it just gives:</p>
-<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
-Processing: proj/src/main.cpp</pre>
+<div class="highlight-c"><div class="highlight"><pre>$ python cpip.py proj/src/main.cpp
+Processing: proj/src/main.cpp
+</pre></div>
 </div>
 <p>But, in the absence of error, shows that we can construct a
 <tt class="xref py py-class docutils literal"><span class="pre">PpLexer</span></tt>.</p>
@@ -203,43 +211,44 @@ to <tt class="xref py py-func docutils literal"><span class="pre">PpLexer.PpToke
 </pre></div>
 </div>
 <p>Invoking it now gives:</p>
-<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
+<div class="highlight-c"><div class="highlight"><pre>$ python cpip.py proj/src/main.cpp
 Processing: proj/src/main.cpp
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
 ...
-PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="main", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="char", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="argv", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t=",", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="argc", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="{", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="printf", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t=""Bonjour tout le monde\n"", tt=string-literal, line=False, prev=False, ?=False)
-PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="return", tt=identifier, line=True, prev=False, ?=False)
-PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="1", tt=pp-number, line=False, prev=False, ?=False)
-PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-PpToken(t="}", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)</pre>
+PpToken(t=&quot;int&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot; &quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;main&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot;(&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;char&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot; &quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;*&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;*&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;argv&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot;,&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot; &quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;int&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot; &quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;argc&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot;)&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;{&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;printf&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot;(&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;&quot;Bonjour tout le monde\n&quot;&quot;, tt=string-literal, line=False, prev=False, ?=False)
+PpToken(t=&quot;)&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;;&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;return&quot;, tt=identifier, line=True, prev=False, ?=False)
+PpToken(t=&quot; &quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;1&quot;, tt=pp-number, line=False, prev=False, ?=False)
+PpToken(t=&quot;;&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
+PpToken(t=&quot;}&quot;, tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+PpToken(t=&quot;\n&quot;, tt=whitespace, line=False, prev=False, ?=False)
+</pre></div>
 </div>
 <p>The PpLexer is yielding PpToken objects that are interesting in
 themselves because they not only have content but the type of content
@@ -330,19 +339,20 @@ hierarchy every step of the way:</p>
 </pre></div>
 </div>
 <p>Gives the following output:</p>
-<div class="highlight-c"><pre>$ python cpip.py proj/src/main.cpp
+<div class="highlight-c"><div class="highlight"><pre>$ python cpip.py proj/src/main.cpp
 Processing: proj/src/main.cpp
-['proj/src/main.cpp', 'proj/usr/user.h']
-['proj/src/main.cpp', 'proj/usr/user.h']
-['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-['proj/src/main.cpp', 'proj/usr/user.h']
-['proj/src/main.cpp', 'proj/usr/user.h']
-['proj/src/main.cpp', 'proj/usr/user.h']
-['proj/src/main.cpp']
-...</pre>
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;, &#39;proj/sys/system.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;, &#39;proj/sys/system.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;, &#39;proj/sys/system.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;, &#39;proj/sys/system.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;]
+[&#39;proj/src/main.cpp&#39;, &#39;proj/usr/user.h&#39;]
+[&#39;proj/src/main.cpp&#39;]
+...
+</pre></div>
 </div>
 </div>
 <div class="section" id="conditional-state">
@@ -353,32 +363,32 @@ Processing: proj/src/main.cpp
 </pre></div>
 </div>
 <p>Produces this output:</p>
-<div class="highlight-c"><pre>Processing: proj/src/main.cpp
-(True, '')
+<div class="highlight-c"><div class="highlight"><pre>Processing: proj/src/main.cpp
+(True, &#39;&#39;)
 ...
-(True, '')
-(True, 'defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))')
-(True, '')
+(True, &#39;&#39;)
+(True, &#39;defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)&#39;)
+(True, &#39;defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)&#39;)
+(True, &#39;defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)&#39;)
+(True, &#39;defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)&#39;)
+(True, &#39;defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)&#39;)
+(True, &#39;defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))&#39;)
+(False, &#39;(!(defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)) &amp;&amp; !(defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)))&#39;)
+(True, &#39;&#39;)
 ...
-(True, '')
-</pre>
+(True, &#39;&#39;)
+</pre></div>
 </div>
 </div>
 </div>
@@ -473,37 +483,38 @@ Processing: proj/src/main.cpp
 </pre></div>
 </td></tr></table></div>
 <p>Invoking this code thus:</p>
-<div class="highlight-c"><pre>$ python3 cpip_07.py ../src/main.cpp</pre>
+<div class="highlight-c"><div class="highlight"><pre>$ python3 cpip_07.py ../src/main.cpp
+</pre></div>
 </div>
 <p>Gives this output:</p>
-<div class="highlight-c"><pre>Processing: ../src/main.cpp
+<div class="highlight-c"><div class="highlight"><pre>Processing: ../src/main.cpp
 ============================= Translation Unit ============================
 
 int main(char **argv, int argc)
 {
-printf("Bonjour tout le monde\n");
+printf(&quot;Bonjour tout le monde\n&quot;);
 return 1;
 }
 
 =========================== Translation Unit END ==========================
 
 ============================ File Include Graph ===========================
-../src/main.cpp [43, 21]:  True "" ""
+../src/main.cpp [43, 21]:  True &quot;&quot; &quot;&quot;
 000002: #include ../usr/user.h
-        ../usr/user.h [10, 6]:  True "" "['"user.h"', 'CP=None', 'usr=../usr']"
+        ../usr/user.h [10, 6]:  True &quot;&quot; &quot;[&#39;&quot;user.h&quot;&#39;, &#39;CP=None&#39;, &#39;usr=../usr&#39;]&quot;
         000004: #include ../sys/system.h
-                ../sys/system.h [10, 6]:  True "!def __USER_H__" "['&lt;system.h&gt;', 'sys=../sys']"
+                ../sys/system.h [10, 6]:  True &quot;!def __USER_H__&quot; &quot;[&#39;&lt;system.h&gt;&#39;, &#39;sys=../sys&#39;]&quot;
 ========================== File Include Graph END =========================
 
 ====================== Conditional Compilation Graph ======================
-#ifndef __USER_H__ /* True "../usr/user.h" 1 0 */
-    #ifndef __SYSTEM_H__ /* True "../sys/system.h" 1 4 */
-    #endif /* True "../sys/system.h" 6 13 */
-#endif /* True "../usr/user.h" 7 20 */
-#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH) /* True "../src/main.cpp" 5 69 */
-#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN) /* False "../src/main.cpp" 7 110 */
-#else /* False "../src/main.cpp" 9 117 */
-#endif /* False "../src/main.cpp" 11 124 */
+#ifndef __USER_H__ /* True &quot;../usr/user.h&quot; 1 0 */
+    #ifndef __SYSTEM_H__ /* True &quot;../sys/system.h&quot; 1 4 */
+    #endif /* True &quot;../sys/system.h&quot; 6 13 */
+#endif /* True &quot;../usr/user.h&quot; 7 20 */
+#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH) /* True &quot;../src/main.cpp&quot; 5 69 */
+#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN) /* False &quot;../src/main.cpp&quot; 7 110 */
+#else /* False &quot;../src/main.cpp&quot; 9 117 */
+#endif /* False &quot;../src/main.cpp&quot; 11 124 */
 ==================== Conditional Compilation Graph END ====================
 
 ============================ Macro Environment ============================
@@ -524,7 +535,7 @@ In scope:
 #define __SYSTEM_H__ /* ../sys/system.h#2 Ref: 0 True */
 #define __USER_H__ /* ../usr/user.h#2 Ref: 0 True */
 ============================ Macro History END ============================
-</pre>
+</pre></div>
 </div>
 <p>This is simple to the point of crude as the <tt class="docutils literal"><span class="pre">PpLexer</span></tt> supplies a far richer data seam than just text.</p>
 <p>File Include Graph interface is described here: <a class="reference internal" href="FileIncGraph.html#cpip-tutorial-fileincludegraph"><em>FileIncludeGraph Tutorial</em></a></p>
@@ -577,8 +588,9 @@ class FilePathOrigin or None for the initial translation unit.
 As a precaution this should include code to check that the stack
 of current places is empty.
 For example:</p>
-<div class="last highlight-c"><pre>if len(self._cpStack) != 0:
-    raise ExceptionCppInclude('setTu() with CP stack: %s' % self._cpStack)</pre>
+<div class="last highlight-c"><div class="highlight"><pre>if len(self._cpStack) != 0:
+    raise ExceptionCppInclude(&#39;setTu() with CP stack: %s&#39; % self._cpStack)
+</pre></div>
 </div>
 </dd>
 </dl>
@@ -731,13 +743,13 @@ For example:</p>
         <li class="right" >
           <a href="index.html" title="CPIP Tutorials"
              >previous</a> |</li>
-        <li><a href="../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >CPIP Tutorials</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

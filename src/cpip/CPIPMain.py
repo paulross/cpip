@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
 import sys
@@ -823,7 +823,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                 ItuToHtml.ItuToHtml(
                     aSrc,
                     outDir,
-                    jobSpec.keepGoing,
+                    writeAnchors=True,
+                    keepGoing=jobSpec.keepGoing,
                     macroRefMap=myMacroRefMap,
                     cppCondMap=myCcgvcl,
                     ituToTuLineSet=mySetItuLines if aSrc == ituPath else None,
@@ -960,7 +961,7 @@ allocated in here. [default: %default]""")
     # Add macros in psuedo pre-include
     preDefStr = ''
     if opts.defines:
-        preDefStr = '\n'.join(['#define '+' '.join(d.split('=')) for d in opts.defines])+'\n'
+        preDefStr = u'\n'.join(['#define '+' '.join(d.split('=')) for d in opts.defines])+'\n'
     # Create the job specification
     jobSpec = MainJobSpec(
         incHandler=myIncH,

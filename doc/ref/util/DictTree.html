@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>DictTree &mdash; CPIP 0.8.1 documentation</title>
+    <title>DictTree &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +23,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
-    <link rel="up" title="CPIP Utilities" href="../util/index.html" />
-    <link rel="next" title="ListGen" href="../util/ListGen.html" />
-    <link rel="prev" title="BufGen" href="../util/BufGen.html" /> 
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.util" href="index.html" />
+    <link rel="next" title="DirWalk" href="DirWalk.html" />
+    <link rel="prev" title="CommonPrefix" href="CommonPrefix.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,14 +39,14 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../util/ListGen.html" title="ListGen"
+          <a href="DirWalk.html" title="DirWalk"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../util/BufGen.html" title="BufGen"
+          <a href="CommonPrefix.html" title="CommonPrefix"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../util/index.html" accesskey="U">CPIP Utilities</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">cpip.util</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -111,7 +109,7 @@
 <em class="property">class </em><tt class="descclassname">cpip.util.DictTree.</tt><tt class="descname">DictTreeHtmlTable</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#cpip.util.DictTree.DictTreeHtmlTable" title="Permalink to this definition">¶</a></dt>
 <dd><p>A sub-class of DictTree that helps writing HTML row/col span tables
 Suppose we have a tree like this:</p>
-<div class="highlight-python"><pre>                        |- AAA
+<div class="highlight-python"><div class="highlight"><pre>                        |- AAA
                         |
                 |- AA --|- AAB
                 |       |
@@ -123,11 +121,12 @@ Root ---|       |- AB
         |
         |- B
         |
-        |- C ---- CA ---- CAA</pre>
+        |- C ---- CA ---- CAA
+</pre></div>
 </div>
 <p>And we want to represent the tree like this when laid out as
 an HTML table:</p>
-<div class="highlight-python"><pre>|-----------------------|
+<div class="highlight-python"><div class="highlight"><pre>|-----------------------|
 | A     | AA    | AAA   |
 |       |       |-------|
 |       |       | AAB   |
@@ -141,7 +140,8 @@ an HTML table:</p>
 | B                     |
 |-----------------------|
 | C     | CA    | CAA   |
-|-----------------------|</pre>
+|-----------------------|
+</pre></div>
 </div>
 <p>In this example the tree is loaded branch by branch thus:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">myTree</span> <span class="o">=</span> <span class="n">DictTreeHtmlTable</span><span class="p">()</span>
@@ -155,46 +155,48 @@ an HTML table:</p>
 </pre></div>
 </div>
 <p>The HTML code generator can be used like this:</p>
-<div class="highlight-python"><pre># Write: &lt;table border="2" width="100%"&gt;
+<div class="highlight-python"><div class="highlight"><pre># Write: &lt;table border=&quot;2&quot; width=&quot;100%&quot;&gt;
 for anEvent in myTree.genColRowEvents():
     if anEvent == myTree.ROW_OPEN:
-        # Write out the '&lt;tr&gt;' element
+        # Write out the &#39;&lt;tr&gt;&#39; element
     elif anEvent == myTree.ROW_CLOSE:
-        # Write out the '&lt;/tr&gt;' element
+        # Write out the &#39;&lt;/tr&gt;&#39; element
     else:
         k, v, r, c = anEvent
-        # Write '&lt;td rowspan="%d" colspan="%d"&gt;%s&lt;/td&gt;' % (r, c, v)
-# Write: &lt;/table&gt;</pre>
+        # Write &#39;&lt;td rowspan=&quot;%d&quot; colspan=&quot;%d&quot;&gt;%s&lt;/td&gt;&#39; % (r, c, v)
+# Write: &lt;/table&gt;
+</pre></div>
 </div>
 <p>And the HTML code will look like this:</p>
-<div class="highlight-python"><pre>&lt;table border="2" width="100%"&gt;
-    &lt;tr valign="top"&gt;
-        &lt;td rowspan="5"&gt;A&lt;/td&gt;
-        &lt;td rowspan="3"&gt;AA&lt;/td&gt;
+<div class="highlight-python"><div class="highlight"><pre>&lt;table border=&quot;2&quot; width=&quot;100%&quot;&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td rowspan=&quot;5&quot;&gt;A&lt;/td&gt;
+        &lt;td rowspan=&quot;3&quot;&gt;AA&lt;/td&gt;
         &lt;td&gt;AAA&lt;/td&gt;
     &lt;/tr&gt;
-    &lt;tr valign="top"&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
         &lt;td&gt;AAB&lt;/td&gt;
     &lt;/tr&gt;
-    &lt;tr valign="top"&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
         &lt;td&gt;AAC&lt;/td&gt;
     &lt;/tr&gt;
-    &lt;tr valign="top"&gt;
-        &lt;td colspan="2"&gt;AB&lt;/td&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td colspan=&quot;2&quot;&gt;AB&lt;/td&gt;
     &lt;/tr&gt;
-    &lt;tr valign="top"&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
         &lt;td&gt;AC&lt;/td&gt;
         &lt;td&gt;ACA&lt;/td&gt;
     &lt;/tr&gt;
-    &lt;tr valign="top"&gt;
-        &lt;td colspan="3"&gt;B&lt;/td&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
+        &lt;td colspan=&quot;3&quot;&gt;B&lt;/td&gt;
     &lt;/tr&gt;
-    &lt;tr valign="top"&gt;
+    &lt;tr valign=&quot;top&quot;&gt;
         &lt;td&gt;C&lt;/td&gt;
         &lt;td&gt;CA&lt;/td&gt;
         &lt;td&gt;CAA&lt;/td&gt;
     &lt;/tr&gt;
-&lt;/table&gt;</pre>
+&lt;/table&gt;
+</pre></div>
 </div>
 <dl class="method">
 <dt id="cpip.util.DictTree.DictTreeHtmlTable.genColRowEvents">
@@ -230,11 +232,11 @@ and at row end (&lt;/tr&gt; a ROW_CLOSE will be yielded</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../util/BufGen.html"
-                        title="previous chapter">BufGen</a></p>
+  <p class="topless"><a href="CommonPrefix.html"
+                        title="previous chapter">CommonPrefix</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../util/ListGen.html"
-                        title="next chapter">ListGen</a></p>
+  <p class="topless"><a href="DirWalk.html"
+                        title="next chapter">DirWalk</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="../../_sources/ref/util/DictTree.txt"
@@ -267,19 +269,19 @@ and at row end (&lt;/tr&gt; a ROW_CLOSE will be yielded</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../util/ListGen.html" title="ListGen"
+          <a href="DirWalk.html" title="DirWalk"
              >next</a> |</li>
         <li class="right" >
-          <a href="../util/BufGen.html" title="BufGen"
+          <a href="CommonPrefix.html" title="CommonPrefix"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../util/index.html" >CPIP Utilities</a> &raquo;</li> 
+          <li><a href="index.html" >cpip.util</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

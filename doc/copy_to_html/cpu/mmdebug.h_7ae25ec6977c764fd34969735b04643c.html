@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/mmdebug.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/mmdebug.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_TElOVVhfTU1fREVCVUdfSF8w"><span class="b">LINUX_MM_DEBUG_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_TElOVVhfTU1fREVCVUdfSF8w"><span class="b">LINUX_MM_DEBUG_H</span></a> <span class="c">1</span>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="False">       4:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_VM</span>
+<a name="5" /><span class="False">       5:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_Vk1fQlVHX09OXzA_"><span class="b">VM_BUG_ON</span></a><span class="f">(</span><span class="b">cond</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_QlVHX09OXzA_"><span class="b">BUG_ON</span></a><span class="f">(</span><span class="b">cond</span><span class="f">)</span>
+<a name="6" /><span class="Maybe">       6:</span> <span class="f">#</span><span class="n">else</span>
+<a name="7" /><span class="Maybe">       7:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_Vk1fQlVHX09OXzA_"><span class="b">VM_BUG_ON</span></a><span class="f">(</span><span class="b">cond</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_QlVJTERfQlVHX09OX0lOVkFMSURfMA__"><span class="b">BUILD_BUG_ON_INVALID</span></a><span class="f">(</span><span class="b">cond</span><span class="f">)</span>
+<a name="8" /><span class="Maybe">       8:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="9" /><span class="Maybe">       9:</span> 
+<a name="10" /><span class="False">      10:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_VIRTUAL</span>
+<a name="11" /><span class="False">      11:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_VklSVFVBTF9CVUdfT05fMA__"><span class="b">VIRTUAL_BUG_ON</span></a><span class="f">(</span><span class="b">cond</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_QlVHX09OXzA_"><span class="b">BUG_ON</span></a><span class="f">(</span><span class="b">cond</span><span class="f">)</span>
+<a name="12" /><span class="Maybe">      12:</span> <span class="f">#</span><span class="n">else</span>
+<a name="13" /><span class="Maybe">      13:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_VklSVFVBTF9CVUdfT05fMA__"><span class="b">VIRTUAL_BUG_ON</span></a><span class="f">(</span><span class="b">cond</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="14" /><span class="Maybe">      14:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="15" /><span class="Maybe">      15:</span> 
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="17" /><span class="True">      17:</span> </pre>
+  </body>
+</html>

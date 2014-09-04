@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/mmu.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/mmu.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0FTTV9YODZfTU1VX0hfMA__"><span class="b">_ASM_X86_MMU_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0FTTV9YODZfTU1VX0hfMA__"><span class="b">_ASM_X86_MMU_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">spinlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="Maybe">       5:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">mutex</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="Maybe">       6:</span> 
+<a name="7" /><span class="Maybe">       7:</span> <span class="k">/*</span>
+<a name="8" /><span class="Maybe">       8:</span> <span class="k"> * The x86 doesn&apos;t have a mmu context, but</span>
+<a name="9" /><span class="Maybe">       9:</span> <span class="k"> * we put the segment information here.</span>
+<a name="10" /><span class="Maybe">      10:</span> <span class="k"> */</span>
+<a name="11" /><span class="Maybe">      11:</span> <span class="m">typedef</span> <span class="m">struct</span> <span class="f">{</span>
+<a name="12" /><span class="Maybe">      12:</span>     <span class="m">void</span> <span class="f">*</span><span class="b">ldt</span><span class="f">;</span>
+<a name="13" /><span class="Maybe">      13:</span>     <span class="m">int</span> <span class="b">size</span><span class="f">;</span>
+<a name="14" /><span class="Maybe">      14:</span> 
+<a name="15" /><span class="Maybe">      15:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1g4Nl82NF8w"><span class="b">CONFIG_X86_64</span></a>
+<a name="16" /><span class="Maybe">      16:</span>     <span class="k">/* True if mm supports a task running in 32 bit compatibility mode. */</span>
+<a name="17" /><span class="Maybe">      17:</span>     <span class="m">unsigned</span> <span class="m">short</span> <span class="b">ia32_compat</span><span class="f">;</span>
+<a name="18" /><span class="Maybe">      18:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="19" /><span class="Maybe">      19:</span> 
+<a name="20" /><span class="Maybe">      20:</span>     <span class="m">struct</span> <span class="b">mutex</span> <span class="b">lock</span><span class="f">;</span>
+<a name="21" /><span class="Maybe">      21:</span>     <span class="m">void</span> <span class="f">*</span><span class="b">vdso</span><span class="f">;</span>
+<a name="22" /><span class="Maybe">      22:</span> <span class="f">}</span> <span class="b">mm_context_t</span><span class="f">;</span>
+<a name="23" /><span class="Maybe">      23:</span> 
+<a name="24" /><span class="Maybe">      24:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1NNUF8w"><span class="b">CONFIG_SMP</span></a>
+<a name="25" /><span class="Maybe">      25:</span> <span class="m">void</span> <span class="b">leave_mm</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span><span class="f">;</span>
+<a name="26" /><span class="False">      26:</span> <span class="f">#</span><span class="n">else</span>
+<a name="27" /><span class="False">      27:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">leave_mm</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">)</span>
+<a name="28" /><span class="False">      28:</span> <span class="f">{</span>
+<a name="29" /><span class="False">      29:</span> <span class="f">}</span>
+<a name="30" /><span class="Maybe">      30:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="31" /><span class="Maybe">      31:</span> 
+<a name="32" /><span class="True">      32:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _ASM_X86_MMU_H */</span>
+<a name="33" /><span class="True">      33:</span> </pre>
+  </body>
+</html>

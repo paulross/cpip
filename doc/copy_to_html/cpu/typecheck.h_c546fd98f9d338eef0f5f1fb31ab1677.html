@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/typecheck.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/typecheck.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_VFlQRUNIRUNLX0hfSU5DTFVERURfMA__"><span class="b">TYPECHECK_H_INCLUDED</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_VFlQRUNIRUNLX0hfSU5DTFVERURfMA__"><span class="b">TYPECHECK_H_INCLUDED</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="k">/*</span>
+<a name="5" /><span class="Maybe">       5:</span> <span class="k"> * Check at compile time that something is of a particular type.</span>
+<a name="6" /><span class="Maybe">       6:</span> <span class="k"> * Always evaluates to 1 so you may use it easily in comparisons.</span>
+<a name="7" /><span class="Maybe">       7:</span> <span class="k"> */</span>
+<a name="8" /><span class="Maybe">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_dHlwZWNoZWNrXzA_"><span class="b">typecheck</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span><span class="b">x</span><span class="f">)</span> \
+<a name="9" /><span class="Maybe">       9:</span> <span class="f">(</span><span class="f">{</span>    <span class="b">type</span> <span class="b">__dummy</span><span class="f">;</span> \
+<a name="10" /><span class="Maybe">      10:</span>     <span class="b">typeof</span><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="b">__dummy2</span><span class="f">;</span> \
+<a name="11" /><span class="Maybe">      11:</span>     <span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">(</span><span class="f">&amp;</span><span class="b">__dummy</span> <span class="f">==</span> <span class="f">&amp;</span><span class="b">__dummy2</span><span class="f">)</span><span class="f">;</span> \
+<a name="12" /><span class="Maybe">      12:</span>     <span class="c">1</span><span class="f">;</span> \
+<a name="13" /><span class="Maybe">      13:</span> <span class="f">}</span><span class="f">)</span>
+<a name="14" /><span class="Maybe">      14:</span> 
+<a name="15" /><span class="Maybe">      15:</span> <span class="k">/*</span>
+<a name="16" /><span class="Maybe">      16:</span> <span class="k"> * Check at compile time that &apos;function&apos; is a certain type, or is a pointer</span>
+<a name="17" /><span class="Maybe">      17:</span> <span class="k"> * to that type (needs to use typedef for the function type.)</span>
+<a name="18" /><span class="Maybe">      18:</span> <span class="k"> */</span>
+<a name="19" /><span class="Maybe">      19:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_dHlwZWNoZWNrX2ZuXzA_"><span class="b">typecheck_fn</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span><span class="b">function</span><span class="f">)</span> \
+<a name="20" /><span class="Maybe">      20:</span> <span class="f">(</span><span class="f">{</span>    <span class="b">typeof</span><span class="f">(</span><span class="b">type</span><span class="f">)</span> <span class="b">__tmp</span> <span class="f">=</span> <span class="b">function</span><span class="f">;</span> \
+<a name="21" /><span class="Maybe">      21:</span>     <span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="b">__tmp</span><span class="f">;</span> \
+<a name="22" /><span class="Maybe">      22:</span> <span class="f">}</span><span class="f">)</span>
+<a name="23" /><span class="Maybe">      23:</span> 
+<a name="24" /><span class="True">      24:</span> <span class="f">#</span><span class="n">endif</span>        <span class="k">/* TYPECHECK_H_INCLUDED */</span>
+<a name="25" /><span class="True">      25:</span> </pre>
+  </body>
+</html>

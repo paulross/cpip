@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PpWhitespace &mdash; CPIP 0.8.1 documentation</title>
+    <title>PpWhitespace &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +23,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
-    <link rel="up" title="CPIP Core" href="../core/index.html" />
-    <link rel="next" title="PragmaHandler" href="../core/PragmaHandler.html" />
-    <link rel="prev" title="PpTokeniser" href="../core/PpTokeniser.html" /> 
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.core" href="index.html" />
+    <link rel="next" title="PragmaHandler" href="PragmaHandler.html" />
+    <link rel="prev" title="PpTokeniser" href="PpTokeniser.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,14 +39,14 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../core/PragmaHandler.html" title="PragmaHandler"
+          <a href="PragmaHandler.html" title="PragmaHandler"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../core/PpTokeniser.html" title="PpTokeniser"
+          <a href="PpTokeniser.html" title="PpTokeniser"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../core/index.html" accesskey="U">CPIP Core</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">cpip.core</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -62,7 +60,7 @@
 <p>Understands whitespacey things about source code character streams.</p>
 <dl class="data">
 <dt id="cpip.core.PpWhitespace.DEFINE_WHITESPACE">
-<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">DEFINE_WHITESPACE</tt><em class="property"> = {'\t', ' ', '\n'}</em><a class="headerlink" href="#cpip.core.PpWhitespace.DEFINE_WHITESPACE" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">DEFINE_WHITESPACE</tt><em class="property"> = set(['\t', ' ', '\n'])</em><a class="headerlink" href="#cpip.core.PpWhitespace.DEFINE_WHITESPACE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whitespace characters that are significant in define statements
 ISO/IEC 14882:1998(E) 16-2 only &#8216; &#8216; and &#8216;t&#8217; as ws</p>
 </dd></dl>
@@ -81,7 +79,7 @@ ISO/IEC 14882:1998(E) 16-2 only &#8216; &#8216; and &#8216;t&#8217; as ws</p>
 
 <dl class="data">
 <dt id="cpip.core.PpWhitespace.LEX_WHITESPACE">
-<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">LEX_WHITESPACE</tt><em class="property"> = {'\t', ' ', '\x0b', '\n', '\x0c'}</em><a class="headerlink" href="#cpip.core.PpWhitespace.LEX_WHITESPACE" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">cpip.core.PpWhitespace.</tt><tt class="descname">LEX_WHITESPACE</tt><em class="property"> = set(['\t', ' ', '\x0b', '\n', '\x0c'])</em><a class="headerlink" href="#cpip.core.PpWhitespace.LEX_WHITESPACE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whitespace characters</p>
 </dd></dl>
 
@@ -150,10 +148,10 @@ position theOfs.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../core/PpTokeniser.html"
+  <p class="topless"><a href="PpTokeniser.html"
                         title="previous chapter">PpTokeniser</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../core/PragmaHandler.html"
+  <p class="topless"><a href="PragmaHandler.html"
                         title="next chapter">PragmaHandler</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -187,19 +185,19 @@ position theOfs.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../core/PragmaHandler.html" title="PragmaHandler"
+          <a href="PragmaHandler.html" title="PragmaHandler"
              >next</a> |</li>
         <li class="right" >
-          <a href="../core/PpTokeniser.html" title="PpTokeniser"
+          <a href="PpTokeniser.html" title="PpTokeniser"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../core/index.html" >CPIP Core</a> &raquo;</li> 
+          <li><a href="index.html" >cpip.core</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

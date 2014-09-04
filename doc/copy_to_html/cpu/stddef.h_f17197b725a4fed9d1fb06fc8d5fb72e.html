@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/stddef.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/stddef.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1NURERFRl9IXzA_"><span class="b">_LINUX_STDDEF_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1NURERFRl9IXzA_"><span class="b">_LINUX_STDDEF_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">uapi</span><span class="f">/</span><span class="b">linux</span><span class="f">/</span><span class="b">stddef</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="Maybe">       5:</span> 
+<a name="6" /><span class="Maybe">       6:</span> 
+<a name="7" /><span class="Maybe">       7:</span> <span class="f">#</span><span class="n">undef</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a>
+<a name="8" /><span class="Maybe">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a> <span class="f">(</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="c">0</span><span class="f">)</span>
+<a name="9" /><span class="Maybe">       9:</span> 
+<a name="10" /><span class="Maybe">      10:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="11" /><span class="Maybe">      11:</span>     <span class="m">false</span>    <span class="f">=</span> <span class="c">0</span><span class="f">,</span>
+<a name="12" /><span class="Maybe">      12:</span>     <span class="m">true</span>    <span class="f">=</span> <span class="c">1</span>
+<a name="13" /><span class="Maybe">      13:</span> <span class="f">}</span><span class="f">;</span>
+<a name="14" /><span class="Maybe">      14:</span> 
+<a name="15" /><span class="Maybe">      15:</span> <span class="f">#</span><span class="n">undef</span> <a href="cpu.c_macros_ref.html#_b2Zmc2V0b2ZfMA__"><span class="b">offsetof</span></a>
+<a name="16" /><span class="Maybe">      16:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_X19jb21waWxlcl9vZmZzZXRvZl8w"><span class="b">__compiler_offsetof</span></a>
+<a name="17" /><span class="Maybe">      17:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_b2Zmc2V0b2ZfMA__"><span class="b">offsetof</span></a><span class="f">(</span><span class="b">TYPE</span><span class="f">,</span><span class="b">MEMBER</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19jb21waWxlcl9vZmZzZXRvZl8w"><span class="b">__compiler_offsetof</span></a><span class="f">(</span><span class="b">TYPE</span><span class="f">,</span><span class="b">MEMBER</span><span class="f">)</span>
+<a name="18" /><span class="False">      18:</span> <span class="f">#</span><span class="n">else</span>
+<a name="19" /><span class="False">      19:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_b2Zmc2V0b2ZfMA__"><span class="b">offsetof</span></a><span class="f">(</span><span class="b">TYPE</span><span class="f">,</span> <span class="b">MEMBER</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="b">size_t</span><span class="f">)</span> <span class="f">&amp;</span><span class="f">(</span><span class="f">(</span><span class="b">TYPE</span> <span class="f">*</span><span class="f">)</span><span class="c">0</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">MEMBER</span><span class="f">)</span>
+<a name="20" /><span class="Maybe">      20:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="21" /><span class="True">      21:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="22" /><span class="True">      22:</span> </pre>
+  </body>
+</html>

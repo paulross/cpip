@@ -1,0 +1,820 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/irq.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/irq.h</h1>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0lSUV9IXzA_"><span class="b">_LINUX_IRQ_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0lSUV9IXzA_"><span class="b">_LINUX_IRQ_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="k">/*</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * Please do not include this file in generic code.  There is currently</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> * no requirement for any architecture to implement anything held</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * within this file.</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> *</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> * Thanks. --rmk</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> */</span>
+<a name="11" /><span class="True">      11:</span> 
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">smp</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">linkage</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">cache</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">spinlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">cpumask</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">gfp</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="18" /><span class="True">      18:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">irqreturn</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="19" /><span class="True">      19:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">irqnr</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="20" /><span class="True">      20:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">errno</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="21" /><span class="True">      21:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">topology</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="22" /><span class="True">      22:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">wait</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="23" /><span class="True">      23:</span> 
+<a name="24" /><span class="True">      24:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">irq</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="25" /><span class="True">      25:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">ptrace</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="26" /><span class="True">      26:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">irq_regs</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="27" /><span class="True">      27:</span> 
+<a name="28" /><span class="True">      28:</span> <span class="m">struct</span> <span class="b">seq_file</span><span class="f">;</span>
+<a name="29" /><span class="True">      29:</span> <span class="m">struct</span> <span class="b">module</span><span class="f">;</span>
+<a name="30" /><span class="True">      30:</span> <span class="m">struct</span> <span class="b">irq_desc</span><span class="f">;</span>
+<a name="31" /><span class="True">      31:</span> <span class="m">struct</span> <span class="b">irq_data</span><span class="f">;</span>
+<a name="32" /><span class="True">      32:</span> <span class="m">typedef</span>    <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">irq_flow_handler_t</span><span class="f">)</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span>
+<a name="33" /><span class="True">      33:</span>                         <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="34" /><span class="True">      34:</span> <span class="m">typedef</span>    <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">irq_preflow_handler_t</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="35" /><span class="True">      35:</span> 
+<a name="36" /><span class="True">      36:</span> <span class="k">/*</span>
+<a name="37" /><span class="True">      37:</span> <span class="k"> * IRQ line status.</span>
+<a name="38" /><span class="True">      38:</span> <span class="k"> *</span>
+<a name="39" /><span class="True">      39:</span> <span class="k"> * Bits 0-7 are the same as the IRQF_* bits in linux/interrupt.h</span>
+<a name="40" /><span class="True">      40:</span> <span class="k"> *</span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> * IRQ_TYPE_NONE        - default, unspecified type</span>
+<a name="42" /><span class="True">      42:</span> <span class="k"> * IRQ_TYPE_EDGE_RISING        - rising edge triggered</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"> * IRQ_TYPE_EDGE_FALLING    - falling edge triggered</span>
+<a name="44" /><span class="True">      44:</span> <span class="k"> * IRQ_TYPE_EDGE_BOTH        - rising and falling edge triggered</span>
+<a name="45" /><span class="True">      45:</span> <span class="k"> * IRQ_TYPE_LEVEL_HIGH        - high level triggered</span>
+<a name="46" /><span class="True">      46:</span> <span class="k"> * IRQ_TYPE_LEVEL_LOW        - low level triggered</span>
+<a name="47" /><span class="True">      47:</span> <span class="k"> * IRQ_TYPE_LEVEL_MASK        - Mask to filter out the level bits</span>
+<a name="48" /><span class="True">      48:</span> <span class="k"> * IRQ_TYPE_SENSE_MASK        - Mask for all the above bits</span>
+<a name="49" /><span class="True">      49:</span> <span class="k"> * IRQ_TYPE_DEFAULT        - For use by some PICs to ask irq_set_type</span>
+<a name="50" /><span class="True">      50:</span> <span class="k"> *                  to setup the HW to a sane default (used</span>
+<a name="51" /><span class="True">      51:</span> <span class="k"> *                                by irqdomain map() callbacks to synchronize</span>
+<a name="52" /><span class="True">      52:</span> <span class="k"> *                                the HW state and SW flags for a newly</span>
+<a name="53" /><span class="True">      53:</span> <span class="k"> *                                allocated descriptor).</span>
+<a name="54" /><span class="True">      54:</span> <span class="k"> *</span>
+<a name="55" /><span class="True">      55:</span> <span class="k"> * IRQ_TYPE_PROBE        - Special flag for probing in progress</span>
+<a name="56" /><span class="True">      56:</span> <span class="k"> *</span>
+<a name="57" /><span class="True">      57:</span> <span class="k"> * Bits which can be modified via irq_set/clear/modify_status_flags()</span>
+<a name="58" /><span class="True">      58:</span> <span class="k"> * IRQ_LEVEL            - Interrupt is level type. Will be also</span>
+<a name="59" /><span class="True">      59:</span> <span class="k"> *                  updated in the code when the above trigger</span>
+<a name="60" /><span class="True">      60:</span> <span class="k"> *                  bits are modified via irq_set_irq_type()</span>
+<a name="61" /><span class="True">      61:</span> <span class="k"> * IRQ_PER_CPU            - Mark an interrupt PER_CPU. Will protect</span>
+<a name="62" /><span class="True">      62:</span> <span class="k"> *                  it from affinity setting</span>
+<a name="63" /><span class="True">      63:</span> <span class="k"> * IRQ_NOPROBE            - Interrupt cannot be probed by autoprobing</span>
+<a name="64" /><span class="True">      64:</span> <span class="k"> * IRQ_NOREQUEST        - Interrupt cannot be requested via</span>
+<a name="65" /><span class="True">      65:</span> <span class="k"> *                  request_irq()</span>
+<a name="66" /><span class="True">      66:</span> <span class="k"> * IRQ_NOTHREAD            - Interrupt cannot be threaded</span>
+<a name="67" /><span class="True">      67:</span> <span class="k"> * IRQ_NOAUTOEN            - Interrupt is not automatically enabled in</span>
+<a name="68" /><span class="True">      68:</span> <span class="k"> *                  request/setup_irq()</span>
+<a name="69" /><span class="True">      69:</span> <span class="k"> * IRQ_NO_BALANCING        - Interrupt cannot be balanced (affinity set)</span>
+<a name="70" /><span class="True">      70:</span> <span class="k"> * IRQ_MOVE_PCNTXT        - Interrupt can be migrated from process context</span>
+<a name="71" /><span class="True">      71:</span> <span class="k"> * IRQ_NESTED_TRHEAD        - Interrupt nests into another thread</span>
+<a name="72" /><span class="True">      72:</span> <span class="k"> * IRQ_PER_CPU_DEVID        - Dev_id is a per-cpu variable</span>
+<a name="73" /><span class="True">      73:</span> <span class="k"> * IRQ_IS_POLLED        - Always polled by another interrupt. Exclude</span>
+<a name="74" /><span class="True">      74:</span> <span class="k"> *                  it from the spurious interrupt detection</span>
+<a name="75" /><span class="True">      75:</span> <span class="k"> *                  mechanism and from core side polling.</span>
+<a name="76" /><span class="True">      76:</span> <span class="k"> */</span>
+<a name="77" /><span class="True">      77:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="78" /><span class="True">      78:</span>     <span class="b">IRQ_TYPE_NONE</span>        <span class="f">=</span> <span class="c">0x00000000</span><span class="f">,</span>
+<a name="79" /><span class="True">      79:</span>     <span class="b">IRQ_TYPE_EDGE_RISING</span>    <span class="f">=</span> <span class="c">0x00000001</span><span class="f">,</span>
+<a name="80" /><span class="True">      80:</span>     <span class="b">IRQ_TYPE_EDGE_FALLING</span>    <span class="f">=</span> <span class="c">0x00000002</span><span class="f">,</span>
+<a name="81" /><span class="True">      81:</span>     <span class="b">IRQ_TYPE_EDGE_BOTH</span>    <span class="f">=</span> <span class="f">(</span><span class="b">IRQ_TYPE_EDGE_FALLING</span> <span class="f">|</span> <span class="b">IRQ_TYPE_EDGE_RISING</span><span class="f">)</span><span class="f">,</span>
+<a name="82" /><span class="True">      82:</span>     <span class="b">IRQ_TYPE_LEVEL_HIGH</span>    <span class="f">=</span> <span class="c">0x00000004</span><span class="f">,</span>
+<a name="83" /><span class="True">      83:</span>     <span class="b">IRQ_TYPE_LEVEL_LOW</span>    <span class="f">=</span> <span class="c">0x00000008</span><span class="f">,</span>
+<a name="84" /><span class="True">      84:</span>     <span class="b">IRQ_TYPE_LEVEL_MASK</span>    <span class="f">=</span> <span class="f">(</span><span class="b">IRQ_TYPE_LEVEL_LOW</span> <span class="f">|</span> <span class="b">IRQ_TYPE_LEVEL_HIGH</span><span class="f">)</span><span class="f">,</span>
+<a name="85" /><span class="True">      85:</span>     <span class="b">IRQ_TYPE_SENSE_MASK</span>    <span class="f">=</span> <span class="c">0x0000000f</span><span class="f">,</span>
+<a name="86" /><span class="True">      86:</span>     <span class="b">IRQ_TYPE_DEFAULT</span>    <span class="f">=</span> <span class="b">IRQ_TYPE_SENSE_MASK</span><span class="f">,</span>
+<a name="87" /><span class="True">      87:</span> 
+<a name="88" /><span class="True">      88:</span>     <span class="b">IRQ_TYPE_PROBE</span>        <span class="f">=</span> <span class="c">0x00000010</span><span class="f">,</span>
+<a name="89" /><span class="True">      89:</span> 
+<a name="90" /><span class="True">      90:</span>     <span class="b">IRQ_LEVEL</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">8</span><span class="f">)</span><span class="f">,</span>
+<a name="91" /><span class="True">      91:</span>     <span class="b">IRQ_PER_CPU</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">9</span><span class="f">)</span><span class="f">,</span>
+<a name="92" /><span class="True">      92:</span>     <span class="b">IRQ_NOPROBE</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">10</span><span class="f">)</span><span class="f">,</span>
+<a name="93" /><span class="True">      93:</span>     <span class="b">IRQ_NOREQUEST</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">11</span><span class="f">)</span><span class="f">,</span>
+<a name="94" /><span class="True">      94:</span>     <span class="b">IRQ_NOAUTOEN</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">12</span><span class="f">)</span><span class="f">,</span>
+<a name="95" /><span class="True">      95:</span>     <span class="b">IRQ_NO_BALANCING</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">13</span><span class="f">)</span><span class="f">,</span>
+<a name="96" /><span class="True">      96:</span>     <span class="b">IRQ_MOVE_PCNTXT</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">14</span><span class="f">)</span><span class="f">,</span>
+<a name="97" /><span class="True">      97:</span>     <span class="b">IRQ_NESTED_THREAD</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">15</span><span class="f">)</span><span class="f">,</span>
+<a name="98" /><span class="True">      98:</span>     <span class="b">IRQ_NOTHREAD</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">16</span><span class="f">)</span><span class="f">,</span>
+<a name="99" /><span class="True">      99:</span>     <span class="b">IRQ_PER_CPU_DEVID</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">17</span><span class="f">)</span><span class="f">,</span>
+<a name="100" /><span class="True">     100:</span>     <span class="b">IRQ_IS_POLLED</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">18</span><span class="f">)</span><span class="f">,</span>
+<a name="101" /><span class="True">     101:</span> <span class="f">}</span><span class="f">;</span>
+<a name="102" /><span class="True">     102:</span> 
+<a name="103" /><span class="True">     103:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SVJRRl9NT0RJRllfTUFTS18w"><span class="b">IRQF_MODIFY_MASK</span></a>    \
+<a name="104" /><span class="True">     104:</span>     <span class="f">(</span><span class="b">IRQ_TYPE_SENSE_MASK</span> <span class="f">|</span> <span class="b">IRQ_NOPROBE</span> <span class="f">|</span> <span class="b">IRQ_NOREQUEST</span> <span class="f">|</span> \
+<a name="105" /><span class="True">     105:</span>      <span class="b">IRQ_NOAUTOEN</span> <span class="f">|</span> <span class="b">IRQ_MOVE_PCNTXT</span> <span class="f">|</span> <span class="b">IRQ_LEVEL</span> <span class="f">|</span> <span class="b">IRQ_NO_BALANCING</span> <span class="f">|</span> \
+<a name="106" /><span class="True">     106:</span>      <span class="b">IRQ_PER_CPU</span> <span class="f">|</span> <span class="b">IRQ_NESTED_THREAD</span> <span class="f">|</span> <span class="b">IRQ_NOTHREAD</span> <span class="f">|</span> <span class="b">IRQ_PER_CPU_DEVID</span> <span class="f">|</span> \
+<a name="107" /><span class="True">     107:</span>      <span class="b">IRQ_IS_POLLED</span><span class="f">)</span>
+<a name="108" /><span class="True">     108:</span> 
+<a name="109" /><span class="True">     109:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_SVJRX05PX0JBTEFOQ0lOR19NQVNLXzA_"><span class="b">IRQ_NO_BALANCING_MASK</span></a>    <span class="f">(</span><span class="b">IRQ_PER_CPU</span> <span class="f">|</span> <span class="b">IRQ_NO_BALANCING</span><span class="f">)</span>
+<a name="110" /><span class="True">     110:</span> 
+<a name="111" /><span class="True">     111:</span> <span class="k">/*</span>
+<a name="112" /><span class="True">     112:</span> <span class="k"> * Return value for chip-&gt;irq_set_affinity()</span>
+<a name="113" /><span class="True">     113:</span> <span class="k"> *</span>
+<a name="114" /><span class="True">     114:</span> <span class="k"> * IRQ_SET_MASK_OK    - OK, core updates irq_data.affinity</span>
+<a name="115" /><span class="True">     115:</span> <span class="k"> * IRQ_SET_MASK_NOCPY    - OK, chip did update irq_data.affinity</span>
+<a name="116" /><span class="True">     116:</span> <span class="k"> */</span>
+<a name="117" /><span class="True">     117:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="118" /><span class="True">     118:</span>     <span class="b">IRQ_SET_MASK_OK</span> <span class="f">=</span> <span class="c">0</span><span class="f">,</span>
+<a name="119" /><span class="True">     119:</span>     <span class="b">IRQ_SET_MASK_OK_NOCOPY</span><span class="f">,</span>
+<a name="120" /><span class="True">     120:</span> <span class="f">}</span><span class="f">;</span>
+<a name="121" /><span class="True">     121:</span> 
+<a name="122" /><span class="True">     122:</span> <span class="m">struct</span> <span class="b">msi_desc</span><span class="f">;</span>
+<a name="123" /><span class="True">     123:</span> <span class="m">struct</span> <span class="b">irq_domain</span><span class="f">;</span>
+<a name="124" /><span class="True">     124:</span> 
+<a name="125" /><span class="True">     125:</span> <span class="k">/**</span>
+<a name="126" /><span class="True">     126:</span> <span class="k"> * struct irq_data - per irq and irq chip data passed down to chip functions</span>
+<a name="127" /><span class="True">     127:</span> <span class="k"> * @mask:        precomputed bitmask for accessing the chip registers</span>
+<a name="128" /><span class="True">     128:</span> <span class="k"> * @irq:        interrupt number</span>
+<a name="129" /><span class="True">     129:</span> <span class="k"> * @hwirq:        hardware interrupt number, local to the interrupt domain</span>
+<a name="130" /><span class="True">     130:</span> <span class="k"> * @node:        node index useful for balancing</span>
+<a name="131" /><span class="True">     131:</span> <span class="k"> * @state_use_accessors: status information for irq chip functions.</span>
+<a name="132" /><span class="True">     132:</span> <span class="k"> *            Use accessor functions to deal with it</span>
+<a name="133" /><span class="True">     133:</span> <span class="k"> * @chip:        low level interrupt hardware access</span>
+<a name="134" /><span class="True">     134:</span> <span class="k"> * @domain:        Interrupt translation domain; responsible for mapping</span>
+<a name="135" /><span class="True">     135:</span> <span class="k"> *            between hwirq number and linux irq number.</span>
+<a name="136" /><span class="True">     136:</span> <span class="k"> * @handler_data:    per-IRQ data for the irq_chip methods</span>
+<a name="137" /><span class="True">     137:</span> <span class="k"> * @chip_data:        platform-specific per-chip private data for the chip</span>
+<a name="138" /><span class="True">     138:</span> <span class="k"> *            methods, to allow shared chip implementations</span>
+<a name="139" /><span class="True">     139:</span> <span class="k"> * @msi_desc:        MSI descriptor</span>
+<a name="140" /><span class="True">     140:</span> <span class="k"> * @affinity:        IRQ affinity on SMP</span>
+<a name="141" /><span class="True">     141:</span> <span class="k"> *</span>
+<a name="142" /><span class="True">     142:</span> <span class="k"> * The fields here need to overlay the ones in irq_desc until we</span>
+<a name="143" /><span class="True">     143:</span> <span class="k"> * cleaned up the direct references and switched everything over to</span>
+<a name="144" /><span class="True">     144:</span> <span class="k"> * irq_data.</span>
+<a name="145" /><span class="True">     145:</span> <span class="k"> */</span>
+<a name="146" /><span class="True">     146:</span> <span class="m">struct</span> <span class="b">irq_data</span> <span class="f">{</span>
+<a name="147" /><span class="True">     147:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">mask</span><span class="f">;</span>
+<a name="148" /><span class="True">     148:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">irq</span><span class="f">;</span>
+<a name="149" /><span class="True">     149:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">hwirq</span><span class="f">;</span>
+<a name="150" /><span class="True">     150:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">node</span><span class="f">;</span>
+<a name="151" /><span class="True">     151:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">state_use_accessors</span><span class="f">;</span>
+<a name="152" /><span class="True">     152:</span>     <span class="m">struct</span> <span class="b">irq_chip</span>        <span class="f">*</span><span class="b">chip</span><span class="f">;</span>
+<a name="153" /><span class="True">     153:</span>     <span class="m">struct</span> <span class="b">irq_domain</span>    <span class="f">*</span><span class="b">domain</span><span class="f">;</span>
+<a name="154" /><span class="True">     154:</span>     <span class="m">void</span>            <span class="f">*</span><span class="b">handler_data</span><span class="f">;</span>
+<a name="155" /><span class="True">     155:</span>     <span class="m">void</span>            <span class="f">*</span><span class="b">chip_data</span><span class="f">;</span>
+<a name="156" /><span class="True">     156:</span>     <span class="m">struct</span> <span class="b">msi_desc</span>        <span class="f">*</span><span class="b">msi_desc</span><span class="f">;</span>
+<a name="157" /><span class="True">     157:</span>     <span class="b">cpumask_var_t</span>        <span class="b">affinity</span><span class="f">;</span>
+<a name="158" /><span class="True">     158:</span> <span class="f">}</span><span class="f">;</span>
+<a name="159" /><span class="True">     159:</span> 
+<a name="160" /><span class="True">     160:</span> <span class="k">/*</span>
+<a name="161" /><span class="True">     161:</span> <span class="k"> * Bit masks for irq_data.state</span>
+<a name="162" /><span class="True">     162:</span> <span class="k"> *</span>
+<a name="163" /><span class="True">     163:</span> <span class="k"> * IRQD_TRIGGER_MASK        - Mask for the trigger type bits</span>
+<a name="164" /><span class="True">     164:</span> <span class="k"> * IRQD_SETAFFINITY_PENDING    - Affinity setting is pending</span>
+<a name="165" /><span class="True">     165:</span> <span class="k"> * IRQD_NO_BALANCING        - Balancing disabled for this IRQ</span>
+<a name="166" /><span class="True">     166:</span> <span class="k"> * IRQD_PER_CPU            - Interrupt is per cpu</span>
+<a name="167" /><span class="True">     167:</span> <span class="k"> * IRQD_AFFINITY_SET        - Interrupt affinity was set</span>
+<a name="168" /><span class="True">     168:</span> <span class="k"> * IRQD_LEVEL            - Interrupt is level triggered</span>
+<a name="169" /><span class="True">     169:</span> <span class="k"> * IRQD_WAKEUP_STATE        - Interrupt is configured for wakeup</span>
+<a name="170" /><span class="True">     170:</span> <span class="k"> *                  from suspend</span>
+<a name="171" /><span class="True">     171:</span> <span class="k"> * IRDQ_MOVE_PCNTXT        - Interrupt can be moved in process</span>
+<a name="172" /><span class="True">     172:</span> <span class="k"> *                  context</span>
+<a name="173" /><span class="True">     173:</span> <span class="k"> * IRQD_IRQ_DISABLED        - Disabled state of the interrupt</span>
+<a name="174" /><span class="True">     174:</span> <span class="k"> * IRQD_IRQ_MASKED        - Masked state of the interrupt</span>
+<a name="175" /><span class="True">     175:</span> <span class="k"> * IRQD_IRQ_INPROGRESS        - In progress state of the interrupt</span>
+<a name="176" /><span class="True">     176:</span> <span class="k"> */</span>
+<a name="177" /><span class="True">     177:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="178" /><span class="True">     178:</span>     <span class="b">IRQD_TRIGGER_MASK</span>        <span class="f">=</span> <span class="c">0xf</span><span class="f">,</span>
+<a name="179" /><span class="True">     179:</span>     <span class="b">IRQD_SETAFFINITY_PENDING</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">8</span><span class="f">)</span><span class="f">,</span>
+<a name="180" /><span class="True">     180:</span>     <span class="b">IRQD_NO_BALANCING</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">10</span><span class="f">)</span><span class="f">,</span>
+<a name="181" /><span class="True">     181:</span>     <span class="b">IRQD_PER_CPU</span>            <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">11</span><span class="f">)</span><span class="f">,</span>
+<a name="182" /><span class="True">     182:</span>     <span class="b">IRQD_AFFINITY_SET</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">12</span><span class="f">)</span><span class="f">,</span>
+<a name="183" /><span class="True">     183:</span>     <span class="b">IRQD_LEVEL</span>            <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">13</span><span class="f">)</span><span class="f">,</span>
+<a name="184" /><span class="True">     184:</span>     <span class="b">IRQD_WAKEUP_STATE</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">14</span><span class="f">)</span><span class="f">,</span>
+<a name="185" /><span class="True">     185:</span>     <span class="b">IRQD_MOVE_PCNTXT</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">15</span><span class="f">)</span><span class="f">,</span>
+<a name="186" /><span class="True">     186:</span>     <span class="b">IRQD_IRQ_DISABLED</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">16</span><span class="f">)</span><span class="f">,</span>
+<a name="187" /><span class="True">     187:</span>     <span class="b">IRQD_IRQ_MASKED</span>            <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">17</span><span class="f">)</span><span class="f">,</span>
+<a name="188" /><span class="True">     188:</span>     <span class="b">IRQD_IRQ_INPROGRESS</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">18</span><span class="f">)</span><span class="f">,</span>
+<a name="189" /><span class="True">     189:</span> <span class="f">}</span><span class="f">;</span>
+<a name="190" /><span class="True">     190:</span> 
+<a name="191" /><span class="True">     191:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_is_setaffinity_pending</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="192" /><span class="True">     192:</span> <span class="f">{</span>
+<a name="193" /><span class="True">     193:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_SETAFFINITY_PENDING</span><span class="f">;</span>
+<a name="194" /><span class="True">     194:</span> <span class="f">}</span>
+<a name="195" /><span class="True">     195:</span> 
+<a name="196" /><span class="True">     196:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_is_per_cpu</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="197" /><span class="True">     197:</span> <span class="f">{</span>
+<a name="198" /><span class="True">     198:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_PER_CPU</span><span class="f">;</span>
+<a name="199" /><span class="True">     199:</span> <span class="f">}</span>
+<a name="200" /><span class="True">     200:</span> 
+<a name="201" /><span class="True">     201:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_can_balance</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="202" /><span class="True">     202:</span> <span class="f">{</span>
+<a name="203" /><span class="True">     203:</span>     <span class="m">return</span> <span class="f">!</span><span class="f">(</span><span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="f">(</span><span class="b">IRQD_PER_CPU</span> <span class="f">|</span> <span class="b">IRQD_NO_BALANCING</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="204" /><span class="True">     204:</span> <span class="f">}</span>
+<a name="205" /><span class="True">     205:</span> 
+<a name="206" /><span class="True">     206:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_affinity_was_set</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="207" /><span class="True">     207:</span> <span class="f">{</span>
+<a name="208" /><span class="True">     208:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_AFFINITY_SET</span><span class="f">;</span>
+<a name="209" /><span class="True">     209:</span> <span class="f">}</span>
+<a name="210" /><span class="True">     210:</span> 
+<a name="211" /><span class="True">     211:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irqd_mark_affinity_was_set</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="212" /><span class="True">     212:</span> <span class="f">{</span>
+<a name="213" /><span class="True">     213:</span>     <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">|=</span> <span class="b">IRQD_AFFINITY_SET</span><span class="f">;</span>
+<a name="214" /><span class="True">     214:</span> <span class="f">}</span>
+<a name="215" /><span class="True">     215:</span> 
+<a name="216" /><span class="True">     216:</span> <span class="m">static</span> <span class="m">inline</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">irqd_get_trigger_type</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="217" /><span class="True">     217:</span> <span class="f">{</span>
+<a name="218" /><span class="True">     218:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_TRIGGER_MASK</span><span class="f">;</span>
+<a name="219" /><span class="True">     219:</span> <span class="f">}</span>
+<a name="220" /><span class="True">     220:</span> 
+<a name="221" /><span class="True">     221:</span> <span class="k">/*</span>
+<a name="222" /><span class="True">     222:</span> <span class="k"> * Must only be called inside irq_chip.irq_set_type() functions.</span>
+<a name="223" /><span class="True">     223:</span> <span class="k"> */</span>
+<a name="224" /><span class="True">     224:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irqd_set_trigger_type</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">type</span><span class="f">)</span>
+<a name="225" /><span class="True">     225:</span> <span class="f">{</span>
+<a name="226" /><span class="True">     226:</span>     <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;=</span> <span class="f">~</span><span class="b">IRQD_TRIGGER_MASK</span><span class="f">;</span>
+<a name="227" /><span class="True">     227:</span>     <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">|=</span> <span class="b">type</span> <span class="f">&amp;</span> <span class="b">IRQD_TRIGGER_MASK</span><span class="f">;</span>
+<a name="228" /><span class="True">     228:</span> <span class="f">}</span>
+<a name="229" /><span class="True">     229:</span> 
+<a name="230" /><span class="True">     230:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_is_level_type</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="231" /><span class="True">     231:</span> <span class="f">{</span>
+<a name="232" /><span class="True">     232:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_LEVEL</span><span class="f">;</span>
+<a name="233" /><span class="True">     233:</span> <span class="f">}</span>
+<a name="234" /><span class="True">     234:</span> 
+<a name="235" /><span class="True">     235:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_is_wakeup_set</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="236" /><span class="True">     236:</span> <span class="f">{</span>
+<a name="237" /><span class="True">     237:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_WAKEUP_STATE</span><span class="f">;</span>
+<a name="238" /><span class="True">     238:</span> <span class="f">}</span>
+<a name="239" /><span class="True">     239:</span> 
+<a name="240" /><span class="True">     240:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_can_move_in_process_context</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="241" /><span class="True">     241:</span> <span class="f">{</span>
+<a name="242" /><span class="True">     242:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_MOVE_PCNTXT</span><span class="f">;</span>
+<a name="243" /><span class="True">     243:</span> <span class="f">}</span>
+<a name="244" /><span class="True">     244:</span> 
+<a name="245" /><span class="True">     245:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_irq_disabled</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="246" /><span class="True">     246:</span> <span class="f">{</span>
+<a name="247" /><span class="True">     247:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_IRQ_DISABLED</span><span class="f">;</span>
+<a name="248" /><span class="True">     248:</span> <span class="f">}</span>
+<a name="249" /><span class="True">     249:</span> 
+<a name="250" /><span class="True">     250:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_irq_masked</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="251" /><span class="True">     251:</span> <span class="f">{</span>
+<a name="252" /><span class="True">     252:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_IRQ_MASKED</span><span class="f">;</span>
+<a name="253" /><span class="True">     253:</span> <span class="f">}</span>
+<a name="254" /><span class="True">     254:</span> 
+<a name="255" /><span class="True">     255:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">irqd_irq_inprogress</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="256" /><span class="True">     256:</span> <span class="f">{</span>
+<a name="257" /><span class="True">     257:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;</span> <span class="b">IRQD_IRQ_INPROGRESS</span><span class="f">;</span>
+<a name="258" /><span class="True">     258:</span> <span class="f">}</span>
+<a name="259" /><span class="True">     259:</span> 
+<a name="260" /><span class="True">     260:</span> <span class="k">/*</span>
+<a name="261" /><span class="True">     261:</span> <span class="k"> * Functions for chained handlers which can be enabled/disabled by the</span>
+<a name="262" /><span class="True">     262:</span> <span class="k"> * standard disable_irq/enable_irq calls. Must be called with</span>
+<a name="263" /><span class="True">     263:</span> <span class="k"> * irq_desc-&gt;lock held.</span>
+<a name="264" /><span class="True">     264:</span> <span class="k"> */</span>
+<a name="265" /><span class="True">     265:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irqd_set_chained_irq_inprogress</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="266" /><span class="True">     266:</span> <span class="f">{</span>
+<a name="267" /><span class="True">     267:</span>     <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">|=</span> <span class="b">IRQD_IRQ_INPROGRESS</span><span class="f">;</span>
+<a name="268" /><span class="True">     268:</span> <span class="f">}</span>
+<a name="269" /><span class="True">     269:</span> 
+<a name="270" /><span class="True">     270:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irqd_clr_chained_irq_inprogress</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="271" /><span class="True">     271:</span> <span class="f">{</span>
+<a name="272" /><span class="True">     272:</span>     <span class="b">d</span><span class="f">-&gt;</span><span class="b">state_use_accessors</span> <span class="f">&amp;=</span> <span class="f">~</span><span class="b">IRQD_IRQ_INPROGRESS</span><span class="f">;</span>
+<a name="273" /><span class="True">     273:</span> <span class="f">}</span>
+<a name="274" /><span class="True">     274:</span> 
+<a name="275" /><span class="True">     275:</span> <span class="m">static</span> <span class="m">inline</span> <span class="b">irq_hw_number_t</span> <span class="b">irqd_to_hwirq</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="276" /><span class="True">     276:</span> <span class="f">{</span>
+<a name="277" /><span class="True">     277:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">hwirq</span><span class="f">;</span>
+<a name="278" /><span class="True">     278:</span> <span class="f">}</span>
+<a name="279" /><span class="True">     279:</span> 
+<a name="280" /><span class="True">     280:</span> <span class="k">/**</span>
+<a name="281" /><span class="True">     281:</span> <span class="k"> * struct irq_chip - hardware interrupt chip descriptor</span>
+<a name="282" /><span class="True">     282:</span> <span class="k"> *</span>
+<a name="283" /><span class="True">     283:</span> <span class="k"> * @name:        name for /proc/interrupts</span>
+<a name="284" /><span class="True">     284:</span> <span class="k"> * @irq_startup:    start up the interrupt (defaults to -&gt;enable if NULL)</span>
+<a name="285" /><span class="True">     285:</span> <span class="k"> * @irq_shutdown:    shut down the interrupt (defaults to -&gt;disable if NULL)</span>
+<a name="286" /><span class="True">     286:</span> <span class="k"> * @irq_enable:        enable the interrupt (defaults to chip-&gt;unmask if NULL)</span>
+<a name="287" /><span class="True">     287:</span> <span class="k"> * @irq_disable:    disable the interrupt</span>
+<a name="288" /><span class="True">     288:</span> <span class="k"> * @irq_ack:        start of a new interrupt</span>
+<a name="289" /><span class="True">     289:</span> <span class="k"> * @irq_mask:        mask an interrupt source</span>
+<a name="290" /><span class="True">     290:</span> <span class="k"> * @irq_mask_ack:    ack and mask an interrupt source</span>
+<a name="291" /><span class="True">     291:</span> <span class="k"> * @irq_unmask:        unmask an interrupt source</span>
+<a name="292" /><span class="True">     292:</span> <span class="k"> * @irq_eoi:        end of interrupt</span>
+<a name="293" /><span class="True">     293:</span> <span class="k"> * @irq_set_affinity:    set the CPU affinity on SMP machines</span>
+<a name="294" /><span class="True">     294:</span> <span class="k"> * @irq_retrigger:    resend an IRQ to the CPU</span>
+<a name="295" /><span class="True">     295:</span> <span class="k"> * @irq_set_type:    set the flow type (IRQ_TYPE_LEVEL/etc.) of an IRQ</span>
+<a name="296" /><span class="True">     296:</span> <span class="k"> * @irq_set_wake:    enable/disable power-management wake-on of an IRQ</span>
+<a name="297" /><span class="True">     297:</span> <span class="k"> * @irq_bus_lock:    function to lock access to slow bus (i2c) chips</span>
+<a name="298" /><span class="True">     298:</span> <span class="k"> * @irq_bus_sync_unlock:function to sync and unlock slow bus (i2c) chips</span>
+<a name="299" /><span class="True">     299:</span> <span class="k"> * @irq_cpu_online:    configure an interrupt source for a secondary CPU</span>
+<a name="300" /><span class="True">     300:</span> <span class="k"> * @irq_cpu_offline:    un-configure an interrupt source for a secondary CPU</span>
+<a name="301" /><span class="True">     301:</span> <span class="k"> * @irq_suspend:    function called from core code on suspend once per chip</span>
+<a name="302" /><span class="True">     302:</span> <span class="k"> * @irq_resume:        function called from core code on resume once per chip</span>
+<a name="303" /><span class="True">     303:</span> <span class="k"> * @irq_pm_shutdown:    function called from core code on shutdown once per chip</span>
+<a name="304" /><span class="True">     304:</span> <span class="k"> * @irq_calc_mask:    Optional function to set irq_data.mask for special cases</span>
+<a name="305" /><span class="True">     305:</span> <span class="k"> * @irq_print_chip:    optional to print special chip info in show_interrupts</span>
+<a name="306" /><span class="True">     306:</span> <span class="k"> * @flags:        chip specific flags</span>
+<a name="307" /><span class="True">     307:</span> <span class="k"> */</span>
+<a name="308" /><span class="True">     308:</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="f">{</span>
+<a name="309" /><span class="True">     309:</span>     <span class="m">const</span> <span class="m">char</span>    <span class="f">*</span><span class="b">name</span><span class="f">;</span>
+<a name="310" /><span class="True">     310:</span>     <span class="m">unsigned</span> <span class="m">int</span>    <span class="f">(</span><span class="f">*</span><span class="b">irq_startup</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="311" /><span class="True">     311:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_shutdown</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="312" /><span class="True">     312:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_enable</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="313" /><span class="True">     313:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_disable</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="314" /><span class="True">     314:</span> 
+<a name="315" /><span class="True">     315:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_ack</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="316" /><span class="True">     316:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_mask</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="317" /><span class="True">     317:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_mask_ack</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="318" /><span class="True">     318:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_unmask</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="319" /><span class="True">     319:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_eoi</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="320" /><span class="True">     320:</span> 
+<a name="321" /><span class="True">     321:</span>     <span class="m">int</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_set_affinity</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">,</span> <span class="m">const</span> <span class="m">struct</span> <span class="b">cpumask</span> <span class="f">*</span><span class="b">dest</span><span class="f">,</span> <span class="m">bool</span> <span class="b">force</span><span class="f">)</span><span class="f">;</span>
+<a name="322" /><span class="True">     322:</span>     <span class="m">int</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_retrigger</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="323" /><span class="True">     323:</span>     <span class="m">int</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_set_type</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">flow_type</span><span class="f">)</span><span class="f">;</span>
+<a name="324" /><span class="True">     324:</span>     <span class="m">int</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_set_wake</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">on</span><span class="f">)</span><span class="f">;</span>
+<a name="325" /><span class="True">     325:</span> 
+<a name="326" /><span class="True">     326:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_bus_lock</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="327" /><span class="True">     327:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_bus_sync_unlock</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="328" /><span class="True">     328:</span> 
+<a name="329" /><span class="True">     329:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_cpu_online</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="330" /><span class="True">     330:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_cpu_offline</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="331" /><span class="True">     331:</span> 
+<a name="332" /><span class="True">     332:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_suspend</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="333" /><span class="True">     333:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_resume</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="334" /><span class="True">     334:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_pm_shutdown</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="335" /><span class="True">     335:</span> 
+<a name="336" /><span class="True">     336:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_calc_mask</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="337" /><span class="True">     337:</span> 
+<a name="338" /><span class="True">     338:</span>     <span class="m">void</span>        <span class="f">(</span><span class="f">*</span><span class="b">irq_print_chip</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">,</span> <span class="m">struct</span> <span class="b">seq_file</span> <span class="f">*</span><span class="b">p</span><span class="f">)</span><span class="f">;</span>
+<a name="339" /><span class="True">     339:</span> 
+<a name="340" /><span class="True">     340:</span>     <span class="m">unsigned</span> <span class="m">long</span>    <span class="b">flags</span><span class="f">;</span>
+<a name="341" /><span class="True">     341:</span> <span class="f">}</span><span class="f">;</span>
+<a name="342" /><span class="True">     342:</span> 
+<a name="343" /><span class="True">     343:</span> <span class="k">/*</span>
+<a name="344" /><span class="True">     344:</span> <span class="k"> * irq_chip specific flags</span>
+<a name="345" /><span class="True">     345:</span> <span class="k"> *</span>
+<a name="346" /><span class="True">     346:</span> <span class="k"> * IRQCHIP_SET_TYPE_MASKED:    Mask before calling chip.irq_set_type()</span>
+<a name="347" /><span class="True">     347:</span> <span class="k"> * IRQCHIP_EOI_IF_HANDLED:    Only issue irq_eoi() when irq was handled</span>
+<a name="348" /><span class="True">     348:</span> <span class="k"> * IRQCHIP_MASK_ON_SUSPEND:    Mask non wake irqs in the suspend path</span>
+<a name="349" /><span class="True">     349:</span> <span class="k"> * IRQCHIP_ONOFFLINE_ENABLED:    Only call irq_on/off_line callbacks</span>
+<a name="350" /><span class="True">     350:</span> <span class="k"> *                when irq enabled</span>
+<a name="351" /><span class="True">     351:</span> <span class="k"> * IRQCHIP_SKIP_SET_WAKE:    Skip chip.irq_set_wake(), for this irq chip</span>
+<a name="352" /><span class="True">     352:</span> <span class="k"> */</span>
+<a name="353" /><span class="True">     353:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="354" /><span class="True">     354:</span>     <span class="b">IRQCHIP_SET_TYPE_MASKED</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">0</span><span class="f">)</span><span class="f">,</span>
+<a name="355" /><span class="True">     355:</span>     <span class="b">IRQCHIP_EOI_IF_HANDLED</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">1</span><span class="f">)</span><span class="f">,</span>
+<a name="356" /><span class="True">     356:</span>     <span class="b">IRQCHIP_MASK_ON_SUSPEND</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">2</span><span class="f">)</span><span class="f">,</span>
+<a name="357" /><span class="True">     357:</span>     <span class="b">IRQCHIP_ONOFFLINE_ENABLED</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">3</span><span class="f">)</span><span class="f">,</span>
+<a name="358" /><span class="True">     358:</span>     <span class="b">IRQCHIP_SKIP_SET_WAKE</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">4</span><span class="f">)</span><span class="f">,</span>
+<a name="359" /><span class="True">     359:</span>     <span class="b">IRQCHIP_ONESHOT_SAFE</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span>  <span class="c">5</span><span class="f">)</span><span class="f">,</span>
+<a name="360" /><span class="True">     360:</span> <span class="f">}</span><span class="f">;</span>
+<a name="361" /><span class="True">     361:</span> 
+<a name="362" /><span class="True">     362:</span> <span class="k">/* This include will go away once we isolated irq_desc usage to core code */</span>
+<a name="363" /><span class="True">     363:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">irqdesc</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="364" /><span class="True">     364:</span> 
+<a name="365" /><span class="True">     365:</span> <span class="k">/*</span>
+<a name="366" /><span class="True">     366:</span> <span class="k"> * Pick up the arch-dependent methods:</span>
+<a name="367" /><span class="True">     367:</span> <span class="k"> */</span>
+<a name="368" /><span class="True">     368:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">hw_irq</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="369" /><span class="True">     369:</span> 
+<a name="370" /><span class="False">     370:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_TlJfSVJRU19MRUdBQ1lfMA__"><span class="b">NR_IRQS_LEGACY</span></a>
+<a name="371" /><span class="False">     371:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_ref.html#_TlJfSVJRU19MRUdBQ1lfMA__"><span class="b">NR_IRQS_LEGACY</span></a> <span class="c">0</span>
+<a name="372" /><span class="True">     372:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="373" /><span class="True">     373:</span> 
+<a name="374" /><span class="True">     374:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_QVJDSF9JUlFfSU5JVF9GTEFHU18w"><span class="b">ARCH_IRQ_INIT_FLAGS</span></a>
+<a name="375" /><span class="True">     375:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVJDSF9JUlFfSU5JVF9GTEFHU18w"><span class="b">ARCH_IRQ_INIT_FLAGS</span></a>    <span class="c">0</span>
+<a name="376" /><span class="True">     376:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="377" /><span class="True">     377:</span> 
+<a name="378" /><span class="True">     378:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SVJRX0RFRkFVTFRfSU5JVF9GTEFHU18w"><span class="b">IRQ_DEFAULT_INIT_FLAGS</span></a>    <a href="cpu.c_macros_noref.html#_QVJDSF9JUlFfSU5JVF9GTEFHU18w"><span class="b">ARCH_IRQ_INIT_FLAGS</span></a>
+<a name="379" /><span class="True">     379:</span> 
+<a name="380" /><span class="True">     380:</span> <span class="m">struct</span> <span class="b">irqaction</span><span class="f">;</span>
+<a name="381" /><span class="True">     381:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">setup_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irqaction</span> <span class="f">*</span><span class="m">new</span><span class="f">)</span><span class="f">;</span>
+<a name="382" /><span class="True">     382:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">remove_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irqaction</span> <span class="f">*</span><span class="b">act</span><span class="f">)</span><span class="f">;</span>
+<a name="383" /><span class="True">     383:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">setup_percpu_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irqaction</span> <span class="f">*</span><span class="m">new</span><span class="f">)</span><span class="f">;</span>
+<a name="384" /><span class="True">     384:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">remove_percpu_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irqaction</span> <span class="f">*</span><span class="b">act</span><span class="f">)</span><span class="f">;</span>
+<a name="385" /><span class="True">     385:</span> 
+<a name="386" /><span class="True">     386:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">irq_cpu_online</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="387" /><span class="True">     387:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">irq_cpu_offline</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="388" /><span class="True">     388:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">__irq_set_affinity_locked</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">,</span>  <span class="m">const</span> <span class="m">struct</span> <span class="b">cpumask</span> <span class="f">*</span><span class="b">cpumask</span><span class="f">)</span><span class="f">;</span>
+<a name="389" /><span class="True">     389:</span> 
+<a name="390" /><span class="True">     390:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1NNUF8w"><span class="b">CONFIG_SMP</span></a><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX0dFTkVSSUNfUEVORElOR19JUlFfMA__"><span class="b">CONFIG_GENERIC_PENDING_IRQ</span></a><span class="f">)</span>
+<a name="391" /><span class="True">     391:</span> <span class="m">void</span> <span class="b">irq_move_irq</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="392" /><span class="True">     392:</span> <span class="m">void</span> <span class="b">irq_move_masked_irq</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="393" /><span class="False">     393:</span> <span class="f">#</span><span class="n">else</span>
+<a name="394" /><span class="False">     394:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_move_irq</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="395" /><span class="False">     395:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_move_masked_irq</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="396" /><span class="True">     396:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="397" /><span class="True">     397:</span> 
+<a name="398" /><span class="True">     398:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">no_irq_affinity</span><span class="f">;</span>
+<a name="399" /><span class="True">     399:</span> 
+<a name="400" /><span class="False">     400:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_HARDIRQS_SW_RESEND</span>
+<a name="401" /><span class="False">     401:</span> <span class="m">int</span> <span class="b">irq_set_parent</span><span class="f">(</span><span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">int</span> <span class="b">parent_irq</span><span class="f">)</span><span class="f">;</span>
+<a name="402" /><span class="True">     402:</span> <span class="f">#</span><span class="n">else</span>
+<a name="403" /><span class="True">     403:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">irq_set_parent</span><span class="f">(</span><span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">int</span> <span class="b">parent_irq</span><span class="f">)</span>
+<a name="404" /><span class="True">     404:</span> <span class="f">{</span>
+<a name="405" /><span class="True">     405:</span>     <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="406" /><span class="True">     406:</span> <span class="f">}</span>
+<a name="407" /><span class="True">     407:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="408" /><span class="True">     408:</span> 
+<a name="409" /><span class="True">     409:</span> <span class="k">/*</span>
+<a name="410" /><span class="True">     410:</span> <span class="k"> * Built-in IRQ handlers for various IRQ types,</span>
+<a name="411" /><span class="True">     411:</span> <span class="k"> * callable via desc-&gt;handle_irq()</span>
+<a name="412" /><span class="True">     412:</span> <span class="k"> */</span>
+<a name="413" /><span class="True">     413:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_level_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="414" /><span class="True">     414:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_fasteoi_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="415" /><span class="True">     415:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_edge_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="416" /><span class="True">     416:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_edge_eoi_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="417" /><span class="True">     417:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_simple_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="418" /><span class="True">     418:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_percpu_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="419" /><span class="True">     419:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_percpu_devid_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="420" /><span class="True">     420:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_bad_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">)</span><span class="f">;</span>
+<a name="421" /><span class="True">     421:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">handle_nested_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="422" /><span class="True">     422:</span> 
+<a name="423" /><span class="True">     423:</span> <span class="k">/* Handling of unhandled and spurious interrupts: */</span>
+<a name="424" /><span class="True">     424:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">note_interrupt</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_desc</span> <span class="f">*</span><span class="b">desc</span><span class="f">,</span>
+<a name="425" /><span class="True">     425:</span>                <span class="b">irqreturn_t</span> <span class="b">action_ret</span><span class="f">)</span><span class="f">;</span>
+<a name="426" /><span class="True">     426:</span> 
+<a name="427" /><span class="True">     427:</span> 
+<a name="428" /><span class="True">     428:</span> <span class="k">/* Enable/disable irq debugging output: */</span>
+<a name="429" /><span class="True">     429:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">noirqdebug_setup</span><span class="f">(</span><span class="m">char</span> <span class="f">*</span><span class="b">str</span><span class="f">)</span><span class="f">;</span>
+<a name="430" /><span class="True">     430:</span> 
+<a name="431" /><span class="True">     431:</span> <span class="k">/* Checks whether the interrupt can be requested by request_irq(): */</span>
+<a name="432" /><span class="True">     432:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">can_request_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">irqflags</span><span class="f">)</span><span class="f">;</span>
+<a name="433" /><span class="True">     433:</span> 
+<a name="434" /><span class="True">     434:</span> <span class="k">/* Dummy irq-chip implementations: */</span>
+<a name="435" /><span class="True">     435:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="b">no_irq_chip</span><span class="f">;</span>
+<a name="436" /><span class="True">     436:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="b">dummy_irq_chip</span><span class="f">;</span>
+<a name="437" /><span class="True">     437:</span> 
+<a name="438" /><span class="True">     438:</span> <span class="m">extern</span> <span class="m">void</span>
+<a name="439" /><span class="True">     439:</span> <span class="b">irq_set_chip_and_handler_name</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="f">*</span><span class="b">chip</span><span class="f">,</span>
+<a name="440" /><span class="True">     440:</span>                   <span class="b">irq_flow_handler_t</span> <span class="b">handle</span><span class="f">,</span> <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">name</span><span class="f">)</span><span class="f">;</span>
+<a name="441" /><span class="True">     441:</span> 
+<a name="442" /><span class="True">     442:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_chip_and_handler</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="f">*</span><span class="b">chip</span><span class="f">,</span>
+<a name="443" /><span class="True">     443:</span>                         <span class="b">irq_flow_handler_t</span> <span class="b">handle</span><span class="f">)</span>
+<a name="444" /><span class="True">     444:</span> <span class="f">{</span>
+<a name="445" /><span class="True">     445:</span>     <span class="b">irq_set_chip_and_handler_name</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">chip</span><span class="f">,</span> <span class="b">handle</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">)</span><span class="f">;</span>
+<a name="446" /><span class="True">     446:</span> <span class="f">}</span>
+<a name="447" /><span class="True">     447:</span> 
+<a name="448" /><span class="True">     448:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">irq_set_percpu_devid</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="449" /><span class="True">     449:</span> 
+<a name="450" /><span class="True">     450:</span> <span class="m">extern</span> <span class="m">void</span>
+<a name="451" /><span class="True">     451:</span> <span class="b">__irq_set_handler</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="b">irq_flow_handler_t</span> <span class="b">handle</span><span class="f">,</span> <span class="m">int</span> <span class="b">is_chained</span><span class="f">,</span>
+<a name="452" /><span class="True">     452:</span>           <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">name</span><span class="f">)</span><span class="f">;</span>
+<a name="453" /><span class="True">     453:</span> 
+<a name="454" /><span class="True">     454:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span>
+<a name="455" /><span class="True">     455:</span> <span class="b">irq_set_handler</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="b">irq_flow_handler_t</span> <span class="b">handle</span><span class="f">)</span>
+<a name="456" /><span class="True">     456:</span> <span class="f">{</span>
+<a name="457" /><span class="True">     457:</span>     <span class="b">__irq_set_handler</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">handle</span><span class="f">,</span> <span class="c">0</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">)</span><span class="f">;</span>
+<a name="458" /><span class="True">     458:</span> <span class="f">}</span>
+<a name="459" /><span class="True">     459:</span> 
+<a name="460" /><span class="True">     460:</span> <span class="k">/*</span>
+<a name="461" /><span class="True">     461:</span> <span class="k"> * Set a highlevel chained flow handler for a given IRQ.</span>
+<a name="462" /><span class="True">     462:</span> <span class="k"> * (a chained handler is automatically enabled and set to</span>
+<a name="463" /><span class="True">     463:</span> <span class="k"> *  IRQ_NOREQUEST, IRQ_NOPROBE, and IRQ_NOTHREAD)</span>
+<a name="464" /><span class="True">     464:</span> <span class="k"> */</span>
+<a name="465" /><span class="True">     465:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span>
+<a name="466" /><span class="True">     466:</span> <span class="b">irq_set_chained_handler</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="b">irq_flow_handler_t</span> <span class="b">handle</span><span class="f">)</span>
+<a name="467" /><span class="True">     467:</span> <span class="f">{</span>
+<a name="468" /><span class="True">     468:</span>     <span class="b">__irq_set_handler</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">handle</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">)</span><span class="f">;</span>
+<a name="469" /><span class="True">     469:</span> <span class="f">}</span>
+<a name="470" /><span class="True">     470:</span> 
+<a name="471" /><span class="True">     471:</span> <span class="m">void</span> <span class="b">irq_modify_status</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">clr</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">set</span><span class="f">)</span><span class="f">;</span>
+<a name="472" /><span class="True">     472:</span> 
+<a name="473" /><span class="True">     473:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_status_flags</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">set</span><span class="f">)</span>
+<a name="474" /><span class="True">     474:</span> <span class="f">{</span>
+<a name="475" /><span class="True">     475:</span>     <span class="b">irq_modify_status</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="c">0</span><span class="f">,</span> <span class="b">set</span><span class="f">)</span><span class="f">;</span>
+<a name="476" /><span class="True">     476:</span> <span class="f">}</span>
+<a name="477" /><span class="True">     477:</span> 
+<a name="478" /><span class="True">     478:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_clear_status_flags</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">clr</span><span class="f">)</span>
+<a name="479" /><span class="True">     479:</span> <span class="f">{</span>
+<a name="480" /><span class="True">     480:</span>     <span class="b">irq_modify_status</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">clr</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span><span class="f">;</span>
+<a name="481" /><span class="True">     481:</span> <span class="f">}</span>
+<a name="482" /><span class="True">     482:</span> 
+<a name="483" /><span class="True">     483:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_noprobe</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="484" /><span class="True">     484:</span> <span class="f">{</span>
+<a name="485" /><span class="True">     485:</span>     <span class="b">irq_modify_status</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="c">0</span><span class="f">,</span> <span class="b">IRQ_NOPROBE</span><span class="f">)</span><span class="f">;</span>
+<a name="486" /><span class="True">     486:</span> <span class="f">}</span>
+<a name="487" /><span class="True">     487:</span> 
+<a name="488" /><span class="True">     488:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_probe</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="489" /><span class="True">     489:</span> <span class="f">{</span>
+<a name="490" /><span class="True">     490:</span>     <span class="b">irq_modify_status</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">IRQ_NOPROBE</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span><span class="f">;</span>
+<a name="491" /><span class="True">     491:</span> <span class="f">}</span>
+<a name="492" /><span class="True">     492:</span> 
+<a name="493" /><span class="True">     493:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_nothread</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="494" /><span class="True">     494:</span> <span class="f">{</span>
+<a name="495" /><span class="True">     495:</span>     <span class="b">irq_modify_status</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="c">0</span><span class="f">,</span> <span class="b">IRQ_NOTHREAD</span><span class="f">)</span><span class="f">;</span>
+<a name="496" /><span class="True">     496:</span> <span class="f">}</span>
+<a name="497" /><span class="True">     497:</span> 
+<a name="498" /><span class="True">     498:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_thread</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="499" /><span class="True">     499:</span> <span class="f">{</span>
+<a name="500" /><span class="True">     500:</span>     <span class="b">irq_modify_status</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">IRQ_NOTHREAD</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span><span class="f">;</span>
+<a name="501" /><span class="True">     501:</span> <span class="f">}</span>
+<a name="502" /><span class="True">     502:</span> 
+<a name="503" /><span class="True">     503:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_nested_thread</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">bool</span> <span class="b">nest</span><span class="f">)</span>
+<a name="504" /><span class="True">     504:</span> <span class="f">{</span>
+<a name="505" /><span class="True">     505:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">nest</span><span class="f">)</span>
+<a name="506" /><span class="True">     506:</span>         <span class="b">irq_set_status_flags</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">IRQ_NESTED_THREAD</span><span class="f">)</span><span class="f">;</span>
+<a name="507" /><span class="True">     507:</span>     <span class="m">else</span>
+<a name="508" /><span class="True">     508:</span>         <span class="b">irq_clear_status_flags</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">IRQ_NESTED_THREAD</span><span class="f">)</span><span class="f">;</span>
+<a name="509" /><span class="True">     509:</span> <span class="f">}</span>
+<a name="510" /><span class="True">     510:</span> 
+<a name="511" /><span class="True">     511:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_set_percpu_devid_flags</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="512" /><span class="True">     512:</span> <span class="f">{</span>
+<a name="513" /><span class="True">     513:</span>     <span class="b">irq_set_status_flags</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span>
+<a name="514" /><span class="True">     514:</span>                  <span class="b">IRQ_NOAUTOEN</span> <span class="f">|</span> <span class="b">IRQ_PER_CPU</span> <span class="f">|</span> <span class="b">IRQ_NOTHREAD</span> <span class="f">|</span>
+<a name="515" /><span class="True">     515:</span>                  <span class="b">IRQ_NOPROBE</span> <span class="f">|</span> <span class="b">IRQ_PER_CPU_DEVID</span><span class="f">)</span><span class="f">;</span>
+<a name="516" /><span class="True">     516:</span> <span class="f">}</span>
+<a name="517" /><span class="True">     517:</span> 
+<a name="518" /><span class="True">     518:</span> <span class="k">/* Handle dynamic irq creation and destruction */</span>
+<a name="519" /><span class="True">     519:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">create_irq_nr</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq_want</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">)</span><span class="f">;</span>
+<a name="520" /><span class="True">     520:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">__create_irqs</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">from</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">count</span><span class="f">,</span>
+<a name="521" /><span class="True">     521:</span>                   <span class="m">int</span> <span class="b">node</span><span class="f">)</span><span class="f">;</span>
+<a name="522" /><span class="True">     522:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">create_irq</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="523" /><span class="True">     523:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">destroy_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="524" /><span class="True">     524:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">destroy_irqs</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">count</span><span class="f">)</span><span class="f">;</span>
+<a name="525" /><span class="True">     525:</span> 
+<a name="526" /><span class="True">     526:</span> <span class="k">/*</span>
+<a name="527" /><span class="True">     527:</span> <span class="k"> * Dynamic irq helper functions. Obsolete. Use irq_alloc_desc* and</span>
+<a name="528" /><span class="True">     528:</span> <span class="k"> * irq_free_desc instead.</span>
+<a name="529" /><span class="True">     529:</span> <span class="k"> */</span>
+<a name="530" /><span class="True">     530:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">dynamic_irq_cleanup</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="531" /><span class="True">     531:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">dynamic_irq_init</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="532" /><span class="True">     532:</span> <span class="f">{</span>
+<a name="533" /><span class="True">     533:</span>     <span class="b">dynamic_irq_cleanup</span><span class="f">(</span><span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="534" /><span class="True">     534:</span> <span class="f">}</span>
+<a name="535" /><span class="True">     535:</span> 
+<a name="536" /><span class="True">     536:</span> <span class="k">/* Set/get chip/data for an IRQ: */</span>
+<a name="537" /><span class="True">     537:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">irq_set_chip</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="f">*</span><span class="b">chip</span><span class="f">)</span><span class="f">;</span>
+<a name="538" /><span class="True">     538:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">irq_set_handler_data</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="539" /><span class="True">     539:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">irq_set_chip_data</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">data</span><span class="f">)</span><span class="f">;</span>
+<a name="540" /><span class="True">     540:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">irq_set_irq_type</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span><span class="f">;</span>
+<a name="541" /><span class="True">     541:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">irq_set_msi_desc</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">struct</span> <span class="b">msi_desc</span> <span class="f">*</span><span class="b">entry</span><span class="f">)</span><span class="f">;</span>
+<a name="542" /><span class="True">     542:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">irq_set_msi_desc_off</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq_base</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq_offset</span><span class="f">,</span>
+<a name="543" /><span class="True">     543:</span>                 <span class="m">struct</span> <span class="b">msi_desc</span> <span class="f">*</span><span class="b">entry</span><span class="f">)</span><span class="f">;</span>
+<a name="544" /><span class="True">     544:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">irq_get_irq_data</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="545" /><span class="True">     545:</span> 
+<a name="546" /><span class="True">     546:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="f">*</span><span class="b">irq_get_chip</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="547" /><span class="True">     547:</span> <span class="f">{</span>
+<a name="548" /><span class="True">     548:</span>     <span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span> <span class="f">=</span> <span class="b">irq_get_irq_data</span><span class="f">(</span><span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="549" /><span class="True">     549:</span>     <span class="m">return</span> <span class="b">d</span> <span class="f">?</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">chip</span> <span class="f">:</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">;</span>
+<a name="550" /><span class="True">     550:</span> <span class="f">}</span>
+<a name="551" /><span class="True">     551:</span> 
+<a name="552" /><span class="True">     552:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">irq_chip</span> <span class="f">*</span><span class="b">irq_data_get_irq_chip</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="553" /><span class="True">     553:</span> <span class="f">{</span>
+<a name="554" /><span class="True">     554:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">chip</span><span class="f">;</span>
+<a name="555" /><span class="True">     555:</span> <span class="f">}</span>
+<a name="556" /><span class="True">     556:</span> 
+<a name="557" /><span class="True">     557:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">irq_get_chip_data</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="558" /><span class="True">     558:</span> <span class="f">{</span>
+<a name="559" /><span class="True">     559:</span>     <span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span> <span class="f">=</span> <span class="b">irq_get_irq_data</span><span class="f">(</span><span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="560" /><span class="True">     560:</span>     <span class="m">return</span> <span class="b">d</span> <span class="f">?</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">chip_data</span> <span class="f">:</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">;</span>
+<a name="561" /><span class="True">     561:</span> <span class="f">}</span>
+<a name="562" /><span class="True">     562:</span> 
+<a name="563" /><span class="True">     563:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">irq_data_get_irq_chip_data</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="564" /><span class="True">     564:</span> <span class="f">{</span>
+<a name="565" /><span class="True">     565:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">chip_data</span><span class="f">;</span>
+<a name="566" /><span class="True">     566:</span> <span class="f">}</span>
+<a name="567" /><span class="True">     567:</span> 
+<a name="568" /><span class="True">     568:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">irq_get_handler_data</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="569" /><span class="True">     569:</span> <span class="f">{</span>
+<a name="570" /><span class="True">     570:</span>     <span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span> <span class="f">=</span> <span class="b">irq_get_irq_data</span><span class="f">(</span><span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="571" /><span class="True">     571:</span>     <span class="m">return</span> <span class="b">d</span> <span class="f">?</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">handler_data</span> <span class="f">:</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">;</span>
+<a name="572" /><span class="True">     572:</span> <span class="f">}</span>
+<a name="573" /><span class="True">     573:</span> 
+<a name="574" /><span class="True">     574:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">irq_data_get_irq_handler_data</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="575" /><span class="True">     575:</span> <span class="f">{</span>
+<a name="576" /><span class="True">     576:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">handler_data</span><span class="f">;</span>
+<a name="577" /><span class="True">     577:</span> <span class="f">}</span>
+<a name="578" /><span class="True">     578:</span> 
+<a name="579" /><span class="True">     579:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">msi_desc</span> <span class="f">*</span><span class="b">irq_get_msi_desc</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="580" /><span class="True">     580:</span> <span class="f">{</span>
+<a name="581" /><span class="True">     581:</span>     <span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span> <span class="f">=</span> <span class="b">irq_get_irq_data</span><span class="f">(</span><span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="582" /><span class="True">     582:</span>     <span class="m">return</span> <span class="b">d</span> <span class="f">?</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">msi_desc</span> <span class="f">:</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">;</span>
+<a name="583" /><span class="True">     583:</span> <span class="f">}</span>
+<a name="584" /><span class="True">     584:</span> 
+<a name="585" /><span class="True">     585:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">msi_desc</span> <span class="f">*</span><span class="b">irq_data_get_msi</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="586" /><span class="True">     586:</span> <span class="f">{</span>
+<a name="587" /><span class="True">     587:</span>     <span class="m">return</span> <span class="b">d</span><span class="f">-&gt;</span><span class="b">msi_desc</span><span class="f">;</span>
+<a name="588" /><span class="True">     588:</span> <span class="f">}</span>
+<a name="589" /><span class="True">     589:</span> 
+<a name="590" /><span class="True">     590:</span> <span class="m">static</span> <span class="m">inline</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">irq_get_trigger_type</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="591" /><span class="True">     591:</span> <span class="f">{</span>
+<a name="592" /><span class="True">     592:</span>     <span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span> <span class="f">=</span> <span class="b">irq_get_irq_data</span><span class="f">(</span><span class="b">irq</span><span class="f">)</span><span class="f">;</span>
+<a name="593" /><span class="True">     593:</span>     <span class="m">return</span> <span class="b">d</span> <span class="f">?</span> <span class="b">irqd_get_trigger_type</span><span class="f">(</span><span class="b">d</span><span class="f">)</span> <span class="f">:</span> <span class="c">0</span><span class="f">;</span>
+<a name="594" /><span class="True">     594:</span> <span class="f">}</span>
+<a name="595" /><span class="True">     595:</span> 
+<a name="596" /><span class="True">     596:</span> <span class="m">int</span> <span class="b">__irq_alloc_descs</span><span class="f">(</span><span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">from</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">cnt</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">,</span>
+<a name="597" /><span class="True">     597:</span>         <span class="m">struct</span> <span class="b">module</span> <span class="f">*</span><span class="b">owner</span><span class="f">)</span><span class="f">;</span>
+<a name="598" /><span class="True">     598:</span> 
+<a name="599" /><span class="True">     599:</span> <span class="k">/* use macros to avoid needing export.h for THIS_MODULE */</span>
+<a name="600" /><span class="True">     600:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NzXzA_"><span class="b">irq_alloc_descs</span></a><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">from</span><span class="f">,</span> <span class="b">cnt</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>    \
+<a name="601" /><span class="True">     601:</span>     <span class="b">__irq_alloc_descs</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="b">from</span><span class="f">,</span> <span class="b">cnt</span><span class="f">,</span> <span class="b">node</span><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VEhJU19NT0RVTEVfMA__"><span class="b">THIS_MODULE</span></a><span class="f">)</span>
+<a name="602" /><span class="True">     602:</span> 
+<a name="603" /><span class="True">     603:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NfMA__"><span class="b">irq_alloc_desc</span></a><span class="f">(</span><span class="b">node</span><span class="f">)</span>            \
+<a name="604" /><span class="True">     604:</span>     <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NzXzA_"><span class="b">irq_alloc_descs</span></a><span class="f">(</span><span class="f">-</span><span class="c">1</span><span class="f">,</span> <span class="c">0</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>
+<a name="605" /><span class="True">     605:</span> 
+<a name="606" /><span class="True">     606:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NfYXRfMA__"><span class="b">irq_alloc_desc_at</span></a><span class="f">(</span><span class="b">at</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>        \
+<a name="607" /><span class="True">     607:</span>     <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NzXzA_"><span class="b">irq_alloc_descs</span></a><span class="f">(</span><span class="b">at</span><span class="f">,</span> <span class="b">at</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>
+<a name="608" /><span class="True">     608:</span> 
+<a name="609" /><span class="True">     609:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NfZnJvbV8w"><span class="b">irq_alloc_desc_from</span></a><span class="f">(</span><span class="b">from</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>        \
+<a name="610" /><span class="True">     610:</span>     <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NzXzA_"><span class="b">irq_alloc_descs</span></a><span class="f">(</span><span class="f">-</span><span class="c">1</span><span class="f">,</span> <span class="b">from</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>
+<a name="611" /><span class="True">     611:</span> 
+<a name="612" /><span class="True">     612:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NzX2Zyb21fMA__"><span class="b">irq_alloc_descs_from</span></a><span class="f">(</span><span class="b">from</span><span class="f">,</span> <span class="b">cnt</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>    \
+<a name="613" /><span class="True">     613:</span>     <a href="cpu.c_macros_noref.html#_aXJxX2FsbG9jX2Rlc2NzXzA_"><span class="b">irq_alloc_descs</span></a><span class="f">(</span><span class="f">-</span><span class="c">1</span><span class="f">,</span> <span class="b">from</span><span class="f">,</span> <span class="b">cnt</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>
+<a name="614" /><span class="True">     614:</span> 
+<a name="615" /><span class="True">     615:</span> <span class="m">void</span> <span class="b">irq_free_descs</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">cnt</span><span class="f">)</span><span class="f">;</span>
+<a name="616" /><span class="True">     616:</span> <span class="m">int</span> <span class="b">irq_reserve_irqs</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">from</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">cnt</span><span class="f">)</span><span class="f">;</span>
+<a name="617" /><span class="True">     617:</span> 
+<a name="618" /><span class="True">     618:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_free_desc</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="619" /><span class="True">     619:</span> <span class="f">{</span>
+<a name="620" /><span class="True">     620:</span>     <span class="b">irq_free_descs</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="c">1</span><span class="f">)</span><span class="f">;</span>
+<a name="621" /><span class="True">     621:</span> <span class="f">}</span>
+<a name="622" /><span class="True">     622:</span> 
+<a name="623" /><span class="True">     623:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">irq_reserve_irq</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq</span><span class="f">)</span>
+<a name="624" /><span class="True">     624:</span> <span class="f">{</span>
+<a name="625" /><span class="True">     625:</span>     <span class="m">return</span> <span class="b">irq_reserve_irqs</span><span class="f">(</span><span class="b">irq</span><span class="f">,</span> <span class="c">1</span><span class="f">)</span><span class="f">;</span>
+<a name="626" /><span class="True">     626:</span> <span class="f">}</span>
+<a name="627" /><span class="True">     627:</span> 
+<a name="628" /><span class="True">     628:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_aXJxX3JlZ193cml0ZWxfMA__"><span class="b">irq_reg_writel</span></a>
+<a name="629" /><span class="True">     629:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_aXJxX3JlZ193cml0ZWxfMA__"><span class="b">irq_reg_writel</span></a><span class="f">(</span><span class="b">val</span><span class="f">,</span> <span class="b">addr</span><span class="f">)</span>    <span class="b">writel</span><span class="f">(</span><span class="b">val</span><span class="f">,</span> <span class="b">addr</span><span class="f">)</span>
+<a name="630" /><span class="True">     630:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="631" /><span class="True">     631:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_aXJxX3JlZ19yZWFkbF8w"><span class="b">irq_reg_readl</span></a>
+<a name="632" /><span class="True">     632:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_aXJxX3JlZ19yZWFkbF8w"><span class="b">irq_reg_readl</span></a><span class="f">(</span><span class="b">addr</span><span class="f">)</span>        <span class="b">readl</span><span class="f">(</span><span class="b">addr</span><span class="f">)</span>
+<a name="633" /><span class="True">     633:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="634" /><span class="True">     634:</span> 
+<a name="635" /><span class="True">     635:</span> <span class="k">/**</span>
+<a name="636" /><span class="True">     636:</span> <span class="k"> * struct irq_chip_regs - register offsets for struct irq_gci</span>
+<a name="637" /><span class="True">     637:</span> <span class="k"> * @enable:    Enable register offset to reg_base</span>
+<a name="638" /><span class="True">     638:</span> <span class="k"> * @disable:    Disable register offset to reg_base</span>
+<a name="639" /><span class="True">     639:</span> <span class="k"> * @mask:    Mask register offset to reg_base</span>
+<a name="640" /><span class="True">     640:</span> <span class="k"> * @ack:    Ack register offset to reg_base</span>
+<a name="641" /><span class="True">     641:</span> <span class="k"> * @eoi:    Eoi register offset to reg_base</span>
+<a name="642" /><span class="True">     642:</span> <span class="k"> * @type:    Type configuration register offset to reg_base</span>
+<a name="643" /><span class="True">     643:</span> <span class="k"> * @polarity:    Polarity configuration register offset to reg_base</span>
+<a name="644" /><span class="True">     644:</span> <span class="k"> */</span>
+<a name="645" /><span class="True">     645:</span> <span class="m">struct</span> <span class="b">irq_chip_regs</span> <span class="f">{</span>
+<a name="646" /><span class="True">     646:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">enable</span><span class="f">;</span>
+<a name="647" /><span class="True">     647:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">disable</span><span class="f">;</span>
+<a name="648" /><span class="True">     648:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">mask</span><span class="f">;</span>
+<a name="649" /><span class="True">     649:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">ack</span><span class="f">;</span>
+<a name="650" /><span class="True">     650:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">eoi</span><span class="f">;</span>
+<a name="651" /><span class="True">     651:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">type</span><span class="f">;</span>
+<a name="652" /><span class="True">     652:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">polarity</span><span class="f">;</span>
+<a name="653" /><span class="True">     653:</span> <span class="f">}</span><span class="f">;</span>
+<a name="654" /><span class="True">     654:</span> 
+<a name="655" /><span class="True">     655:</span> <span class="k">/**</span>
+<a name="656" /><span class="True">     656:</span> <span class="k"> * struct irq_chip_type - Generic interrupt chip instance for a flow type</span>
+<a name="657" /><span class="True">     657:</span> <span class="k"> * @chip:        The real interrupt chip which provides the callbacks</span>
+<a name="658" /><span class="True">     658:</span> <span class="k"> * @regs:        Register offsets for this chip</span>
+<a name="659" /><span class="True">     659:</span> <span class="k"> * @handler:        Flow handler associated with this chip</span>
+<a name="660" /><span class="True">     660:</span> <span class="k"> * @type:        Chip can handle these flow types</span>
+<a name="661" /><span class="True">     661:</span> <span class="k"> * @mask_cache_priv:    Cached mask register private to the chip type</span>
+<a name="662" /><span class="True">     662:</span> <span class="k"> * @mask_cache:        Pointer to cached mask register</span>
+<a name="663" /><span class="True">     663:</span> <span class="k"> *</span>
+<a name="664" /><span class="True">     664:</span> <span class="k"> * A irq_generic_chip can have several instances of irq_chip_type when</span>
+<a name="665" /><span class="True">     665:</span> <span class="k"> * it requires different functions and register offsets for different</span>
+<a name="666" /><span class="True">     666:</span> <span class="k"> * flow types.</span>
+<a name="667" /><span class="True">     667:</span> <span class="k"> */</span>
+<a name="668" /><span class="True">     668:</span> <span class="m">struct</span> <span class="b">irq_chip_type</span> <span class="f">{</span>
+<a name="669" /><span class="True">     669:</span>     <span class="m">struct</span> <span class="b">irq_chip</span>        <span class="b">chip</span><span class="f">;</span>
+<a name="670" /><span class="True">     670:</span>     <span class="m">struct</span> <span class="b">irq_chip_regs</span>    <span class="b">regs</span><span class="f">;</span>
+<a name="671" /><span class="True">     671:</span>     <span class="b">irq_flow_handler_t</span>    <span class="b">handler</span><span class="f">;</span>
+<a name="672" /><span class="True">     672:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">type</span><span class="f">;</span>
+<a name="673" /><span class="True">     673:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">mask_cache_priv</span><span class="f">;</span>
+<a name="674" /><span class="True">     674:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="f">*</span><span class="b">mask_cache</span><span class="f">;</span>
+<a name="675" /><span class="True">     675:</span> <span class="f">}</span><span class="f">;</span>
+<a name="676" /><span class="True">     676:</span> 
+<a name="677" /><span class="True">     677:</span> <span class="k">/**</span>
+<a name="678" /><span class="True">     678:</span> <span class="k"> * struct irq_chip_generic - Generic irq chip data structure</span>
+<a name="679" /><span class="True">     679:</span> <span class="k"> * @lock:        Lock to protect register and cache data access</span>
+<a name="680" /><span class="True">     680:</span> <span class="k"> * @reg_base:        Register base address (virtual)</span>
+<a name="681" /><span class="True">     681:</span> <span class="k"> * @irq_base:        Interrupt base nr for this chip</span>
+<a name="682" /><span class="True">     682:</span> <span class="k"> * @irq_cnt:        Number of interrupts handled by this chip</span>
+<a name="683" /><span class="True">     683:</span> <span class="k"> * @mask_cache:        Cached mask register shared between all chip types</span>
+<a name="684" /><span class="True">     684:</span> <span class="k"> * @type_cache:        Cached type register</span>
+<a name="685" /><span class="True">     685:</span> <span class="k"> * @polarity_cache:    Cached polarity register</span>
+<a name="686" /><span class="True">     686:</span> <span class="k"> * @wake_enabled:    Interrupt can wakeup from suspend</span>
+<a name="687" /><span class="True">     687:</span> <span class="k"> * @wake_active:    Interrupt is marked as an wakeup from suspend source</span>
+<a name="688" /><span class="True">     688:</span> <span class="k"> * @num_ct:        Number of available irq_chip_type instances (usually 1)</span>
+<a name="689" /><span class="True">     689:</span> <span class="k"> * @private:        Private data for non generic chip callbacks</span>
+<a name="690" /><span class="True">     690:</span> <span class="k"> * @installed:        bitfield to denote installed interrupts</span>
+<a name="691" /><span class="True">     691:</span> <span class="k"> * @unused:        bitfield to denote unused interrupts</span>
+<a name="692" /><span class="True">     692:</span> <span class="k"> * @domain:        irq domain pointer</span>
+<a name="693" /><span class="True">     693:</span> <span class="k"> * @list:        List head for keeping track of instances</span>
+<a name="694" /><span class="True">     694:</span> <span class="k"> * @chip_types:        Array of interrupt irq_chip_types</span>
+<a name="695" /><span class="True">     695:</span> <span class="k"> *</span>
+<a name="696" /><span class="True">     696:</span> <span class="k"> * Note, that irq_chip_generic can have multiple irq_chip_type</span>
+<a name="697" /><span class="True">     697:</span> <span class="k"> * implementations which can be associated to a particular irq line of</span>
+<a name="698" /><span class="True">     698:</span> <span class="k"> * an irq_chip_generic instance. That allows to share and protect</span>
+<a name="699" /><span class="True">     699:</span> <span class="k"> * state in an irq_chip_generic instance when we need to implement</span>
+<a name="700" /><span class="True">     700:</span> <span class="k"> * different flow mechanisms (level/edge) for it.</span>
+<a name="701" /><span class="True">     701:</span> <span class="k"> */</span>
+<a name="702" /><span class="True">     702:</span> <span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">{</span>
+<a name="703" /><span class="True">     703:</span>     <span class="b">raw_spinlock_t</span>        <span class="b">lock</span><span class="f">;</span>
+<a name="704" /><span class="True">     704:</span>     <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a>        <span class="f">*</span><span class="b">reg_base</span><span class="f">;</span>
+<a name="705" /><span class="True">     705:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">irq_base</span><span class="f">;</span>
+<a name="706" /><span class="True">     706:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">irq_cnt</span><span class="f">;</span>
+<a name="707" /><span class="True">     707:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">mask_cache</span><span class="f">;</span>
+<a name="708" /><span class="True">     708:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">type_cache</span><span class="f">;</span>
+<a name="709" /><span class="True">     709:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">polarity_cache</span><span class="f">;</span>
+<a name="710" /><span class="True">     710:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">wake_enabled</span><span class="f">;</span>
+<a name="711" /><span class="True">     711:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a>            <span class="b">wake_active</span><span class="f">;</span>
+<a name="712" /><span class="True">     712:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">num_ct</span><span class="f">;</span>
+<a name="713" /><span class="True">     713:</span>     <span class="m">void</span>            <span class="f">*</span><span class="m">private</span><span class="f">;</span>
+<a name="714" /><span class="True">     714:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">installed</span><span class="f">;</span>
+<a name="715" /><span class="True">     715:</span>     <span class="m">unsigned</span> <span class="m">long</span>        <span class="b">unused</span><span class="f">;</span>
+<a name="716" /><span class="True">     716:</span>     <span class="m">struct</span> <span class="b">irq_domain</span>    <span class="f">*</span><span class="b">domain</span><span class="f">;</span>
+<a name="717" /><span class="True">     717:</span>     <span class="m">struct</span> <span class="b">list_head</span>    <span class="b">list</span><span class="f">;</span>
+<a name="718" /><span class="True">     718:</span>     <span class="m">struct</span> <span class="b">irq_chip_type</span>    <span class="b">chip_types</span><span class="f">[</span><span class="c">0</span><span class="f">]</span><span class="f">;</span>
+<a name="719" /><span class="True">     719:</span> <span class="f">}</span><span class="f">;</span>
+<a name="720" /><span class="True">     720:</span> 
+<a name="721" /><span class="True">     721:</span> <span class="k">/**</span>
+<a name="722" /><span class="True">     722:</span> <span class="k"> * enum irq_gc_flags - Initialization flags for generic irq chips</span>
+<a name="723" /><span class="True">     723:</span> <span class="k"> * @IRQ_GC_INIT_MASK_CACHE:    Initialize the mask_cache by reading mask reg</span>
+<a name="724" /><span class="True">     724:</span> <span class="k"> * @IRQ_GC_INIT_NESTED_LOCK:    Set the lock class of the irqs to nested for</span>
+<a name="725" /><span class="True">     725:</span> <span class="k"> *                irq chips which need to call irq_set_wake() on</span>
+<a name="726" /><span class="True">     726:</span> <span class="k"> *                the parent irq. Usually GPIO implementations</span>
+<a name="727" /><span class="True">     727:</span> <span class="k"> * @IRQ_GC_MASK_CACHE_PER_TYPE:    Mask cache is chip type private</span>
+<a name="728" /><span class="True">     728:</span> <span class="k"> * @IRQ_GC_NO_MASK:        Do not calculate irq_data-&gt;mask</span>
+<a name="729" /><span class="True">     729:</span> <span class="k"> */</span>
+<a name="730" /><span class="True">     730:</span> <span class="m">enum</span> <span class="b">irq_gc_flags</span> <span class="f">{</span>
+<a name="731" /><span class="True">     731:</span>     <span class="b">IRQ_GC_INIT_MASK_CACHE</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">0</span><span class="f">,</span>
+<a name="732" /><span class="True">     732:</span>     <span class="b">IRQ_GC_INIT_NESTED_LOCK</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">1</span><span class="f">,</span>
+<a name="733" /><span class="True">     733:</span>     <span class="b">IRQ_GC_MASK_CACHE_PER_TYPE</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">2</span><span class="f">,</span>
+<a name="734" /><span class="True">     734:</span>     <span class="b">IRQ_GC_NO_MASK</span>            <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">3</span><span class="f">,</span>
+<a name="735" /><span class="True">     735:</span> <span class="f">}</span><span class="f">;</span>
+<a name="736" /><span class="True">     736:</span> 
+<a name="737" /><span class="True">     737:</span> <span class="k">/*</span>
+<a name="738" /><span class="True">     738:</span> <span class="k"> * struct irq_domain_chip_generic - Generic irq chip data structure for irq domains</span>
+<a name="739" /><span class="True">     739:</span> <span class="k"> * @irqs_per_chip:    Number of interrupts per chip</span>
+<a name="740" /><span class="True">     740:</span> <span class="k"> * @num_chips:        Number of chips</span>
+<a name="741" /><span class="True">     741:</span> <span class="k"> * @irq_flags_to_set:    IRQ* flags to set on irq setup</span>
+<a name="742" /><span class="True">     742:</span> <span class="k"> * @irq_flags_to_clear:    IRQ* flags to clear on irq setup</span>
+<a name="743" /><span class="True">     743:</span> <span class="k"> * @gc_flags:        Generic chip specific setup flags</span>
+<a name="744" /><span class="True">     744:</span> <span class="k"> * @gc:            Array of pointers to generic interrupt chips</span>
+<a name="745" /><span class="True">     745:</span> <span class="k"> */</span>
+<a name="746" /><span class="True">     746:</span> <span class="m">struct</span> <span class="b">irq_domain_chip_generic</span> <span class="f">{</span>
+<a name="747" /><span class="True">     747:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">irqs_per_chip</span><span class="f">;</span>
+<a name="748" /><span class="True">     748:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">num_chips</span><span class="f">;</span>
+<a name="749" /><span class="True">     749:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">irq_flags_to_clear</span><span class="f">;</span>
+<a name="750" /><span class="True">     750:</span>     <span class="m">unsigned</span> <span class="m">int</span>        <span class="b">irq_flags_to_set</span><span class="f">;</span>
+<a name="751" /><span class="True">     751:</span>     <span class="m">enum</span> <span class="b">irq_gc_flags</span>    <span class="b">gc_flags</span><span class="f">;</span>
+<a name="752" /><span class="True">     752:</span>     <span class="m">struct</span> <span class="b">irq_chip_generic</span>    <span class="f">*</span><span class="b">gc</span><span class="f">[</span><span class="c">0</span><span class="f">]</span><span class="f">;</span>
+<a name="753" /><span class="True">     753:</span> <span class="f">}</span><span class="f">;</span>
+<a name="754" /><span class="True">     754:</span> 
+<a name="755" /><span class="True">     755:</span> <span class="k">/* Generic chip callback functions */</span>
+<a name="756" /><span class="True">     756:</span> <span class="m">void</span> <span class="b">irq_gc_noop</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="757" /><span class="True">     757:</span> <span class="m">void</span> <span class="b">irq_gc_mask_disable_reg</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="758" /><span class="True">     758:</span> <span class="m">void</span> <span class="b">irq_gc_mask_set_bit</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="759" /><span class="True">     759:</span> <span class="m">void</span> <span class="b">irq_gc_mask_clr_bit</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="760" /><span class="True">     760:</span> <span class="m">void</span> <span class="b">irq_gc_unmask_enable_reg</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="761" /><span class="True">     761:</span> <span class="m">void</span> <span class="b">irq_gc_ack_set_bit</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="762" /><span class="True">     762:</span> <span class="m">void</span> <span class="b">irq_gc_ack_clr_bit</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="763" /><span class="True">     763:</span> <span class="m">void</span> <span class="b">irq_gc_mask_disable_reg_and_ack</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="764" /><span class="True">     764:</span> <span class="m">void</span> <span class="b">irq_gc_eoi</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span><span class="f">;</span>
+<a name="765" /><span class="True">     765:</span> <span class="m">int</span> <span class="b">irq_gc_set_wake</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">on</span><span class="f">)</span><span class="f">;</span>
+<a name="766" /><span class="True">     766:</span> 
+<a name="767" /><span class="True">     767:</span> <span class="k">/* Setup functions for irq_chip_generic */</span>
+<a name="768" /><span class="True">     768:</span> <span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span>
+<a name="769" /><span class="True">     769:</span> <span class="b">irq_alloc_generic_chip</span><span class="f">(</span><span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">name</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_ct</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">irq_base</span><span class="f">,</span>
+<a name="770" /><span class="True">     770:</span>                <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">reg_base</span><span class="f">,</span> <span class="b">irq_flow_handler_t</span> <span class="b">handler</span><span class="f">)</span><span class="f">;</span>
+<a name="771" /><span class="True">     771:</span> <span class="m">void</span> <span class="b">irq_setup_generic_chip</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span><span class="b">gc</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">msk</span><span class="f">,</span>
+<a name="772" /><span class="True">     772:</span>                 <span class="m">enum</span> <span class="b">irq_gc_flags</span> <span class="b">flags</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">clr</span><span class="f">,</span>
+<a name="773" /><span class="True">     773:</span>                 <span class="m">unsigned</span> <span class="m">int</span> <span class="b">set</span><span class="f">)</span><span class="f">;</span>
+<a name="774" /><span class="True">     774:</span> <span class="m">int</span> <span class="b">irq_setup_alt_chip</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span><span class="f">;</span>
+<a name="775" /><span class="True">     775:</span> <span class="m">void</span> <span class="b">irq_remove_generic_chip</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span><span class="b">gc</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">msk</span><span class="f">,</span>
+<a name="776" /><span class="True">     776:</span>                  <span class="m">unsigned</span> <span class="m">int</span> <span class="b">clr</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">set</span><span class="f">)</span><span class="f">;</span>
+<a name="777" /><span class="True">     777:</span> 
+<a name="778" /><span class="True">     778:</span> <span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span><span class="b">irq_get_domain_generic_chip</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_domain</span> <span class="f">*</span><span class="b">d</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">hw_irq</span><span class="f">)</span><span class="f">;</span>
+<a name="779" /><span class="True">     779:</span> <span class="m">int</span> <span class="b">irq_alloc_domain_generic_chips</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_domain</span> <span class="f">*</span><span class="b">d</span><span class="f">,</span> <span class="m">int</span> <span class="b">irqs_per_chip</span><span class="f">,</span>
+<a name="780" /><span class="True">     780:</span>                    <span class="m">int</span> <span class="b">num_ct</span><span class="f">,</span> <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">name</span><span class="f">,</span>
+<a name="781" /><span class="True">     781:</span>                    <span class="b">irq_flow_handler_t</span> <span class="b">handler</span><span class="f">,</span>
+<a name="782" /><span class="True">     782:</span>                    <span class="m">unsigned</span> <span class="m">int</span> <span class="b">clr</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">set</span><span class="f">,</span>
+<a name="783" /><span class="True">     783:</span>                    <span class="m">enum</span> <span class="b">irq_gc_flags</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="784" /><span class="True">     784:</span> 
+<a name="785" /><span class="True">     785:</span> 
+<a name="786" /><span class="True">     786:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">irq_chip_type</span> <span class="f">*</span><span class="b">irq_data_get_chip_type</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_data</span> <span class="f">*</span><span class="b">d</span><span class="f">)</span>
+<a name="787" /><span class="True">     787:</span> <span class="f">{</span>
+<a name="788" /><span class="True">     788:</span>     <span class="m">return</span> <a href="cpu.c_macros_ref.html#_Y29udGFpbmVyX29mXzA_"><span class="b">container_of</span></a><span class="f">(</span><span class="b">d</span><span class="f">-&gt;</span><span class="b">chip</span><span class="f">,</span> <span class="m">struct</span> <span class="b">irq_chip_type</span><span class="f">,</span> <span class="b">chip</span><span class="f">)</span><span class="f">;</span>
+<a name="789" /><span class="True">     789:</span> <span class="f">}</span>
+<a name="790" /><span class="True">     790:</span> 
+<a name="791" /><span class="True">     791:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SVJRX01TS18w"><span class="b">IRQ_MSK</span></a><span class="f">(</span><span class="b">n</span><span class="f">)</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a><span class="f">)</span><span class="f">(</span><span class="f">(</span><span class="b">n</span><span class="f">)</span> <span class="f">&lt;</span> <span class="c">32</span> <span class="f">?</span> <span class="f">(</span><span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">)</span> <span class="f">:</span> <a href="cpu.c_macros_noref.html#_VUlOVF9NQVhfMA__"><span class="b">UINT_MAX</span></a><span class="f">)</span>
+<a name="792" /><span class="True">     792:</span> 
+<a name="793" /><span class="True">     793:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1NNUF8w"><span class="b">CONFIG_SMP</span></a>
+<a name="794" /><span class="True">     794:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_gc_lock</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span><span class="b">gc</span><span class="f">)</span>
+<a name="795" /><span class="True">     795:</span> <span class="f">{</span>
+<a name="796" /><span class="True">     796:</span>     <a href="cpu.c_macros_ref.html#_cmF3X3NwaW5fbG9ja18w"><span class="b">raw_spin_lock</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">gc</span><span class="f">-&gt;</span><span class="b">lock</span><span class="f">)</span><span class="f">;</span>
+<a name="797" /><span class="True">     797:</span> <span class="f">}</span>
+<a name="798" /><span class="True">     798:</span> 
+<a name="799" /><span class="True">     799:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_gc_unlock</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span><span class="b">gc</span><span class="f">)</span>
+<a name="800" /><span class="True">     800:</span> <span class="f">{</span>
+<a name="801" /><span class="True">     801:</span>     <a href="cpu.c_macros_ref.html#_cmF3X3NwaW5fdW5sb2NrXzA_"><span class="b">raw_spin_unlock</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">gc</span><span class="f">-&gt;</span><span class="b">lock</span><span class="f">)</span><span class="f">;</span>
+<a name="802" /><span class="True">     802:</span> <span class="f">}</span>
+<a name="803" /><span class="False">     803:</span> <span class="f">#</span><span class="n">else</span>
+<a name="804" /><span class="False">     804:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_gc_lock</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span><span class="b">gc</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="805" /><span class="False">     805:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">irq_gc_unlock</span><span class="f">(</span><span class="m">struct</span> <span class="b">irq_chip_generic</span> <span class="f">*</span><span class="b">gc</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="806" /><span class="True">     806:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="807" /><span class="True">     807:</span> 
+<a name="808" /><span class="True">     808:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_IRQ_H */</span>
+<a name="809" /><span class="True">     809:</span> </pre>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,18 +23,14 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 
 import time
 import logging
 import sys
-#import os
-try:
-    import io as StringIO
-except ImportError:
-    import io
+import io
 
 def gen_00(f):
     for b in f.read():
@@ -127,7 +123,7 @@ def main():
                   gen_05,
                   gen_06,
                   ):
-            myF = io.StringIO(' ' * siz)
+            myF = io.StringIO(u' ' * siz)
             genClkStart = time.clock()
             for b in func(myF):
                 pass

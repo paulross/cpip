@@ -2,21 +2,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <link href="cpip.css" rel="stylesheet" type="text/css"/>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
     <title>CPIP Processing</title>
   </head>
   <body>
-    <h1>CPIP Processing in output location: ../../output/linux/cpu</h1>
+    <h1>CPIP Processing in output location: ../../output/linux/cpu_43_Python3</h1>
     <h2>Files Processed as Translation Units:</h2>
     <ul>
       <li>
         <tt>
-          <a href="index_cpu.c_4865a90101cf573a838e3e20f2508630.html">/Users/paulross/dev/linux-2.6.37/kernel/cpu.c</a>
+          <a href="index_cpu.c_9421877faaf4151b78debf7c842685f2.html">/Users/paulross/dev/linux/linux-3.13/kernel/cpu.c</a>
         </tt>
       </li>
     </ul>
     <h2>CPIP Command line:</h2>
-    <pre>CPIPMain.py -k -o ../../output/linux/cpu -D __KERNEL__ -D __EXPORTED_HEADERS__ -D BITS_PER_LONG=32 -D CONFIG_HZ=1000 -J /usr/include/ -J /Users/paulross/dev/linux-2.6.37/include/ -J /Users/paulross/dev/linux-2.6.37/arch/x86/include/ /Users/paulross/dev/linux-2.6.37/kernel/cpu.c</pre>
+    <pre>CPIPMain.py -kp -l20 -o ../../output/linux/cpu_43_Python3 -S __STDC__=1 -D __KERNEL__ -D __EXPORTED_HEADERS__ -D BITS_PER_LONG=64 -D CONFIG_HZ=100 -D __x86_64__ -D __GNUC__=4 -D __has_feature(x)=0 -D __has_extension=__has_feature -D __has_attribute=__has_feature -D __has_include=__has_feature -P /Users/paulross/dev/linux/linux-3.13/include/linux/kconfig.h -J /usr/include/ -J /usr/include/c++/4.2.1/ -J /usr/include/c++/4.2.1/tr1/ -J /Users/paulross/dev/linux/linux-3.13/include/ -J /Users/paulross/dev/linux/linux-3.13/include/uapi/ -J /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/ -J /Users/paulross/dev/linux/linux-3.13/arch/x86/include/ -J /Users/paulross/dev/linux/linux-3.13/arch/x86/include/generated/ /Users/paulross/dev/linux/linux-3.13/kernel/cpu.c</pre>
     <table border="1">
       <tr>
         <th style="padding: 2px 6px 2px 6px">Option</th>
@@ -46,9 +46,9 @@
           <tt>-D/--define</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>__KERNEL__,<br/>__EXPORTED_HEADERS__,<br/>BITS_PER_LONG=32,<br/>CONFIG_HZ=1000</tt>
+          <tt>__KERNEL__,<br />__EXPORTED_HEADERS__,<br />BITS_PER_LONG=64,<br />CONFIG_HZ=100,<br />__x86_64__,<br />__GNUC__=4,<br />__has_feature(x)=0,<br />__has_extension=__has_feature,<br />__has_attribute=__has_feature,<br />__has_include=__has_feature</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Add macro defintions of the form name&lt;=defintion&gt;.<br/>                      These are introduced into the environment before any pre-include.</td>
+        <td style="padding: 2px 6px 2px 6px">Add macro defintions of the form name&lt;=defintion&gt;.<br />                      These are introduced into the environment before<br />                      any pre-include.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -64,7 +64,7 @@
           <tt>-J/--sys</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>/usr/include/,<br/>/Users/paulross/dev/linux-2.6.37/include/,<br/>/Users/paulross/dev/linux-2.6.37/arch/x86/include/</tt>
+          <tt>/usr/include/,<br />/usr/include/c++/4.2.1/,<br />/usr/include/c++/4.2.1/tr1/,<br />/Users/paulross/dev/linux/linux-3.13/include/,<br />/Users/paulross/dev/linux/linux-3.13/include/uapi/,<br />/Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/,<br />/Users/paulross/dev/linux/linux-3.13/arch/x86/include/,<br />/Users/paulross/dev/linux/linux-3.13/arch/x86/include/generated/</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Add system include search path.</td>
       </tr>
@@ -73,9 +73,18 @@
           <tt>-P/--pre</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>&nbsp;</tt>
+          <tt>/Users/paulross/dev/linux/linux-3.13/include/linux/kconfig.h</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Add pre-include file path.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-S/--predefine</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>__STDC__=1</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Add standard predefined macro defintions of the<br />form name&lt;=defintion&gt;. These are introduced into the<br />environment before anything else. These macros can not be<br />redefined. __DATE__ and __TIME__ will be automatically<br />allocated in here.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -93,7 +102,16 @@
         <td style="padding: 2px 6px 2px 6px">
           <tt>&nbsp;</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Dump output, additive. Can be:<br/>C - Conditional compilation graph.<br/>F - File names encountered and their count.<br/>I - Include graph.<br/>M - Macro environment.<br/>T - Token count.<br/>D - Include graph as an input to DOT.<br/>R - Macro dependencies as an input to DOT.</td>
+        <td style="padding: 2px 6px 2px 6px">Dump output, additive. Can be:<br />C - Conditional compilation graph.<br />F - File names encountered and their count.<br />I - Include graph.<br />M - Macro environment.<br />T - Token count.<br />R - Macro dependencies as an input to DOT.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-g/--glob</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>*.*</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Pattern match to use when processing directories.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -111,11 +129,11 @@
         <td style="padding: 2px 6px 2px 6px">
           <tt>0</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Max processes when multiprocessing. Zero uses number of native CPUs [8]</td>
+        <td style="padding: 2px 6px 2px 6px">Max simultaneous processes when pre-processing<br />directories. Zero uses number of native CPUs [4].<br />1 means no multiprocessing.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>-k</tt>
+          <tt>-k/--keep-going</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
           <tt>True</tt>
@@ -127,25 +145,16 @@
           <tt>-l/--loglevel</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>30</tt>
+          <tt>20</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Log Level (debug=10, info=20, warning=30, error=40, critical=50)</td>
-      </tr>
-      <tr>
-        <td style="padding: 2px 6px 2px 6px">
-          <tt>-n</tt>
-        </td>
-        <td style="padding: 2px 6px 2px 6px">
-          <tt>False</tt>
-        </td>
-        <td style="padding: 2px 6px 2px 6px">Nervous mode (do no harm).</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
           <tt>-o/--output</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>../../output/linux/cpu</tt>
+          <tt>../../output/linux/cpu_43_Python3</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Output directory.</td>
       </tr>
@@ -154,18 +163,27 @@
           <tt>-p</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>False</tt>
+          <tt>True</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Ignore pragma statements.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>-q</tt>
+          <tt>-r/--recursive</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
           <tt>False</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Writes a Public/Platform/Internal include graph in SVG.</td>
+        <td style="padding: 2px 6px 2px 6px">Recursively process directories.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-t/--dot</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>False</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Write an DOT include dependency table and execute DOT<br />on it to create a SVG file.</td>
       </tr>
     </table>
   </body>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import sys
 import time
@@ -221,7 +221,7 @@ class TestCppCondLowLevel(unittest.TestCase):
         # self.assertEqual(True, myObj) evaluates to:
         # AssertionError: True != <__main__.CppCond object at 0x00989F10>
         # So we fall back on this test:
-        if myObj:
+        if myObj.isTrue():
             self.fail('CppCond object is True!')
 
     def testExceptionRaising(self):
@@ -838,7 +838,7 @@ TRUE
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('!(1)', str(myObj))
-        self.assertFalse(myObj)
+        self.assertFalse(myObj.isTrue())
         myObj.oEndif()
         self.assertEqual(0, myObj.stackDepth)
         self.assertTrue(myObj)
@@ -861,7 +861,7 @@ TRUE
         myObj.oIf(False, '0')
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('0', str(myObj))
-        self.assertFalse(myObj)
+        self.assertFalse(myObj.isTrue())
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('!(0)', str(myObj))
@@ -908,7 +908,7 @@ TRUE
         myObj.oElse()
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('1 && !(11)', str(myObj))
-        self.assertFalse(myObj)
+        self.assertFalse(myObj.isTrue())
         myObj.oEndif()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('1', str(myObj))
@@ -917,24 +917,24 @@ TRUE
         myObj.oElse()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('!(1)', str(myObj))
-        self.assertFalse(myObj)
+        self.assertFalse(myObj.isTrue())
         #
         myObj.oIf(True, '11')
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('!(1) && 11', str(myObj))
-        self.assertFalse(myObj)
+        self.assertFalse(myObj.isTrue())
         myObj.oElse()
         self.assertEqual(2, myObj.stackDepth)
         self.assertEqual('!(1) && !(11)', str(myObj))
-        self.assertFalse(myObj)
+        self.assertFalse(myObj.isTrue())
         myObj.oEndif()
         self.assertEqual(1, myObj.stackDepth)
         self.assertEqual('!(1)', str(myObj))
-        self.assertFalse(myObj)
+        self.assertFalse(myObj.isTrue())
         #
         myObj.oEndif()
         self.assertEqual(0, myObj.stackDepth)
-        self.assertTrue(myObj)
+        self.assertTrue(myObj.isTrue())
         myObj.close()
 
         

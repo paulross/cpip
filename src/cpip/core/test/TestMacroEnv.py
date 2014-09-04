@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -69,8 +69,8 @@ Gives:
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 #import os
 import sys
@@ -95,7 +95,8 @@ class TestMacroEnv(TestPpDefine):
     def _checkMacroEnv(self, theGen, theEnv, expectedIdentifiers, testNOTHING=True):
         """Checks constructed environment is correct."""
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, theGen.__next__)
+#         self.assertRaises(StopIteration, theGen.__next__)
+        self.assertRaises(StopIteration, next, theGen)
         self.assertEqual(len(expectedIdentifiers), len(theEnv))
         for anName in expectedIdentifiers:
             self.assertEqual(
@@ -132,7 +133,7 @@ class MacroEnvInit(TestMacroEnv):
     def testDefineMapInit_00(self):
         """MacroEnv.MacroEnv - simple creation."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -146,12 +147,12 @@ EGGS 2
         self.assertEqual("""#define EGGS 2 /* f.h#2 Ref: 1 True */
 #define SPAM 1 /* f.h#1 Ref: 1 True */""", str(myMap))
         self.assertEqual(
-            self.stringToTokens('1'),
+            self.stringToTokens(u'1'),
             myMap.replace(
                 PpToken.PpToken('SPAM', 'identifier'), None)
             )
         self.assertEqual(
-            self.stringToTokens('2'),
+            self.stringToTokens(u'2'),
             myMap.replace(
                 PpToken.PpToken('EGGS', 'identifier'), None)
             )
@@ -162,7 +163,7 @@ EGGS 2
     def testDefineMapInit_00_00(self):
         """MacroEnv.MacroEnv - simple creation and then using clear()."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -202,7 +203,7 @@ EGGS 2
     def testDefineMapInit_fails_00(self):
         """MacroEnv.MacroEnv - creation failure with only newline."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """
+        myStr = u"""
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -219,7 +220,7 @@ EGGS 2
     def testDefineMapInit_fails_01(self):
         """MacroEnv.MacroEnv - creation failure with empty string."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """"""
+        myStr = u""""""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
             )
@@ -238,7 +239,7 @@ class MacroEnvDefined(TestMacroEnv):
     def test_00(self):
         """MacroEnvDefined.test_00 - check defined()."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -268,7 +269,7 @@ EGGS 2
     def test_01(self):
         """MacroEnvDefined.test_01 - check defined() raises on non-identifier."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -282,7 +283,7 @@ EGGS 2
         self.assertEqual("""#define EGGS 2 /* f.h#2 Ref: 1 True */
 #define SPAM 1 /* f.h#1 Ref: 1 True */""", str(myMap))
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""
+            theFileObj=io.StringIO(u"""
 1
 "something"
 'c'
@@ -303,7 +304,7 @@ class MacroEnvSimpleReplaceObject(TestMacroEnv):
     def testDefineMapSimpleReplaceObject_00(self):
         """MacroEnv.MacroEnv - simple replacement of object style macros, no change on rescanning: "SPAM and EGGS" """
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -330,7 +331,7 @@ EGGS 2
                 myGen)
             )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('SPAM and EGGS')
+            theFileObj=io.StringIO(u'SPAM and EGGS')
             )
         repList = []
         myGen = myCpp.next()
@@ -353,7 +354,7 @@ EGGS 2
     def testDefineMapSimpleReplaceObject_01(self):
         """MacroEnv.MacroEnv - simple replacement of object style macros, no change on rescanning: "SPAM==EGGS" """
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -380,7 +381,7 @@ EGGS 2
                 myGen)
             )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('SPAM==EGGS')
+            theFileObj=io.StringIO(u'SPAM==EGGS')
             )
         repList = []
         myGen = myCpp.next()
@@ -403,7 +404,7 @@ class MacroEnvReplaceObject(TestMacroEnv):
     def testDefineMapReplaceObject_00(self):
         """MacroEnv.MacroEnv - more complex replacement of object style macros, changes once on rescanning: "SPAM and EGGS" """
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS and eggs and EGGS
+        myStr = u"""SPAM EGGS and eggs and EGGS
 EGGS 2
 """
 #        cppExe = """#define SPAM EGGS and eggs and EGGS
@@ -449,7 +450,7 @@ EGGS 2
                 )
             )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('SPAM hold the EGGS')
+            theFileObj=io.StringIO(u'SPAM hold the EGGS')
             )
         repList = []
         myGen = myCpp.next()
@@ -483,7 +484,7 @@ EGGS 2
     def testDefineMapReplaceObject_00_00(self):
         """testDefineMapReplaceObject_00_00 - more complex replacement of object style macros, changes once on rescanning: "SPAM and EGGS" """
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS EGGS
+        myStr = u"""SPAM EGGS EGGS
 EGGS 2
 """
 #        cppExe = """#define SPAM EGGS EGGS
@@ -511,7 +512,7 @@ EGGS 2
     def testDefineMapReplaceObject_01(self):
         """MacroEnv.MacroEnv - more complex replacement of object style macros, changes twice on rescanning: "Anyone for SPAM?" """
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS+EGGS
+        myStr = u"""SPAM EGGS+EGGS
 EGGS CHIPS or SALT?
 CHIPS frites
 SALT sel
@@ -526,7 +527,7 @@ SALT sel
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['SPAM', 'EGGS', 'CHIPS', 'SALT',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('Anyone for SPAM?')
+            theFileObj=io.StringIO(u'Anyone for SPAM?')
             )
         repList = []
         myGen = myCpp.next()
@@ -561,7 +562,7 @@ SALT sel
             )
         # This is another way of doing things
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('Anyone for frites or sel?+frites or sel??')
+            theFileObj=io.StringIO(u'Anyone for frites or sel?+frites or sel??')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -574,7 +575,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_00(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n, no replacement"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """FUNC(a) a
+        myStr = u"""FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -583,7 +584,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC(12);')
+            theFileObj=io.StringIO(u'FUNC(12);')
             )
         repList = []
         myGen = myCpp.next()
@@ -602,7 +603,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_01_00(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC" is called."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """FUNC(a) a
+        myStr = u"""FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -611,7 +612,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC')
+            theFileObj=io.StringIO(u'FUNC')
             )
         repList = []
         myGen = myCpp.next()
@@ -636,7 +637,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_01_01(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC ;" is called."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """FUNC(a) a
+        myStr = u"""FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -645,7 +646,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC ;')
+            theFileObj=io.StringIO(u'FUNC ;')
             )
         repList = []
         myGen = myCpp.next()
@@ -663,7 +664,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_01_02(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC FUNC(7)" is called."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """FUNC(a) a
+        myStr = u"""FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -672,7 +673,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC FUNC(7);')
+            theFileObj=io.StringIO(u'FUNC FUNC(7);')
             )
         repList = []
         myGen = myCpp.next()
@@ -702,7 +703,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_01_03(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC(12) plus FUNC minus FUNC(1);" is called."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """FUNC(a) a
+        myStr = u"""FUNC(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -711,7 +712,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC(12) plus FUNC minus FUNC(1);')
+            theFileObj=io.StringIO(u'FUNC(12) plus FUNC minus FUNC(1);')
             )
         repList = []
         myGen = myCpp.next()
@@ -746,7 +747,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_01_04(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define INC(f) <f>\\n."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """INC(f) <f>
+        myStr = u"""INC(f) <f>
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -755,7 +756,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['INC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('INC(spam.h);')
+            theFileObj=io.StringIO(u'INC(spam.h);')
             )
         repList = []
         myGen = myCpp.next()
@@ -787,7 +788,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_01_05(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define INC(f) # f\\n."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """INC(f) # f
+        myStr = u"""INC(f) # f
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -796,7 +797,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['INC',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('INC(spam.h);')
+            theFileObj=io.StringIO(u'INC(spam.h);')
             )
         repList = []
         myGen = myCpp.next()
@@ -826,7 +827,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
     def testDefineMapSimpleReplaceFunction_02(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros by another function macro - no replacement."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """f(a) a+a
+        myStr = u"""f(a) a+a
 g(a) a(2)
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -837,7 +838,7 @@ g(a) a(2)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'g',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('g(x);\nf(y)')
+            theFileObj=io.StringIO(u'g(x);\nf(y)')
             )
         repList = []
         myGen = myCpp.next()
@@ -846,7 +847,7 @@ g(a) a(2)
             repList += myReplacements
         #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('x(2);\ny+y')
+            theFileObj=io.StringIO(u'x(2);\ny+y')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -856,7 +857,7 @@ g(a) a(2)
     def testDefineMapSimpleReplaceFunction_03(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros with rescanning replacement."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """f(a) a+a
+        myStr = u"""f(a) a+a
 g(a) a(2)
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -867,7 +868,7 @@ g(a) a(2)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'g',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('g(f);')
+            theFileObj=io.StringIO(u'g(f);')
             )
         myMap.debugMarker = 'MacroEnvSimpleReplaceFunction.testDefineMapSimpleReplaceFunction_03()'
         repList = []
@@ -877,7 +878,7 @@ g(a) a(2)
             repList += myReplacements
         #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('2+2;')
+            theFileObj=io.StringIO(u'2+2;')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -961,7 +962,7 @@ SPAM
         #Result:
         # SPAM+1
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM SPAM\n"""
+        myStr = u"""SPAM SPAM\n"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
             )
@@ -987,7 +988,7 @@ SPAM
         # SPAM
         # EGGS
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS
+        myStr = u"""SPAM EGGS
 EGGS SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -1028,7 +1029,7 @@ EGGS SPAM
         # EGGS
         # CHIPS
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS
+        myStr = u"""SPAM EGGS
 EGGS CHIPS
 CHIPS SPAM
 """
@@ -1080,7 +1081,7 @@ CHIPS SPAM
         # CHIPS
         # BEANS
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS
+        myStr = u"""SPAM EGGS
 EGGS CHIPS
 CHIPS BEANS
 BEANS SPAM
@@ -1138,7 +1139,7 @@ BEANS SPAM
         # EGGS
         # SPAM
         myMap = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS
+        myStr = u"""SPAM EGGS
 EGGS SPAM
 CHIPS SPAM
 """
@@ -1178,7 +1179,7 @@ class MacroEnvReplaceMixed(TestMacroEnv):
     def testDefineMapReplace_00(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.3-4"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """hash_hash # ## #
+        myStr = u"""hash_hash # ## #
 mkstr(a) # a
 in_between(a) mkstr(a)
 join(c, d) in_between(c hash_hash d)
@@ -1194,7 +1195,7 @@ join(c, d) in_between(c hash_hash d)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['hash_hash', 'mkstr', 'in_between', 'join',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('join(x,y)')
+            theFileObj=io.StringIO(u'join(x,y)')
             )
         repList = []
         myGen = myCpp.next()
@@ -1221,7 +1222,7 @@ join(c, d) in_between(c hash_hash d)
     def testDefineMapReplace_01(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-3 EXAMPLE 1"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """TABSIZE 100
+        myStr = u"""TABSIZE 100
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -1231,7 +1232,7 @@ join(c, d) in_between(c hash_hash d)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['TABSIZE',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('int table[TABSIZE];')
+            theFileObj=io.StringIO(u'int table[TABSIZE];')
             )
         repList = []
         myGen = myCpp.next()
@@ -1240,7 +1241,7 @@ join(c, d) in_between(c hash_hash d)
             repList += myReplacements
         #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         self.assertEqual(
-            self.stringToTokens('int table[100];'),
+            self.stringToTokens(u'int table[100];'),
             repList,
             )
         #print 'str(myMap):'
@@ -1255,7 +1256,7 @@ join(c, d) in_between(c hash_hash d)
     def testDefineMapReplace_02(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-4 EXAMPLE 2"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """max(a, b) ((a) > (b) ? (a) : (b))
+        myStr = u"""max(a, b) ((a) > (b) ? (a) : (b))
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -1264,7 +1265,7 @@ join(c, d) in_between(c hash_hash d)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['max',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('max(x,y)')
+            theFileObj=io.StringIO(u'max(x,y)')
             )
         repList = []
         myGen = myCpp.next()
@@ -1274,7 +1275,7 @@ join(c, d) in_between(c hash_hash d)
         #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         #self.pprintReplacementList(repList)
         self.assertEqual(
-            self.stringToTokens('((x) > (y) ? (x) : (y))'),
+            self.stringToTokens(u'((x) > (y) ? (x) : (y))'),
             repList,
             )
         #print 'str(myMap):'
@@ -1289,7 +1290,7 @@ join(c, d) in_between(c hash_hash d)
     def testDefineMapReplace_03xxx(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3: h 5) -> f(2 * (~ 5))"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """f(a) f(x * (a))
+        myStr = u"""f(a) f(x * (a))
 x 2
 g f
 h g(~
@@ -1304,7 +1305,7 @@ h g(~
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'h',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""h 5)""")
+            theFileObj=io.StringIO(u"""h 5)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1312,7 +1313,7 @@ h g(~
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
         #self.pprintReplacementList(repList)
-        expectedTokens = self.stringToTokens('f(2 * (~ 5))')
+        expectedTokens = self.stringToTokens(u'f(2 * (~ 5))')
         #expectedTokens = [
         #        PpToken.PpToken('f',       'identifier'),
         #        PpToken.PpToken('(',       'preprocessing-op-or-punc'),
@@ -1333,7 +1334,7 @@ h g(~
             repList,
             )
         # Or, from cpp:
-        myResultString = """f(2 * (~ 5))"""
+        myResultString = u"""f(2 * (~ 5))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -1345,7 +1346,7 @@ h g(~
     def testDefineMapReplace_03a(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 f(f(z)) -> f(2 * (f(2 * (z[0]))))"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 z z[0]
 """
@@ -1359,7 +1360,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(f(z))""")
+            theFileObj=io.StringIO(u"""f(f(z))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1397,7 +1398,7 @@ z z[0]
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         # Or, from cpp:
-        myResultString = """f(2 * (f(2 * (z[0]))))"""
+        myResultString = u"""f(2 * (f(2 * (z[0]))))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -1409,7 +1410,7 @@ z z[0]
     def testDefineMapReplace_03b(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 f(z) -> f(2 * (f(2 * (z[0]))))"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 z z[0]
 """
@@ -1423,7 +1424,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(z)""")
+            theFileObj=io.StringIO(u"""f(z)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1449,7 +1450,7 @@ z z[0]
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         # Or, from cpp:
-        myResultString = """f(2 * (z[0]))"""
+        myResultString = u"""f(2 * (z[0]))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -1464,7 +1465,7 @@ class TestMacroReplacementFuncRecursive(TestMacroEnv):
     def testDefineMapFuncRecurseReplace_00(self):
         """MacroEnv.MacroEnv - function calling function - multiple depthes"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 z z[0]
 """
@@ -1485,10 +1486,10 @@ z z[0]
         #f(f(f(z)))      // f(2 * (f(2 * (f(2 * (z[0]))))))
         #f(f(f(f(z))))   // f(2 * (f(2 * (f(2 * (f(2 * (z[0]))))))))
         myCppResult = (
-            ('f(z)',            'f(2 * (z[0]))'),
-            ('f(f(z))',         'f(2 * (f(2 * (z[0]))))'),
-            ('f(f(f(z)))',      'f(2 * (f(2 * (f(2 * (z[0]))))))'),
-            ('f(f(f(f(z))))',   'f(2 * (f(2 * (f(2 * (f(2 * (z[0]))))))))'),
+            (u'f(z)',            'f(2 * (z[0]))'),
+            (u'f(f(z))',         'f(2 * (f(2 * (z[0]))))'),
+            (u'f(f(f(z)))',      'f(2 * (f(2 * (f(2 * (z[0]))))))'),
+            (u'f(f(f(f(z))))',   'f(2 * (f(2 * (f(2 * (f(2 * (z[0]))))))))'),
         )
         #print
         #print '%-20s  %-32s  %s' % ('Source', 'Got', 'Should have got')
@@ -1513,7 +1514,7 @@ class TestMacroReplacementFuncRecursive_01(TestMacroEnv):
         #return
         #assert(0)
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 z z[0]
 g f
@@ -1529,21 +1530,21 @@ t(a) a
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z', 'g', 't'])
         myCppResult = (
-            ('z',                       'z[0]'),
-            ('f(z)',                    'f(2 * (z[0]))'),
-            ('f(f(z))',                 'f(2 * (f(2 * (z[0]))))'),
-            ('f(f(f(z)))',              'f(2 * (f(2 * (f(2 * (z[0]))))))'),
-            ('f(f(f(f(z))))',           'f(2 * (f(2 * (f(2 * (f(2 * (z[0]))))))))'),
-            ('t(g)',                    'f'),
-            ('t(g)(0)',                 'f(2 * (0))'),
-            ('t(g)(0) + t',             'f(2 * (0)) + t'),
-            ('t(g(0) + t);',            'f(2 * (0)) + t;'),
-            ('t(t(g))',                 'f'),
-            ('t(t(g)(0) + t)(1);',      'f(2 * (0)) + t(1);'),
-            ('t(t)',                    't'),
-            ('t(t);',                   't;'),
-            ('t(t)();',                 't();'),
-            ('t(t)(1)',                 't(1)'),
+            (u'z',                       'z[0]'),
+            (u'f(z)',                    'f(2 * (z[0]))'),
+            (u'f(f(z))',                 'f(2 * (f(2 * (z[0]))))'),
+            (u'f(f(f(z)))',              'f(2 * (f(2 * (f(2 * (z[0]))))))'),
+            (u'f(f(f(f(z))))',           'f(2 * (f(2 * (f(2 * (f(2 * (z[0]))))))))'),
+            (u't(g)',                    'f'),
+            (u't(g)(0)',                 'f(2 * (0))'),
+            (u't(g)(0) + t',             'f(2 * (0)) + t'),
+            (u't(g(0) + t);',            'f(2 * (0)) + t;'),
+            (u't(t(g))',                 'f'),
+            (u't(t(g)(0) + t)(1);',      'f(2 * (0)) + t(1);'),
+            (u't(t)',                    't'),
+            (u't(t);',                   't;'),
+            (u't(t)();',                 't();'),
+            (u't(t)(1)',                 't(1)'),
         )
         myMap.debugMarker = 'TestMacroReplacementFuncRecursive_01.testDefineMapFuncRecurseReplace_01()'
         #print
@@ -1582,7 +1583,7 @@ t(u(t))();  // t();
 f(f)(2)     // b f(2)
 
 """
-        myStr = """t(a) a
+        myStr = u"""t(a) a
 u(a) a
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -1595,12 +1596,12 @@ u(a) a
             i += 1
         self._checkMacroEnv(myGen, myMap, ['t', 'u',])
         myCppResult = (
-            ('t(t)();',                 't();'),
-            ('t(u)();',                 ';'),
-            ('t(t)(1);',                't(1);'),
-            ('t(u)(1);',                '1;'),
-            ('t(t(t))();',              't();'),
-            ('t(u(t))();',              't();'),
+            (u't(t)();',                 't();'),
+            (u't(u)();',                 ';'),
+            (u't(t)(1);',                't(1);'),
+            (u't(u)(1);',                '1;'),
+            (u't(t(t))();',              't();'),
+            (u't(u(t))();',              't();'),
         )
         myMap.debugMarker = 'TestMacroReplacementFuncRecursive_01.testDefineMapFuncRecurseReplace_02()'
         #print
@@ -1630,7 +1631,7 @@ u(a) a
         myCpp = """#define f(x) b x
 f(f)(2)     // b f(2)
 """
-        myStr = """f(x) b x
+        myStr = u"""f(x) b x
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -1642,8 +1643,8 @@ f(f)(2)     // b f(2)
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f',])
         myCppResult = (
-            ('f(f)(2)',     'b f(2)'),
-            ('f f(2)',      'f b 2'),
+            (u'f(f)(2)',     'b f(2)'),
+            (u'f f(2)',      'f b 2'),
         )
         myMap.debugMarker = 'TestMacroReplacementFuncRecursive_01.testDefineMapFuncRecurseReplace_03()'
         #print
@@ -1676,7 +1677,7 @@ class TestPpDefineReplace_Special_00(TestMacroEnv):
 x 2  )
 """
         myMap = MacroEnv.MacroEnv()
-        myStr = """x y(
+        myStr = u"""x y(
 y(a) a+1
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -1688,7 +1689,7 @@ y(a) a+1
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['x', 'y',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('x 2  )')
+            theFileObj=io.StringIO(u'x 2  )')
             )
         repList = []
         myGen = myCpp.next()
@@ -1709,7 +1710,7 @@ y(a) a+1
             )
         # Or:
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('2+1')
+            theFileObj=io.StringIO(u'2+1')
             )
         self.assertEqual(
             [t_tt for t_tt in myCpp.next()],
@@ -1719,7 +1720,7 @@ y(a) a+1
     def test_01(self):
         """TestPpDefineReplace_Special_00.test_01(): example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3: h 5) -> f(2 * (~ 5))"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """f(a) f(2 * (a))
+        myStr = u"""f(a) f(2 * (a))
 g f
 h g(~
 """
@@ -1733,7 +1734,7 @@ h g(~
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'g', 'h',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""h 5)""")
+            theFileObj=io.StringIO(u"""h 5)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1761,7 +1762,7 @@ h g(~
         self._printDiff(repList, expectedTokens)
         self.assertEqual(repList, expectedTokens)
         # Or, from cpp:
-        myResultString = """f(2 * (~ 5))"""
+        myResultString = u"""f(2 * (~ 5))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -1773,7 +1774,7 @@ h g(~
     def test_02(self):
         """TestPpDefineReplace_Special_00.test_02(): example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3: h 5) with x 2 -> f(2 * (~ 5))"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """f(a) f(x * (a))
+        myStr = u"""f(a) f(x * (a))
 x 2
 g f
 h g(~
@@ -1788,7 +1789,7 @@ h g(~
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'h',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""h 5)""")
+            theFileObj=io.StringIO(u"""h 5)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1812,7 +1813,7 @@ h g(~
         self._printDiff(repList, expectedTokens)
         self.assertEqual(repList, expectedTokens)
         # Or, from cpp:
-        myResultString = """f(2 * (~ 5))"""
+        myResultString = u"""f(2 * (~ 5))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -1829,7 +1830,7 @@ class SpecialClass(TestMacroEnv):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 f(z) -> f(2 * (z[0]))"""
         #assert(0)
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 z z[0]
 """
@@ -1843,7 +1844,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(z)""")
+            theFileObj=io.StringIO(u"""f(z)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1870,7 +1871,7 @@ z z[0]
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         ## Or, from cpp:
-        #myResultString = """f(2 * (f(2 * (z[0]))))"""
+        #myResultString = u"""f(2 * (f(2 * (z[0]))))"""
         #myCpp = PpTokeniser.PpTokeniser(
         #    theFileObj=StringIO.StringIO(myResultString)
         #    )
@@ -1883,7 +1884,7 @@ z z[0]
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 f(f(z)) -> f(2 * (f(2 * (z[0]))))"""
         #assert(0)
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 z z[0]
 """
@@ -1897,7 +1898,7 @@ z z[0]
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'z',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(f(z))""")
+            theFileObj=io.StringIO(u"""f(f(z))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -1933,7 +1934,7 @@ z z[0]
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         # Or, from cpp:
-        myResultString = """f(2 * (f(2 * (z[0]))))"""
+        myResultString = u"""f(2 * (f(2 * (z[0]))))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -1946,7 +1947,7 @@ z z[0]
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3. f(y+1) + f(f(z))"""
         #assert(0)
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 3
+        myStr = u"""x 3
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -1960,13 +1961,13 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('x\n')
+                theFileObj=io.StringIO(u'x\n')
             ).next(),
             '',
             1,
         )
         self._checkMacroEnv(myGen, myMap, ['f',])
-        myStr = """x 2
+        myStr = u"""x 2
 g f
 z z[0]
 h g(~
@@ -1986,7 +1987,7 @@ str(x) # x
             myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'z', 'h', 'm', 'w', 't', 'p', 'q', 'r', 'str',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(y+1) + f(f(z))""")# % t(t(g)(0) + t)(1);""")
+            theFileObj=io.StringIO(u"""f(y+1) + f(f(z))""")# % t(t(g)(0) + t)(1);""")
             )
         repList = []
         myGen = myCpp.next()
@@ -2040,7 +2041,7 @@ str(x) # x
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         # Or:
-        myResultString = """f(2 * (y+1)) + f(2 * (f(2 * (z[0]))))"""
+        myResultString = u"""f(2 * (y+1)) + f(2 * (f(2 * (z[0]))))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -2052,7 +2053,7 @@ str(x) # x
     def testDefineMapReplace_03_03_00(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3. t(g)(0)"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 g f
 t(a) a
@@ -2067,7 +2068,7 @@ t(a) a
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 't'])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""t(g(0))""")
+            theFileObj=io.StringIO(u"""t(g(0))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -2093,7 +2094,7 @@ t(a) a
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         # Or:
-        myResultString = """f(2 * (0))"""
+        myResultString = u"""f(2 * (0))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -2114,7 +2115,7 @@ t(g)(0) + t         // f(2 * (0)) + t
 t(t(g)(0) + t)(1);  // f(2 * (0)) + t(1);
 """
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 g f
 t(a) a
@@ -2129,16 +2130,16 @@ t(a) a
             i += 1
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 't',])
         myResultPairs = (
-            ('t(g)',                     'f'),
-            ('t(g)(0)',                  'f(2 * (0))'),
-            ('t(g)(0) + t',              'f(2 * (0)) + t'),
-            ('t(g(0) + t);',             'f(2 * (0)) + t;'),
-            ('t(t(g))',                  'f'),
-            ('t(t(g)(0) + t)(1);',       'f(2 * (0)) + t(1);'),
-            ('t(t)',                     't'),
-            ('t(t);',                    't;'),
-            ('t(t)();',                  't();'),
-            ('t(t)(1)',                  't(1)'),
+            (u't(g)',                     'f'),
+            (u't(g)(0)',                  'f(2 * (0))'),
+            (u't(g)(0) + t',              'f(2 * (0)) + t'),
+            (u't(g(0) + t);',             'f(2 * (0)) + t;'),
+            (u't(t(g))',                  'f'),
+            (u't(t(g)(0) + t)(1);',       'f(2 * (0)) + t(1);'),
+            (u't(t)',                     't'),
+            (u't(t);',                    't;'),
+            (u't(t)();',                  't();'),
+            (u't(t)(1)',                  't(1)'),
         )
         #print
         myMap.debugMarker = 'SpecialClass.testDefineMapReplace_03_04()'
@@ -2162,7 +2163,7 @@ t(a) a
     def testDefineMapReplace_03_05(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 3
+        myStr = u"""x 3
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -2176,13 +2177,13 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('x\n')
+                theFileObj=io.StringIO(u'x\n')
             ).next(),
             'a.h',
             i+1,
         )
         self._checkMacroEnv(myGen, myMap, ['f',])
-        myStr = """x 2
+        myStr = u"""x 2
 g f
 z z[0]
 h g(~
@@ -2201,13 +2202,13 @@ str(x) # x
         for i in range(11):
             myMap.define(myGen, 'b.h', i+1)
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'z', 'h', 'm', 'w', 't', 'p', 'q', 'r', 'str',])
-        strOriginal = """f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+        strOriginal = u"""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
 g(x+(3,4)-w) | h 5) & m
 (f)^m(m);
 p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };
 """
-        strExpected = """f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+        strExpected = u"""f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
 f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
 int i[] = { 1, 23, 4, 5,  };
 char c[2][6] = { "hello", "" };
@@ -2222,7 +2223,7 @@ char c[2][6] = { "hello", "" };
             #self.pprintReplacementList(myReplacements)
             #print
             repList += myReplacements
-        expectedTokens = self.stringToTokens(strExpected)
+#         expectedTokens = self.stringToTokens(strExpected)
         #print 'TRACE:'
         #self.pprintTokensAsCtors(repList)
         #print 'TRACE:'
@@ -2405,7 +2406,7 @@ char c[2][6] = { "hello", "" };
     def testDefineMapReplace_03_06(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 with str(MacroEnv)"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 3
+        myStr = u"""x 3
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -2419,13 +2420,13 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('x\n')
+                theFileObj=io.StringIO(u'x\n')
             ).next(),
             'a.h',
             i+1,
         )
         self._checkMacroEnv(myGen, myMap, ['f',])
-        myStr = """x 2
+        myStr = u"""x 2
 g f
 z z[0]
 h g(~
@@ -2444,7 +2445,7 @@ str(x) # x
         for i in range(11):
             myMap.define(myGen, 'b.h', i+1)
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'z', 'h', 'm', 'w', 't', 'p', 'q', 'r', 'str',])
-        strOriginal = """f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+        strOriginal = u"""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
 g(x+(3,4)-w) | h 5) & m
 (f)^m(m);
 p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
@@ -2483,7 +2484,7 @@ char c[2][6] = { str(hello), str() };
     def testDefineMapReplace_03_07(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 with str(MacroEnv.genMacros())"""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 3
+        myStr = u"""x 3
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -2497,13 +2498,13 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('x\n')
+                theFileObj=io.StringIO(u'x\n')
             ).next(),
             'a.h',
             i+1,
         )
         self._checkMacroEnv(myGen, myMap, ['f',])
-        myStr = """x 2
+        myStr = u"""x 2
 g f
 z z[0]
 h g(~
@@ -2522,7 +2523,7 @@ str(x) # x
         for i in range(11):
             myMap.define(myGen, 'b.h', i+1)
         self._checkMacroEnv(myGen, myMap, ['f', 'x', 'g', 'z', 'h', 'm', 'w', 't', 'p', 'q', 'r', 'str',])
-        strOriginal = """f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+        strOriginal = u"""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
 g(x+(3,4)-w) | h 5) & m
 (f)^m(m);
 p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
@@ -2595,7 +2596,7 @@ fputs("strncmp(\"abc\\0d\", \"abc\", '\\4') == 0" ": @\n",s);
 "hello" ", world"
 """
         self._macroEnv = MacroEnv.MacroEnv()
-        myStr = """str(s) # s
+        myStr = u"""str(s) # s
 xstr(s) str(s)
 debug(s, t) printf("x" # s "= %d, x" # t "= %s", x ## s, x ## t)
 INCFILE(n) vers ## n
@@ -2625,7 +2626,7 @@ LOW LOW ", world"
         """TestExample4.test_00() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [0]"""
 
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO(u"""debug(1, 2);
 """)
             )
         repList = []
@@ -2638,7 +2639,7 @@ LOW LOW ", world"
         #print
         #self.pprintTokensAsCtors(repList)
         # printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-        #expectedTokens = self.stringToTokens('printf("x"  "1" "= %d, x" "2" "= %s", x1, x2);')
+        #expectedTokens = self.stringToTokens(u'printf("x"  "1" "= %d, x" "2" "= %s", x1, x2);')
         expectedTokens = [
             PpToken.PpToken('printf',       'identifier'),
             PpToken.PpToken('(',            'preprocessing-op-or-punc'),
@@ -2669,7 +2670,7 @@ LOW LOW ", world"
     def test_01(self):
         """TestExample4.test_01() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [1]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
+            theFileObj=io.StringIO(u"""fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 """)
             )
         # Should convert to:
@@ -2684,7 +2685,7 @@ LOW LOW ", world"
         #print
         #self.pprintTokensAsCtors(repList)
         # printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-        #expectedTokens = self.stringToTokens("""fputs("strncmp(\"abc\\0d\", \"abc\", '\\4') == 0" ": @\n",s);""")
+        #expectedTokens = self.stringToTokens(u"""fputs("strncmp(\"abc\\0d\", \"abc\", '\\4') == 0" ": @\n",s);""")
         #print 'Expected:'
         #self.pprintTokensAsCtors(expectedTokens)
         expectedTokens = [
@@ -2708,7 +2709,7 @@ LOW LOW ", world"
     def test_02(self):
         """TestExample4.test_02() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [2]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""#include xstr(INCFILE(2).h)
+            theFileObj=io.StringIO(u"""#include xstr(INCFILE(2).h)
 """)
             )
         # Should convert to:
@@ -2723,7 +2724,7 @@ LOW LOW ", world"
         #print
         #self.pprintTokensAsCtors(repList)
         # printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-        #expectedTokens = self.stringToTokens("""#include "vers2.h"\n""")
+        #expectedTokens = self.stringToTokens(u"""#include "vers2.h"\n""")
         #print 'Expected:'
         #self.pprintTokensAsCtors(expectedTokens)
         expectedTokens = [
@@ -2740,7 +2741,7 @@ LOW LOW ", world"
     def test_03(self):
         """TestExample4.test_03() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [3]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""glue(HIGH, LOW);
+            theFileObj=io.StringIO(u"""glue(HIGH, LOW);
 """)
             )
         # Should convert to:
@@ -2755,7 +2756,7 @@ LOW LOW ", world"
         #print
         #self.pprintTokensAsCtors(repList)
         # printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-        #expectedTokens = self.stringToTokens("""#include "vers2.h"\n""")
+        #expectedTokens = self.stringToTokens(u"""#include "vers2.h"\n""")
         #print 'Expected:'
         #self.pprintTokensAsCtors(expectedTokens)
         expectedTokens = [
@@ -2769,7 +2770,7 @@ LOW LOW ", world"
     def test_04(self):
         """TestExample4.test_04() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 [4]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""xglue(HIGH, LOW)
+            theFileObj=io.StringIO(u"""xglue(HIGH, LOW)
 """)
             )
         # Should convert to:
@@ -2784,7 +2785,7 @@ LOW LOW ", world"
         #print
         #self.pprintTokensAsCtors(repList)
         # printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-        #expectedTokens = self.stringToTokens("""#include "vers2.h"\n""")
+        #expectedTokens = self.stringToTokens(u"""#include "vers2.h"\n""")
         #print 'Expected:'
         #self.pprintTokensAsCtors(expectedTokens)
         expectedTokens = [
@@ -2799,7 +2800,7 @@ LOW LOW ", world"
     def test_10(self):
         """TestExample4.test_10() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO(u"""debug(1, 2);
 fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 #include xstr(INCFILE(2).h)
 glue(HIGH, LOW);
@@ -2816,7 +2817,7 @@ xglue(HIGH, LOW)
         #print
         #self.pprintTokensAsCtors(repList)
         # printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-        #expectedTokens = self.stringToTokens("""#include "vers2.h"\n""")
+        #expectedTokens = self.stringToTokens(u"""#include "vers2.h"\n""")
         #print 'Expected:'
         #self.pprintTokensAsCtors(expectedTokens)
         expectedTokens = [
@@ -2879,7 +2880,7 @@ xglue(HIGH, LOW)
     def test_11(self):
         """TestExample4.test_10() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 with str(MacroEnv)"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO(u"""debug(1, 2);
 fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 #include xstr(INCFILE(2).h)
 glue(HIGH, LOW);
@@ -2909,7 +2910,7 @@ xglue(HIGH, LOW)
     def test_12(self):
         """TestExample4.test_10() - ISO/IEC 9899:1999(E) 6.10.3.5-6 EXAMPLE 4 with str(genMacros)"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""debug(1, 2);
+            theFileObj=io.StringIO(u"""debug(1, 2);
 fputs(str(strncmp("abc\\0d", "abc", '\\4') == 0) str(: @\\n), s);
 #include xstr(INCFILE(2).h)
 glue(HIGH, LOW);
@@ -2954,7 +2955,7 @@ int j[] = { 123, 45, 67, 89,
     def setUp(self):
         """"""
         self._macroEnv = MacroEnv.MacroEnv()
-        myStr = """t(x,y,z) x ## y ## z
+        myStr = u"""t(x,y,z) x ## y ## z
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -2976,7 +2977,7 @@ int j[] = { 123, 45, 67, 89,
     def test_00(self):
         """TestExample5.test_00() - ISO/IEC 9899:1999 (E) 6.10.3.5-7 EXAMPLE 5 [0]"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
+            theFileObj=io.StringIO(u"""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
 t(10,,), t(,11,), t(,,12), t(,,) };
 """)
             )
@@ -2990,8 +2991,8 @@ t(10,,), t(,11,), t(,,12), t(,,) };
         #print
         #self.pprintTokensAsCtors(repList)
         # printf("x" "1" "= %d, x" "2" "= %s", x1, x2);
-        expectedTokens = self.stringToTokens("""int j[] = { 123, 45, 67, 89,
-10, 11, 12,  };""")
+#         expectedTokens = self.stringToTokens(u"""int j[] = { 123, 45, 67, 89,
+#10, 11, 12,  };""")
         expectedTokens = [
             PpToken.PpToken('int',      'identifier'),
             PpToken.PpToken(' ',        'whitespace'),
@@ -3035,7 +3036,7 @@ t(10,,), t(,11,), t(,,12), t(,,) };
     def test_01(self):
         """TestExample5.test_00() - ISO/IEC 9899:1999 (E) 6.10.3.5-7 EXAMPLE 5 [0] with str(MacroEnv)"""
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
+            theFileObj=io.StringIO(u"""int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
 t(10,,), t(,11,), t(,,12), t(,,) };
 """)
             )
@@ -3056,7 +3057,7 @@ class MacroEnvReplaceFunctionLowLevel(TestMacroEnv):
     def _genMap_00(self):
         """Return a map of four defines."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 g f
 t(a) a
@@ -3075,7 +3076,7 @@ t(a) a
     def _genMap_01(self):
         """Return a map of three defines."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """z z[0]
+        myStr = u"""z z[0]
 x 4
 f(a) f(x+a)
 """
@@ -3094,7 +3095,7 @@ f(a) f(x+a)
         """MacroEnv.MacroEnv._replaceFunctionStyleMacro() - low level 'f(7)'"""
         myMap = self._genMap_01()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("f(7)")
+            theFileObj=io.StringIO(u"f(7)")
             )
         myGen = myCpp.next()
         myArgTokType = next(myGen)
@@ -3102,7 +3103,7 @@ f(a) f(x+a)
         #mySeenSet = set()
         myReplacements = myMap.replace(myArgTokType, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         #self.pprintReplacementList(myReplacements)
         expectedTokens = [
             PpToken.PpToken('f',       'identifier'),
@@ -3119,14 +3120,14 @@ f(a) f(x+a)
         """MacroEnv.MacroEnv._replaceFunctionStyleMacro() - low level 'f(z)'"""
         myMap = self._genMap_01()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("f(z)")
+            theFileObj=io.StringIO(u"f(z)")
             )
         myGen = myCpp.next()
         myArgTokType = next(myGen)
         #print 'Argument t_tt:', myArgTokType
         myReplacements = myMap.replace(myArgTokType, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         #self.pprintReplacementList(myReplacements)
         expectedTokens = [
             PpToken.PpToken('f',       'identifier'),
@@ -3154,7 +3155,7 @@ f(a) f(x+a)
         #
         #*/
         myMap = MacroEnv.MacroEnv()
-        myStr = """foo(x) bar x
+        myStr = u"""foo(x) bar x
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -3167,14 +3168,14 @@ f(a) f(x+a)
         # Check that all tokens have been consumed
         self._checkMacroEnv(myGen, myMap, ['foo',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("foo(foo) (2)")
+            theFileObj=io.StringIO(u"foo(foo) (2)")
             )
         myGen = myCpp.next()
         myReplacements = []
         for myArgTokType in myGen:
             myReplacements += myMap.replace(myArgTokType, myGen)
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         #self.pprintReplacementList(myReplacements)
         expectedTokens = [
             PpToken.PpToken('bar',     'identifier'),
@@ -3194,7 +3195,7 @@ class RecursiveFunctionLike(TestMacroEnv):
     def _genMap_00(self):
         """Return a map of three defines."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 4
+        myStr = u"""x 4
 f(a) f(x+a)
 z z[0]
 """
@@ -3207,7 +3208,7 @@ z z[0]
             myMap.define(myGen, '', 1)
             i += 1
         # Check that all tokens have been consumed
-        self.assertRaises(StopIteration, myGen.__next__)
+        self.assertRaises(StopIteration, next, myGen)
         self.assertEqual(3, len(myMap))
         return myMap
 
@@ -3215,7 +3216,7 @@ z z[0]
         """testRecursiveFunctionLike_00: f(z) -> f(4+z[0])"""
         myMap = self._genMap_00()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(z)""")
+            theFileObj=io.StringIO(u"""f(z)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3239,7 +3240,7 @@ z z[0]
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         # Or, from cpp:
-        myResultString = """f(4+z[0])"""
+        myResultString = u"""f(4+z[0])"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -3252,7 +3253,7 @@ z z[0]
         """testRecursiveFunctionLike_01: f(f(z)) -> f(4 +f(4 +z[0]))"""
         myMap = self._genMap_00()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(f(z))""")
+            theFileObj=io.StringIO(u"""f(f(z))""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3281,7 +3282,7 @@ z z[0]
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
         # Or, from cpp:
-        myResultString = """f(4+f(4+z[0]))"""
+        myResultString = u"""f(4+f(4+z[0]))"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myResultString)
             )
@@ -3300,7 +3301,7 @@ class MacroEnvFuncReexamine(TestMacroEnv):
     def testDefineFunction_00(self):
         """MacroEnvFuncReexamine.testDefineFunction_00 - function like macros with rescanning replacement [00]."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """f(a) a+a
+        myStr = u"""f(a) a+a
 g(a) a(2)
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -3311,7 +3312,7 @@ g(a) a(2)
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['f', 'g',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('g(f);')
+            theFileObj=io.StringIO(u'g(f);')
             )
         myMap.debugMarker = 'MacroEnvFuncReexamine.testDefineFunction_00()'
         repList = []
@@ -3323,7 +3324,7 @@ g(a) a(2)
         #myCpp = PpTokeniser.PpTokeniser(
         #    theFileObj=StringIO.StringIO('2+2;')
         #    )
-        self.assertEqual(self.stringToTokens('2+2;'), repList)
+        self.assertEqual(self.stringToTokens(u'2+2;'), repList)
 
     def testDefineFunction_01(self):
         """MacroEnvFuncReexamine.testDefineFunction_01 - function like macros with rescanning replacement [01]."""
@@ -3337,7 +3338,7 @@ t(g)(0) + t         // f(2 * (0)) + t
 t(t(g)(0) + t)(1);  // f(2 * (0)) + t(1);
 """
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 2
+        myStr = u"""x 2
 f(a) f(x * (a))
 g f
 t(a) a
@@ -3352,16 +3353,16 @@ t(a) a
             i += 1
         self._checkMacroEnv(myGen, myMap, ['x', 'f', 'g', 't',])
         myResultPairs = (
-            ('t(g)',                     'f'),
-            ('t(g)(0)',                  'f(2 * (0))'),
-            ('t(g)(0) + t',              'f(2 * (0)) + t'),
-            ('t(g(0) + t);',             'f(2 * (0)) + t;'),
-            ('t(t(g))',                  'f'),
-            ('t(t(g)(0) + t)(1);',       'f(2 * (0)) + t(1);'),
-            ('t(t)',                     't'),
-            ('t(t);',                    't;'),
-            ('t(t)();',                  't();'),
-            ('t(t)(1)',                  't(1)'),
+            (u't(g)',                     'f'),
+            (u't(g)(0)',                  'f(2 * (0))'),
+            (u't(g)(0) + t',              'f(2 * (0)) + t'),
+            (u't(g(0) + t);',             'f(2 * (0)) + t;'),
+            (u't(t(g))',                  'f'),
+            (u't(t(g)(0) + t)(1);',       'f(2 * (0)) + t(1);'),
+            (u't(t)',                     't'),
+            (u't(t);',                    't;'),
+            (u't(t)();',                  't();'),
+            (u't(t)(1)',                  't(1)'),
         )
         #print
         myMap.debugMarker = 'MacroEnvFuncReexamine.testDefineFunction_00()'
@@ -3388,7 +3389,7 @@ class TestExample3(TestMacroEnv):
     def _createEnv(self):
         """Creates a MacroEnv for the #defines in this example."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """x 3
+        myStr = u"""x 3
 f(a) f(x * (a))
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -3402,13 +3403,13 @@ f(a) f(x * (a))
         self._checkMacroEnv(myGen, myMap, ['f', 'x',])
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('x\n')
+                theFileObj=io.StringIO(u'x\n')
             ).next(),
             '',
             1,
         )
         self._checkMacroEnv(myGen, myMap, ['f',])
-        myStr = """x 2
+        myStr = u"""x 2
 g f
 z z[0]
 h g(~
@@ -3433,7 +3434,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_01() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 1"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+            theFileObj=io.StringIO(u"""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
 """)
             )
         repList = []
@@ -3446,7 +3447,7 @@ str(x) # x
             #self.pprintReplacementList(myReplacements)
             #print
             repList += myReplacements
-        expectedString = """f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+        expectedString = u"""f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
 """
         repString = self.tokensToString(repList)
         expectedTokens = self.stringToTokens(expectedString)
@@ -3462,7 +3463,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_02() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 2"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""g(x+(3,4)-w) | h 5) & m(f)^m(m);
+            theFileObj=io.StringIO(u"""g(x+(3,4)-w) | h 5) & m(f)^m(m);
 """)
             )
         repList = []
@@ -3475,7 +3476,7 @@ str(x) # x
             #self.pprintReplacementList(myReplacements)
             #print
             repList += myReplacements
-        expectedString = """f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
+        expectedString = u"""f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
 """
         repString = self.tokensToString(repList)
         expectedTokens = self.stringToTokens(expectedString)
@@ -3491,7 +3492,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_03() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 3"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
+            theFileObj=io.StringIO(u"""p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 """)
             )
         repList = []
@@ -3520,7 +3521,7 @@ str(x) # x
         """TestExample3.testTestExample3_line_04() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 line 4"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""char c[2][6] = { str(hello), str() };""")
+            theFileObj=io.StringIO(u"""char c[2][6] = { str(hello), str() };""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3547,7 +3548,7 @@ str(x) # x
         """TestExample3.testTestExample3_str_x() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3 str(x)"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""str()""")
+            theFileObj=io.StringIO(u"""str()""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3574,7 +3575,7 @@ str(x) # x
         """TestExample3.testTestExample3() - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-5 EXAMPLE 3"""
         myMap = self._createEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+            theFileObj=io.StringIO(u"""f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
 g(x+(3,4)-w) | h 5) & m(f)^m(m);
 p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };""")
@@ -3609,13 +3610,13 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testObjectLikeRedefinition_00(): #defines then redefines an object like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO(u'OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['OBJ',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('OBJ    1    +    2    \n')
+            theFileObj=io.StringIO(u'OBJ    1    +    2    \n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -3625,13 +3626,13 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testObjectLikeRedefinition_01(): #defines then redefines an object like macro incorrectly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO(u'OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['OBJ',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('OBJ 1+2\n')
+            theFileObj=io.StringIO(u'OBJ 1+2\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -3647,13 +3648,13 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testFunctionLikeRedefinition_00(): #defines then redefines an function like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC_LIKE(a) ( a )\n')
+            theFileObj=io.StringIO(u'FUNC_LIKE(a) ( a )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC_LIKE',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC_LIKE( a )( /* note the white space */ a /* other stuff on this line */ )\n')
+            theFileObj=io.StringIO(u'FUNC_LIKE( a )( /* note the white space */ a /* other stuff on this line */ )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
@@ -3663,13 +3664,13 @@ class TestMacroRedefinition(TestMacroEnv):
         """TestMacroRedefinition.testFunctionLikeRedefinition_01(): #defines then redefines an function like macro incorrectly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC_LIKE(a) ( a )\n')
+            theFileObj=io.StringIO(u'FUNC_LIKE(a) ( a )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC_LIKE',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC_LIKE(b) ( b )\n')
+            theFileObj=io.StringIO(u'FUNC_LIKE(b) ( b )\n')
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -3687,7 +3688,7 @@ class TestMacroUndef(TestMacroEnv):
         """TestMacroUndef.testObjectLikeUndef_00(): #defines then undefs an object like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO(u'OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'obj.h', 1)
@@ -3697,7 +3698,7 @@ class TestMacroUndef(TestMacroEnv):
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=io.StringIO('NOTHING\n')
+                    theFileObj=io.StringIO(u'NOTHING\n')
                 ).next(),
                 '',
                 1,
@@ -3708,7 +3709,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef something that is there
         myMap.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=io.StringIO('OBJ\n')
+                    theFileObj=io.StringIO(u'OBJ\n')
                 ).next(),
                 'obj.h',
                 1
@@ -3731,7 +3732,7 @@ class TestMacroUndef(TestMacroEnv):
         """TestMacroUndef.testObjectLikeUndef_01(): #defines then undefs an object like macro and invokes genMacros()."""
         myEnv = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('OBJ 1 + 2\n')
+            theFileObj=io.StringIO(u'OBJ 1 + 2\n')
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'obj.h', 1)
@@ -3739,7 +3740,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef something that is not there
         myEnv.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('NOTHING\n')
+                theFileObj=io.StringIO(u'NOTHING\n')
             ).next(),
             '',
             1,
@@ -3749,7 +3750,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef something that is there
         myEnv.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=io.StringIO('OBJ\n')
+                    theFileObj=io.StringIO(u'OBJ\n')
                 ).next(),
                 'obj.h',
                 2,
@@ -3757,7 +3758,7 @@ class TestMacroUndef(TestMacroEnv):
         self._checkMacroEnv(myGen, myEnv, [])
         # Redefine it
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('OBJ 3 + 4\n')
+            theFileObj=io.StringIO(u'OBJ 3 + 4\n')
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'obj.h', 3)
@@ -3781,7 +3782,7 @@ class TestMacroUndef(TestMacroEnv):
         """TestMacroUndef.testFunctionLikeUndef_00(): #defines then undefs an function like macro correctly."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('FUNC_LIKE(a) ( a )\n')
+            theFileObj=io.StringIO(u'FUNC_LIKE(a) ( a )\n')
             )
         myGen = myCpp.next()
         myMap.define(myGen, 'F.h', 1)
@@ -3791,7 +3792,7 @@ class TestMacroUndef(TestMacroEnv):
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
-                    theFileObj=io.StringIO('NOTHING\n')
+                    theFileObj=io.StringIO(u'NOTHING\n')
                 ).next(),
                 '',
                 1,
@@ -3801,7 +3802,7 @@ class TestMacroUndef(TestMacroEnv):
         # undef it
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('FUNC_LIKE\n')
+                theFileObj=io.StringIO(u'FUNC_LIKE\n')
             ).next(),
             'F.h',
             2,
@@ -3828,7 +3829,7 @@ class TestFromCppInternals(TestMacroEnv):
         #foo(foo) (2)
         #which fully expands to "bar foo (2)".
         myMap = MacroEnv.MacroEnv()
-        myStr = """foo(x) bar x
+        myStr = u"""foo(x) bar x
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -3840,7 +3841,7 @@ class TestFromCppInternals(TestMacroEnv):
             i += 1
         self._checkMacroEnv(myGen, myMap, ['foo',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""foo(foo) (2)""")
+            theFileObj=io.StringIO(u"""foo(foo) (2)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3871,7 +3872,7 @@ class TestFromCppInternalsTokenspacing(TestMacroEnv):
         #not
         #-> ++ -- ++ ===
         myMap = MacroEnv.MacroEnv()
-        myStr = """PLUS +
+        myStr = u"""PLUS +
 EMPTY
 f(x) =x=
 """
@@ -3885,7 +3886,7 @@ f(x) =x=
             i += 1
         self._checkMacroEnv(myGen, myMap, ['PLUS', 'EMPTY', 'f'])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""+PLUS -EMPTY- PLUS+ f(=)""")
+            theFileObj=io.StringIO(u"""+PLUS -EMPTY- PLUS+ f(=)""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3911,7 +3912,7 @@ f(x) =x=
         #-> sum = 1 + 2 +3;
         myMap = MacroEnv.MacroEnv()
         # NOTE: Had to take spurious ';' out
-        myStr = """add(x, y, z) x + y +z
+        myStr = u"""add(x, y, z) x + y +z
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -3923,7 +3924,7 @@ f(x) =x=
             i += 1
         self._checkMacroEnv(myGen, myMap, ['add',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""sum = add (1,2, 3);""")
+            theFileObj=io.StringIO(u"""sum = add (1,2, 3);""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3950,7 +3951,7 @@ f(x) =x=
         #-> [baz]
         myMap = MacroEnv.MacroEnv()
         # NOTE: Had to take spurious ';' out
-        myStr = """foo bar
+        myStr = u"""foo bar
 bar baz
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -3963,7 +3964,7 @@ bar baz
             i += 1
         self._checkMacroEnv(myGen, myMap, ['foo', 'bar',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""[foo]""")
+            theFileObj=io.StringIO(u"""[foo]""")
             )
         repList = []
         myGen = myCpp.next()
@@ -3992,7 +3993,7 @@ bar baz
 
         myMap = MacroEnv.MacroEnv()
         # NOTE: Had to take spurious ';' out
-        myStr = """foo bar
+        myStr = u"""foo bar
 bar EMPTY baz
 EMPTY
 """
@@ -4006,7 +4007,7 @@ EMPTY
             i += 1
         self._checkMacroEnv(myGen, myMap, ['foo', 'bar', 'EMPTY'])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""[foo] EMPTY;""")
+            theFileObj=io.StringIO(u"""[foo] EMPTY;""")
             )
         repList = []
         myGen = myCpp.next()
@@ -4039,7 +4040,7 @@ glue(HIGH, LOW) // "hello"
 glue(HIGH, LO) // HIGHLO
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """glue(a, b) a ## b
+        myStr = u"""glue(a, b) a ## b
 xglue(a, b) glue(a, b)
 HIGHLOW "hello"
 LOW LOW ", world"
@@ -4060,35 +4061,35 @@ f(a) f(a)
             ['glue', 'xglue', 'HIGHLOW', 'LOW', 'LO', 'f']
             )
         myInOut = (
-            ('glue(HIGH,LOW)', '"hello"',),
-            ('glue(HIGH, LOW)', '"hello"',),
-            ('glue(HIGH,LOW )', '"hello"',),
-            ('glue(HIGH, LOW )', '"hello"',),
-            ('glue( HIGH,LOW)', '"hello"',),
-            ('glue( HIGH, LOW)', '"hello"',),
-            ('glue( HIGH,LOW )', '"hello"',),
-            ('glue( HIGH, LOW )', '"hello"',),
-            ('glue(HIGH ,LOW)', '"hello"',),
-            ('glue(HIGH , LOW)', '"hello"',),
-            ('glue(HIGH ,LOW )', '"hello"',),
-            ('glue(HIGH , LOW )', '"hello"',),
-            ('glue( HIGH ,LOW)', '"hello"',),
-            ('glue( HIGH , LOW)', '"hello"',),
-            ('glue( HIGH ,LOW )', '"hello"',),
-            ('glue( HIGH , LOW )', '"hello"',),
+            (u'glue(HIGH,LOW)', '"hello"',),
+            (u'glue(HIGH, LOW)', '"hello"',),
+            (u'glue(HIGH,LOW )', '"hello"',),
+            (u'glue(HIGH, LOW )', '"hello"',),
+            (u'glue( HIGH,LOW)', '"hello"',),
+            (u'glue( HIGH, LOW)', '"hello"',),
+            (u'glue( HIGH,LOW )', '"hello"',),
+            (u'glue( HIGH, LOW )', '"hello"',),
+            (u'glue(HIGH ,LOW)', '"hello"',),
+            (u'glue(HIGH , LOW)', '"hello"',),
+            (u'glue(HIGH ,LOW )', '"hello"',),
+            (u'glue(HIGH , LOW )', '"hello"',),
+            (u'glue( HIGH ,LOW)', '"hello"',),
+            (u'glue( HIGH , LOW)', '"hello"',),
+            (u'glue( HIGH ,LOW )', '"hello"',),
+            (u'glue( HIGH , LOW )', '"hello"',),
             #
-            ('glue(HIGH,LO)',  'HIGHLO',),
-            ('glue(HIGH, LO)',  'HIGHLO',),
-            ('glue(HIGH,LO )',  'HIGHLO',),
-            ('glue(HIGH, LO )',  'HIGHLO',),
-            ('glue( HIGH,LO)',  'HIGHLO',),
-            ('glue( HIGH, LO)',  'HIGHLO',),
-            ('glue( HIGH,LO )',  'HIGHLO',),
-            ('glue( HIGH, LO )',  'HIGHLO',),
-            ('glue(HIGH ,LO)',  'HIGHLO',),
-            ('glue(HIGH , LO)',  'HIGHLO',),
-            ('glue(HIGH ,LO )',  'HIGHLO',),
-            ('glue(HIGH , LO )',  'HIGHLO',),
+            (u'glue(HIGH,LO)',  'HIGHLO',),
+            (u'glue(HIGH, LO)',  'HIGHLO',),
+            (u'glue(HIGH,LO )',  'HIGHLO',),
+            (u'glue(HIGH, LO )',  'HIGHLO',),
+            (u'glue( HIGH,LO)',  'HIGHLO',),
+            (u'glue( HIGH, LO)',  'HIGHLO',),
+            (u'glue( HIGH,LO )',  'HIGHLO',),
+            (u'glue( HIGH, LO )',  'HIGHLO',),
+            (u'glue(HIGH ,LO)',  'HIGHLO',),
+            (u'glue(HIGH , LO)',  'HIGHLO',),
+            (u'glue(HIGH ,LO )',  'HIGHLO',),
+            (u'glue(HIGH , LO )',  'HIGHLO',),
             )
         #print
         for myIn, myOut in myInOut:
@@ -4124,7 +4125,7 @@ f(a) f(a)
 xglue(HIGH, LOW) // "hello" ", world"
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """glue(a, b) a ## b
+        myStr = u"""glue(a, b) a ## b
 xglue(a, b) glue(a, b)
 HIGHLOW "hello"
 LOW LOW ", world"
@@ -4146,8 +4147,8 @@ f(a) f(a)
             )
         myInOut = (
             #('glue(HIGH,LOW)',  '"hello"',),
-            ('xglue(HIGH,LOW)', '"hello" ", world"'),
-            ('xglue(HIGH,LO)', 'HIGH" earth"'),
+            (u'xglue(HIGH,LOW)', '"hello" ", world"'),
+            (u'xglue(HIGH,LO)', 'HIGH" earth"'),
 
             )
         #print
@@ -4179,7 +4180,7 @@ f(a) f(a)
 #define g f
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """f(a) a*g
+        myStr = u"""f(a) a*g
 g f
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -4196,7 +4197,7 @@ g f
             ['f', 'g',]
             )
         myInOut = (
-            ('f(2)(9)', '2*f(9)',),
+            (u'f(2)(9)', '2*f(9)',),
             )
         #print
         for myIn, myOut in myInOut:
@@ -4228,7 +4229,7 @@ g f
 f(2)(9)
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """f(a) a*g
+        myStr = u"""f(a) a*g
 g f
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -4245,8 +4246,8 @@ g f
             ['f', 'g',]
             )
         myInOut = (
-            ('f(2)(9)', '2*f(9)',),
-            #('f(2)(9)', '2*9*g',),
+            (u'f(2)(9)', '2*f(9)',),
+            #(u'f(2)(9)', '2*9*g',),
             )
         #print
         for myIn, myOut in myInOut:
@@ -4299,7 +4300,7 @@ Becomes:
 "s(foo)"
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """s(x) # x
+        myStr = u"""s(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4315,9 +4316,9 @@ Becomes:
             ['s',]
             )
         myInOut = (
-            ('s(spam)', ' "spam"',),
-            ('s("spam")', ' "\\"spam\\""',),
-            ('s(s(spam))', ' "s(spam)"',),
+            (u's(spam)', ' "spam"',),
+            (u's("spam")', ' "\\"spam\\""',),
+            (u's(s(spam))', ' "s(spam)"',),
             )
         #print
         for myIn, myOut in myInOut:
@@ -4354,7 +4355,7 @@ Becomes:
 "s(foo)"
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """s(x) # x
+        myStr = u"""s(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4372,7 +4373,7 @@ Becomes:
         myInOut = (
             # cpp:
             # "\"abc\\0d\""
-            (r's("abc\0d")', r' "\"abc\0d\""'),
+            (u's("abc\\0d")', u' "\\"abc\\0d\\""'),
             )
         #print
         for myIn, myOut in myInOut:
@@ -4403,7 +4404,7 @@ Becomes:
 s(@)
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """s(x) # x
+        myStr = u"""s(x) # x
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4420,7 +4421,7 @@ s(@)
             )
         myInOut = (
             # cpp:
-            ('s(@)', ' "@"'),
+            (u's(@)', ' "@"'),
             )
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
@@ -4450,7 +4451,7 @@ class TestPredefinedRedefinition(TestMacroEnv):
             MacroEnv.ExceptionMacroReplacementPredefinedRedefintion,
             myEnv.define,
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('__DATE__ Apr 02 2009\n')
+                theFileObj=io.StringIO(u'__DATE__ Apr 02 2009\n')
             ).next(),
             'mt.h',
             1
@@ -4459,7 +4460,7 @@ class TestPredefinedRedefinition(TestMacroEnv):
             MacroEnv.ExceptionMacroReplacementPredefinedRedefintion,
             myEnv.define,
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('__TIME__ 14:21:32\n')
+                theFileObj=io.StringIO(u'__TIME__ 14:21:32\n')
             ).next(),
             'mt.h',
             1
@@ -4477,7 +4478,7 @@ class TestPredefinedRedefinition(TestMacroEnv):
             MacroEnv.ExceptionMacroReplacementPredefinedRedefintion,
             myEnv.define,
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('SPAM\n')
+                theFileObj=io.StringIO(u'SPAM\n')
             ).next(),
             'mt.h',
             1
@@ -4510,7 +4511,7 @@ class TestPredefinedRedefinition(TestMacroEnv):
     def test_04(self):
         """TestPredefinedInCtor.test_04 - attempt to redefine 'defined'."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """defined
+        myStr = u"""defined
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4552,12 +4553,12 @@ class TestPredefinedRedefinition(TestMacroEnv):
             }
         )
         for aMacro in (
-            '__LINE__ \n',
-            '__FILE__ \n',
-            '__DATE__ \n',
-            '__TIME__ \n',
-            '__STDC__ \n',
-            '__cplusplus \n',
+            u'__LINE__ \n',
+            u'__FILE__ \n',
+            u'__DATE__ \n',
+            u'__TIME__ \n',
+            u'__STDC__ \n',
+            u'__cplusplus \n',
             ):
 #             print(aMacro)
             myCpp = PpTokeniser.PpTokeniser(
@@ -4581,7 +4582,7 @@ class TestPredefined__FILE__(TestMacroEnv):
         """TestPredefined__FILE__.test_00 - redefining __FILE__ fails when using define()."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('%s\n' % self._macroName)
+            theFileObj=io.StringIO(u'%s\n' % self._macroName)
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -4595,7 +4596,7 @@ class TestPredefined__FILE__(TestMacroEnv):
     def test_01(self):
         """TestPredefined__FILE__.test_01 - redefining __FILE__ succeeds when using set__FILE__()."""
         myMap = MacroEnv.MacroEnv()
-        myMap.set__FILE__('42\n')
+        myMap.set__FILE__(u'42\n')
         self.assertEqual(
             True,
             myMap.mightReplace(
@@ -4603,7 +4604,7 @@ class TestPredefined__FILE__(TestMacroEnv):
             )
         )
         self.assertEqual(
-            self.stringToTokens('42'),
+            self.stringToTokens(u'42'),
             myMap.replace(
                 PpToken.PpToken(self._macroName, 'identifier'), None)
             )
@@ -4617,7 +4618,7 @@ class TestPredefined__LINE__(TestMacroEnv):
         """TestPredefined__LINE__.test_00 - redefining __LINE__ fails when using define()."""
         myMap = MacroEnv.MacroEnv()
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('%s\n' % self._macroName)
+            theFileObj=io.StringIO(u'%s\n' % self._macroName)
             )
         myGen = myCpp.next()
         self.assertRaises(
@@ -4631,7 +4632,7 @@ class TestPredefined__LINE__(TestMacroEnv):
     def test_01(self):
         """TestPredefined__LINE__.test_01 - redefining __LINE__ succeeds when using set__LINE__()."""
         myMap = MacroEnv.MacroEnv()
-        myMap.set__LINE__('42\n')
+        myMap.set__LINE__(u'42\n')
         self.assertEqual(
             True,
             myMap.mightReplace(
@@ -4639,7 +4640,7 @@ class TestPredefined__LINE__(TestMacroEnv):
             )
         )
         self.assertEqual(
-            self.stringToTokens('42'),
+            self.stringToTokens(u'42'),
             myMap.replace(
                 PpToken.PpToken(self._macroName, 'identifier'), None)
             )
@@ -4650,7 +4651,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_00(self):
         """MacroEnvIncRefCount.test_00() refcount zero on definition.""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """REFCOUNT 1
+        myStr = u"""REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4666,7 +4667,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_00_00(self):
         """MacroEnvIncRefCount.test_00_00() refcount raises on macro() if name not defined.""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """REFCOUNT 1
+        myStr = u"""REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4687,7 +4688,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_01(self):
         """MacroEnvIncRefCount.test_01() refcount increments on isDefined().""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """REFCOUNT 1
+        myStr = u"""REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4705,7 +4706,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_02(self):
         """MacroEnvIncRefCount.test_02() refcount increments on defined().""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """REFCOUNT 1
+        myStr = u"""REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4725,7 +4726,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_03(self):
         """MacroEnvIncRefCount.test_03() refcount increments on isDefined().""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """REFCOUNT 1
+        myStr = u"""REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4743,7 +4744,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_04(self):
         """MacroEnvIncRefCount.test_04() refcount does not increment on undef.""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """REFCOUNT 1
+        myStr = u"""REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4760,7 +4761,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         # Now undef it
         myMap.undef(
             PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO('REFCOUNT\n')
+                theFileObj=io.StringIO(u'REFCOUNT\n')
             ).next(),
             '',
             1,
@@ -4772,7 +4773,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_05(self):
         """MacroEnvIncRefCount.test_05() refcount increments on simple replacement.""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """REFCOUNT 1
+        myStr = u"""REFCOUNT 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4785,7 +4786,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         self._checkMacroEnv(myGen, myMap, ['REFCOUNT', ])
         self.assertEqual(1, myMap.macro('REFCOUNT').refCount)
         self.assertEqual(
-            self.stringToTokens('1'),
+            self.stringToTokens(u'1'),
             myMap.replace(
                 PpToken.PpToken('REFCOUNT', 'identifier'), None)
             )
@@ -4794,7 +4795,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
     def test_06(self):
         """MacroEnvIncRefCount.test_05() refcount increments on replacement with re-examination.""" 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """glue(a, b) a ## b
+        myStr = u"""glue(a, b) a ## b
 xglue(a, b) glue(a, b)
 HIGHLOW "hello"
 LOW LOW ", world"
@@ -4829,7 +4830,7 @@ LOW LOW ", world"
 #define xglue(a,b) glue(a, b) /* #1 Ref: 1 True */""", str(myEnv))
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""glue(HIGH, LOW);
+            theFileObj=io.StringIO(u"""glue(HIGH, LOW);
 xglue(HIGH, LOW)
 """)
             )
@@ -4875,7 +4876,7 @@ class MacroEnvAccess(TestMacroEnv):
     def test_00(self):
         """MacroEnvAccess.test_00() accessing the macro environment after processing.""" 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM -1
+        myStr = u"""SPAM -1
 EGGS -2+SPAM
 CHIPS 3+EGGS
 BEANS 4+CHIPS
@@ -4891,7 +4892,7 @@ PEAS Not on the menu
             i += 1
         # Do some undef'ing
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""SPAM
+            theFileObj=io.StringIO(u"""SPAM
 EGGS
 PEAS
 """)
@@ -4903,7 +4904,7 @@ PEAS
             i += 1
         # Do some defining
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""SPAM 1
+            theFileObj=io.StringIO(u"""SPAM 1
 EGGS 2+SPAM
 """)
             )
@@ -4933,7 +4934,7 @@ EGGS 2+SPAM
 #define SPAM 1 /* #100 Ref: 1 True */""", str(myEnv))
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""SPAM
+            theFileObj=io.StringIO(u"""SPAM
 EGGS
 CHIPS
 BEANS
@@ -4944,7 +4945,7 @@ BEANS
         for ttt in myGen:
             myReplacements = myEnv.replace(ttt, myGen)
             repList += myReplacements
-        expectedTokens = self.stringToTokens("""1
+        expectedTokens = self.stringToTokens(u"""1
 2+1
 3+2+1
 4+3+2+1
@@ -4999,7 +5000,7 @@ class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
     def test_00(self):
         """MacroEnvPreserveStateOnRedefinition.test_00(): Test state (refcount etc.) is preserved on redefinition.""" 
         myMap = MacroEnv.MacroEnv()
-        myStr = """DEF 1 + 2
+        myStr = u"""DEF 1 + 2
  """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -5015,7 +5016,7 @@ class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
         self.assertEqual(11, myMap.macro('DEF').line)
         self.assertEqual(1, myMap.macro('DEF').refCount)
         # Now try a bad redefinition
-        myStr = 'DEF 1+2\n'
+        myStr = u'DEF 1+2\n'
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
             )
@@ -5028,7 +5029,7 @@ class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
             17,
             )
         # Now try a good redefinition from different file and line
-        myStr = 'DEF   1   /*   Some  comment   */    +     2    \n'
+        myStr = u'DEF   1   /*   Some  comment   */    +     2    \n'
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
             )
@@ -5072,7 +5073,7 @@ class SpecialParsingOverRun(TestMacroEnv):
         information.
         """
         myMap = MacroEnv.MacroEnv()#enableTrace=True)
-        myStr = """INC 1
+        myStr = u"""INC 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -5081,7 +5082,7 @@ class SpecialParsingOverRun(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['INC',])
         myTuPp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('INC == 1\n')
+            theFileObj=io.StringIO(u'INC == 1\n')
             )
         myGen = myTuPp.next()
         result = []
@@ -5123,7 +5124,7 @@ class MacroEnvCppInternals(TestMacroEnv):
     def test_3_9_00(self):
         """MacroEnvCppInternals.test_3_9_00(): 3.9 [0]. TODO: Raise an exception.""" 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """f(x) x x
+        myStr = u"""f(x) x x
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -5133,7 +5134,7 @@ class MacroEnvCppInternals(TestMacroEnv):
         self._checkMacroEnv(myGen, myEnv, ['f',])
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""f (1
+            theFileObj=io.StringIO(u"""f (1
 #undef f
 #define f 2
 f)
@@ -5220,7 +5221,7 @@ f)
         # -> twice(1)
         # -> (2*(1))
         myEnv = MacroEnv.MacroEnv()
-        myStr = """twice(x) (2*(x))
+        myStr = u"""twice(x) (2*(x))
 call_with_1(x) x(1)
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -5232,7 +5233,7 @@ call_with_1(x) x(1)
         self._checkMacroEnv(myGen, myEnv, ['twice', 'call_with_1',])
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""call_with_1 (twice)
+            theFileObj=io.StringIO(u"""call_with_1 (twice)
 """)
             )
         repList = []
@@ -5267,7 +5268,7 @@ call_with_1(x) x(1)
         # strange(stderr) p, 35)
         # -> fprintf (stderr, "%s %d", p, 35)
         myEnv = MacroEnv.MacroEnv()
-        myStr = """strange(file) fprintf (file, "%s %d",
+        myStr = u"""strange(file) fprintf (file, "%s %d",
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -5277,7 +5278,7 @@ call_with_1(x) x(1)
         self._checkMacroEnv(myGen, myEnv, ['strange',])
         # Now replacement
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO("""strange(stderr) p, 35)
+            theFileObj=io.StringIO(u"""strange(stderr) p, 35)
 """)
             )
         repList = []
@@ -5314,7 +5315,7 @@ class VariableArgumentMacros(TestMacroEnv):
     def test_00(self):
         """VariableArgumentMacros.test_00(): - Function like macro with variable arguments."""
         myMap = MacroEnv.MacroEnv()
-        myStr = """showlist(...) puts(#__VA_ARGS__)
+        myStr = u"""showlist(...) puts(#__VA_ARGS__)
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -5323,7 +5324,7 @@ class VariableArgumentMacros(TestMacroEnv):
         myMap.define(myGen, '', 1)
         self._checkMacroEnv(myGen, myMap, ['showlist',])
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('showlist(The first, second, and third items.);')
+            theFileObj=io.StringIO(u'showlist(The first, second, and third items.);')
             )
         repList = []
         myGen = myCpp.next()
@@ -5334,7 +5335,7 @@ class VariableArgumentMacros(TestMacroEnv):
         #print 'TRACE: repList:\n', '\n'.join([str(x) for x in repList])
         #print 'TRACE:', self.tokensToString(repList)
         self.assertEqual(
-            self.stringToTokens('puts("The first,second,and third items.");'),
+            self.stringToTokens(u'puts("The first,second,and third items.");'),
             repList,
             )
 
@@ -5344,7 +5345,7 @@ class MacroHistory(TestMacroEnv):
         """MacroHistory.test_00(): - Basic macro history."""
 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -5377,7 +5378,7 @@ In scope:""")
         """MacroHistory.test_01(): - define, undef and define again."""
 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 SPAM
 SPAM 2
 """
@@ -5413,7 +5414,7 @@ In scope:
         """MacroHistory.test_02(): - Multiple definition and undefinition."""
 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 SPAM
 SPAM 2
 SPAM
@@ -5459,7 +5460,7 @@ In scope:
         """MacroHistory.test_01(): - define, undef and get the undef macro."""
 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -5506,7 +5507,7 @@ Out-of-scope:
         """MacroHistory.test_04(): - define, undef and define again with references."""
 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 SPAM
 SPAM 2
 """
@@ -5571,7 +5572,7 @@ In scope:
         """MacroHistory.test_05(): - references to ifdef'd macros that are not defined."""
 
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -5659,7 +5660,7 @@ class TestLinux(TestMacroEnv):
 #define __stringify(x...)    __stringify_1(x)
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
-        myStr = """__stringify_1(x...)    #x
+        myStr = u"""__stringify_1(x...)    #x
 __stringify(x...)    __stringify_1(x)
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -5677,8 +5678,8 @@ __stringify(x...)    __stringify_1(x)
             )
         myInOut = (
             # cpp:
-            ('__stringify(X)', '"X"'),
-            ('__stringify(X,Y)', '"X"'),
+            (u'__stringify(X)', '"X"'),
+            (u'__stringify(X,Y)', '"X"'),
             )
         for myIn, myOut in myInOut:
             myCpp = PpTokeniser.PpTokeniser(
@@ -5703,7 +5704,7 @@ __stringify(x...)    __stringify_1(x)
 /* rwsem.h */
 f(__ASM_SIZE(add))
 """
-        def_src = """__ASM_SEL(a,b) a,b
+        def_src = u"""__ASM_SEL(a,b) a,b
 __ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
 """
         myMacEnv = MacroEnv.MacroEnv(enableTrace=True)
@@ -5720,7 +5721,7 @@ __ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
             myMacEnv,
             ['__ASM_SEL', '__ASM_SIZE',]
             )
-        srcIn = "f(__ASM_SIZE(add))\n"
+        srcIn = u"f(__ASM_SIZE(add))\n"
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(srcIn)
             )
@@ -5748,7 +5749,7 @@ __ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
 /* rwsem.h */
 f(_ASM_ADD)
 """
-        def_src = """__ASM_FORM(x)    " " #x " "
+        def_src = u"""__ASM_FORM(x)    " " #x " "
 __ASM_SEL(a,b) __ASM_FORM(b)
 __ASM_SIZE(inst, ...)    __ASM_SEL(inst##l##__VA_ARGS__, inst##q##__VA_ARGS__)
 _ASM_ADD    __ASM_SIZE(add)
@@ -5769,7 +5770,7 @@ _ASM_ADD    __ASM_SIZE(add)
             myMacEnv,
             ['__ASM_FORM', '__ASM_SEL', '__ASM_SIZE', '_ASM_ADD',]
             )
-        srcIn = "f(_ASM_ADD)\n"
+        srcIn = u"f(_ASM_ADD)\n"
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(srcIn)
             )
@@ -5788,7 +5789,7 @@ class MacroDependencies(TestMacroEnv):
     def test_00(self):
         """MacroDependencies.test_00(): - No macro dependencies."""
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -5805,7 +5806,7 @@ EGGS 2
     def test_01(self):
         """MacroDependencies.test_01(): - Simple macro dependency."""
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS
+        myStr = u"""SPAM EGGS
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -5825,7 +5826,7 @@ EGGS 2
     def test_02(self):
         """MacroDependencies.test_02(): - Macro dependency on self."""
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM SPAM\n"""
+        myStr = u"""SPAM SPAM\n"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
             )
@@ -5839,7 +5840,7 @@ EGGS 2
     def test_03(self):
         """MacroDependencies.test_03(): - Macro cyclic dependency."""
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM EGGS
+        myStr = u"""SPAM EGGS
 EGGS SPAM
 """
         myCpp = PpTokeniser.PpTokeniser(
@@ -5864,7 +5865,7 @@ EGGS SPAM
     def test_04(self):
         """MacroDependencies.test_04(): - Non-existent macro."""
         myEnv = MacroEnv.MacroEnv()
-        myStr = """SPAM 1
+        myStr = u"""SPAM 1
 EGGS 2
 """
         myCpp = PpTokeniser.PpTokeniser(

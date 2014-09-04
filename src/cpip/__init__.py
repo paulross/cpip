@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2014-03-03'
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 __all__ = ['core', 'util', 'plot']
@@ -28,11 +28,13 @@ __all__ = ['core', 'util', 'plot']
 """CPIP: 'C' Preprocessor in Python.
 """
 
-CPIP_VERSION = (0, 9, 0)
+CPIP_VERSION = (0, 9, 1)
 
 RELEASE_NOTES = [
     """Release Notes (latest at top).
 ==============================
+2014-09-03: Version 0.9.1, various minor fixes. Tested on Python 2.7 and 3.3.
+
 2014-01-11: Revisited SVG and HTML code to make it faster and cross browser.
 
 2012-03-26: Updated to Python 3.

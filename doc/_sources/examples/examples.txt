@@ -34,12 +34,12 @@ For example:
 Each in the list of files preprocessed in this pass is linked to file specific page.
 
 =======================================
-File Specific Pages
+Preprocessed File Specific Page
 =======================================
 
 These describe the results of preprocessing a single file, it contains links to:
 
-#. The final translation unit.
+#. The source and the translation unit as HTML.
 #. The results of file inclusion.
 #. The results of conditional compilation.
 #. Macro processing results.
@@ -52,14 +52,31 @@ The top of the page includes links to these sections (described in detail below)
    :alt: The overall SVG diagram.
    :align: center
 
-Further down the page is a table showing what files were included and how many times:
+Further down the page is a table showing what files were included, from where and how many times:
 
 .. image:: images/HTMLLinux_cpu.c_Home_Lower.png
    :alt: The overall SVG diagram.
    :align: center
 
-Translation Unit & Original File
-=================================
+Here is an explanation for the table:
+
+.. image:: images/HTMLLinux_cpu.c_Home_Lower_Lower_edit.png
+   :alt: Files used.
+   :align: center
+
+Original File and the Translation Unit
+=======================================
+
+Original  File
+----------------------
+
+All processed source code (original file and and included files) is presented as syntax highlighted HTML.
+
+The syntax is the C pre-preprocessor language. Macro names are linked to their definition in the :ref:`cpip_macro_page_example` page.
+
+.. image:: images/HTMLLinux_cpu.c_ITU_edit.png
+   :alt: A individual file in HTML.
+   :align: center
 
 Translation Unit
 ----------------------
@@ -72,19 +89,14 @@ The numbered links thus ``[       19]`` are to an HTML representation of the ori
 
 The other navigational element present is when the file path is the file being pre-processed a forward link is there to to the next part of this file, thus skipping over intermediate ``#include``'d code.
 
-.. image:: images/HTMLLinux_cpu.c_TU.png
+.. image:: images/HTMLLinux_cpu.c_TU_edit.png
    :alt: The complete translation unit represented in HTML.
    :align: center
 
-Original  File
-----------------------
+Further down you can see the actual code from ``cpu.c``, notice the macro expansion on line 76.
 
-All processed source code (original file and and included files) is presented as syntax highlighted HTML.
-
-The syntax is the C pre-preprocessor language. Macro names are linked to their definition in the :ref:`cpip_macro_page_example` page.
-
-.. image:: images/HTMLLinux_cpu.c_ITU.png
-   :alt: A individual file in HTML.
+.. image:: images/HTMLLinux_cpu.c_TU_Lower.png
+   :alt: The complete translation unit represented in HTML.
    :align: center
 
 The SVG Include Graph
@@ -95,75 +107,72 @@ The file specific page offers a link to an SVG visualisation of the file include
 The Overall Picture
 -----------------------
 
-The diagram represents a tree with the root (the file being preprocessed) at center left. Increasing include depth is left-to-right and source code order (i.e. ``#include`` order) is top to bottom.
+The diagram represents a tree with the root (the file being preprocessed) at center left. Each node represents a file and each edge represents an ``#include`` directive. Increasing include depth is left-to-right and source code order (i.e. order of the ``#include`` directives) is top to bottom.
 
-A special case is that the may be a file ``"Unnamed Pre-Include"`` at the top left and joined to the preprocessed file with a thick light grey line. This 'virtual' file contains the macro declarations made on the :file:`CPIPMain.py` command line.
+At the top are various zoom factors that you can use to view the graph, initially the page opens at the smallest scale factor to give you an impression of what is going on:
 
-Each file is represented by a fixed width block, the depth is proportional to the number of preprocessing tokens produced by a file (and its ``#include``'s). Cyan coloured blocks represent files that are included but contain no effective content, probably because their header guards use conditional compilation to prevent re-inclusion.
-
-The diagram looks like this:
-
-.. image:: images/SVGLinuxOverall.png
-   :alt: The overall SVG diagram.
+.. image:: images/SVG_CPU_OpeningPage.png
+   :alt: The overall SVG diagram for cpu.c.
    :align: center
 
 A Detailed Look
 -----------------------
 
-Zooming in to a part of the diagram reveals a host of new information. This example (in the center of the diagram above) and represents the :file:`arch/x86/include/asm/bitops.h` file.
+Zooming in to 100% on one part of the graph gives a wealth of information. In this picture the :file:`processor.h` file is represented on the left and the files that it ``#include``'s to its right.:
 
-In this picture the :file:`arch/x86/include/asm/bitops.h` file is represented on the left and the files that it ``#include``'s to its right.
-
-.. image:: images/SVGLinuxDetail.png
-   :alt: Detail of the SVG diagram.
+.. image:: images/SVG_CPU_FileDetail.png
+   :alt: The overall SVG diagram for cpu.c.
    :align: center
+
+Each file is represented by a fixed width block, the height is proportional to the number of preprocessing tokens produced by a file (and its ``#include``'s) [#]_. Cyan coloured blocks represent files that are included but contain no effective content, usually because it has already been included and the header guards use conditional compilation to prevent preprocessing more than once (``types.h`` for example).
+
+The 'V' symbol in the block represents the relative size of the file and its descendants, if the 'V' touches top and bottom then all the tokens come from this file (``personality.h`` for example). Where the 'V' is closed, or almost so, it means the bulk of the tokens are coming from the descendent includes (``msr.h`` for example).
+
+The coloured bars on the left represent the count of different token types, the left bar being the current file, the right bar being the total of the descendants. See below for which :ref:`token_types` corespond to each colour.
+
+Many parts of this diagram can display additional information when moving the mouse over various bits of the file block. 
 
 File Path
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Many parts of this diagram can display additional information on a mouse over. For example mousing over the file name above the box shows the the absolute path of the file as a pop-up yellow block:
+For example mousing over the file name above the box shows the the absolute path of the file stack as a pop-up yellow block. At the top of this list is the file we are preprocessing, then the stack of included files downwards to ``processor.h``:
 
-.. image:: images/SVGFilePath.png
+.. image:: images/SVG_CPU_FileDetail_FileStack.png
    :alt: The result of mousing over the file name.
    :align: center
-
+   
 How it was Included?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Moving the mouse over the ``?`` to the left of the block reveals a host of information about the file inclusion process:
+Moving the mouse over to the left of the block reveals a host of information about the file inclusion process:
 
-.. image:: images/SVGIncPath.png
+.. image:: images/SVG_CPU_FileDetail_WhereWhyHow.png
    :alt: The result of mousing over the left hand ``?``.
    :align: center
 
 This pop-up yellow block contains the following:
 
-* ``Inc:`` *Where* this was included from. This :file:`arch/x86/include/asm/bitops.h` file is included from line 23 of the :file:`kernel/bitops.h` file.
-* ``As:`` *Why* it was included. This is the current state of the conditional compilation stack.
-* ``How:`` *How* this file was included. This string starts with the text that follows the ``#include`` statement, in this case ``<asm/bitops.h>``. This is followed by the search results, in this case this file was found by searching the system includes (``sys=``) and was found in :file:`arch/x86/include`. There may be more than one search made as fallback mechanisms are used and a failure will be shown with ``None``. For example ``usr=None sys=spam/eggs`` means that the user include directories were searched first and nothing came up, then the system include directories were searched and the file was found in :file:`spam/eggs`.
+* ``Where:`` *Where* this was included from. This file is included from line 22 of the :file:`arch/x86/include/asm/thread_info.h` file.
+* ``Why:`` *Why* it was included. This is the current state of the conditional compilation stack.
+* ``How:`` *How* this file was included. This string starts with the text that follows the ``#include`` statement, in this case ``#include <asm/processor.h>``. This is followed by the search results, in this case this file was found by searching the system includes (``sys=``) and was found in :file:`arch/x86/include`. There may be more than one search made as fallback mechanisms are used and a failure will be shown with ``None``. For example ``usr=None sys=spam/eggs`` means that the user include directories were searched first and nothing came up, then the system include directories were searched and the file was found in :file:`spam/eggs`. A special case; ``CP:`` means 'the current place'.
+
+.. _token_types:
 
 Token Types
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you are interested in what types of preprocessor tokens were encountered than there is a host of information available to you. On the left hand side of each file block is a colour coded histogram of token types. If the file includes others then there will be two, the left hand one is for the file, the right hand one is for all the files it includes. Hovering over the ``?`` in either histogram pops up the legend thus:
+If you are interested in what types of preprocessor tokens were encountered than there is a host of information available to you. On the left hand side of each file block is a colour coded histogram of token types. If the file includes others then there will be two, the left hand one is for the file, the right hand one is for all the files it includes. Hovering over either histogram pops up the legend thus:
 
-.. image:: images/SVGHistogramLegend.png
+.. image:: images/SVG_CPU_FileDetail_HistLegend.png
    :alt: The legend for the histogram bars.
    :align: center
 
-The actual count of tokens is seen when moving the mouse over the left of the three ``?`` characters within the box. There are two columns, the first is for all tokens and the second is for *significant* tokens, that is those that are not conditionally excluded by ``#if`` etc. statements:
+The actual count of tokens is seen when moving the mouse over the centre of the box. There are three sets of two columns, the left column of the set is total tokens, the right column is for *significant* tokens, that is those that are not conditionally excluded by ``#if`` etc. statements.
 
-.. image:: images/SVGTokensJustMe.png
-   :align: center
+The first set is for the specific file, the second set is the descendents and the third set is the total.
 
-Similarly the token count for the files this file includes:
-
-.. image:: images/SVGTokensChildren.png
-   :align: center
-
-And the combined token count:
-
-.. image:: images/SVGTokensAll.png
+.. image:: images/SVG_CPU_FileDetail_TokenCount.png
+   :alt: Token counts.
    :align: center
 
 Conditional Compilation
@@ -192,39 +201,20 @@ CPIP retains all information about marcos during preprocessing and the file spec
 
 The contents starts with a list of links to macro information further down the page; the first set of links is alphabetical to all macros that are declared, even if they are not used. The second set is to any macros that are actually used in pre-processing this file.
 
-These are all linked to the main macro table further down the page that looks like this:
+These are all linked to the macro details that looks like this, for example ``BITMAP_LAST_WORD_MASK``:
 
-.. image:: images/HTMLLinux_cpu.c_Macro_TableStart.png
+.. image:: images/HTMLLinux_cpu.c_Macro_Detail.png
    :alt: Macro information.
    :align: center
 
-The table has the following columns:
+Each macro description has the following:
 
-* Macro name and its definition, this is on bold if the macro has been referenced.
-* Where the macro was defined (NOTE: macros can be redefined and that would happen in a different place). This is linked to the source file.
-* The reference count for the macro i.e. how many times the pre-processor was required to invoke the definition. This is linked to further down the page where the actual invocations are identified (see below).
-* A boolean that says whether the macro is still defined at the end of procession the translation unit.
-
-As an example let's look at ``BITS_TO_LONGS(nr)``. Here is the macro table entry:
-
-.. image:: images/HTMLLinux_cpu.c_Macro_Table_BITS.png
-   :alt: Macro information.
-   :align: center
-
-A link in the second column takes you to an HTML rendition of the file where the macro is defined.
-
-A link in the third column takes you down the page to a summary of *where* the macro was referenced.
-
-.. image:: images/HTMLLinux_cpu.c_Macro_Table_BITS_Usage.png
-   :alt: Macro information.
-   :align: center
-
-Each link in that table takes you to the source code that referenced this macro. For example take ``BITS_TO_LONGS(nr)`` and the file :file:`linux_2.6.37/kernel/cpu.c` there are a seven references which are of the form ``line-column``. The link to ``508-53`` goes to here:
-
-.. image:: images/HTMLLinux_cpu.c_Macro_Table_BITS_ITU.png
-   :alt: Macro information.
-   :align: center
-
+* The macro name followed by the reference count for the macro i.e. how many times the pre-processor was required to invoke the definition. This line ends with whether it is still defined at the end of preprocessing (True in this case).
+* The macro definition (this is artificially wrapped for clarity).
+* Following ``defined @`` is where the macro was defined and a link to the source file where the the macro is defined.
+* Then follows a table of locations that the macro was used. In this case it was referenced by ``include/linux/bitmap.h`` on line 176, column 20, then line 228, column 20 and so on. Each of these references is a link to the source file representation where the macro is used. NOTE: Where macros are defined in terms of other macros then this location will not necessarily have the literal macro name, it is implicit because of macro dependencies. For example if you look at the last entry ``kernel/cpu.c`` line 653, column 47 then you do not see ``BITMAP_LAST_WORD_MASK``, instead you see ``CPU_BITS_ALL`` however ``CPU_BITS_ALL`` is defined in terms of ``BITMAP_LAST_WORD_MASK``.
+* After "I depend on these macros" is a table (a tree actually) of other macros (with links) that ``BITMAP_LAST_WORD_MASK`` depend on, in this case only one, ``BITS_PER_LONG`` as you can see in the definition.
+* After "These macros depend on me" is another table (a tree) of other macros (with links) that depend on ``BITMAP_LAST_WORD_MASK``.
 
 A Most Powerful Feature
 ============================
@@ -241,15 +231,12 @@ Some Real Examples
 CPIPMain is a command line tool that you can invoke very much like your favorite pre-processor. CPIPMain produces a number of HTML pages and SVG files that make it easier to understand what is happening during preprocessing. This section shows some examples of the kind of thing that CPIP can do.
 
 =======================================
-Symbian OS
-=======================================
-
-Symbian OS might have been killed off by Nokia but here is an example of :file:`CPIPMain.py` pre-processing one of Symbian's most basic files: `e32std.h <../copy_to_html/e32std/index.html>`_.
-
-=======================================
 The Linux Kernel
 =======================================
 
-A more complex example that shows the :file:`CPIPMain.py` pre-processing the `cpu.c <../copy_to_html/cpu/index.html>`_ file in the Linux Kernel.
+Here is :file:`CPIPMain.py` pre-processing the `cpu.c <../copy_to_html/cpu/index.html>`_ file from the Linux Kernel.
 
 
+.. rubric:: Footnotes
+
+.. [#] A special case is that the may be a file ``"Unnamed Pre-Include"`` at the top left and joined to the preprocessed file with a thick light grey line. This 'virtual' file contains the macro declarations made on the :file:`CPIPMain.py` command line.

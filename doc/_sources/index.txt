@@ -8,9 +8,9 @@ Welcome to CPIP
 
 CPIP is a C/C++ pre-processor implemented in Python.
 
-Instead of regard pre-processing as a just a dirty job that just has to be done as quickly as possible CPIP aims to record every detail of preprocessing CPIP help debugging difficult problems involving preprocessing.
+Instead of regard pre-processing as a just a dirty job that just has to be done as quickly as possible CPIP records every detail of preprocessing for inspection. Uniquely, CPIP can make those difficult preprocessing debugging problems easy to solve.
 
-As well CPIP can can produce some wonderfully visual information about file dependencies, macro usage and so on (see :ref:`cpip-examples`).
+CPIP can can produce some wonderfully visual information about file dependencies, macro usage and much more (see :ref:`cpip-examples`).
 
 CPIP's project page is here: https://sourceforge.net/projects/cpip/
 

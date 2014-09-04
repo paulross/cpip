@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2009-09-15'
-__version__ = '0.8.0'
+__version__ = '0.9.1'
 __rights__  = 'Copyright (c) Paul Ross'
 
 import logging
@@ -131,13 +131,13 @@ def nameFromString(theStr):
 #############################
 class XmlStream(object):
     """Creates and maintains an XML output stream."""
-    INDENT_STR = '  '
+    INDENT_STR = u'  '
     ENTITY_MAP = {
-                  '<'   : '&lt;',
-                  '>'   : '&gt;',
-                  '&'   : '&amp;',
-                  "'"   : '&apos;', 
-                  '"'   : '&quot;',
+                  '<'   : u'&lt;',
+                  '>'   : u'&gt;',
+                  '&'   : u'&amp;',
+                  "'"   : u'&apos;', 
+                  '"'   : u'&quot;',
                   }
     def __init__(self, theFout, theEnc='utf-8', theDtdLocal=None, theId=0, mustIndent=True):
         """Initialise with a writable file like object or a file path.
@@ -198,10 +198,10 @@ class XmlStream(object):
         """Opens a named element with attributes."""
         self._closeElemIfOpen()
         self._indent()
-        self._file.write('<%s' % name)
+        self._file.write(u'<%s' % name)
         kS = sorted(attrs.keys())
         for k in kS:
-            self._file.write(' %s="%s"' % (k, self._encode(attrs[k])))
+            self._file.write(u' %s="%s"' % (k, self._encode(attrs[k])))
         self._inElem = True
         self._canIndentStk.append(self._mustIndent)
         self._elemStk.append(name)
@@ -210,7 +210,8 @@ class XmlStream(object):
         """Encodes the string and writes it to the output."""
         self._closeElemIfOpen()
 #         print('WTF', repr(self._encode(theString)))
-        self._file.write(self._encode(theString))
+        encStr = self._encode(theString)
+        self._file.write(encStr)
         # mixed content - don't indent
         self._flipIndent(False)
 
@@ -244,18 +245,18 @@ class XmlStream(object):
                 raise ExceptionXmlEndElement(errMsg)
             logging.error(errMsg)
         if name != self._elemStk[-1]:
-            errMsg = 'endElement(%s) does not match %s' \
+            errMsg = 'endElement("%s") does not match "%s"' \
                                          % (name, self._elemStk[-1])
             if RAISE_ON_ERROR:
                 raise ExceptionXmlEndElement(errMsg)
             logging.error(errMsg)
         myName = self._elemStk.pop()
         if self._inElem:
-            self._file.write(' />')
+            self._file.write(u' />')
             self._inElem = False
         else:
             self._indent()
-            self._file.write('</%s>' % myName)
+            self._file.write(u'</%s>' % myName)
         self._canIndentStk.pop()
         
     def writeECMAScript(self, theScript):
@@ -284,9 +285,10 @@ class XmlStream(object):
         """
         self._closeElemIfOpen()
         self.xmlSpacePreserve()
-        self._file.write('\n<![CDATA[\n')
+        self._file.write(u'')
+        self._file.write(u'\n<![CDATA[\n')
         self._file.write(theData)
-        self._file.write('\n]]>\n')
+        self._file.write(u'\n]]>\n')
     
     def writeCSS(self, theCSSMap):
         """Writes a style sheet as a CDATA section. Expects a dict of dicts.
@@ -304,17 +306,17 @@ class XmlStream(object):
             for attr in sorted(theCSSMap[style].keys()):
                 theLines.append('%s : %s;' % (attr, theCSSMap[style][attr]))
             theLines.append('}')
-        self.writeCDATA('\n'.join(theLines))
+        self.writeCDATA(u'\n'.join(theLines))
         self.endElement('style')
     
     def _indent(self, offset=0):
         if self._canIndent:
-            self._file.write('\n')
+            self._file.write(u'\n')
             self._file.write(self.INDENT_STR*(len(self._elemStk)-offset))
         
     def _closeElemIfOpen(self):
         if self._inElem:
-            self._file.write('>')
+            self._file.write(u'>')
             self._inElem = False
 
     def _encode(self, theStr):
@@ -332,11 +334,11 @@ class XmlStream(object):
                 # Python 3.x code
                 retL.append(c)
 #         print(retL)
-        return ''.join(retL)#.encode(self._enc, 'xmlcharrefreplace')
+        return u''.join(retL)#.encode(self._enc, 'xmlcharrefreplace')
     
     def __enter__(self):
         """Context manager support."""
-        self._file.write("<?xml version='1.0' encoding=\"%s\"?>" % self._enc)
+        self._file.write(u"<?xml version='1.0' encoding=\"%s\"?>" % self._enc)
         # Write local DTD?
         return self
     
@@ -344,7 +346,7 @@ class XmlStream(object):
         """Context manager support."""
         while len(self._elemStk):
             self.endElement(self._elemStk[-1])
-        self._file.write('\n')
+        self._file.write(u'\n')
         if self._fileClose:
             self._file.close()
         return False
@@ -359,7 +361,7 @@ class XhtmlStream(XmlStream):
     def __enter__(self):
         """Context manager support."""
         super(XhtmlStream, self).__enter__()
-        self._file.write("""\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">""")
+        self._file.write(u"""\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">""")
         self.startElement(
                 'html',
                 {

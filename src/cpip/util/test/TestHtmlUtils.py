@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# Part of TotalDepth: Petrophysical data processing and presentation
-# Copyright (C) 1999-2012 Paul Ross
+# CPIP is a C/C++ Preprocessor implemented in Python.
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ Created on Jun 8, 2011
 
 __author__  = 'Paul Ross'
 __date__    = 'Jun 8, 2011'
-__version__ = '0.8.0'
+__version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2011 paulross.'
 
 #import pprint
@@ -60,25 +60,25 @@ class Test_retHtmlFileName(unittest.TestCase):
 
     def test_01(self):
         """Test_retHtmlFileName.test_01(): retHtmlFileName() - basic functionality."""
-        self.assertEqual('_e82c6828ebffd3ff8a034aa1121ac5c2.html', HtmlUtils.retHtmlFileName(''))
-        self.assertEqual('foo.lis_9c4089cf5cb01da7eb1abd0df35a56da.html', HtmlUtils.retHtmlFileName('foo.lis'))
+        self.assertEqual('_85815d8fcaf4100c893e42ecf798ee68.html', HtmlUtils.retHtmlFileName(''))
+        self.assertEqual('foo.lis_a2264fb27d01482d85fb07d540d99d29.html', HtmlUtils.retHtmlFileName('foo.lis'))
         myPathStr = 'a very long path that goes on and on and on and you think that it will never ever stop spam.lis'
         myPath = os.path.join(*myPathStr.split())
         self.assertEqual('a/very/long/path/that/goes/on/and/on/and/on/and/you/think/that/it/will/never/ever/stop/spam.lis', myPath)
         self.assertEqual(
-            'spam.lis_1df3ebf00c1732f3e67a96f407d760cc.html',
+            'spam.lis_eb53aeb1072ab90b9ba0304c5e2b6fd9.html',
             HtmlUtils.retHtmlFileName(myPath),
         )
 
     def test_02(self):
         """Test_retHtmlFileName.test_02(): retHtmlFileLink() - basic functionality."""
-        self.assertEqual('_e82c6828ebffd3ff8a034aa1121ac5c2.html#4', HtmlUtils.retHtmlFileLink('', 4))
-        self.assertEqual('foo.lis_9c4089cf5cb01da7eb1abd0df35a56da.html#4', HtmlUtils.retHtmlFileLink('foo.lis', 4))
+        self.assertEqual('_85815d8fcaf4100c893e42ecf798ee68.html#4', HtmlUtils.retHtmlFileLink('', 4))
+        self.assertEqual('foo.lis_a2264fb27d01482d85fb07d540d99d29.html#4', HtmlUtils.retHtmlFileLink('foo.lis', 4))
         myPathStr = 'a very long path that goes on and on and on and you think that it will never ever stop spam.lis'
         myPath = os.path.join(*myPathStr.split())
         self.assertEqual('a/very/long/path/that/goes/on/and/on/and/on/and/you/think/that/it/will/never/ever/stop/spam.lis', myPath)
         self.assertEqual(
-            'spam.lis_1df3ebf00c1732f3e67a96f407d760cc.html#4',
+            'spam.lis_eb53aeb1072ab90b9ba0304c5e2b6fd9.html#4',
             HtmlUtils.retHtmlFileLink(myPath, 4),
         )
 
@@ -107,7 +107,7 @@ class Test_XhtmlWrite(unittest.TestCase):
         self.assertEqual("""<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-  <a href="chips.lis_45f085668a3c0a432238239f47d2e383.html#47">Navigation text</a>
+  <a href="chips.lis_5e410d3de8868d056cd4d3367f91e769.html#47">Navigation text</a>
 </html>
 """,
             myF.getvalue(),
@@ -124,7 +124,7 @@ class Test_XhtmlWrite(unittest.TestCase):
         self.assertEqual("""<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-  <a href="chips.lis_45f085668a3c0a432238239f47d2e383.html#47">
+  <a href="chips.lis_5e410d3de8868d056cd4d3367f91e769.html#47">
     <span class="CSS_class">Navigation text</span>
   </a>
 </html>
@@ -227,26 +227,26 @@ class Test_writeFileListAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListAsTable(myS, myFileLinkS, {}, False)
-#        print()
-#        print(myF.getvalue())
-#        self.maxDiff = None
+#         print()
+#         print(myF.getvalue())
+#         self.maxDiff = None
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <table>
     <tr>
       <td>
-        <a href="beans.lis_75e52cad6cf2a392f15796f6ea3663e6.html">beans.lis</a>
+        <a href="beans.lis_37fe59d50e21a22f770f96832a3316be.html">beans.lis</a>
       </td>
     </tr>
     <tr>
       <td>
-        <a href="chips.lis_9737180af6c19687e9d5cc4698da7314.html">chips.lis</a>
+        <a href="chips.lis_52ff1ebbb6b180864516ab041e20da65.html">chips.lis</a>
       </td>
     </tr>
     <tr>
       <td>
-        <a href="eggs.lis_b28bb159a2e9af82ba9c6b4c21e31dc2.html">eggs.lis</a>
+        <a href="eggs.lis_1355f6695f856c9448c806cfa562a4c4.html">eggs.lis</a>
       </td>
     </tr>
   </table>
@@ -264,9 +264,9 @@ class Test_writeFileListAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListAsTable(myS, myFileLinkS, {}, False)
-#        print()
-#        print(myF.getvalue())
-#        self.maxDiff = None
+#         print()
+#         print(myF.getvalue())
+#         self.maxDiff = None
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
@@ -274,17 +274,17 @@ class Test_writeFileListAsTable(unittest.TestCase):
     <tr>
       <td rowspan="3">spam/</td>
       <td>
-        <a href="beans.lis_b3b8cbe00d93db8ed260037f1d2faf75.html">beans.lis</a>
+        <a href="beans.lis_2cd7aad2a1a03013720d9cc5d83b860c.html">beans.lis</a>
       </td>
     </tr>
     <tr>
       <td>
-        <a href="chips.lis_3902afaeb010283538abe7945a0089c5.html">chips.lis</a>
+        <a href="chips.lis_78c24a9e68057387b3f7c7de7f57385d.html">chips.lis</a>
       </td>
     </tr>
     <tr>
       <td>
-        <a href="eggs.lis_c575e9ada0d62438ae8f0b65ff4c1c51.html">eggs.lis</a>
+        <a href="eggs.lis_afc193e8de9a2e06454b4bf92d5fefd8.html">eggs.lis</a>
       </td>
     </tr>
   </table>
@@ -303,9 +303,9 @@ class Test_writeFileListAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListAsTable(myS, myFileLinkS, {}, False)
-#        print()
-#        print(myF.getvalue())
-#        self.maxDiff = None
+#         print()
+#         print(myF.getvalue())
+#         self.maxDiff = None
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
@@ -313,23 +313,23 @@ class Test_writeFileListAsTable(unittest.TestCase):
     <tr>
       <td rowspan="4">spam/</td>
       <td colspan="2">
-        <a href="chips.lis_3902afaeb010283538abe7945a0089c5.html">chips.lis</a>
+        <a href="chips.lis_78c24a9e68057387b3f7c7de7f57385d.html">chips.lis</a>
       </td>
     </tr>
     <tr>
       <td colspan="2">
-        <a href="eggs.lis_c575e9ada0d62438ae8f0b65ff4c1c51.html">eggs.lis</a>
+        <a href="eggs.lis_afc193e8de9a2e06454b4bf92d5fefd8.html">eggs.lis</a>
       </td>
     </tr>
     <tr>
       <td rowspan="2">fishfingers/</td>
       <td>
-        <a href="beans.lis_6d6a2244244fdcebb1cc18cbb94057ce.html">beans.lis</a>
+        <a href="beans.lis_8c05f2bb7fd4e4946ceae7a0f0a658f1.html">beans.lis</a>
       </td>
     </tr>
     <tr>
       <td>
-        <a href="peas.lis_9a84122dd1798be1916bbdc52301eb55.html">peas.lis</a>
+        <a href="peas.lis_93ee5d4c29eb90269e47d1e20daa4110.html">peas.lis</a>
       </td>
     </tr>
   </table>
@@ -348,26 +348,26 @@ class Test_writeFileListAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListAsTable(myS, myFileLinkS, {}, True)
-#        print()
-#        print(myF.getvalue())
-#        self.maxDiff = None
+#         print()
+#         print(myF.getvalue())
+#         self.maxDiff = None
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <table>
     <tr>
       <td rowspan="4">spam/</td>
-      <td colspan="2">chips.lis:<a href="chips.lis_3902afaeb010283538abe7945a0089c5.html">chips.lis</a></td>
+      <td colspan="2">chips.lis:<a href="chips.lis_78c24a9e68057387b3f7c7de7f57385d.html">chips.lis</a></td>
     </tr>
     <tr>
-      <td colspan="2">eggs.lis:<a href="eggs.lis_c575e9ada0d62438ae8f0b65ff4c1c51.html">eggs.lis</a></td>
+      <td colspan="2">eggs.lis:<a href="eggs.lis_afc193e8de9a2e06454b4bf92d5fefd8.html">eggs.lis</a></td>
     </tr>
     <tr>
       <td rowspan="2">fishfingers/</td>
-      <td>beans.lis:<a href="beans.lis_6d6a2244244fdcebb1cc18cbb94057ce.html">beans.lis</a></td>
+      <td>beans.lis:<a href="beans.lis_8c05f2bb7fd4e4946ceae7a0f0a658f1.html">beans.lis</a></td>
     </tr>
     <tr>
-      <td>peas.lis:<a href="peas.lis_9a84122dd1798be1916bbdc52301eb55.html">peas.lis</a></td>
+      <td>peas.lis:<a href="peas.lis_93ee5d4c29eb90269e47d1e20daa4110.html">peas.lis</a></td>
     </tr>
   </table>
 </html>
@@ -398,22 +398,22 @@ class Test_writeFileListTrippleAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListTrippleAsTable(myS, myFileLinkS, {}, False)
-#        print()
-#        print(myF.getvalue())
-#        self.maxDiff = None
+#         print()
+#         print(myF.getvalue())
+#         self.maxDiff = None
 #        print(myFileLinkS)
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <table>
     <tr>
-      <td> <a href="0eggs.lis_daa73ceada66c7e564a24972c7aec7c5.html">Link text 0</a></td>
+      <td> <a href="0eggs.lis_4656d29aa36ca0c168a10dd3ffe2c9fa.html">Link text 0</a></td>
     </tr>
     <tr>
-      <td> <a href="1chips.lis_6f9889ff1f6ddeb0caab0510469ef8ba.html">Link text 1</a></td>
+      <td> <a href="1chips.lis_6cb5a1758e21dad3dba0cc4a53d91c31.html">Link text 1</a></td>
     </tr>
     <tr>
-      <td> <a href="2beans.lis_cb57d392c330aa4fb5fb401cc76ad1db.html">Link text 2</a></td>
+      <td> <a href="2beans.lis_961d8a2ab0ecf325e12f11c8bdbbf817.html">Link text 2</a></td>
     </tr>
   </table>
 </html>
@@ -430,22 +430,22 @@ class Test_writeFileListTrippleAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListTrippleAsTable(myS, myFileLinkS, {}, False)
-#        print()
-#        print(myF.getvalue())
-#        self.maxDiff = None
+#         print()
+#         print(myF.getvalue())
+#         self.maxDiff = None
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <table>
     <tr>
       <td rowspan="3">spam/</td>
-      <td> <a href="beans.lis_b3b8cbe00d93db8ed260037f1d2faf75.html">Link text 0</a></td>
+      <td> <a href="beans.lis_2cd7aad2a1a03013720d9cc5d83b860c.html">Link text 0</a></td>
     </tr>
     <tr>
-      <td> <a href="chips.lis_3902afaeb010283538abe7945a0089c5.html">Link text 1</a></td>
+      <td> <a href="chips.lis_78c24a9e68057387b3f7c7de7f57385d.html">Link text 1</a></td>
     </tr>
     <tr>
-      <td> <a href="eggs.lis_c575e9ada0d62438ae8f0b65ff4c1c51.html">Link text 2</a></td>
+      <td> <a href="eggs.lis_afc193e8de9a2e06454b4bf92d5fefd8.html">Link text 2</a></td>
     </tr>
   </table>
 </html>
@@ -463,26 +463,26 @@ class Test_writeFileListTrippleAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListTrippleAsTable(myS, myFileLinkS, {}, False)
-#        print()
-#        print(myF.getvalue())
-#        self.maxDiff = None
+#         print()
+#         print(myF.getvalue())
+#         self.maxDiff = None
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
   <table>
     <tr>
       <td rowspan="4">spam/</td>
-      <td colspan="2"> <a href="chips.lis_3902afaeb010283538abe7945a0089c5.html">Link text 0</a></td>
+      <td colspan="2"> <a href="chips.lis_78c24a9e68057387b3f7c7de7f57385d.html">Link text 0</a></td>
     </tr>
     <tr>
-      <td colspan="2"> <a href="eggs.lis_c575e9ada0d62438ae8f0b65ff4c1c51.html">Link text 1</a></td>
+      <td colspan="2"> <a href="eggs.lis_afc193e8de9a2e06454b4bf92d5fefd8.html">Link text 1</a></td>
     </tr>
     <tr>
       <td rowspan="2">fishfingers/</td>
-      <td> <a href="beans.lis_6d6a2244244fdcebb1cc18cbb94057ce.html">Link text 2</a></td>
+      <td> <a href="beans.lis_8c05f2bb7fd4e4946ceae7a0f0a658f1.html">Link text 2</a></td>
     </tr>
     <tr>
-      <td> <a href="peas.lis_9a84122dd1798be1916bbdc52301eb55.html">Link text 3</a></td>
+      <td> <a href="peas.lis_93ee5d4c29eb90269e47d1e20daa4110.html">Link text 3</a></td>
     </tr>
   </table>
 </html>

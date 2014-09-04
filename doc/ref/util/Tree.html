@@ -1,0 +1,212 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tree &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.util" href="index.html" />
+    <link rel="next" title="XmlWrite" href="XmlWrite.html" />
+    <link rel="prev" title="StrTree" href="StrTree.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="XmlWrite.html" title="XmlWrite"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="StrTree.html" title="StrTree"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">cpip.util</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tree">
+<h1>Tree<a class="headerlink" href="#tree" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.util.Tree"></span><p>Represents a simple tree.</p>
+<p>Created on 6 Mar 2014</p>
+<p>&#64;author: paulross</p>
+<dl class="class">
+<dt id="cpip.util.Tree.DuplexAdjacencyList">
+<em class="property">class </em><tt class="descclassname">cpip.util.Tree.</tt><tt class="descname">DuplexAdjacencyList</tt><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a set of parent/child relationships (and their inverse) as
+Adjacency Lists.</p>
+<dl class="attribute">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.allChildren">
+<tt class="descname">allChildren</tt><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.allChildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an unordered list of objects that have at least one parent.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.allParents">
+<tt class="descname">allParents</tt><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.allParents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an unordered list of objects that have at least one child.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.children">
+<tt class="descname">children</tt><big>(</big><em>parent</em><big>)</big><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all immediate children of a given parent.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.hasChild">
+<tt class="descname">hasChild</tt><big>(</big><em>child</em><big>)</big><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.hasChild" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the given child has any parents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.hasParent">
+<tt class="descname">hasParent</tt><big>(</big><em>parent</em><big>)</big><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.hasParent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the given parent has any children.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.parents">
+<tt class="descname">parents</tt><big>(</big><em>child</em><big>)</big><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.parents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all immediate parents of a given child.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.treeChildParent">
+<tt class="descname">treeChildParent</tt><big>(</big><em>theObj</em><big>)</big><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.treeChildParent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Tree() object where the links are the relationships
+between child and parent.
+Cycles are not reproduced i.e. if a -&gt; b and b -&gt; c and c-&gt; a then
+treeChildParent(&#8216;a&#8217;) returns [&#8216;a&#8217;, &#8216;c&#8217;, &#8216;b&#8217;,]
+treeChildParent(&#8216;b&#8217;) returns [&#8216;b&#8217;, &#8216;a&#8217;, &#8216;c&#8217;,]
+treeChildParent(&#8216;c&#8217;) returns [&#8216;c&#8217;, &#8216;b&#8217;, &#8216;a&#8217;,]</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.util.Tree.DuplexAdjacencyList.treeParentChild">
+<tt class="descname">treeParentChild</tt><big>(</big><em>theObj</em><big>)</big><a class="headerlink" href="#cpip.util.Tree.DuplexAdjacencyList.treeParentChild" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Tree() object where the links are the relationships
+between parent and child.
+Cycles are not reproduced i.e. if a -&gt; b and b -&gt; c and c-&gt; a then
+treeParentChild(&#8216;a&#8217;) returns [&#8216;a&#8217;, &#8216;b&#8217;, &#8216;c&#8217;,]
+treeParentChild(&#8216;b&#8217;) returns [&#8216;b&#8217;, &#8216;c&#8217;, &#8216;a&#8217;,]
+treeParentChild(&#8216;c&#8217;) returns [&#8216;c&#8217;, &#8216;a&#8217;, &#8216;c&#8217;,]</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.util.Tree.Tree">
+<em class="property">class </em><tt class="descclassname">cpip.util.Tree.</tt><tt class="descname">Tree</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#cpip.util.Tree.Tree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents a simple tree of objects.</p>
+<dl class="method">
+<dt id="cpip.util.Tree.Tree.branches">
+<tt class="descname">branches</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.util.Tree.Tree.branches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the possible branches through the tree as a list of lists
+of self._obj.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.util.Tree.Tree.youngestChild">
+<tt class="descname">youngestChild</tt><a class="headerlink" href="#cpip.util.Tree.Tree.youngestChild" title="Permalink to this definition">¶</a></dt>
+<dd><p>The latest child to be added, may raise IndexError if no children.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="StrTree.html"
+                        title="previous chapter">StrTree</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="XmlWrite.html"
+                        title="next chapter">XmlWrite</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/util/Tree.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="XmlWrite.html" title="XmlWrite"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="StrTree.html" title="StrTree"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" >cpip.util</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

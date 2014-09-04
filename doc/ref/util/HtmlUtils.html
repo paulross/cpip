@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HtmlUtils &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.util" href="index.html" />
+    <link rel="next" title="ListGen" href="ListGen.html" />
+    <link rel="prev" title="FileStatus" href="FileStatus.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ListGen.html" title="ListGen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="FileStatus.html" title="FileStatus"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">cpip.util</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="htmlutils">
+<h1>HtmlUtils<a class="headerlink" href="#htmlutils" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.util.HtmlUtils"></span><p>HTML utility functions.</p>
+<dl class="function">
+<dt id="cpip.util.HtmlUtils.pathSplit">
+<tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">pathSplit</tt><big>(</big><em>p</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.pathSplit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Split a path into its components.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.HtmlUtils.retHtmlFileName">
+<tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">retHtmlFileName</tt><big>(</big><em>thePath</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.retHtmlFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a unique, short, human readable file name base on the input
+file path.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.HtmlUtils.writeDictTreeAsTable">
+<tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">writeDictTreeAsTable</tt><big>(</big><em>theS</em>, <em>theDt</em>, <em>tableAttrs</em>, <em>includeKeyTail</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.writeDictTreeAsTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a DictTreeHtmlTable object as a table, for example as a directory
+structure.
+The key list in the DictTreeHtmlTable object is the path to the file
+i.e. os.path.abspath(p).split(os.sep) and the value is expected to be a
+pair of (link, nav_text) or None.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.HtmlUtils.writeFileListAsTable">
+<tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">writeFileListAsTable</tt><big>(</big><em>theS</em>, <em>theFileLinkS</em>, <em>tableAttrs</em>, <em>includeKeyTail</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.writeFileListAsTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a list of file names as an HTML table looking like a directory
+structure. theFileLinkS is a list of pairs (file_path, href).
+The navigation text in the cell will be the basename of the file_path.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.HtmlUtils.writeFileListTrippleAsTable">
+<tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">writeFileListTrippleAsTable</tt><big>(</big><em>theS</em>, <em>theFileLinkS</em>, <em>tableAttrs</em>, <em>includeKeyTail</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.writeFileListTrippleAsTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a list of file names as an HTML table looking like a directory
+structure. theFileLinkS is a list of triples (file_name, href, nav_text).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.HtmlUtils.writeFilePathsAsTable">
+<tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">writeFilePathsAsTable</tt><big>(</big><em>valueType</em>, <em>theS</em>, <em>theKvS</em>, <em>tableStyle</em>, <em>fnTd</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.writeFilePathsAsTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes file paths as a table, for example as a directory structure.
+valueType - The type of the value; None, <a href="#id1"><span class="problematic" id="id2">|</span></a>&#8216;list&#8217; | &#8216;set&#8217;
+theKvS - A list of pairs (file_path, value).
+tableStyle - The style used for the table.
+fnTd - A callback function that is executed for a &lt;td&gt; element when</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>there is a non-None value. This is called with the following arguments:</dt>
+<dd>theS - The HTML stream.
+attrs - A map of attrs that include the rowspan/colspan for the &lt;td&gt;
+k - The key as a list of path components.
+v - The value given by the caller.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.HtmlUtils.writeHtmlFileLink">
+<tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">writeHtmlFileLink</tt><big>(</big><em>theS</em>, <em>theSrcPath</em>, <em>theLineNum</em>, <em>theText=''</em>, <em>theClass=None</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.writeHtmlFileLink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a link to another HTML file that represents source code.
+theS is an XHTML stream.
+theSrcPath is the path of the original source, whis will be encoded with retHtmlFileName().
+theLineNum is an integer line number in the target.
+theText is optional navigation text.
+theClass is optional CSS class for the navigational text.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="FileStatus.html"
+                        title="previous chapter">FileStatus</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ListGen.html"
+                        title="next chapter">ListGen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/util/HtmlUtils.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ListGen.html" title="ListGen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="FileStatus.html" title="FileStatus"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" >cpip.util</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

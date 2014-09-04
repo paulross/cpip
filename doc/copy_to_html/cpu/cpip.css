@@ -1,3 +1,15 @@
+/* Conditionally compiled == True. */
+span.True {
+background-color: GreenYellow;
+}
+/* Conditionally compiled == False. */
+span.False {
+background-color: Salmon;
+}
+/* Conditionally compiled == Maybe. */
+span.Maybe {
+background-color: yellowgreen;
+}
 /* header-name */
 span.a {
 color:         Chartreuse;
@@ -81,7 +93,7 @@ margin:         6px;
 padding:        6px;
 }
 h1 {
-color:            IndianRed;
+color:            darkgoldenrod;
 font-family:      sans-serif;
 font-size:        14pt;
 font-weight:      bold;

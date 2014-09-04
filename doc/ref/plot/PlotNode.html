@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -8,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>PlotNode &mdash; CPIP 0.8.1 documentation</title>
+    <title>PlotNode &mdash; CPIP 0.9.1 documentation</title>
     
     <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -16,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.8.1',
+        VERSION:     '0.9.1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,10 +23,10 @@
     <script type="text/javascript" src="../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
-    <link rel="top" title="CPIP 0.8.1 documentation" href="../../index.html" />
-    <link rel="up" title="CPIP Plot" href="../plot/index.html" />
-    <link rel="next" title="SVGWriter" href="../plot/SVGWriter.html" />
-    <link rel="prev" title="Coord" href="../plot/Coord.html" /> 
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.plot" href="index.html" />
+    <link rel="next" title="SVGWriter" href="SVGWriter.html" />
+    <link rel="prev" title="Coord" href="Coord.html" /> 
   </head>
   <body>
     <div class="related">
@@ -41,14 +39,14 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../plot/SVGWriter.html" title="SVGWriter"
+          <a href="SVGWriter.html" title="SVGWriter"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../plot/Coord.html" title="Coord"
+          <a href="Coord.html" title="Coord"
              accesskey="P">previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../plot/index.html" accesskey="U">CPIP Plot</a> &raquo;</li> 
+          <li><a href="index.html" accesskey="U">cpip.plot</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -66,11 +64,12 @@
 <span class="target" id="module-cpip.plot.PlotNode"></span><div class="section" id="bounding-boxes">
 <h2>Bounding Boxes<a class="headerlink" href="#bounding-boxes" title="Permalink to this headline">¶</a></h2>
 <p>Legend for the drawing below:</p>
-<div class="highlight-python"><pre>**** - Self sigma BB.
+<div class="highlight-python"><div class="highlight"><pre>**** - Self sigma BB.
 ~~~~ - Self pad box
 #### - Self width and depth.
 .... - All children
-++++ - Child[n] sigma BB.</pre>
+++++ - Child[n] sigma BB.
+</pre></div>
 </div>
 <p>i.e. For a child its <tt class="docutils literal"><span class="pre">++++</span></tt> is equivalent to my <tt class="docutils literal"><span class="pre">****</span></tt>.</p>
 <p>D      - Self datum point.
@@ -86,10 +85,11 @@ tdc    - Top dead centre.</p>
 width max(Box(~~~~), sum(Boxes(++++).depth)).</p>
 <p>Each instance of class knows about the following:
 Boxes:</p>
-<div class="highlight-python"><pre>* ``****`` - Self sigma BB as computed Dim() objects: self.bbSigmaDepth and self.bbSigmaWidth. Or as computed Box() object self.bbSigma
+<div class="highlight-python"><div class="highlight"><pre>* ``****`` - Self sigma BB as computed Dim() objects: self.bbSigmaDepth and self.bbSigmaWidth. Or as computed Box() object self.bbSigma
 * ``~~~~`` - As computed Dim() objects: self.bbSelfWidth, self.bbSelfDepth
 * ``####`` - Self width and depth as Dim() objects: self.width and self.depth
-* ``....`` - All children as a Box() object: self.bbChildren</pre>
+* ``....`` - All children as a Box() object: self.bbChildren
+</pre></div>
 </div>
 <p>And padding between <tt class="docutils literal"><span class="pre">~~~~</span></tt> and <tt class="docutils literal"><span class="pre">....</span></tt> as Dim() object self.bbSpaceChildren</p>
 <p>i.e. not ++++ - Child[n] sigma BB. That the caller knows about its children.</p>
@@ -98,7 +98,7 @@ Given D each instance of this class knows:
 S, Pl, Pt, P[0] to P[N-1], x[0], tdc (only).</p>
 <p>In the following diagrams where lines are adjacent that means that there is no
 spacing between them.</p>
-<div class="highlight-python"><pre>-|-----&gt; x increases
+<div class="highlight-python"><div class="highlight"><pre>-|-----&gt; x increases
  |
  |
 \/
@@ -128,30 +128,33 @@ D ***************************************************************************
 *.                      +                               +                  .*
 *.                      +++++++++++++++++++++++++++++++++                  .*
 *...........................................................................*
-*****************************************************************************</pre>
+*****************************************************************************
+</pre></div>
 </div>
 <p>Note: <tt class="docutils literal"><span class="pre">....</span></tt> can be narrower than <tt class="docutils literal"><span class="pre">~~~~</span></tt></p>
 </div>
 <div class="section" id="verticies">
 <h2>Verticies<a class="headerlink" href="#verticies" title="Permalink to this headline">¶</a></h2>
 <p>The following show root at the left. Linking parent to child:</p>
-<div class="highlight-python"><pre>                    PC_land    PC_stop
+<div class="highlight-python"><div class="highlight"><pre>                    PC_land    PC_stop
                      |            |
                      x&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;x
                     /
                    /
     x&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;x/
     |            |
-PC_roll        PC_to</pre>
+PC_roll        PC_to
+</pre></div>
 </div>
 <p>PC_roll and PC_to are determined by the parent.
 PC_land and PC_stop are determined by the child.</p>
 <p>And child to parent:</p>
-<div class="highlight-python"><pre>CP_stop     CP_land
+<div class="highlight-python"><div class="highlight"><pre>CP_stop     CP_land
     |          |
     x&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;x                                                                  x&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;x
                    |            |
-                CP_to        CP_roll</pre>
+                CP_to        CP_roll
+</pre></div>
 </div>
 <p>CP_roll and CP_to are determined by the child.
 CP_land and CP_stop are determined by the parent.</p>
@@ -428,10 +431,10 @@ along the lower edge.</p>
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../plot/Coord.html"
+  <p class="topless"><a href="Coord.html"
                         title="previous chapter">Coord</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../plot/SVGWriter.html"
+  <p class="topless"><a href="SVGWriter.html"
                         title="next chapter">SVGWriter</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
@@ -465,19 +468,19 @@ along the lower edge.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../plot/SVGWriter.html" title="SVGWriter"
+          <a href="SVGWriter.html" title="SVGWriter"
              >next</a> |</li>
         <li class="right" >
-          <a href="../plot/Coord.html" title="Coord"
+          <a href="Coord.html" title="Coord"
              >previous</a> |</li>
-        <li><a href="../../index.html">CPIP 0.8.1 documentation</a> &raquo;</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
           <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
-          <li><a href="../plot/index.html" >CPIP Plot</a> &raquo;</li> 
+          <li><a href="index.html" >cpip.plot</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2008-2012, Paul Ross.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>
 </html>

@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/vm86.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/vm86.h</h1>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X1VBUElfQVNNX1g4Nl9WTTg2X0hfMA__"><span class="b">_UAPI_ASM_X86_VM86_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X1VBUElfQVNNX1g4Nl9WTTg2X0hfMA__"><span class="b">_UAPI_ASM_X86_VM86_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="k">/*</span>
+<a name="5" /><span class="Maybe">       5:</span> <span class="k"> * I&apos;m guessing at the VIF/VIP flag usage, but hope that this is how</span>
+<a name="6" /><span class="Maybe">       6:</span> <span class="k"> * the Pentium uses them. Linux will return from vm86 mode when both</span>
+<a name="7" /><span class="Maybe">       7:</span> <span class="k"> * VIF and VIP is set.</span>
+<a name="8" /><span class="Maybe">       8:</span> <span class="k"> *</span>
+<a name="9" /><span class="Maybe">       9:</span> <span class="k"> * On a Pentium, we could probably optimize the virtual flags directly</span>
+<a name="10" /><span class="Maybe">      10:</span> <span class="k"> * in the eflags register instead of doing it &quot;by hand&quot; in vflags...</span>
+<a name="11" /><span class="Maybe">      11:</span> <span class="k"> *</span>
+<a name="12" /><span class="Maybe">      12:</span> <span class="k"> * Linus</span>
+<a name="13" /><span class="Maybe">      13:</span> <span class="k"> */</span>
+<a name="14" /><span class="Maybe">      14:</span> 
+<a name="15" /><span class="Maybe">      15:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">processor</span><span class="f">-</span><span class="b">flags</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="16" /><span class="Maybe">      16:</span> 
+<a name="17" /><span class="Maybe">      17:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QklPU1NFR18w"><span class="b">BIOSSEG</span></a>        <span class="c">0x0f000</span>
+<a name="18" /><span class="Maybe">      18:</span> 
+<a name="19" /><span class="Maybe">      19:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q1BVXzA4Nl8w"><span class="b">CPU_086</span></a>        <span class="c">0</span>
+<a name="20" /><span class="Maybe">      20:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q1BVXzE4Nl8w"><span class="b">CPU_186</span></a>        <span class="c">1</span>
+<a name="21" /><span class="Maybe">      21:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q1BVXzI4Nl8w"><span class="b">CPU_286</span></a>        <span class="c">2</span>
+<a name="22" /><span class="Maybe">      22:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q1BVXzM4Nl8w"><span class="b">CPU_386</span></a>        <span class="c">3</span>
+<a name="23" /><span class="Maybe">      23:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q1BVXzQ4Nl8w"><span class="b">CPU_486</span></a>        <span class="c">4</span>
+<a name="24" /><span class="Maybe">      24:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q1BVXzU4Nl8w"><span class="b">CPU_586</span></a>        <span class="c">5</span>
+<a name="25" /><span class="Maybe">      25:</span> 
+<a name="26" /><span class="Maybe">      26:</span> <span class="k">/*</span>
+<a name="27" /><span class="Maybe">      27:</span> <span class="k"> * Return values for the &apos;vm86()&apos; system call</span>
+<a name="28" /><span class="Maybe">      28:</span> <span class="k"> */</span>
+<a name="29" /><span class="Maybe">      29:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9UWVBFXzA_"><span class="b">VM86_TYPE</span></a><span class="f">(</span><span class="b">retval</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="b">retval</span><span class="f">)</span> <span class="f">&amp;</span> <span class="c">0xff</span><span class="f">)</span>
+<a name="30" /><span class="Maybe">      30:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9BUkdfMA__"><span class="b">VM86_ARG</span></a><span class="f">(</span><span class="b">retval</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="b">retval</span><span class="f">)</span> <span class="f">&gt;&gt;</span> <span class="c">8</span><span class="f">)</span>
+<a name="31" /><span class="Maybe">      31:</span> 
+<a name="32" /><span class="Maybe">      32:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9TSUdOQUxfMA__"><span class="b">VM86_SIGNAL</span></a>    <span class="c">0</span>    <span class="k">/* return due to signal */</span>
+<a name="33" /><span class="Maybe">      33:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9VTktOT1dOXzA_"><span class="b">VM86_UNKNOWN</span></a>    <span class="c">1</span>    <span class="k">/* unhandled GP fault</span>
+<a name="34" /><span class="Maybe">      34:</span> <span class="k">                   - IO-instruction or similar */</span>
+<a name="35" /><span class="Maybe">      35:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9JTlR4XzA_"><span class="b">VM86_INTx</span></a>    <span class="c">2</span>    <span class="k">/* int3/int x instruction (ARG = x) */</span>
+<a name="36" /><span class="Maybe">      36:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9TVElfMA__"><span class="b">VM86_STI</span></a>    <span class="c">3</span>    <span class="k">/* sti/popf/iret instruction enabled</span>
+<a name="37" /><span class="Maybe">      37:</span> <span class="k">                   virtual interrupts */</span>
+<a name="38" /><span class="Maybe">      38:</span> 
+<a name="39" /><span class="Maybe">      39:</span> <span class="k">/*</span>
+<a name="40" /><span class="Maybe">      40:</span> <span class="k"> * Additional return values when invoking new vm86()</span>
+<a name="41" /><span class="Maybe">      41:</span> <span class="k"> */</span>
+<a name="42" /><span class="Maybe">      42:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9QSUNSRVRVUk5fMA__"><span class="b">VM86_PICRETURN</span></a>    <span class="c">4</span>    <span class="k">/* return due to pending PIC request */</span>
+<a name="43" /><span class="Maybe">      43:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9UUkFQXzA_"><span class="b">VM86_TRAP</span></a>    <span class="c">6</span>    <span class="k">/* return due to DOS-debugger request */</span>
+<a name="44" /><span class="Maybe">      44:</span> 
+<a name="45" /><span class="Maybe">      45:</span> <span class="k">/*</span>
+<a name="46" /><span class="Maybe">      46:</span> <span class="k"> * function codes when invoking new vm86()</span>
+<a name="47" /><span class="Maybe">      47:</span> <span class="k"> */</span>
+<a name="48" /><span class="Maybe">      48:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9QTFVTX0lOU1RBTExfQ0hFQ0tfMA__"><span class="b">VM86_PLUS_INSTALL_CHECK</span></a>    <span class="c">0</span>
+<a name="49" /><span class="Maybe">      49:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9FTlRFUl8w"><span class="b">VM86_ENTER</span></a>        <span class="c">1</span>
+<a name="50" /><span class="Maybe">      50:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9FTlRFUl9OT19CWVBBU1NfMA__"><span class="b">VM86_ENTER_NO_BYPASS</span></a>    <span class="c">2</span>
+<a name="51" /><span class="Maybe">      51:</span> <span class="f">#</span><span class="n">define</span>    <a href="cpu.c_macros_noref.html#_Vk04Nl9SRVFVRVNUX0lSUV8w"><span class="b">VM86_REQUEST_IRQ</span></a>    <span class="c">3</span>
+<a name="52" /><span class="Maybe">      52:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9GUkVFX0lSUV8w"><span class="b">VM86_FREE_IRQ</span></a>        <span class="c">4</span>
+<a name="53" /><span class="Maybe">      53:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9HRVRfSVJRX0JJVFNfMA__"><span class="b">VM86_GET_IRQ_BITS</span></a>    <span class="c">5</span>
+<a name="54" /><span class="Maybe">      54:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9HRVRfQU5EX1JFU0VUX0lSUV8w"><span class="b">VM86_GET_AND_RESET_IRQ</span></a>    <span class="c">6</span>
+<a name="55" /><span class="Maybe">      55:</span> 
+<a name="56" /><span class="Maybe">      56:</span> <span class="k">/*</span>
+<a name="57" /><span class="Maybe">      57:</span> <span class="k"> * This is the stack-layout seen by the user space program when we have</span>
+<a name="58" /><span class="Maybe">      58:</span> <span class="k"> * done a translation of &quot;SAVE_ALL&quot; from vm86 mode. The real kernel layout</span>
+<a name="59" /><span class="Maybe">      59:</span> <span class="k"> * is &apos;kernel_vm86_regs&apos; (see below).</span>
+<a name="60" /><span class="Maybe">      60:</span> <span class="k"> */</span>
+<a name="61" /><span class="Maybe">      61:</span> 
+<a name="62" /><span class="Maybe">      62:</span> <span class="m">struct</span> <span class="b">vm86_regs</span> <span class="f">{</span>
+<a name="63" /><span class="Maybe">      63:</span> <span class="k">/*</span>
+<a name="64" /><span class="Maybe">      64:</span> <span class="k"> * normal regs, with special meaning for the segment descriptors..</span>
+<a name="65" /><span class="Maybe">      65:</span> <span class="k"> */</span>
+<a name="66" /><span class="Maybe">      66:</span>     <span class="m">long</span> <span class="b">ebx</span><span class="f">;</span>
+<a name="67" /><span class="Maybe">      67:</span>     <span class="m">long</span> <span class="b">ecx</span><span class="f">;</span>
+<a name="68" /><span class="Maybe">      68:</span>     <span class="m">long</span> <span class="b">edx</span><span class="f">;</span>
+<a name="69" /><span class="Maybe">      69:</span>     <span class="m">long</span> <span class="b">esi</span><span class="f">;</span>
+<a name="70" /><span class="Maybe">      70:</span>     <span class="m">long</span> <span class="b">edi</span><span class="f">;</span>
+<a name="71" /><span class="Maybe">      71:</span>     <span class="m">long</span> <span class="b">ebp</span><span class="f">;</span>
+<a name="72" /><span class="Maybe">      72:</span>     <span class="m">long</span> <span class="b">eax</span><span class="f">;</span>
+<a name="73" /><span class="Maybe">      73:</span>     <span class="m">long</span> <span class="b">__null_ds</span><span class="f">;</span>
+<a name="74" /><span class="Maybe">      74:</span>     <span class="m">long</span> <span class="b">__null_es</span><span class="f">;</span>
+<a name="75" /><span class="Maybe">      75:</span>     <span class="m">long</span> <span class="b">__null_fs</span><span class="f">;</span>
+<a name="76" /><span class="Maybe">      76:</span>     <span class="m">long</span> <span class="b">__null_gs</span><span class="f">;</span>
+<a name="77" /><span class="Maybe">      77:</span>     <span class="m">long</span> <span class="b">orig_eax</span><span class="f">;</span>
+<a name="78" /><span class="Maybe">      78:</span>     <span class="m">long</span> <span class="b">eip</span><span class="f">;</span>
+<a name="79" /><span class="Maybe">      79:</span>     <span class="m">unsigned</span> <span class="m">short</span> <span class="b">cs</span><span class="f">,</span> <span class="b">__csh</span><span class="f">;</span>
+<a name="80" /><span class="Maybe">      80:</span>     <span class="m">long</span> <span class="b">eflags</span><span class="f">;</span>
+<a name="81" /><span class="Maybe">      81:</span>     <span class="m">long</span> <span class="b">esp</span><span class="f">;</span>
+<a name="82" /><span class="Maybe">      82:</span>     <span class="m">unsigned</span> <span class="m">short</span> <span class="b">ss</span><span class="f">,</span> <span class="b">__ssh</span><span class="f">;</span>
+<a name="83" /><span class="Maybe">      83:</span> <span class="k">/*</span>
+<a name="84" /><span class="Maybe">      84:</span> <span class="k"> * these are specific to v86 mode:</span>
+<a name="85" /><span class="Maybe">      85:</span> <span class="k"> */</span>
+<a name="86" /><span class="Maybe">      86:</span>     <span class="m">unsigned</span> <span class="m">short</span> <span class="b">es</span><span class="f">,</span> <span class="b">__esh</span><span class="f">;</span>
+<a name="87" /><span class="Maybe">      87:</span>     <span class="m">unsigned</span> <span class="m">short</span> <span class="b">ds</span><span class="f">,</span> <span class="b">__dsh</span><span class="f">;</span>
+<a name="88" /><span class="Maybe">      88:</span>     <span class="m">unsigned</span> <span class="m">short</span> <span class="b">fs</span><span class="f">,</span> <span class="b">__fsh</span><span class="f">;</span>
+<a name="89" /><span class="Maybe">      89:</span>     <span class="m">unsigned</span> <span class="m">short</span> <span class="b">gs</span><span class="f">,</span> <span class="b">__gsh</span><span class="f">;</span>
+<a name="90" /><span class="Maybe">      90:</span> <span class="f">}</span><span class="f">;</span>
+<a name="91" /><span class="Maybe">      91:</span> 
+<a name="92" /><span class="Maybe">      92:</span> <span class="m">struct</span> <span class="b">revectored_struct</span> <span class="f">{</span>
+<a name="93" /><span class="Maybe">      93:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">__map</span><span class="f">[</span><span class="c">8</span><span class="f">]</span><span class="f">;</span>            <span class="k">/* 256 bits */</span>
+<a name="94" /><span class="Maybe">      94:</span> <span class="f">}</span><span class="f">;</span>
+<a name="95" /><span class="Maybe">      95:</span> 
+<a name="96" /><span class="Maybe">      96:</span> <span class="m">struct</span> <span class="b">vm86_struct</span> <span class="f">{</span>
+<a name="97" /><span class="Maybe">      97:</span>     <span class="m">struct</span> <span class="b">vm86_regs</span> <span class="b">regs</span><span class="f">;</span>
+<a name="98" /><span class="Maybe">      98:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">flags</span><span class="f">;</span>
+<a name="99" /><span class="Maybe">      99:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">screen_bitmap</span><span class="f">;</span>
+<a name="100" /><span class="Maybe">     100:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">cpu_type</span><span class="f">;</span>
+<a name="101" /><span class="Maybe">     101:</span>     <span class="m">struct</span> <span class="b">revectored_struct</span> <span class="b">int_revectored</span><span class="f">;</span>
+<a name="102" /><span class="Maybe">     102:</span>     <span class="m">struct</span> <span class="b">revectored_struct</span> <span class="b">int21_revectored</span><span class="f">;</span>
+<a name="103" /><span class="Maybe">     103:</span> <span class="f">}</span><span class="f">;</span>
+<a name="104" /><span class="Maybe">     104:</span> 
+<a name="105" /><span class="Maybe">     105:</span> <span class="k">/*</span>
+<a name="106" /><span class="Maybe">     106:</span> <span class="k"> * flags masks</span>
+<a name="107" /><span class="Maybe">     107:</span> <span class="k"> */</span>
+<a name="108" /><span class="Maybe">     108:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk04Nl9TQ1JFRU5fQklUTUFQXzA_"><span class="b">VM86_SCREEN_BITMAP</span></a>    <span class="c">0x0001</span>
+<a name="109" /><span class="Maybe">     109:</span> 
+<a name="110" /><span class="Maybe">     110:</span> <span class="m">struct</span> <span class="b">vm86plus_info_struct</span> <span class="f">{</span>
+<a name="111" /><span class="Maybe">     111:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">force_return_for_pic</span><span class="f">:</span><span class="c">1</span><span class="f">;</span>
+<a name="112" /><span class="Maybe">     112:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">vm86dbg_active</span><span class="f">:</span><span class="c">1</span><span class="f">;</span>       <span class="k">/* for debugger */</span>
+<a name="113" /><span class="Maybe">     113:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">vm86dbg_TFpendig</span><span class="f">:</span><span class="c">1</span><span class="f">;</span>     <span class="k">/* for debugger */</span>
+<a name="114" /><span class="Maybe">     114:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">unused</span><span class="f">:</span><span class="c">28</span><span class="f">;</span>
+<a name="115" /><span class="Maybe">     115:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">is_vm86pus</span><span class="f">:</span><span class="c">1</span><span class="f">;</span>          <span class="k">/* for vm86 internal use */</span>
+<a name="116" /><span class="Maybe">     116:</span>     <span class="m">unsigned</span> <span class="m">char</span> <span class="b">vm86dbg_intxxtab</span><span class="f">[</span><span class="c">32</span><span class="f">]</span><span class="f">;</span>   <span class="k">/* for debugger */</span>
+<a name="117" /><span class="Maybe">     117:</span> <span class="f">}</span><span class="f">;</span>
+<a name="118" /><span class="Maybe">     118:</span> <span class="m">struct</span> <span class="b">vm86plus_struct</span> <span class="f">{</span>
+<a name="119" /><span class="Maybe">     119:</span>     <span class="m">struct</span> <span class="b">vm86_regs</span> <span class="b">regs</span><span class="f">;</span>
+<a name="120" /><span class="Maybe">     120:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">flags</span><span class="f">;</span>
+<a name="121" /><span class="Maybe">     121:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">screen_bitmap</span><span class="f">;</span>
+<a name="122" /><span class="Maybe">     122:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">cpu_type</span><span class="f">;</span>
+<a name="123" /><span class="Maybe">     123:</span>     <span class="m">struct</span> <span class="b">revectored_struct</span> <span class="b">int_revectored</span><span class="f">;</span>
+<a name="124" /><span class="Maybe">     124:</span>     <span class="m">struct</span> <span class="b">revectored_struct</span> <span class="b">int21_revectored</span><span class="f">;</span>
+<a name="125" /><span class="Maybe">     125:</span>     <span class="m">struct</span> <span class="b">vm86plus_info_struct</span> <span class="b">vm86plus</span><span class="f">;</span>
+<a name="126" /><span class="Maybe">     126:</span> <span class="f">}</span><span class="f">;</span>
+<a name="127" /><span class="Maybe">     127:</span> 
+<a name="128" /><span class="Maybe">     128:</span> 
+<a name="129" /><span class="True">     129:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _UAPI_ASM_X86_VM86_H */</span>
+<a name="130" /><span class="True">     130:</span> </pre>
+  </body>
+</html>

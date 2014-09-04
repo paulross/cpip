@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2011 Paul Ross
+# Copyright (C) 2008-2014 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.8.0'
-__rights__  = 'Copyright (c) 2008-2011 Paul Ross'
+__version__ = '0.9.1'
+__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import sys
 #import os
@@ -78,7 +78,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlLowLevel.test_01(): Empty string, no processing."""
-        myIth = ItuToTokens.ItuToTokens(io.StringIO(''))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(u''))
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
         #print o
@@ -91,7 +91,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
     
     def test_02(self):
         """TestItuToHtmlLowLevel.test_02(): _translatePhase_1() with empty string."""
-        myIth = ItuToTokens.ItuToTokens(io.StringIO(''))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(u''))
         myIth._translatePhase_1()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
@@ -108,7 +108,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
         myTestData = [
             # Tuples of (input_string, [exp_tokens,], [exp_types,], [current_string])
             (
-                '??=',
+                u'??=',
                 ['#'],
                 [
                     ('??=', 'trigraph'),
@@ -116,7 +116,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
                 ['#', '', ''],
             ),
             (
-                '??=??(',
+                u'??=??(',
                 ['#', '['],
                 [
                     ('??=', 'trigraph'),
@@ -125,7 +125,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
                 ['#', '', '', '[', '', ''],
             ),
             (
-                '??=??(??)',
+                u'??=??(??)',
                 ['#', '[', ']'],
                 [
                     ('??=', 'trigraph'),
@@ -135,7 +135,7 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
                 ['#', '', '', '[', '', '', ']', '', ''],
             ),
             (
-                '??=??(??)??(??)',
+                u'??=??(??)??(??)',
                 list('#[][]'),
                 [
                     ('??=', 'trigraph'),
@@ -178,7 +178,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlPhase3.test_01(): Empty string."""
-        myIth = ItuToTokens.ItuToTokens(io.StringIO(''))
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(u''))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
@@ -192,7 +192,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     
     def test_02(self):
         """TestItuToHtmlPhase3.test_02(): Macro."""
-        myStr = '#define OBJ_LIKE /* white space */ (1-1) /* other */\n'
+        myStr = u'#define OBJ_LIKE /* white space */ (1-1) /* other */\n'
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
@@ -232,7 +232,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     
     def test_03(self):
         """TestItuToHtmlPhase3.test_03(): ISO/IEC 9899:1999 (E) 6.10.3.5-5 EXAMPLE 3"""
-        myStr = """#define x 3
+        myStr = u"""#define x 3
 #define f(a) f(x * (a))
 #undef x
 #define x 2
@@ -573,7 +573,7 @@ class TestItuToHtmlTokenGen(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlTokenGen.test_01(): Hello world."""
-        myStr = """#include <iostream>
+        myStr = u"""#include <iostream>
 
 using namespace std;
 
@@ -639,7 +639,7 @@ void main()
 
     def test_02(self):
         """TestItuToHtmlTokenGen.test_02(): Literals."""
-        myStr = """char c = 'c';
+        myStr = u"""char c = 'c';
 long l = 42L;
 int i = 42;
 float f = 1.234E-27 ;
@@ -736,7 +736,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlTokenGenSpecial.test_01(): Use of $ in a file."""
-        myStr = """# define _ASM_j(cond,dest) _asm jn##cond short $+11 _asm jmp dest
+        myStr = u"""# define _ASM_j(cond,dest) _asm jn##cond short $+11 _asm jmp dest
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
@@ -777,7 +777,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
 
     def test_02_00(self):
         """TestItuToHtmlTokenGenSpecial.test_02_00(): ISO/IEC 14882:1998(E) 2.12 Operators and punctuators [lex.operators] 'new' is a preprocessing-op-or-punc and keyword."""
-        myStr = """(new);
+        myStr = u"""(new);
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
@@ -794,7 +794,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
 
     def test_02_01(self):
         """TestItuToHtmlTokenGenSpecial.test_02_01(): ISO/IEC 14882:1998(E) 2.12 Operators and punctuators [lex.operators] 'new' is a preprocessing-op-or-punc and keyword."""
-        myStr = """new;
+        myStr = u"""new;
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
@@ -809,7 +809,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
 
     def test_02_10(self):
         """TestItuToHtmlTokenGenSpecial.test_02_10(): Use of new after parenthesis."""
-        myStr = """return(new(ELeave) CBufFlat(anExpandSize));
+        myStr = u"""return(new(ELeave) CBufFlat(anExpandSize));
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
@@ -847,14 +847,31 @@ class TestItuToHtmlTokenGenLinux(unittest.TestCase):
     
     def test_01(self):
         """TestItuToHtmlTokenGenLinux.test_01(): linux-3.13/include/linux/init.h."""
-        myStr = """/* Data marked not to be saved by software suspend */
+        myStr = u"""/* Data marked not to be saved by software suspend */
 #define __nosavedata __section(.data..nosave)
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-        print
-        pprint.pprint(myTokS)
-
+#         print
+#         pprint.pprint(myTokS)
+        expTokS = [
+            ('/* Data marked not to be saved by software suspend */', 'C comment'),
+            ('\n', 'whitespace'),
+            ('#', 'preprocessing-op-or-punc'),
+            ('define', 'preprocessing-directive'),
+            (' ', 'whitespace'),
+            ('__nosavedata', 'identifier'),
+            (' ', 'whitespace'),
+            ('__section', 'identifier'),
+            ('(', 'preprocessing-op-or-punc'),
+            ('.', 'preprocessing-op-or-punc'),
+            ('data', 'identifier'),
+            ('..', 'preprocessing-op-or-punc'),
+            ('nosave', 'identifier'),
+            (')', 'preprocessing-op-or-punc'),
+            ('\n', 'whitespace'),
+        ]
+        self.assertEqual(expTokS, myTokS)
 
 class NullClass(unittest.TestCase):
     pass

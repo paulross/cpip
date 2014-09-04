@@ -3,18 +3,12 @@
 """
 cpip.util.DupeLines -- Detects duplicate lines in a file
 
-cpip.util.DupeLines is a description
-
-It defines classes_and_methods
-
 @author:     apaulross@gmail.com
 
 @copyright:  2014 Paul Ross. All rights reserved.
 
 @license:    license
 
-@contact:    user_email
-@deffield    updated: Updated
 """
 
 import sys

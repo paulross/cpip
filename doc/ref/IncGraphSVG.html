@@ -1,0 +1,198 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>IncGraphSVG &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
+    <link rel="up" title="CPIP Reference" href="index.html" />
+    <link rel="next" title="IncGraphSVGBase" href="IncGraphSVGBase.html" />
+    <link rel="prev" title="CppCondGraphToHtml" href="CppCondGraphToHtml.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="IncGraphSVGBase.html" title="IncGraphSVGBase"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="CppCondGraphToHtml.html" title="CppCondGraphToHtml"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.IncGraphSVG">
+<span id="incgraphsvg"></span><span id="cpip-ref-incgraphsvg"></span><h1>IncGraphSVG<a class="headerlink" href="#module-cpip.IncGraphSVG" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain">
+<em class="property">class </em><tt class="descclassname">cpip.IncGraphSVG.</tt><tt class="descname">SVGTreeNodeMain</tt><big>(</big><em>theFig</em>, <em>theLineNum</em><big>)</big><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain" title="Permalink to this definition">¶</a></dt>
+<dd><p>This does most of the heavy lifting of plotting the include graph SVG.
+Challenges are plotting things in the &#8216;right&#8217; order and with the &#8216;right&#8217;
+JavaScript so that the DHTML does not look too hideous.
+Basic principle here is that <cite>plotInitialise()</cite> writes static data. In
+our case just the pretty histogram pop-up (Ed. is this right???).
+Then <cite>plotToSVGStream()</cite> is called - this is implemented in the base class.
+FInally <cite>plotFinalise()</cite> is called - this overlays the DHTML text. This is
+a little tricky as our way of DHTML is to switch opacity on underlying
+objects the switching boundary being the overlying object (e.g. &#8216;?&#8217;).
+So _all_ the underlying objects need to be written first so that the
+overlying objects are always &#8216;visible&#8217; to trigger onmouseover/onmouseout on
+the underlying object.</p>
+<dl class="attribute">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.condComp">
+<tt class="descname">condComp</tt><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.condComp" title="Permalink to this definition">¶</a></dt>
+<dd><p>A string of conditional tests.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.finalise">
+<tt class="descname">finalise</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.finalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalisation this sets up all the bounding boxes of me and my children.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.findLogic">
+<tt class="descname">findLogic</tt><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.findLogic" title="Permalink to this definition">¶</a></dt>
+<dd><p>The find logic as a string.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.plotFinalise">
+<tt class="descname">plotFinalise</tt><big>(</big><em>theSvg</em>, <em>theDatumL</em>, <em>theTpt</em><big>)</big><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.plotFinalise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish the plot. In this case we write the text overlays.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.plotInitialise">
+<tt class="descname">plotInitialise</tt><big>(</big><em>theSvg</em>, <em>theDatumL</em>, <em>theTpt</em><big>)</big><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.plotInitialise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the histogram legend once only.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.tokenCounter">
+<tt class="descname">tokenCounter</tt><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.tokenCounter" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the PpTokenCount.PpTokenCount() for me only.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.tokenCounterChildren">
+<tt class="descname">tokenCounterChildren</tt><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.tokenCounterChildren" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the computed PpTokenCount.PpTokenCount() for all my descendents.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.tokenCounterTotal">
+<tt class="descname">tokenCounterTotal</tt><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.tokenCounterTotal" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the computed PpTokenCount.PpTokenCount() me plus my descendents.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.writeAltTextAndMouseOverRect">
+<tt class="descname">writeAltTextAndMouseOverRect</tt><big>(</big><em>theSvg</em>, <em>theId</em>, <em>theAltPt</em>, <em>theAltS</em>, <em>theTrigPt</em>, <em>theTrigRect</em><big>)</big><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.writeAltTextAndMouseOverRect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Composes and writes the (pop-up) alternate text.
+Also writes a trigger rectangle.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="cpip.IncGraphSVG.SVGTreeNodeMain.writePreamble">
+<tt class="descname">writePreamble</tt><big>(</big><em>theS</em><big>)</big><a class="headerlink" href="#cpip.IncGraphSVG.SVGTreeNodeMain.writePreamble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write any preamble such as CSS or JavaScript.
+To be implemented by child classes.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="CppCondGraphToHtml.html"
+                        title="previous chapter">CppCondGraphToHtml</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="IncGraphSVGBase.html"
+                        title="next chapter">IncGraphSVGBase</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/ref/IncGraphSVG.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="IncGraphSVGBase.html" title="IncGraphSVGBase"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="CppCondGraphToHtml.html" title="CppCondGraphToHtml"
+             >previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

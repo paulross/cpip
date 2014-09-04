@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/posix_types.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/uapi/asm/posix_types.h</h1>
+    <pre><a name="1" /><span class="False">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X19LRVJORUxfX18w"><span class="b">__KERNEL__</span></a>
+<a name="2" /><span class="False">       2:</span> <span class="f">#</span> <span class="n">ifdef</span> <span class="b">__i386__</span>
+<a name="3" /><span class="False">       3:</span> <span class="f">#</span>  <span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">posix_types_32</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="4" /><span class="False">       4:</span> <span class="f">#</span> <span class="n">elif</span> <span class="b">defined</span><span class="f">(</span><span class="b">__ILP32__</span><span class="f">)</span>
+<a name="5" /><span class="False">       5:</span> <span class="f">#</span>  <span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">posix_types_x32</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="False">       6:</span> <span class="f">#</span> <span class="n">else</span>
+<a name="7" /><span class="False">       7:</span> <span class="f">#</span>  <span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">posix_types_64</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="8" /><span class="False">       8:</span> <span class="f">#</span> <span class="n">endif</span>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="10" /><span class="True">      10:</span> </pre>
+  </body>
+</html>
