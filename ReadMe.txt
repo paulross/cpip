@@ -19,10 +19,14 @@ Paul Ross: cpipdev@googlemail.com
 
 CPIP - A 'C' Preprocessor Implemented in Python
 
+Beta Release 2014-09-04
+=======================
+Fairly thorough refactor. CPIP now tested on Python 2.7, 3.3. Version 0.9.1. Updated documentation.
+
 Alpha Release 2012-03-25
 ========================
 
-Very little function l change. CPIP now tested on Python 2.6, 2.7, 3.2. Added loads of documentation.
+Very little functional change. CPIP now tested on Python 2.6, 2.7, 3.2. Added loads of documentation.
 
 
 Alpha Release 2011-07-14
