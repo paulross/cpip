@@ -109,6 +109,11 @@ class ItuToHtml(object):
                 with XmlWrite.Element(myS, 'body'):
                     with XmlWrite.Element(myS, 'h1'):
                         myS.characters('File: %s' % self._fpIn)
+                    with XmlWrite.Element(myS, 'p'):
+                        myS.characters("""Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.""")
                     with XmlWrite.Element(myS, 'pre'):
                         myS.xmlSpacePreserve()
                         self._incAndWriteLine(myS)

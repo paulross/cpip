@@ -113,6 +113,10 @@ def processCppCondGrphToHtml(theLex,
         with XmlWrite.Element(myS, 'body'):
             with XmlWrite.Element(myS, 'h1'):
                 myS.characters('Preprocessing Conditional Compilation Graph: %s' % theLex.tuFileId)
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters("""The conditional compilation statements as green (i.e. evaluates as True)
+and red (evaluates as False). Each statement is linked to the source code it came from.
+""")
             linkToIndex(myS, theIdxPath)
             with XmlWrite.Element(myS, 'pre'):
                 myVisitor = CcgVisitorToHtml(myS)

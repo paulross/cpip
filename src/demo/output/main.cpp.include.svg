@@ -99,14 +99,14 @@ function scaleGraphic(scale, theId) {
 ]]>
 </script>
   <g id="scaleGroup">
-    <text class="scale" x="8.0mm" y="4.0mm">Scale by:</text>
-    <text class="scale" font-weight="normal" id="0.05" onclick="scaleGraphic(0.05, &apos;0.05&apos;)" text-decoration="underline" x="32.0mm" y="4.0mm">5%</text>
-    <text class="scale" font-weight="normal" id="0.1" onclick="scaleGraphic(0.1, &apos;0.1&apos;)" text-decoration="underline" x="42.0mm" y="4.0mm">10%</text>
-    <text class="scale" font-weight="normal" id="0.25" onclick="scaleGraphic(0.25, &apos;0.25&apos;)" text-decoration="underline" x="57.0mm" y="4.0mm">25%</text>
-    <text class="scale" font-weight="normal" id="0.5" onclick="scaleGraphic(0.5, &apos;0.5&apos;)" text-decoration="underline" x="72.0mm" y="4.0mm">50%</text>
-    <text class="scale" font-weight="bold" id="1.0" onclick="scaleGraphic(1.0, &apos;1.0&apos;)" text-decoration="underline" x="87.0mm" y="4.0mm">100%</text>
-    <text class="scale" font-weight="normal" id="1.5" onclick="scaleGraphic(1.5, &apos;1.5&apos;)" text-decoration="underline" x="107.0mm" y="4.0mm">150%</text>
-    <text class="scale" font-weight="normal" id="2.0" onclick="scaleGraphic(2.0, &apos;2.0&apos;)" text-decoration="underline" x="127.0mm" y="4.0mm">200%</text>
+    <text class="scale" x="8.0mm" y="4.0mm">Select scale (bold selected):</text>
+    <text class="scale" font-weight="normal" id="0.05" onclick="scaleGraphic(0.05, &apos;0.05&apos;)" text-decoration="underline" x="72.0mm" y="4.0mm">5%</text>
+    <text class="scale" font-weight="normal" id="0.1" onclick="scaleGraphic(0.1, &apos;0.1&apos;)" text-decoration="underline" x="82.0mm" y="4.0mm">10%</text>
+    <text class="scale" font-weight="normal" id="0.25" onclick="scaleGraphic(0.25, &apos;0.25&apos;)" text-decoration="underline" x="97.0mm" y="4.0mm">25%</text>
+    <text class="scale" font-weight="normal" id="0.5" onclick="scaleGraphic(0.5, &apos;0.5&apos;)" text-decoration="underline" x="112.0mm" y="4.0mm">50%</text>
+    <text class="scale" font-weight="bold" id="1.0" onclick="scaleGraphic(1.0, &apos;1.0&apos;)" text-decoration="underline" x="127.0mm" y="4.0mm">100%</text>
+    <text class="scale" font-weight="normal" id="1.5" onclick="scaleGraphic(1.5, &apos;1.5&apos;)" text-decoration="underline" x="147.0mm" y="4.0mm">150%</text>
+    <text class="scale" font-weight="normal" id="2.0" onclick="scaleGraphic(2.0, &apos;2.0&apos;)" text-decoration="underline" x="167.0mm" y="4.0mm">200%</text>
   </g>
   <!-- Root position: left, Sweep direction: + canvas=Box(width=Dim(232mm), depth=Dim(19mm)) datum=Pt(x=Dim(-6.0mm), y=Dim(4.0mm))-->
   <g transform="translate(0, 24)">

@@ -305,9 +305,9 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         )
         with SVGWriter.SVGGroup(theSvg, {'id' : 'scaleGroup'}):
             with SVGWriter.SVGText(theSvg, myPointP, None, None, myAttrs):
-                theSvg.characters('Scale by:')
+                theSvg.characters('Select scale (bold selected):')
             myAttrs['text-decoration']  = "underline"
-            myPointP = Coord.newPt(myPointP, incX=Coord.Dim(24, 'mm'), incY=None)
+            myPointP = Coord.newPt(myPointP, incX=Coord.Dim(64, 'mm'), incY=None)
             for scale in self.SCALE_FACTORS:
                 myAttrs['onclick'] = "scaleGraphic(%s, '%s')" % (scale, scale)
                 myAttrs['id'] = str(scale)
