@@ -1,27 +1,27 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
 # Copyright (C) 2008-2014 Paul Ross
-# 
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-# 
+#
 # Paul Ross: cpipdev@googlemail.com
 
-__author__  = 'Paul Ross'
-__date__    = '2011-07-10'
+__author__ = 'Paul Ross'
+__date__ = '2011-07-10'
 __version__ = '0.9.1'
-__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
+__rights__ = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
 import sys
@@ -56,23 +56,73 @@ from cpip import ExceptionCpip
 # POD class that contains the arguments for processing a file or directory
 MainJobSpec = collections.namedtuple('MainJobSpec',
     [
-        'incHandler',       # IncludeHandler.CppIncludeStdOs()
-        'preDefMacros',     # A dictionary of standard predefined macros e.g. __STDC__
+        'incHandler',  # IncludeHandler.CppIncludeStdOs()
+        'preDefMacros',  # A dictionary of standard predefined macros e.g. __STDC__
                             #   __DATE__, __TIME__ will be automatically allocated.
-        'preIncStr',        # String that contains the predefined #defines
-        'preIncPaths',      # List of file paths to be pre-included
+        'preIncStr',  # String that contains the predefined #defines
+        'preIncPaths',  # List of file paths to be pre-included
                             # NOTE: Not open file-like objects as multiprocessing
                             # as these will fail to be deep copied.
-        'diagnostic',       # CppDiagnostic.PreprocessDiagnosticKeepGoing() or None
-        'pragmaHandler',    # PragmaHandler.PragmaHandlerNull() or None
-        'keepGoing',        # boolean
-        'conditionalLevel', # Integer level, whether to display conditionally compiled out files
-        'dumpList',         # List of letters as to what to dump to stdout
-        'helpMap',          # map of {opt_name : (value, help), ...}. See retOptionMap().
-        'includeDOT',      # boolean, whether to try to use DOT to create a dependency SVG.
-        'cmdLine',          # Invocation: ' '.join(sys.argv)
+        'diagnostic',  # CppDiagnostic.PreprocessDiagnosticKeepGoing() or None
+        'pragmaHandler',  # PragmaHandler.PragmaHandlerNull() or None
+        'keepGoing',  # boolean
+        'conditionalLevel',  # Integer level, whether to display conditionally compiled out files
+        'dumpList',  # List of letters as to what to dump to stdout
+        'helpMap',  # map of {opt_name : (value, help), ...}. See retOptionMap().
+        'includeDOT',  # boolean, whether to try to use DOT to create a dependency SVG.
+        'cmdLine',  # Invocation: ' '.join(sys.argv)
     ]
 )
+
+###################### Static introductory text. #########################
+INCLUDE_GRAPH_INTRO = [
+    """This is the relationships of the #include'd files
+presented as a SVG graph or as text.
+""",
+    """The SVG graph shows the tree of included files
+in a graphical fashion with each file as a node and the #include relationship
+as an edge.
+""",
+    """You can choose the scale with the selectors at the top.
+Mousing over the nodes in the SVG graph pops up information about
+the #include process.
+""",
+]
+
+SOURCE_CODE_INTRO = [
+    """HTML representations of the source file and
+the translation unit as seen by the compiler.
+""",
+    """Lines in the source file are
+linked to the translation unit where appropriate. Macros in the source file
+are linked to the macro page.
+"""
+]
+
+CONDITIONAL_COMPILATION_INTRO = [
+    """The conditional compilation statements as green (i.e. evaluates as True)
+and red (evaluates as False). Each statement is linked to the source code it came from."""
+]
+
+MACROS_INTRO = [
+    """A page describing the macros encountered during pre-processing, their definition, where defined,
+where used and their dependencies. All linked to the source code.
+""",
+]
+
+TOKEN_COUNT_INTRO = [
+    """A table of the token types and their count.
+""",
+]
+
+FILES_INCLUDED_INTRO = [
+    """A table of the source files included, their directories and the number of times they
+were included.
+""",
+    """The links lead to the source code.
+""",
+]
+#################### END: Static introductory text. #######################
 
 # Holds the result of preprocessFileToOutput()
 # ituPath - the path to the input ITU
@@ -84,15 +134,15 @@ class FigVisitorLargestCommanPrefix(FileIncludeGraph.FigVisitorBase):
     """Simple visitor that walks the tree and finds the largest common file name prefix."""
     def __init__(self):
         self._fileNameS = set()
-        
+
     def visitGraph(self, theFigNode, theDepth, theLine):
         """Capture the file name."""
         if theFigNode.fileName != PpLexer.UNNAMED_FILE_NAME:
             self._fileNameS.add(os.path.abspath(theFigNode.fileName))
-        
+
     def lenCommonPrefix(self):
         return CommonPrefix.lenCommonPrefix(self._fileNameS)
-    
+
 class FigVisitorDot(FileIncludeGraph.FigVisitorBase):
     """Simple visitor that collects parent/child links for plotting the graph with dot."""
     FILE_EXT_TO_NODE_COLOURS = {
@@ -107,9 +157,9 @@ class FigVisitorDot(FileIncludeGraph.FigVisitorBase):
         self._nodeS = set()
         self._rootS = []
         self._lineS = []
-        
+
     def __str__(self):
-        retL = ['digraph FigVisitorDot {',]
+        retL = ['digraph FigVisitorDot {', ]
         retL.extend(sorted(self._nodeS))
         if len(self._rootS) > 1:
             retL.append('%s;' % ' -> '.join(self._rootS))
@@ -125,7 +175,7 @@ class FigVisitorDot(FileIncludeGraph.FigVisitorBase):
         if self._lenPrefix > 0:
             myF = myF[self._lenPrefix:]
         return myF
-    
+
     def _addNode(self, theFigNode):
         if theFigNode.numTokensSig > 0:
             myF = self._fileName(theFigNode)
@@ -142,7 +192,7 @@ class FigVisitorDot(FileIncludeGraph.FigVisitorBase):
             nodeAttrStr += ',label="%s"' % myF
             nodeAttrStr += '];'
             self._nodeS.add(nodeAttrStr)
-        
+
     def visitGraph(self, theFigNode, theDepth, theLine):
         """."""
         self._addNode(theFigNode)
@@ -165,7 +215,7 @@ def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
 #    myVis = FigVisitorLargestCommanPrefix()
 #    myFigr.acceptVisitor(myVis)
     # Visitor for the DOT file
-    myVis = FigVisitorDot()#myVis.lenCommonPrefix())
+    myVis = FigVisitorDot()  # myVis.lenCommonPrefix())
     myFigr.acceptVisitor(myVis)
     dotPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotTxt(theItu)))
     svgPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotSVG(theItu)))
@@ -221,7 +271,7 @@ def _dumpFileCount(theFileCountMap):
 def _dumpTokenCount(theTokenCounter):
     print()
     print(' Token count '.center(75, '-'))
-    #print theTokenCounter
+    # print theTokenCounter
     myTotal = 0
     for tokType, tokCount in theTokenCounter.tokenTypesAndCounts(
                                         isAll=True,
@@ -256,25 +306,25 @@ def tuIndexFileName(theTu):
     return 'index_' + HtmlUtils.retHtmlFileName(theTu)
 
 def tuFileName(theTu):
-    return os.path.basename(theTu)+'.html'
+    return os.path.basename(theTu) + '.html'
 
 # def macroHistoryFileName(theItu):
 #     return os.path.basename(theItu)+'_macros'+'.html'
 
 def includeGraphFileNameSVG(theItu):
-    return os.path.basename(theItu)+'.include.svg'
+    return os.path.basename(theItu) + '.include.svg'
 
 def includeGraphFileNameCcg(theItu):
-    return os.path.basename(theItu)+'.ccg.html'
+    return os.path.basename(theItu) + '.ccg.html'
 
 def includeGraphFileNameText(theItu):
-    return os.path.basename(theItu)+'.include.txt.html'
+    return os.path.basename(theItu) + '.include.txt.html'
 
 def includeGraphFileNameDotTxt(theItu):
-    return os.path.basename(theItu)+'.include.dot'
+    return os.path.basename(theItu) + '.include.dot'
 
 def includeGraphFileNameDotSVG(theItu):
-    return os.path.basename(theItu)+'.include.dot.svg'
+    return os.path.basename(theItu) + '.include.dot.svg'
 
 def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
     def _linkToIndex(theS, theItu):
@@ -300,11 +350,21 @@ def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
         with XmlWrite.Element(myS, 'body'):
             with XmlWrite.Element(myS, 'h1'):
                 myS.characters('File include graph for: %s' % theItu)
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters('A text dump of the include graph.')
             _linkToIndex(myS, theItu)
             with XmlWrite.Element(myS, 'pre'):
                 myS.characters(str(theLexer.fileIncludeGraphRoot))
             _linkToIndex(myS, theItu)
 
+def _writeParagraphWithBreaks(theS, theParas):
+    for i, p in enumerate(theParas):
+        if i < 0:
+            with XmlWrite.Element(theS, 'br'):
+                pass
+        with XmlWrite.Element(theS, 'p'):
+            theS.characters(p)
+            
 def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCntr, hasIncDot, macroHistoryIndexName):
     with XmlWrite.XhtmlStream(
             os.path.join(theOutDir, tuIndexFileName(theTuPath)),
@@ -326,58 +386,66 @@ def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCn
         with XmlWrite.Element(myS, 'body'):
             with XmlWrite.Element(myS, 'h1'):
                 myS.characters('CPIP Processing of %s' % theTuPath)
-            ###
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters("""This has links to individual pages about the
+pre-processing of this file.""")
+            # ##
             # Translation unit
-            ###
+            # ##
             with XmlWrite.Element(myS, 'h2'):
                 myS.characters('1. Source Code')
-            with XmlWrite.Element(myS, 'h3'):#'p'):
-                myS.characters('As ')
-                with XmlWrite.Element(myS, 'a', {'href' : HtmlUtils.retHtmlFileName(theTuPath),}):
-                    myS.characters('Original Source')
-                myS.characters(' or as a ')
-                with XmlWrite.Element(myS, 'a',{'href' : tuFileName(theTuPath),}):
-                    myS.characters('Translation Unit')
-            ###
+            _writeParagraphWithBreaks(myS, SOURCE_CODE_INTRO)
+            with XmlWrite.Element(myS, 'h3'):  # 'p'):
+                myS.characters('The ')
+                with XmlWrite.Element(myS, 'a', {'href' : HtmlUtils.retHtmlFileName(theTuPath), }):
+                    myS.characters('source file')
+                myS.characters(' and ')
+                with XmlWrite.Element(myS, 'a', {'href' : tuFileName(theTuPath), }):
+                    myS.characters('as a translation unit')
+            # ##
             # Include graph
-            ###
+            # ##
             with XmlWrite.Element(myS, 'h2'):
                 myS.characters('2. Include Graphs')
-            with XmlWrite.Element(myS, 'h3'):#'p'):
-                myS.characters('As ')
-                with XmlWrite.Element(myS, 'a',{'href' : includeGraphFileNameSVG(theTuPath),}):
-                    myS.characters('Normal [SVG]')
+            _writeParagraphWithBreaks(myS, INCLUDE_GRAPH_INTRO)
+            with XmlWrite.Element(myS, 'h3'):  # 'p'):
+                myS.characters('A ')
+                with XmlWrite.Element(myS, 'a', {'href' : includeGraphFileNameSVG(theTuPath), }):
+                    myS.characters('visual #include tree in SVG')
                 # If we have successfully written a .dot file then link to it
                 if hasIncDot:
                     myS.characters(', ')
-                    with XmlWrite.Element(myS,'a', {'href' : includeGraphFileNameDotSVG(theTuPath),}):
+                    with XmlWrite.Element(myS, 'a', {'href' : includeGraphFileNameDotSVG(theTuPath), }):
                         myS.characters('Dot dependency [SVG]')
                 myS.characters(' or ')
-                with XmlWrite.Element(myS, 'a', {'href' : includeGraphFileNameText(theTuPath),}):
-                    myS.characters('Text')
-            ###
+                with XmlWrite.Element(myS, 'a', {'href' : includeGraphFileNameText(theTuPath), }):
+                    myS.characters('as Text')
+            # ##
             # Conditional compilation
-            ###
+            # ##
             with XmlWrite.Element(myS, 'h2'):
                 myS.characters('3. Conditional Compilation')
-            with XmlWrite.Element(myS, 'h3'):#'p'):
-                myS.characters('The conditional compilation ')
-                with XmlWrite.Element(myS, 'a',{'href' : includeGraphFileNameCcg(theTuPath),}):
-                    myS.characters('graph')
-            ###
+            _writeParagraphWithBreaks(myS, CONDITIONAL_COMPILATION_INTRO)
+            with XmlWrite.Element(myS, 'h3'):  # 'p'):
+                myS.characters('The ')
+                with XmlWrite.Element(myS, 'a', {'href' : includeGraphFileNameCcg(theTuPath), }):
+                    myS.characters('conditional compilation graph')
+            # ##
             # Macro history
-            ###
+            # ##
             with XmlWrite.Element(myS, 'h2'):
                 myS.characters('4. Macros')
+            _writeParagraphWithBreaks(myS, MACROS_INTRO)
             with XmlWrite.Element(myS, 'h3'):
-                myS.characters('The Macro ')
-                with XmlWrite.Element(myS, 'a', {'href' : macroHistoryIndexName,}):
-                    myS.characters('Environment')
-            ###
+                myS.characters('The ')
+                with XmlWrite.Element(myS, 'a', {'href' : macroHistoryIndexName, }):
+                    myS.characters('Macro Environment')
+            # ##
             # Write out token counter as a table
-            ###
+            # ##
             with XmlWrite.Element(myS, 'h2'):
                 myS.characters('5. Token Count')
+            _writeParagraphWithBreaks(myS, TOKEN_COUNT_INTRO)
             with XmlWrite.Element(myS, 'table', {'class' : "monospace"}):
                 with XmlWrite.Element(myS, 'tr'):
                     with XmlWrite.Element(myS, 'th', {'class' : "monospace"}):
@@ -404,17 +472,18 @@ def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCn
                     with XmlWrite.Element(myS, 'td', {'class' : "monospace"}):
                         with XmlWrite.Element(myS, 'b'):
                             # <tt> does not preserve space so force it to
-                            myStr = '%10d' % myTotal            
+                            myStr = '%10d' % myTotal
                             myStr = myStr.replace(' ', '&nbsp;')
                             myS.literal(myStr)
             with XmlWrite.Element(myS, 'br'):
                 pass
             with XmlWrite.Element(myS, 'h2'):
                 myS.characters('6. Files Included and Count')
+            _writeParagraphWithBreaks(myS, FILES_INCLUDED_INTRO)
             with XmlWrite.Element(myS, 'p'):
-                myS.characters('Number of individual files: %d' % len(theFileCountMap))
+                myS.characters('Total number of unique files: %d' % len(theFileCountMap))
             # TODO: Value count
-            #with XmlWrite.Element(myS, 'p'):
+            # with XmlWrite.Element(myS, 'p'):
             #    myS.characters('Total files processed: %d' % sum(theFileCountMap.values()))
             myItuFileS = sorted(theFileCountMap.keys())
             # Create a list for the DictTree
@@ -434,7 +503,7 @@ def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCn
                 pass
             # TODO...
             with XmlWrite.Element(myS, 'p'):
-                myS.characters('Produced by %s version: %s' % ('CPIPMain',  __version__))
+                myS.characters('Produced by %s version: %s' % ('CPIPMain', __version__))
             # Back link
             with XmlWrite.Element(myS, 'p'):
                 myS.characters('Back to: ')
@@ -466,7 +535,7 @@ def _tdCallback(theS, attrs, k, v):
                 ):
         # Write the nav text
         theS.characters('%d' % count)
-        
+
 def writeIndexHtml(theItuS, theOutDir, theJobSpec):
     """Writes the top level index.html page for a pre-processed file.
     
@@ -513,7 +582,7 @@ def writeIndexHtml(theItuS, theOutDir, theJobSpec):
                                     ):
                                 myS.characters(anItu)
             _writeCommandLineInvocationToHTML(myS, theJobSpec)
-    # 
+    #
     return indexPath
 
 def _writeCommandLineInvocationToHTML(theS, theJobSpec):
@@ -697,7 +766,7 @@ def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
     # Write the linking HTML from the title and file paths.
 #     print('results', results)
     _writeDirectoryIndexHTML(inDir, outDir, results, jobSpec)
-    
+
 def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
     """Preprocess a single file and catch all ExceptionCpip
     exceptions and log them."""
@@ -706,7 +775,7 @@ def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
     except ExceptionCpip as err:
         logging.critical('preprocessFileToOutputNoExcept(): "%s" %s' % (err, ituPath))
     return PpProcessResult(ituPath, None, None)
-    
+
 def preprocessFileToOutput(ituPath, outDir, jobSpec):
     """Preprocess a single file. May raise ExceptionCpip (or worse!).
     Returns a PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath))."""
@@ -739,7 +808,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                             myDestFile,
                             ituPath,
                             jobSpec.conditionalLevel,
-                            tuIndexFileName(ituPath), # Path back to the index
+                            tuIndexFileName(ituPath),  # Path back to the index
                             incItuAnchors=True,
                         )
     logging.info('preprocessFileToOutput(): Processing TU done.')
@@ -806,7 +875,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
             outPath,
             'Conditional Compilation Graph',
             tuIndexFileName(ituPath),
-        )            
+        )
     # This is an index for the TU
     writeTuIndexHtml(outDir, ituPath, myLexer, myFileCountMap, myTokCntr,
                      hasIncGraphDot, macroHistoryIndexName)
@@ -831,7 +900,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                 )
         except ItuToHtml.ExceptionItuToHTML as err:
             logging.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
-    indexPath = writeIndexHtml([ituPath,], outDir, jobSpec)
+    indexPath = writeIndexHtml([ituPath, ], outDir, jobSpec)
     logging.info('preprocessFileToOutput(): %s DONE' % ituPath)
     # Return the path to the ITU and to the index.html path for consolidation
     # by the caller - to be used in multiprocessing.
@@ -841,9 +910,9 @@ def main():
     """Processes command line to preprocess a file or a directory."""
     usage = """usage: %prog [options] path
 Preprocess the file or the files in the directory."""
-    #print 'Cmd: %s' % ' '.join(sys.argv)
+    # print 'Cmd: %s' % ' '.join(sys.argv)
     optParser = OptionParser(usage, version='%prog ' + __version__)
-    optParser.add_option("-c", action="store_true", dest="plot_conditional", default=False, 
+    optParser.add_option("-c", action="store_true", dest="plot_conditional", default=False,
                       help="Add conditionally included files to the plots. [default: %default]")
     optParser.add_option("-d", "--dump", action="append", dest="dump", default=[],
                       help="""Dump output, additive. Can be:
@@ -855,8 +924,8 @@ T - Token count.
 R - Macro dependencies as an input to DOT.
 [default: %default]""")
     optParser.add_option("-g", "--glob", type="str", dest="glob", default="*.*",
-            help="Pattern match to use when processing directories. [default: %default]")      
-    optParser.add_option("--heap", action="store_true", dest="heap", default=False, 
+            help="Pattern match to use when processing directories. [default: %default]")
+    optParser.add_option("--heap", action="store_true", dest="heap", default=False,
                       help="Profile memory usage. [default: %default]")
     optParser.add_option(
             "-j", "--jobs",
@@ -867,10 +936,10 @@ R - Macro dependencies as an input to DOT.
 directories. Zero uses number of native CPUs [%d].
 1 means no multiprocessing."""
                     % multiprocessing.cpu_count() \
-                    + " [default: %default]" 
-        )      
+                    + " [default: %default]"
+        )
     optParser.add_option("-k", "--keep-going", action="store_true",
-                         dest="keep_going", default=False, 
+                         dest="keep_going", default=False,
                          help="Keep going. [default: %default]")
     optParser.add_option(
             "-l", "--loglevel",
@@ -879,18 +948,18 @@ directories. Zero uses number of native CPUs [%d].
             default=30,
             help="Log Level (debug=10, info=20, warning=30, error=40, critical=50)" \
             " [default: %default]"
-        )      
-#     optParser.add_option("-n", action="store_true", dest="nervous", default=False, 
+        )
+#     optParser.add_option("-n", action="store_true", dest="nervous", default=False,
 #                       help="Nervous mode (do no harm). [default: %default]")
     optParser.add_option("-o", "--output",
                          type="string",
                          dest="output",
-                         default="out", 
+                         default="out",
                          help="Output directory. [default: %default]")
-    optParser.add_option("-p", action="store_true", dest="ignore_pragma", default=False, 
+    optParser.add_option("-p", action="store_true", dest="ignore_pragma", default=False,
                       help="Ignore pragma statements. [default: %default]")
     optParser.add_option("-r", "--recursive", action="store_true", dest="recursive",
-                         default=False, 
+                         default=False,
                       help="Recursively process directories. [default: %default]")
     optParser.add_option("-t", "--dot", action="store_true", dest="include_dot",
                          default=False,
@@ -922,12 +991,12 @@ allocated in here. [default: %default]""")
     # Initialise logging etc.
     if opts.jobs != 1 and os.path.isdir(args[0]):
         # Multiprocessing
-        logFormat='%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
+        logFormat = '%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
     else:
-        logFormat='%(asctime)s %(levelname)-8s %(message)s'
+        logFormat = '%(asctime)s %(levelname)-8s %(message)s'
     logging.basicConfig(level=opts.loglevel,
                     format=logFormat,
-                    #datefmt='%y-%m-%d % %H:%M:%S',
+                    # datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
     # Memory usage dump
     if opts.heap:
@@ -961,7 +1030,7 @@ allocated in here. [default: %default]""")
     # Add macros in psuedo pre-include
     preDefStr = ''
     if opts.defines:
-        preDefStr = u'\n'.join(['#define '+' '.join(d.split('=')) for d in opts.defines])+'\n'
+        preDefStr = u'\n'.join(['#define ' + ' '.join(d.split('=')) for d in opts.defines]) + '\n'
     # Create the job specification
     jobSpec = MainJobSpec(
         incHandler=myIncH,
@@ -988,7 +1057,7 @@ allocated in here. [default: %default]""")
             globMatch=opts.glob,
             recursive=opts.recursive,
             numJobs=opts.jobs,
-            )        
+            )
     else:
         logging.fatal('%s is neither a file or a directory!' % args[0])
         return 1
@@ -1008,4 +1077,3 @@ allocated in here. [default: %default]""")
 if __name__ == '__main__':
     multiprocessing.freeze_support()
     sys.exit(main())
-    

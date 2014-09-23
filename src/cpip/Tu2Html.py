@@ -150,6 +150,14 @@ def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath, inc
         with XmlWrite.Element(myS, 'body'):
             with XmlWrite.Element(myS, 'h1'):
                 myS.characters('Translation Unit: %s' % theLex.tuFileId)
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters("""An annotated version of the translation unit
+with minimal whitespace. Indentation is according to the depth of the #include stack.
+Line numbers are linked to the original source code.
+""")
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters("""Highlighted filenames take you forward to the
+next occasion in the include graph of the file being pre-processed, in this case: %s""" % theLex.tuFileId)
             linkToIndex(myS, theIdxPath)
             with XmlWrite.Element(myS, 'pre'):
                 # My copy of the file stack for annotating the output

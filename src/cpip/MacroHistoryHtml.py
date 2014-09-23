@@ -713,6 +713,9 @@ def processMacroHistoryToHtml(theLex, theHtmlPath, theItu, theIndexPath):
         with XmlWrite.Element(myS, 'body'):
             with XmlWrite.Element(myS, 'h1'):
                 myS.characters('Macro Environment for: %s' % theItu)
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters("""A page describing the macros encountered during pre-processing, their definition, where defined,
+where used and their dependencies. All linked to the source code.""")
             _linkToIndex(myS, theIndexPath)
             # Write the TOC and get the sorted list all the macros in alphabetical order
             _writeTocMacros(myS, myEnv, isReferenced=True, filePrefix=_macroHistoryRefName(theItu))
