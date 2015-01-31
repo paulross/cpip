@@ -879,6 +879,16 @@ class PpLexer(object):
     #=============================================
     # Section: Helpers for conditional processing.
     #=============================================
+    def _appendTokenMergingWhitespace(self, theList, theToken):
+        """Adds a token to the list merging whitespace if possible."""
+        if len(theList) and theList[-1].isWs() and theToken.isWs():
+            # Make sure we have a copy on the list tail otherwise the merge
+            # will be seen by any other list that has that token
+            theList.append(theList.pop().copy())
+            theList[-1].merge(theToken)
+        else:
+            theList.append(theToken)
+    
     def _retDefinedSubstitution(self, theGen):
         """Returns a list of tokens from the supplied argument with defined...
         and !defined... handled appropriately and other tokens expanded where
@@ -916,13 +926,17 @@ class PpLexer(object):
         # The replaced or otherwise interpreted tokens
         repTokS = []
         flagInvert = flagHasSeenDefined = False
+        macroReplacedTokS = []
         while 1:
             myFlc = self.fileLineCol
-            myTtt = next(theGen)
-            rawTokS.append(myTtt)
-            #print '_retDefinedSubstitution(): %s' % myTtt
+            if len(macroReplacedTokS) > 0:
+                myTtt = macroReplacedTokS.pop(0)
+            else:
+                myTtt = next(theGen)
+                rawTokS.append(myTtt)
+            logging.debug('_retDefinedSubstitution(): %s' % myTtt)
             if self._wsHandler.isBreakingWhitespace(myTtt.t):
-                repTokS.append(myTtt)
+                self._appendTokenMergingWhitespace(repTokS, myTtt)
                 break
             else:
                 # Look for: '!', 'defined'
@@ -950,10 +964,10 @@ class PpLexer(object):
                                         myFlc,
                                         ):
                             #print '_retDefinedSubstitution(): replaced: %s' % aTtt
-                            repTokS.append(aTtt)
-                        if len(repTokS) > 0 \
-                        and self._wsHandler.isBreakingWhitespace(repTokS[-1].t):
-                            break
+                            self._appendTokenMergingWhitespace(macroReplacedTokS, aTtt)
+#                         if len(macroReplacedTokS) > 0 \
+#                         and self._wsHandler.isBreakingWhitespace(macroReplacedTokS[-1].t):
+#                             break
                     else:
                         if flagInvert:
                             # Something like #if !NOWT where NOWT is not defined
@@ -962,7 +976,7 @@ class PpLexer(object):
                             # Something like #if NOWT where NOWT is not defined
                             repTokS.append(PpToken.PpToken('0', 'pp-number'))
                 else:
-                    repTokS.append(myTtt)
+                    self._appendTokenMergingWhitespace(repTokS, myTtt)
         #print '_retDefinedSubstitution(): returning rep: "%s"' % ''.join([t.t for t in repTokS])
         #print '_retDefinedSubstitution(): returning raw: "%s"' % ''.join([t.t for t in rawTokS])
         return repTokS, rawTokS
@@ -1040,15 +1054,15 @@ class PpLexer(object):
         ##if (    (  (defined (SPAM))))
         myBool, myStr = self._retIfEvalAndTokens(theGen)
         # TODO: Why is this different to Ifdef/Ifndef?
-        # Surely myBool is never None???
+        # myBool is None if the eval fails and self._diagnostic.undefined does not raise
         if myBool is not None:
-            #print '_cppIf(): myStr: "%s"' % myStr
+#             print('_cppIf(): myStr: "%s"' % myStr)
             self._condStack.oIf(myBool, myStr)
             self._condCompGraph.oIf(theFlc,
                                     self._tuIndex,
                                     self._condStack.isTrue(),
                                     myStr)
-            #print '_cppIf(): self._condStack:', self._condStack
+#             print('_cppIf(): self._condStack:', self._condStack)
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppElif(self, theGen, theFlc):
@@ -1066,7 +1080,7 @@ class PpLexer(object):
             myStr = ''.join([t.t for t in myTokS]).strip()
             myBool = False
         else:
-            # This might evelauate to True so we definitely want macro expansion
+            # This might eveluate to True so we definitely want macro expansion
             # and eval
             myBool, myStr = self._retIfEvalAndTokens(theGen)
         if myBool is not None:

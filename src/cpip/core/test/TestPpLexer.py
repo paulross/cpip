@@ -1155,10 +1155,6 @@ class TestIncludeHandlerBase(TestPpLexer):
         self.assertEqual([], self._incSim.cpStack)
         self._incSim.validateCpStack()
 
-    def testSetUpTearDown(self):
-        """TestIncludeHandlerBase.testSetUpTearDown(): Tests setUp() and tearDown()."""
-        self.assertEqual(1,1)
-
 class TestIncludeHandler_Simple(TestIncludeHandlerBase):
     """Tests #include statements. Note: This is similar to stuff
     in TestIncludeHandler.py"""
@@ -1793,9 +1789,7 @@ class TestPpLexerConditional_LowLevel(TestPpLexer):
             (u'!defined NOWT\n', self.stringToTokens(u' 1\n')),
             (u'   ! defined SPAM\n',
                 [
-                    PpToken.PpToken('   ',         'whitespace'),
-                    PpToken.PpToken(' ',           'whitespace'),
-                    PpToken.PpToken(' ',           'whitespace'),
+                    PpToken.PpToken('     ',         'whitespace'),
                     PpToken.PpToken('0',           'pp-number'),
                     PpToken.PpToken('\n',          'whitespace'),
                 ],
@@ -1821,6 +1815,41 @@ class TestPpLexerConditional_LowLevel(TestPpLexer):
             #print 'repTokS:', repTokS
             #print 'rawTokS:', rawTokS
             #print
+        #myLexer.finalise()
+
+    def test_01(self):
+        """TestPpLexerConditional_LowLevel.test_01(): test _retDefinedSubstitution() undefined macros using defined(...)."""
+        preDefMacros=[]
+        myLexer = PpLexer.PpLexer(
+                 'mt.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""\n""",
+                    {}
+                    ),
+                 preIncFiles=[io.StringIO(x) for x in preDefMacros],
+                 diagnostic=None,
+                 )
+        myTestS = (
+            (u'defined NOWT\n', self.stringToTokens(u' 0\n')),
+            (u'!defined NOWT\n', self.stringToTokens(u' 1\n')),
+            (u'defined(NOWT)\n', self.stringToTokens(u'(0)\n')),
+            (u'!defined(NOWT)\n', self.stringToTokens(u'(1)\n')),
+            )
+        myToks = [tok for tok in myLexer.ppTokens()]
+        #print
+        for aStr, expectedTokS in myTestS:
+            myCpp = PpTokeniser.PpTokeniser(
+                theFileObj=io.StringIO(aStr)
+                )
+            repTokS, rawTokS = myLexer._retDefinedSubstitution(myCpp.next())
+            self._printDiff(repTokS, expectedTokS)
+            self.assertEqual(repTokS, expectedTokS)
+            self.assertEqual(self.stringToTokens(aStr), rawTokS)
+#             print('repTokS:', repTokS)
+#             print('rawTokS:', rawTokS)
+#             print()
         #myLexer.finalise()
 
 class TestPpLexerConditional(TestPpLexer):
@@ -5143,6 +5172,139 @@ struct page_frag {
         self.assertEqual(tokS, expTokS)
         myLexer.finalise()
         
+class TestLibCelloProblems(TestPpLexer):
+    def test_00(self):
+        """Test of #if (    (  (defined (SPAM))))"""
+        src = """#if (    (  (defined (SPAM))))
+FOO
+#else
+BAR
+#endif
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    src,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+#         print('Result:\n', result)
+#         self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('BAR', 'identifier'),
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('\n', 'whitespace'),
+        ]
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(tokS, expTokS)
+
+    def test_01(self):
+        """Test of #if X when X is defined as "(    (  (defined (SPAM))))" - was failing"""
+        src = """#define X (    (  (defined (SPAM))))
+#if X
+FOO
+#else
+BAR
+#endif
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    src,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+#         print('Result:\n', result)
+#         self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n\n', 'whitespace'),
+            PpToken.PpToken('BAR', 'identifier'),
+            PpToken.PpToken('\n\n', 'whitespace'),
+        ]
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)    
+    
+    def test_02(self):
+        """Test of #if !__DARWIN_NO_LONG_LONG when X is defined as "__DARWIN_NO_LONG_LONG defined(__STRICT_ANSI__)" - was failing"""
+        src = """#define __DARWIN_NO_LONG_LONG defined(__STRICT_ANSI__)
+#if !__DARWIN_NO_LONG_LONG
+FOO
+#else
+BAR
+#endif
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    src,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+#         print('Result:\n', result)
+#         self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n\n', 'whitespace'),
+            PpToken.PpToken('FOO', 'identifier'),
+            PpToken.PpToken('\n\n', 'whitespace'),
+        ]
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)    
+    
+    def test_03(self):
+        """Test of #if !__DARWIN_NO_LONG_LONG when X is defined as "__DARWIN_NO_LONG_LONG (defined(__STRICT_ANSI__) && (__STDC_VERSION__-0 < 199901L) && !defined(__GNUG__))" - was failing"""
+        src = """#define __DARWIN_NO_LONG_LONG (defined(__STRICT_ANSI__) && (__STDC_VERSION__-0 < 199901L) && !defined(__GNUG__))
+#if !__DARWIN_NO_LONG_LONG
+FOO
+#else
+BAR
+#endif
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    src,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+#         print('Result:\n', result)
+#         self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n\n', 'whitespace'),
+            PpToken.PpToken('FOO', 'identifier'),
+            PpToken.PpToken('\n\n', 'whitespace'),
+        ]
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)    
+    
 class Special(TestPpLexer):
     def test_00(self):
         """Sepecial.test_00()."""
@@ -5216,6 +5378,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInclude))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInTypesH))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxEvalProblem))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLibCelloProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))

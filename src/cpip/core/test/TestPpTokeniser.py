@@ -2333,6 +2333,54 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
 
+    def testControlLineDefine_dollar_as_identifier(self):
+        """From libCello: #define $ lit"""
+        myObj = PpTokeniser.PpTokeniser()
+        myToks = [t for t in myObj.genLexPptokenAndSeqWs('#define $ lit\n')]
+        eToks = [
+                PpToken.PpToken('#',               'preprocessing-op-or-punc'),
+                PpToken.PpToken('define',          'identifier'),
+                PpToken.PpToken(' ',               'whitespace'),
+                PpToken.PpToken('$',               'identifier'),
+                PpToken.PpToken(' ',               'whitespace'),
+                PpToken.PpToken('lit',             'identifier'),
+                PpToken.PpToken('\n',              'whitespace'),
+                ]
+        self._printDiff(myToks, eToks)
+        self.assertEqual(myToks, eToks)
+
+    def testControlLineDefine_at_symbol_as_identifier(self):
+        """From libCello: #define @ lit"""
+        myObj = PpTokeniser.PpTokeniser()
+        myToks = [t for t in myObj.genLexPptokenAndSeqWs('#define @ lit\n')]
+        eToks = [
+                PpToken.PpToken('#',               'preprocessing-op-or-punc'),
+                PpToken.PpToken('define',          'identifier'),
+                PpToken.PpToken(' ',               'whitespace'),
+                PpToken.PpToken('@',               'identifier'),
+                PpToken.PpToken(' ',               'whitespace'),
+                PpToken.PpToken('lit',             'identifier'),
+                PpToken.PpToken('\n',              'whitespace'),
+                ]
+        self._printDiff(myToks, eToks)
+        self.assertEqual(myToks, eToks)
+
+    def testControlLineDefine_back_tick_as_identifier(self):
+        """From libCello: #define ` lit"""
+        myObj = PpTokeniser.PpTokeniser()
+        myToks = [t for t in myObj.genLexPptokenAndSeqWs('#define ` lit\n')]
+        eToks = [
+                PpToken.PpToken('#',               'preprocessing-op-or-punc'),
+                PpToken.PpToken('define',          'identifier'),
+                PpToken.PpToken(' ',               'whitespace'),
+                PpToken.PpToken('`',               'identifier'),
+                PpToken.PpToken(' ',               'whitespace'),
+                PpToken.PpToken('lit',             'identifier'),
+                PpToken.PpToken('\n',              'whitespace'),
+                ]
+        self._printDiff(myToks, eToks)
+        self.assertEqual(myToks, eToks)
+
     def testControlLineNull(self):
         """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Sect 16 control-line Null."""
         myObj = PpTokeniser.PpTokeniser()
@@ -3162,7 +3210,7 @@ class TestMisc(TestPpTokeniserBase):#TestGenerateLexPpTokens):
         myGen = myObj.genLexPptokenAndSeqWs('@\n')
         myToks = [t for t in myGen]
         eToks = [
-                PpToken.PpToken('@',           'non-whitespace'),
+                PpToken.PpToken('@',           'identifier'),
                 PpToken.PpToken('\n',          'whitespace'),
                 ]
         self._printDiff(myToks, eToks)

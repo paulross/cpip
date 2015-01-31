@@ -54,10 +54,9 @@ ConstantExpression      51     41    80%   52, 63-72, 78, 85, 103
 
 """
 
-import sys
-import os
-import time
 import logging
+import sys
+import time
 
 from cpip.core import ConstantExpression, PpTokeniser
 
@@ -116,7 +115,6 @@ class TestConstantExpressionEvaluateSimple(unittest.TestCase):
         myCpp = PpTokeniser.PpTokeniser()
         myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('"x" < ==')]
         myObj = ConstantExpression.ConstantExpression(myToksTypes)
-        #self.assertEqual(1, myObj.evaluate())
         self.assertRaises(
             ConstantExpression.ExceptionEvaluateExpression,
             myObj.evaluate
@@ -222,11 +220,7 @@ class TestConstantExpressionConditionalExpression(unittest.TestCase):
         myCpp = PpTokeniser.PpTokeniser()
         myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('((1U)==(2L)) ? (1) : (2)\n')]
         myObj = ConstantExpression.ConstantExpression(myToksTypes)
-#        print()
-#        print(myToksTypes)
-#        print(myObj.evaluate())
         self.assertEqual(2, myObj.evaluate())
-#        self.assertRaises(ConstantExpression.ExceptionConditionalExpression, myObj.evaluate)
 
 class TestConstantExpressionLinux(unittest.TestCase):
     """Tests various issues discovered in building the Linux kernel."""
@@ -235,8 +229,6 @@ class TestConstantExpressionLinux(unittest.TestCase):
         myCpp = PpTokeniser.PpTokeniser()
         myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('1000000UL * 1000\n')]
         myObj = ConstantExpression.ConstantExpression(myToksTypes)
-#        print()
-#        print(myObj.evaluate())
         self.assertEqual(1000000000, myObj.evaluate())
 
 def unitTest(theVerbosity=2):

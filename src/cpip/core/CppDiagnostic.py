@@ -25,7 +25,6 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-
 import logging
 
 from cpip import ExceptionCpip
@@ -239,9 +238,7 @@ class PreprocessDiagnosticKeepGoing(PreprocessDiagnosticStd):
             self.warning('Undefined behaviour: %s' % str(err), theLoc)
 
 class PreprocessDiagnosticRaiseOnError(PreprocessDiagnosticStd):
-    """Sub-class that raises an exception on a #'error directive.
-    TODO: We really should return a value here so that the caller can
-    decide if they need to raise an Exception after reporting the error."""
+    """Sub-class that raises an exception on a #'error directive."""
     def error(self, msg, theLoc=None):
         """Reports when an error event happens.
         msg - The main message.

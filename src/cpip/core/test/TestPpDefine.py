@@ -92,7 +92,14 @@ class TestPpDefine(TestBase.TestCpipBase):
     """Base class for tests on PpDefine and PpDefine.MacroReplacementEnv."""
 
     def _retCheckedMacro(self, theStr, isObj, numToks, name, idS, rS):
-        """Creates and checks a macro and returns it."""
+        """Creates and checks a macro and returns it.
+        theStr - The string the defines the macro.
+        isObj - boolean, True if object like, False if function like.
+        numToks - Number of tokens expected in theStr.
+        name - Expected macro name.
+        idS - List of parameter names.
+        rS - List of replacement tokens.
+        """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(theStr)
             )

@@ -202,6 +202,8 @@ CHAR_SET_MAP = {
             'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
             'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
             'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+            # The 3 from Universal Character names
+            '$', '@', '`',
             )),
     },
     # From: ISO/IEC 14882:1998(E) 2.11 Keywords [lex.key]
@@ -1074,6 +1076,7 @@ class PpTokeniser(object):
             and self._sliceHexQuad(theBuf, theOfs+2) == 4 \
             and self._sliceHexQuad(theBuf, theOfs+6) == 4:
                 return 10
+        # TODO: $ @ ` ??? as '#define $ lit' appears legal
         return 0
     #=========================
     # End: lex.charset

@@ -37,7 +37,6 @@ from cpip.core import ItuToTokens
 from cpip.core import CppDiagnostic
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
-# from cpip.util.MultiPassString import ExceptionMultiPass
 from cpip import TokenCss
 
 class ExceptionItuToHTML(ExceptionCpip):
@@ -50,12 +49,11 @@ class ItuToHtml(object):
         0 : 'False',
         1 : 'True',
     }
-    def __init__(self, theItu, theHtmlDir, writeAnchors, keepGoing=False,
+    def __init__(self, theItu, theHtmlDir, keepGoing=False,
                  macroRefMap=None, cppCondMap=None, ituToTuLineSet=None):
         """Takes an input source file and an output directory.
         theItu - The original source file path (or file like object for the input).
         theHtmlDir - The output directory for the HTML or a file-like object for the output
-        writeAnchors - Bool, whether to write file anchors.
         keepGoing - Bool, if True raise on error.
         macroRefMap - Map of {identifier : href_text, ...) to link to macro definitions.
         ituToTuLineSet - Set of integer line numbers which are lines that can be linked
@@ -73,13 +71,11 @@ class ItuToHtml(object):
             self._fOut = open(os.path.join(theHtmlDir, HtmlUtils.retHtmlFileName(self._fpIn)), 'w')
         else:
             self._fOut = theHtmlDir
-        self._writeAnchors = writeAnchors
         self._keepGoing = keepGoing
         # Map of {identifier : href_text, ...) to link to macro definitions.
         self._macroRefMap = macroRefMap or {}
         self._cppCondMap = cppCondMap
         self._ituToTuLineSet = ituToTuLineSet
-#         cppCondMap.pprint()
         # Start at 0 as this gets incremented before write
         self._lineNum = 0
         self._convert()
@@ -119,7 +115,6 @@ the macro page.""")
                         self._incAndWriteLine(myS)
                         for t, tt in myItt.genTokensKeywordPpDirective():
                             self._handleToken(myS, t, tt)
-#        except (ExceptionMultiPass, IOError) as err:
         except (IOError) as err:
             raise ExceptionItuToHTML('%s line=%d, col=%d' \
                         % (
@@ -189,16 +184,12 @@ the macro page.""")
             myHref = '%s.html#%d' % (os.path.basename(self._fpIn), self._lineNum)
         else:
             myHref = None
-        if self._writeAnchors:
-            HtmlUtils.writeHtmlFileAnchor(
-                    theS,
-                    self._lineNum,
-                    '%8d:' % self._lineNum,
-                    classAttr,
-                    theHref=myHref)
-        else:
-            # Just write the line number without the anchor
-            HtmlUtils.writeCharsAndSpan(theS, '%8d:' % self._lineNum, classAttr)
+        HtmlUtils.writeHtmlFileAnchor(
+                theS,
+                self._lineNum,
+                '%8d:' % self._lineNum,
+                classAttr,
+                theHref=myHref)
         theS.characters(' ')
         
     def _initReader(self):
@@ -230,24 +221,18 @@ Converts a source code file to HTML in the output directory."""
             default=30,
             help="Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: %default]"
         )
-    optParser.add_option("-a", "--anchors", action="store_false", dest="anchors",
-                         default=True, 
-                      help="Suppress line anchors. [default: %default]")
-    
     opts, args = optParser.parse_args()
     clkStart = time.clock()
     # Initialise logging etc.
     logging.basicConfig(level=opts.loglevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
-                    #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
     if len(args) != 2:
         optParser.print_help()
         optParser.error("No arguments!")
         return 1
-    # Your code here
     TokenCss.writeCssToDir(args[1])
-    ItuToHtml(args[0], args[1], opts.anchors)
+    ItuToHtml(args[0], args[1])
     clkExec = time.clock() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')

@@ -25,10 +25,9 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import os
+import logging
 import sys
 import time
-import logging
 
 from cpip.core import FileIncludeGraph, PpToken, PpTokenCount
 
@@ -217,8 +216,6 @@ class TestFileIncludeGraphPlot(unittest.TestCase):
             ],
             myObj.retBranches(),
             )
-#        print()
-#        print(myObj)
         self.assertEqual(
                          """a.h [None, None]:  True "a > 1" "CP=a"
 000001: #include b.h
@@ -540,9 +537,7 @@ class TestFileIncludeGraphAttributeSetGet(unittest.TestCase):
         self.assertEqual('a.h', myObj.fileName)
         self.assertEqual(0, len(myObj._graph))
         myTcs = PpTokenCount.PpTokenCountStack()
-        #myFs = []
         myTcs.push()
-        #myFs.append('PreInclude_00')
         myTcs.counter().inc(PpToken.PpToken('a.h', 'identifier'), True, 31)
         myTcs.counter().inc(PpToken.PpToken('a.h', 'identifier'), False, 10)
         myObj.setTokenCounter(myTcs.pop())
@@ -563,9 +558,7 @@ class TestFileIncludeGraphAttributeSetGet(unittest.TestCase):
         self.assertEqual('a.h', myObj.fileName)
         self.assertEqual(0, len(myObj._graph))
         myTcs = PpTokenCount.PpTokenCountStack()
-        #myFs = []
         myTcs.push()
-        #myFs.append('PreInclude_00')
         myTcs.counter().inc(PpToken.PpToken('a.h', 'identifier'), True, 10)
         myTcs.counter().inc(PpToken.PpToken('a.h', 'identifier'), False, 21)
         myObj.setTokenCounter(myTcs.pop())
@@ -618,16 +611,12 @@ class TestFileIncludeGraphRoot(unittest.TestCase):
         """FileIncludeGraphRoot constructor."""
         myFigr = FileIncludeGraph.FileIncludeGraphRoot()
         self.assertEqual(0, myFigr.numTrees())
-        #print
-        #print myFigr
         self.assertEqual('', str(myFigr))
         myFigr.addGraph(FileIncludeGraph.FileIncludeGraph('PreInclude_00', True, 'a >= b+2', 'Forced PreInclude_00'))
         self.assertEqual(1, myFigr.numTrees())
-        #print myFigr
         self.assertEqual('PreInclude_00 [None, None]:  True "a >= b+2" "Forced PreInclude_00"', str(myFigr))
         myFigr.addGraph(FileIncludeGraph.FileIncludeGraph('PreInclude_01', True, 'x > 1', 'Forced PreInclude_01'))
         self.assertEqual(2, myFigr.numTrees())
-        #print myFigr
         self.assertEqual("""PreInclude_00 [None, None]:  True "a >= b+2" "Forced PreInclude_00"
 PreInclude_01 [None, None]:  True "x > 1" "Forced PreInclude_01\"""", str(myFigr))
 
@@ -635,19 +624,13 @@ PreInclude_01 [None, None]:  True "x > 1" "Forced PreInclude_01\"""", str(myFigr
         """FileIncludeGrphRoot graph raises on empty."""
         myFigr = FileIncludeGraph.FileIncludeGraphRoot()
         self.assertEqual(0, myFigr.numTrees())
-        # Use try/except as this is a property
-        try:
-            myFigr.graph
-            self.fail('FileIncludeGraph.ExceptionFileIncludeGraphRoot not raised.')
-        except FileIncludeGraph.ExceptionFileIncludeGraphRoot:
-            pass
+        self.assertRaises(FileIncludeGraph.ExceptionFileIncludeGraphRoot,
+                          getattr, myFigr, 'graph')
 
     def testCtorAndIncTokens(self):
         """FileIncludeGraphRoot constructor with one graph and incrementing token count."""
         myFigr = FileIncludeGraph.FileIncludeGraphRoot()
         self.assertEqual(0, myFigr.numTrees())
-        #print
-        #print myFigr
         self.assertEqual('', str(myFigr))
         myFigr.addGraph(FileIncludeGraph.FileIncludeGraph('PreInclude_00', True, 'a >= b+2', 'Forced PreInclude_00'))
         self.assertEqual(1, myFigr.numTrees())
@@ -669,15 +652,9 @@ PreInclude_01 [None, None]:  True "x > 1" "Forced PreInclude_01\"""", str(myFigr
         myFigr.graph.addBranch(['a.h',], 1, 'b.h', True, '', 'CP=.')
         self.assertEqual([['a.h',], ['a.h#1', 'b.h'],], myFigr.graph.retBranches())
         myTc = PpTokenCount.PpTokenCount()
-        #myTcs = PpTokenCount.PpTokenCountStack()
-        #myFs = []
-        #myTcs.push()
-        #myFs.append('PreInclude_00')
         myTc.inc(PpToken.PpToken('a.h', 'identifier'), True, num=17)
         myTc.inc(PpToken.PpToken('a.h', 'identifier'), False, num=7)
         myFigr.graph.setTokenCounter(myTc)
-        #print
-        #print myFigr
         self.assertEqual(
             """a.h [24, 17]:  True "a >= b+2" "CP=."
 000001: #include b.h
@@ -729,8 +706,6 @@ PreInclude_01 [None, None]:  True "x > 1" "Forced PreInclude_01\"""", str(myFigr
         myTcs.push()
         myFs.append('PreInc_01')
         self.assertEqual(2, myFigr.numTrees())
-        #print
-        #print myFigr
         self.assertEqual("""PreInc_00 [24, 17]:  True "" "Forced PreInc_00"
 000001: #include a.h
   a.h [117, 91]:  True "" "CP=."
@@ -754,8 +729,6 @@ PreInc_01 [None, None]:  True "" "Forced PreInc_01\"""", str(myFigr))
         myFs.pop()
         myTcs.close()
         self.assertEqual(len(myFs), 0)
-        #print
-        #print myFigr
         self.assertEqual(
             """PreInc_00 [24, 17]:  True "" "Forced PreInc_00"
 000001: #include a.h
@@ -774,7 +747,6 @@ class MyVisitorTreeNode(FileIncludeGraph.FigVisitorTreeNodeBase):
             self._name = None
             self._t = 0
         else:
-            #print 'MyVisitorTreeNode.__init__(%s)' % theFig 
             self._name = theFig.fileName
             self._t = theFig.numTokens
             
@@ -907,10 +879,6 @@ ITU.h [140, 70]:  True "" "CP=."
     ba.h [32, 16]:  True "" "CP=."
   000119: #include bb.h
     bb.h [64, 32]:  True "" "CP=.\""""
-        #print
-        #print expGraph
-        #print
-        #print str(self._figr)
         self.assertEqual(expGraph, str(self._figr))
 
     def setUpNoPreIncludesAndAGraph(self):
@@ -1026,10 +994,6 @@ ITU.h [140, 70]:  True "" "CP=."
         aaba.h [7, 2]:  True "" "CP=."
 000115: #include b.h
   b.h [16, 8]:  True "" "CP=.\""""
-        #print
-        #print expTree
-        #print
-        #print self._figr
         self.assertEqual(expTree, str(self._figr))
 
 class TestFileIncludeGraphRootVisitor(TestFileIncludeGraphRootVisitorBase):
@@ -1172,17 +1136,9 @@ ITU.h [140, 70]:  True "" ""
         aaba.h [7, 2]:  True "" "CP=."
 000115: #include b.h
   b.h [16, 8]:  True "" "CP=.\""""
-        #print
-        #print myFigr
-        #print
-        #print myExpFigr
         self.assertEqual(myExpFigr, str(myFigr))
-        #print
-        #myVis = FincgVisitorTree()
         myVis = FileIncludeGraph.FigVisitorTree(MyVisitorTreeNode)
         myFigr.acceptVisitor(myVis)
-        #self.assertEquals(366, myVis._t)
-        #self.assertEquals(186, myVis._ts)
         myExpTree = """-001 None
   -001 PreInclude_00
   -001 PreInclude_01
@@ -1196,11 +1152,7 @@ ITU.h [140, 70]:  True "" ""
           0117 aaba.h
     0115 b.h
 """
-        #print 'myExpTree'
-        #print myExpTree
         myActTree = myVis.tree()
-        #print 'myActTree'
-        #print myActTree
         self.assertEquals(myExpTree, str(myActTree))
 
     def test_03(self):
@@ -1412,21 +1364,11 @@ ITU.h [140, 70]:  True "" "ITU"
         aaba.h [7, 2]:  True "" ""aaba.h", CP=."
 000115: #include b.h
   b.h [16, 8]:  True "" ""b.h", CP=.\""""
-        #print
-        #print myFigr
-        #print
-        #print myExpFigr
         self.assertEqual(myExpFigr, str(myFigr))
-        #print
-        #myVis = FincgVisitorTree()
         myVis = FileIncludeGraph.FigVisitorTree(MyVisitorTreeNode)
         myFigr.acceptVisitor(myVis)
         myVisTree = myVis.tree()
         self.assertEquals(586, myVisTree._t)
-        #self.assertEquals(186, myVis._ts)
-        #print
-        #print 'myVis.tree()'
-        #print myVis.tree()
         myExpTree = """-001 None
   -001 PreInclude_00
   -001 PreInclude_01
@@ -1440,10 +1382,6 @@ ITU.h [140, 70]:  True "" "ITU"
           0117 aaba.h
     0115 b.h
 """
-        #print 'myExpTree'
-        #print myExpTree
-        #print 'myVisTree'
-        #print myVisTree
         self.assertEquals(myExpTree, str(myVisTree))
 
 class TestFileIncludeGraphRootVisitorFileSet(TestFileIncludeGraphRootVisitorBase):
@@ -1455,14 +1393,10 @@ class TestFileIncludeGraphRootVisitorFileSet(TestFileIncludeGraphRootVisitorBase
         self._figr.acceptVisitor(myVis)
         myList = list(myVis.fileNameSet)
         myList.sort()
-        #print
-        #print myList
         self.assertEqual(
             myList,
             ['ITU.h', 'PreInclude_00', 'PreInclude_01', 'a.h', 'aa.h', 'ab.h', 'b.h', 'ba.h', 'bb.h']
         )
-        #print
-        #print myVis.fileNameMap
         self.assertEqual(
                 myVis.fileNameMap,
                 {
@@ -1485,14 +1419,10 @@ class TestFileIncludeGraphRootVisitorFileSet(TestFileIncludeGraphRootVisitorBase
         self._figr.acceptVisitor(myVis)
         myList = list(myVis.fileNameSet)
         myList.sort()
-        #print
-        #print myList
         self.assertEqual(
             myList,
             ['ITU.h', 'a.h', 'aa.h', 'aaa.h', 'aaaa.h', 'aaab.h', 'aab.h', 'aaba.h', 'b.h'],
         )
-        #print
-        #print myVis.fileNameMap
         self.assertEqual(
                 myVis.fileNameMap,
                 {
@@ -1508,57 +1438,6 @@ class TestFileIncludeGraphRootVisitorFileSet(TestFileIncludeGraphRootVisitorBase
                 }
         )
 
-#===============================================================================
-# class TestFileIncludeGraphRootVisitorDot(TestFileIncludeGraphRootVisitorBase):
-#    """Tests the visitor class that gathers file names."""
-#    def test_00(self):
-#        """Test TestFileIncludeGraphRootVisitorDot: Two pre-includes and a graph."""
-#        self.setUpTwoPreIncludesAndAGraph()
-#        myVis = FileIncludeGraph.FigVisitorDot()
-#        self._figr.acceptVisitor(myVis)
-#        #print
-#        #print myVis
-#        self.assertEqual(str(myVis), """digraph FigVisitorDot {
-# "PreInclude_00" -> "PreInclude_01" -> "ITU.h";
-# "PreInclude_00";
-# "PreInclude_01";
-# "ITU.h" -> "a.h";
-# "ITU.h" -> "b.h";
-# "a.h" -> "aa.h";
-# "a.h" -> "ab.h";
-# "aa.h";
-# "ab.h";
-# "b.h" -> "ba.h";
-# "b.h" -> "bb.h";
-# "ba.h";
-# "bb.h";
-# }
-# """)
-# 
-#    def test_01(self):
-#        """Test TestFileIncludeGraphRootVisitorDot: No pre-includes and a graph."""
-#        self.setUpNoPreIncludesAndAGraph()
-#        myVis = FileIncludeGraph.FigVisitorDot()
-#        self._figr.acceptVisitor(myVis)
-#        #print
-#        #print myVis
-#        self.assertEqual(str(myVis), """digraph FigVisitorDot {
-# "ITU.h" -> "a.h";
-# "ITU.h" -> "b.h";
-# "a.h" -> "aa.h";
-# "aa.h" -> "aaa.h";
-# "aa.h" -> "aab.h";
-# "aaa.h" -> "aaaa.h";
-# "aaa.h" -> "aaab.h";
-# "aaaa.h";
-# "aaab.h";
-# "aab.h" -> "aaba.h";
-# "aaba.h";
-# "b.h";
-# }
-# """)
-#===============================================================================
-
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestFileIncludeGraph)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileIncludeGraphPlot))
@@ -1568,7 +1447,6 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileIncludeGraphRoot))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileIncludeGraphRootVisitor))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileIncludeGraphRootVisitorFileSet))
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileIncludeGraphRootVisitorDot))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################
@@ -1622,7 +1500,6 @@ def main():
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
-                    #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
     clkStart = time.clock()
     unitTest()

@@ -27,10 +27,9 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import pprint
+import logging
 import sys
 import time
-import logging
 
 from cpip.core import FileLocation
 
@@ -168,250 +167,6 @@ class TestFileLocation(unittest.TestCase):
         self.assertEqual(myFile, myObj.fileName)
         myObj.colNum = 96
         self.assertEqual(96, myObj.colNum)
-
-class TestCppFileLocation(unittest.TestCase):
-    """Tests the class CppFileLocation."""
-
-    def testCtor(self):
-        """CppFileLocation - simple construction."""
-        myFile  = 'FileLocation.py'
-        myObj = FileLocation.CppFileLocation(myFile)
-        self.assertEqual(myFile, myObj.fileName)
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        self.assertEqual(
-                myObj.fileLineCol(),
-                FileLocation.FileLineCol(
-                        myFile,
-                        FileLocation.START_LINE,
-                        FileLocation.START_COLUMN,
-                    )
-            )
-
-    def testBadPredefinedMacro(self):
-        """CppFileLocation - simple construction and raises on unknown predefined macro."""
-        myObj = FileLocation.CppFileLocation('my.h')
-        self.assertRaises(FileLocation.ExceptionFileLocation,
-                          myObj.retPredefinedMacro,
-                          'spam'
-                          )
-
-    def testEmptyStack(self):
-        """CppFileLocation - simple construction and raises on empty stack."""
-        myObj = FileLocation.CppFileLocation('my.h')
-        myObj.filePop()
-        self.assertRaises(FileLocation.ExceptionFileLocation,
-                          myObj.filePop,
-                          )
-        self.assertRaises(FileLocation.ExceptionFileLocation,
-                          myObj.retPredefinedMacro,
-                          ''
-                          )
-        self.assertRaises(FileLocation.ExceptionFileLocation,
-                          myObj.update,
-                          ''
-                          )
-        self.assertRaises(FileLocation.ExceptionFileLocation,
-                          myObj.fileLineCol,
-                          )
-        # property testing
-        try:
-            myObj.fileName
-            self.fail('FileLocation.ExceptionFileLocation not raised')
-        except FileLocation.ExceptionFileLocation:
-            pass
-        try:
-            print(myObj.lineNum)
-            self.fail('FileLocation.ExceptionFileLocation not raised')
-        except FileLocation.ExceptionFileLocation:
-            pass
-        try:
-            myObj.lineNum = 12
-            self.fail('FileLocation.ExceptionFileLocation not raised')
-        except FileLocation.ExceptionFileLocation:
-            pass
-        try:
-            print(myObj.colNum)
-            self.fail('FileLocation.ExceptionFileLocation not raised')
-        except FileLocation.ExceptionFileLocation:
-            pass
-        try:
-            myObj.colNum = 90
-            self.fail('FileLocation.ExceptionFileLocation not raised')
-        except FileLocation.ExceptionFileLocation:
-            pass
-
-    def testCtorNonExistentFile(self):
-        """CppFileLocation - construction with non-existent file, this is OK as we are not bound to the file system."""
-        FileLocation.CppFileLocation('spam/eggs.h')
-        self.assertTrue(True)
-        #self.assertRaises(FileLocation.ExceptionFileLocation,
-        #                  FileLocation.CppFileLocation, 'spam/eggs.h')
-
-    def testIncrementColumn(self):
-        """CppFileLocation - increment column."""
-        myFile  = 'FileLocation.py'
-        myObj = FileLocation.CppFileLocation(myFile)
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.colNum = myObj.colNum
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.colNum = myObj.colNum + 1
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN+1, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.colNum = myObj.colNum + 2
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN+3, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-
-    def testIncrementLine(self):
-        """CppFileLocation - increment line counter."""
-        myFile  = 'FileLocation.py'
-        myObj = FileLocation.CppFileLocation(myFile)
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.lineNum = myObj.lineNum + 1
-        self.assertEqual(FileLocation.START_LINE+1, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % (FileLocation.START_LINE+1), myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.lineNum = myObj.lineNum + 1
-        self.assertEqual(FileLocation.START_LINE+2, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % (FileLocation.START_LINE+2), myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.lineNum = myObj.lineNum + 2
-        self.assertEqual(FileLocation.START_LINE+4, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % (FileLocation.START_LINE+4), myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.colNum = myObj.colNum + 2
-        self.assertEqual(FileLocation.START_LINE+4, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN+2, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % (FileLocation.START_LINE+4), myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.lineNum = myObj.lineNum + 0
-        self.assertEqual(FileLocation.START_LINE+4, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % (FileLocation.START_LINE+4), myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.lineNum = myObj.lineNum + 1
-        self.assertEqual(FileLocation.START_LINE+5, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % (FileLocation.START_LINE+5), myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-
-    def testUpdate(self):
-        """CppFileLocation - update()."""
-        myFile  = 'FileLocation.py'
-        myObj = FileLocation.CppFileLocation(myFile)
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE, FileLocation.START_COLUMN), myObj.pLineCol)
-        self.assertEqual(myFile, myObj.retPredefinedMacro('__FILE__'))
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        myObj.update('')
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE, FileLocation.START_COLUMN), myObj.pLineCol)
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('  ')
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN+2, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE, FileLocation.START_COLUMN+2), myObj.pLineCol)
-        self.assertEqual('%d' % FileLocation.START_LINE, myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('\n')
-        self.assertEqual(FileLocation.START_LINE+1, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE+1, FileLocation.START_COLUMN), myObj.pLineCol)
-        self.assertEqual('%d' % (FileLocation.START_LINE+1), myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('\n\n')
-        self.assertEqual(FileLocation.START_LINE+3, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE+3, FileLocation.START_COLUMN), myObj.pLineCol)
-        self.assertEqual('%d' % (FileLocation.START_LINE+3), myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('0123456789\n')
-        self.assertEqual(FileLocation.START_LINE+4, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE+4, FileLocation.START_COLUMN), myObj.pLineCol)
-        self.assertEqual('%d' % (FileLocation.START_LINE+4), myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('01234\n56789\n')
-        self.assertEqual(FileLocation.START_LINE+6, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE+6, FileLocation.START_COLUMN), myObj.pLineCol)
-        self.assertEqual('%d' % (FileLocation.START_LINE+6), myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('\n0')
-        self.assertEqual(FileLocation.START_LINE+7, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN+1, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE+7, FileLocation.START_COLUMN+1), myObj.pLineCol)
-        self.assertEqual('%d' % (FileLocation.START_LINE+7), myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('\n0123456789')
-        self.assertEqual(FileLocation.START_LINE+8, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN+10, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE+8, FileLocation.START_COLUMN+10), myObj.pLineCol)
-        self.assertEqual('%d' % (FileLocation.START_LINE+8), myObj.retPredefinedMacro('__LINE__'))
-        myObj.update('0123456789\n0123456789\n0123456789')
-        self.assertEqual(FileLocation.START_LINE+10, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN+10, myObj.colNum)
-        #self.assertEqual((FileLocation.START_LINE+10, FileLocation.START_COLUMN+10), myObj.pLineCol)
-        self.assertEqual('%d' % (FileLocation.START_LINE+10), myObj.retPredefinedMacro('__LINE__'))
-
-    def testFilePop(self):
-        """CppFileLocation - pop() and effects."""
-        myFile  = 'FileLocation.py'
-        myObj = FileLocation.CppFileLocation(myFile)
-        self.assertEqual(myFile, myObj.fileName)
-        self.assertEqual(1, myObj.stackDepth)
-        self.assertEqual(True, myObj.isOnStack(myFile))
-        self.assertEqual(myFile, myObj.fileName)
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual(FileLocation.START_LINE, myObj.lineNum)
-        self.assertEqual(FileLocation.START_COLUMN, myObj.colNum)
-        self.assertEqual('%d' % (FileLocation.START_LINE), myObj.retPredefinedMacro('__LINE__'))
-        myObj.filePop()
-        self.assertEqual(0, myObj.stackDepth)
-        self.assertEqual(False, myObj.isOnStack(myFile))
 
 class TestLogicalPhysicalLineMapLowLevelBase(unittest.TestCase):
     """Tests the low leve functionality of the LogicalPhysicalLineMap."""
@@ -1282,7 +1037,10 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         myPstrS = ['abc', 'def']
         # In the logical space 'd' is replaced by 'dddd'
         myLstrS = ['abc', 'ddddef']
-        myObj.substString(FileLocation.START_LINE+1, FileLocation.START_COLUMN, len('d'), len('dddd'))
+        myObj.substString(FileLocation.START_LINE+1,
+                          FileLocation.START_COLUMN,
+                          len('d'),
+                          len('dddd'))
         #pprint.pprint(myObj._ir)
         print('\nTRACE: testSingleExpandingSubst()')
         print(myObj)
@@ -1836,7 +1594,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #print 'Before spliceLine()'
         #print myObj
         # Now the spliced line
-        myObj.spliceLine(FileLocation.START_LINE, FileLocation.START_COLUMN+3)
+#         myObj.spliceLine(FileLocation.START_LINE, FileLocation.START_COLUMN+3)
         #print 'After spliceLine()'
         #print myObj
         # Now the additional '\n'
@@ -2329,10 +2087,13 @@ class Special(unittest.TestCase):
 
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(Special)
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLogicalPhysicalLineMapLowLevel))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLogicalPhysicalLineMapSimLineSplice))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
+                                        TestLogicalPhysicalLineMapLowLevel))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
+                                        TestLogicalPhysicalLineMapSimLineSplice))
+#     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
+#                                         TestLogicalPhysicalLineMap))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileLocation))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppFileLocation))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileLocationTrigraph))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileLocationLineContinuation))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFileLocationMultiPhase))

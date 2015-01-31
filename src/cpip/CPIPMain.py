@@ -40,6 +40,7 @@ from cpip.core import CppDiagnostic
 from cpip.core import FileIncludeGraph
 from cpip.core import PragmaHandler
 from cpip.core import CppCond
+# from cpip.util import Cpp
 from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip.util import DirWalk
@@ -56,21 +57,21 @@ from cpip import ExceptionCpip
 # POD class that contains the arguments for processing a file or directory
 MainJobSpec = collections.namedtuple('MainJobSpec',
     [
-        'incHandler',  # IncludeHandler.CppIncludeStdOs()
-        'preDefMacros',  # A dictionary of standard predefined macros e.g. __STDC__
+        'incHandler',       # IncludeHandler.CppIncludeStdOs()
+        'preDefMacros',     # A dictionary of standard predefined macros e.g. __STDC__
                             #   __DATE__, __TIME__ will be automatically allocated.
-        'preIncStr',  # String that contains the predefined #defines
-        'preIncPaths',  # List of file paths to be pre-included
+        'preIncStr',        # String that contains the predefined #defines
+        'preIncPaths',      # List of file paths to be pre-included
                             # NOTE: Not open file-like objects as multiprocessing
                             # as these will fail to be deep copied.
-        'diagnostic',  # CppDiagnostic.PreprocessDiagnosticKeepGoing() or None
-        'pragmaHandler',  # PragmaHandler.PragmaHandlerNull() or None
-        'keepGoing',  # boolean
-        'conditionalLevel',  # Integer level, whether to display conditionally compiled out files
-        'dumpList',  # List of letters as to what to dump to stdout
-        'helpMap',  # map of {opt_name : (value, help), ...}. See retOptionMap().
-        'includeDOT',  # boolean, whether to try to use DOT to create a dependency SVG.
-        'cmdLine',  # Invocation: ' '.join(sys.argv)
+        'diagnostic',       # CppDiagnostic.PreprocessDiagnosticKeepGoing() or None
+        'pragmaHandler',    # PragmaHandler.PragmaHandlerNull() or None
+        'keepGoing',        # boolean
+        'conditionalLevel', # Integer level, whether to display conditionally compiled out files
+        'dumpList',         # List of letters as to what to dump to stdout
+        'helpMap',          # map of {opt_name : (value, help), ...}. See retOptionMap().
+        'includeDOT',       # boolean, whether to try to use DOT to create a dependency SVG.
+        'cmdLine',          # Invocation: ' '.join(sys.argv)
     ]
 )
 
@@ -359,7 +360,7 @@ def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
 
 def _writeParagraphWithBreaks(theS, theParas):
     for i, p in enumerate(theParas):
-        if i < 0:
+        if i > 0:
             with XmlWrite.Element(theS, 'br'):
                 pass
         with XmlWrite.Element(theS, 'p'):
@@ -582,7 +583,6 @@ def writeIndexHtml(theItuS, theOutDir, theJobSpec):
                                     ):
                                 myS.characters(anItu)
             _writeCommandLineInvocationToHTML(myS, theJobSpec)
-    #
     return indexPath
 
 def _writeCommandLineInvocationToHTML(theS, theJobSpec):
@@ -892,7 +892,6 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                 ItuToHtml.ItuToHtml(
                     aSrc,
                     outDir,
-                    writeAnchors=True,
                     keepGoing=jobSpec.keepGoing,
                     macroRefMap=myMacroRefMap,
                     cppCondMap=myCcgvcl,
@@ -976,6 +975,15 @@ form name<=defintion>. These are introduced into the
 environment before anything else. These macros can not be
 redefined. __DATE__ and __TIME__ will be automatically
 allocated in here. [default: %default]""")
+#     optParser.add_option("-C", "--CPP", action="store_true", dest="recursive",
+#                          default=False,
+#                          help="""Sys call 'cpp -dM' to extract and use platform
+# specific macros. These are inserted after -S option and
+# before the -D option. [default: %default]""")
+    # subprocess.check_output(['cpp', '-dM'], stdin=subprocess.DEVNULL)
+    # returns a bytes object in Python 3
+    # mS = [v.decode('ascii') for v in l.split(b'\n')]
+    # Stringifies them into a list of stings.
     optParser.add_option("-D", "--define", action="append", dest="defines", default=[],
                       help="""Add macro defintions of the form name<=defintion>.
                       These are introduced into the environment before
@@ -1028,13 +1036,13 @@ allocated in here. [default: %default]""")
             else:
                 raise ValueError('Can not read macro definition: %s' % d)
     # Add macros in psuedo pre-include
-    preDefStr = ''
+    preIncStr = ''
     if opts.defines:
-        preDefStr = u'\n'.join(['#define ' + ' '.join(d.split('=')) for d in opts.defines]) + '\n'
+        preIncStr = u'\n'.join(['#define ' + ' '.join(d.split('=')) for d in opts.defines]) + '\n'
     # Create the job specification
     jobSpec = MainJobSpec(
         incHandler=myIncH,
-        preIncStr=preDefStr,
+        preIncStr=preIncStr,
         preDefMacros=preDefMacros,
         preIncPaths=opts.preInc,
         diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing() if opts.keep_going else None,
