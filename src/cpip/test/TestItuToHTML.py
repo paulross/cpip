@@ -26,25 +26,12 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import sys
-#import os
-import unittest
-import time
-import logging
-#import pprint
-
 import io
+import logging
+import sys
+import time
+import unittest
 
-#try:
-#    from xml.etree import cElementTree as etree
-#except ImportError:
-#    from xml.etree import ElementTree as etree
-
-#sys.path.append(os.path.join(os.pardir + os.sep))
-#===============================================================================
-# import pprint
-# pprint.pprint(sys.path)
-#===============================================================================
 from cpip import ItuToHtml
 
 #######################################
@@ -78,7 +65,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
     def test_01(self):
         """TestItuToHtmlPhase3.test_01(): Empty string."""
         myOutput = io.StringIO()
-        ItuToHtml.ItuToHtml(io.StringIO(u''), myOutput, writeAnchors=True)
+        ItuToHtml.ItuToHtml(io.StringIO(u''), myOutput)
 #         print(myOutput.getvalue())
         expVal = """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -89,6 +76,10 @@ class TestItuToHtmlPhase3(unittest.TestCase):
   </head>
   <body>
     <h1>File: Unknown</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
     <pre><a name="1" /><span class="line">       1:</span> </pre>
   </body>
 </html>
@@ -99,7 +90,7 @@ class TestItuToHtmlPhase3(unittest.TestCase):
         """TestItuToHtmlPhase3.test_02(): Macro."""
         myStr = u'#define OBJ_LIKE /* white space */ (1-1) /* other */\n'
         myOutput = io.StringIO()
-        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput, writeAnchors=True)
+        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput)
 #         print(myOutput.getvalue())
         expVal = """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -110,6 +101,10 @@ class TestItuToHtmlPhase3(unittest.TestCase):
   </head>
   <body>
     <h1>File: Unknown</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
     <pre><a name="1" /><span class="line">       1:</span> <span class="f">#</span><span class="n">define</span> <span class="b">OBJ_LIKE</span> <span class="k">/* white space */</span> <span class="f">(</span><span class="c">1</span><span class="f">-</span><span class="c">1</span><span class="f">)</span> <span class="k">/* other */</span>
 <a name="2" /><span class="line">       2:</span> </pre>
   </body>
@@ -140,7 +135,7 @@ p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 char c[2][6] = { str(hello), str() };
 """
         myOutput = io.StringIO()
-        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput, writeAnchors=True)
+        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput)
 #         print(myOutput.getvalue())
         expVal = """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -151,6 +146,10 @@ char c[2][6] = { str(hello), str() };
   </head>
   <body>
     <h1>File: Unknown</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
     <pre><a name="1" /><span class="line">       1:</span> <span class="f">#</span><span class="n">define</span> <span class="b">x</span> <span class="c">3</span>
 <a name="2" /><span class="line">       2:</span> <span class="f">#</span><span class="n">define</span> <span class="b">f</span><span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="b">f</span><span class="f">(</span><span class="b">x</span> <span class="f">*</span> <span class="f">(</span><span class="b">a</span><span class="f">)</span><span class="f">)</span>
 <a name="3" /><span class="line">       3:</span> <span class="f">#</span><span class="n">undef</span> <span class="b">x</span>
@@ -201,7 +200,7 @@ void main()
 }
 """
         myOutput = io.StringIO()
-        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput, writeAnchors=True)
+        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput)
 #         print(myOutput.getvalue())
         expVal = """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -212,6 +211,10 @@ void main()
   </head>
   <body>
     <h1>File: Unknown</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
     <pre><a name="1" /><span class="line">       1:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">iostream</span><span class="f">&gt;</span>
 <a name="2" /><span class="line">       2:</span> 
 <a name="3" /><span class="line">       3:</span> <span class="m">using</span> <span class="m">namespace</span> <span class="b">std</span><span class="f">;</span>
@@ -238,7 +241,7 @@ int h = 0xABC;
 const char* s = "Hello world";
 """
         myOutput = io.StringIO()
-        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput, writeAnchors=True)
+        ItuToHtml.ItuToHtml(io.StringIO(myStr), myOutput)
 #         print(myOutput.getvalue())
         expVal = """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -249,6 +252,10 @@ const char* s = "Hello world";
   </head>
   <body>
     <h1>File: Unknown</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
     <pre><a name="1" /><span class="line">       1:</span> <span class="m">char</span> <span class="b">c</span> <span class="f">=</span> <span class="d">&apos;c&apos;</span><span class="f">;</span>
 <a name="2" /><span class="line">       2:</span> <span class="m">long</span> <span class="b">l</span> <span class="f">=</span> <span class="c">42L</span><span class="f">;</span>
 <a name="3" /><span class="line">       3:</span> <span class="m">int</span> <span class="b">i</span> <span class="f">=</span> <span class="c">42</span><span class="f">;</span>

@@ -27,10 +27,11 @@ __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import logging
+
 from cpip import ExceptionCpip
+from cpip.core import PpLexer
 from cpip.core import PpToken
 from cpip.core import PpTokeniser
-from cpip.core import PpLexer
 from cpip.util import BufGen
 from cpip.util import MultiPassString
 
@@ -143,7 +144,6 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                     self._mps.setMarker()
                     if myBg[i+1] == '\n':
                         # Remove the continuation marker
-                        # TODO: setWordType when we have fixed the overlap problem
                         self._mps.removeMarkedWord(isTerm=True)
                         i += 2
                         self._fileLocator.incLine()
@@ -184,8 +184,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                     # Fix comments to replace them by a comment character
                     if self._cppTokType in PpTokeniser.COMMENT_TYPES:
                         # Turn the comment into a single whitespace
-                        # TODO: Explain this, surely the \n is a C++ comment terminator
-                        myIsTerm = self._cppTokType in (PpTokeniser.COMMENT_TYPE_C,)
+                        myIsTerm = self._cppTokType == PpTokeniser.COMMENT_TYPE_C
                         self._mps.removeSetReplaceClear(
                                 isTerm=myIsTerm,
                                 theType=self._cppTokType,
@@ -196,7 +195,6 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                                 'string-literal',
                                 'non-whitespace'
                             )
-#                        print('_translatePhase_3', self._cppTokType, myIsTerm, ''.join(myBg[ofsIdx:ofsIdx+sliceLen]))
                         self._mps.setWordType(self._cppTokType, isTerm=myIsTerm)
                     ofsIdx += sliceLen
                 else:

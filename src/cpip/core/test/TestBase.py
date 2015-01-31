@@ -56,11 +56,11 @@ class TestCpipBase(unittest.TestCase):
         actual, expected = self._extendPair(actual, expected)
         if actual != expected:
             print()
-            self.pprintReplacementList(actual)
+#             self.pprintReplacementList(actual)
             i = 0
             print('Diff: actual -> expected')
             #m = map(None, actual, expected)
-            for t, e in map(None, actual, expected):
+            for t, e in zip(actual, expected):
                 if t is not None and e is not None:
                     if t != e:
                         print('%d: %s, != %s' \
@@ -73,6 +73,10 @@ class TestCpipBase(unittest.TestCase):
                                          self.__stringiseToken(t),
                                          self.__stringiseToken(e)))
                 i += 1
+            if len(actual) > len(expected):
+                print('Actual has extra tokens: %s' % actual[len(expected):])
+            if len(actual) < len(expected):
+                print('Expect has extra tokens: %s' % expected[len(actual):])
 
     def __stringiseToken(self, theTtt):
         return str(theTtt).replace('\n', '\\n')
@@ -86,6 +90,7 @@ class TestCpipBase(unittest.TestCase):
             print('%2d: %s,' \
                 % (i, self.__stringiseToken(aTtt)))
             i += 1
+        # TODO: This is horrible we expand the list with None's then pass them to something that thinks they are PpTokens
         print('As string:')
         print(PpToken.tokensStr(theList))
 

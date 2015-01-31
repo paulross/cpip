@@ -25,6 +25,7 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
+import io
 import os
 import sys
 import logging
@@ -653,6 +654,61 @@ class TestCppIncludeStdOs(unittest.TestCase):
             ''
             )
 
+class TestCppIncludeStdin(unittest.TestCase):
+    """Tests standard include behaviour from stdin and the OS file system."""
+    def setUp(self):
+        self._incSim = IncludeHandler.CppIncludeStdin([], [])
+        
+    def _getRelFilePath(self, fileRelHere):
+        return os.path.join(self._getRelDirPath(), fileRelHere)
+
+    def _getRelDirPath(self):
+        r = os.path.dirname(__file__)
+        if r == os.sep:
+            r = ''
+        return r
+
+    def testIncludePasses(self):
+        """Tests standard include succeeds from the OS file system."""
+        f = self._incSim._searchFile(self._getRelFilePath('mt.h'), os.curdir)
+        self.assertNotEqual(None, f)
+        # Test the return value
+        self.assertEqual('', f.fileObj.read())
+        self.assertEqual(os.path.join(os.curdir, self._getRelDirPath(), 'mt.h'), f.filePath)
+#         print(os.path.join(os.curdir, self._getRelDirPath()))
+#         print('===========', self._getRelDirPath(), '||', f.currentPlace)
+        expCurrentPlace = os.path.relpath(os.path.join(os.curdir, self._getRelDirPath()))
+        if len(self._getRelDirPath()) > 0:
+            expCurrentPlace = os.path.join(os.curdir, expCurrentPlace)
+        self.assertEqual(os.path.abspath(expCurrentPlace),
+                         os.path.abspath(f.currentPlace))
+        self.assertEqual(None, f.origin)
+
+    def testIncludeFails(self):
+        """Tests standard include fails from the OS file system."""
+        f = self._incSim._searchFile('NONEXITENT', os.curdir)
+        self.assertEqual(None, f)
+
+    def testNoMultipleTuS(self):
+        """TestCppIncludeFailure: multiple ITUs fails."""
+        f = self._incSim.initialTu(self._getRelFilePath('mt.h'))
+        self.assertNotEqual(None, f)
+        self.assertRaises(
+            IncludeHandler.ExceptionCppInclude,
+            self._incSim.initialTu,
+            ''
+            )
+    
+    def testStdinWriteRead(self):
+        try:
+            temp = sys.stdin
+            content = 'Hello world\n'
+            sys.stdin = io.StringIO(content)
+            f = self._incSim.initialTu('stdin').fileObj
+            self.assertEqual(content, f.read())
+        finally:
+            sys.stdin = temp
+
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStd)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStdAbc))
@@ -662,6 +718,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeCurrentPlace))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeFailure))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStdOs))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStdin))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

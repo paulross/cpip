@@ -26,6 +26,7 @@ __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import os
+import sys
 import collections
 import io
 #import time
@@ -319,7 +320,7 @@ class CppIncludeStdOs(CppIncludeStd):
                 self._currentPlaceFromFile(myPath),
                 None,
                 )
-        except Exception as err:
+        except Exception as _err:
             pass
         return None
 
@@ -337,8 +338,27 @@ class CppIncludeStdOs(CppIncludeStd):
                 'TU',
                 )
             self.cpStackPush(retVal)
-            #self._cpStack.append(retVal.currentPlace)
-        except Exception as err:
+        except Exception as _err:
+            pass
+        return retVal
+
+class CppIncludeStdin(CppIncludeStdOs):
+    """This reads stdin for the ITU but delegates _searchFile() to the OS file system call."""
+    def initialTu(self, theTuPath):
+        """Given an path as a string this returns the
+        class FilePathOrigin or None for the initial translation unit"""
+        if len(self._cpStack) != 0:
+            raise ExceptionCppInclude('setTu() with CP stack: %s' % self._cpStack)
+        retVal = None
+        try:
+            retVal = FilePathOrigin(
+                sys.stdin,
+                theTuPath,
+                self._currentPlaceFromFile(theTuPath),
+                'stdin',
+                )
+            self.cpStackPush(retVal)
+        except Exception as _err:
             pass
         return retVal
 
@@ -382,5 +402,4 @@ class CppIncludeStringIO(CppIncludeStd):
             'TU',
             )
         self.cpStackPush(retVal)
-        #self._cpStack.append(retVal.currentPlace)
         return retVal

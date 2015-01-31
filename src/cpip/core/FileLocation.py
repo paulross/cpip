@@ -120,6 +120,7 @@ __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import collections
+
 from cpip import ExceptionCpip
 
 class ExceptionFileLocation(ExceptionCpip):
@@ -270,7 +271,6 @@ class FileLocation(object):
         if theName == '__FILE__':
             return self.fileName
         elif theName == '__LINE__':
-            # TODO: Return physical file number or logical one?
             return '%d' % self.lineNum
         raise ExceptionFileLocation('Unknown predefined macro name "%s"' % theName)
 
@@ -280,11 +280,8 @@ class FileLocation(object):
         assert(len(self._logicalPhysMapStack) > 0)
         retL = theLline
         retC = theLcol
-#        print 'logicalToPhysical(self, %d, %d):' % (theLline, theLcol)
         for i in range(len(self._logicalPhysMapStack)-1, -1, -1):
-#            print 'logicalToPhysical() i=%d retL=%d retC=%d):' % (i, retL, retC)
             retL, retC = self._logicalPhysMapStack[i].pLineCol(retL, retC)
-#        print 'logicalToPhysical() retL=%d retC=%d):' % (retL, retC)
         return retL, retC
 
     ###############################
@@ -314,8 +311,6 @@ class FileLocation(object):
     def pLineCol(self):
         """Returns the current physical line and column number."""
         assert(len(self._logicalPhysMapStack) > 0)
-#        print 'FileLocation.FileLocation.pLineCol: %d %d returns %s' \
-#            % (self._lineNum, self._colNum, str(self.logicalToPhysical(self._lineNum, self._colNum)))
         return self.logicalToPhysical(self._lineNum, self._colNum)
 
     @property
@@ -332,9 +327,7 @@ class FileLocation(object):
     def fileLineCol(self):
         """Return an instance of FileLineCol from the current settings."""
         pLine, pCol = self.pLineCol
-        #print 'TRACE: fileLineCol()', pLine, pCol
         return FileLineCol(self.fileName, pLine, pCol)
-        #return FileLineCol(self.fileName, self.lineNum, self.colNum)
     ###############################
     # End: Getters and setters.
     ###############################
@@ -432,105 +425,3 @@ class FileLocation(object):
     ####################
     # End: Test support.
     ####################
-
-class CppFileLocation(object):
-    """Class that maintains location in a translation unit during preprocessing.
-    This maintains a stack of FileLocation objects for each #included file.
-    TODO: this is designed for the PpLexer should be removed as we now have
-    FileIncludeStack."""
-    def __init__(self, theTu):
-        """Constructor with the name of the translation unit."""
-        # A stack of FileLocation objects
-        self._fileStack = []
-        self.filePush(theTu)
-    
-    def filePush(self, theFile):
-        """Push an included file onto the stack."""
-        self._fileStack.append(FileLocation(theFile))
-
-    def filePop(self):
-        """Remove an included file from the stack."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation: pop from empty stack.')
-        return self._fileStack.pop()
-
-    def isOnStack(self, theFile):
-        """Returns True if the file is already on the stack."""
-        for anEntry in self._fileStack:
-            if theFile == anEntry.fileName:
-                return True
-        return False
-
-    @property
-    def fileName(self):
-        """The current file name at the top of the stack."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation.fileName on empty stack.')
-        return self._fileStack[-1].fileName
-
-    @property
-    def lineNum(self):
-        """The column number of the file on the top of the stack.
-        Will raise a ExceptionFileLocation if the stack is empty."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation.lineNum on empty stack.')
-        return self._fileStack[-1].lineNum
-
-    @lineNum.setter
-    def lineNum(self, num):
-        """Sets the line number on the FileLocation object at the top
-        of the stack. Will raise a ExceptionFileLocation if the stack is empty."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation: lineNum.setter on empty stack.')
-        self._fileStack[-1].lineNum = num
-        self._fileStack[-1].colNum = START_COLUMN
-
-    @property
-    def colNum(self):
-        """The column number of the file on the top of the stack.
-        Will raise a ExceptionFileLocation if the stack is empty."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation.colNum on empty stack.')
-        return self._fileStack[-1].colNum
-
-    @colNum.setter
-    def colNum(self, num):
-        """Sets the column number on the FileLocation object at the top
-        of the stack. Will raise a ExceptionFileLocation if the stack is empty."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation: colNum.setter on empty stack.')
-        self._fileStack[-1].colNum = num
-
-    @property
-    def stackDepth(self):
-        """The depth of the stack."""
-        return len(self._fileStack)
-
-    def retPredefinedMacro(self, theName):
-        """Returns a retPredefinedMacro from the FileLocation object at the top
-        of the stack. Will raise a ExceptionFileLocation if the stack is empty."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation.retPredefinedMacro() on empty stack.')
-        return self._fileStack[-1].retPredefinedMacro(theName)
-
-    def update(self, theStr):
-        """Updates the FileLocation object at the top of the stack.
-        Will raise a ExceptionFileLocation if the stack is empty."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation.update() on empty stack.')
-        return self._fileStack[-1].update(theStr)
-    
-    def fileLineCol(self):
-        """Returns a FileLineCol object from the FileLocation object at the
-        top of the stack. Will raise a ExceptionFileLocation if the stack is
-        empty."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation.fileLineCol() on empty stack.')
-        return self._fileStack[-1].fileLineCol()
-        
-    @property
-    def pLineCol(self):
-        """Returns the current physical line and column number."""
-        if len(self._fileStack) == 0:
-            raise ExceptionFileLocation('CppFileLocation.pLineCol on empty stack.')
-        return self._fileStack[-1].pLineCol

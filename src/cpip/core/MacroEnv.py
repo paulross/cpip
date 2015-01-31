@@ -22,41 +22,20 @@
 
 It implements ISO/IEC 9899:1999(E) section 6 (aka 'C')
 and ISO/IEC 14882:1998(E) section 16 (aka 'C++')
-
-TODO: Record macro related events in the order that they happen.::
-
-    [
-        (
-            macro_ident,         - string
-            event,               - string e.g. 'define', 'replace', 'undef'
-            None or PpDefine,    - the latter if undef (or define???)
-            file,                - string
-            line,                - int
-            col,                 - int
-        ),
-    ]
-
-Can remap this on output to:
-{macro_ident : [index, ...], ...}
-
-TODO: Record #ifdef, #ifndef, #if defined and #elif defined when no macro is
-defined in a separate data structure so that we can say that these macros, if
-present, could alter the outcome i.e. it is a NOT dependency.
 """
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
+import io
 import logging
 import traceback
-import types
-import io
 
 from cpip import ExceptionCpip
+from cpip.core import PpDefine
 from cpip.core import PpToken
 from cpip.core import PpTokeniser
-from cpip.core import PpDefine
 from cpip.core import PpWhitespace
 from cpip.util.ListGen import ListAsGenerator
 from cpip.util.Tree import DuplexAdjacencyList
@@ -86,6 +65,8 @@ class ExceptionMacroEnvNoMacroDefined(ExceptionMacroEnv):
 class ExceptionMacroIndexError(ExceptionMacroEnv):
     """Exception when an access to a PpDefine that generates a IndexError."""
     pass
+
+KEYWORD_DEFINED = 'defined'
 
 class MacroEnv(object):
     """Represents a set of #define directives that represent a macro processing
@@ -134,8 +115,8 @@ class MacroEnv(object):
     # to pre-define it or not.
     NAMES_NO_REDEFINITION = set(
         (
-            # This has a special semantics and can not be redefined
-            'defined',
+            # 'defined' has a special semantics and can not be redefined
+            KEYWORD_DEFINED,
         )
     )
     STD_PREDEFINED_NEVER_REDEFINED = set(
@@ -257,30 +238,6 @@ class MacroEnv(object):
         logging.debug('[%2d]%s%s: %s' \
                       % (len(stackPrefix), stackPrefix, thePrefix, debugStr))
 
-    #def _nextNonWsOrNewline(self, theGen):
-    #    """Returns the next non-whitespace token or whitespace that contains a
-    #    newline."""
-    #    while 1:
-    #        myTtt = theGen.next()
-    #        if not myTtt.isWs() \
-    #        or self._wsHandler.isBreakingWhitespace(myTtt.t):
-    #            return myTtt
-    #        # Non-breaking whitespace so continue
-    #
-    #def _consumeNewline(self, theGen):
-    #    """Consumes all tokens up to and including the next newline."""
-    #    while 1:
-    #        myTtt = self._retToken(theGen)
-    #        if self._wsHandler.isBreakingWhitespace(myTtt.t):
-    #            break
-    #
-    #def _consumeAndRaise(self, theGen, theException):
-    #    """Consumes all tokens up to and including the next newline then raises
-    #    an exception. This is commonly used to get rid of bad token streams but
-    #    allow the caller to catch the exception, report the error and
-    #    continue."""
-    #    self._consumeNewline(theGen)
-    #    raise theException
     ###############
     # End: Utility.
     ###############
@@ -378,7 +335,7 @@ class MacroEnv(object):
         False otherwise. If True this increments the macro reference.
         See: ISO/IEC 9899:1999 (E) 6.10.1.
         theFileLineCol is a FileLocation.FileLineCol object."""
-        if theTtt.isIdentifier():# and self._defineMap.has_key(theTtt.t):
+        if theTtt.isIdentifier():
             try:
                 self._defineMap[theTtt.t].incRefCount(theFileLineCol)
                 return True
@@ -479,7 +436,6 @@ class MacroEnv(object):
             self._debugTokenStream('_expand() examining "%s"' % theTtt.t)
         hasReplaced = False
         myMacro = self._defineMap[theTtt.t]
-        #myMacro.assertReplListIntegrity()
         if myMacro.isObjectTypeMacro:
             # Object-like macro
             rTokS = myMacro.replaceObjectStyleMacro()
@@ -526,9 +482,6 @@ class MacroEnv(object):
                                                                  )
                                 except StopIteration:
                                     break
-                            #for aTok in myExpArgTokS:
-                            #    if aTok.canReplace:
-                            #        aTok.canReplace = False
                             if self._enableTrace:
                                 self._debugTokenStream(
                                         '_expand("%s") function argument now' \
@@ -560,7 +513,6 @@ class MacroEnv(object):
         myGen = next(myListAsGen)
         while not myListAsGen.listIsEmpty:
             reexTokS += self._expand(next(myGen), myGen, theFileLineCol)
-            #print 'myListAsGen.listIsEmpty', myListAsGen.listIsEmpty
         self._expandedSet.remove(theTtt.t)
         if self._enableTrace:
             self._debugTokenStream(

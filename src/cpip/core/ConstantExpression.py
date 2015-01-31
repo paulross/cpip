@@ -27,15 +27,10 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-#import sys
-#import time
 import logging
-import pprint
-
-# Ugggh
+# Arrrrgh!
 import re
 
-#import PpToken
 from cpip import ExceptionCpip 
 
 class ExceptionConstantExpression(ExceptionCpip):
@@ -70,18 +65,12 @@ class ConstantExpression(object):
     def __str__(self):
         return ''.join([t.t for t in self._tokTypeS])
 
-    #def concatTokens(self):
-    #    """Returns a string that is a simple concatenation of a the tokens
-    #    regardless of type."""
-    #    return ''.join([t.t for t in self._tokTypeS])
-
     def translateTokensToString(self):
         """Returns a string to be evaluated as a constant-expression.
         ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4
-        i.e. 16.1-4"""
-        # all remaining identifiers and keywords 137) , except for true and false,
-        # are replaced with the pp-number 0
-#        print 'self._tokTypeS', self._tokTypeS[0]
+        i.e. 16.1-4
+        All remaining identifiers and keywords 137) , except for true and
+        false, are replaced with the pp-number 0"""
         return ''.join([aTok.evalConstExpr() for aTok in self._tokTypeS])
 
     def evaluate(self):
@@ -103,55 +92,21 @@ class ConstantExpression(object):
         assert(theMatch is not None)
         compileString = self.REPLACE_CONDITIONAL_EXPRESSION \
                         % (theMatch.group(1), theMatch.group(2), theMatch.group(3))
-#        print('compileString:', compileString)
-#        result = None
         try:
             _locals = {'result' : None}
             c = compile(compileString, '<string>', 'exec')
             exec(c, {}, _locals)
-#            pprint.pprint(locals())
             return _locals['result']
-#            return locals()['result']
         except Exception as err:
             logging.error('ConstantExpression._evaluateConditionalExpression() can not evaluate: "%s"' % compileString)
             raise ExceptionConditionalExpression(str(err))
-#        return result
 
     def _evaluateExpression(self, theStr):
         """Evaluates a conditional expression e.g. 1 < 2 """
         assert(self.RE_CONDITIONAL_EXPRESSION.match(self.translateTokensToString()) is None)
         try:
-#            print '_evaluateExpression():', theStr
             return eval(theStr)
         except Exception as err:
             raise ExceptionEvaluateExpression(
                 'Evaluation of "%s" gives error: %s' % (theStr, str(err))
                 )
-
-    #def _commaOperator(self):
-    #    """Handles the comma operator.
-    #    ISO/IEC 14882:1998(E) 5.18 Comma operator.
-    #    And:
-    #    ISO/IEC 9899:1999 (E) 6.5.17 Comma operator.
-    #    [Example:
-    #    f(a, (t=3, t+2), c);
-    #    has three arguments, the second of which has the value 5. ]
-    #
-    #    But need we do anything as:
-    #    $ cpp -E
-    #    #if (t=3, t+2)
-    #    ONE
-    #    #else
-    #    TWO
-    #    #endif
-    #
-    #    # 1 "<stdin>"
-    #    # 1 "<built-in>"
-    #    # 1 "<command line>"
-    #    # 1 "<stdin>"
-    #    <stdin>:1:7: token "=" is not valid in preprocessor expressions
-    #
-    #    TWO
-    #    """
-    #    # TODO
-    #    pass

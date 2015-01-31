@@ -20,6 +20,7 @@
 
 """Represents a preprocessing Token in C/C++ source code.
 """
+import copy
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
@@ -179,6 +180,13 @@ class PpToken(object):
         # that was conditionally compiled. This is False on construction and
         # can only be set True.
         self._isCond = False
+        
+    def copy(self):
+        """Returns a shallow copy of self. This is useful where the same token is
+        added to multiple lists and then a merge() operation on one list will
+        be seen by the others. To avoid this insert self.copy() in all but one
+        of the lists."""
+        return copy.copy(self)
 
     def subst(self, t, tt):
         """Substitutes token value and type."""
@@ -313,16 +321,14 @@ class PpToken(object):
         return self._t
 
     def merge(self, other):
-        """This will merge by appending the other token if possible.
-        
-        Failure will raise a ExceptionCpipTokenIllegalMerge if
-        the token types are different."""
+        """This will merge by appending the other token if they are different token
+        types the type becomes 'concat'."""
         self._t += other.t
-        #self._tt = NAME_ENUM['concat']
         if self.tt != other.tt:
             self._tt = NAME_ENUM['concat']
         return
-
+    
+        # TODO: Why is this here?
         #if self._tt == other.tt:
         #    self._t += other.t
         #elif self.tt == 'identifier':

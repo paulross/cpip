@@ -23,29 +23,12 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import sys
-#import os
-import unittest
-import time
-import logging
-import pprint
-
-#try:
-#    import io as StringIO
-#except ImportError:
-#    import io
 import io
+import logging
+import sys
+import time
+import unittest
 
-#try:
-#    from xml.etree import cElementTree as etree
-#except ImportError:
-#    from xml.etree import ElementTree as etree
-
-#sys.path.append(os.path.join(os.pardir + os.sep))
-#===============================================================================
-# import pprint
-# pprint.pprint(sys.path)
-#===============================================================================
 from cpip.core import ItuToTokens
 
 #######################################
@@ -81,7 +64,6 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
         myIth = ItuToTokens.ItuToTokens(io.StringIO(u''))
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
-        #print o
         self.assertEqual([], o)
         n = [c for c in myMps.genWords()]
         self.assertEqual([], n)
@@ -95,7 +77,6 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
         myIth._translatePhase_1()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
-        #print o
         self.assertEqual([], o)
         n = [c for c in myMps.genWords()]
         self.assertEqual([], n)
@@ -149,17 +130,12 @@ class TestItuToHtmlLowLevel(unittest.TestCase):
                       
         ]
         for s, eto, ety, cs in myTestData:
-            #print 's:', s
             myIth = ItuToTokens.ItuToTokens(io.StringIO(s))
             myIth._translatePhase_1()
             myMps = myIth.multiPassString
             o = [c for c in myMps.genChars()]
-            #print o
             self.assertEqual(eto, o)
-            #print
-            #print myMps.idxTypeMap
             n = [c for c in myMps.genWords()]
-            #self.assertEqual({0: Word(wordLen=3, wordType='trigraph')}, myMps.idxTypeMap)
             self.assertEqual(len(s), myMps.idxChar)
             self.assertEqual(ety, n)
             self.assertEqual(cs, myMps.currentString)
@@ -182,7 +158,6 @@ class TestItuToHtmlPhase3(unittest.TestCase):
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         o = [c for c in myMps.genChars()]
-        #print o
         self.assertEqual([], o)
         n = [c for c in myMps.genWords()]
         self.assertEqual([], n)
@@ -191,22 +166,18 @@ class TestItuToHtmlPhase3(unittest.TestCase):
         self.assertEqual({}, myMps.idxTypeMap)
     
     def test_02(self):
-        """TestItuToHtmlPhase3.test_02(): Macro."""
+        """TestItuToHtmlPhase3.test_02(): Macro with two C comments."""
         myStr = u'#define OBJ_LIKE /* white space */ (1-1) /* other */\n'
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         # Now test
         o = [c for c in myMps.genChars()]
-        #print o
-        #print ''.join(o)
         self.assertEqual(
             ['#', 'd', 'e', 'f', 'i', 'n', 'e', ' ', 'O', 'B', 'J', '_', 'L', 'I', 'K', 'E', ' ', ' ', ' ', '(', '1', '-', '1', ')', ' ', ' ', '\n'],
             o,
         )
-        #self.assertEqual({}, myMps.idxTypeMap)        
         n = [c for c in myMps.genWords()]
-        #pprint.pprint(n)
         self.assertEqual(
             n,
             [
@@ -227,10 +198,44 @@ class TestItuToHtmlPhase3(unittest.TestCase):
                  ('\n',                 'whitespace')
             ]
         )
-        #self.assertEqual([], myMps.currentString)
         self.assertEqual(53, myMps.idxChar)
     
     def test_03(self):
+        """TestItuToHtmlPhase3.test_03(): Macro with C and a C++ comment."""
+        myStr = u'#define OBJ_LIKE /* white space */ (1-1) // other \n'
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
+        myIth.translatePhases123()
+        myMps = myIth.multiPassString
+        # Now test
+        o = [c for c in myMps.genChars()]
+        self.assertEqual(
+            ['#', 'd', 'e', 'f', 'i', 'n', 'e', ' ', 'O', 'B', 'J', '_', 'L', 'I', 'K', 'E', ' ', ' ', ' ', '(', '1', '-', '1', ')', ' ', ' ', '\n'],
+            o,
+        )
+        n = [c for c in myMps.genWords()]
+        self.assertEqual(
+            n,
+            [
+                ('#',                   'preprocessing-op-or-punc'),
+                 ('define',             'identifier'),
+                 (' ',                  'whitespace'),
+                 ('OBJ_LIKE',           'identifier'),
+                 (' ',                  'whitespace'),
+                 ('/* white space */',  'C comment'),
+                 (' ',                  'whitespace'),
+                 ('(',                  'preprocessing-op-or-punc'),
+                 ('1',                  'pp-number'),
+                 ('-',                  'preprocessing-op-or-punc'),
+                 ('1',                  'pp-number'),
+                 (')',                  'preprocessing-op-or-punc'),
+                 (' ',                  'whitespace'),
+                 ('// other ',          'C++ comment'),
+                 ('\n',                 'whitespace')
+            ]
+        )
+        self.assertEqual(51, myMps.idxChar)
+    
+    def test_13(self):
         """TestItuToHtmlPhase3.test_03(): ISO/IEC 9899:1999 (E) 6.10.3.5-5 EXAMPLE 3"""
         myStr = u"""#define x 3
 #define f(a) f(x * (a))
@@ -256,8 +261,6 @@ char c[2][6] = { str(hello), str() };
         myIth.translatePhases123()
         myMps = myIth.multiPassString
         wordS = [w for w in myMps.genWords()]
-        #print
-        #pprint.pprint(wordS)
         self.assertEqual(
             wordS,
             [
@@ -556,7 +559,6 @@ char c[2][6] = { str(hello), str() };
                 ('\n', 'whitespace')
             ]
         )
-        #self.assertEqual([], myMps.currentString)
         self.assertEqual(378, myMps.idxChar)
 
 class TestItuToHtmlTokenGen(unittest.TestCase):
@@ -585,8 +587,6 @@ void main()
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-        #print
-        #pprint.pprint(myTokS)
         expTokS = [
             ('#', 'preprocessing-op-or-punc'),
             ('include', 'preprocessing-directive'),
@@ -649,8 +649,6 @@ const char* s = "Hello world";
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-        #print
-        #pprint.pprint(myTokS)
         expTokS = [
             ('char', 'keyword'),
             (' ', 'whitespace'),
@@ -740,8 +738,6 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-        #print
-        #pprint.pprint(myTokS)
         expTokS = [
             ('#', 'preprocessing-op-or-punc'),
             (' ', 'whitespace'),
@@ -762,7 +758,7 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
             (' ', 'whitespace'),
             ('short', 'keyword'),
             (' ', 'whitespace'),
-            ('$', 'non-whitespace'),
+            ('$', 'identifier'),
             ('+', 'preprocessing-op-or-punc'),
             ('11', 'pp-number'),
             (' ', 'whitespace'),
@@ -781,8 +777,6 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-        #print
-        #pprint.pprint(myTokS)
         expTokS = [
                 ('(', 'preprocessing-op-or-punc'),
                 ('new', 'keyword'),
@@ -798,8 +792,6 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-        #print
-        #pprint.pprint(myTokS)
         expTokS = [
                 ('new', 'keyword'),
                 (';', 'preprocessing-op-or-punc'),
@@ -813,8 +805,6 @@ class TestItuToHtmlTokenGenSpecial(unittest.TestCase):
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-        #print
-        #pprint.pprint(myTokS)
         expTokS = [
                 ('return', 'keyword'),
                 ('(', 'preprocessing-op-or-punc'),
@@ -852,8 +842,6 @@ class TestItuToHtmlTokenGenLinux(unittest.TestCase):
 """
         myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
         myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
-#         print
-#         pprint.pprint(myTokS)
         expTokS = [
             ('/* Data marked not to be saved by software suspend */', 'C comment'),
             ('\n', 'whitespace'),

@@ -72,11 +72,9 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-#import os
+import logging
 import sys
 import time
-import logging
-#import pprint
 
 from cpip.core import PpToken, PpTokeniser, PpDefine, MacroEnv, FileLocation
 from TestPpDefine import TestPpDefine
@@ -95,7 +93,6 @@ class TestMacroEnv(TestPpDefine):
     def _checkMacroEnv(self, theGen, theEnv, expectedIdentifiers, testNOTHING=True):
         """Checks constructed environment is correct."""
         # Check that all tokens have been consumed
-#         self.assertRaises(StopIteration, theGen.__next__)
         self.assertRaises(StopIteration, next, theGen)
         self.assertEqual(len(expectedIdentifiers), len(theEnv))
         for anName in expectedIdentifiers:
@@ -143,7 +140,6 @@ EGGS 2
         myMap.define(myGen, 'f.h', 1)
         myMap.define(myGen, 'f.h', 2)
         self._checkMacroEnv(myGen, myMap, ['SPAM', 'EGGS',])
-        #print str(myMap)
         self.assertEqual("""#define EGGS 2 /* f.h#2 Ref: 1 True */
 #define SPAM 1 /* f.h#1 Ref: 1 True */""", str(myMap))
         self.assertEqual(
@@ -156,7 +152,6 @@ EGGS 2
             myMap.replace(
                 PpToken.PpToken('EGGS', 'identifier'), None)
             )
-        #print str(myMap)
         self.assertEqual("""#define EGGS 2 /* f.h#2 Ref: 2 True */
 #define SPAM 1 /* f.h#1 Ref: 2 True */""", str(myMap))
 
@@ -249,7 +244,6 @@ EGGS 2
         myMap.define(myGen, 'f.h', 1)
         myMap.define(myGen, 'f.h', 2)
         self._checkMacroEnv(myGen, myMap, ['SPAM', 'EGGS',])
-        #print str(myMap)
         self.assertEqual("""#define EGGS 2 /* f.h#2 Ref: 1 True */
 #define SPAM 1 /* f.h#1 Ref: 1 True */""", str(myMap))
         myCodeResult = (
@@ -279,7 +273,6 @@ EGGS 2
         myMap.define(myGen, 'f.h', 1)
         myMap.define(myGen, 'f.h', 2)
         self._checkMacroEnv(myGen, myMap, ['SPAM', 'EGGS',])
-        #print str(myMap)
         self.assertEqual("""#define EGGS 2 /* f.h#2 Ref: 1 True */
 #define SPAM 1 /* f.h#1 Ref: 1 True */""", str(myMap))
         myCpp = PpTokeniser.PpTokeniser(
@@ -343,13 +336,11 @@ EGGS 2
                 PpToken.PpToken('1',   'pp-number'),
                 PpToken.PpToken(' ',   'whitespace'),
                 PpToken.PpToken('and', 'identifier'),
-#                PpToken.PpToken('and', 'preprocessing-op-or-punc'),
                 PpToken.PpToken(' ',   'whitespace'),
                 PpToken.PpToken('2',   'pp-number'),
             ],
             repList,
             )
-#        print '\nTRACE: repList', repList
 
     def testDefineMapSimpleReplaceObject_01(self):
         """MacroEnv.MacroEnv - simple replacement of object style macros, no change on rescanning: "SPAM==EGGS" """
@@ -388,7 +379,6 @@ EGGS 2
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
-        #print '\nTRACE: repList', repList
         self.assertEqual(
             [
                 PpToken.PpToken('1',   'pp-number'),
@@ -407,10 +397,6 @@ class MacroEnvReplaceObject(TestMacroEnv):
         myStr = u"""SPAM EGGS and eggs and EGGS
 EGGS 2
 """
-#        cppExe = """#define SPAM EGGS and eggs and EGGS
-##define EGGS 2
-#SPAM // 2 and eggs and 2
-#"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
             )
@@ -424,17 +410,14 @@ EGGS 2
         myExpected = [
                 PpToken.PpToken('2',       'pp-number'),
                 PpToken.PpToken(' ',       'whitespace'),
-#                PpToken.PpToken('and',     'preprocessing-op-or-punc'),
                 PpToken.PpToken('and',     'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('eggs',    'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
-#                PpToken.PpToken('and',     'preprocessing-op-or-punc'),
                 PpToken.PpToken('and',     'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('2',       'pp-number'),
             ]
-        #self.pprintReplacementList(myReplacement)
         self._printDiff(myReplacement, myExpected)
         self.assertEqual(
             myExpected,
@@ -457,17 +440,14 @@ EGGS 2
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
-        #print '\nTRACE: repList', repList
         self.assertEqual(
             [
                 PpToken.PpToken('2',       'pp-number'),
                 PpToken.PpToken(' ',       'whitespace'),
-#                PpToken.PpToken('and',     'preprocessing-op-or-punc'),
                 PpToken.PpToken('and',     'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('eggs',    'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
-#                PpToken.PpToken('and',     'preprocessing-op-or-punc'),
                 PpToken.PpToken('and',     'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('2',       'pp-number'),
@@ -487,10 +467,6 @@ EGGS 2
         myStr = u"""SPAM EGGS EGGS
 EGGS 2
 """
-#        cppExe = """#define SPAM EGGS EGGS
-##define EGGS 2
-#SPAM // 2 2
-#"""
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
             )
@@ -505,7 +481,6 @@ EGGS 2
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('2',       'pp-number'),
             ]
-        #self.pprintReplacementList(myReplacement)
         self._printDiff(myReplacement, myExpected)
         self.assertEqual(myExpected, myReplacement)
 
@@ -534,7 +509,6 @@ SALT sel
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
-        #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         self.assertEqual(
             [
                 PpToken.PpToken('Anyone',  'identifier'),
@@ -543,7 +517,6 @@ SALT sel
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('frites',  'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
-#                PpToken.PpToken('or',      'preprocessing-op-or-punc'),
                 PpToken.PpToken('or',      'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('sel',     'identifier'),
@@ -551,7 +524,6 @@ SALT sel
                 PpToken.PpToken('+',       'preprocessing-op-or-punc'),
                 PpToken.PpToken('frites',  'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
-#                PpToken.PpToken('or',      'preprocessing-op-or-punc'),
                 PpToken.PpToken('or',      'identifier'),
                 PpToken.PpToken(' ',       'whitespace'),
                 PpToken.PpToken('sel',     'identifier'),
@@ -591,7 +563,6 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
-        #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         self.assertEqual(
             [
                 PpToken.PpToken('12',  'pp-number'),
@@ -624,15 +595,6 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
             ]
         self._printDiff(repList, expectedList)
         self.assertEqual(expectedList, repList)
-        ## Or:
-        #myCpp = PpTokeniser.PpTokeniser(
-        #    theFileObj=StringIO.StringIO('FUNC')
-        #    )
-        #self.assertEqual(
-        #    [t_tt for t_tt in myCpp.next()],
-        #    repList,
-        #    )
-
 
     def testDefineMapSimpleReplaceFunction_01_01(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC ;" is called."""
@@ -679,8 +641,6 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myGen = myCpp.next()
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
-            #print 'XXX'
-            #self.pprintReplacementList(myReplacements)
             repList += myReplacements
         expectedList =             [
                 PpToken.PpToken('FUNC',    'identifier'),
@@ -688,17 +648,8 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
                 PpToken.PpToken('7',       'pp-number'),
                 PpToken.PpToken(';',       'preprocessing-op-or-punc'),
             ]
-        #self.pprintReplacementList(repList)
         self._printDiff(repList, expectedList)
         self.assertEqual(expectedList, repList)
-        ## Or:
-        #myCpp = PpTokeniser.PpTokeniser(
-        #    theFileObj=StringIO.StringIO('12 plus  minus 1;')
-        #    )
-        #self.assertEqual(
-        #    [t_tt for t_tt in myCpp.next()],
-        #    repList,
-        #    )
 
     def testDefineMapSimpleReplaceFunction_01_03(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC(12) plus FUNC minus FUNC(1);" is called."""
@@ -718,7 +669,6 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myGen = myCpp.next()
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
-            #print '%s -> %s' % (t, myReplacements)
             repList += myReplacements
         expectedList =             [
                 PpToken.PpToken('12',      'pp-number'),
@@ -732,17 +682,8 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
                 PpToken.PpToken('1',       'pp-number'),
                 PpToken.PpToken(';',       'preprocessing-op-or-punc'),
             ]
-        #self.pprintReplacementList(repList)
         self._printDiff(repList, expectedList)
         self.assertEqual(expectedList, repList)
-        ## Or:
-        #myCpp = PpTokeniser.PpTokeniser(
-        #    theFileObj=StringIO.StringIO('12 plus  minus 1;')
-        #    )
-        #self.assertEqual(
-        #    [t_tt for t_tt in myCpp.next()],
-        #    repList,
-        #    )
 
     def testDefineMapSimpleReplaceFunction_01_04(self):
         """MacroEnv.MacroEnv - simple replacement of function style macros #define INC(f) <f>\\n."""
@@ -762,9 +703,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myGen = myCpp.next()
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
-            #print '%s -> %s' % (ttt, myReplacements)
             repList += myReplacements
-        #self.pprintTokensAsCtors(repList)
         myExp = [
                 PpToken.PpToken('<',        'preprocessing-op-or-punc'),
                 PpToken.PpToken('spam',     'identifier'),
@@ -803,9 +742,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
         myGen = myCpp.next()
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
-            #print '%s -> %s' % (ttt, myReplacements)
             repList += myReplacements
-        #self.pprintTokensAsCtors(repList)
         myExp = [
                 PpToken.PpToken(' ',            'whitespace'),
                 PpToken.PpToken('"spam.h"',     'string-literal'),
@@ -845,7 +782,6 @@ g(a) a(2)
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
-        #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(u'x(2);\ny+y')
             )
@@ -876,7 +812,6 @@ g(a) a(2)
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
-        #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(u'2+2;')
             )
@@ -1001,16 +936,13 @@ EGGS SPAM
         expTokS = [
                 PpToken.PpToken('SPAM', 'identifier'),
             ]
-        #print '\nTRACE: myMap:\n%s\n' % myMap
         actTokS = myMap.replace(PpToken.PpToken('SPAM', 'identifier'), myGen)
         self._printDiff(actTokS, expTokS)
         self.assertEqual(actTokS, expTokS)
         expTokS = [
                 PpToken.PpToken('EGGS', 'identifier'),
             ]
-        #print 'TRACE: myMap:\n%s\n' % myMap
         actTokS = myMap.replace(PpToken.PpToken('EGGS', 'identifier'), myGen)
-        #print 'TRACE: myMap:\n%s\n' % myMap
         self._printDiff(actTokS, expTokS)
         self.assertEqual(actTokS, expTokS)
 
@@ -1202,7 +1134,6 @@ join(c, d) in_between(c hash_hash d)
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             repList += myReplacements
-        #print '\nTRACE: repList:\n', '\n'.join([str(x) for x in repList])
         self.assertEqual(
             [
                 PpToken.PpToken(' ',           'whitespace'),
@@ -1210,14 +1141,6 @@ join(c, d) in_between(c hash_hash d)
             ],
             repList,
             )
-        ## Or:
-        #myCpp = PpTokeniser.PpTokeniser(
-        #    theFileObj=StringIO.StringIO(' "x ## y"')
-        #    )
-        #self.assertEqual(
-        #    [t_tt for t_tt in myCpp.next()],
-        #    repList,
-        #    )
 
     def testDefineMapReplace_01(self):
         """MacroEnv.MacroEnv - mixed replacement - example in ISO/IEC 9899:1999(E) 6.10.3.5-3 EXAMPLE 1"""
@@ -5880,6 +5803,42 @@ EGGS 2
         except MacroEnv.ExceptionMacroEnvNoMacroDefined:
             pass
 
+
+class TestLibCello(TestMacroEnv):
+    """Tests that resulted in processing libCello."""
+    def test_00(self):
+        """MacroEnvDefined.test_00 - check defined()."""
+        myMap = MacroEnv.MacroEnv()
+        myStr = u"""X (    (  (defined (SPAM))))
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(myStr)
+            )
+        myGen = myCpp.next()
+        myMap.define(myGen, 'libCello.h', 1)
+        self._checkMacroEnv(myGen, myMap, ['X',])
+        self.assertEqual("""#define X ( ( (defined (SPAM)))) /* libCello.h#1 Ref: 1 True */""", str(myMap))
+        myCodeResult = (
+            (PpToken.PpToken('X', 'identifier'), False, PpToken.PpToken('1', 'pp-number')),
+            )
+        for aTok, aFlag, aResult in myCodeResult:
+            self.assertEqual(
+                myMap.defined(aTok, aFlag),
+                aResult
+                )
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO('X')
+            )
+        repList = []
+        myGen = myCpp.next()
+        myMap.debugMarker = 'TestLibCello.test_00()'
+        for ttt in myGen:
+            myReplacements = myMap.replace(ttt, myGen)
+            repList += myReplacements
+#         self.pprintTokensAsCtors(repList)
+        repString = self.tokensToString(repList)
+        self.assertEqual(repString, '(    (  (defined (SPAM))))')
+    
 class NullClass(TestMacroEnv):
     pass
 
@@ -5956,6 +5915,8 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinux))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroDependencies))
+    # - OK
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLibCello))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

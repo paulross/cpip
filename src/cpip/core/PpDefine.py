@@ -322,11 +322,6 @@ class PpDefine(object):
                 raise ExceptionCpipDefineInit(
                     'Premature newline in function like macro'
                     )
-        # Include a single placeholder if the identifier list is empty
-        # TODO: Explain the comment above
-        if len(self._paramS) == 0:
-            pass
-            #self._paramS.append(self.PLACEMARKER)
         # Check the identifier list to see if I am a variadic macro
         self._isVariadic = False
         for aId in self._paramS:
@@ -900,7 +895,7 @@ class PpDefine(object):
         #
         # src.h:2:8: macro "FOO" requires 3 arguments, but only 2 given
         # FOO
-        # Or if to many given:
+        # Or if too many given:
         # src.h:2:12: macro "FOO" passed 4 arguments, but takes just 3
         # TODO: Remove Kludge on next line
         # Kludge:
@@ -927,7 +922,6 @@ class PpDefine(object):
             # A B C
             # But #define F(a,b,...)
             # F() is an error
-            #assert(0)
             if len(myArgS) < (len(self._paramS)-1):
                 msg = 'macro "%s" requires %d arguments, but only %d given' \
                       % (self.identifier, (len(self._paramS)-1), len(myArgS))

@@ -25,9 +25,9 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
+import collections
 import re
 import sys
-import collections
 
 from cpip import ExceptionCpip
 
@@ -64,7 +64,7 @@ class FileIncludeGraphRoot(object):
     dummy root is represented by None."""
     def __init__(self):
         """Constructor."""
-        # List of class FileIncludeGraph
+        # List of [class FileIncludeGraph, ...]
         self._incGraphS = []
         
     def __str__(self):
@@ -169,14 +169,14 @@ class FileIncludeGraph(object):
         any way, it is merely stored for representation."""
         self._fileName = theFile
         self._condCompState = theState
-        #print 'TRACE FileIncludeGraph.__init__() with %s' % theCondition 
         self._condComp = theCondition
         self._findLogic = theLogic
         # Somewhat hacky support for Python 2.x. Otherwise the __str__ appears as
         #   sys/inc/spam.h [15, 10]:  True "" "[u\'<inc/spam.h>\', u\'CP=usr\']"
         # rather than:
         #   sys/inc/spam.h [15, 10]:  True "" "[\'<inc/spam.h>\', \'CP=usr\']"
-        if isinstance(self._findLogic, list) and len(self._findLogic) > 0 and sys.version_info.major == 2:
+        if isinstance(self._findLogic, list) and len(self._findLogic) > 0 \
+        and sys.version_info.major == 2:
             for i in range(len(self._findLogic)):
                 self._findLogic[i] = str(self._findLogic[i])
         # Recursive map of {line : class FileIncludeGraph, ...}
@@ -336,14 +336,6 @@ class FileIncludeGraph(object):
         
         3. The branch has missing nodes.
         """
-#        print('FileIncludeGraph.addBranch: %s line: %d leaf: %s' \
-#            % ([os.path.basename(f) for f in theFileS], theLine, theIncFile)
-#        )
-#        logging.debug('FileIncludeGraph.addBranch: %s line: %d' \
-#            % ([os.path.basename(f) for f in theFileS], theLine)
-#        )
-#        import traceback
-#        print ''.join(traceback.format_list(traceback.extract_stack()))
         if len(theFileS) == 0:
             # Case 0. above.
             raise ExceptionFileIncludeGraph('FileIncludeGraph.addBranch() with empty branch.')
@@ -422,7 +414,6 @@ class FileIncludeGraph(object):
         
         This is generally used during dynamic construction by a caller
         that understands the state of the file include branch."""
-#        print 'TRACE: retLatestNode() branch %s self.fileName %s' % (theBranch, self.fileName)
         if len(theBranch) == 0:
             raise ExceptionFileIncludeGraph('retLatestNode() on empty branch.')
         if theBranch[0] != self.fileName:
@@ -444,7 +435,6 @@ class FileIncludeGraph(object):
         """Recursive call that returns the branch to the last inserted leaf.
         theList is modified in-place."""
         if len(self._graph) > 0:
-            # Recurse
             lastLine = max(self._graph.keys())
             theList.append(self._retFileLine(lastLine))
             self._graph[lastLine]._retLatestBranch(theList)
@@ -465,7 +455,6 @@ class FileIncludeGraph(object):
         """Recursive call that returns an integer that is the depth of the
         latest branch."""
         if len(self._graph) > 0:
-            # Recurse
             return self._graph[max(self._graph.keys())]._retLatestBranchDepth(i+1)
         return i+1
     #===========================================================================
@@ -492,11 +481,10 @@ class FileIncludeGraph(object):
                           self.findLogic,
                           )
                        )
-        # TODO: This use of fileName often contains '\\' characters on windows
+        # NOTE: This use of fileName often contains '\\' characters on windows
         # These characters are specifically excluded from #include statements
-        # and are thus missleading. We should normalise them to '/' e.g.
-        # 000000: #include usr/spam.h
-        # ditto above
+        # and are thus misleading. Perhaps ee should normalise them to '/' e.g.
+        # 000001: #include "usr/spam.h"
         for aLineNum in sorted(self._graph.keys()):
             retList.append('%s%06d: #include %s' \
                             % (
