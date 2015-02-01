@@ -7,14 +7,21 @@ Created on 24 Jan 2015
 @author: paulross
 """
 import io
+import os
 import subprocess
-import sys
 
 def invokeCppForPlatformMacros(*args):
-    """Invoke cpp as a sub-process with *args and return a list of macro
+    """Invoke the pre-processor as a sub-process with *args and return a list of macro
     definition strings.
+    
+    By default the preprocessor is 'cpp' but this is overridden if $CPP is set in
+    the environment.
+    
     May raise subprocess.CalledProcessError on failure."""
-    cmdS = ['cpp']
+    try:
+        cmdS = [os.environ['CPP']]
+    except KeyError:
+        cmdS = ['cpp']
     cmdS.extend(args)
     return subprocess.check_output(cmdS, universal_newlines=True, stdin=subprocess.DEVNULL)
 
