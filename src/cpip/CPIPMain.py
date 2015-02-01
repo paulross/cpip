@@ -17,42 +17,45 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # Paul Ross: cpipdev@googlemail.com
-
+"""
+cpip.cpp -- Preprocess the file or the files in the directory.
+"""
 __author__ = 'Paul Ross'
 __date__ = '2011-07-10'
 __version__ = '0.9.1'
 __rights__ = 'Copyright (c) 2008-2014 Paul Ross'
 
-import os
-import sys
-import logging
-import time
-from optparse import OptionParser
-import io
-import subprocess
-import multiprocessing
+import argparse
 import collections
+import io
+import logging
+import multiprocessing
+import os
+import pprint
+import subprocess
+import sys
+import time
 
-from cpip import INDENT_ML
-from cpip.core import PpLexer
-from cpip.core import IncludeHandler
-from cpip.core import CppDiagnostic
-from cpip.core import FileIncludeGraph
-from cpip.core import PragmaHandler
-from cpip.core import CppCond
-# from cpip.util import Cpp
-from cpip.util import XmlWrite
-from cpip.util import HtmlUtils
-from cpip.util import DirWalk
-from cpip.util import CommonPrefix
-from cpip import Tu2Html
-from cpip import MacroHistoryHtml
-from cpip import IncGraphSVGBase
-from cpip import IncGraphSVG
-from cpip import ItuToHtml
-from cpip import TokenCss
 from cpip import CppCondGraphToHtml
 from cpip import ExceptionCpip
+from cpip import IncGraphSVG
+from cpip import IncGraphSVGBase
+from cpip import INDENT_ML
+from cpip import ItuToHtml
+from cpip import MacroHistoryHtml
+from cpip import TokenCss
+from cpip import Tu2Html
+from cpip.core import CppCond
+from cpip.core import CppDiagnostic
+from cpip.core import FileIncludeGraph
+from cpip.core import IncludeHandler
+from cpip.core import PpLexer
+from cpip.core import PragmaHandler
+from cpip.util import CommonPrefix
+from cpip.util import Cpp
+from cpip.util import DirWalk
+from cpip.util import HtmlUtils
+from cpip.util import XmlWrite
 
 # POD class that contains the arguments for processing a file or directory
 MainJobSpec = collections.namedtuple('MainJobSpec',
@@ -360,9 +363,9 @@ def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
 
 def _writeParagraphWithBreaks(theS, theParas):
     for i, p in enumerate(theParas):
-        if i > 0:
-            with XmlWrite.Element(theS, 'br'):
-                pass
+#         if i > 0:
+#             with XmlWrite.Element(theS, 'br'):
+#                 pass
         with XmlWrite.Element(theS, 'p'):
             theS.characters(p)
             
@@ -600,8 +603,7 @@ def _writeCommandLineInvocationToHTML(theS, theJobSpec):
                 theS.characters('Value')
             with XmlWrite.Element(theS, 'th', {'style' : "padding: 2px 6px 2px 6px"}):
                 theS.characters('Description')
-        optS = list(theJobSpec.helpMap.keys())
-        optS.sort()
+        optS = sorted(theJobSpec.helpMap.keys())
         for o in optS:
             with XmlWrite.Element(theS, 'tr'):
                 # Option name
@@ -637,13 +639,19 @@ def _writeCommandLineInvocationToHTML(theS, theJobSpec):
 
 def retOptionMap(theOptParser, theOpts):
     """Returns map of {opt_name : (value, help), ...} from the current options."""
+    varsOpts = vars(theOpts)
     retMap = {}
-    for o in theOptParser.option_list:
-        myHelp = o.help.replace('[default: %default]', '')
-        if o.dest is not None:
-            retMap[str(o)] = (getattr(theOpts, o.dest), myHelp)
-        else:
-            retMap[str(o)] = (None, myHelp)
+    for k in sorted(theOptParser._option_string_actions.keys()):
+        optDest = theOptParser._option_string_actions[k].dest
+        optName = '/'.join(theOptParser._option_string_actions[k].option_strings)
+        try:
+            optValue = varsOpts[optDest]
+            if hasattr(theOptParser._option_string_actions[k], 'help'):
+                optHelp = theOptParser._option_string_actions[k].help.replace('[default: %(default)s]', '')
+                retMap[optName] = (optValue, optHelp)
+        except KeyError:
+            pass
+#     pprint.pprint(retMap)
     return retMap
 
 ################################
@@ -907,13 +915,19 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
 
 def main():
     """Processes command line to preprocess a file or a directory."""
-    usage = """usage: %prog [options] path
-Preprocess the file or the files in the directory."""
-    # print 'Cmd: %s' % ' '.join(sys.argv)
-    optParser = OptionParser(usage, version='%prog ' + __version__)
-    optParser.add_option("-c", action="store_true", dest="plot_conditional", default=False,
-                      help="Add conditionally included files to the plots. [default: %default]")
-    optParser.add_option("-d", "--dump", action="append", dest="dump", default=[],
+    program_version = "v%s" % __version__
+    program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
+    program_license = """%s
+  Created by Paul Ross on %s.
+  Copyright 2008-2015. All rights reserved.
+  Licensed under GPL 2.0
+USAGE
+""" % (program_shortdesc, str(__date__))
+    parser = argparse.ArgumentParser(description=program_license,
+                            formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("-c", action="store_true", dest="plot_conditional", default=False,
+                      help="Add conditionally included files to the plots. [default: %(default)s]")
+    parser.add_argument("-d", "--dump", action="append", dest="dump", default=[],
                       help="""Dump output, additive. Can be:
 C - Conditional compilation graph.
 F - File names encountered and their count.
@@ -921,113 +935,87 @@ I - Include graph.
 M - Macro environment.
 T - Token count.
 R - Macro dependencies as an input to DOT.
-[default: %default]""")
-    optParser.add_option("-g", "--glob", type="str", dest="glob", default="*.*",
-            help="Pattern match to use when processing directories. [default: %default]")
-    optParser.add_option("--heap", action="store_true", dest="heap", default=False,
-                      help="Profile memory usage. [default: %default]")
-    optParser.add_option(
+[default: %(default)s]""")
+    parser.add_argument("-g", "--glob", type=str, dest="glob", default="*.*",
+            help="Pattern match to use when processing directories. [default: %(default)s]")
+    parser.add_argument("--heap", action="store_true", dest="heap", default=False,
+                      help="Profile memory usage. [default: %(default)s]")
+    parser.add_argument(
             "-j", "--jobs",
-            type="int",
+            type=int,
             dest="jobs",
             default=0,
             help="""Max simultaneous processes when pre-processing
 directories. Zero uses number of native CPUs [%d].
 1 means no multiprocessing."""
                     % multiprocessing.cpu_count() \
-                    + " [default: %default]"
+                    + " [default: %(default)s]"
         )
-    optParser.add_option("-k", "--keep-going", action="store_true",
+    parser.add_argument("-k", "--keep-going", action="store_true",
                          dest="keep_going", default=False,
-                         help="Keep going. [default: %default]")
-    optParser.add_option(
+                         help="Keep going. [default: %(default)s]")
+    parser.add_argument(
             "-l", "--loglevel",
-            type="int",
+            type=int,
             dest="loglevel",
             default=30,
             help="Log Level (debug=10, info=20, warning=30, error=40, critical=50)" \
-            " [default: %default]"
+            " [default: %(default)s]"
         )
-#     optParser.add_option("-n", action="store_true", dest="nervous", default=False,
-#                       help="Nervous mode (do no harm). [default: %default]")
-    optParser.add_option("-o", "--output",
-                         type="string",
+    parser.add_argument("-o", "--output",
+                         type=str,
                          dest="output",
                          default="out",
-                         help="Output directory. [default: %default]")
-    optParser.add_option("-p", action="store_true", dest="ignore_pragma", default=False,
-                      help="Ignore pragma statements. [default: %default]")
-    optParser.add_option("-r", "--recursive", action="store_true", dest="recursive",
+                         help="Output directory. [default: %(default)s]")
+    parser.add_argument("-p", action="store_true", dest="ignore_pragma", default=False,
+                      help="Ignore pragma statements. [default: %(default)s]")
+    parser.add_argument("-r", "--recursive", action="store_true", dest="recursive",
                          default=False,
-                      help="Recursively process directories. [default: %default]")
-    optParser.add_option("-t", "--dot", action="store_true", dest="include_dot",
+                      help="Recursively process directories. [default: %(default)s]")
+    parser.add_argument("-t", "--dot", action="store_true", dest="include_dot",
                          default=False,
                       help="""Write an DOT include dependency table and execute DOT
-on it to create a SVG file. [default: %default]""")
-    # List type options
-    optParser.add_option("-I", "--usr", action="append", dest="incUsr", default=[],
-                      help="Add user include search path. [default: %default]")
-    optParser.add_option("-J", "--sys", action="append", dest="incSys", default=[],
-                      help="Add system include search path. [default: %default]")
-    optParser.add_option("-S", "--predefine", action="append", dest="predefines", default=[],
-                      help="""Add standard predefined macro defintions of the
-form name<=defintion>. These are introduced into the
-environment before anything else. These macros can not be
-redefined. __DATE__ and __TIME__ will be automatically
-allocated in here. [default: %default]""")
-#     optParser.add_option("-C", "--CPP", action="store_true", dest="recursive",
-#                          default=False,
-#                          help="""Sys call 'cpp -dM' to extract and use platform
-# specific macros. These are inserted after -S option and
-# before the -D option. [default: %default]""")
-    # subprocess.check_output(['cpp', '-dM'], stdin=subprocess.DEVNULL)
-    # returns a bytes object in Python 3
-    # mS = [v.decode('ascii') for v in l.split(b'\n')]
-    # Stringifies them into a list of stings.
-    optParser.add_option("-D", "--define", action="append", dest="defines", default=[],
-                      help="""Add macro defintions of the form name<=defintion>.
-                      These are introduced into the environment before
-                      any pre-include. [default: %default]""")
-    optParser.add_option("-P", "--pre", action="append", dest="preInc", default=[],
-                      help="Add pre-include file path. [default: %default]")
-    opts, args = optParser.parse_args()
-    if len(args) != 1:
-        optParser.print_help()
-        optParser.error("Need single argument not: %d" % len(args))
-        return 1
+on it to create a SVG file. [default: %(default)s]""")
+    parser.add_argument(dest="path", nargs=1, help="Path to source file.")
+    Cpp.addStandardArguments(parser)
+    args = parser.parse_args()
+#     print(' ARGS '.center(75, '-'))
+#     print(args)
+#     print(' END: ARGS '.center(75, '-'))
     clkStart = time.clock()
     # Initialise logging etc.
-    if opts.jobs != 1 and os.path.isdir(args[0]):
+    inPath = args.path[0]
+    if args.jobs != 1 and os.path.isdir(inPath):
         # Multiprocessing
         logFormat = '%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
     else:
         logFormat = '%(asctime)s %(levelname)-8s %(message)s'
-    logging.basicConfig(level=opts.loglevel,
+    logging.basicConfig(level=args.loglevel,
                     format=logFormat,
                     # datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
     # Memory usage dump
-    if opts.heap:
+    if args.heap:
         try:
             from guppy import hpy
         except ImportError:
             print('Can not profile memory as you do not have guppy installed:' \
                   ' http://guppy-pe.sourceforge.net/')
-            opts.heap = False
+            args.heap = False
     # Start memory profiling if requested
-    if opts.heap:
+    if args.heap:
         myHeap = hpy()
         myHeap.setrelheap()
     else:
         myHeap = None
     # Create objects to pass to pre-processor
     myIncH = IncludeHandler.CppIncludeStdOs(
-                    theUsrDirs=opts.incUsr or [],
-                    theSysDirs=opts.incSys or [],
+                    theUsrDirs=args.incUsr or [],
+                    theSysDirs=args.incSys or [],
     )
     preDefMacros = {}
-    if opts.predefines:
-        for d in opts.predefines:
+    if args.predefines:
+        for d in args.predefines:
             _tup = d.split('=')
             if len(_tup) == 2:
                 preDefMacros[_tup[0]] = _tup[1] + '\n'
@@ -1037,39 +1025,39 @@ allocated in here. [default: %default]""")
                 raise ValueError('Can not read macro definition: %s' % d)
     # Add macros in psuedo pre-include
     preIncStr = ''
-    if opts.defines:
-        preIncStr = u'\n'.join(['#define ' + ' '.join(d.split('=')) for d in opts.defines]) + '\n'
+    if args.defines:
+        preIncStr = u'\n'.join(['#define ' + ' '.join(d.split('=')) for d in args.defines]) + '\n'
     # Create the job specification
     jobSpec = MainJobSpec(
         incHandler=myIncH,
         preIncStr=preIncStr,
         preDefMacros=preDefMacros,
-        preIncPaths=opts.preInc,
-        diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing() if opts.keep_going else None,
-        pragmaHandler=PragmaHandler.PragmaHandlerNull() if opts.ignore_pragma else None,
-        keepGoing=opts.keep_going,
-        conditionalLevel=2 if opts.plot_conditional else 0,
-        dumpList=opts.dump,
-        helpMap=retOptionMap(optParser, opts),
-        includeDOT=opts.include_dot,
+        preIncPaths=args.preInc,
+        diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing() if args.keep_going else None,
+        pragmaHandler=PragmaHandler.PragmaHandlerNull() if args.ignore_pragma else None,
+        keepGoing=args.keep_going,
+        conditionalLevel=2 if args.plot_conditional else 0,
+        dumpList=args.dump,
+        helpMap=retOptionMap(parser, args),
+        includeDOT=args.include_dot,
         cmdLine=' '.join(sys.argv),
     )
-    if os.path.isfile(args[0]):
-        preprocessFileToOutput(args[0], opts.output, jobSpec)
-        writeIndexHtml([args[0]], opts.output, jobSpec)
-    elif os.path.isdir(args[0]):
+    if os.path.isfile(inPath):
+        preprocessFileToOutput(inPath, args.output, jobSpec)
+        writeIndexHtml([inPath], args.output, jobSpec)
+    elif os.path.isdir(inPath):
         preprocessDirToOutput(
-            args[0],
-            opts.output,
+            inPath,
+            args.output,
             jobSpec,
-            globMatch=opts.glob,
-            recursive=opts.recursive,
-            numJobs=opts.jobs,
+            globMatch=args.glob,
+            recursive=args.recursive,
+            numJobs=args.jobs,
             )
     else:
-        logging.fatal('%s is neither a file or a directory!' % args[0])
+        logging.fatal('%s is neither a file or a directory!' % inPath)
         return 1
-    if opts.heap and myHeap is not None:
+    if args.heap and myHeap is not None:
         print('Dump of heap:')
         h = myHeap.heap()
         print(h)
