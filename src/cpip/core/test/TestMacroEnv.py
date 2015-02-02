@@ -5827,7 +5827,7 @@ class TestLibCello(TestMacroEnv):
                 aResult
                 )
         myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO('X')
+            theFileObj=io.StringIO(u'X')
             )
         repList = []
         myGen = myCpp.next()
