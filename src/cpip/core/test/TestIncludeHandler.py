@@ -702,7 +702,7 @@ class TestCppIncludeStdin(unittest.TestCase):
     def testStdinWriteRead(self):
         try:
             temp = sys.stdin
-            content = 'Hello world\n'
+            content = u'Hello world\n'
             sys.stdin = io.StringIO(content)
             f = self._incSim.initialTu('stdin').fileObj
             self.assertEqual(content, f.read())

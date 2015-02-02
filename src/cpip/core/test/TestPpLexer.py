@@ -5175,7 +5175,7 @@ struct page_frag {
 class TestLibCelloProblems(TestPpLexer):
     def test_00(self):
         """Test of #if (    (  (defined (SPAM))))"""
-        src = """#if (    (  (defined (SPAM))))
+        src = u"""#if (    (  (defined (SPAM))))
 FOO
 #else
 BAR
@@ -5208,7 +5208,7 @@ BAR
 
     def test_01(self):
         """Test of #if X when X is defined as "(    (  (defined (SPAM))))" - was failing"""
-        src = """#define X (    (  (defined (SPAM))))
+        src = u"""#define X (    (  (defined (SPAM))))
 #if X
 FOO
 #else
@@ -5241,7 +5241,7 @@ BAR
     
     def test_02(self):
         """Test of #if !__DARWIN_NO_LONG_LONG when X is defined as "__DARWIN_NO_LONG_LONG defined(__STRICT_ANSI__)" - was failing"""
-        src = """#define __DARWIN_NO_LONG_LONG defined(__STRICT_ANSI__)
+        src = u"""#define __DARWIN_NO_LONG_LONG defined(__STRICT_ANSI__)
 #if !__DARWIN_NO_LONG_LONG
 FOO
 #else
@@ -5274,7 +5274,7 @@ BAR
     
     def test_03(self):
         """Test of #if !__DARWIN_NO_LONG_LONG when X is defined as "__DARWIN_NO_LONG_LONG (defined(__STRICT_ANSI__) && (__STDC_VERSION__-0 < 199901L) && !defined(__GNUG__))" - was failing"""
-        src = """#define __DARWIN_NO_LONG_LONG (defined(__STRICT_ANSI__) && (__STDC_VERSION__-0 < 199901L) && !defined(__GNUG__))
+        src = u"""#define __DARWIN_NO_LONG_LONG (defined(__STRICT_ANSI__) && (__STDC_VERSION__-0 < 199901L) && !defined(__GNUG__))
 #if !__DARWIN_NO_LONG_LONG
 FOO
 #else
