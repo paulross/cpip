@@ -167,6 +167,15 @@ unless marked otherwise.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="cpip.core.PpToken.PpToken.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a shallow copy of self. This is useful where the same token is
+added to multiple lists and then a merge() operation on one list will
+be seen by the others. To avoid this insert self.copy() in all but one
+of the lists.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="cpip.core.PpToken.PpToken.evalConstExpr">
 <tt class="descname">evalConstExpr</tt><big>(</big><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.evalConstExpr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns an string value suitable for eval&#8217;ing in a constant expression.
@@ -226,9 +235,8 @@ isCond.</p>
 <dl class="method">
 <dt id="cpip.core.PpToken.PpToken.merge">
 <tt class="descname">merge</tt><big>(</big><em>other</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.PpToken.merge" title="Permalink to this definition">¶</a></dt>
-<dd><p>This will merge by appending the other token if possible.</p>
-<p>Failure will raise a ExceptionCpipTokenIllegalMerge if
-the token types are different.</p>
+<dd><p>This will merge by appending the other token if they are different token
+types the type becomes &#8216;concat&#8217;.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -310,7 +318,7 @@ a whitespace token.</p>
 <tt class="descclassname">cpip.core.PpToken.</tt><tt class="descname">tokensStr</tt><big>(</big><em>theTokens</em>, <em>shortForm=True</em><big>)</big><a class="headerlink" href="#cpip.core.PpToken.tokensStr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a list of tokens this returns them as a string.
 If shortForm is True then the lexical string is returned.
-If False then the PpToken representations separated by &#8216; <a href="#id1"><span class="problematic" id="id2">|</span></a>&#8216; is returned.
+If False then the PpToken representations separated by &#8216; | &#8216; is returned.
 e.g. <tt class="docutils literal"><span class="pre">PpToken(t=&quot;f&quot;,</span> <span class="pre">tt=identifier,</span> <span class="pre">line=True,</span> <span class="pre">prev=False,</span> <span class="pre">?=False)</span> <span class="pre">|</span> <span class="pre">...</span></tt></p>
 </dd></dl>
 

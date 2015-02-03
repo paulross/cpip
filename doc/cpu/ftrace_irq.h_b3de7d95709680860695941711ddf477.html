@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/ftrace_irq.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/ftrace_irq.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0ZUUkFDRV9JUlFfSF8w"><span class="b">_LINUX_FTRACE_IRQ_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0ZUUkFDRV9JUlFfSF8w"><span class="b">_LINUX_FTRACE_IRQ_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> 
+<a name="5" /><span class="False">       5:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_FTRACE_NMI_ENTER</span>
+<a name="6" /><span class="False">       6:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">ftrace_nmi_enter</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="7" /><span class="False">       7:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">ftrace_nmi_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span><span class="n">else</span>
+<a name="9" /><span class="True">       9:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">ftrace_nmi_enter</span><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="10" /><span class="True">      10:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">ftrace_nmi_exit</span><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="11" /><span class="True">      11:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="12" /><span class="True">      12:</span> 
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_FTRACE_IRQ_H */</span>
+<a name="14" /><span class="True">      14:</span> </pre>
+  </body>
+</html>

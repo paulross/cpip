@@ -137,7 +137,7 @@ statement.</p>
 
 <dl class="class">
 <dt id="cpip.core.PpLexer.PpLexer">
-<em class="property">class </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">PpLexer</tt><big>(</big><em>tuFileId</em>, <em>includeHandler</em>, <em>preIncFiles=None</em>, <em>diagnostic=None</em>, <em>pragmaHandler=None</em>, <em>stdPredefMacros=None</em>, <em>autoDefineDateTime=True</em><big>)</big><a class="headerlink" href="#cpip.core.PpLexer.PpLexer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">cpip.core.PpLexer.</tt><tt class="descname">PpLexer</tt><big>(</big><em>tuFileId</em>, <em>includeHandler</em>, <em>preIncFiles=None</em>, <em>diagnostic=None</em>, <em>pragmaHandler=None</em>, <em>stdPredefMacros=None</em>, <em>autoDefineDateTime=True</em>, <em>gccExtensions=False</em><big>)</big><a class="headerlink" href="#cpip.core.PpLexer.PpLexer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a translation unit tokeniser that applies ISO/IEC 9899:1999(E)
 Section 6 and ISO/IEC 14882:1998(E) section 16.</p>
 <dl class="docutils">
@@ -166,6 +166,20 @@ CppDiagnostic.PreprocessDiagnosticStd().</dd>
 function pragma() defined that takes a non-zero
 length list of PpTokens the last of which will be
 a newline token.</dd>
+<dt><em>stdPredefMacros</em></dt>
+<dd>A dictionary of Standard pre-defined macros.
+See for example:
+ISO/IEC 9899:1999 (E) 6.10.8 &#8220;Predefined macro names&#8221;,
+ISO/IEC 14882:1998 (E) 16.8 &#8220;Predefined macro names&#8221;
+and N2800=08-0310 16.8 &#8220;Predefined macro names&#8221;.
+The macros <tt class="docutils literal"><span class="pre">__DATE__</span></tt> and <tt class="docutils literal"><span class="pre">__TIME__</span></tt> will be automatically
+updated to current locale date/time (see autoDefineDateTime).</dd>
+<dt><em>autoDefineDateTime</em></dt>
+<dd>If True then the macros <tt class="docutils literal"><span class="pre">__DATE__</span></tt> and <tt class="docutils literal"><span class="pre">__TIME__</span></tt> will
+be automatically updated to current locale date/time.
+Mostly this is used for testing.</dd>
+<dt><em>gccExtensions</em></dt>
+<dd>Support GCC extensions. Currently just <tt class="docutils literal"><span class="pre">#include_next</span></tt> is supported.</dd>
 </dl>
 <p>TODO: Set flags here rather than supplying them to a generator?
 This would make the API simply the ctor and ppTokens/next().

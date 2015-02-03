@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/page_types.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/page_types.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0FTTV9YODZfUEFHRV9ERUZTX0hfMA__"><span class="b">_ASM_X86_PAGE_DEFS_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0FTTV9YODZfUEFHRV9ERUZTX0hfMA__"><span class="b">_ASM_X86_PAGE_DEFS_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="m">const</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="Maybe">       5:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="Maybe">       6:</span> 
+<a name="7" /><span class="Maybe">       7:</span> <span class="k">/* PAGE_SHIFT determines the page size */</span>
+<a name="8" /><span class="Maybe">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a>    <span class="c">12</span>
+<a name="9" /><span class="Maybe">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSVpFXzA_"><span class="b">PAGE_SIZE</span></a>    <span class="f">(</span><a href="cpu.c_macros_ref.html#_X0FDXzA_"><span class="b">_AC</span></a><span class="f">(</span><span class="c">1</span><span class="f">,</span><span class="b">UL</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="10" /><span class="Maybe">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_UEFHRV9NQVNLXzA_"><span class="b">PAGE_MASK</span></a>    <span class="f">(</span><span class="f">~</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_UEFHRV9TSVpFXzA_"><span class="b">PAGE_SIZE</span></a><span class="f">-</span><span class="c">1</span><span class="f">)</span><span class="f">)</span>
+<a name="11" /><span class="Maybe">      11:</span> 
+<a name="12" /><span class="Maybe">      12:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19QSFlTSUNBTF9NQVNLXzA_"><span class="b">__PHYSICAL_MASK</span></a>        <span class="f">(</span><span class="f">(</span><span class="b">phys_addr_t</span><span class="f">)</span><span class="f">(</span><span class="f">(</span><span class="c">1ULL</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_X19QSFlTSUNBTF9NQVNLX1NISUZUXzA_"><span class="b">__PHYSICAL_MASK_SHIFT</span></a><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">)</span><span class="f">)</span>
+<a name="13" /><span class="Maybe">      13:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19WSVJUVUFMX01BU0tfMA__"><span class="b">__VIRTUAL_MASK</span></a>        <span class="f">(</span><span class="f">(</span><span class="c">1UL</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_noref.html#_X19WSVJUVUFMX01BU0tfU0hJRlRfMA__"><span class="b">__VIRTUAL_MASK_SHIFT</span></a><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">)</span>
+<a name="14" /><span class="Maybe">      14:</span> 
+<a name="15" /><span class="Maybe">      15:</span> <span class="k">/* Cast PAGE_MASK to a signed type so that it is sign-extended if</span>
+<a name="16" /><span class="Maybe">      16:</span> <span class="k">   virtual addresses are 32-bits but physical addresses are larger</span>
+<a name="17" /><span class="Maybe">      17:</span> <span class="k">   (ie, 32-bit PAE). */</span>
+<a name="18" /><span class="Maybe">      18:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_UEhZU0lDQUxfUEFHRV9NQVNLXzA_"><span class="b">PHYSICAL_PAGE_MASK</span></a>    <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="m">signed</span> <span class="m">long</span><span class="f">)</span><a href="cpu.c_macros_ref.html#_UEFHRV9NQVNLXzA_"><span class="b">PAGE_MASK</span></a><span class="f">)</span> <span class="f">&amp;</span> <a href="cpu.c_macros_ref.html#_X19QSFlTSUNBTF9NQVNLXzA_"><span class="b">__PHYSICAL_MASK</span></a><span class="f">)</span>
+<a name="19" /><span class="Maybe">      19:</span> 
+<a name="20" /><span class="Maybe">      20:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UE1EX1BBR0VfU0laRV8w"><span class="b">PMD_PAGE_SIZE</span></a>        <span class="f">(</span><a href="cpu.c_macros_ref.html#_X0FDXzA_"><span class="b">_AC</span></a><span class="f">(</span><span class="c">1</span><span class="f">,</span> <span class="b">UL</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_UE1EX1NISUZUXzA_"><span class="b">PMD_SHIFT</span></a><span class="f">)</span>
+<a name="21" /><span class="Maybe">      21:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UE1EX1BBR0VfTUFTS18w"><span class="b">PMD_PAGE_MASK</span></a>        <span class="f">(</span><span class="f">~</span><span class="f">(</span><a href="cpu.c_macros_noref.html#_UE1EX1BBR0VfU0laRV8w"><span class="b">PMD_PAGE_SIZE</span></a><span class="f">-</span><span class="c">1</span><span class="f">)</span><span class="f">)</span>
+<a name="22" /><span class="Maybe">      22:</span> 
+<a name="23" /><span class="Maybe">      23:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SFBBR0VfU0hJRlRfMA__"><span class="b">HPAGE_SHIFT</span></a>        <a href="cpu.c_macros_ref.html#_UE1EX1NISUZUXzA_"><span class="b">PMD_SHIFT</span></a>
+<a name="24" /><span class="Maybe">      24:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SFBBR0VfU0laRV8w"><span class="b">HPAGE_SIZE</span></a>        <span class="f">(</span><a href="cpu.c_macros_ref.html#_X0FDXzA_"><span class="b">_AC</span></a><span class="f">(</span><span class="c">1</span><span class="f">,</span><span class="b">UL</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_noref.html#_SFBBR0VfU0hJRlRfMA__"><span class="b">HPAGE_SHIFT</span></a><span class="f">)</span>
+<a name="25" /><span class="Maybe">      25:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SFBBR0VfTUFTS18w"><span class="b">HPAGE_MASK</span></a>        <span class="f">(</span><span class="f">~</span><span class="f">(</span><a href="cpu.c_macros_noref.html#_SFBBR0VfU0laRV8w"><span class="b">HPAGE_SIZE</span></a> <span class="f">-</span> <span class="c">1</span><span class="f">)</span><span class="f">)</span>
+<a name="26" /><span class="Maybe">      26:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SFVHRVRMQl9QQUdFX09SREVSXzA_"><span class="b">HUGETLB_PAGE_ORDER</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_SFBBR0VfU0hJRlRfMA__"><span class="b">HPAGE_SHIFT</span></a> <span class="f">-</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="27" /><span class="Maybe">      27:</span> 
+<a name="28" /><span class="Maybe">      28:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SFVHRV9NQVhfSFNUQVRFXzA_"><span class="b">HUGE_MAX_HSTATE</span></a> <span class="c">2</span>
+<a name="29" /><span class="Maybe">      29:</span> 
+<a name="30" /><span class="Maybe">      30:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_UEFHRV9PRkZTRVRfMA__"><span class="b">PAGE_OFFSET</span></a>        <span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><a href="cpu.c_macros_ref.html#_X19QQUdFX09GRlNFVF8w"><span class="b">__PAGE_OFFSET</span></a><span class="f">)</span>
+<a name="31" /><span class="Maybe">      31:</span> 
+<a name="32" /><span class="Maybe">      32:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Vk1fREFUQV9ERUZBVUxUX0ZMQUdTXzA_"><span class="b">VM_DATA_DEFAULT_FLAGS</span></a> \
+<a name="33" /><span class="Maybe">      33:</span>     <span class="f">(</span><span class="f">(</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Y3VycmVudF8w"><span class="b">current</span></a><span class="f">-&gt;</span><a href="cpu.c_macros_noref.html#_cGVyc29uYWxpdHlfMA__"><span class="b">personality</span></a> <span class="f">&amp;</span> <span class="b">READ_IMPLIES_EXEC</span><span class="f">)</span> <span class="f">?</span> <a href="cpu.c_macros_noref.html#_Vk1fRVhFQ18w"><span class="b">VM_EXEC</span></a> <span class="f">:</span> <span class="c">0</span> <span class="f">)</span> <span class="f">|</span> \
+<a name="34" /><span class="Maybe">      34:</span>      <a href="cpu.c_macros_noref.html#_Vk1fUkVBRF8w"><span class="b">VM_READ</span></a> <span class="f">|</span> <a href="cpu.c_macros_ref.html#_Vk1fV1JJVEVfMA__"><span class="b">VM_WRITE</span></a> <span class="f">|</span> <a href="cpu.c_macros_noref.html#_Vk1fTUFZUkVBRF8w"><span class="b">VM_MAYREAD</span></a> <span class="f">|</span> <a href="cpu.c_macros_noref.html#_Vk1fTUFZV1JJVEVfMA__"><span class="b">VM_MAYWRITE</span></a> <span class="f">|</span> <a href="cpu.c_macros_noref.html#_Vk1fTUFZRVhFQ18w"><span class="b">VM_MAYEXEC</span></a><span class="f">)</span>
+<a name="35" /><span class="Maybe">      35:</span> 
+<a name="36" /><span class="Maybe">      36:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19QSFlTSUNBTF9TVEFSVF8w"><span class="b">__PHYSICAL_START</span></a>    <a href="cpu.c_macros_noref.html#_QUxJR05fMA__"><span class="b">ALIGN</span></a><span class="f">(</span><a href="cpu.c_macros_noref.html#_Q09ORklHX1BIWVNJQ0FMX1NUQVJUXzA_"><span class="b">CONFIG_PHYSICAL_START</span></a><span class="f">,</span> \
+<a name="37" /><span class="Maybe">      37:</span>                       <a href="cpu.c_macros_noref.html#_Q09ORklHX1BIWVNJQ0FMX0FMSUdOXzA_"><span class="b">CONFIG_PHYSICAL_ALIGN</span></a><span class="f">)</span>
+<a name="38" /><span class="Maybe">      38:</span> 
+<a name="39" /><span class="Maybe">      39:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19TVEFSVF9LRVJORUxfMA__"><span class="b">__START_KERNEL</span></a>        <span class="f">(</span><a href="cpu.c_macros_ref.html#_X19TVEFSVF9LRVJORUxfbWFwXzA_"><span class="b">__START_KERNEL_map</span></a> <span class="f">+</span> <a href="cpu.c_macros_noref.html#_X19QSFlTSUNBTF9TVEFSVF8w"><span class="b">__PHYSICAL_START</span></a><span class="f">)</span>
+<a name="40" /><span class="Maybe">      40:</span> 
+<a name="41" /><span class="Maybe">      41:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1g4Nl82NF8w"><span class="b">CONFIG_X86_64</span></a>
+<a name="42" /><span class="Maybe">      42:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">page_64_types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="43" /><span class="False">      43:</span> <span class="f">#</span><span class="n">else</span>
+<a name="44" /><span class="False">      44:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">page_32_types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="45" /><span class="Maybe">      45:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* CONFIG_X86_64 */</span>
+<a name="46" /><span class="Maybe">      46:</span> 
+<a name="47" /><span class="Maybe">      47:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">__ASSEMBLY__</span>
+<a name="48" /><span class="Maybe">      48:</span> 
+<a name="49" /><span class="Maybe">      49:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">devmem_is_allowed</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">pagenr</span><span class="f">)</span><span class="f">;</span>
+<a name="50" /><span class="Maybe">      50:</span> 
+<a name="51" /><span class="Maybe">      51:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">max_low_pfn_mapped</span><span class="f">;</span>
+<a name="52" /><span class="Maybe">      52:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">max_pfn_mapped</span><span class="f">;</span>
+<a name="53" /><span class="Maybe">      53:</span> 
+<a name="54" /><span class="Maybe">      54:</span> <span class="m">static</span> <span class="m">inline</span> <span class="b">phys_addr_t</span> <span class="b">get_max_mapped</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="55" /><span class="Maybe">      55:</span> <span class="f">{</span>
+<a name="56" /><span class="Maybe">      56:</span>     <span class="m">return</span> <span class="f">(</span><span class="b">phys_addr_t</span><span class="f">)</span><span class="b">max_pfn_mapped</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">;</span>
+<a name="57" /><span class="Maybe">      57:</span> <span class="f">}</span>
+<a name="58" /><span class="Maybe">      58:</span> 
+<a name="59" /><span class="Maybe">      59:</span> <span class="m">bool</span> <span class="b">pfn_range_is_mapped</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">start_pfn</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">end_pfn</span><span class="f">)</span><span class="f">;</span>
+<a name="60" /><span class="Maybe">      60:</span> 
+<a name="61" /><span class="Maybe">      61:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">init_memory_mapping</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">start</span><span class="f">,</span>
+<a name="62" /><span class="Maybe">      62:</span>                      <span class="m">unsigned</span> <span class="m">long</span> <span class="b">end</span><span class="f">)</span><span class="f">;</span>
+<a name="63" /><span class="Maybe">      63:</span> 
+<a name="64" /><span class="Maybe">      64:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">initmem_init</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="65" /><span class="Maybe">      65:</span> 
+<a name="66" /><span class="Maybe">      66:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* !__ASSEMBLY__ */</span>
+<a name="67" /><span class="Maybe">      67:</span> 
+<a name="68" /><span class="True">      68:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* _ASM_X86_PAGE_DEFS_H */</span>
+<a name="69" /><span class="True">      69:</span> </pre>
+  </body>
+</html>

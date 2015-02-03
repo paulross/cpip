@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/sections.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/arch/x86/include/asm/sections.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0FTTV9YODZfU0VDVElPTlNfSF8w"><span class="b">_ASM_X86_SECTIONS_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0FTTV9YODZfU0VDVElPTlNfSF8w"><span class="b">_ASM_X86_SECTIONS_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">-</span><span class="b">generic</span><span class="f">/</span><span class="b">sections</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="True">       5:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">uaccess</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="True">       6:</span> 
+<a name="7" /><span class="True">       7:</span> <span class="m">extern</span> <span class="m">char</span> <span class="b">__brk_base</span><span class="f">[</span><span class="f">]</span><span class="f">,</span> <span class="b">__brk_limit</span><span class="f">[</span><span class="f">]</span><span class="f">;</span>
+<a name="8" /><span class="True">       8:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">exception_table_entry</span> <span class="b">__stop___ex_table</span><span class="f">[</span><span class="f">]</span><span class="f">;</span>
+<a name="9" /><span class="True">       9:</span> 
+<a name="10" /><span class="True">      10:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1g4Nl82NF8w"><span class="b">CONFIG_X86_64</span></a><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX0RFQlVHX1JPREFUQV8w"><span class="b">CONFIG_DEBUG_RODATA</span></a><span class="f">)</span>
+<a name="11" /><span class="True">      11:</span> <span class="m">extern</span> <span class="m">char</span> <span class="b">__end_rodata_hpage_align</span><span class="f">[</span><span class="f">]</span><span class="f">;</span>
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="13" /><span class="True">      13:</span> 
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* _ASM_X86_SECTIONS_H */</span>
+<a name="15" /><span class="True">      15:</span> </pre>
+  </body>
+</html>

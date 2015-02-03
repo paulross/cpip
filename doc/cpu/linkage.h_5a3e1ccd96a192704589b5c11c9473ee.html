@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/linkage.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/linkage.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX0xJTktBR0VfSF8w"><span class="b">_LINUX_LINKAGE_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX0xJTktBR0VfSF8w"><span class="b">_LINUX_LINKAGE_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">compiler</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="Maybe">       5:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">stringify</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="Maybe">       6:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="m">export</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="7" /><span class="Maybe">       7:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">linkage</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="8" /><span class="Maybe">       8:</span> 
+<a name="9" /><span class="False">       9:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">__cplusplus</span>
+<a name="10" /><span class="False">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_Q1BQX0FTTUxJTktBR0VfMA__"><span class="b">CPP_ASMLINKAGE</span></a> <span class="m">extern</span> <span class="e">&quot;C&quot;</span>
+<a name="11" /><span class="Maybe">      11:</span> <span class="f">#</span><span class="n">else</span>
+<a name="12" /><span class="Maybe">      12:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_Q1BQX0FTTUxJTktBR0VfMA__"><span class="b">CPP_ASMLINKAGE</span></a>
+<a name="13" /><span class="Maybe">      13:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="14" /><span class="Maybe">      14:</span> 
+<a name="15" /><span class="Maybe">      15:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_YXNtbGlua2FnZV8w"><span class="b">asmlinkage</span></a>
+<a name="16" /><span class="Maybe">      16:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_YXNtbGlua2FnZV8w"><span class="b">asmlinkage</span></a> <a href="cpu.c_macros_ref.html#_Q1BQX0FTTUxJTktBR0VfMA__"><span class="b">CPP_ASMLINKAGE</span></a>
+<a name="17" /><span class="Maybe">      17:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="18" /><span class="Maybe">      18:</span> 
+<a name="19" /><span class="Maybe">      19:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_Y29uZF9zeXNjYWxsXzA_"><span class="b">cond_syscall</span></a>
+<a name="20" /><span class="Maybe">      20:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_Y29uZF9zeXNjYWxsXzA_"><span class="b">cond_syscall</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span>    <span class="m">asm</span><span class="f">(</span>                \
+<a name="21" /><span class="Maybe">      21:</span>     <span class="e">&quot;.weak &quot;</span> <a href="cpu.c_macros_ref.html#_Vk1MSU5VWF9TWU1CT0xfU1RSXzA_"><span class="b">VMLINUX_SYMBOL_STR</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="e">&quot;\n\t&quot;</span>        \
+<a name="22" /><span class="Maybe">      22:</span>     <span class="e">&quot;.set  &quot;</span> <a href="cpu.c_macros_ref.html#_Vk1MSU5VWF9TWU1CT0xfU1RSXzA_"><span class="b">VMLINUX_SYMBOL_STR</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="e">&quot;,&quot;</span>        \
+<a name="23" /><span class="Maybe">      23:</span>          <a href="cpu.c_macros_ref.html#_Vk1MSU5VWF9TWU1CT0xfU1RSXzA_"><span class="b">VMLINUX_SYMBOL_STR</span></a><span class="f">(</span><span class="b">sys_ni_syscall</span><span class="f">)</span><span class="f">)</span>
+<a name="24" /><span class="Maybe">      24:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="25" /><span class="Maybe">      25:</span> 
+<a name="26" /><span class="Maybe">      26:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_U1lTQ0FMTF9BTElBU18w"><span class="b">SYSCALL_ALIAS</span></a>
+<a name="27" /><span class="Maybe">      27:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_U1lTQ0FMTF9BTElBU18w"><span class="b">SYSCALL_ALIAS</span></a><span class="f">(</span><span class="b">alias</span><span class="f">,</span> <span class="b">name</span><span class="f">)</span> <span class="m">asm</span><span class="f">(</span>            \
+<a name="28" /><span class="Maybe">      28:</span>     <span class="e">&quot;.globl &quot;</span> <a href="cpu.c_macros_ref.html#_Vk1MSU5VWF9TWU1CT0xfU1RSXzA_"><span class="b">VMLINUX_SYMBOL_STR</span></a><span class="f">(</span><span class="b">alias</span><span class="f">)</span> <span class="e">&quot;\n\t&quot;</span>    \
+<a name="29" /><span class="Maybe">      29:</span>     <span class="e">&quot;.set   &quot;</span> <a href="cpu.c_macros_ref.html#_Vk1MSU5VWF9TWU1CT0xfU1RSXzA_"><span class="b">VMLINUX_SYMBOL_STR</span></a><span class="f">(</span><span class="b">alias</span><span class="f">)</span> <span class="e">&quot;,&quot;</span>        \
+<a name="30" /><span class="Maybe">      30:</span>           <a href="cpu.c_macros_ref.html#_Vk1MSU5VWF9TWU1CT0xfU1RSXzA_"><span class="b">VMLINUX_SYMBOL_STR</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">)</span>
+<a name="31" /><span class="Maybe">      31:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="32" /><span class="Maybe">      32:</span> 
+<a name="33" /><span class="Maybe">      33:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19wYWdlX2FsaWduZWRfZGF0YV8w"><span class="b">__page_aligned_data</span></a>    <a href="cpu.c_macros_ref.html#_X19zZWN0aW9uXzA_"><span class="b">__section</span></a><span class="f">(</span><span class="f">.</span><span class="b">data</span><span class="f">..</span><span class="b">page_aligned</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19hbGlnbmVkXzA_"><span class="b">__aligned</span></a><span class="f">(</span><a href="cpu.c_macros_ref.html#_UEFHRV9TSVpFXzA_"><span class="b">PAGE_SIZE</span></a><span class="f">)</span>
+<a name="34" /><span class="Maybe">      34:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19wYWdlX2FsaWduZWRfYnNzXzA_"><span class="b">__page_aligned_bss</span></a>    <a href="cpu.c_macros_ref.html#_X19zZWN0aW9uXzA_"><span class="b">__section</span></a><span class="f">(</span><span class="f">.</span><span class="b">bss</span><span class="f">..</span><span class="b">page_aligned</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19hbGlnbmVkXzA_"><span class="b">__aligned</span></a><span class="f">(</span><a href="cpu.c_macros_ref.html#_UEFHRV9TSVpFXzA_"><span class="b">PAGE_SIZE</span></a><span class="f">)</span>
+<a name="35" /><span class="Maybe">      35:</span> 
+<a name="36" /><span class="Maybe">      36:</span> <span class="k">/*</span>
+<a name="37" /><span class="Maybe">      37:</span> <span class="k"> * For assembly routines.</span>
+<a name="38" /><span class="Maybe">      38:</span> <span class="k"> *</span>
+<a name="39" /><span class="Maybe">      39:</span> <span class="k"> * Note when using these that you must specify the appropriate</span>
+<a name="40" /><span class="Maybe">      40:</span> <span class="k"> * alignment directives yourself</span>
+<a name="41" /><span class="Maybe">      41:</span> <span class="k"> */</span>
+<a name="42" /><span class="Maybe">      42:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19QQUdFX0FMSUdORURfREFUQV8w"><span class="b">__PAGE_ALIGNED_DATA</span></a>    <span class="f">.</span><span class="b">section</span> <span class="e">&quot;.data..page_aligned&quot;</span><span class="f">,</span> <span class="e">&quot;aw&quot;</span>
+<a name="43" /><span class="Maybe">      43:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19QQUdFX0FMSUdORURfQlNTXzA_"><span class="b">__PAGE_ALIGNED_BSS</span></a>    <span class="f">.</span><span class="b">section</span> <span class="e">&quot;.bss..page_aligned&quot;</span><span class="f">,</span> <span class="e">&quot;aw&quot;</span>
+<a name="44" /><span class="Maybe">      44:</span> 
+<a name="45" /><span class="Maybe">      45:</span> <span class="k">/*</span>
+<a name="46" /><span class="Maybe">      46:</span> <span class="k"> * This is used by architectures to keep arguments on the stack</span>
+<a name="47" /><span class="Maybe">      47:</span> <span class="k"> * untouched by the compiler by keeping them live until the end.</span>
+<a name="48" /><span class="Maybe">      48:</span> <span class="k"> * The argument stack may be owned by the assembly-language</span>
+<a name="49" /><span class="Maybe">      49:</span> <span class="k"> * caller, not the callee, and gcc doesn&apos;t always understand</span>
+<a name="50" /><span class="Maybe">      50:</span> <span class="k"> * that.</span>
+<a name="51" /><span class="Maybe">      51:</span> <span class="k"> *</span>
+<a name="52" /><span class="Maybe">      52:</span> <span class="k"> * We have the return value, and a maximum of six arguments.</span>
+<a name="53" /><span class="Maybe">      53:</span> <span class="k"> *</span>
+<a name="54" /><span class="Maybe">      54:</span> <span class="k"> * This should always be followed by a &quot;return ret&quot; for the</span>
+<a name="55" /><span class="Maybe">      55:</span> <span class="k"> * protection to work (ie no more work that the compiler might</span>
+<a name="56" /><span class="Maybe">      56:</span> <span class="k"> * end up needing stack temporaries for).</span>
+<a name="57" /><span class="Maybe">      57:</span> <span class="k"> */</span>
+<a name="58" /><span class="Maybe">      58:</span> <span class="k">/* Assembly files may be compiled with -traditional .. */</span>
+<a name="59" /><span class="Maybe">      59:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">__ASSEMBLY__</span>
+<a name="60" /><span class="Maybe">      60:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_YXNtbGlua2FnZV9wcm90ZWN0XzA_"><span class="b">asmlinkage_protect</span></a>
+<a name="61" /><span class="Maybe">      61:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_ref.html#_YXNtbGlua2FnZV9wcm90ZWN0XzA_"><span class="b">asmlinkage_protect</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">ret</span><span class="f">,</span> <span class="b">args</span><span class="f">...</span><span class="f">)</span>    <span class="m">do</span> <span class="f">{</span> <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="62" /><span class="Maybe">      62:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="63" /><span class="Maybe">      63:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="64" /><span class="Maybe">      64:</span> 
+<a name="65" /><span class="Maybe">      65:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X19BTElHTl8w"><span class="b">__ALIGN</span></a>
+<a name="66" /><span class="Maybe">      66:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X19BTElHTl8w"><span class="b">__ALIGN</span></a>        <span class="f">.</span><span class="b">align</span> <span class="c">4</span><span class="f">,</span><span class="c">0x90</span>
+<a name="67" /><span class="Maybe">      67:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19BTElHTl9TVFJfMA__"><span class="b">__ALIGN_STR</span></a>    <span class="e">&quot;.align 4,0x90&quot;</span>
+<a name="68" /><span class="Maybe">      68:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="69" /><span class="Maybe">      69:</span> 
+<a name="70" /><span class="False">      70:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">__ASSEMBLY__</span>
+<a name="71" /><span class="False">      71:</span> 
+<a name="72" /><span class="False">      72:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">LINKER_SCRIPT</span>
+<a name="73" /><span class="False">      73:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QUxJR05fMA__"><span class="b">ALIGN</span></a> <a href="cpu.c_macros_ref.html#_X19BTElHTl8w"><span class="b">__ALIGN</span></a>
+<a name="74" /><span class="False">      74:</span> <span class="f">#</span><span class="n">define</span> <span class="b">ALIGN_STR</span> <a href="cpu.c_macros_noref.html#_X19BTElHTl9TVFJfMA__"><span class="b">__ALIGN_STR</span></a>
+<a name="75" /><span class="False">      75:</span> 
+<a name="76" /><span class="False">      76:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">ENTRY</span>
+<a name="77" /><span class="False">      77:</span> <span class="f">#</span><span class="n">define</span> <span class="b">ENTRY</span><span class="f">(</span><span class="b">name</span><span class="f">)</span> \
+<a name="78" /><span class="False">      78:</span>   <span class="f">.</span><span class="b">globl</span> <span class="b">name</span><span class="f">;</span> \
+<a name="79" /><span class="False">      79:</span>   <a href="cpu.c_macros_noref.html#_QUxJR05fMA__"><span class="b">ALIGN</span></a><span class="f">;</span> \
+<a name="80" /><span class="False">      80:</span>   <span class="b">name</span><span class="f">:</span>
+<a name="81" /><span class="False">      81:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="82" /><span class="False">      82:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* LINKER_SCRIPT */</span>
+<a name="83" /><span class="False">      83:</span> 
+<a name="84" /><span class="False">      84:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">WEAK</span>
+<a name="85" /><span class="False">      85:</span> <span class="f">#</span><span class="n">define</span> <span class="b">WEAK</span><span class="f">(</span><span class="b">name</span><span class="f">)</span>       \
+<a name="86" /><span class="False">      86:</span>     <span class="f">.</span><span class="b">weak</span> <span class="b">name</span><span class="f">;</span>       \
+<a name="87" /><span class="False">      87:</span>     <span class="b">name</span><span class="f">:</span>
+<a name="88" /><span class="False">      88:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="89" /><span class="False">      89:</span> 
+<a name="90" /><span class="False">      90:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">END</span>
+<a name="91" /><span class="False">      91:</span> <span class="f">#</span><span class="n">define</span> <span class="b">END</span><span class="f">(</span><span class="b">name</span><span class="f">)</span> \
+<a name="92" /><span class="False">      92:</span>   <span class="f">.</span><span class="b">size</span> <span class="b">name</span><span class="f">,</span> <span class="f">.</span><span class="f">-</span><span class="b">name</span>
+<a name="93" /><span class="False">      93:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="94" /><span class="False">      94:</span> 
+<a name="95" /><span class="False">      95:</span> <span class="k">/* If symbol &apos;name&apos; is treated as a subroutine (gets called, and returns)</span>
+<a name="96" /><span class="False">      96:</span> <span class="k"> * then please use ENDPROC to mark &apos;name&apos; as STT_FUNC for the benefit of</span>
+<a name="97" /><span class="False">      97:</span> <span class="k"> * static analysis tools such as stack depth analyzer.</span>
+<a name="98" /><span class="False">      98:</span> <span class="k"> */</span>
+<a name="99" /><span class="False">      99:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">ENDPROC</span>
+<a name="100" /><span class="False">     100:</span> <span class="f">#</span><span class="n">define</span> <span class="b">ENDPROC</span><span class="f">(</span><span class="b">name</span><span class="f">)</span> \
+<a name="101" /><span class="False">     101:</span>   <span class="f">.</span><span class="b">type</span> <span class="b">name</span><span class="f">,</span> <span class="g">@</span><span class="b">function</span><span class="f">;</span> \
+<a name="102" /><span class="False">     102:</span>   <span class="b">END</span><span class="f">(</span><span class="b">name</span><span class="f">)</span>
+<a name="103" /><span class="False">     103:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="104" /><span class="False">     104:</span> 
+<a name="105" /><span class="Maybe">     105:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="106" /><span class="Maybe">     106:</span> 
+<a name="107" /><span class="True">     107:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="108" /><span class="True">     108:</span> </pre>
+  </body>
+</html>

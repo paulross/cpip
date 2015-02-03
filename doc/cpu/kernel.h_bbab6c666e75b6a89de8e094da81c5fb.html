@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/kernel.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/kernel.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X1VBUElfTElOVVhfS0VSTkVMX0hfMA__"><span class="b">_UAPI_LINUX_KERNEL_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X1VBUElfTElOVVhfS0VSTkVMX0hfMA__"><span class="b">_UAPI_LINUX_KERNEL_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">sysinfo</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="True">       5:</span> 
+<a name="6" /><span class="True">       6:</span> <span class="k">/*</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * &apos;kernel.h&apos; contains some often-used function prototypes etc</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> */</span>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19BTElHTl9LRVJORUxfMA__"><span class="b">__ALIGN_KERNEL</span></a><span class="f">(</span><span class="b">x</span><span class="f">,</span> <span class="b">a</span><span class="f">)</span>        <a href="cpu.c_macros_noref.html#_X19BTElHTl9LRVJORUxfTUFTS18w"><span class="b">__ALIGN_KERNEL_MASK</span></a><span class="f">(</span><span class="b">x</span><span class="f">,</span> <span class="f">(</span><span class="b">typeof</span><span class="f">(</span><span class="b">x</span><span class="f">)</span><span class="f">)</span><span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">)</span>
+<a name="10" /><span class="True">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19BTElHTl9LRVJORUxfTUFTS18w"><span class="b">__ALIGN_KERNEL_MASK</span></a><span class="f">(</span><span class="b">x</span><span class="f">,</span> <span class="b">mask</span><span class="f">)</span>    <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="f">+</span> <span class="f">(</span><span class="b">mask</span><span class="f">)</span><span class="f">)</span> <span class="f">&amp;</span> <span class="f">~</span><span class="f">(</span><span class="b">mask</span><span class="f">)</span><span class="f">)</span>
+<a name="11" /><span class="True">      11:</span> 
+<a name="12" /><span class="True">      12:</span> 
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _UAPI_LINUX_KERNEL_H */</span>
+<a name="14" /><span class="True">      14:</span> </pre>
+  </body>
+</html>

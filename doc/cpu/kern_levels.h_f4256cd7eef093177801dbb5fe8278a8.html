@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/kern_levels.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/kern_levels.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X19LRVJOX0xFVkVMU19IX19fMA__"><span class="b">__KERN_LEVELS_H__</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19LRVJOX0xFVkVMU19IX19fMA__"><span class="b">__KERN_LEVELS_H__</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a>    <span class="e">&quot;\001&quot;</span>        <span class="k">/* ASCII Start Of Header */</span>
+<a name="5" /><span class="True">       5:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfQVNDSUlfMA__"><span class="b">KERN_SOH_ASCII</span></a>    <span class="d">&apos;\001&apos;</span>
+<a name="6" /><span class="True">       6:</span> 
+<a name="7" /><span class="True">       7:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S0VSTl9FTUVSR18w"><span class="b">KERN_EMERG</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;0&quot;</span>    <span class="k">/* system is unusable */</span>
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S0VSTl9BTEVSVF8w"><span class="b">KERN_ALERT</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;1&quot;</span>    <span class="k">/* action must be taken immediately */</span>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S0VSTl9DUklUXzA_"><span class="b">KERN_CRIT</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;2&quot;</span>    <span class="k">/* critical conditions */</span>
+<a name="10" /><span class="True">      10:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S0VSTl9FUlJfMA__"><span class="b">KERN_ERR</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;3&quot;</span>    <span class="k">/* error conditions */</span>
+<a name="11" /><span class="True">      11:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S0VSTl9XQVJOSU5HXzA_"><span class="b">KERN_WARNING</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;4&quot;</span>    <span class="k">/* warning conditions */</span>
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S0VSTl9OT1RJQ0VfMA__"><span class="b">KERN_NOTICE</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;5&quot;</span>    <span class="k">/* normal but significant condition */</span>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S0VSTl9JTkZPXzA_"><span class="b">KERN_INFO</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;6&quot;</span>    <span class="k">/* informational */</span>
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S0VSTl9ERUJVR18w"><span class="b">KERN_DEBUG</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;7&quot;</span>    <span class="k">/* debug-level messages */</span>
+<a name="15" /><span class="True">      15:</span> 
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S0VSTl9ERUZBVUxUXzA_"><span class="b">KERN_DEFAULT</span></a>    <a href="cpu.c_macros_ref.html#_S0VSTl9TT0hfMA__"><span class="b">KERN_SOH</span></a> <span class="e">&quot;d&quot;</span>    <span class="k">/* the default kernel loglevel */</span>
+<a name="17" /><span class="True">      17:</span> 
+<a name="18" /><span class="True">      18:</span> <span class="k">/*</span>
+<a name="19" /><span class="True">      19:</span> <span class="k"> * Annotation for a &quot;continued&quot; line of log printout (only done after a</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * line that had no enclosing \n). Only to be used by core/arch code</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> * during early bootup (a continued line is not SMP-safe otherwise).</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> */</span>
+<a name="23" /><span class="True">      23:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S0VSTl9DT05UXzA_"><span class="b">KERN_CONT</span></a>    <span class="e">&quot;&quot;</span>
+<a name="24" /><span class="True">      24:</span> 
+<a name="25" /><span class="True">      25:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="26" /><span class="True">      26:</span> </pre>
+  </body>
+</html>

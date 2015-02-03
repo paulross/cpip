@@ -1,0 +1,377 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/clocksource.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/clocksource.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*  linux/include/linux/clocksource.h</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> *</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> *  This file contains the structure definitions for clocksources.</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> *</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> *  If you are not a clocksource, or timekeeping code, you should</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> *  not be including this file!</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> */</span>
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0NMT0NLU09VUkNFX0hfMA__"><span class="b">_LINUX_CLOCKSOURCE_H</span></a>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX0NMT0NLU09VUkNFX0hfMA__"><span class="b">_LINUX_CLOCKSOURCE_H</span></a>
+<a name="10" /><span class="True">      10:</span> 
+<a name="11" /><span class="True">      11:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">timex</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">time</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">list</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">cache</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">timer</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">init</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="18" /><span class="True">      18:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">div64</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="19" /><span class="True">      19:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">io</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="20" /><span class="True">      20:</span> 
+<a name="21" /><span class="True">      21:</span> <span class="k">/* clocksource cycle base type */</span>
+<a name="22" /><span class="True">      22:</span> <span class="m">typedef</span> <span class="b">u64</span> <span class="b">cycle_t</span><span class="f">;</span>
+<a name="23" /><span class="True">      23:</span> <span class="m">struct</span> <span class="b">clocksource</span><span class="f">;</span>
+<a name="24" /><span class="True">      24:</span> <span class="m">struct</span> <span class="b">module</span><span class="f">;</span>
+<a name="25" /><span class="True">      25:</span> 
+<a name="26" /><span class="True">      26:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX0FSQ0hfQ0xPQ0tTT1VSQ0VfREFUQV8w"><span class="b">CONFIG_ARCH_CLOCKSOURCE_DATA</span></a>
+<a name="27" /><span class="True">      27:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">clocksource</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="28" /><span class="True">      28:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="29" /><span class="True">      29:</span> 
+<a name="30" /><span class="True">      30:</span> <span class="k">/**</span>
+<a name="31" /><span class="True">      31:</span> <span class="k"> * struct cyclecounter - hardware abstraction for a free running counter</span>
+<a name="32" /><span class="True">      32:</span> <span class="k"> *    Provides completely state-free accessors to the underlying hardware.</span>
+<a name="33" /><span class="True">      33:</span> <span class="k"> *    Depending on which hardware it reads, the cycle counter may wrap</span>
+<a name="34" /><span class="True">      34:</span> <span class="k"> *    around quickly. Locking rules (if necessary) have to be defined</span>
+<a name="35" /><span class="True">      35:</span> <span class="k"> *    by the implementor and user of specific instances of this API.</span>
+<a name="36" /><span class="True">      36:</span> <span class="k"> *</span>
+<a name="37" /><span class="True">      37:</span> <span class="k"> * @read:        returns the current cycle value</span>
+<a name="38" /><span class="True">      38:</span> <span class="k"> * @mask:        bitmask for two&apos;s complement</span>
+<a name="39" /><span class="True">      39:</span> <span class="k"> *            subtraction of non 64 bit counters,</span>
+<a name="40" /><span class="True">      40:</span> <span class="k"> *            see CLOCKSOURCE_MASK() helper macro</span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> * @mult:        cycle to nanosecond multiplier</span>
+<a name="42" /><span class="True">      42:</span> <span class="k"> * @shift:        cycle to nanosecond divisor (power of two)</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"> */</span>
+<a name="44" /><span class="True">      44:</span> <span class="m">struct</span> <span class="b">cyclecounter</span> <span class="f">{</span>
+<a name="45" /><span class="True">      45:</span>     <span class="b">cycle_t</span> <span class="f">(</span><span class="f">*</span><span class="b">read</span><span class="f">)</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cyclecounter</span> <span class="f">*</span><span class="b">cc</span><span class="f">)</span><span class="f">;</span>
+<a name="46" /><span class="True">      46:</span>     <span class="b">cycle_t</span> <span class="b">mask</span><span class="f">;</span>
+<a name="47" /><span class="True">      47:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">mult</span><span class="f">;</span>
+<a name="48" /><span class="True">      48:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">shift</span><span class="f">;</span>
+<a name="49" /><span class="True">      49:</span> <span class="f">}</span><span class="f">;</span>
+<a name="50" /><span class="True">      50:</span> 
+<a name="51" /><span class="True">      51:</span> <span class="k">/**</span>
+<a name="52" /><span class="True">      52:</span> <span class="k"> * struct timecounter - layer above a %struct cyclecounter which counts nanoseconds</span>
+<a name="53" /><span class="True">      53:</span> <span class="k"> *    Contains the state needed by timecounter_read() to detect</span>
+<a name="54" /><span class="True">      54:</span> <span class="k"> *    cycle counter wrap around. Initialize with</span>
+<a name="55" /><span class="True">      55:</span> <span class="k"> *    timecounter_init(). Also used to convert cycle counts into the</span>
+<a name="56" /><span class="True">      56:</span> <span class="k"> *    corresponding nanosecond counts with timecounter_cyc2time(). Users</span>
+<a name="57" /><span class="True">      57:</span> <span class="k"> *    of this code are responsible for initializing the underlying</span>
+<a name="58" /><span class="True">      58:</span> <span class="k"> *    cycle counter hardware, locking issues and reading the time</span>
+<a name="59" /><span class="True">      59:</span> <span class="k"> *    more often than the cycle counter wraps around. The nanosecond</span>
+<a name="60" /><span class="True">      60:</span> <span class="k"> *    counter will only wrap around after ~585 years.</span>
+<a name="61" /><span class="True">      61:</span> <span class="k"> *</span>
+<a name="62" /><span class="True">      62:</span> <span class="k"> * @cc:            the cycle counter used by this instance</span>
+<a name="63" /><span class="True">      63:</span> <span class="k"> * @cycle_last:        most recent cycle counter value seen by</span>
+<a name="64" /><span class="True">      64:</span> <span class="k"> *            timecounter_read()</span>
+<a name="65" /><span class="True">      65:</span> <span class="k"> * @nsec:        continuously increasing count</span>
+<a name="66" /><span class="True">      66:</span> <span class="k"> */</span>
+<a name="67" /><span class="True">      67:</span> <span class="m">struct</span> <span class="b">timecounter</span> <span class="f">{</span>
+<a name="68" /><span class="True">      68:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">cyclecounter</span> <span class="f">*</span><span class="b">cc</span><span class="f">;</span>
+<a name="69" /><span class="True">      69:</span>     <span class="b">cycle_t</span> <span class="b">cycle_last</span><span class="f">;</span>
+<a name="70" /><span class="True">      70:</span>     <span class="b">u64</span> <span class="b">nsec</span><span class="f">;</span>
+<a name="71" /><span class="True">      71:</span> <span class="f">}</span><span class="f">;</span>
+<a name="72" /><span class="True">      72:</span> 
+<a name="73" /><span class="True">      73:</span> <span class="k">/**</span>
+<a name="74" /><span class="True">      74:</span> <span class="k"> * cyclecounter_cyc2ns - converts cycle counter cycles to nanoseconds</span>
+<a name="75" /><span class="True">      75:</span> <span class="k"> * @cc:        Pointer to cycle counter.</span>
+<a name="76" /><span class="True">      76:</span> <span class="k"> * @cycles:    Cycles</span>
+<a name="77" /><span class="True">      77:</span> <span class="k"> *</span>
+<a name="78" /><span class="True">      78:</span> <span class="k"> * XXX - This could use some mult_lxl_ll() asm optimization. Same code</span>
+<a name="79" /><span class="True">      79:</span> <span class="k"> * as in cyc2ns, but with unsigned result.</span>
+<a name="80" /><span class="True">      80:</span> <span class="k"> */</span>
+<a name="81" /><span class="True">      81:</span> <span class="m">static</span> <span class="m">inline</span> <span class="b">u64</span> <span class="b">cyclecounter_cyc2ns</span><span class="f">(</span><span class="m">const</span> <span class="m">struct</span> <span class="b">cyclecounter</span> <span class="f">*</span><span class="b">cc</span><span class="f">,</span>
+<a name="82" /><span class="True">      82:</span>                       <span class="b">cycle_t</span> <span class="b">cycles</span><span class="f">)</span>
+<a name="83" /><span class="True">      83:</span> <span class="f">{</span>
+<a name="84" /><span class="True">      84:</span>     <span class="b">u64</span> <span class="b">ret</span> <span class="f">=</span> <span class="f">(</span><span class="b">u64</span><span class="f">)</span><span class="b">cycles</span><span class="f">;</span>
+<a name="85" /><span class="True">      85:</span>     <span class="b">ret</span> <span class="f">=</span> <span class="f">(</span><span class="b">ret</span> <span class="f">*</span> <span class="b">cc</span><span class="f">-&gt;</span><span class="b">mult</span><span class="f">)</span> <span class="f">&gt;&gt;</span> <span class="b">cc</span><span class="f">-&gt;</span><span class="b">shift</span><span class="f">;</span>
+<a name="86" /><span class="True">      86:</span>     <span class="m">return</span> <span class="b">ret</span><span class="f">;</span>
+<a name="87" /><span class="True">      87:</span> <span class="f">}</span>
+<a name="88" /><span class="True">      88:</span> 
+<a name="89" /><span class="True">      89:</span> <span class="k">/**</span>
+<a name="90" /><span class="True">      90:</span> <span class="k"> * timecounter_init - initialize a time counter</span>
+<a name="91" /><span class="True">      91:</span> <span class="k"> * @tc:            Pointer to time counter which is to be initialized/reset</span>
+<a name="92" /><span class="True">      92:</span> <span class="k"> * @cc:            A cycle counter, ready to be used.</span>
+<a name="93" /><span class="True">      93:</span> <span class="k"> * @start_tstamp:    Arbitrary initial time stamp.</span>
+<a name="94" /><span class="True">      94:</span> <span class="k"> *</span>
+<a name="95" /><span class="True">      95:</span> <span class="k"> * After this call the current cycle register (roughly) corresponds to</span>
+<a name="96" /><span class="True">      96:</span> <span class="k"> * the initial time stamp. Every call to timecounter_read() increments</span>
+<a name="97" /><span class="True">      97:</span> <span class="k"> * the time stamp counter by the number of elapsed nanoseconds.</span>
+<a name="98" /><span class="True">      98:</span> <span class="k"> */</span>
+<a name="99" /><span class="True">      99:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">timecounter_init</span><span class="f">(</span><span class="m">struct</span> <span class="b">timecounter</span> <span class="f">*</span><span class="b">tc</span><span class="f">,</span>
+<a name="100" /><span class="True">     100:</span>                  <span class="m">const</span> <span class="m">struct</span> <span class="b">cyclecounter</span> <span class="f">*</span><span class="b">cc</span><span class="f">,</span>
+<a name="101" /><span class="True">     101:</span>                  <span class="b">u64</span> <span class="b">start_tstamp</span><span class="f">)</span><span class="f">;</span>
+<a name="102" /><span class="True">     102:</span> 
+<a name="103" /><span class="True">     103:</span> <span class="k">/**</span>
+<a name="104" /><span class="True">     104:</span> <span class="k"> * timecounter_read - return nanoseconds elapsed since timecounter_init()</span>
+<a name="105" /><span class="True">     105:</span> <span class="k"> *                    plus the initial time stamp</span>
+<a name="106" /><span class="True">     106:</span> <span class="k"> * @tc:          Pointer to time counter.</span>
+<a name="107" /><span class="True">     107:</span> <span class="k"> *</span>
+<a name="108" /><span class="True">     108:</span> <span class="k"> * In other words, keeps track of time since the same epoch as</span>
+<a name="109" /><span class="True">     109:</span> <span class="k"> * the function which generated the initial time stamp.</span>
+<a name="110" /><span class="True">     110:</span> <span class="k"> */</span>
+<a name="111" /><span class="True">     111:</span> <span class="m">extern</span> <span class="b">u64</span> <span class="b">timecounter_read</span><span class="f">(</span><span class="m">struct</span> <span class="b">timecounter</span> <span class="f">*</span><span class="b">tc</span><span class="f">)</span><span class="f">;</span>
+<a name="112" /><span class="True">     112:</span> 
+<a name="113" /><span class="True">     113:</span> <span class="k">/**</span>
+<a name="114" /><span class="True">     114:</span> <span class="k"> * timecounter_cyc2time - convert a cycle counter to same</span>
+<a name="115" /><span class="True">     115:</span> <span class="k"> *                        time base as values returned by</span>
+<a name="116" /><span class="True">     116:</span> <span class="k"> *                        timecounter_read()</span>
+<a name="117" /><span class="True">     117:</span> <span class="k"> * @tc:        Pointer to time counter.</span>
+<a name="118" /><span class="True">     118:</span> <span class="k"> * @cycle_tstamp:    a value returned by tc-&gt;cc-&gt;read()</span>
+<a name="119" /><span class="True">     119:</span> <span class="k"> *</span>
+<a name="120" /><span class="True">     120:</span> <span class="k"> * Cycle counts that are converted correctly as long as they</span>
+<a name="121" /><span class="True">     121:</span> <span class="k"> * fall into the interval [-1/2 max cycle count, +1/2 max cycle count],</span>
+<a name="122" /><span class="True">     122:</span> <span class="k"> * with &quot;max cycle count&quot; == cs-&gt;mask+1.</span>
+<a name="123" /><span class="True">     123:</span> <span class="k"> *</span>
+<a name="124" /><span class="True">     124:</span> <span class="k"> * This allows conversion of cycle counter values which were generated</span>
+<a name="125" /><span class="True">     125:</span> <span class="k"> * in the past.</span>
+<a name="126" /><span class="True">     126:</span> <span class="k"> */</span>
+<a name="127" /><span class="True">     127:</span> <span class="m">extern</span> <span class="b">u64</span> <span class="b">timecounter_cyc2time</span><span class="f">(</span><span class="m">struct</span> <span class="b">timecounter</span> <span class="f">*</span><span class="b">tc</span><span class="f">,</span>
+<a name="128" /><span class="True">     128:</span>                 <span class="b">cycle_t</span> <span class="b">cycle_tstamp</span><span class="f">)</span><span class="f">;</span>
+<a name="129" /><span class="True">     129:</span> 
+<a name="130" /><span class="True">     130:</span> <span class="k">/**</span>
+<a name="131" /><span class="True">     131:</span> <span class="k"> * struct clocksource - hardware abstraction for a free running counter</span>
+<a name="132" /><span class="True">     132:</span> <span class="k"> *    Provides mostly state-free accessors to the underlying hardware.</span>
+<a name="133" /><span class="True">     133:</span> <span class="k"> *    This is the structure used for system time.</span>
+<a name="134" /><span class="True">     134:</span> <span class="k"> *</span>
+<a name="135" /><span class="True">     135:</span> <span class="k"> * @name:        ptr to clocksource name</span>
+<a name="136" /><span class="True">     136:</span> <span class="k"> * @list:        list head for registration</span>
+<a name="137" /><span class="True">     137:</span> <span class="k"> * @rating:        rating value for selection (higher is better)</span>
+<a name="138" /><span class="True">     138:</span> <span class="k"> *            To avoid rating inflation the following</span>
+<a name="139" /><span class="True">     139:</span> <span class="k"> *            list should give you a guide as to how</span>
+<a name="140" /><span class="True">     140:</span> <span class="k"> *            to assign your clocksource a rating</span>
+<a name="141" /><span class="True">     141:</span> <span class="k"> *            1-99: Unfit for real use</span>
+<a name="142" /><span class="True">     142:</span> <span class="k"> *                Only available for bootup and testing purposes.</span>
+<a name="143" /><span class="True">     143:</span> <span class="k"> *            100-199: Base level usability.</span>
+<a name="144" /><span class="True">     144:</span> <span class="k"> *                Functional for real use, but not desired.</span>
+<a name="145" /><span class="True">     145:</span> <span class="k"> *            200-299: Good.</span>
+<a name="146" /><span class="True">     146:</span> <span class="k"> *                A correct and usable clocksource.</span>
+<a name="147" /><span class="True">     147:</span> <span class="k"> *            300-399: Desired.</span>
+<a name="148" /><span class="True">     148:</span> <span class="k"> *                A reasonably fast and accurate clocksource.</span>
+<a name="149" /><span class="True">     149:</span> <span class="k"> *            400-499: Perfect</span>
+<a name="150" /><span class="True">     150:</span> <span class="k"> *                The ideal clocksource. A must-use where</span>
+<a name="151" /><span class="True">     151:</span> <span class="k"> *                available.</span>
+<a name="152" /><span class="True">     152:</span> <span class="k"> * @read:        returns a cycle value, passes clocksource as argument</span>
+<a name="153" /><span class="True">     153:</span> <span class="k"> * @enable:        optional function to enable the clocksource</span>
+<a name="154" /><span class="True">     154:</span> <span class="k"> * @disable:        optional function to disable the clocksource</span>
+<a name="155" /><span class="True">     155:</span> <span class="k"> * @mask:        bitmask for two&apos;s complement</span>
+<a name="156" /><span class="True">     156:</span> <span class="k"> *            subtraction of non 64 bit counters</span>
+<a name="157" /><span class="True">     157:</span> <span class="k"> * @mult:        cycle to nanosecond multiplier</span>
+<a name="158" /><span class="True">     158:</span> <span class="k"> * @shift:        cycle to nanosecond divisor (power of two)</span>
+<a name="159" /><span class="True">     159:</span> <span class="k"> * @max_idle_ns:    max idle time permitted by the clocksource (nsecs)</span>
+<a name="160" /><span class="True">     160:</span> <span class="k"> * @maxadj:        maximum adjustment value to mult (~11%)</span>
+<a name="161" /><span class="True">     161:</span> <span class="k"> * @flags:        flags describing special properties</span>
+<a name="162" /><span class="True">     162:</span> <span class="k"> * @archdata:        arch-specific data</span>
+<a name="163" /><span class="True">     163:</span> <span class="k"> * @suspend:        suspend function for the clocksource, if necessary</span>
+<a name="164" /><span class="True">     164:</span> <span class="k"> * @resume:        resume function for the clocksource, if necessary</span>
+<a name="165" /><span class="True">     165:</span> <span class="k"> * @cycle_last:        most recent cycle counter value seen by ::read()</span>
+<a name="166" /><span class="True">     166:</span> <span class="k"> * @owner:        module reference, must be set by clocksource in modules</span>
+<a name="167" /><span class="True">     167:</span> <span class="k"> */</span>
+<a name="168" /><span class="True">     168:</span> <span class="m">struct</span> <span class="b">clocksource</span> <span class="f">{</span>
+<a name="169" /><span class="True">     169:</span>     <span class="k">/*</span>
+<a name="170" /><span class="True">     170:</span> <span class="k">     * Hotpath data, fits in a single cache line when the</span>
+<a name="171" /><span class="True">     171:</span> <span class="k">     * clocksource itself is cacheline aligned.</span>
+<a name="172" /><span class="True">     172:</span> <span class="k">     */</span>
+<a name="173" /><span class="True">     173:</span>     <span class="b">cycle_t</span> <span class="f">(</span><span class="f">*</span><span class="b">read</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">)</span><span class="f">;</span>
+<a name="174" /><span class="True">     174:</span>     <span class="b">cycle_t</span> <span class="b">cycle_last</span><span class="f">;</span>
+<a name="175" /><span class="True">     175:</span>     <span class="b">cycle_t</span> <span class="b">mask</span><span class="f">;</span>
+<a name="176" /><span class="True">     176:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">mult</span><span class="f">;</span>
+<a name="177" /><span class="True">     177:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">shift</span><span class="f">;</span>
+<a name="178" /><span class="True">     178:</span>     <span class="b">u64</span> <span class="b">max_idle_ns</span><span class="f">;</span>
+<a name="179" /><span class="True">     179:</span>     <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">maxadj</span><span class="f">;</span>
+<a name="180" /><span class="True">     180:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX0FSQ0hfQ0xPQ0tTT1VSQ0VfREFUQV8w"><span class="b">CONFIG_ARCH_CLOCKSOURCE_DATA</span></a>
+<a name="181" /><span class="True">     181:</span>     <span class="m">struct</span> <span class="b">arch_clocksource_data</span> <span class="b">archdata</span><span class="f">;</span>
+<a name="182" /><span class="True">     182:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="183" /><span class="True">     183:</span> 
+<a name="184" /><span class="True">     184:</span>     <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">name</span><span class="f">;</span>
+<a name="185" /><span class="True">     185:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">list</span><span class="f">;</span>
+<a name="186" /><span class="True">     186:</span>     <span class="m">int</span> <span class="b">rating</span><span class="f">;</span>
+<a name="187" /><span class="True">     187:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">enable</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">)</span><span class="f">;</span>
+<a name="188" /><span class="True">     188:</span>     <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">disable</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">)</span><span class="f">;</span>
+<a name="189" /><span class="True">     189:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">flags</span><span class="f">;</span>
+<a name="190" /><span class="True">     190:</span>     <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">suspend</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">)</span><span class="f">;</span>
+<a name="191" /><span class="True">     191:</span>     <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">resume</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">)</span><span class="f">;</span>
+<a name="192" /><span class="True">     192:</span> 
+<a name="193" /><span class="True">     193:</span>     <span class="k">/* private: */</span>
+<a name="194" /><span class="True">     194:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX0NMT0NLU09VUkNFX1dBVENIRE9HXzA_"><span class="b">CONFIG_CLOCKSOURCE_WATCHDOG</span></a>
+<a name="195" /><span class="True">     195:</span>     <span class="k">/* Watchdog related data, used by the framework */</span>
+<a name="196" /><span class="True">     196:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">wd_list</span><span class="f">;</span>
+<a name="197" /><span class="True">     197:</span>     <span class="b">cycle_t</span> <span class="b">cs_last</span><span class="f">;</span>
+<a name="198" /><span class="True">     198:</span>     <span class="b">cycle_t</span> <span class="b">wd_last</span><span class="f">;</span>
+<a name="199" /><span class="True">     199:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="200" /><span class="True">     200:</span>     <span class="m">struct</span> <span class="b">module</span> <span class="f">*</span><span class="b">owner</span><span class="f">;</span>
+<a name="201" /><span class="True">     201:</span> <span class="f">}</span> <a href="cpu.c_macros_ref.html#_X19fX2NhY2hlbGluZV9hbGlnbmVkXzA_"><span class="b">____cacheline_aligned</span></a><span class="f">;</span>
+<a name="202" /><span class="True">     202:</span> 
+<a name="203" /><span class="True">     203:</span> <span class="k">/*</span>
+<a name="204" /><span class="True">     204:</span> <span class="k"> * Clock source flags bits::</span>
+<a name="205" /><span class="True">     205:</span> <span class="k"> */</span>
+<a name="206" /><span class="True">     206:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tfU09VUkNFX0lTX0NPTlRJTlVPVVNfMA__"><span class="b">CLOCK_SOURCE_IS_CONTINUOUS</span></a>        <span class="c">0x01</span>
+<a name="207" /><span class="True">     207:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tfU09VUkNFX01VU1RfVkVSSUZZXzA_"><span class="b">CLOCK_SOURCE_MUST_VERIFY</span></a>        <span class="c">0x02</span>
+<a name="208" /><span class="True">     208:</span> 
+<a name="209" /><span class="True">     209:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tfU09VUkNFX1dBVENIRE9HXzA_"><span class="b">CLOCK_SOURCE_WATCHDOG</span></a>            <span class="c">0x10</span>
+<a name="210" /><span class="True">     210:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tfU09VUkNFX1ZBTElEX0ZPUl9IUkVTXzA_"><span class="b">CLOCK_SOURCE_VALID_FOR_HRES</span></a>        <span class="c">0x20</span>
+<a name="211" /><span class="True">     211:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tfU09VUkNFX1VOU1RBQkxFXzA_"><span class="b">CLOCK_SOURCE_UNSTABLE</span></a>            <span class="c">0x40</span>
+<a name="212" /><span class="True">     212:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tfU09VUkNFX1NVU1BFTkRfTk9OU1RPUF8w"><span class="b">CLOCK_SOURCE_SUSPEND_NONSTOP</span></a>        <span class="c">0x80</span>
+<a name="213" /><span class="True">     213:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tfU09VUkNFX1JFU0VMRUNUXzA_"><span class="b">CLOCK_SOURCE_RESELECT</span></a>            <span class="c">0x100</span>
+<a name="214" /><span class="True">     214:</span> 
+<a name="215" /><span class="True">     215:</span> <span class="k">/* simplify initialization of mask field */</span>
+<a name="216" /><span class="True">     216:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tTT1VSQ0VfTUFTS18w"><span class="b">CLOCKSOURCE_MASK</span></a><span class="f">(</span><span class="b">bits</span><span class="f">)</span> <span class="f">(</span><span class="b">cycle_t</span><span class="f">)</span><span class="f">(</span><span class="f">(</span><span class="b">bits</span><span class="f">)</span> <span class="f">&lt;</span> <span class="c">64</span> <span class="f">?</span> <span class="f">(</span><span class="f">(</span><span class="c">1ULL</span><span class="f">&lt;&lt;</span><span class="f">(</span><span class="b">bits</span><span class="f">)</span><span class="f">)</span><span class="f">-</span><span class="c">1</span><span class="f">)</span> <span class="f">:</span> <span class="f">-</span><span class="c">1</span><span class="f">)</span>
+<a name="217" /><span class="True">     217:</span> 
+<a name="218" /><span class="True">     218:</span> <span class="k">/**</span>
+<a name="219" /><span class="True">     219:</span> <span class="k"> * clocksource_khz2mult - calculates mult from khz and shift</span>
+<a name="220" /><span class="True">     220:</span> <span class="k"> * @khz:        Clocksource frequency in KHz</span>
+<a name="221" /><span class="True">     221:</span> <span class="k"> * @shift_constant:    Clocksource shift factor</span>
+<a name="222" /><span class="True">     222:</span> <span class="k"> *</span>
+<a name="223" /><span class="True">     223:</span> <span class="k"> * Helper functions that converts a khz counter frequency to a timsource</span>
+<a name="224" /><span class="True">     224:</span> <span class="k"> * multiplier, given the clocksource shift value</span>
+<a name="225" /><span class="True">     225:</span> <span class="k"> */</span>
+<a name="226" /><span class="True">     226:</span> <span class="m">static</span> <span class="m">inline</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">clocksource_khz2mult</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">khz</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">shift_constant</span><span class="f">)</span>
+<a name="227" /><span class="True">     227:</span> <span class="f">{</span>
+<a name="228" /><span class="True">     228:</span>     <span class="k">/*  khz = cyc/(Million ns)</span>
+<a name="229" /><span class="True">     229:</span> <span class="k">     *  mult/2^shift  = ns/cyc</span>
+<a name="230" /><span class="True">     230:</span> <span class="k">     *  mult = ns/cyc * 2^shift</span>
+<a name="231" /><span class="True">     231:</span> <span class="k">     *  mult = 1Million/khz * 2^shift</span>
+<a name="232" /><span class="True">     232:</span> <span class="k">     *  mult = 1000000 * 2^shift / khz</span>
+<a name="233" /><span class="True">     233:</span> <span class="k">     *  mult = (1000000&lt;&lt;shift) / khz</span>
+<a name="234" /><span class="True">     234:</span> <span class="k">     */</span>
+<a name="235" /><span class="True">     235:</span>     <span class="b">u64</span> <span class="b">tmp</span> <span class="f">=</span> <span class="f">(</span><span class="f">(</span><span class="b">u64</span><span class="f">)</span><span class="c">1000000</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <span class="b">shift_constant</span><span class="f">;</span>
+<a name="236" /><span class="True">     236:</span> 
+<a name="237" /><span class="True">     237:</span>     <span class="b">tmp</span> <span class="f">+=</span> <span class="b">khz</span><span class="f">/</span><span class="c">2</span><span class="f">;</span> <span class="k">/* round for do_div */</span>
+<a name="238" /><span class="True">     238:</span>     <a href="cpu.c_macros_ref.html#_ZG9fZGl2XzA_"><span class="b">do_div</span></a><span class="f">(</span><span class="b">tmp</span><span class="f">,</span> <span class="b">khz</span><span class="f">)</span><span class="f">;</span>
+<a name="239" /><span class="True">     239:</span> 
+<a name="240" /><span class="True">     240:</span>     <span class="m">return</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a><span class="f">)</span><span class="b">tmp</span><span class="f">;</span>
+<a name="241" /><span class="True">     241:</span> <span class="f">}</span>
+<a name="242" /><span class="True">     242:</span> 
+<a name="243" /><span class="True">     243:</span> <span class="k">/**</span>
+<a name="244" /><span class="True">     244:</span> <span class="k"> * clocksource_hz2mult - calculates mult from hz and shift</span>
+<a name="245" /><span class="True">     245:</span> <span class="k"> * @hz:            Clocksource frequency in Hz</span>
+<a name="246" /><span class="True">     246:</span> <span class="k"> * @shift_constant:    Clocksource shift factor</span>
+<a name="247" /><span class="True">     247:</span> <span class="k"> *</span>
+<a name="248" /><span class="True">     248:</span> <span class="k"> * Helper functions that converts a hz counter</span>
+<a name="249" /><span class="True">     249:</span> <span class="k"> * frequency to a timsource multiplier, given the</span>
+<a name="250" /><span class="True">     250:</span> <span class="k"> * clocksource shift value</span>
+<a name="251" /><span class="True">     251:</span> <span class="k"> */</span>
+<a name="252" /><span class="True">     252:</span> <span class="m">static</span> <span class="m">inline</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">clocksource_hz2mult</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">hz</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">shift_constant</span><span class="f">)</span>
+<a name="253" /><span class="True">     253:</span> <span class="f">{</span>
+<a name="254" /><span class="True">     254:</span>     <span class="k">/*  hz = cyc/(Billion ns)</span>
+<a name="255" /><span class="True">     255:</span> <span class="k">     *  mult/2^shift  = ns/cyc</span>
+<a name="256" /><span class="True">     256:</span> <span class="k">     *  mult = ns/cyc * 2^shift</span>
+<a name="257" /><span class="True">     257:</span> <span class="k">     *  mult = 1Billion/hz * 2^shift</span>
+<a name="258" /><span class="True">     258:</span> <span class="k">     *  mult = 1000000000 * 2^shift / hz</span>
+<a name="259" /><span class="True">     259:</span> <span class="k">     *  mult = (1000000000&lt;&lt;shift) / hz</span>
+<a name="260" /><span class="True">     260:</span> <span class="k">     */</span>
+<a name="261" /><span class="True">     261:</span>     <span class="b">u64</span> <span class="b">tmp</span> <span class="f">=</span> <span class="f">(</span><span class="f">(</span><span class="b">u64</span><span class="f">)</span><span class="c">1000000000</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <span class="b">shift_constant</span><span class="f">;</span>
+<a name="262" /><span class="True">     262:</span> 
+<a name="263" /><span class="True">     263:</span>     <span class="b">tmp</span> <span class="f">+=</span> <span class="b">hz</span><span class="f">/</span><span class="c">2</span><span class="f">;</span> <span class="k">/* round for do_div */</span>
+<a name="264" /><span class="True">     264:</span>     <a href="cpu.c_macros_ref.html#_ZG9fZGl2XzA_"><span class="b">do_div</span></a><span class="f">(</span><span class="b">tmp</span><span class="f">,</span> <span class="b">hz</span><span class="f">)</span><span class="f">;</span>
+<a name="265" /><span class="True">     265:</span> 
+<a name="266" /><span class="True">     266:</span>     <span class="m">return</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a><span class="f">)</span><span class="b">tmp</span><span class="f">;</span>
+<a name="267" /><span class="True">     267:</span> <span class="f">}</span>
+<a name="268" /><span class="True">     268:</span> 
+<a name="269" /><span class="True">     269:</span> <span class="k">/**</span>
+<a name="270" /><span class="True">     270:</span> <span class="k"> * clocksource_cyc2ns - converts clocksource cycles to nanoseconds</span>
+<a name="271" /><span class="True">     271:</span> <span class="k"> * @cycles:    cycles</span>
+<a name="272" /><span class="True">     272:</span> <span class="k"> * @mult:    cycle to nanosecond multiplier</span>
+<a name="273" /><span class="True">     273:</span> <span class="k"> * @shift:    cycle to nanosecond divisor (power of two)</span>
+<a name="274" /><span class="True">     274:</span> <span class="k"> *</span>
+<a name="275" /><span class="True">     275:</span> <span class="k"> * Converts cycles to nanoseconds, using the given mult and shift.</span>
+<a name="276" /><span class="True">     276:</span> <span class="k"> *</span>
+<a name="277" /><span class="True">     277:</span> <span class="k"> * XXX - This could use some mult_lxl_ll() asm optimization</span>
+<a name="278" /><span class="True">     278:</span> <span class="k"> */</span>
+<a name="279" /><span class="True">     279:</span> <span class="m">static</span> <span class="m">inline</span> <span class="b">s64</span> <span class="b">clocksource_cyc2ns</span><span class="f">(</span><span class="b">cycle_t</span> <span class="b">cycles</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">mult</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">shift</span><span class="f">)</span>
+<a name="280" /><span class="True">     280:</span> <span class="f">{</span>
+<a name="281" /><span class="True">     281:</span>     <span class="m">return</span> <span class="f">(</span><span class="f">(</span><span class="b">u64</span><span class="f">)</span> <span class="b">cycles</span> <span class="f">*</span> <span class="b">mult</span><span class="f">)</span> <span class="f">&gt;&gt;</span> <span class="b">shift</span><span class="f">;</span>
+<a name="282" /><span class="True">     282:</span> <span class="f">}</span>
+<a name="283" /><span class="True">     283:</span> 
+<a name="284" /><span class="True">     284:</span> 
+<a name="285" /><span class="True">     285:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">clocksource_register</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span><span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="286" /><span class="True">     286:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">clocksource_unregister</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span><span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="287" /><span class="True">     287:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">clocksource_touch_watchdog</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="288" /><span class="True">     288:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">clocksource</span><span class="f">*</span> <span class="b">clocksource_get_next</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="289" /><span class="True">     289:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">clocksource_change_rating</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">,</span> <span class="m">int</span> <span class="b">rating</span><span class="f">)</span><span class="f">;</span>
+<a name="290" /><span class="True">     290:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">clocksource_suspend</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="291" /><span class="True">     291:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">clocksource_resume</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="292" /><span class="True">     292:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span> <a href="cpu.c_macros_ref.html#_X19pbml0XzA_"><span class="b">__init</span></a> <a href="cpu.c_macros_ref.html#_X193ZWFrXzA_"><span class="b">__weak</span></a> <span class="b">clocksource_default_clock</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="293" /><span class="True">     293:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">clocksource_mark_unstable</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">)</span><span class="f">;</span>
+<a name="294" /><span class="True">     294:</span> 
+<a name="295" /><span class="True">     295:</span> <span class="m">extern</span> <span class="b">u64</span>
+<a name="296" /><span class="True">     296:</span> <span class="b">clocks_calc_max_nsecs</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">mult</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">shift</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">maxadj</span><span class="f">,</span> <span class="b">u64</span> <span class="b">mask</span><span class="f">)</span><span class="f">;</span>
+<a name="297" /><span class="True">     297:</span> <span class="m">extern</span> <span class="m">void</span>
+<a name="298" /><span class="True">     298:</span> <span class="b">clocks_calc_mult_shift</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="f">*</span><span class="b">mult</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="f">*</span><span class="b">shift</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">from</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">to</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">minsec</span><span class="f">)</span><span class="f">;</span>
+<a name="299" /><span class="True">     299:</span> 
+<a name="300" /><span class="True">     300:</span> <span class="k">/*</span>
+<a name="301" /><span class="True">     301:</span> <span class="k"> * Don&apos;t call __clocksource_register_scale directly, use</span>
+<a name="302" /><span class="True">     302:</span> <span class="k"> * clocksource_register_hz/khz</span>
+<a name="303" /><span class="True">     303:</span> <span class="k"> */</span>
+<a name="304" /><span class="True">     304:</span> <span class="m">extern</span> <span class="m">int</span>
+<a name="305" /><span class="True">     305:</span> <span class="b">__clocksource_register_scale</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">scale</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">freq</span><span class="f">)</span><span class="f">;</span>
+<a name="306" /><span class="True">     306:</span> <span class="m">extern</span> <span class="m">void</span>
+<a name="307" /><span class="True">     307:</span> <span class="b">__clocksource_updatefreq_scale</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">scale</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">freq</span><span class="f">)</span><span class="f">;</span>
+<a name="308" /><span class="True">     308:</span> 
+<a name="309" /><span class="True">     309:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">clocksource_register_hz</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">hz</span><span class="f">)</span>
+<a name="310" /><span class="True">     310:</span> <span class="f">{</span>
+<a name="311" /><span class="True">     311:</span>     <span class="m">return</span> <span class="b">__clocksource_register_scale</span><span class="f">(</span><span class="b">cs</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="b">hz</span><span class="f">)</span><span class="f">;</span>
+<a name="312" /><span class="True">     312:</span> <span class="f">}</span>
+<a name="313" /><span class="True">     313:</span> 
+<a name="314" /><span class="True">     314:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">clocksource_register_khz</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">khz</span><span class="f">)</span>
+<a name="315" /><span class="True">     315:</span> <span class="f">{</span>
+<a name="316" /><span class="True">     316:</span>     <span class="m">return</span> <span class="b">__clocksource_register_scale</span><span class="f">(</span><span class="b">cs</span><span class="f">,</span> <span class="c">1000</span><span class="f">,</span> <span class="b">khz</span><span class="f">)</span><span class="f">;</span>
+<a name="317" /><span class="True">     317:</span> <span class="f">}</span>
+<a name="318" /><span class="True">     318:</span> 
+<a name="319" /><span class="True">     319:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">__clocksource_updatefreq_hz</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">hz</span><span class="f">)</span>
+<a name="320" /><span class="True">     320:</span> <span class="f">{</span>
+<a name="321" /><span class="True">     321:</span>     <span class="b">__clocksource_updatefreq_scale</span><span class="f">(</span><span class="b">cs</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="b">hz</span><span class="f">)</span><span class="f">;</span>
+<a name="322" /><span class="True">     322:</span> <span class="f">}</span>
+<a name="323" /><span class="True">     323:</span> 
+<a name="324" /><span class="True">     324:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">__clocksource_updatefreq_khz</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">cs</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a> <span class="b">khz</span><span class="f">)</span>
+<a name="325" /><span class="True">     325:</span> <span class="f">{</span>
+<a name="326" /><span class="True">     326:</span>     <span class="b">__clocksource_updatefreq_scale</span><span class="f">(</span><span class="b">cs</span><span class="f">,</span> <span class="c">1000</span><span class="f">,</span> <span class="b">khz</span><span class="f">)</span><span class="f">;</span>
+<a name="327" /><span class="True">     327:</span> <span class="f">}</span>
+<a name="328" /><span class="True">     328:</span> 
+<a name="329" /><span class="True">     329:</span> 
+<a name="330" /><span class="True">     330:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">timekeeping_notify</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="b">clock</span><span class="f">)</span><span class="f">;</span>
+<a name="331" /><span class="True">     331:</span> 
+<a name="332" /><span class="True">     332:</span> <span class="m">extern</span> <span class="b">cycle_t</span> <span class="b">clocksource_mmio_readl_up</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="333" /><span class="True">     333:</span> <span class="m">extern</span> <span class="b">cycle_t</span> <span class="b">clocksource_mmio_readl_down</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="334" /><span class="True">     334:</span> <span class="m">extern</span> <span class="b">cycle_t</span> <span class="b">clocksource_mmio_readw_up</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="335" /><span class="True">     335:</span> <span class="m">extern</span> <span class="b">cycle_t</span> <span class="b">clocksource_mmio_readw_down</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="336" /><span class="True">     336:</span> 
+<a name="337" /><span class="True">     337:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">clocksource_mmio_init</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">,</span> <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="f">,</span>
+<a name="338" /><span class="True">     338:</span>     <span class="m">unsigned</span> <span class="m">long</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">unsigned</span><span class="f">,</span> <span class="b">cycle_t</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">clocksource</span> <span class="f">*</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="339" /><span class="True">     339:</span> 
+<a name="340" /><span class="True">     340:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">clocksource_i8253_init</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="341" /><span class="True">     341:</span> 
+<a name="342" /><span class="True">     342:</span> <span class="m">struct</span> <span class="b">device_node</span><span class="f">;</span>
+<a name="343" /><span class="True">     343:</span> <span class="m">typedef</span> <span class="m">void</span><span class="f">(</span><span class="f">*</span><span class="b">clocksource_of_init_fn</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">device_node</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="344" /><span class="False">     344:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_CLKSRC_OF</span>
+<a name="345" /><span class="False">     345:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">clocksource_of_init</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="346" /><span class="False">     346:</span> 
+<a name="347" /><span class="False">     347:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tTT1VSQ0VfT0ZfREVDTEFSRV8w"><span class="b">CLOCKSOURCE_OF_DECLARE</span></a><span class="f">(</span><span class="b">name</span><span class="f">,</span> <span class="b">compat</span><span class="f">,</span> <span class="b">fn</span><span class="f">)</span>            \
+<a name="348" /><span class="False">     348:</span>     <span class="m">static</span> <span class="m">const</span> <span class="m">struct</span> <span class="b">of_device_id</span> <span class="b">__clksrc_of_table_</span><span class="f">##</span><span class="b">name</span>    \
+<a name="349" /><span class="False">     349:</span>         <a href="cpu.c_macros_ref.html#_X191c2VkXzA_"><span class="b">__used</span></a> <a href="cpu.c_macros_ref.html#_X19zZWN0aW9uXzA_"><span class="b">__section</span></a><span class="f">(</span><span class="b">__clksrc_of_table</span><span class="f">)</span>            \
+<a name="350" /><span class="False">     350:</span>          <span class="f">=</span> <span class="f">{</span> <span class="f">.</span><span class="b">compatible</span> <span class="f">=</span> <span class="b">compat</span><span class="f">,</span>                \
+<a name="351" /><span class="False">     351:</span>              <span class="f">.</span><span class="b">data</span> <span class="f">=</span> <span class="f">(</span><span class="b">fn</span> <span class="f">==</span> <span class="f">(</span><span class="b">clocksource_of_init_fn</span><span class="f">)</span><a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">)</span> <span class="f">?</span> <span class="b">fn</span> <span class="f">:</span> <span class="b">fn</span> <span class="f">}</span>
+<a name="352" /><span class="True">     352:</span> <span class="f">#</span><span class="n">else</span>
+<a name="353" /><span class="True">     353:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">clocksource_of_init</span><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="f">{</span><span class="f">}</span>
+<a name="354" /><span class="True">     354:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Q0xPQ0tTT1VSQ0VfT0ZfREVDTEFSRV8w"><span class="b">CLOCKSOURCE_OF_DECLARE</span></a><span class="f">(</span><span class="b">name</span><span class="f">,</span> <span class="b">compat</span><span class="f">,</span> <span class="b">fn</span><span class="f">)</span>            \
+<a name="355" /><span class="True">     355:</span>     <span class="m">static</span> <span class="m">const</span> <span class="m">struct</span> <span class="b">of_device_id</span> <span class="b">__clksrc_of_table_</span><span class="f">##</span><span class="b">name</span>    \
+<a name="356" /><span class="True">     356:</span>         <span class="b">__attribute__</span><span class="f">(</span><span class="f">(</span><span class="b">unused</span><span class="f">)</span><span class="f">)</span>                    \
+<a name="357" /><span class="True">     357:</span>          <span class="f">=</span> <span class="f">{</span> <span class="f">.</span><span class="b">compatible</span> <span class="f">=</span> <span class="b">compat</span><span class="f">,</span>                \
+<a name="358" /><span class="True">     358:</span>              <span class="f">.</span><span class="b">data</span> <span class="f">=</span> <span class="f">(</span><span class="b">fn</span> <span class="f">==</span> <span class="f">(</span><span class="b">clocksource_of_init_fn</span><span class="f">)</span><a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">)</span> <span class="f">?</span> <span class="b">fn</span> <span class="f">:</span> <span class="b">fn</span> <span class="f">}</span>
+<a name="359" /><span class="True">     359:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="360" /><span class="True">     360:</span> 
+<a name="361" /><span class="True">     361:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_CLOCKSOURCE_H */</span>
+<a name="362" /><span class="True">     362:</span> </pre>
+  </body>
+</html>

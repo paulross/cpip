@@ -1,0 +1,673 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/workqueue.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/workqueue.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> * workqueue.h --- work queue handling for Linux.</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> */</span>
+<a name="4" /><span class="True">       4:</span> 
+<a name="5" /><span class="Maybe">       5:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1dPUktRVUVVRV9IXzA_"><span class="b">_LINUX_WORKQUEUE_H</span></a>
+<a name="6" /><span class="Maybe">       6:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1dPUktRVUVVRV9IXzA_"><span class="b">_LINUX_WORKQUEUE_H</span></a>
+<a name="7" /><span class="Maybe">       7:</span> 
+<a name="8" /><span class="Maybe">       8:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">timer</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="9" /><span class="Maybe">       9:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">linkage</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="10" /><span class="Maybe">      10:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">bitops</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="11" /><span class="Maybe">      11:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">lockdep</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="12" /><span class="Maybe">      12:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">threads</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="13" /><span class="Maybe">      13:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">atomic</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="14" /><span class="Maybe">      14:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">cpumask</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="15" /><span class="Maybe">      15:</span> 
+<a name="16" /><span class="Maybe">      16:</span> <span class="m">struct</span> <span class="b">workqueue_struct</span><span class="f">;</span>
+<a name="17" /><span class="Maybe">      17:</span> 
+<a name="18" /><span class="Maybe">      18:</span> <span class="m">struct</span> <span class="b">work_struct</span><span class="f">;</span>
+<a name="19" /><span class="Maybe">      19:</span> <span class="m">typedef</span> <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">work_func_t</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="20" /><span class="Maybe">      20:</span> <span class="m">void</span> <span class="b">delayed_work_timer_fn</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">__data</span><span class="f">)</span><span class="f">;</span>
+<a name="21" /><span class="Maybe">      21:</span> 
+<a name="22" /><span class="Maybe">      22:</span> <span class="k">/*</span>
+<a name="23" /><span class="Maybe">      23:</span> <span class="k"> * The first word is the work queue pointer and the flags rolled into</span>
+<a name="24" /><span class="Maybe">      24:</span> <span class="k"> * one</span>
+<a name="25" /><span class="Maybe">      25:</span> <span class="k"> */</span>
+<a name="26" /><span class="Maybe">      26:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_d29ya19kYXRhX2JpdHNfMA__"><span class="b">work_data_bits</span></a><span class="f">(</span><span class="b">work</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">data</span><span class="f">)</span><span class="f">)</span>
+<a name="27" /><span class="Maybe">      27:</span> 
+<a name="28" /><span class="Maybe">      28:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="29" /><span class="Maybe">      29:</span>     <span class="b">WORK_STRUCT_PENDING_BIT</span>    <span class="f">=</span> <span class="c">0</span><span class="f">,</span>    <span class="k">/* work item is pending execution */</span>
+<a name="30" /><span class="Maybe">      30:</span>     <span class="b">WORK_STRUCT_DELAYED_BIT</span>    <span class="f">=</span> <span class="c">1</span><span class="f">,</span>    <span class="k">/* work item is delayed */</span>
+<a name="31" /><span class="Maybe">      31:</span>     <span class="b">WORK_STRUCT_PWQ_BIT</span>    <span class="f">=</span> <span class="c">2</span><span class="f">,</span>    <span class="k">/* data points to pwq */</span>
+<a name="32" /><span class="Maybe">      32:</span>     <span class="b">WORK_STRUCT_LINKED_BIT</span>    <span class="f">=</span> <span class="c">3</span><span class="f">,</span>    <span class="k">/* next work is linked to this one */</span>
+<a name="33" /><span class="False">      33:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_OBJECTS_WORK</span>
+<a name="34" /><span class="False">      34:</span>     <span class="b">WORK_STRUCT_STATIC_BIT</span>    <span class="f">=</span> <span class="c">4</span><span class="f">,</span>    <span class="k">/* static initializer (debugobjects) */</span>
+<a name="35" /><span class="False">      35:</span>     <span class="b">WORK_STRUCT_COLOR_SHIFT</span>    <span class="f">=</span> <span class="c">5</span><span class="f">,</span>    <span class="k">/* color for workqueue flushing */</span>
+<a name="36" /><span class="Maybe">      36:</span> <span class="f">#</span><span class="n">else</span>
+<a name="37" /><span class="Maybe">      37:</span>     <span class="b">WORK_STRUCT_COLOR_SHIFT</span>    <span class="f">=</span> <span class="c">4</span><span class="f">,</span>    <span class="k">/* color for workqueue flushing */</span>
+<a name="38" /><span class="Maybe">      38:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="39" /><span class="Maybe">      39:</span> 
+<a name="40" /><span class="Maybe">      40:</span>     <span class="b">WORK_STRUCT_COLOR_BITS</span>    <span class="f">=</span> <span class="c">4</span><span class="f">,</span>
+<a name="41" /><span class="Maybe">      41:</span> 
+<a name="42" /><span class="Maybe">      42:</span>     <span class="b">WORK_STRUCT_PENDING</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_STRUCT_PENDING_BIT</span><span class="f">,</span>
+<a name="43" /><span class="Maybe">      43:</span>     <span class="b">WORK_STRUCT_DELAYED</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_STRUCT_DELAYED_BIT</span><span class="f">,</span>
+<a name="44" /><span class="Maybe">      44:</span>     <span class="b">WORK_STRUCT_PWQ</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_STRUCT_PWQ_BIT</span><span class="f">,</span>
+<a name="45" /><span class="Maybe">      45:</span>     <span class="b">WORK_STRUCT_LINKED</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_STRUCT_LINKED_BIT</span><span class="f">,</span>
+<a name="46" /><span class="False">      46:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_OBJECTS_WORK</span>
+<a name="47" /><span class="False">      47:</span>     <span class="b">WORK_STRUCT_STATIC</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_STRUCT_STATIC_BIT</span><span class="f">,</span>
+<a name="48" /><span class="Maybe">      48:</span> <span class="f">#</span><span class="n">else</span>
+<a name="49" /><span class="Maybe">      49:</span>     <span class="b">WORK_STRUCT_STATIC</span>    <span class="f">=</span> <span class="c">0</span><span class="f">,</span>
+<a name="50" /><span class="Maybe">      50:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="51" /><span class="Maybe">      51:</span> 
+<a name="52" /><span class="Maybe">      52:</span>     <span class="k">/*</span>
+<a name="53" /><span class="Maybe">      53:</span> <span class="k">     * The last color is no color used for works which don&apos;t</span>
+<a name="54" /><span class="Maybe">      54:</span> <span class="k">     * participate in workqueue flushing.</span>
+<a name="55" /><span class="Maybe">      55:</span> <span class="k">     */</span>
+<a name="56" /><span class="Maybe">      56:</span>     <span class="b">WORK_NR_COLORS</span>        <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_STRUCT_COLOR_BITS</span><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">,</span>
+<a name="57" /><span class="Maybe">      57:</span>     <span class="b">WORK_NO_COLOR</span>        <span class="f">=</span> <span class="b">WORK_NR_COLORS</span><span class="f">,</span>
+<a name="58" /><span class="Maybe">      58:</span> 
+<a name="59" /><span class="Maybe">      59:</span>     <span class="k">/* special cpu IDs */</span>
+<a name="60" /><span class="Maybe">      60:</span>     <span class="b">WORK_CPU_UNBOUND</span>    <span class="f">=</span> <a href="cpu.c_macros_ref.html#_TlJfQ1BVU18w"><span class="b">NR_CPUS</span></a><span class="f">,</span>
+<a name="61" /><span class="Maybe">      61:</span>     <span class="b">WORK_CPU_END</span>        <span class="f">=</span> <a href="cpu.c_macros_ref.html#_TlJfQ1BVU18w"><span class="b">NR_CPUS</span></a> <span class="f">+</span> <span class="c">1</span><span class="f">,</span>
+<a name="62" /><span class="Maybe">      62:</span> 
+<a name="63" /><span class="Maybe">      63:</span>     <span class="k">/*</span>
+<a name="64" /><span class="Maybe">      64:</span> <span class="k">     * Reserve 7 bits off of pwq pointer w/ debugobjects turned off.</span>
+<a name="65" /><span class="Maybe">      65:</span> <span class="k">     * This makes pwqs aligned to 256 bytes and allows 15 workqueue</span>
+<a name="66" /><span class="Maybe">      66:</span> <span class="k">     * flush colors.</span>
+<a name="67" /><span class="Maybe">      67:</span> <span class="k">     */</span>
+<a name="68" /><span class="Maybe">      68:</span>     <span class="b">WORK_STRUCT_FLAG_BITS</span>    <span class="f">=</span> <span class="b">WORK_STRUCT_COLOR_SHIFT</span> <span class="f">+</span>
+<a name="69" /><span class="Maybe">      69:</span>                   <span class="b">WORK_STRUCT_COLOR_BITS</span><span class="f">,</span>
+<a name="70" /><span class="Maybe">      70:</span> 
+<a name="71" /><span class="Maybe">      71:</span>     <span class="k">/* data contains off-queue information when !WORK_STRUCT_PWQ */</span>
+<a name="72" /><span class="Maybe">      72:</span>     <span class="b">WORK_OFFQ_FLAG_BASE</span>    <span class="f">=</span> <span class="b">WORK_STRUCT_COLOR_SHIFT</span><span class="f">,</span>
+<a name="73" /><span class="Maybe">      73:</span> 
+<a name="74" /><span class="Maybe">      74:</span>     <span class="b">WORK_OFFQ_CANCELING</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_OFFQ_FLAG_BASE</span><span class="f">)</span><span class="f">,</span>
+<a name="75" /><span class="Maybe">      75:</span> 
+<a name="76" /><span class="Maybe">      76:</span>     <span class="k">/*</span>
+<a name="77" /><span class="Maybe">      77:</span> <span class="k">     * When a work item is off queue, its high bits point to the last</span>
+<a name="78" /><span class="Maybe">      78:</span> <span class="k">     * pool it was on.  Cap at 31 bits and use the highest number to</span>
+<a name="79" /><span class="Maybe">      79:</span> <span class="k">     * indicate that no pool is associated.</span>
+<a name="80" /><span class="Maybe">      80:</span> <span class="k">     */</span>
+<a name="81" /><span class="Maybe">      81:</span>     <span class="b">WORK_OFFQ_FLAG_BITS</span>    <span class="f">=</span> <span class="c">1</span><span class="f">,</span>
+<a name="82" /><span class="Maybe">      82:</span>     <span class="b">WORK_OFFQ_POOL_SHIFT</span>    <span class="f">=</span> <span class="b">WORK_OFFQ_FLAG_BASE</span> <span class="f">+</span> <span class="b">WORK_OFFQ_FLAG_BITS</span><span class="f">,</span>
+<a name="83" /><span class="Maybe">      83:</span>     <span class="b">WORK_OFFQ_LEFT</span>        <span class="f">=</span> <a href="cpu.c_macros_ref.html#_QklUU19QRVJfTE9OR18w"><span class="b">BITS_PER_LONG</span></a> <span class="f">-</span> <span class="b">WORK_OFFQ_POOL_SHIFT</span><span class="f">,</span>
+<a name="84" /><span class="Maybe">      84:</span>     <span class="b">WORK_OFFQ_POOL_BITS</span>    <span class="f">=</span> <span class="b">WORK_OFFQ_LEFT</span> <span class="f">&lt;=</span> <span class="c">31</span> <span class="f">?</span> <span class="b">WORK_OFFQ_LEFT</span> <span class="f">:</span> <span class="c">31</span><span class="f">,</span>
+<a name="85" /><span class="Maybe">      85:</span>     <span class="b">WORK_OFFQ_POOL_NONE</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1LU</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_OFFQ_POOL_BITS</span><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">,</span>
+<a name="86" /><span class="Maybe">      86:</span> 
+<a name="87" /><span class="Maybe">      87:</span>     <span class="k">/* convenience constants */</span>
+<a name="88" /><span class="Maybe">      88:</span>     <span class="b">WORK_STRUCT_FLAG_MASK</span>    <span class="f">=</span> <span class="f">(</span><span class="c">1UL</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_STRUCT_FLAG_BITS</span><span class="f">)</span> <span class="f">-</span> <span class="c">1</span><span class="f">,</span>
+<a name="89" /><span class="Maybe">      89:</span>     <span class="b">WORK_STRUCT_WQ_DATA_MASK</span> <span class="f">=</span> <span class="f">~</span><span class="b">WORK_STRUCT_FLAG_MASK</span><span class="f">,</span>
+<a name="90" /><span class="Maybe">      90:</span>     <span class="b">WORK_STRUCT_NO_POOL</span>    <span class="f">=</span> <span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="b">WORK_OFFQ_POOL_NONE</span> <span class="f">&lt;&lt;</span> <span class="b">WORK_OFFQ_POOL_SHIFT</span><span class="f">,</span>
+<a name="91" /><span class="Maybe">      91:</span> 
+<a name="92" /><span class="Maybe">      92:</span>     <span class="k">/* bit mask for work_busy() return values */</span>
+<a name="93" /><span class="Maybe">      93:</span>     <span class="b">WORK_BUSY_PENDING</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">0</span><span class="f">,</span>
+<a name="94" /><span class="Maybe">      94:</span>     <span class="b">WORK_BUSY_RUNNING</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">1</span><span class="f">,</span>
+<a name="95" /><span class="Maybe">      95:</span> 
+<a name="96" /><span class="Maybe">      96:</span>     <span class="k">/* maximum string length for set_worker_desc() */</span>
+<a name="97" /><span class="Maybe">      97:</span>     <span class="b">WORKER_DESC_LEN</span>        <span class="f">=</span> <span class="c">24</span><span class="f">,</span>
+<a name="98" /><span class="Maybe">      98:</span> <span class="f">}</span><span class="f">;</span>
+<a name="99" /><span class="Maybe">      99:</span> 
+<a name="100" /><span class="Maybe">     100:</span> <span class="m">struct</span> <span class="b">work_struct</span> <span class="f">{</span>
+<a name="101" /><span class="Maybe">     101:</span>     <span class="b">atomic_long_t</span> <span class="b">data</span><span class="f">;</span>
+<a name="102" /><span class="Maybe">     102:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">entry</span><span class="f">;</span>
+<a name="103" /><span class="Maybe">     103:</span>     <span class="b">work_func_t</span> <span class="b">func</span><span class="f">;</span>
+<a name="104" /><span class="False">     104:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_LOCKDEP</span>
+<a name="105" /><span class="False">     105:</span>     <span class="m">struct</span> <span class="b">lockdep_map</span> <span class="b">lockdep_map</span><span class="f">;</span>
+<a name="106" /><span class="Maybe">     106:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="107" /><span class="Maybe">     107:</span> <span class="f">}</span><span class="f">;</span>
+<a name="108" /><span class="Maybe">     108:</span> 
+<a name="109" /><span class="Maybe">     109:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_V09SS19EQVRBX0lOSVRfMA__"><span class="b">WORK_DATA_INIT</span></a><span class="f">(</span><span class="f">)</span>    <a href="cpu.c_macros_noref.html#_QVRPTUlDX0xPTkdfSU5JVF8w"><span class="b">ATOMIC_LONG_INIT</span></a><span class="f">(</span><span class="b">WORK_STRUCT_NO_POOL</span><span class="f">)</span>
+<a name="110" /><span class="Maybe">     110:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_V09SS19EQVRBX1NUQVRJQ19JTklUXzA_"><span class="b">WORK_DATA_STATIC_INIT</span></a><span class="f">(</span><span class="f">)</span>    \
+<a name="111" /><span class="Maybe">     111:</span>     <a href="cpu.c_macros_noref.html#_QVRPTUlDX0xPTkdfSU5JVF8w"><span class="b">ATOMIC_LONG_INIT</span></a><span class="f">(</span><span class="b">WORK_STRUCT_NO_POOL</span> <span class="f">|</span> <span class="b">WORK_STRUCT_STATIC</span><span class="f">)</span>
+<a name="112" /><span class="Maybe">     112:</span> 
+<a name="113" /><span class="Maybe">     113:</span> <span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">{</span>
+<a name="114" /><span class="Maybe">     114:</span>     <span class="m">struct</span> <span class="b">work_struct</span> <span class="b">work</span><span class="f">;</span>
+<a name="115" /><span class="Maybe">     115:</span>     <span class="m">struct</span> <span class="b">timer_list</span> <span class="b">timer</span><span class="f">;</span>
+<a name="116" /><span class="Maybe">     116:</span> 
+<a name="117" /><span class="Maybe">     117:</span>     <span class="k">/* target workqueue and CPU -&gt;timer uses to queue -&gt;work */</span>
+<a name="118" /><span class="Maybe">     118:</span>     <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">;</span>
+<a name="119" /><span class="Maybe">     119:</span>     <span class="m">int</span> <span class="b">cpu</span><span class="f">;</span>
+<a name="120" /><span class="Maybe">     120:</span> <span class="f">}</span><span class="f">;</span>
+<a name="121" /><span class="Maybe">     121:</span> 
+<a name="122" /><span class="Maybe">     122:</span> <span class="k">/*</span>
+<a name="123" /><span class="Maybe">     123:</span> <span class="k"> * A struct for workqueue attributes.  This can be used to change</span>
+<a name="124" /><span class="Maybe">     124:</span> <span class="k"> * attributes of an unbound workqueue.</span>
+<a name="125" /><span class="Maybe">     125:</span> <span class="k"> *</span>
+<a name="126" /><span class="Maybe">     126:</span> <span class="k"> * Unlike other fields, -&gt;no_numa isn&apos;t a property of a worker_pool.  It</span>
+<a name="127" /><span class="Maybe">     127:</span> <span class="k"> * only modifies how apply_workqueue_attrs() select pools and thus doesn&apos;t</span>
+<a name="128" /><span class="Maybe">     128:</span> <span class="k"> * participate in pool hash calculations or equality comparisons.</span>
+<a name="129" /><span class="Maybe">     129:</span> <span class="k"> */</span>
+<a name="130" /><span class="Maybe">     130:</span> <span class="m">struct</span> <span class="b">workqueue_attrs</span> <span class="f">{</span>
+<a name="131" /><span class="Maybe">     131:</span>     <span class="m">int</span>            <span class="b">nice</span><span class="f">;</span>        <span class="k">/* nice level */</span>
+<a name="132" /><span class="Maybe">     132:</span>     <span class="b">cpumask_var_t</span>        <span class="b">cpumask</span><span class="f">;</span>    <span class="k">/* allowed CPUs */</span>
+<a name="133" /><span class="Maybe">     133:</span>     <span class="m">bool</span>            <span class="b">no_numa</span><span class="f">;</span>    <span class="k">/* disable NUMA affinity */</span>
+<a name="134" /><span class="Maybe">     134:</span> <span class="f">}</span><span class="f">;</span>
+<a name="135" /><span class="Maybe">     135:</span> 
+<a name="136" /><span class="Maybe">     136:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">to_delayed_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span>
+<a name="137" /><span class="Maybe">     137:</span> <span class="f">{</span>
+<a name="138" /><span class="Maybe">     138:</span>     <span class="m">return</span> <a href="cpu.c_macros_ref.html#_Y29udGFpbmVyX29mXzA_"><span class="b">container_of</span></a><span class="f">(</span><span class="b">work</span><span class="f">,</span> <span class="m">struct</span> <span class="b">delayed_work</span><span class="f">,</span> <span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="139" /><span class="Maybe">     139:</span> <span class="f">}</span>
+<a name="140" /><span class="Maybe">     140:</span> 
+<a name="141" /><span class="Maybe">     141:</span> <span class="m">struct</span> <span class="b">execute_work</span> <span class="f">{</span>
+<a name="142" /><span class="Maybe">     142:</span>     <span class="m">struct</span> <span class="b">work_struct</span> <span class="b">work</span><span class="f">;</span>
+<a name="143" /><span class="Maybe">     143:</span> <span class="f">}</span><span class="f">;</span>
+<a name="144" /><span class="Maybe">     144:</span> 
+<a name="145" /><span class="False">     145:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_LOCKDEP</span>
+<a name="146" /><span class="False">     146:</span> <span class="k">/*</span>
+<a name="147" /><span class="False">     147:</span> <span class="k"> * NB: because we have to copy the lockdep_map, setting _key</span>
+<a name="148" /><span class="False">     148:</span> <span class="k"> * here is required, otherwise it could get initialised to the</span>
+<a name="149" /><span class="False">     149:</span> <span class="k"> * copy of the lockdep_map!</span>
+<a name="150" /><span class="False">     150:</span> <span class="k"> */</span>
+<a name="151" /><span class="False">     151:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19XT1JLX0lOSVRfTE9DS0RFUF9NQVBfMA__"><span class="b">__WORK_INIT_LOCKDEP_MAP</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">k</span><span class="f">)</span> \
+<a name="152" /><span class="False">     152:</span>     <span class="f">.</span><span class="b">lockdep_map</span> <span class="f">=</span> <span class="b">STATIC_LOCKDEP_MAP_INIT</span><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">k</span><span class="f">)</span><span class="f">,</span>
+<a name="153" /><span class="Maybe">     153:</span> <span class="f">#</span><span class="n">else</span>
+<a name="154" /><span class="Maybe">     154:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19XT1JLX0lOSVRfTE9DS0RFUF9NQVBfMA__"><span class="b">__WORK_INIT_LOCKDEP_MAP</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">k</span><span class="f">)</span>
+<a name="155" /><span class="Maybe">     155:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="156" /><span class="Maybe">     156:</span> 
+<a name="157" /><span class="Maybe">     157:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19XT1JLX0lOSVRJQUxJWkVSXzA_"><span class="b">__WORK_INITIALIZER</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">)</span> <span class="f">{</span>                    \
+<a name="158" /><span class="Maybe">     158:</span>     <span class="f">.</span><span class="b">data</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_V09SS19EQVRBX1NUQVRJQ19JTklUXzA_"><span class="b">WORK_DATA_STATIC_INIT</span></a><span class="f">(</span><span class="f">)</span><span class="f">,</span>                \
+<a name="159" /><span class="Maybe">     159:</span>     <span class="f">.</span><span class="b">entry</span>    <span class="f">=</span> <span class="f">{</span> <span class="f">&amp;</span><span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">.</span><span class="b">entry</span><span class="f">,</span> <span class="f">&amp;</span><span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">.</span><span class="b">entry</span> <span class="f">}</span><span class="f">,</span>                \
+<a name="160" /><span class="Maybe">     160:</span>     <span class="f">.</span><span class="b">func</span> <span class="f">=</span> <span class="f">(</span><span class="b">f</span><span class="f">)</span><span class="f">,</span>                            \
+<a name="161" /><span class="Maybe">     161:</span>     <a href="cpu.c_macros_noref.html#_X19XT1JLX0lOSVRfTE9DS0RFUF9NQVBfMA__"><span class="b">__WORK_INIT_LOCKDEP_MAP</span></a><span class="f">(</span><span class="f">#</span><span class="b">n</span><span class="f">,</span> <span class="f">&amp;</span><span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span>                \
+<a name="162" /><span class="Maybe">     162:</span>     <span class="f">}</span>
+<a name="163" /><span class="Maybe">     163:</span> 
+<a name="164" /><span class="Maybe">     164:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19ERUxBWUVEX1dPUktfSU5JVElBTElaRVJfMA__"><span class="b">__DELAYED_WORK_INITIALIZER</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">,</span> <span class="b">tflags</span><span class="f">)</span> <span class="f">{</span>            \
+<a name="165" /><span class="Maybe">     165:</span>     <span class="f">.</span><span class="b">work</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_X19XT1JLX0lOSVRJQUxJWkVSXzA_"><span class="b">__WORK_INITIALIZER</span></a><span class="f">(</span><span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">.</span><span class="b">work</span><span class="f">,</span> <span class="f">(</span><span class="b">f</span><span class="f">)</span><span class="f">)</span><span class="f">,</span>            \
+<a name="166" /><span class="Maybe">     166:</span>     <span class="f">.</span><span class="b">timer</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_X19USU1FUl9JTklUSUFMSVpFUl8w"><span class="b">__TIMER_INITIALIZER</span></a><span class="f">(</span><span class="b">delayed_work_timer_fn</span><span class="f">,</span>        \
+<a name="167" /><span class="Maybe">     167:</span>                      <span class="c">0</span><span class="f">,</span> <span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">&amp;</span><span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">,</span>        \
+<a name="168" /><span class="Maybe">     168:</span>                      <span class="f">(</span><span class="b">tflags</span><span class="f">)</span> <span class="f">|</span> <a href="cpu.c_macros_noref.html#_VElNRVJfSVJRU0FGRV8w"><span class="b">TIMER_IRQSAFE</span></a><span class="f">)</span><span class="f">,</span>        \
+<a name="169" /><span class="Maybe">     169:</span>     <span class="f">}</span>
+<a name="170" /><span class="Maybe">     170:</span> 
+<a name="171" /><span class="Maybe">     171:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_REVDTEFSRV9XT1JLXzA_"><span class="b">DECLARE_WORK</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">)</span>                        \
+<a name="172" /><span class="Maybe">     172:</span>     <span class="m">struct</span> <span class="b">work_struct</span> <span class="b">n</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_X19XT1JLX0lOSVRJQUxJWkVSXzA_"><span class="b">__WORK_INITIALIZER</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">)</span>
+<a name="173" /><span class="Maybe">     173:</span> 
+<a name="174" /><span class="Maybe">     174:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_REVDTEFSRV9ERUxBWUVEX1dPUktfMA__"><span class="b">DECLARE_DELAYED_WORK</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">)</span>                    \
+<a name="175" /><span class="Maybe">     175:</span>     <span class="m">struct</span> <span class="b">delayed_work</span> <span class="b">n</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_X19ERUxBWUVEX1dPUktfSU5JVElBTElaRVJfMA__"><span class="b">__DELAYED_WORK_INITIALIZER</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span>
+<a name="176" /><span class="Maybe">     176:</span> 
+<a name="177" /><span class="Maybe">     177:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_REVDTEFSRV9ERUZFUlJBQkxFX1dPUktfMA__"><span class="b">DECLARE_DEFERRABLE_WORK</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">)</span>                    \
+<a name="178" /><span class="Maybe">     178:</span>     <span class="m">struct</span> <span class="b">delayed_work</span> <span class="b">n</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_X19ERUxBWUVEX1dPUktfSU5JVElBTElaRVJfMA__"><span class="b">__DELAYED_WORK_INITIALIZER</span></a><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">f</span><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VElNRVJfREVGRVJSQUJMRV8w"><span class="b">TIMER_DEFERRABLE</span></a><span class="f">)</span>
+<a name="179" /><span class="Maybe">     179:</span> 
+<a name="180" /><span class="Maybe">     180:</span> <span class="k">/*</span>
+<a name="181" /><span class="Maybe">     181:</span> <span class="k"> * initialize a work item&apos;s function pointer</span>
+<a name="182" /><span class="Maybe">     182:</span> <span class="k"> */</span>
+<a name="183" /><span class="Maybe">     183:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UFJFUEFSRV9XT1JLXzA_"><span class="b">PREPARE_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>                    \
+<a name="184" /><span class="Maybe">     184:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="185" /><span class="Maybe">     185:</span>         <span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">func</span> <span class="f">=</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">;</span>                \
+<a name="186" /><span class="Maybe">     186:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="187" /><span class="Maybe">     187:</span> 
+<a name="188" /><span class="Maybe">     188:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_UFJFUEFSRV9ERUxBWUVEX1dPUktfMA__"><span class="b">PREPARE_DELAYED_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>                \
+<a name="189" /><span class="Maybe">     189:</span>     <a href="cpu.c_macros_noref.html#_UFJFUEFSRV9XT1JLXzA_"><span class="b">PREPARE_WORK</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">work</span><span class="f">,</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">)</span>
+<a name="190" /><span class="Maybe">     190:</span> 
+<a name="191" /><span class="False">     191:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_OBJECTS_WORK</span>
+<a name="192" /><span class="False">     192:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">__init_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">,</span> <span class="m">int</span> <span class="b">onstack</span><span class="f">)</span><span class="f">;</span>
+<a name="193" /><span class="False">     193:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">destroy_work_on_stack</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="194" /><span class="False">     194:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">work_static</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span>
+<a name="195" /><span class="False">     195:</span> <span class="f">{</span>
+<a name="196" /><span class="False">     196:</span>     <span class="m">return</span> <span class="f">*</span><a href="cpu.c_macros_ref.html#_d29ya19kYXRhX2JpdHNfMA__"><span class="b">work_data_bits</span></a><span class="f">(</span><span class="b">work</span><span class="f">)</span> <span class="f">&amp;</span> <span class="b">WORK_STRUCT_STATIC</span><span class="f">;</span>
+<a name="197" /><span class="False">     197:</span> <span class="f">}</span>
+<a name="198" /><span class="Maybe">     198:</span> <span class="f">#</span><span class="n">else</span>
+<a name="199" /><span class="Maybe">     199:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">__init_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">,</span> <span class="m">int</span> <span class="b">onstack</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="200" /><span class="Maybe">     200:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">destroy_work_on_stack</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span> <span class="f">{</span> <span class="f">}</span>
+<a name="201" /><span class="Maybe">     201:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">work_static</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span> <span class="f">{</span> <span class="m">return</span> <span class="c">0</span><span class="f">;</span> <span class="f">}</span>
+<a name="202" /><span class="Maybe">     202:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="203" /><span class="Maybe">     203:</span> 
+<a name="204" /><span class="Maybe">     204:</span> <span class="k">/*</span>
+<a name="205" /><span class="Maybe">     205:</span> <span class="k"> * initialize all of a work item in one go</span>
+<a name="206" /><span class="Maybe">     206:</span> <span class="k"> *</span>
+<a name="207" /><span class="Maybe">     207:</span> <span class="k"> * NOTE! No point in using &quot;atomic_long_set()&quot;: using a direct</span>
+<a name="208" /><span class="Maybe">     208:</span> <span class="k"> * assignment of the work data initializer allows the compiler</span>
+<a name="209" /><span class="Maybe">     209:</span> <span class="k"> * to generate better code.</span>
+<a name="210" /><span class="Maybe">     210:</span> <span class="k"> */</span>
+<a name="211" /><span class="False">     211:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_LOCKDEP</span>
+<a name="212" /><span class="False">     212:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19JTklUX1dPUktfMA__"><span class="b">__INIT_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <span class="b">_onstack</span><span class="f">)</span>                \
+<a name="213" /><span class="False">     213:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="214" /><span class="False">     214:</span>         <span class="m">static</span> <span class="m">struct</span> <span class="b">lock_class_key</span> <span class="b">__key</span><span class="f">;</span>            \
+<a name="215" /><span class="False">     215:</span>                                     \
+<a name="216" /><span class="False">     216:</span>         <span class="b">__init_work</span><span class="f">(</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span> <span class="b">_onstack</span><span class="f">)</span><span class="f">;</span>                \
+<a name="217" /><span class="False">     217:</span>         <span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">data</span> <span class="f">=</span> <span class="f">(</span><span class="b">atomic_long_t</span><span class="f">)</span> <a href="cpu.c_macros_noref.html#_V09SS19EQVRBX0lOSVRfMA__"><span class="b">WORK_DATA_INIT</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>    \
+<a name="218" /><span class="False">     218:</span>         <a href="cpu.c_macros_ref.html#_bG9ja2RlcF9pbml0X21hcF8w"><span class="b">lockdep_init_map</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">lockdep_map</span><span class="f">,</span> <span class="f">#</span><span class="b">_work</span><span class="f">,</span> <span class="f">&amp;</span><span class="b">__key</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span><span class="f">;</span> \
+<a name="219" /><span class="False">     219:</span>         <span class="b">INIT_LIST_HEAD</span><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">entry</span><span class="f">)</span><span class="f">;</span>            \
+<a name="220" /><span class="False">     220:</span>         <a href="cpu.c_macros_noref.html#_UFJFUEFSRV9XT1JLXzA_"><span class="b">PREPARE_WORK</span></a><span class="f">(</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>                \
+<a name="221" /><span class="False">     221:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="222" /><span class="Maybe">     222:</span> <span class="f">#</span><span class="n">else</span>
+<a name="223" /><span class="Maybe">     223:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19JTklUX1dPUktfMA__"><span class="b">__INIT_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <span class="b">_onstack</span><span class="f">)</span>                \
+<a name="224" /><span class="Maybe">     224:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="225" /><span class="Maybe">     225:</span>         <span class="b">__init_work</span><span class="f">(</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span> <span class="b">_onstack</span><span class="f">)</span><span class="f">;</span>                \
+<a name="226" /><span class="Maybe">     226:</span>         <span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">data</span> <span class="f">=</span> <span class="f">(</span><span class="b">atomic_long_t</span><span class="f">)</span> <a href="cpu.c_macros_noref.html#_V09SS19EQVRBX0lOSVRfMA__"><span class="b">WORK_DATA_INIT</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>    \
+<a name="227" /><span class="Maybe">     227:</span>         <span class="b">INIT_LIST_HEAD</span><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">entry</span><span class="f">)</span><span class="f">;</span>            \
+<a name="228" /><span class="Maybe">     228:</span>         <a href="cpu.c_macros_noref.html#_UFJFUEFSRV9XT1JLXzA_"><span class="b">PREPARE_WORK</span></a><span class="f">(</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>                \
+<a name="229" /><span class="Maybe">     229:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="230" /><span class="Maybe">     230:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="231" /><span class="Maybe">     231:</span> 
+<a name="232" /><span class="Maybe">     232:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SU5JVF9XT1JLXzA_"><span class="b">INIT_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>                        \
+<a name="233" /><span class="Maybe">     233:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="234" /><span class="Maybe">     234:</span>         <a href="cpu.c_macros_noref.html#_X19JTklUX1dPUktfMA__"><span class="b">__INIT_WORK</span></a><span class="f">(</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span><span class="f">;</span>            \
+<a name="235" /><span class="Maybe">     235:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="236" /><span class="Maybe">     236:</span> 
+<a name="237" /><span class="Maybe">     237:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SU5JVF9XT1JLX09OU1RBQ0tfMA__"><span class="b">INIT_WORK_ONSTACK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>                    \
+<a name="238" /><span class="Maybe">     238:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="239" /><span class="Maybe">     239:</span>         <a href="cpu.c_macros_noref.html#_X19JTklUX1dPUktfMA__"><span class="b">__INIT_WORK</span></a><span class="f">(</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">,</span> <span class="c">1</span><span class="f">)</span><span class="f">;</span>            \
+<a name="240" /><span class="Maybe">     240:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="241" /><span class="Maybe">     241:</span> 
+<a name="242" /><span class="Maybe">     242:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19JTklUX0RFTEFZRURfV09SS18w"><span class="b">__INIT_DELAYED_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <span class="b">_tflags</span><span class="f">)</span>            \
+<a name="243" /><span class="Maybe">     243:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="244" /><span class="Maybe">     244:</span>         <a href="cpu.c_macros_noref.html#_SU5JVF9XT1JLXzA_"><span class="b">INIT_WORK</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">work</span><span class="f">,</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>            \
+<a name="245" /><span class="Maybe">     245:</span>         <a href="cpu.c_macros_noref.html#_X19zZXR1cF90aW1lcl8w"><span class="b">__setup_timer</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">timer</span><span class="f">,</span> <span class="b">delayed_work_timer_fn</span><span class="f">,</span>    \
+<a name="246" /><span class="Maybe">     246:</span>                   <span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span>            \
+<a name="247" /><span class="Maybe">     247:</span>                   <span class="f">(</span><span class="b">_tflags</span><span class="f">)</span> <span class="f">|</span> <a href="cpu.c_macros_noref.html#_VElNRVJfSVJRU0FGRV8w"><span class="b">TIMER_IRQSAFE</span></a><span class="f">)</span><span class="f">;</span>        \
+<a name="248" /><span class="Maybe">     248:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="249" /><span class="Maybe">     249:</span> 
+<a name="250" /><span class="Maybe">     250:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19JTklUX0RFTEFZRURfV09SS19PTlNUQUNLXzA_"><span class="b">__INIT_DELAYED_WORK_ONSTACK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <span class="b">_tflags</span><span class="f">)</span>        \
+<a name="251" /><span class="Maybe">     251:</span>     <span class="m">do</span> <span class="f">{</span>                                \
+<a name="252" /><span class="Maybe">     252:</span>         <a href="cpu.c_macros_noref.html#_SU5JVF9XT1JLX09OU1RBQ0tfMA__"><span class="b">INIT_WORK_ONSTACK</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">work</span><span class="f">,</span> <span class="f">(</span><span class="b">_func</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>        \
+<a name="253" /><span class="Maybe">     253:</span>         <a href="cpu.c_macros_noref.html#_X19zZXR1cF90aW1lcl9vbl9zdGFja18w"><span class="b">__setup_timer_on_stack</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">timer</span><span class="f">,</span>            \
+<a name="254" /><span class="Maybe">     254:</span>                        <span class="b">delayed_work_timer_fn</span><span class="f">,</span>        \
+<a name="255" /><span class="Maybe">     255:</span>                        <span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">_work</span><span class="f">)</span><span class="f">,</span>        \
+<a name="256" /><span class="Maybe">     256:</span>                        <span class="f">(</span><span class="b">_tflags</span><span class="f">)</span> <span class="f">|</span> <a href="cpu.c_macros_noref.html#_VElNRVJfSVJRU0FGRV8w"><span class="b">TIMER_IRQSAFE</span></a><span class="f">)</span><span class="f">;</span>    \
+<a name="257" /><span class="Maybe">     257:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="258" /><span class="Maybe">     258:</span> 
+<a name="259" /><span class="Maybe">     259:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SU5JVF9ERUxBWUVEX1dPUktfMA__"><span class="b">INIT_DELAYED_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>                    \
+<a name="260" /><span class="Maybe">     260:</span>     <a href="cpu.c_macros_noref.html#_X19JTklUX0RFTEFZRURfV09SS18w"><span class="b">__INIT_DELAYED_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span>
+<a name="261" /><span class="Maybe">     261:</span> 
+<a name="262" /><span class="Maybe">     262:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SU5JVF9ERUxBWUVEX1dPUktfT05TVEFDS18w"><span class="b">INIT_DELAYED_WORK_ONSTACK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>                \
+<a name="263" /><span class="Maybe">     263:</span>     <a href="cpu.c_macros_noref.html#_X19JTklUX0RFTEFZRURfV09SS19PTlNUQUNLXzA_"><span class="b">__INIT_DELAYED_WORK_ONSTACK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <span class="c">0</span><span class="f">)</span>
+<a name="264" /><span class="Maybe">     264:</span> 
+<a name="265" /><span class="Maybe">     265:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SU5JVF9ERUZFUlJBQkxFX1dPUktfMA__"><span class="b">INIT_DEFERRABLE_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>                \
+<a name="266" /><span class="Maybe">     266:</span>     <a href="cpu.c_macros_noref.html#_X19JTklUX0RFTEFZRURfV09SS18w"><span class="b">__INIT_DELAYED_WORK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VElNRVJfREVGRVJSQUJMRV8w"><span class="b">TIMER_DEFERRABLE</span></a><span class="f">)</span>
+<a name="267" /><span class="Maybe">     267:</span> 
+<a name="268" /><span class="Maybe">     268:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SU5JVF9ERUZFUlJBQkxFX1dPUktfT05TVEFDS18w"><span class="b">INIT_DEFERRABLE_WORK_ONSTACK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">)</span>            \
+<a name="269" /><span class="Maybe">     269:</span>     <a href="cpu.c_macros_noref.html#_X19JTklUX0RFTEFZRURfV09SS19PTlNUQUNLXzA_"><span class="b">__INIT_DELAYED_WORK_ONSTACK</span></a><span class="f">(</span><span class="b">_work</span><span class="f">,</span> <span class="b">_func</span><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VElNRVJfREVGRVJSQUJMRV8w"><span class="b">TIMER_DEFERRABLE</span></a><span class="f">)</span>
+<a name="270" /><span class="Maybe">     270:</span> 
+<a name="271" /><span class="Maybe">     271:</span> <span class="k">/**</span>
+<a name="272" /><span class="Maybe">     272:</span> <span class="k"> * work_pending - Find out whether a work item is currently pending</span>
+<a name="273" /><span class="Maybe">     273:</span> <span class="k"> * @work: The work item in question</span>
+<a name="274" /><span class="Maybe">     274:</span> <span class="k"> */</span>
+<a name="275" /><span class="Maybe">     275:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_d29ya19wZW5kaW5nXzA_"><span class="b">work_pending</span></a><span class="f">(</span><span class="b">work</span><span class="f">)</span> \
+<a name="276" /><span class="Maybe">     276:</span>     <a href="cpu.c_macros_ref.html#_dGVzdF9iaXRfMA__"><span class="b">test_bit</span></a><span class="f">(</span><span class="b">WORK_STRUCT_PENDING_BIT</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_d29ya19kYXRhX2JpdHNfMA__"><span class="b">work_data_bits</span></a><span class="f">(</span><span class="b">work</span><span class="f">)</span><span class="f">)</span>
+<a name="277" /><span class="Maybe">     277:</span> 
+<a name="278" /><span class="Maybe">     278:</span> <span class="k">/**</span>
+<a name="279" /><span class="Maybe">     279:</span> <span class="k"> * delayed_work_pending - Find out whether a delayable work item is currently</span>
+<a name="280" /><span class="Maybe">     280:</span> <span class="k"> * pending</span>
+<a name="281" /><span class="Maybe">     281:</span> <span class="k"> * @work: The work item in question</span>
+<a name="282" /><span class="Maybe">     282:</span> <span class="k"> */</span>
+<a name="283" /><span class="Maybe">     283:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_ZGVsYXllZF93b3JrX3BlbmRpbmdfMA__"><span class="b">delayed_work_pending</span></a><span class="f">(</span><span class="b">w</span><span class="f">)</span> \
+<a name="284" /><span class="Maybe">     284:</span>     <a href="cpu.c_macros_noref.html#_d29ya19wZW5kaW5nXzA_"><span class="b">work_pending</span></a><span class="f">(</span><span class="f">&amp;</span><span class="f">(</span><span class="b">w</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">work</span><span class="f">)</span>
+<a name="285" /><span class="Maybe">     285:</span> 
+<a name="286" /><span class="Maybe">     286:</span> <span class="k">/**</span>
+<a name="287" /><span class="Maybe">     287:</span> <span class="k"> * work_clear_pending - for internal use only, mark a work item as not pending</span>
+<a name="288" /><span class="Maybe">     288:</span> <span class="k"> * @work: The work item in question</span>
+<a name="289" /><span class="Maybe">     289:</span> <span class="k"> */</span>
+<a name="290" /><span class="Maybe">     290:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_d29ya19jbGVhcl9wZW5kaW5nXzA_"><span class="b">work_clear_pending</span></a><span class="f">(</span><span class="b">work</span><span class="f">)</span> \
+<a name="291" /><span class="Maybe">     291:</span>     <span class="b">clear_bit</span><span class="f">(</span><span class="b">WORK_STRUCT_PENDING_BIT</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_d29ya19kYXRhX2JpdHNfMA__"><span class="b">work_data_bits</span></a><span class="f">(</span><span class="b">work</span><span class="f">)</span><span class="f">)</span>
+<a name="292" /><span class="Maybe">     292:</span> 
+<a name="293" /><span class="Maybe">     293:</span> <span class="k">/*</span>
+<a name="294" /><span class="Maybe">     294:</span> <span class="k"> * Workqueue flags and constants.  For details, please refer to</span>
+<a name="295" /><span class="Maybe">     295:</span> <span class="k"> * Documentation/workqueue.txt.</span>
+<a name="296" /><span class="Maybe">     296:</span> <span class="k"> */</span>
+<a name="297" /><span class="Maybe">     297:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="298" /><span class="Maybe">     298:</span>     <span class="k">/*</span>
+<a name="299" /><span class="Maybe">     299:</span> <span class="k">     * All wqs are now non-reentrant making the following flag</span>
+<a name="300" /><span class="Maybe">     300:</span> <span class="k">     * meaningless.  Will be removed.</span>
+<a name="301" /><span class="Maybe">     301:</span> <span class="k">     */</span>
+<a name="302" /><span class="Maybe">     302:</span>     <span class="b">WQ_NON_REENTRANT</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">0</span><span class="f">,</span> <span class="k">/* DEPRECATED */</span>
+<a name="303" /><span class="Maybe">     303:</span> 
+<a name="304" /><span class="Maybe">     304:</span>     <span class="b">WQ_UNBOUND</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">1</span><span class="f">,</span> <span class="k">/* not bound to any cpu */</span>
+<a name="305" /><span class="Maybe">     305:</span>     <span class="b">WQ_FREEZABLE</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">2</span><span class="f">,</span> <span class="k">/* freeze during suspend */</span>
+<a name="306" /><span class="Maybe">     306:</span>     <span class="b">WQ_MEM_RECLAIM</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">3</span><span class="f">,</span> <span class="k">/* may be used for memory reclaim */</span>
+<a name="307" /><span class="Maybe">     307:</span>     <span class="b">WQ_HIGHPRI</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">4</span><span class="f">,</span> <span class="k">/* high priority */</span>
+<a name="308" /><span class="Maybe">     308:</span>     <span class="b">WQ_CPU_INTENSIVE</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">5</span><span class="f">,</span> <span class="k">/* cpu instensive workqueue */</span>
+<a name="309" /><span class="Maybe">     309:</span>     <span class="b">WQ_SYSFS</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">6</span><span class="f">,</span> <span class="k">/* visible in sysfs, see wq_sysfs_register() */</span>
+<a name="310" /><span class="Maybe">     310:</span> 
+<a name="311" /><span class="Maybe">     311:</span>     <span class="k">/*</span>
+<a name="312" /><span class="Maybe">     312:</span> <span class="k">     * Per-cpu workqueues are generally preferred because they tend to</span>
+<a name="313" /><span class="Maybe">     313:</span> <span class="k">     * show better performance thanks to cache locality.  Per-cpu</span>
+<a name="314" /><span class="Maybe">     314:</span> <span class="k">     * workqueues exclude the scheduler from choosing the CPU to</span>
+<a name="315" /><span class="Maybe">     315:</span> <span class="k">     * execute the worker threads, which has an unfortunate side effect</span>
+<a name="316" /><span class="Maybe">     316:</span> <span class="k">     * of increasing power consumption.</span>
+<a name="317" /><span class="Maybe">     317:</span> <span class="k">     *</span>
+<a name="318" /><span class="Maybe">     318:</span> <span class="k">     * The scheduler considers a CPU idle if it doesn&apos;t have any task</span>
+<a name="319" /><span class="Maybe">     319:</span> <span class="k">     * to execute and tries to keep idle cores idle to conserve power;</span>
+<a name="320" /><span class="Maybe">     320:</span> <span class="k">     * however, for example, a per-cpu work item scheduled from an</span>
+<a name="321" /><span class="Maybe">     321:</span> <span class="k">     * interrupt handler on an idle CPU will force the scheduler to</span>
+<a name="322" /><span class="Maybe">     322:</span> <span class="k">     * excute the work item on that CPU breaking the idleness, which in</span>
+<a name="323" /><span class="Maybe">     323:</span> <span class="k">     * turn may lead to more scheduling choices which are sub-optimal</span>
+<a name="324" /><span class="Maybe">     324:</span> <span class="k">     * in terms of power consumption.</span>
+<a name="325" /><span class="Maybe">     325:</span> <span class="k">     *</span>
+<a name="326" /><span class="Maybe">     326:</span> <span class="k">     * Workqueues marked with WQ_POWER_EFFICIENT are per-cpu by default</span>
+<a name="327" /><span class="Maybe">     327:</span> <span class="k">     * but become unbound if workqueue.power_efficient kernel param is</span>
+<a name="328" /><span class="Maybe">     328:</span> <span class="k">     * specified.  Per-cpu workqueues which are identified to</span>
+<a name="329" /><span class="Maybe">     329:</span> <span class="k">     * contribute significantly to power-consumption are identified and</span>
+<a name="330" /><span class="Maybe">     330:</span> <span class="k">     * marked with this flag and enabling the power_efficient mode</span>
+<a name="331" /><span class="Maybe">     331:</span> <span class="k">     * leads to noticeable power saving at the cost of small</span>
+<a name="332" /><span class="Maybe">     332:</span> <span class="k">     * performance disadvantage.</span>
+<a name="333" /><span class="Maybe">     333:</span> <span class="k">     *</span>
+<a name="334" /><span class="Maybe">     334:</span> <span class="k">     * http://thread.gmane.org/gmane.linux.kernel/1480396</span>
+<a name="335" /><span class="Maybe">     335:</span> <span class="k">     */</span>
+<a name="336" /><span class="Maybe">     336:</span>     <span class="b">WQ_POWER_EFFICIENT</span>    <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">7</span><span class="f">,</span>
+<a name="337" /><span class="Maybe">     337:</span> 
+<a name="338" /><span class="Maybe">     338:</span>     <span class="b">__WQ_DRAINING</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">16</span><span class="f">,</span> <span class="k">/* internal: workqueue is draining */</span>
+<a name="339" /><span class="Maybe">     339:</span>     <span class="b">__WQ_ORDERED</span>        <span class="f">=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">17</span><span class="f">,</span> <span class="k">/* internal: workqueue is ordered */</span>
+<a name="340" /><span class="Maybe">     340:</span> 
+<a name="341" /><span class="Maybe">     341:</span>     <span class="b">WQ_MAX_ACTIVE</span>        <span class="f">=</span> <span class="c">512</span><span class="f">,</span>      <span class="k">/* I like 512, better ideas? */</span>
+<a name="342" /><span class="Maybe">     342:</span>     <span class="b">WQ_MAX_UNBOUND_PER_CPU</span>    <span class="f">=</span> <span class="c">4</span><span class="f">,</span>      <span class="k">/* 4 * #cpus for unbound wq */</span>
+<a name="343" /><span class="Maybe">     343:</span>     <span class="b">WQ_DFL_ACTIVE</span>        <span class="f">=</span> <span class="b">WQ_MAX_ACTIVE</span> <span class="f">/</span> <span class="c">2</span><span class="f">,</span>
+<a name="344" /><span class="Maybe">     344:</span> <span class="f">}</span><span class="f">;</span>
+<a name="345" /><span class="Maybe">     345:</span> 
+<a name="346" /><span class="Maybe">     346:</span> <span class="k">/* unbound wq&apos;s aren&apos;t per-cpu, scale max_active according to #cpus */</span>
+<a name="347" /><span class="Maybe">     347:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_V1FfVU5CT1VORF9NQVhfQUNUSVZFXzA_"><span class="b">WQ_UNBOUND_MAX_ACTIVE</span></a>    \
+<a name="348" /><span class="Maybe">     348:</span>     <a href="cpu.c_macros_noref.html#_bWF4X3RfMA__"><span class="b">max_t</span></a><span class="f">(</span><span class="m">int</span><span class="f">,</span> <span class="b">WQ_MAX_ACTIVE</span><span class="f">,</span> <a href="cpu.c_macros_noref.html#_bnVtX3Bvc3NpYmxlX2NwdXNfMA__"><span class="b">num_possible_cpus</span></a><span class="f">(</span><span class="f">)</span> <span class="f">*</span> <span class="b">WQ_MAX_UNBOUND_PER_CPU</span><span class="f">)</span>
+<a name="349" /><span class="Maybe">     349:</span> 
+<a name="350" /><span class="Maybe">     350:</span> <span class="k">/*</span>
+<a name="351" /><span class="Maybe">     351:</span> <span class="k"> * System-wide workqueues which are always present.</span>
+<a name="352" /><span class="Maybe">     352:</span> <span class="k"> *</span>
+<a name="353" /><span class="Maybe">     353:</span> <span class="k"> * system_wq is the one used by schedule[_delayed]_work[_on]().</span>
+<a name="354" /><span class="Maybe">     354:</span> <span class="k"> * Multi-CPU multi-threaded.  There are users which expect relatively</span>
+<a name="355" /><span class="Maybe">     355:</span> <span class="k"> * short queue flush time.  Don&apos;t queue works which can run for too</span>
+<a name="356" /><span class="Maybe">     356:</span> <span class="k"> * long.</span>
+<a name="357" /><span class="Maybe">     357:</span> <span class="k"> *</span>
+<a name="358" /><span class="Maybe">     358:</span> <span class="k"> * system_long_wq is similar to system_wq but may host long running</span>
+<a name="359" /><span class="Maybe">     359:</span> <span class="k"> * works.  Queue flushing might take relatively long.</span>
+<a name="360" /><span class="Maybe">     360:</span> <span class="k"> *</span>
+<a name="361" /><span class="Maybe">     361:</span> <span class="k"> * system_unbound_wq is unbound workqueue.  Workers are not bound to</span>
+<a name="362" /><span class="Maybe">     362:</span> <span class="k"> * any specific CPU, not concurrency managed, and all queued works are</span>
+<a name="363" /><span class="Maybe">     363:</span> <span class="k"> * executed immediately as long as max_active limit is not reached and</span>
+<a name="364" /><span class="Maybe">     364:</span> <span class="k"> * resources are available.</span>
+<a name="365" /><span class="Maybe">     365:</span> <span class="k"> *</span>
+<a name="366" /><span class="Maybe">     366:</span> <span class="k"> * system_freezable_wq is equivalent to system_wq except that it&apos;s</span>
+<a name="367" /><span class="Maybe">     367:</span> <span class="k"> * freezable.</span>
+<a name="368" /><span class="Maybe">     368:</span> <span class="k"> *</span>
+<a name="369" /><span class="Maybe">     369:</span> <span class="k"> * *_power_efficient_wq are inclined towards saving power and converted</span>
+<a name="370" /><span class="Maybe">     370:</span> <span class="k"> * into WQ_UNBOUND variants if &apos;wq_power_efficient&apos; is enabled; otherwise,</span>
+<a name="371" /><span class="Maybe">     371:</span> <span class="k"> * they are same as their non-power-efficient counterparts - e.g.</span>
+<a name="372" /><span class="Maybe">     372:</span> <span class="k"> * system_power_efficient_wq is identical to system_wq if</span>
+<a name="373" /><span class="Maybe">     373:</span> <span class="k"> * &apos;wq_power_efficient&apos; is disabled.  See WQ_POWER_EFFICIENT for more info.</span>
+<a name="374" /><span class="Maybe">     374:</span> <span class="k"> */</span>
+<a name="375" /><span class="Maybe">     375:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">system_wq</span><span class="f">;</span>
+<a name="376" /><span class="Maybe">     376:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">system_long_wq</span><span class="f">;</span>
+<a name="377" /><span class="Maybe">     377:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">system_unbound_wq</span><span class="f">;</span>
+<a name="378" /><span class="Maybe">     378:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">system_freezable_wq</span><span class="f">;</span>
+<a name="379" /><span class="Maybe">     379:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">system_power_efficient_wq</span><span class="f">;</span>
+<a name="380" /><span class="Maybe">     380:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">system_freezable_power_efficient_wq</span><span class="f">;</span>
+<a name="381" /><span class="Maybe">     381:</span> 
+<a name="382" /><span class="Maybe">     382:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span> <a href="cpu.c_macros_ref.html#_X19kZXByZWNhdGVkXzE_"><span class="b">__deprecated</span></a> <span class="b">__system_nrt_wq</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="383" /><span class="Maybe">     383:</span> <span class="f">{</span>
+<a name="384" /><span class="Maybe">     384:</span>     <span class="m">return</span> <span class="b">system_wq</span><span class="f">;</span>
+<a name="385" /><span class="Maybe">     385:</span> <span class="f">}</span>
+<a name="386" /><span class="Maybe">     386:</span> 
+<a name="387" /><span class="Maybe">     387:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span> <a href="cpu.c_macros_ref.html#_X19kZXByZWNhdGVkXzE_"><span class="b">__deprecated</span></a> <span class="b">__system_nrt_freezable_wq</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="388" /><span class="Maybe">     388:</span> <span class="f">{</span>
+<a name="389" /><span class="Maybe">     389:</span>     <span class="m">return</span> <span class="b">system_freezable_wq</span><span class="f">;</span>
+<a name="390" /><span class="Maybe">     390:</span> <span class="f">}</span>
+<a name="391" /><span class="Maybe">     391:</span> 
+<a name="392" /><span class="Maybe">     392:</span> <span class="k">/* equivlalent to system_wq and system_freezable_wq, deprecated */</span>
+<a name="393" /><span class="Maybe">     393:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3lzdGVtX25ydF93cV8w"><span class="b">system_nrt_wq</span></a>            <span class="b">__system_nrt_wq</span><span class="f">(</span><span class="f">)</span>
+<a name="394" /><span class="Maybe">     394:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3lzdGVtX25ydF9mcmVlemFibGVfd3FfMA__"><span class="b">system_nrt_freezable_wq</span></a>        <span class="b">__system_nrt_freezable_wq</span><span class="f">(</span><span class="f">)</span>
+<a name="395" /><span class="Maybe">     395:</span> 
+<a name="396" /><span class="Maybe">     396:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span>
+<a name="397" /><span class="Maybe">     397:</span> <span class="b">__alloc_workqueue_key</span><span class="f">(</span><span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">fmt</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">max_active</span><span class="f">,</span>
+<a name="398" /><span class="Maybe">     398:</span>     <span class="m">struct</span> <span class="b">lock_class_key</span> <span class="f">*</span><span class="b">key</span><span class="f">,</span> <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">lock_name</span><span class="f">,</span> <span class="f">...</span><span class="f">)</span> <a href="cpu.c_macros_ref.html#_X19wcmludGZfMA__"><span class="b">__printf</span></a><span class="f">(</span><span class="c">1</span><span class="f">,</span> <span class="c">6</span><span class="f">)</span><span class="f">;</span>
+<a name="399" /><span class="Maybe">     399:</span> 
+<a name="400" /><span class="Maybe">     400:</span> <span class="k">/**</span>
+<a name="401" /><span class="Maybe">     401:</span> <span class="k"> * alloc_workqueue - allocate a workqueue</span>
+<a name="402" /><span class="Maybe">     402:</span> <span class="k"> * @fmt: printf format for the name of the workqueue</span>
+<a name="403" /><span class="Maybe">     403:</span> <span class="k"> * @flags: WQ_* flags</span>
+<a name="404" /><span class="Maybe">     404:</span> <span class="k"> * @max_active: max in-flight work items, 0 for default</span>
+<a name="405" /><span class="Maybe">     405:</span> <span class="k"> * @args: args for @fmt</span>
+<a name="406" /><span class="Maybe">     406:</span> <span class="k"> *</span>
+<a name="407" /><span class="Maybe">     407:</span> <span class="k"> * Allocate a workqueue with the specified parameters.  For detailed</span>
+<a name="408" /><span class="Maybe">     408:</span> <span class="k"> * information on WQ_* flags, please refer to Documentation/workqueue.txt.</span>
+<a name="409" /><span class="Maybe">     409:</span> <span class="k"> *</span>
+<a name="410" /><span class="Maybe">     410:</span> <span class="k"> * The __lock_name macro dance is to guarantee that single lock_class_key</span>
+<a name="411" /><span class="Maybe">     411:</span> <span class="k"> * doesn&apos;t end up with different namesm, which isn&apos;t allowed by lockdep.</span>
+<a name="412" /><span class="Maybe">     412:</span> <span class="k"> *</span>
+<a name="413" /><span class="Maybe">     413:</span> <span class="k"> * RETURNS:</span>
+<a name="414" /><span class="Maybe">     414:</span> <span class="k"> * Pointer to the allocated workqueue on success, %NULL on failure.</span>
+<a name="415" /><span class="Maybe">     415:</span> <span class="k"> */</span>
+<a name="416" /><span class="False">     416:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_LOCKDEP</span>
+<a name="417" /><span class="False">     417:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_YWxsb2Nfd29ya3F1ZXVlXzA_"><span class="b">alloc_workqueue</span></a><span class="f">(</span><span class="b">fmt</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">max_active</span><span class="f">,</span> <span class="b">args</span><span class="f">...</span><span class="f">)</span>        \
+<a name="418" /><span class="False">     418:</span> <span class="f">(</span><span class="f">{</span>                                    \
+<a name="419" /><span class="False">     419:</span>     <span class="m">static</span> <span class="m">struct</span> <span class="b">lock_class_key</span> <span class="b">__key</span><span class="f">;</span>                \
+<a name="420" /><span class="False">     420:</span>     <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">__lock_name</span><span class="f">;</span>                    \
+<a name="421" /><span class="False">     421:</span>                                     \
+<a name="422" /><span class="False">     422:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">__builtin_constant_p</span><span class="f">(</span><span class="b">fmt</span><span class="f">)</span><span class="f">)</span>                    \
+<a name="423" /><span class="False">     423:</span>         <span class="b">__lock_name</span> <span class="f">=</span> <span class="f">(</span><span class="b">fmt</span><span class="f">)</span><span class="f">;</span>                    \
+<a name="424" /><span class="False">     424:</span>     <span class="m">else</span>                                \
+<a name="425" /><span class="False">     425:</span>         <span class="b">__lock_name</span> <span class="f">=</span> <span class="f">#</span><span class="b">fmt</span><span class="f">;</span>                    \
+<a name="426" /><span class="False">     426:</span>                                     \
+<a name="427" /><span class="False">     427:</span>     <span class="b">__alloc_workqueue_key</span><span class="f">(</span><span class="f">(</span><span class="b">fmt</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">flags</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">max_active</span><span class="f">)</span><span class="f">,</span>        \
+<a name="428" /><span class="False">     428:</span>                   <span class="f">&amp;</span><span class="b">__key</span><span class="f">,</span> <span class="b">__lock_name</span><span class="f">,</span> <span class="f">##</span><span class="b">args</span><span class="f">)</span><span class="f">;</span>        \
+<a name="429" /><span class="False">     429:</span> <span class="f">}</span><span class="f">)</span>
+<a name="430" /><span class="Maybe">     430:</span> <span class="f">#</span><span class="n">else</span>
+<a name="431" /><span class="Maybe">     431:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_YWxsb2Nfd29ya3F1ZXVlXzA_"><span class="b">alloc_workqueue</span></a><span class="f">(</span><span class="b">fmt</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">max_active</span><span class="f">,</span> <span class="b">args</span><span class="f">...</span><span class="f">)</span>        \
+<a name="432" /><span class="Maybe">     432:</span>     <span class="b">__alloc_workqueue_key</span><span class="f">(</span><span class="f">(</span><span class="b">fmt</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">flags</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">max_active</span><span class="f">)</span><span class="f">,</span>        \
+<a name="433" /><span class="Maybe">     433:</span>                   <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">,</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">,</span> <span class="f">##</span><span class="b">args</span><span class="f">)</span>
+<a name="434" /><span class="Maybe">     434:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="435" /><span class="Maybe">     435:</span> 
+<a name="436" /><span class="Maybe">     436:</span> <span class="k">/**</span>
+<a name="437" /><span class="Maybe">     437:</span> <span class="k"> * alloc_ordered_workqueue - allocate an ordered workqueue</span>
+<a name="438" /><span class="Maybe">     438:</span> <span class="k"> * @fmt: printf format for the name of the workqueue</span>
+<a name="439" /><span class="Maybe">     439:</span> <span class="k"> * @flags: WQ_* flags (only WQ_FREEZABLE and WQ_MEM_RECLAIM are meaningful)</span>
+<a name="440" /><span class="Maybe">     440:</span> <span class="k"> * @args: args for @fmt</span>
+<a name="441" /><span class="Maybe">     441:</span> <span class="k"> *</span>
+<a name="442" /><span class="Maybe">     442:</span> <span class="k"> * Allocate an ordered workqueue.  An ordered workqueue executes at</span>
+<a name="443" /><span class="Maybe">     443:</span> <span class="k"> * most one work item at any given time in the queued order.  They are</span>
+<a name="444" /><span class="Maybe">     444:</span> <span class="k"> * implemented as unbound workqueues with @max_active of one.</span>
+<a name="445" /><span class="Maybe">     445:</span> <span class="k"> *</span>
+<a name="446" /><span class="Maybe">     446:</span> <span class="k"> * RETURNS:</span>
+<a name="447" /><span class="Maybe">     447:</span> <span class="k"> * Pointer to the allocated workqueue on success, %NULL on failure.</span>
+<a name="448" /><span class="Maybe">     448:</span> <span class="k"> */</span>
+<a name="449" /><span class="Maybe">     449:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_YWxsb2Nfb3JkZXJlZF93b3JrcXVldWVfMA__"><span class="b">alloc_ordered_workqueue</span></a><span class="f">(</span><span class="b">fmt</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">args</span><span class="f">...</span><span class="f">)</span>            \
+<a name="450" /><span class="Maybe">     450:</span>     <a href="cpu.c_macros_noref.html#_YWxsb2Nfd29ya3F1ZXVlXzA_"><span class="b">alloc_workqueue</span></a><span class="f">(</span><span class="b">fmt</span><span class="f">,</span> <span class="b">WQ_UNBOUND</span> <span class="f">|</span> <span class="b">__WQ_ORDERED</span> <span class="f">|</span> <span class="f">(</span><span class="b">flags</span><span class="f">)</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="f">##</span><span class="b">args</span><span class="f">)</span>
+<a name="451" /><span class="Maybe">     451:</span> 
+<a name="452" /><span class="Maybe">     452:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3JlYXRlX3dvcmtxdWV1ZV8w"><span class="b">create_workqueue</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>                        \
+<a name="453" /><span class="Maybe">     453:</span>     <a href="cpu.c_macros_noref.html#_YWxsb2Nfd29ya3F1ZXVlXzA_"><span class="b">alloc_workqueue</span></a><span class="f">(</span><span class="e">&quot;%s&quot;</span><span class="f">,</span> <span class="b">WQ_MEM_RECLAIM</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">)</span>
+<a name="454" /><span class="Maybe">     454:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3JlYXRlX2ZyZWV6YWJsZV93b3JrcXVldWVfMA__"><span class="b">create_freezable_workqueue</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>                \
+<a name="455" /><span class="Maybe">     455:</span>     <a href="cpu.c_macros_noref.html#_YWxsb2Nfd29ya3F1ZXVlXzA_"><span class="b">alloc_workqueue</span></a><span class="f">(</span><span class="e">&quot;%s&quot;</span><span class="f">,</span> <span class="b">WQ_FREEZABLE</span> <span class="f">|</span> <span class="b">WQ_UNBOUND</span> <span class="f">|</span> <span class="b">WQ_MEM_RECLAIM</span><span class="f">,</span> \
+<a name="456" /><span class="Maybe">     456:</span>             <span class="c">1</span><span class="f">,</span> <span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">)</span>
+<a name="457" /><span class="Maybe">     457:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_Y3JlYXRlX3NpbmdsZXRocmVhZF93b3JrcXVldWVfMA__"><span class="b">create_singlethread_workqueue</span></a><span class="f">(</span><span class="b">name</span><span class="f">)</span>                \
+<a name="458" /><span class="Maybe">     458:</span>     <a href="cpu.c_macros_noref.html#_YWxsb2Nfd29ya3F1ZXVlXzA_"><span class="b">alloc_workqueue</span></a><span class="f">(</span><span class="e">&quot;%s&quot;</span><span class="f">,</span> <span class="b">WQ_UNBOUND</span> <span class="f">|</span> <span class="b">WQ_MEM_RECLAIM</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="f">(</span><span class="b">name</span><span class="f">)</span><span class="f">)</span>
+<a name="459" /><span class="Maybe">     459:</span> 
+<a name="460" /><span class="Maybe">     460:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">destroy_workqueue</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">)</span><span class="f">;</span>
+<a name="461" /><span class="Maybe">     461:</span> 
+<a name="462" /><span class="Maybe">     462:</span> <span class="m">struct</span> <span class="b">workqueue_attrs</span> <span class="f">*</span><span class="b">alloc_workqueue_attrs</span><span class="f">(</span><span class="b">gfp_t</span> <span class="b">gfp_mask</span><span class="f">)</span><span class="f">;</span>
+<a name="463" /><span class="Maybe">     463:</span> <span class="m">void</span> <span class="b">free_workqueue_attrs</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_attrs</span> <span class="f">*</span><span class="b">attrs</span><span class="f">)</span><span class="f">;</span>
+<a name="464" /><span class="Maybe">     464:</span> <span class="m">int</span> <span class="b">apply_workqueue_attrs</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="465" /><span class="Maybe">     465:</span>               <span class="m">const</span> <span class="m">struct</span> <span class="b">workqueue_attrs</span> <span class="f">*</span><span class="b">attrs</span><span class="f">)</span><span class="f">;</span>
+<a name="466" /><span class="Maybe">     466:</span> 
+<a name="467" /><span class="Maybe">     467:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">queue_work_on</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="468" /><span class="Maybe">     468:</span>             <span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="469" /><span class="Maybe">     469:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">queue_delayed_work_on</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="470" /><span class="Maybe">     470:</span>             <span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">work</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">delay</span><span class="f">)</span><span class="f">;</span>
+<a name="471" /><span class="Maybe">     471:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">mod_delayed_work_on</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="472" /><span class="Maybe">     472:</span>             <span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">delay</span><span class="f">)</span><span class="f">;</span>
+<a name="473" /><span class="Maybe">     473:</span> 
+<a name="474" /><span class="Maybe">     474:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">flush_workqueue</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">)</span><span class="f">;</span>
+<a name="475" /><span class="Maybe">     475:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">drain_workqueue</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">)</span><span class="f">;</span>
+<a name="476" /><span class="Maybe">     476:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">flush_scheduled_work</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="477" /><span class="Maybe">     477:</span> 
+<a name="478" /><span class="Maybe">     478:</span> <span class="m">extern</span> <span class="m">int</span> <span class="b">schedule_on_each_cpu</span><span class="f">(</span><span class="b">work_func_t</span> <span class="b">func</span><span class="f">)</span><span class="f">;</span>
+<a name="479" /><span class="Maybe">     479:</span> 
+<a name="480" /><span class="Maybe">     480:</span> <span class="m">int</span> <span class="b">execute_in_process_context</span><span class="f">(</span><span class="b">work_func_t</span> <span class="b">fn</span><span class="f">,</span> <span class="m">struct</span> <span class="b">execute_work</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="481" /><span class="Maybe">     481:</span> 
+<a name="482" /><span class="Maybe">     482:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">flush_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="483" /><span class="Maybe">     483:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">cancel_work_sync</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="484" /><span class="Maybe">     484:</span> 
+<a name="485" /><span class="Maybe">     485:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">flush_delayed_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">)</span><span class="f">;</span>
+<a name="486" /><span class="Maybe">     486:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">cancel_delayed_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">)</span><span class="f">;</span>
+<a name="487" /><span class="Maybe">     487:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">cancel_delayed_work_sync</span><span class="f">(</span><span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">)</span><span class="f">;</span>
+<a name="488" /><span class="Maybe">     488:</span> 
+<a name="489" /><span class="Maybe">     489:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">workqueue_set_max_active</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="490" /><span class="Maybe">     490:</span>                      <span class="m">int</span> <span class="b">max_active</span><span class="f">)</span><span class="f">;</span>
+<a name="491" /><span class="Maybe">     491:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">current_is_workqueue_rescuer</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="492" /><span class="Maybe">     492:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">workqueue_congested</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">)</span><span class="f">;</span>
+<a name="493" /><span class="Maybe">     493:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">work_busy</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="494" /><span class="Maybe">     494:</span> <span class="m">extern</span> <a href="cpu.c_macros_ref.html#_X19wcmludGZfMA__"><span class="b">__printf</span></a><span class="f">(</span><span class="c">1</span><span class="f">,</span> <span class="c">2</span><span class="f">)</span> <span class="m">void</span> <span class="b">set_worker_desc</span><span class="f">(</span><span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">fmt</span><span class="f">,</span> <span class="f">...</span><span class="f">)</span><span class="f">;</span>
+<a name="495" /><span class="Maybe">     495:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">print_worker_info</span><span class="f">(</span><span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">log_lvl</span><span class="f">,</span> <span class="m">struct</span> <span class="b">task_struct</span> <span class="f">*</span><span class="b">task</span><span class="f">)</span><span class="f">;</span>
+<a name="496" /><span class="Maybe">     496:</span> 
+<a name="497" /><span class="Maybe">     497:</span> <span class="k">/**</span>
+<a name="498" /><span class="Maybe">     498:</span> <span class="k"> * queue_work - queue work on a workqueue</span>
+<a name="499" /><span class="Maybe">     499:</span> <span class="k"> * @wq: workqueue to use</span>
+<a name="500" /><span class="Maybe">     500:</span> <span class="k"> * @work: work to queue</span>
+<a name="501" /><span class="Maybe">     501:</span> <span class="k"> *</span>
+<a name="502" /><span class="Maybe">     502:</span> <span class="k"> * Returns %false if @work was already on a queue, %true otherwise.</span>
+<a name="503" /><span class="Maybe">     503:</span> <span class="k"> *</span>
+<a name="504" /><span class="Maybe">     504:</span> <span class="k"> * We queue the work to the CPU on which it was submitted, but if the CPU dies</span>
+<a name="505" /><span class="Maybe">     505:</span> <span class="k"> * it can be processed by another CPU.</span>
+<a name="506" /><span class="Maybe">     506:</span> <span class="k"> */</span>
+<a name="507" /><span class="Maybe">     507:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">queue_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="508" /><span class="Maybe">     508:</span>                   <span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span>
+<a name="509" /><span class="Maybe">     509:</span> <span class="f">{</span>
+<a name="510" /><span class="Maybe">     510:</span>     <span class="m">return</span> <span class="b">queue_work_on</span><span class="f">(</span><span class="b">WORK_CPU_UNBOUND</span><span class="f">,</span> <span class="b">wq</span><span class="f">,</span> <span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="511" /><span class="Maybe">     511:</span> <span class="f">}</span>
+<a name="512" /><span class="Maybe">     512:</span> 
+<a name="513" /><span class="Maybe">     513:</span> <span class="k">/**</span>
+<a name="514" /><span class="Maybe">     514:</span> <span class="k"> * queue_delayed_work - queue work on a workqueue after delay</span>
+<a name="515" /><span class="Maybe">     515:</span> <span class="k"> * @wq: workqueue to use</span>
+<a name="516" /><span class="Maybe">     516:</span> <span class="k"> * @dwork: delayable work to queue</span>
+<a name="517" /><span class="Maybe">     517:</span> <span class="k"> * @delay: number of jiffies to wait before queueing</span>
+<a name="518" /><span class="Maybe">     518:</span> <span class="k"> *</span>
+<a name="519" /><span class="Maybe">     519:</span> <span class="k"> * Equivalent to queue_delayed_work_on() but tries to use the local CPU.</span>
+<a name="520" /><span class="Maybe">     520:</span> <span class="k"> */</span>
+<a name="521" /><span class="Maybe">     521:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">queue_delayed_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="522" /><span class="Maybe">     522:</span>                       <span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">,</span>
+<a name="523" /><span class="Maybe">     523:</span>                       <span class="m">unsigned</span> <span class="m">long</span> <span class="b">delay</span><span class="f">)</span>
+<a name="524" /><span class="Maybe">     524:</span> <span class="f">{</span>
+<a name="525" /><span class="Maybe">     525:</span>     <span class="m">return</span> <span class="b">queue_delayed_work_on</span><span class="f">(</span><span class="b">WORK_CPU_UNBOUND</span><span class="f">,</span> <span class="b">wq</span><span class="f">,</span> <span class="b">dwork</span><span class="f">,</span> <span class="b">delay</span><span class="f">)</span><span class="f">;</span>
+<a name="526" /><span class="Maybe">     526:</span> <span class="f">}</span>
+<a name="527" /><span class="Maybe">     527:</span> 
+<a name="528" /><span class="Maybe">     528:</span> <span class="k">/**</span>
+<a name="529" /><span class="Maybe">     529:</span> <span class="k"> * mod_delayed_work - modify delay of or queue a delayed work</span>
+<a name="530" /><span class="Maybe">     530:</span> <span class="k"> * @wq: workqueue to use</span>
+<a name="531" /><span class="Maybe">     531:</span> <span class="k"> * @dwork: work to queue</span>
+<a name="532" /><span class="Maybe">     532:</span> <span class="k"> * @delay: number of jiffies to wait before queueing</span>
+<a name="533" /><span class="Maybe">     533:</span> <span class="k"> *</span>
+<a name="534" /><span class="Maybe">     534:</span> <span class="k"> * mod_delayed_work_on() on local CPU.</span>
+<a name="535" /><span class="Maybe">     535:</span> <span class="k"> */</span>
+<a name="536" /><span class="Maybe">     536:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">mod_delayed_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">,</span>
+<a name="537" /><span class="Maybe">     537:</span>                     <span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">,</span>
+<a name="538" /><span class="Maybe">     538:</span>                     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">delay</span><span class="f">)</span>
+<a name="539" /><span class="Maybe">     539:</span> <span class="f">{</span>
+<a name="540" /><span class="Maybe">     540:</span>     <span class="m">return</span> <span class="b">mod_delayed_work_on</span><span class="f">(</span><span class="b">WORK_CPU_UNBOUND</span><span class="f">,</span> <span class="b">wq</span><span class="f">,</span> <span class="b">dwork</span><span class="f">,</span> <span class="b">delay</span><span class="f">)</span><span class="f">;</span>
+<a name="541" /><span class="Maybe">     541:</span> <span class="f">}</span>
+<a name="542" /><span class="Maybe">     542:</span> 
+<a name="543" /><span class="Maybe">     543:</span> <span class="k">/**</span>
+<a name="544" /><span class="Maybe">     544:</span> <span class="k"> * schedule_work_on - put work task on a specific cpu</span>
+<a name="545" /><span class="Maybe">     545:</span> <span class="k"> * @cpu: cpu to put the work task on</span>
+<a name="546" /><span class="Maybe">     546:</span> <span class="k"> * @work: job to be done</span>
+<a name="547" /><span class="Maybe">     547:</span> <span class="k"> *</span>
+<a name="548" /><span class="Maybe">     548:</span> <span class="k"> * This puts a job on a specific cpu</span>
+<a name="549" /><span class="Maybe">     549:</span> <span class="k"> */</span>
+<a name="550" /><span class="Maybe">     550:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">schedule_work_on</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span>
+<a name="551" /><span class="Maybe">     551:</span> <span class="f">{</span>
+<a name="552" /><span class="Maybe">     552:</span>     <span class="m">return</span> <span class="b">queue_work_on</span><span class="f">(</span><span class="b">cpu</span><span class="f">,</span> <span class="b">system_wq</span><span class="f">,</span> <span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="553" /><span class="Maybe">     553:</span> <span class="f">}</span>
+<a name="554" /><span class="Maybe">     554:</span> 
+<a name="555" /><span class="Maybe">     555:</span> <span class="k">/**</span>
+<a name="556" /><span class="Maybe">     556:</span> <span class="k"> * schedule_work - put work task in global workqueue</span>
+<a name="557" /><span class="Maybe">     557:</span> <span class="k"> * @work: job to be done</span>
+<a name="558" /><span class="Maybe">     558:</span> <span class="k"> *</span>
+<a name="559" /><span class="Maybe">     559:</span> <span class="k"> * Returns %false if @work was already on the kernel-global workqueue and</span>
+<a name="560" /><span class="Maybe">     560:</span> <span class="k"> * %true otherwise.</span>
+<a name="561" /><span class="Maybe">     561:</span> <span class="k"> *</span>
+<a name="562" /><span class="Maybe">     562:</span> <span class="k"> * This puts a job in the kernel-global workqueue if it was not already</span>
+<a name="563" /><span class="Maybe">     563:</span> <span class="k"> * queued and leaves it in the same position on the kernel-global</span>
+<a name="564" /><span class="Maybe">     564:</span> <span class="k"> * workqueue otherwise.</span>
+<a name="565" /><span class="Maybe">     565:</span> <span class="k"> */</span>
+<a name="566" /><span class="Maybe">     566:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">schedule_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span>
+<a name="567" /><span class="Maybe">     567:</span> <span class="f">{</span>
+<a name="568" /><span class="Maybe">     568:</span>     <span class="m">return</span> <span class="b">queue_work</span><span class="f">(</span><span class="b">system_wq</span><span class="f">,</span> <span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="569" /><span class="Maybe">     569:</span> <span class="f">}</span>
+<a name="570" /><span class="Maybe">     570:</span> 
+<a name="571" /><span class="Maybe">     571:</span> <span class="k">/**</span>
+<a name="572" /><span class="Maybe">     572:</span> <span class="k"> * schedule_delayed_work_on - queue work in global workqueue on CPU after delay</span>
+<a name="573" /><span class="Maybe">     573:</span> <span class="k"> * @cpu: cpu to use</span>
+<a name="574" /><span class="Maybe">     574:</span> <span class="k"> * @dwork: job to be done</span>
+<a name="575" /><span class="Maybe">     575:</span> <span class="k"> * @delay: number of jiffies to wait</span>
+<a name="576" /><span class="Maybe">     576:</span> <span class="k"> *</span>
+<a name="577" /><span class="Maybe">     577:</span> <span class="k"> * After waiting for a given time this puts a job in the kernel-global</span>
+<a name="578" /><span class="Maybe">     578:</span> <span class="k"> * workqueue on the specified CPU.</span>
+<a name="579" /><span class="Maybe">     579:</span> <span class="k"> */</span>
+<a name="580" /><span class="Maybe">     580:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">schedule_delayed_work_on</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">,</span>
+<a name="581" /><span class="Maybe">     581:</span>                         <span class="m">unsigned</span> <span class="m">long</span> <span class="b">delay</span><span class="f">)</span>
+<a name="582" /><span class="Maybe">     582:</span> <span class="f">{</span>
+<a name="583" /><span class="Maybe">     583:</span>     <span class="m">return</span> <span class="b">queue_delayed_work_on</span><span class="f">(</span><span class="b">cpu</span><span class="f">,</span> <span class="b">system_wq</span><span class="f">,</span> <span class="b">dwork</span><span class="f">,</span> <span class="b">delay</span><span class="f">)</span><span class="f">;</span>
+<a name="584" /><span class="Maybe">     584:</span> <span class="f">}</span>
+<a name="585" /><span class="Maybe">     585:</span> 
+<a name="586" /><span class="Maybe">     586:</span> <span class="k">/**</span>
+<a name="587" /><span class="Maybe">     587:</span> <span class="k"> * schedule_delayed_work - put work task in global workqueue after delay</span>
+<a name="588" /><span class="Maybe">     588:</span> <span class="k"> * @dwork: job to be done</span>
+<a name="589" /><span class="Maybe">     589:</span> <span class="k"> * @delay: number of jiffies to wait or 0 for immediate execution</span>
+<a name="590" /><span class="Maybe">     590:</span> <span class="k"> *</span>
+<a name="591" /><span class="Maybe">     591:</span> <span class="k"> * After waiting for a given time this puts a job in the kernel-global</span>
+<a name="592" /><span class="Maybe">     592:</span> <span class="k"> * workqueue.</span>
+<a name="593" /><span class="Maybe">     593:</span> <span class="k"> */</span>
+<a name="594" /><span class="Maybe">     594:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">schedule_delayed_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">,</span>
+<a name="595" /><span class="Maybe">     595:</span>                      <span class="m">unsigned</span> <span class="m">long</span> <span class="b">delay</span><span class="f">)</span>
+<a name="596" /><span class="Maybe">     596:</span> <span class="f">{</span>
+<a name="597" /><span class="Maybe">     597:</span>     <span class="m">return</span> <span class="b">queue_delayed_work</span><span class="f">(</span><span class="b">system_wq</span><span class="f">,</span> <span class="b">dwork</span><span class="f">,</span> <span class="b">delay</span><span class="f">)</span><span class="f">;</span>
+<a name="598" /><span class="Maybe">     598:</span> <span class="f">}</span>
+<a name="599" /><span class="Maybe">     599:</span> 
+<a name="600" /><span class="Maybe">     600:</span> <span class="k">/**</span>
+<a name="601" /><span class="Maybe">     601:</span> <span class="k"> * keventd_up - is workqueue initialized yet?</span>
+<a name="602" /><span class="Maybe">     602:</span> <span class="k"> */</span>
+<a name="603" /><span class="Maybe">     603:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <span class="b">keventd_up</span><span class="f">(</span><span class="m">void</span><span class="f">)</span>
+<a name="604" /><span class="Maybe">     604:</span> <span class="f">{</span>
+<a name="605" /><span class="Maybe">     605:</span>     <span class="m">return</span> <span class="b">system_wq</span> <span class="f">!=</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">;</span>
+<a name="606" /><span class="Maybe">     606:</span> <span class="f">}</span>
+<a name="607" /><span class="Maybe">     607:</span> 
+<a name="608" /><span class="Maybe">     608:</span> <span class="k">/*</span>
+<a name="609" /><span class="Maybe">     609:</span> <span class="k"> * Like above, but uses del_timer() instead of del_timer_sync(). This means,</span>
+<a name="610" /><span class="Maybe">     610:</span> <span class="k"> * if it returns 0 the timer function may be running and the queueing is in</span>
+<a name="611" /><span class="Maybe">     611:</span> <span class="k"> * progress.</span>
+<a name="612" /><span class="Maybe">     612:</span> <span class="k"> */</span>
+<a name="613" /><span class="Maybe">     613:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <a href="cpu.c_macros_ref.html#_X19kZXByZWNhdGVkXzE_"><span class="b">__deprecated</span></a> <span class="b">__cancel_delayed_work</span><span class="f">(</span><span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span>
+<a name="614" /><span class="Maybe">     614:</span> <span class="f">{</span>
+<a name="615" /><span class="Maybe">     615:</span>     <span class="m">bool</span> <span class="b">ret</span><span class="f">;</span>
+<a name="616" /><span class="Maybe">     616:</span> 
+<a name="617" /><span class="Maybe">     617:</span>     <span class="b">ret</span> <span class="f">=</span> <span class="b">del_timer</span><span class="f">(</span><span class="f">&amp;</span><span class="b">work</span><span class="f">-&gt;</span><span class="b">timer</span><span class="f">)</span><span class="f">;</span>
+<a name="618" /><span class="Maybe">     618:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">ret</span><span class="f">)</span>
+<a name="619" /><span class="Maybe">     619:</span>         <a href="cpu.c_macros_ref.html#_d29ya19jbGVhcl9wZW5kaW5nXzA_"><span class="b">work_clear_pending</span></a><span class="f">(</span><span class="f">&amp;</span><span class="b">work</span><span class="f">-&gt;</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="620" /><span class="Maybe">     620:</span>     <span class="m">return</span> <span class="b">ret</span><span class="f">;</span>
+<a name="621" /><span class="Maybe">     621:</span> <span class="f">}</span>
+<a name="622" /><span class="Maybe">     622:</span> 
+<a name="623" /><span class="Maybe">     623:</span> <span class="k">/* used to be different but now identical to flush_work(), deprecated */</span>
+<a name="624" /><span class="Maybe">     624:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <a href="cpu.c_macros_ref.html#_X19kZXByZWNhdGVkXzE_"><span class="b">__deprecated</span></a> <span class="b">flush_work_sync</span><span class="f">(</span><span class="m">struct</span> <span class="b">work_struct</span> <span class="f">*</span><span class="b">work</span><span class="f">)</span>
+<a name="625" /><span class="Maybe">     625:</span> <span class="f">{</span>
+<a name="626" /><span class="Maybe">     626:</span>     <span class="m">return</span> <span class="b">flush_work</span><span class="f">(</span><span class="b">work</span><span class="f">)</span><span class="f">;</span>
+<a name="627" /><span class="Maybe">     627:</span> <span class="f">}</span>
+<a name="628" /><span class="Maybe">     628:</span> 
+<a name="629" /><span class="Maybe">     629:</span> <span class="k">/* used to be different but now identical to flush_delayed_work(), deprecated */</span>
+<a name="630" /><span class="Maybe">     630:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">bool</span> <a href="cpu.c_macros_ref.html#_X19kZXByZWNhdGVkXzE_"><span class="b">__deprecated</span></a> <span class="b">flush_delayed_work_sync</span><span class="f">(</span><span class="m">struct</span> <span class="b">delayed_work</span> <span class="f">*</span><span class="b">dwork</span><span class="f">)</span>
+<a name="631" /><span class="Maybe">     631:</span> <span class="f">{</span>
+<a name="632" /><span class="Maybe">     632:</span>     <span class="m">return</span> <span class="b">flush_delayed_work</span><span class="f">(</span><span class="b">dwork</span><span class="f">)</span><span class="f">;</span>
+<a name="633" /><span class="Maybe">     633:</span> <span class="f">}</span>
+<a name="634" /><span class="Maybe">     634:</span> 
+<a name="635" /><span class="False">     635:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1NNUF8w"><span class="b">CONFIG_SMP</span></a>
+<a name="636" /><span class="False">     636:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">long</span> <span class="b">work_on_cpu</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">long</span> <span class="f">(</span><span class="f">*</span><span class="b">fn</span><span class="f">)</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">arg</span><span class="f">)</span>
+<a name="637" /><span class="False">     637:</span> <span class="f">{</span>
+<a name="638" /><span class="False">     638:</span>     <span class="m">return</span> <span class="b">fn</span><span class="f">(</span><span class="b">arg</span><span class="f">)</span><span class="f">;</span>
+<a name="639" /><span class="False">     639:</span> <span class="f">}</span>
+<a name="640" /><span class="Maybe">     640:</span> <span class="f">#</span><span class="n">else</span>
+<a name="641" /><span class="Maybe">     641:</span> <span class="m">long</span> <span class="b">work_on_cpu</span><span class="f">(</span><span class="m">int</span> <span class="b">cpu</span><span class="f">,</span> <span class="m">long</span> <span class="f">(</span><span class="f">*</span><span class="b">fn</span><span class="f">)</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">arg</span><span class="f">)</span><span class="f">;</span>
+<a name="642" /><span class="Maybe">     642:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_SMP */</span>
+<a name="643" /><span class="Maybe">     643:</span> 
+<a name="644" /><span class="Maybe">     644:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX0ZSRUVaRVJfMA__"><span class="b">CONFIG_FREEZER</span></a>
+<a name="645" /><span class="Maybe">     645:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">freeze_workqueues_begin</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="646" /><span class="Maybe">     646:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">freeze_workqueues_busy</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="647" /><span class="Maybe">     647:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">thaw_workqueues</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="648" /><span class="Maybe">     648:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_FREEZER */</span>
+<a name="649" /><span class="Maybe">     649:</span> 
+<a name="650" /><span class="Maybe">     650:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1NZU0ZTXzA_"><span class="b">CONFIG_SYSFS</span></a>
+<a name="651" /><span class="Maybe">     651:</span> <span class="m">int</span> <span class="b">workqueue_sysfs_register</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">)</span><span class="f">;</span>
+<a name="652" /><span class="False">     652:</span> <span class="f">#</span><span class="n">else</span>    <span class="k">/* CONFIG_SYSFS */</span>
+<a name="653" /><span class="False">     653:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">workqueue_sysfs_register</span><span class="f">(</span><span class="m">struct</span> <span class="b">workqueue_struct</span> <span class="f">*</span><span class="b">wq</span><span class="f">)</span>
+<a name="654" /><span class="False">     654:</span> <span class="f">{</span> <span class="m">return</span> <span class="c">0</span><span class="f">;</span> <span class="f">}</span>
+<a name="655" /><span class="Maybe">     655:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* CONFIG_SYSFS */</span>
+<a name="656" /><span class="Maybe">     656:</span> 
+<a name="657" /><span class="True">     657:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="658" /><span class="True">     658:</span> </pre>
+  </body>
+</html>

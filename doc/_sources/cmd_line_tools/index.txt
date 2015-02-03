@@ -22,53 +22,70 @@ Usage
 
 ::
 
-    Usage: CPIPMain.py [options] path
-    Preprocess the file or the files in the directory.
+    usage: CPIPMain.py [-h] [-c] [-d DUMP] [-g GLOB] [--heap] [-j JOBS] [-k]
+                       [-l LOGLEVEL] [-o OUTPUT] [-p] [-r] [-t] [-G]
+                       [-S PREDEFINES] [-C] [-D DEFINES] [-P PREINC] [-I INCUSR]
+                       [-J INCSYS]
+                       path
 
-    Options:
-      --version             show program's version number and exit
+    cpip.cpp -- Preprocess the file or the files in the directory.
+      Created by Paul Ross on 2011-07-10.
+      Copyright 2008-2015. All rights reserved.
+      Licensed under GPL 2.0
+    USAGE
+
+    positional arguments:
+      path                  Path to source file.
+
+    optional arguments:
       -h, --help            show this help message and exit
       -c                    Add conditionally included files to the plots.
                             [default: False]
-      -d DUMP, --dump=DUMP  Dump output, additive. Can be: C - Conditional
+      -d DUMP, --dump DUMP  Dump output, additive. Can be: C - Conditional
                             compilation graph. F - File names encountered and
                             their count. I - Include graph. M - Macro environment.
                             T - Token count. R - Macro dependencies as an input to
                             DOT. [default: []]
-      -g GLOB, --glob=GLOB  Pattern match to use when processing directories.
+      -g GLOB, --glob GLOB  Pattern match to use when processing directories.
                             [default: *.*]
       --heap                Profile memory usage. [default: False]
-      -j JOBS, --jobs=JOBS  Max simultaneous processes when pre-processing
+      -j JOBS, --jobs JOBS  Max simultaneous processes when pre-processing
                             directories. Zero uses number of native CPUs [4]. 1
                             means no multiprocessing. [default: 0]
       -k, --keep-going      Keep going. [default: False]
-      -l LOGLEVEL, --loglevel=LOGLEVEL
+      -l LOGLEVEL, --loglevel LOGLEVEL
                             Log Level (debug=10, info=20, warning=30, error=40,
                             critical=50) [default: 30]
-      -o OUTPUT, --output=OUTPUT
+      -o OUTPUT, --output OUTPUT
                             Output directory. [default: out]
       -p                    Ignore pragma statements. [default: False]
       -r, --recursive       Recursively process directories. [default: False]
       -t, --dot             Write an DOT include dependency table and execute DOT
                             on it to create a SVG file. [default: False]
-      -I INCUSR, --usr=INCUSR
+      -G                    Support GCC extensions. Currently only #include_next.
+                            [default: False]
+      -S PREDEFINES, --predefine PREDEFINES
+                            Add standard predefined macro definitions of the form
+                            name<=definition>. They are introduced into the
+                            environment before anything else. They can not be
+                            redefined. __DATE__ and __TIME__ will be automatically
+                            allocated in here. __FILE__ and __LINE__ are defined
+                            dynamically. See ISO/IEC 9899:1999 (E) 6.10.8
+                            Predefined macro names. [default: []]
+      -C, --CPP             Sys call 'cpp -dM' to extract and use platform
+                            specific macros. These are inserted after -S option
+                            and before the -D option. [default: False]
+      -D DEFINES, --define DEFINES
+                            Add macro definitions of the form name<=definition>.
+                            These are introduced into the environment before any
+                            pre-include. [default: []]
+      -P PREINC, --pre PREINC
+                            Add pre-include file path, this file precedes the
+                            initial translation unit. [default: []]
+      -I INCUSR, --usr INCUSR
                             Add user include search path. [default: []]
-      -J INCSYS, --sys=INCSYS
+      -J INCSYS, --sys INCSYS
                             Add system include search path. [default: []]
-      -S PREDEFINES, --predefine=PREDEFINES
-                            Add standard predefined macro defintions of the form
-                            name<=defintion>. These are introduced into the
-                            environment before anything else. These macros can not
-                            be redefined. __DATE__ and __TIME__ will be
-                            automatically allocated in here. [default: []]
-      -D DEFINES, --define=DEFINES
-                            Add macro defintions of the form name<=defintion>.
-                            These are introduced into the environment before
-                            any pre-include. [default: []]
-      -P PREINC, --pre=PREINC
-                            Add pre-include file path. [default: []]
-    Usage: CPIPMain.py [options] path
-    Preprocess the file or the files in the directory.
 
 .. note::
     
@@ -108,6 +125,11 @@ Options
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-t, --dot``                        | Write an DOT include dependency table and execute DOT on it to create a SVG     |
 |                                      | file. [default: False]                                                          |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-C , --CPP``                       | Sys call ``cpp -dM`` to extract and use platform specific macros. These are     |
+|                                      | inserted after -S option and before the -D option. [default: False]             |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``-G``                               | Support GCC extensions. Currently only #include_next. [default: False]          |
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-I INCUSR, --usr=INCUSR``          | Add user include search path (additive). [default: []]                          |
 +--------------------------------------+---------------------------------------------------------------------------------+
@@ -159,12 +181,13 @@ Here we set:
 
 * ``l 20`` sets logging to ``INFO``
 * ``-o`` sets the output to :file:`../../demo/output_00/`
+* ``-C`` is used to get the platform specific macros.
 * ``-J`` is used to set a single system include as :file:`../../demo/sys/`
 * ``-I`` is used to set a single user include as :file:`../../demo/usr/`
 
 We are processing :file:`../../demo/src/main.cpp` and stdout is something like this::
 
-    $ python3 CPIPMain.py -l 20 -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp 
+    $ python3 CPIPMain.py -l 20 -C -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp 
     2012-03-20 07:41:38,655 INFO     TU in HTML:
     2012-03-20 07:41:38,655 INFO       ../../demo/output_00/main.cpp.html
     2012-03-20 07:41:38,664 INFO     Processing TU done.
