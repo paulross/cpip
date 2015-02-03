@@ -122,8 +122,9 @@ __initPptokenMaps()
 def tokensStr(theTokens, shortForm=True):
     """Given a list of tokens this returns them as a string.
     If shortForm is True then the lexical string is returned.
-    If False then the PpToken representations separated by ' |' is returned.
-    e.g. ``PpToken(t="f", tt=identifier, line=True, prev=False, ?=False) | ...``"""
+    If False then the PpToken representations separated by ' | ' is returned.
+    e.g. ``PpToken(t="f", tt=identifier, line=True, prev=False, ?=False) | ...``
+    """
     assert(theTokens is not None)
     if shortForm:
         strList = [t.t for t in theTokens]

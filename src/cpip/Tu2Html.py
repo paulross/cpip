@@ -108,11 +108,21 @@ def linkToIndex(theS, theIdxPath):
             
 def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath, incItuAnchors=True):
     """Processes the PpLexer and writes the tokens to the HTML file.
-    theHtmlPath - the path to the HTML file to write.
-    theTitle - A string to go into the <title> element.
-    theCondLevel - the Conditional level to pass to theLex.ppTokens()
-    theIdxPath - path to link back to the index page.
-    incItuAnchors - boolean, if True will write anchors for lines in the ITU
+    
+    *theHtmlPath*
+        The path to the HTML file to write.
+    
+    *theTitle*
+        A string to go into the <title> element.
+    
+    *theCondLevel*
+        The Conditional level to pass to theLex.ppTokens()
+        
+    *theIdxPath*
+        Path to link back to the index page.
+        
+    *incItuAnchors*
+        boolean, if True will write anchors for lines in the ITU
         that are in this TU. If True then setItuLineNumbers returned is likely
         to be non-empty.
     
