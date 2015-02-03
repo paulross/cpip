@@ -78,7 +78,7 @@ class TestCppIncludeStdAbc(unittest.TestCase):
 
 class TestCppIncludeLookup(unittest.TestCase):
     """Tests the CppIncludeStd."""
-    # Simulate the following
+    # Simulate the following where -I usr -I usr/inc -J sys -J sys/inc
     """#include <spam.h>
 #include <inc/spam.h>
 #include "spam.h"
@@ -87,17 +87,17 @@ class TestCppIncludeLookup(unittest.TestCase):
 
     def setUp(self):
         self._incSim = IncludeHandler.CppIncludeStringIO(
-            [
+            theUsrDirs = [
                 os.path.join('usr'),
                 os.path.join('usr', 'inc'),
                 ],
-            [
+            theSysDirs = [
                 os.path.join('sys'),
                 os.path.join('sys', 'inc'),
                 ],
-            u"""Contents of src/spam.c
+            theInitialTuContent = u"""Contents of src/spam.c
 """,
-            {
+            theFilePathToContent = {
                 os.path.join('usr', 'inc', 'spam.h') : u"""User, include, spam.h
 """,
                 os.path.join('usr', 'spam.h') : u"""User, spam.h
@@ -709,6 +709,105 @@ class TestCppIncludeStdin(unittest.TestCase):
         finally:
             sys.stdin = temp
 
+class TestCppIncludeNextLookup(TestCppIncludeLookup):
+    """Tests the #include_next GCC extension."""
+    # Simulate the following where -I usr -I usr/inc -J sys -J sys/inc
+    """// Simulates the following:
+#include_next <spam.h>      /* First one found at sys/spam.h, next one found as sys/inc/spam.h */
+#include_next "spam.h"      /* First one found at usr/spam.h, next one found as usr/inc/spam.h */
+#include_next <no_next.h>   /* First one found as sys/no_next.h, next one not found */
+#include_next "no_next.h"   /* First one found as usr/no_next.h, next one not found */
+"""
+
+    def setUp(self):
+        self._incSim = IncludeHandler.CppIncludeStringIO(
+            theUsrDirs = [
+                os.path.join('usr'),
+                os.path.join('usr', 'inc'),
+                ],
+            theSysDirs = [
+                os.path.join('sys'),
+                os.path.join('sys', 'inc'),
+                ],
+            theInitialTuContent = u"""Contents of src/spam.c
+""",
+            theFilePathToContent = {
+                # spam.h
+                os.path.join('usr', 'inc', 'spam.h') : u"""User, include, spam.h
+""",
+                os.path.join('usr', 'spam.h') : u"""User, spam.h
+""",
+                os.path.join('sys', 'spam.h') : u"""System, spam.h
+""",
+                os.path.join('sys', 'inc', 'spam.h') : u"""System, include, spam.h
+""",
+                # no_next.h
+                os.path.join('usr', 'no_next.h') : u"""User, no_next.h
+""",
+                os.path.join('sys', 'no_next.h') : u"""System, no_next.h
+""",
+            }
+            )
+        self._incSim.validateCpStack()
+        self.assertEqual([], self._incSim.cpStack)
+        self.assertEqual(0, self._incSim.cpStackSize)
+        # Load the initial translation unit
+        f = self._incSim.initialTu(u'src/spam.c')
+        self._incSim.validateCpStack()
+        self.assertEqual(['src',], self._incSim.cpStack)
+        self.assertEqual(1, self._incSim.cpStackSize)
+        self.assertNotEqual(None, f)
+        # Test the return value
+        self.assertEqual('Contents of src/spam.c\n', f.fileObj.read())
+        self.assertEqual('src/spam.c', f.filePath)
+        self.assertEqual('src', f.currentPlace)
+        self.assertEqual('TU', f.origin)
+
+    def tearDown(self):
+        self.assertEqual(['src',], self._incSim.cpStack)
+        self._incSim.validateCpStack()
+        self._incSim.endInclude()
+        self._incSim.validateCpStack()
+
+    def testSysNext(self):
+        """TestCppIncludeNextLookup: Simulate #include_next <spam.h>."""
+        # #include_next <spam.h> should resolve to sys/inc/spam.h
+        f = self._incSim.includeNextHeaderName('<spam.h>')
+        self.assertNotEqual(None, f)
+        self.assertEqual(os.path.join('sys', 'inc'), self._incSim.currentPlace)
+        self.assertEqual(['src', os.path.join('sys', 'inc')], self._incSim.cpStack)
+        # Test the return value
+        self.assertEqual('System, include, spam.h\n', f.fileObj.read())
+        self.assertEqual(os.path.join('sys', 'inc', 'spam.h'), f.filePath)
+        self.assertEqual(os.path.join('sys', 'inc'), f.currentPlace)
+        self.assertEqual('sys', f.origin)
+        self._incSim.endInclude()
+
+    def testUsrNext(self):
+        """TestCppIncludeNextLookup: Simulate #include_next "spam.h"."""
+        # #include_next "spam.h" should resolve to usr/inc/spam.h
+        self.assertEqual(['src',], self._incSim.cpStack)
+        f = self._incSim.includeNextHeaderName('"spam.h"')
+        self.assertNotEqual(None, f)
+        self.assertEqual(os.path.join('usr', 'inc'), self._incSim.currentPlace)
+        self.assertEqual(['src', os.path.join('usr', 'inc')], self._incSim.cpStack)
+        # Test the return value
+        self.assertEqual('User, include, spam.h\n', f.fileObj.read())
+        self.assertEqual(os.path.join('usr', 'inc', 'spam.h'), f.filePath)
+        self.assertEqual(os.path.join('usr', 'inc'), f.currentPlace)
+        self.assertEqual('usr', f.origin)
+        self._incSim.endInclude()
+
+    def testSysNoNext(self):
+        """TestCppIncludeNextLookup: Simulate #include_next <no_next.h>."""
+        f = self._incSim._includeHcharseq('no_next.h', include_next=True)
+        self.assertTrue(f is None)
+
+    def testUsrNoNext(self):
+        """TestCppIncludeNextLookup: Simulate #include_next "no_next.h"."""
+        f = self._incSim._includeQcharseq('no_next.h', include_next=True)
+        self.assertTrue(f is None)
+
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStd)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStdAbc))
@@ -719,6 +818,8 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeFailure))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStdOs))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeStdin))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeNextLookup))
+#     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppIncludeNextLookupVanilla))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################
