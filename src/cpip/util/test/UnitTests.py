@@ -68,6 +68,7 @@ def unitTest(theVerbosity=0):
     #print globals()
     myModules = (
             'TestBufGen',
+            'TestCpp',
             'TestDictTree',
             'TestHtmlUtils',
             'TestListGen',

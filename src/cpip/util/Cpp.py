@@ -99,6 +99,7 @@ def predefinedFileObjects(args):
     retVal = []
     # First platform specific macros
     if args.call_cpp:
+#         print('Adding', invokeCppForPlatformMacros('-E', '-dM'))
         retVal.append(io.StringIO(invokeCppForPlatformMacros('-E', '-dM')))
     # Then any command line defines
     retVal.append(io.StringIO(macroDefinitionString(args.defines)))

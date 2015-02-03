@@ -1138,9 +1138,6 @@ puts("The first,second,and third items.");
 class TestIncludeHandlerBase(TestPpLexer):
     """ABC for testing #include processing."""
     def setUp(self):
-        # Translation unit contents
-        initialTuContents = """#include "spam.h"
-"""
         self._incSim = CppIncludeStringIO(
             self._pathsUsr,
             self._pathsSys,
@@ -1760,6 +1757,131 @@ ONCE
 000002: #include spam.h
   spam.h [2, 0]:  True "" "['"spam.h"', 'CP=']\""""
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+
+class TestIncludeNextHandlerBase(TestIncludeHandlerBase):
+    """Tests #include_next statements.
+    From: https://gcc.gnu.org/onlinedocs/cpp/Wrapper-Headers.html
+    "Suppose you specify -I /usr/local/include, and the list of directories to
+    search also includes /usr/include; and suppose both directories contain
+    signal.h. Ordinary #include <signal.h> finds the file under
+    /usr/local/include. If that file contains #include_next <signal.h>, it
+    starts searching after that directory, and finds the file in /usr/include.
+    
+    Child classes need to implement:
+    * self._initialTuContents
+    """
+    def __init__(self, *args):
+        self._pathsUsr = [
+                os.path.join('usr'),
+                os.path.join('usr', 'inc'),
+                ]
+        self._pathsSys = [
+                os.path.join('sys'),
+                os.path.join('sys', 'inc'),
+                ]
+        # src/spam.c
+        #   |-> usr/signal.h
+        #       |-> usr/inc/signal.h
+        #           |-> "Content of: user, include, signal.h"
+        # src/spam.c
+        #   |-> sys/signal.h
+        #       |-> sys/inc/signal.h
+        #           |-> "Content of: system, include, signal.h"
+        self._incFileMap = {
+                os.path.join('usr', 'signal.h') : u"""Content of: user, signal.h
+#include_next "signal.h"
+""",
+                os.path.join('usr', 'inc', 'signal.h') : u"""Content of: user, include, signal.h
+""",
+                os.path.join('sys', 'signal.h') : u"""Content of: system, signal.h
+#include_next <signal.h>
+""",
+                os.path.join('sys', 'inc', 'signal.h') : u"""Content of: system, include, signal.h
+""",
+            }
+        super(TestIncludeNextHandlerBase, self).__init__(*args)
+
+class TestIncludeNextHandler_Usr(TestIncludeNextHandlerBase):
+    """Tests #include_next "...".
+    """
+    def __init__(self, *args):
+        # Initial TU:
+        self._initialTuContents = u"""#include "signal.h"
+"""
+        super(TestIncludeNextHandler_Usr, self).__init__(*args)
+
+    def testSimpleIncludeNext(self):
+        """TestIncludeNextHandler_UsrSys.testSimpleIncludeNext(): Tests #include_next statements that resolve to usr/include."""
+        expectedResult = u"""Content of: user, signal.h\nContent of: user, include, signal.h\n\n\n"""
+        expGraph = """src/spam.c [0, 0]:  True "" ""
+000001: #include usr/signal.h
+  usr/signal.h [12, 8]:  True "" "['"signal.h"', 'CP=None', 'usr=usr']"
+  000002: #include usr/inc/signal.h
+    usr/inc/signal.h [15, 10]:  True "" "['"signal.h"', 'CP=None', 'usr=usr/inc']\"""".replace('\\', os.sep)
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim, gccExtensions=True)
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+#         print('FileIncludeGraph:')
+#         print(myLexer.fileIncludeGraphRoot)
+        self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+        # Do it again, this should raise
+        try:
+            result = u''.join([t.t for t in myLexer.ppTokens()])
+            self.fail('Failed to raise ExceptionPpLexerAlreadyGenerating')
+        except PpLexer.ExceptionPpLexerAlreadyGenerating:
+            pass
+
+class TestIncludeNextHandler_Sys(TestIncludeNextHandlerBase):
+    """Tests #include_next "...".
+    """
+    def __init__(self, *args):
+        # Initial TU:
+        self._initialTuContents = u"""#include <signal.h>
+"""
+        super(TestIncludeNextHandler_Sys, self).__init__(*args)
+
+    def testSimpleIncludeNext(self):
+        """TestIncludeNextHandler_UsrSys.testSimpleIncludeNext(): Tests #include_next statements that resolve to usr/include."""
+        expectedResult = u"""Content of: system, signal.h\nContent of: system, include, signal.h\n\n\n"""
+        expGraph = """src/spam.c [0, 0]:  True "" ""
+000001: #include sys/signal.h
+  sys/signal.h [12, 8]:  True "" "['<signal.h>', 'sys=sys']"
+  000002: #include sys/inc/signal.h
+    sys/inc/signal.h [15, 10]:  True "" "['<signal.h>', 'sys=sys/inc']\"""".replace('\\', os.sep)
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim, gccExtensions=True)
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        print('FileIncludeGraph:')
+        print(myLexer.fileIncludeGraphRoot)
+        self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+        # Do it again, this should raise
+        try:
+            result = u''.join([t.t for t in myLexer.ppTokens()])
+            self.fail('Failed to raise ExceptionPpLexerAlreadyGenerating')
+        except PpLexer.ExceptionPpLexerAlreadyGenerating:
+            pass
+
+class TestIncludeNextHandler_FailsNoGccExtension(TestIncludeNextHandlerBase):
+    """Tests #include_next "...".
+    """
+    def __init__(self, *args):
+        # Initial TU:
+        self._initialTuContents = u"""#include "signal.h"
+"""
+        super(TestIncludeNextHandler_FailsNoGccExtension, self).__init__(*args)
+
+    def testSimpleIncludeNextFails(self):
+        """TestIncludeNextHandler_FailsNoGccExtension.testSimpleIncludeNextFails(): Tests #include_next statements when gcc extensions not supported."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim, gccExtensions=False)
+        try:
+            u''.join([t.t for t in myLexer.ppTokens()])
+            self.fail('cpip.core.CppDiagnostic.ExceptionCppDiagnosticUndefined not raised')
+        except CppDiagnostic.ExceptionCppDiagnosticUndefined:
+            pass
 
 class TestPpLexerConditional_LowLevel(TestPpLexer):
     """Tests PpLexer low level funcitonality for conditional source code handling."""
@@ -5351,6 +5473,9 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MacroFunction))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MultipleDepth))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_HeaderGuard))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeNextHandler_Usr))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeNextHandler_Sys))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeNextHandler_FailsNoGccExtension))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditional))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalWithState))

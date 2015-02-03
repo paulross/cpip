@@ -63,10 +63,9 @@ MainJobSpec = collections.namedtuple('MainJobSpec',
         'incHandler',       # IncludeHandler.CppIncludeStdOs()
         'preDefMacros',     # A dictionary of standard predefined macros e.g. __STDC__
                             #   __DATE__, __TIME__ will be automatically allocated.
-        'preIncStr',        # String that contains the predefined #defines
-        'preIncPaths',      # List of file paths to be pre-included
-                            # NOTE: Not open file-like objects as multiprocessing
-                            # as these will fail to be deep copied.
+        'preIncFiles',      # List of file objects to be pre-included
+                            # TODO: Multiprocessing issues here? fail to be deep copied
+                            # TODO: html generation is absent
         'diagnostic',       # CppDiagnostic.PreprocessDiagnosticKeepGoing() or None
         'pragmaHandler',    # PragmaHandler.PragmaHandlerNull() or None
         'keepGoing',        # boolean
@@ -75,6 +74,7 @@ MainJobSpec = collections.namedtuple('MainJobSpec',
         'helpMap',          # map of {opt_name : (value, help), ...}. See retOptionMap().
         'includeDOT',       # boolean, whether to try to use DOT to create a dependency SVG.
         'cmdLine',          # Invocation: ' '.join(sys.argv)
+        'gccExtensions'     # Support GCC extensions to the language
     ]
 )
 
@@ -796,17 +796,14 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
             pass
     myItuToHtmlFileSet = set()
     # Create the lexer.
-    preIncFiles = []
-    if len(jobSpec.preIncStr):
-        preIncFiles.append(io.StringIO(jobSpec.preIncStr))
-    preIncFiles.extend([open(f) for f in jobSpec.preIncPaths])
     myLexer = PpLexer.PpLexer(
                     ituPath,
                     jobSpec.incHandler,
-                    preIncFiles=preIncFiles,
+                    preIncFiles=jobSpec.preIncFiles,
                     diagnostic=jobSpec.diagnostic,
                     pragmaHandler=jobSpec.pragmaHandler,
                     stdPredefMacros=jobSpec.preDefMacros,
+                    gccExtensions=jobSpec.gccExtensions
                     )
     myDestFile = os.path.join(outDir, tuFileName(ituPath))
     logging.info('TU in HTML:')
@@ -976,6 +973,9 @@ directories. Zero uses number of native CPUs [%d].
                          default=False,
                       help="""Write an DOT include dependency table and execute DOT
 on it to create a SVG file. [default: %(default)s]""")
+    parser.add_argument("-G", action="store_true", dest="gcc_extensions",
+                         default=False,
+                      help="""Support GCC extensions. Currently only #include_next. [default: %(default)s]""")
     parser.add_argument(dest="path", nargs=1, help="Path to source file.")
     Cpp.addStandardArguments(parser)
     args = parser.parse_args()
@@ -1023,16 +1023,11 @@ on it to create a SVG file. [default: %(default)s]""")
                 preDefMacros[_tup[0]] = '\n'
             else:
                 raise ValueError('Can not read macro definition: %s' % d)
-    # Add macros in psuedo pre-include
-    preIncStr = ''
-    if args.defines:
-        preIncStr = u'\n'.join(['#define ' + ' '.join(d.split('=')) for d in args.defines]) + '\n'
     # Create the job specification
     jobSpec = MainJobSpec(
         incHandler=myIncH,
-        preIncStr=preIncStr,
         preDefMacros=preDefMacros,
-        preIncPaths=args.preInc,
+        preIncFiles=Cpp.predefinedFileObjects(args),
         diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing() if args.keep_going else None,
         pragmaHandler=PragmaHandler.PragmaHandlerNull() if args.ignore_pragma else None,
         keepGoing=args.keep_going,
@@ -1041,6 +1036,7 @@ on it to create a SVG file. [default: %(default)s]""")
         helpMap=retOptionMap(parser, args),
         includeDOT=args.include_dot,
         cmdLine=' '.join(sys.argv),
+        gccExtensions=args.gcc_extensions,
     )
     if os.path.isfile(inPath):
         preprocessFileToOutput(inPath, args.output, jobSpec)

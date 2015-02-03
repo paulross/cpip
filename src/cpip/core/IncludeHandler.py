@@ -199,13 +199,15 @@ class CppIncludeStd(object):
         """
         return self._findLogic[:]
     
-    def _includeHcharseq(self, theHstr):
-        """Return the file location of a #include <...> or None on failure.
+    def _includeHcharseq(self, theHstr, include_next=False):
+        """Return the file location of a #include <...> as a FilePathOrigin
+        object or None on failure.
         If not None this also records the CP for the file."""
         if not self.canInclude():
             raise ExceptionCppInclude('_includeHcharseq() with CP stack: %s' % self._cpStack)
         foundFile = None
-        for aSearchPath in self._sys:
+        pathS = self._sys[1:] if include_next else self._sys
+        for aSearchPath in pathS:
             foundFile = self._searchFile(theHstr, aSearchPath)
             if foundFile is not None:
                 foundFile = foundFile._replace(origin='sys')
@@ -214,25 +216,29 @@ class CppIncludeStd(object):
         # Record current place
         if foundFile is not None:
             self.cpStackPush(foundFile)
-            #self._cpStack.append(foundFile.currentPlace)
-        else:
+        elif not include_next:
             self.cpStackPush(None)
-            #self._cpStack.append(None)
             self._findLogic.append('sys=None')
         return foundFile
 
-    def _includeQcharseq(self, theQstr):
-        """Return the file location of a #include "..." or None on failure.
+    def _includeQcharseq(self, theQstr, include_next=False):
+        """Return the file location of a #include "..." as a FilePathOrigin
+        object or None on failure.
         If not None this also records the CP for the file."""
         if not self.canInclude():
             raise ExceptionCppInclude('_includeQcharseq() with CP stack: %s' % self._cpStack)
-        foundFile = self._searchFile(theQstr, self._cpStack[-1])
+        if include_next:
+            # Do not search the current place when using GCC extension #include_next
+            foundFile = None
+        else:
+            foundFile = self._searchFile(theQstr, self._cpStack[-1])
         if foundFile is not None:
             foundFile = foundFile._replace(origin='CP')
             self._findLogic.append('CP=%s' % self._cpStack[-1])
         else:
             self._findLogic.append('CP=None')
-            for aSearchPath in self._usr:
+            pathS = self._usr[1:] if include_next else self._usr
+            for aSearchPath in pathS:
                 foundFile = self._searchFile(theQstr, aSearchPath)
                 if foundFile is not None:
                     foundFile = foundFile._replace(origin='usr')
@@ -240,11 +246,10 @@ class CppIncludeStd(object):
                     break
         if foundFile is not None:
             self.cpStackPush(foundFile)
-            #self._cpStack.append(foundFile.currentPlace)
-        else:
+        elif not include_next:
             # ISO/IEC ISO/IEC 14882:1998(E) 16.2 Source file inclusion [cpp.include]
             # Note 3 says q-char-sequence falls back to h-char-sequence
-            #print 'HI'
+            # We do not do this fallback for #include_next GCC extensions
             self._findLogic.append('usr=None')
             foundFile = self._includeHcharseq(theQstr)
         return foundFile
@@ -260,7 +265,25 @@ class CppIncludeStd(object):
         if theStr.startswith('"') and theStr.endswith('"'):
             return self._includeQcharseq(theStr[1:-1])
         else:
-            raise ExceptionCppInclude('_includeHcharseq() with CP stack: %s' % self._cpStack)
+            raise ExceptionCppInclude('includeHeaderName() unrecognised string %s with CP stack: %s' \
+                                      % ( theStr, self._cpStack))
+
+    def includeNextHeaderName(self, theStr):
+        """Return the file location of a #include_next header-name where the
+        header-name is a pp-token either a <h-char-sequence> or a
+        "q-char-sequence" (including delimiters).
+        
+        This is a GCC extension, see: https://gcc.gnu.org/onlinedocs/cpp/Wrapper-Headers.html
+        
+        If not None return value this also records the CP for the file."""
+        self._findLogic = [theStr,]
+        if theStr.startswith('<') and theStr.endswith('>'):
+            return self._includeHcharseq(theStr[1:-1], include_next=True)
+        if theStr.startswith('"') and theStr.endswith('"'):
+            return self._includeQcharseq(theStr[1:-1], include_next=True)
+        else:
+            raise ExceptionCppInclude('includeNextHeaderName() unrecognised string %s with CP stack: %s' \
+                                      % ( theStr, self._cpStack))
 
     def endInclude(self):
         """Notify end of #include'd file. This pops the CP stack."""

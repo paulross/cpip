@@ -209,6 +209,7 @@ class PpLexer(object):
                  pragmaHandler=None,
                  stdPredefMacros=None,
                  autoDefineDateTime=True,
+                 gccExtensions=False,
                  ):
         """Create a translation unit tokeniser.
         tuFileId        - A file ID that will be given to the include
@@ -264,6 +265,7 @@ class PpLexer(object):
         self._tuFileId = tuFileId
         self._includeHandler = includeHandler
         self._preIncFiles = preIncFiles or []
+        self._gccExtensions = gccExtensions
         # Create the class members
         self._diagnostic = diagnostic or CppDiagnostic.PreprocessDiagnosticStd()
         self._pragmaHandler = pragmaHandler
@@ -290,6 +292,8 @@ class PpLexer(object):
             # Not in the standard but is often seen
             'warning'   : self._cppWarning,
         }
+        if self._gccExtensions:
+            self._KEYWORD_DESPATCH['include_next'] = self._cppIncludeNext
         # Sanity check
         for aType in PREPROCESSING_DIRECTIVES:
             assert(aType in self._KEYWORD_DESPATCH)
@@ -1172,7 +1176,7 @@ class PpLexer(object):
     # Section: Handling file inclusion.
     #==================================
     def _cppInclude(self, theGen, theFlc):
-        """Handles a Include directive. This handles:
+        """Handles an #include directive. This handles:
         # include <h-char-sequence> new-line
         # include "q-char-sequence" new-line
         This gathers a list of PpTokens up to, and including, a newline with
@@ -1184,6 +1188,24 @@ class PpLexer(object):
         FWIW cpp.exe does not explore #include statements when they are
         conditional so will not error on unreachable files if they
         are conditionally included. 
+        """
+        return self._cppIncludeGeneric(theGen, theFlc,
+                                       self._includeHandler.includeHeaderName)
+        
+    def _cppIncludeNext(self, theGen, theFlc):
+        """Handles an #include_next GCC extension.
+        This behaves in a very similar fashion to self._cppInclude but calls
+        includeNextHeaderName() on the include handler
+        """
+        assert self._gccExtensions, \
+            'Logic error: despatcher called _cppIncludeNext() but self._gccExtensions False'
+        return self._cppIncludeGeneric(theGen, theFlc,
+                                       self._includeHandler.includeNextHeaderName)
+        
+    def _cppIncludeGeneric(self, theGen, theFlc, theFileIncludeFunction):
+        """Handles the target of an #include or #include_next directive.
+        theFileIncludeFunction is the function to call to resolve the target to
+        an actual file.
         """
         # NOTE: Error on #include\n
         # <stdin>:1:13: #include expects "FILENAME" or <FILENAME>
@@ -1201,7 +1223,7 @@ class PpLexer(object):
                 # unless the conditional level requires us to process it 
                 if self._condStack.isTrue() or self._condLevel > 1:
                     try:
-                        myFpo = self._includeHandler.includeHeaderName(myHeaderNameTok.t)
+                        myFpo = theFileIncludeFunction(myHeaderNameTok.t)
                         logging.debug('Include search for %s finds %s', myHeaderNameTok.t, myFpo)
                         if myFpo is not None:
                             # Note: This call also handles self._fileStack.append()
