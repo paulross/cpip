@@ -178,15 +178,31 @@ def writeDictTreeAsTable(theS, theDt, tableAttrs, includeKeyTail):
     
 def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
     """Writes file paths as a table, for example as a directory structure.
-    valueType - The type of the value; None, |'list' | 'set'
-    theKvS - A list of pairs (file_path, value).
-    tableStyle - The style used for the table.
-    fnTd - A callback function that is executed for a <td> element when
+    
+    *valueType*
+        The type of the value; ``None, |'list' | 'set'``
+        
+    *theKvS*
+        A list of pairs ``(file_path, value)``.
+    
+    *tableStyle*
+        The style used for the table.
+        
+    *fnTd*
+        A callback function that is executed for a ``<td>`` element when
         there is a non-None value. This is called with the following arguments:
-            theS - The HTML stream.
-            attrs - A map of attrs that include the rowspan/colspan for the <td>
-            k - The key as a list of path components.
-            v - The value given by the caller.
+        
+            *theS*
+                The HTML stream.
+                
+            *attrs*
+                A map of attrs that include the rowspan/colspan for the <td>
+                
+            *k*
+                The key as a list of path components.
+                
+            *v*
+                The value given by the caller.
     """
     myDict = DictTree.DictTreeHtmlTable(valueType)
     for k, v in theKvS:

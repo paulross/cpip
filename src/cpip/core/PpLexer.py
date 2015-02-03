@@ -163,6 +163,23 @@ class PpLexer(object):
         length list of PpTokens the last of which will be
         a newline token.
     
+    *stdPredefMacros*
+        A dictionary of Standard pre-defined macros.
+        See for example:
+        ISO/IEC 9899:1999 (E) 6.10.8 "Predefined macro names",
+        ISO/IEC 14882:1998 (E) 16.8 "Predefined macro names"
+        and N2800=08-0310 16.8 "Predefined macro names".
+        The macros ``__DATE__`` and ``__TIME__`` will be automatically
+        updated to current locale date/time (see autoDefineDateTime).
+        
+    *autoDefineDateTime*
+        If True then the macros ``__DATE__`` and ``__TIME__`` will
+        be automatically updated to current locale date/time.
+        Mostly this is used for testing.
+        
+    *gccExtensions*
+        Support GCC extensions. Currently just ``#include_next`` is supported.
+
     TODO: Set flags here rather than supplying them to a generator?
     This would make the API simply the ctor and ppTokens/next().
     Flags would be:
@@ -246,6 +263,8 @@ class PpLexer(object):
         autoDefineDateTime - If True then the macros __DATE__ and __TIME__ will
                                 be automatically updated to current locale date/time.
                                 Mostly this is used for testing.
+        gccExtensions - Support GCC extensions. Currently just #include_next
+        
         TODO: Set flags here rather than supplying them to a generator?
         This would make the API simply the ctor and ppTokens/next().
         Flags would be:
