@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/errno.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/errno.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX0VSUk5PX0hfMA__"><span class="b">_LINUX_ERRNO_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX0VSUk5PX0hfMA__"><span class="b">_LINUX_ERRNO_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">uapi</span><span class="f">/</span><span class="b">linux</span><span class="f">/</span><span class="b">errno</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="Maybe">       5:</span> 
+<a name="6" /><span class="Maybe">       6:</span> 
+<a name="7" /><span class="Maybe">       7:</span> <span class="k">/*</span>
+<a name="8" /><span class="Maybe">       8:</span> <span class="k"> * These should never be seen by user programs.  To return one of ERESTART*</span>
+<a name="9" /><span class="Maybe">       9:</span> <span class="k"> * codes, signal_pending() MUST be set.  Note that ptrace can observe these</span>
+<a name="10" /><span class="Maybe">      10:</span> <span class="k"> * at syscall exit tracing, but they will never be left for the debugged user</span>
+<a name="11" /><span class="Maybe">      11:</span> <span class="k"> * process to see.</span>
+<a name="12" /><span class="Maybe">      12:</span> <span class="k"> */</span>
+<a name="13" /><span class="Maybe">      13:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RVJFU1RBUlRTWVNfMA__"><span class="b">ERESTARTSYS</span></a>    <span class="c">512</span>
+<a name="14" /><span class="Maybe">      14:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_RVJFU1RBUlROT0lOVFJfMA__"><span class="b">ERESTARTNOINTR</span></a>    <span class="c">513</span>
+<a name="15" /><span class="Maybe">      15:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RVJFU1RBUlROT0hBTkRfMA__"><span class="b">ERESTARTNOHAND</span></a>    <span class="c">514</span>    <span class="k">/* restart if no handler.. */</span>
+<a name="16" /><span class="Maybe">      16:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RU5PSU9DVExDTURfMA__"><span class="b">ENOIOCTLCMD</span></a>    <span class="c">515</span>    <span class="k">/* No ioctl command */</span>
+<a name="17" /><span class="Maybe">      17:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RVJFU1RBUlRfUkVTVEFSVEJMT0NLXzA_"><span class="b">ERESTART_RESTARTBLOCK</span></a> <span class="c">516</span> <span class="k">/* restart by calling sys_restart_syscall */</span>
+<a name="18" /><span class="Maybe">      18:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RVBST0JFX0RFRkVSXzA_"><span class="b">EPROBE_DEFER</span></a>    <span class="c">517</span>    <span class="k">/* Driver requests probe retry */</span>
+<a name="19" /><span class="Maybe">      19:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RU9QRU5TVEFMRV8w"><span class="b">EOPENSTALE</span></a>    <span class="c">518</span>    <span class="k">/* open found a stale dentry */</span>
+<a name="20" /><span class="Maybe">      20:</span> 
+<a name="21" /><span class="Maybe">      21:</span> <span class="k">/* Defined for the NFSv3 protocol */</span>
+<a name="22" /><span class="Maybe">      22:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RUJBREhBTkRMRV8w"><span class="b">EBADHANDLE</span></a>    <span class="c">521</span>    <span class="k">/* Illegal NFS file handle */</span>
+<a name="23" /><span class="Maybe">      23:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RU5PVFNZTkNfMA__"><span class="b">ENOTSYNC</span></a>    <span class="c">522</span>    <span class="k">/* Update synchronization mismatch */</span>
+<a name="24" /><span class="Maybe">      24:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RUJBRENPT0tJRV8w"><span class="b">EBADCOOKIE</span></a>    <span class="c">523</span>    <span class="k">/* Cookie is stale */</span>
+<a name="25" /><span class="Maybe">      25:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RU5PVFNVUFBfMA__"><span class="b">ENOTSUPP</span></a>    <span class="c">524</span>    <span class="k">/* Operation is not supported */</span>
+<a name="26" /><span class="Maybe">      26:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RVRPT1NNQUxMXzA_"><span class="b">ETOOSMALL</span></a>    <span class="c">525</span>    <span class="k">/* Buffer or request is too small */</span>
+<a name="27" /><span class="Maybe">      27:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RVNFUlZFUkZBVUxUXzA_"><span class="b">ESERVERFAULT</span></a>    <span class="c">526</span>    <span class="k">/* An untranslatable error occurred */</span>
+<a name="28" /><span class="Maybe">      28:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RUJBRFRZUEVfMA__"><span class="b">EBADTYPE</span></a>    <span class="c">527</span>    <span class="k">/* Type not supported by server */</span>
+<a name="29" /><span class="Maybe">      29:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RUpVS0VCT1hfMA__"><span class="b">EJUKEBOX</span></a>    <span class="c">528</span>    <span class="k">/* Request initiated, but will not complete before timeout */</span>
+<a name="30" /><span class="Maybe">      30:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RUlPQ0JRVUVVRURfMA__"><span class="b">EIOCBQUEUED</span></a>    <span class="c">529</span>    <span class="k">/* iocb queued, will get completion event */</span>
+<a name="31" /><span class="Maybe">      31:</span> 
+<a name="32" /><span class="True">      32:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="33" /><span class="True">      33:</span> </pre>
+  </body>
+</html>

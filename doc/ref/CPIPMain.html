@@ -56,6 +56,7 @@
             
   <div class="section" id="module-cpip.CPIPMain">
 <span id="cpipmain"></span><span id="cpip-ref-cpipmain"></span><h1>CPIPMain<a class="headerlink" href="#module-cpip.CPIPMain" title="Permalink to this headline">¶</a></h1>
+<p>cpip.cpp &#8211; Preprocess the file or the files in the directory.</p>
 <dl class="class">
 <dt id="cpip.CPIPMain.FigVisitorDot">
 <em class="property">class </em><tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">FigVisitorDot</tt><big>(</big><em>lenPrefix=0</em><big>)</big><a class="headerlink" href="#cpip.CPIPMain.FigVisitorDot" title="Permalink to this definition">¶</a></dt>
@@ -83,35 +84,41 @@
 <dl class="class">
 <dt id="cpip.CPIPMain.MainJobSpec">
 <em class="property">class </em><tt class="descclassname">cpip.CPIPMain.</tt><tt class="descname">MainJobSpec</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec" title="Permalink to this definition">¶</a></dt>
-<dd><p>MainJobSpec(incHandler, preDefMacros, preIncStr, preIncPaths, diagnostic, pragmaHandler, keepGoing, conditionalLevel, dumpList, helpMap, includeDOT, cmdLine)</p>
+<dd><p>MainJobSpec(incHandler, preDefMacros, preIncFiles, diagnostic, pragmaHandler, keepGoing, conditionalLevel, dumpList, helpMap, includeDOT, cmdLine, gccExtensions)</p>
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.cmdLine">
 <tt class="descname">cmdLine</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.cmdLine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 11</p>
+<dd><p>Alias for field number 10</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.conditionalLevel">
 <tt class="descname">conditionalLevel</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.conditionalLevel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 7</p>
+<dd><p>Alias for field number 6</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.diagnostic">
 <tt class="descname">diagnostic</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.diagnostic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 4</p>
+<dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.dumpList">
 <tt class="descname">dumpList</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.dumpList" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 8</p>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.CPIPMain.MainJobSpec.gccExtensions">
+<tt class="descname">gccExtensions</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.gccExtensions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 11</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.helpMap">
 <tt class="descname">helpMap</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.helpMap" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 9</p>
+<dd><p>Alias for field number 8</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -123,19 +130,19 @@
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.includeDOT">
 <tt class="descname">includeDOT</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.includeDOT" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 10</p>
+<dd><p>Alias for field number 9</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.keepGoing">
 <tt class="descname">keepGoing</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.keepGoing" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 6</p>
+<dd><p>Alias for field number 5</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="cpip.CPIPMain.MainJobSpec.pragmaHandler">
 <tt class="descname">pragmaHandler</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.pragmaHandler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 5</p>
+<dd><p>Alias for field number 4</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -145,14 +152,8 @@
 </dd></dl>
 
 <dl class="attribute">
-<dt id="cpip.CPIPMain.MainJobSpec.preIncPaths">
-<tt class="descname">preIncPaths</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.preIncPaths" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for field number 3</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="cpip.CPIPMain.MainJobSpec.preIncStr">
-<tt class="descname">preIncStr</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.preIncStr" title="Permalink to this definition">¶</a></dt>
+<dt id="cpip.CPIPMain.MainJobSpec.preIncFiles">
+<tt class="descname">preIncFiles</tt><a class="headerlink" href="#cpip.CPIPMain.MainJobSpec.preIncFiles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 

@@ -189,6 +189,16 @@ If not None return value this also records the CP for the file.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStd.includeNextHeaderName">
+<tt class="descname">includeNextHeaderName</tt><big>(</big><em>theStr</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.includeNextHeaderName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file location of a #include_next header-name where the
+header-name is a pp-token either a &lt;h-char-sequence&gt; or a
+&#8220;q-char-sequence&#8221; (including delimiters).</p>
+<p>This is a GCC extension, see: <a class="reference external" href="https://gcc.gnu.org/onlinedocs/cpp/Wrapper-Headers.html">https://gcc.gnu.org/onlinedocs/cpp/Wrapper-Headers.html</a></p>
+<p>If not None return value this also records the CP for the file.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="cpip.core.IncludeHandler.CppIncludeStd.initialTu">
 <tt class="descname">initialTu</tt><big>(</big><em>theTuIdentifier</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStd.initialTu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an Translation Unit Identifier this should return a
@@ -217,6 +227,19 @@ a non-None.</p>
 <dl class="method">
 <dt id="cpip.core.IncludeHandler.CppIncludeStdOs.initialTu">
 <tt class="descname">initialTu</tt><big>(</big><em>theTuPath</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStdOs.initialTu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given an path as a string this returns the
+class FilePathOrigin or None for the initial translation unit</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.core.IncludeHandler.CppIncludeStdin">
+<em class="property">class </em><tt class="descclassname">cpip.core.IncludeHandler.</tt><tt class="descname">CppIncludeStdin</tt><big>(</big><em>theUsrDirs</em>, <em>theSysDirs</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStdin" title="Permalink to this definition">¶</a></dt>
+<dd><p>This reads stdin for the ITU but delegates _searchFile() to the OS file system call.</p>
+<dl class="method">
+<dt id="cpip.core.IncludeHandler.CppIncludeStdin.initialTu">
+<tt class="descname">initialTu</tt><big>(</big><em>theTuPath</em><big>)</big><a class="headerlink" href="#cpip.core.IncludeHandler.CppIncludeStdin.initialTu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given an path as a string this returns the
 class FilePathOrigin or None for the initial translation unit</p>
 </dd></dl>

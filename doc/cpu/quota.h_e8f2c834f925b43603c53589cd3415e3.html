@@ -1,0 +1,428 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/quota.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/quota.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> * Copyright (c) 1982, 1986 Regents of the University of California.</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> * All rights reserved.</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> *</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * This code is derived from software contributed to Berkeley by</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> * Robert Elz at The University of Melbourne.</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> *</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> * Redistribution and use in source and binary forms, with or without</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> * modification, are permitted provided that the following conditions</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * are met:</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> * 1. Redistributions of source code must retain the above copyright</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> *    notice, this list of conditions and the following disclaimer.</span>
+<a name="13" /><span class="True">      13:</span> <span class="k"> * 2. Redistributions in binary form must reproduce the above copyright</span>
+<a name="14" /><span class="True">      14:</span> <span class="k"> *    notice, this list of conditions and the following disclaimer in the</span>
+<a name="15" /><span class="True">      15:</span> <span class="k"> *    documentation and/or other materials provided with the distribution.</span>
+<a name="16" /><span class="True">      16:</span> <span class="k"> * 3. Neither the name of the University nor the names of its contributors</span>
+<a name="17" /><span class="True">      17:</span> <span class="k"> *    may be used to endorse or promote products derived from this software</span>
+<a name="18" /><span class="True">      18:</span> <span class="k"> *    without specific prior written permission.</span>
+<a name="19" /><span class="True">      19:</span> <span class="k"> *</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&apos;&apos; AND</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</span>
+<a name="23" /><span class="True">      23:</span> <span class="k"> * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE</span>
+<a name="24" /><span class="True">      24:</span> <span class="k"> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</span>
+<a name="25" /><span class="True">      25:</span> <span class="k"> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</span>
+<a name="26" /><span class="True">      26:</span> <span class="k"> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</span>
+<a name="27" /><span class="True">      27:</span> <span class="k"> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</span>
+<a name="28" /><span class="True">      28:</span> <span class="k"> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</span>
+<a name="29" /><span class="True">      29:</span> <span class="k"> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</span>
+<a name="30" /><span class="True">      30:</span> <span class="k"> * SUCH DAMAGE.</span>
+<a name="31" /><span class="True">      31:</span> <span class="k"> */</span>
+<a name="32" /><span class="True">      32:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX1FVT1RBX18w"><span class="b">_LINUX_QUOTA_</span></a>
+<a name="33" /><span class="True">      33:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX1FVT1RBX18w"><span class="b">_LINUX_QUOTA_</span></a>
+<a name="34" /><span class="True">      34:</span> 
+<a name="35" /><span class="True">      35:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">list</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="36" /><span class="True">      36:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">mutex</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="37" /><span class="True">      37:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">rwsem</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="38" /><span class="True">      38:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">spinlock</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="39" /><span class="True">      39:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">wait</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="40" /><span class="True">      40:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">percpu_counter</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="41" /><span class="True">      41:</span> 
+<a name="42" /><span class="True">      42:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">dqblk_xfs</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="43" /><span class="True">      43:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">dqblk_v1</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="44" /><span class="True">      44:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">dqblk_v2</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="45" /><span class="True">      45:</span> 
+<a name="46" /><span class="True">      46:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">atomic</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="47" /><span class="True">      47:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">uidgid</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="48" /><span class="True">      48:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">projid</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="49" /><span class="True">      49:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">uapi</span><span class="f">/</span><span class="b">linux</span><span class="f">/</span><span class="b">quota</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="50" /><span class="True">      50:</span> 
+<a name="51" /><span class="True">      51:</span> <span class="f">#</span><span class="n">undef</span> <a href="cpu.c_macros_noref.html#_VVNSUVVPVEFfMA__"><span class="b">USRQUOTA</span></a>
+<a name="52" /><span class="True">      52:</span> <span class="f">#</span><span class="n">undef</span> <a href="cpu.c_macros_noref.html#_R1JQUVVPVEFfMA__"><span class="b">GRPQUOTA</span></a>
+<a name="53" /><span class="True">      53:</span> <span class="m">enum</span> <span class="b">quota_type</span> <span class="f">{</span>
+<a name="54" /><span class="True">      54:</span>     <a href="cpu.c_macros_noref.html#_VVNSUVVPVEFfMA__"><span class="b">USRQUOTA</span></a> <span class="f">=</span> <span class="c">0</span><span class="f">,</span>        <span class="k">/* element used for user quotas */</span>
+<a name="55" /><span class="True">      55:</span>     <a href="cpu.c_macros_noref.html#_R1JQUVVPVEFfMA__"><span class="b">GRPQUOTA</span></a> <span class="f">=</span> <span class="c">1</span><span class="f">,</span>        <span class="k">/* element used for group quotas */</span>
+<a name="56" /><span class="True">      56:</span>     <span class="b">PRJQUOTA</span> <span class="f">=</span> <span class="c">2</span><span class="f">,</span>        <span class="k">/* element used for project quotas */</span>
+<a name="57" /><span class="True">      57:</span> <span class="f">}</span><span class="f">;</span>
+<a name="58" /><span class="True">      58:</span> 
+<a name="59" /><span class="True">      59:</span> <span class="m">typedef</span> <span class="b">__kernel_uid32_t</span> <span class="b">qid_t</span><span class="f">;</span> <span class="k">/* Type in which we store ids in memory */</span>
+<a name="60" /><span class="True">      60:</span> <span class="m">typedef</span> <span class="m">long</span> <span class="m">long</span> <span class="b">qsize_t</span><span class="f">;</span>    <span class="k">/* Type in which we store sizes */</span>
+<a name="61" /><span class="True">      61:</span> 
+<a name="62" /><span class="True">      62:</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="f">{</span>            <span class="k">/* Type in which we store the quota identifier */</span>
+<a name="63" /><span class="True">      63:</span>     <span class="m">union</span> <span class="f">{</span>
+<a name="64" /><span class="True">      64:</span>         <span class="b">kuid_t</span> <span class="b">uid</span><span class="f">;</span>
+<a name="65" /><span class="True">      65:</span>         <span class="b">kgid_t</span> <span class="b">gid</span><span class="f">;</span>
+<a name="66" /><span class="True">      66:</span>         <span class="b">kprojid_t</span> <span class="b">projid</span><span class="f">;</span>
+<a name="67" /><span class="True">      67:</span>     <span class="f">}</span><span class="f">;</span>
+<a name="68" /><span class="True">      68:</span>     <span class="m">enum</span> <span class="b">quota_type</span> <span class="b">type</span><span class="f">;</span>  <span class="k">/* USRQUOTA (uid) or GRPQUOTA (gid) or PRJQUOTA (projid) */</span>
+<a name="69" /><span class="True">      69:</span> <span class="f">}</span><span class="f">;</span>
+<a name="70" /><span class="True">      70:</span> 
+<a name="71" /><span class="True">      71:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">qid_eq</span><span class="f">(</span><span class="m">struct</span> <span class="b">kqid</span> <span class="b">left</span><span class="f">,</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">right</span><span class="f">)</span><span class="f">;</span>
+<a name="72" /><span class="True">      72:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">qid_lt</span><span class="f">(</span><span class="m">struct</span> <span class="b">kqid</span> <span class="b">left</span><span class="f">,</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">right</span><span class="f">)</span><span class="f">;</span>
+<a name="73" /><span class="True">      73:</span> <span class="m">extern</span> <span class="b">qid_t</span> <span class="b">from_kqid</span><span class="f">(</span><span class="m">struct</span> <span class="b">user_namespace</span> <span class="f">*</span><span class="b">to</span><span class="f">,</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">qid</span><span class="f">)</span><span class="f">;</span>
+<a name="74" /><span class="True">      74:</span> <span class="m">extern</span> <span class="b">qid_t</span> <span class="b">from_kqid_munged</span><span class="f">(</span><span class="m">struct</span> <span class="b">user_namespace</span> <span class="f">*</span><span class="b">to</span><span class="f">,</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">qid</span><span class="f">)</span><span class="f">;</span>
+<a name="75" /><span class="True">      75:</span> <span class="m">extern</span> <span class="m">bool</span> <span class="b">qid_valid</span><span class="f">(</span><span class="m">struct</span> <span class="b">kqid</span> <span class="b">qid</span><span class="f">)</span><span class="f">;</span>
+<a name="76" /><span class="True">      76:</span> 
+<a name="77" /><span class="True">      77:</span> <span class="k">/**</span>
+<a name="78" /><span class="True">      78:</span> <span class="k"> *    make_kqid - Map a user-namespace, type, qid tuple into a kqid.</span>
+<a name="79" /><span class="True">      79:</span> <span class="k"> *    @from: User namespace that the qid is in</span>
+<a name="80" /><span class="True">      80:</span> <span class="k"> *    @type: The type of quota</span>
+<a name="81" /><span class="True">      81:</span> <span class="k"> *    @qid: Quota identifier</span>
+<a name="82" /><span class="True">      82:</span> <span class="k"> *</span>
+<a name="83" /><span class="True">      83:</span> <span class="k"> *    Maps a user-namespace, type qid tuple into a kernel internal</span>
+<a name="84" /><span class="True">      84:</span> <span class="k"> *    kqid, and returns that kqid.</span>
+<a name="85" /><span class="True">      85:</span> <span class="k"> *</span>
+<a name="86" /><span class="True">      86:</span> <span class="k"> *    When there is no mapping defined for the user-namespace, type,</span>
+<a name="87" /><span class="True">      87:</span> <span class="k"> *    qid tuple an invalid kqid is returned.  Callers are expected to</span>
+<a name="88" /><span class="True">      88:</span> <span class="k"> *    test for and handle handle invalid kqids being returned.</span>
+<a name="89" /><span class="True">      89:</span> <span class="k"> *    Invalid kqids may be tested for using qid_valid().</span>
+<a name="90" /><span class="True">      90:</span> <span class="k"> */</span>
+<a name="91" /><span class="True">      91:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">make_kqid</span><span class="f">(</span><span class="m">struct</span> <span class="b">user_namespace</span> <span class="f">*</span><span class="b">from</span><span class="f">,</span>
+<a name="92" /><span class="True">      92:</span>                     <span class="m">enum</span> <span class="b">quota_type</span> <span class="b">type</span><span class="f">,</span> <span class="b">qid_t</span> <span class="b">qid</span><span class="f">)</span>
+<a name="93" /><span class="True">      93:</span> <span class="f">{</span>
+<a name="94" /><span class="True">      94:</span>     <span class="m">struct</span> <span class="b">kqid</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="95" /><span class="True">      95:</span> 
+<a name="96" /><span class="True">      96:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">type</span> <span class="f">=</span> <span class="b">type</span><span class="f">;</span>
+<a name="97" /><span class="True">      97:</span>     <span class="m">switch</span> <span class="f">(</span><span class="b">type</span><span class="f">)</span> <span class="f">{</span>
+<a name="98" /><span class="True">      98:</span>     <span class="m">case</span> <a href="cpu.c_macros_noref.html#_VVNSUVVPVEFfMA__"><span class="b">USRQUOTA</span></a><span class="f">:</span>
+<a name="99" /><span class="True">      99:</span>         <span class="b">kqid</span><span class="f">.</span><span class="b">uid</span> <span class="f">=</span> <span class="b">make_kuid</span><span class="f">(</span><span class="b">from</span><span class="f">,</span> <span class="b">qid</span><span class="f">)</span><span class="f">;</span>
+<a name="100" /><span class="True">     100:</span>         <span class="m">break</span><span class="f">;</span>
+<a name="101" /><span class="True">     101:</span>     <span class="m">case</span> <a href="cpu.c_macros_noref.html#_R1JQUVVPVEFfMA__"><span class="b">GRPQUOTA</span></a><span class="f">:</span>
+<a name="102" /><span class="True">     102:</span>         <span class="b">kqid</span><span class="f">.</span><span class="b">gid</span> <span class="f">=</span> <span class="b">make_kgid</span><span class="f">(</span><span class="b">from</span><span class="f">,</span> <span class="b">qid</span><span class="f">)</span><span class="f">;</span>
+<a name="103" /><span class="True">     103:</span>         <span class="m">break</span><span class="f">;</span>
+<a name="104" /><span class="True">     104:</span>     <span class="m">case</span> <span class="b">PRJQUOTA</span><span class="f">:</span>
+<a name="105" /><span class="True">     105:</span>         <span class="b">kqid</span><span class="f">.</span><span class="b">projid</span> <span class="f">=</span> <span class="b">make_kprojid</span><span class="f">(</span><span class="b">from</span><span class="f">,</span> <span class="b">qid</span><span class="f">)</span><span class="f">;</span>
+<a name="106" /><span class="True">     106:</span>         <span class="m">break</span><span class="f">;</span>
+<a name="107" /><span class="True">     107:</span>     <span class="m">default</span><span class="f">:</span>
+<a name="108" /><span class="True">     108:</span>         <a href="cpu.c_macros_ref.html#_QlVHXzA_"><span class="b">BUG</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="109" /><span class="True">     109:</span>     <span class="f">}</span>
+<a name="110" /><span class="True">     110:</span>     <span class="m">return</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="111" /><span class="True">     111:</span> <span class="f">}</span>
+<a name="112" /><span class="True">     112:</span> 
+<a name="113" /><span class="True">     113:</span> <span class="k">/**</span>
+<a name="114" /><span class="True">     114:</span> <span class="k"> *    make_kqid_invalid - Explicitly make an invalid kqid</span>
+<a name="115" /><span class="True">     115:</span> <span class="k"> *    @type: The type of quota identifier</span>
+<a name="116" /><span class="True">     116:</span> <span class="k"> *</span>
+<a name="117" /><span class="True">     117:</span> <span class="k"> *    Returns an invalid kqid with the specified type.</span>
+<a name="118" /><span class="True">     118:</span> <span class="k"> */</span>
+<a name="119" /><span class="True">     119:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">make_kqid_invalid</span><span class="f">(</span><span class="m">enum</span> <span class="b">quota_type</span> <span class="b">type</span><span class="f">)</span>
+<a name="120" /><span class="True">     120:</span> <span class="f">{</span>
+<a name="121" /><span class="True">     121:</span>     <span class="m">struct</span> <span class="b">kqid</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="122" /><span class="True">     122:</span> 
+<a name="123" /><span class="True">     123:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">type</span> <span class="f">=</span> <span class="b">type</span><span class="f">;</span>
+<a name="124" /><span class="True">     124:</span>     <span class="m">switch</span> <span class="f">(</span><span class="b">type</span><span class="f">)</span> <span class="f">{</span>
+<a name="125" /><span class="True">     125:</span>     <span class="m">case</span> <a href="cpu.c_macros_noref.html#_VVNSUVVPVEFfMA__"><span class="b">USRQUOTA</span></a><span class="f">:</span>
+<a name="126" /><span class="True">     126:</span>         <span class="b">kqid</span><span class="f">.</span><span class="b">uid</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_SU5WQUxJRF9VSURfMA__"><span class="b">INVALID_UID</span></a><span class="f">;</span>
+<a name="127" /><span class="True">     127:</span>         <span class="m">break</span><span class="f">;</span>
+<a name="128" /><span class="True">     128:</span>     <span class="m">case</span> <a href="cpu.c_macros_noref.html#_R1JQUVVPVEFfMA__"><span class="b">GRPQUOTA</span></a><span class="f">:</span>
+<a name="129" /><span class="True">     129:</span>         <span class="b">kqid</span><span class="f">.</span><span class="b">gid</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_SU5WQUxJRF9HSURfMA__"><span class="b">INVALID_GID</span></a><span class="f">;</span>
+<a name="130" /><span class="True">     130:</span>         <span class="m">break</span><span class="f">;</span>
+<a name="131" /><span class="True">     131:</span>     <span class="m">case</span> <span class="b">PRJQUOTA</span><span class="f">:</span>
+<a name="132" /><span class="True">     132:</span>         <span class="b">kqid</span><span class="f">.</span><span class="b">projid</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_SU5WQUxJRF9QUk9KSURfMA__"><span class="b">INVALID_PROJID</span></a><span class="f">;</span>
+<a name="133" /><span class="True">     133:</span>         <span class="m">break</span><span class="f">;</span>
+<a name="134" /><span class="True">     134:</span>     <span class="m">default</span><span class="f">:</span>
+<a name="135" /><span class="True">     135:</span>         <a href="cpu.c_macros_ref.html#_QlVHXzA_"><span class="b">BUG</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="136" /><span class="True">     136:</span>     <span class="f">}</span>
+<a name="137" /><span class="True">     137:</span>     <span class="m">return</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="138" /><span class="True">     138:</span> <span class="f">}</span>
+<a name="139" /><span class="True">     139:</span> 
+<a name="140" /><span class="True">     140:</span> <span class="k">/**</span>
+<a name="141" /><span class="True">     141:</span> <span class="k"> *    make_kqid_uid - Make a kqid from a kuid</span>
+<a name="142" /><span class="True">     142:</span> <span class="k"> *    @uid: The kuid to make the quota identifier from</span>
+<a name="143" /><span class="True">     143:</span> <span class="k"> */</span>
+<a name="144" /><span class="True">     144:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">make_kqid_uid</span><span class="f">(</span><span class="b">kuid_t</span> <span class="b">uid</span><span class="f">)</span>
+<a name="145" /><span class="True">     145:</span> <span class="f">{</span>
+<a name="146" /><span class="True">     146:</span>     <span class="m">struct</span> <span class="b">kqid</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="147" /><span class="True">     147:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">type</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_VVNSUVVPVEFfMA__"><span class="b">USRQUOTA</span></a><span class="f">;</span>
+<a name="148" /><span class="True">     148:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">uid</span> <span class="f">=</span> <span class="b">uid</span><span class="f">;</span>
+<a name="149" /><span class="True">     149:</span>     <span class="m">return</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="150" /><span class="True">     150:</span> <span class="f">}</span>
+<a name="151" /><span class="True">     151:</span> 
+<a name="152" /><span class="True">     152:</span> <span class="k">/**</span>
+<a name="153" /><span class="True">     153:</span> <span class="k"> *    make_kqid_gid - Make a kqid from a kgid</span>
+<a name="154" /><span class="True">     154:</span> <span class="k"> *    @gid: The kgid to make the quota identifier from</span>
+<a name="155" /><span class="True">     155:</span> <span class="k"> */</span>
+<a name="156" /><span class="True">     156:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">make_kqid_gid</span><span class="f">(</span><span class="b">kgid_t</span> <span class="b">gid</span><span class="f">)</span>
+<a name="157" /><span class="True">     157:</span> <span class="f">{</span>
+<a name="158" /><span class="True">     158:</span>     <span class="m">struct</span> <span class="b">kqid</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="159" /><span class="True">     159:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">type</span> <span class="f">=</span> <a href="cpu.c_macros_noref.html#_R1JQUVVPVEFfMA__"><span class="b">GRPQUOTA</span></a><span class="f">;</span>
+<a name="160" /><span class="True">     160:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">gid</span> <span class="f">=</span> <span class="b">gid</span><span class="f">;</span>
+<a name="161" /><span class="True">     161:</span>     <span class="m">return</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="162" /><span class="True">     162:</span> <span class="f">}</span>
+<a name="163" /><span class="True">     163:</span> 
+<a name="164" /><span class="True">     164:</span> <span class="k">/**</span>
+<a name="165" /><span class="True">     165:</span> <span class="k"> *    make_kqid_projid - Make a kqid from a projid</span>
+<a name="166" /><span class="True">     166:</span> <span class="k"> *    @projid: The kprojid to make the quota identifier from</span>
+<a name="167" /><span class="True">     167:</span> <span class="k"> */</span>
+<a name="168" /><span class="True">     168:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">struct</span> <span class="b">kqid</span> <span class="b">make_kqid_projid</span><span class="f">(</span><span class="b">kprojid_t</span> <span class="b">projid</span><span class="f">)</span>
+<a name="169" /><span class="True">     169:</span> <span class="f">{</span>
+<a name="170" /><span class="True">     170:</span>     <span class="m">struct</span> <span class="b">kqid</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="171" /><span class="True">     171:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">type</span> <span class="f">=</span> <span class="b">PRJQUOTA</span><span class="f">;</span>
+<a name="172" /><span class="True">     172:</span>     <span class="b">kqid</span><span class="f">.</span><span class="b">projid</span> <span class="f">=</span> <span class="b">projid</span><span class="f">;</span>
+<a name="173" /><span class="True">     173:</span>     <span class="m">return</span> <span class="b">kqid</span><span class="f">;</span>
+<a name="174" /><span class="True">     174:</span> <span class="f">}</span>
+<a name="175" /><span class="True">     175:</span> 
+<a name="176" /><span class="True">     176:</span> 
+<a name="177" /><span class="True">     177:</span> <span class="m">extern</span> <span class="b">spinlock_t</span> <span class="b">dq_data_lock</span><span class="f">;</span>
+<a name="178" /><span class="True">     178:</span> 
+<a name="179" /><span class="True">     179:</span> <span class="k">/* Maximal numbers of writes for quota operation (insert/delete/update)</span>
+<a name="180" /><span class="True">     180:</span> <span class="k"> * (over VFS all formats) */</span>
+<a name="181" /><span class="True">     181:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfSU5JVF9BTExPQ18w"><span class="b">DQUOT_INIT_ALLOC</span></a> <a href="cpu.c_macros_ref.html#_bWF4XzA_"><span class="b">max</span></a><span class="f">(</span><a href="cpu.c_macros_noref.html#_VjFfSU5JVF9BTExPQ18w"><span class="b">V1_INIT_ALLOC</span></a><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VjJfSU5JVF9BTExPQ18w"><span class="b">V2_INIT_ALLOC</span></a><span class="f">)</span>
+<a name="182" /><span class="True">     182:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfSU5JVF9SRVdSSVRFXzA_"><span class="b">DQUOT_INIT_REWRITE</span></a> <a href="cpu.c_macros_ref.html#_bWF4XzA_"><span class="b">max</span></a><span class="f">(</span><a href="cpu.c_macros_noref.html#_VjFfSU5JVF9SRVdSSVRFXzA_"><span class="b">V1_INIT_REWRITE</span></a><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VjJfSU5JVF9SRVdSSVRFXzA_"><span class="b">V2_INIT_REWRITE</span></a><span class="f">)</span>
+<a name="183" /><span class="True">     183:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfREVMX0FMTE9DXzA_"><span class="b">DQUOT_DEL_ALLOC</span></a> <a href="cpu.c_macros_ref.html#_bWF4XzA_"><span class="b">max</span></a><span class="f">(</span><a href="cpu.c_macros_noref.html#_VjFfREVMX0FMTE9DXzA_"><span class="b">V1_DEL_ALLOC</span></a><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VjJfREVMX0FMTE9DXzA_"><span class="b">V2_DEL_ALLOC</span></a><span class="f">)</span>
+<a name="184" /><span class="True">     184:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfREVMX1JFV1JJVEVfMA__"><span class="b">DQUOT_DEL_REWRITE</span></a> <a href="cpu.c_macros_ref.html#_bWF4XzA_"><span class="b">max</span></a><span class="f">(</span><a href="cpu.c_macros_noref.html#_VjFfREVMX1JFV1JJVEVfMA__"><span class="b">V1_DEL_REWRITE</span></a><span class="f">,</span> <a href="cpu.c_macros_noref.html#_VjJfREVMX1JFV1JJVEVfMA__"><span class="b">V2_DEL_REWRITE</span></a><span class="f">)</span>
+<a name="185" /><span class="True">     185:</span> 
+<a name="186" /><span class="True">     186:</span> <span class="k">/*</span>
+<a name="187" /><span class="True">     187:</span> <span class="k"> * Data for one user/group kept in memory</span>
+<a name="188" /><span class="True">     188:</span> <span class="k"> */</span>
+<a name="189" /><span class="True">     189:</span> <span class="m">struct</span> <span class="b">mem_dqblk</span> <span class="f">{</span>
+<a name="190" /><span class="True">     190:</span>     <span class="b">qsize_t</span> <span class="b">dqb_bhardlimit</span><span class="f">;</span>    <span class="k">/* absolute limit on disk blks alloc */</span>
+<a name="191" /><span class="True">     191:</span>     <span class="b">qsize_t</span> <span class="b">dqb_bsoftlimit</span><span class="f">;</span>    <span class="k">/* preferred limit on disk blks */</span>
+<a name="192" /><span class="True">     192:</span>     <span class="b">qsize_t</span> <span class="b">dqb_curspace</span><span class="f">;</span>    <span class="k">/* current used space */</span>
+<a name="193" /><span class="True">     193:</span>     <span class="b">qsize_t</span> <span class="b">dqb_rsvspace</span><span class="f">;</span>   <span class="k">/* current reserved space for delalloc*/</span>
+<a name="194" /><span class="True">     194:</span>     <span class="b">qsize_t</span> <span class="b">dqb_ihardlimit</span><span class="f">;</span>    <span class="k">/* absolute limit on allocated inodes */</span>
+<a name="195" /><span class="True">     195:</span>     <span class="b">qsize_t</span> <span class="b">dqb_isoftlimit</span><span class="f">;</span>    <span class="k">/* preferred inode limit */</span>
+<a name="196" /><span class="True">     196:</span>     <span class="b">qsize_t</span> <span class="b">dqb_curinodes</span><span class="f">;</span>    <span class="k">/* current # allocated inodes */</span>
+<a name="197" /><span class="True">     197:</span>     <span class="b">time_t</span> <span class="b">dqb_btime</span><span class="f">;</span>    <span class="k">/* time limit for excessive disk use */</span>
+<a name="198" /><span class="True">     198:</span>     <span class="b">time_t</span> <span class="b">dqb_itime</span><span class="f">;</span>    <span class="k">/* time limit for excessive inode use */</span>
+<a name="199" /><span class="True">     199:</span> <span class="f">}</span><span class="f">;</span>
+<a name="200" /><span class="True">     200:</span> 
+<a name="201" /><span class="True">     201:</span> <span class="k">/*</span>
+<a name="202" /><span class="True">     202:</span> <span class="k"> * Data for one quotafile kept in memory</span>
+<a name="203" /><span class="True">     203:</span> <span class="k"> */</span>
+<a name="204" /><span class="True">     204:</span> <span class="m">struct</span> <span class="b">quota_format_type</span><span class="f">;</span>
+<a name="205" /><span class="True">     205:</span> 
+<a name="206" /><span class="True">     206:</span> <span class="m">struct</span> <span class="b">mem_dqinfo</span> <span class="f">{</span>
+<a name="207" /><span class="True">     207:</span>     <span class="m">struct</span> <span class="b">quota_format_type</span> <span class="f">*</span><span class="b">dqi_format</span><span class="f">;</span>
+<a name="208" /><span class="True">     208:</span>     <span class="m">int</span> <span class="b">dqi_fmt_id</span><span class="f">;</span>        <span class="k">/* Id of the dqi_format - used when turning</span>
+<a name="209" /><span class="True">     209:</span> <span class="k">                 * quotas on after remount RW */</span>
+<a name="210" /><span class="True">     210:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">dqi_dirty_list</span><span class="f">;</span>    <span class="k">/* List of dirty dquots */</span>
+<a name="211" /><span class="True">     211:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">dqi_flags</span><span class="f">;</span>
+<a name="212" /><span class="True">     212:</span>     <span class="m">unsigned</span> <span class="m">int</span> <span class="b">dqi_bgrace</span><span class="f">;</span>
+<a name="213" /><span class="True">     213:</span>     <span class="m">unsigned</span> <span class="m">int</span> <span class="b">dqi_igrace</span><span class="f">;</span>
+<a name="214" /><span class="True">     214:</span>     <span class="b">qsize_t</span> <span class="b">dqi_maxblimit</span><span class="f">;</span>
+<a name="215" /><span class="True">     215:</span>     <span class="b">qsize_t</span> <span class="b">dqi_maxilimit</span><span class="f">;</span>
+<a name="216" /><span class="True">     216:</span>     <span class="m">void</span> <span class="f">*</span><span class="b">dqi_priv</span><span class="f">;</span>
+<a name="217" /><span class="True">     217:</span> <span class="f">}</span><span class="f">;</span>
+<a name="218" /><span class="True">     218:</span> 
+<a name="219" /><span class="True">     219:</span> <span class="m">struct</span> <span class="b">super_block</span><span class="f">;</span>
+<a name="220" /><span class="True">     220:</span> 
+<a name="221" /><span class="True">     221:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFGX01BU0tfMA__"><span class="b">DQF_MASK</span></a> <span class="c">0xffff</span>        <span class="k">/* Mask for format specific flags */</span>
+<a name="222" /><span class="True">     222:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFGX0dFVElORk9fTUFTS18w"><span class="b">DQF_GETINFO_MASK</span></a> <span class="c">0x1ffff</span>    <span class="k">/* Mask for flags passed to userspace */</span>
+<a name="223" /><span class="True">     223:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFGX1NFVElORk9fTUFTS18w"><span class="b">DQF_SETINFO_MASK</span></a> <span class="c">0xffff</span>        <span class="k">/* Mask for flags modifiable from userspace */</span>
+<a name="224" /><span class="True">     224:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFGX1NZU19GSUxFX0JfMA__"><span class="b">DQF_SYS_FILE_B</span></a>        <span class="c">16</span>
+<a name="225" /><span class="True">     225:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFGX1NZU19GSUxFXzA_"><span class="b">DQF_SYS_FILE</span></a> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_noref.html#_RFFGX1NZU19GSUxFX0JfMA__"><span class="b">DQF_SYS_FILE_B</span></a><span class="f">)</span>    <span class="k">/* Quota file stored as system file */</span>
+<a name="226" /><span class="True">     226:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_RFFGX0lORk9fRElSVFlfQl8w"><span class="b">DQF_INFO_DIRTY_B</span></a>    <span class="c">31</span>
+<a name="227" /><span class="True">     227:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFGX0lORk9fRElSVFlfMA__"><span class="b">DQF_INFO_DIRTY</span></a> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_RFFGX0lORk9fRElSVFlfQl8w"><span class="b">DQF_INFO_DIRTY_B</span></a><span class="f">)</span>    <span class="k">/* Is info dirty? */</span>
+<a name="228" /><span class="True">     228:</span> 
+<a name="229" /><span class="True">     229:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">mark_info_dirty</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="b">sb</span><span class="f">,</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span><span class="f">;</span>
+<a name="230" /><span class="True">     230:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">int</span> <span class="b">info_dirty</span><span class="f">(</span><span class="m">struct</span> <span class="b">mem_dqinfo</span> <span class="f">*</span><span class="b">info</span><span class="f">)</span>
+<a name="231" /><span class="True">     231:</span> <span class="f">{</span>
+<a name="232" /><span class="True">     232:</span>     <span class="m">return</span> <a href="cpu.c_macros_ref.html#_dGVzdF9iaXRfMA__"><span class="b">test_bit</span></a><span class="f">(</span><a href="cpu.c_macros_ref.html#_RFFGX0lORk9fRElSVFlfQl8w"><span class="b">DQF_INFO_DIRTY_B</span></a><span class="f">,</span> <span class="f">&amp;</span><span class="b">info</span><span class="f">-&gt;</span><span class="b">dqi_flags</span><span class="f">)</span><span class="f">;</span>
+<a name="233" /><span class="True">     233:</span> <span class="f">}</span>
+<a name="234" /><span class="True">     234:</span> 
+<a name="235" /><span class="True">     235:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="236" /><span class="True">     236:</span>     <span class="b">DQST_LOOKUPS</span><span class="f">,</span>
+<a name="237" /><span class="True">     237:</span>     <span class="b">DQST_DROPS</span><span class="f">,</span>
+<a name="238" /><span class="True">     238:</span>     <span class="b">DQST_READS</span><span class="f">,</span>
+<a name="239" /><span class="True">     239:</span>     <span class="b">DQST_WRITES</span><span class="f">,</span>
+<a name="240" /><span class="True">     240:</span>     <span class="b">DQST_CACHE_HITS</span><span class="f">,</span>
+<a name="241" /><span class="True">     241:</span>     <span class="b">DQST_ALLOC_DQUOTS</span><span class="f">,</span>
+<a name="242" /><span class="True">     242:</span>     <span class="b">DQST_FREE_DQUOTS</span><span class="f">,</span>
+<a name="243" /><span class="True">     243:</span>     <span class="b">DQST_SYNCS</span><span class="f">,</span>
+<a name="244" /><span class="True">     244:</span>     <span class="b">_DQST_DQSTAT_LAST</span>
+<a name="245" /><span class="True">     245:</span> <span class="f">}</span><span class="f">;</span>
+<a name="246" /><span class="True">     246:</span> 
+<a name="247" /><span class="True">     247:</span> <span class="m">struct</span> <span class="b">dqstats</span> <span class="f">{</span>
+<a name="248" /><span class="True">     248:</span>     <span class="m">int</span> <span class="b">stat</span><span class="f">[</span><span class="b">_DQST_DQSTAT_LAST</span><span class="f">]</span><span class="f">;</span>
+<a name="249" /><span class="True">     249:</span>     <span class="m">struct</span> <span class="b">percpu_counter</span> <span class="b">counter</span><span class="f">[</span><span class="b">_DQST_DQSTAT_LAST</span><span class="f">]</span><span class="f">;</span>
+<a name="250" /><span class="True">     250:</span> <span class="f">}</span><span class="f">;</span>
+<a name="251" /><span class="True">     251:</span> 
+<a name="252" /><span class="True">     252:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">dqstats</span> <span class="f">*</span><span class="b">dqstats_pcpu</span><span class="f">;</span>
+<a name="253" /><span class="True">     253:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">dqstats</span> <span class="b">dqstats</span><span class="f">;</span>
+<a name="254" /><span class="True">     254:</span> 
+<a name="255" /><span class="True">     255:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">dqstats_inc</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span>
+<a name="256" /><span class="True">     256:</span> <span class="f">{</span>
+<a name="257" /><span class="True">     257:</span>     <span class="b">percpu_counter_inc</span><span class="f">(</span><span class="f">&amp;</span><span class="b">dqstats</span><span class="f">.</span><span class="b">counter</span><span class="f">[</span><span class="b">type</span><span class="f">]</span><span class="f">)</span><span class="f">;</span>
+<a name="258" /><span class="True">     258:</span> <span class="f">}</span>
+<a name="259" /><span class="True">     259:</span> 
+<a name="260" /><span class="True">     260:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">dqstats_dec</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span>
+<a name="261" /><span class="True">     261:</span> <span class="f">{</span>
+<a name="262" /><span class="True">     262:</span>     <span class="b">percpu_counter_dec</span><span class="f">(</span><span class="f">&amp;</span><span class="b">dqstats</span><span class="f">.</span><span class="b">counter</span><span class="f">[</span><span class="b">type</span><span class="f">]</span><span class="f">)</span><span class="f">;</span>
+<a name="263" /><span class="True">     263:</span> <span class="f">}</span>
+<a name="264" /><span class="True">     264:</span> 
+<a name="265" /><span class="True">     265:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFfTU9EX0JfMA__"><span class="b">DQ_MOD_B</span></a>    <span class="c">0</span>    <span class="k">/* dquot modified since read */</span>
+<a name="266" /><span class="True">     266:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFfQkxLU19CXzA_"><span class="b">DQ_BLKS_B</span></a>    <span class="c">1</span>    <span class="k">/* uid/gid has been warned about blk limit */</span>
+<a name="267" /><span class="True">     267:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFfSU5PREVTX0JfMA__"><span class="b">DQ_INODES_B</span></a>    <span class="c">2</span>    <span class="k">/* uid/gid has been warned about inode limit */</span>
+<a name="268" /><span class="True">     268:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFfRkFLRV9CXzA_"><span class="b">DQ_FAKE_B</span></a>    <span class="c">3</span>    <span class="k">/* no limits only usage */</span>
+<a name="269" /><span class="True">     269:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFfUkVBRF9CXzA_"><span class="b">DQ_READ_B</span></a>    <span class="c">4</span>    <span class="k">/* dquot was read into memory */</span>
+<a name="270" /><span class="True">     270:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFfQUNUSVZFX0JfMA__"><span class="b">DQ_ACTIVE_B</span></a>    <span class="c">5</span>    <span class="k">/* dquot is active (dquot_release not called) */</span>
+<a name="271" /><span class="True">     271:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFfTEFTVFNFVF9CXzA_"><span class="b">DQ_LASTSET_B</span></a>    <span class="c">6</span>    <span class="k">/* Following 6 bits (see QIF_) are reserved\</span>
+<a name="272" /><span class="True">     272:</span> <span class="k">                 * for the mask of entries set via SETQUOTA\</span>
+<a name="273" /><span class="True">     273:</span> <span class="k">                 * quotactl. They are set under dq_data_lock\</span>
+<a name="274" /><span class="True">     274:</span> <span class="k">                 * and the quota format handling dquot can\</span>
+<a name="275" /><span class="True">     275:</span> <span class="k">                 * clear them when it sees fit. */</span>
+<a name="276" /><span class="True">     276:</span> 
+<a name="277" /><span class="True">     277:</span> <span class="m">struct</span> <span class="b">dquot</span> <span class="f">{</span>
+<a name="278" /><span class="True">     278:</span>     <span class="m">struct</span> <span class="b">hlist_node</span> <span class="b">dq_hash</span><span class="f">;</span>    <span class="k">/* Hash list in memory */</span>
+<a name="279" /><span class="True">     279:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">dq_inuse</span><span class="f">;</span>    <span class="k">/* List of all quotas */</span>
+<a name="280" /><span class="True">     280:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">dq_free</span><span class="f">;</span>    <span class="k">/* Free list element */</span>
+<a name="281" /><span class="True">     281:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">dq_dirty</span><span class="f">;</span>    <span class="k">/* List of dirty dquots */</span>
+<a name="282" /><span class="True">     282:</span>     <span class="m">struct</span> <span class="b">mutex</span> <span class="b">dq_lock</span><span class="f">;</span>        <span class="k">/* dquot IO lock */</span>
+<a name="283" /><span class="True">     283:</span>     <span class="b">atomic_t</span> <span class="b">dq_count</span><span class="f">;</span>        <span class="k">/* Use count */</span>
+<a name="284" /><span class="True">     284:</span>     <span class="b">wait_queue_head_t</span> <span class="b">dq_wait_unused</span><span class="f">;</span>    <span class="k">/* Wait queue for dquot to become unused */</span>
+<a name="285" /><span class="True">     285:</span>     <span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="b">dq_sb</span><span class="f">;</span>    <span class="k">/* superblock this applies to */</span>
+<a name="286" /><span class="True">     286:</span>     <span class="m">struct</span> <span class="b">kqid</span> <span class="b">dq_id</span><span class="f">;</span>        <span class="k">/* ID this applies to (uid, gid, projid) */</span>
+<a name="287" /><span class="True">     287:</span>     <span class="b">loff_t</span> <span class="b">dq_off</span><span class="f">;</span>            <span class="k">/* Offset of dquot on disk */</span>
+<a name="288" /><span class="True">     288:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">dq_flags</span><span class="f">;</span>        <span class="k">/* See DQ_* */</span>
+<a name="289" /><span class="True">     289:</span>     <span class="m">struct</span> <span class="b">mem_dqblk</span> <span class="b">dq_dqb</span><span class="f">;</span>    <span class="k">/* Diskquota usage */</span>
+<a name="290" /><span class="True">     290:</span> <span class="f">}</span><span class="f">;</span>
+<a name="291" /><span class="True">     291:</span> 
+<a name="292" /><span class="True">     292:</span> <span class="k">/* Operations which must be implemented by each quota format */</span>
+<a name="293" /><span class="True">     293:</span> <span class="m">struct</span> <span class="b">quota_format_ops</span> <span class="f">{</span>
+<a name="294" /><span class="True">     294:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">check_quota_file</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="b">sb</span><span class="f">,</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Detect whether file is in our format */</span>
+<a name="295" /><span class="True">     295:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">read_file_info</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="b">sb</span><span class="f">,</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Read main info about file - called on quotaon() */</span>
+<a name="296" /><span class="True">     296:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">write_file_info</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="b">sb</span><span class="f">,</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Write main info about file */</span>
+<a name="297" /><span class="True">     297:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">free_file_info</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="b">sb</span><span class="f">,</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Called on quotaoff() */</span>
+<a name="298" /><span class="True">     298:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">read_dqblk</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="b">dquot</span><span class="f">)</span><span class="f">;</span>        <span class="k">/* Read structure for one user */</span>
+<a name="299" /><span class="True">     299:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">commit_dqblk</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="b">dquot</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Write structure for one user */</span>
+<a name="300" /><span class="True">     300:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">release_dqblk</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="b">dquot</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Called when last reference to dquot is being dropped */</span>
+<a name="301" /><span class="True">     301:</span> <span class="f">}</span><span class="f">;</span>
+<a name="302" /><span class="True">     302:</span> 
+<a name="303" /><span class="True">     303:</span> <span class="k">/* Operations working with dquots */</span>
+<a name="304" /><span class="True">     304:</span> <span class="m">struct</span> <span class="b">dquot_operations</span> <span class="f">{</span>
+<a name="305" /><span class="True">     305:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">write_dquot</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>        <span class="k">/* Ordinary dquot write */</span>
+<a name="306" /><span class="True">     306:</span>     <span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="f">(</span><span class="f">*</span><span class="b">alloc_dquot</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Allocate memory for new dquot */</span>
+<a name="307" /><span class="True">     307:</span>     <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">destroy_dquot</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>        <span class="k">/* Free memory for dquot */</span>
+<a name="308" /><span class="True">     308:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">acquire_dquot</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>        <span class="k">/* Quota is going to be created on disk */</span>
+<a name="309" /><span class="True">     309:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">release_dquot</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>        <span class="k">/* Quota is going to be deleted from disk */</span>
+<a name="310" /><span class="True">     310:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">mark_dirty</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">dquot</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>        <span class="k">/* Dquot is marked dirty */</span>
+<a name="311" /><span class="True">     311:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">write_info</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Write of quota &quot;superblock&quot; */</span>
+<a name="312" /><span class="True">     312:</span>     <span class="k">/* get reserved quota for delayed alloc, value returned is managed by</span>
+<a name="313" /><span class="True">     313:</span> <span class="k">     * quota code only */</span>
+<a name="314" /><span class="True">     314:</span>     <span class="b">qsize_t</span> <span class="f">*</span><span class="f">(</span><span class="f">*</span><span class="b">get_reserved_space</span><span class="f">)</span> <span class="f">(</span><span class="m">struct</span> <span class="b">inode</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="315" /><span class="True">     315:</span> <span class="f">}</span><span class="f">;</span>
+<a name="316" /><span class="True">     316:</span> 
+<a name="317" /><span class="True">     317:</span> <span class="m">struct</span> <span class="b">path</span><span class="f">;</span>
+<a name="318" /><span class="True">     318:</span> 
+<a name="319" /><span class="True">     319:</span> <span class="k">/* Operations handling requests from userspace */</span>
+<a name="320" /><span class="True">     320:</span> <span class="m">struct</span> <span class="b">quotactl_ops</span> <span class="f">{</span>
+<a name="321" /><span class="True">     321:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">quota_on</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">struct</span> <span class="b">path</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="322" /><span class="True">     322:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">quota_on_meta</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="323" /><span class="True">     323:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">quota_off</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="324" /><span class="True">     324:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">quota_sync</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="325" /><span class="True">     325:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">get_info</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">struct</span> <span class="b">if_dqinfo</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="326" /><span class="True">     326:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">set_info</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">struct</span> <span class="b">if_dqinfo</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="327" /><span class="True">     327:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">get_dqblk</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">struct</span> <span class="b">kqid</span><span class="f">,</span> <span class="m">struct</span> <span class="b">fs_disk_quota</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="328" /><span class="True">     328:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">set_dqblk</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">struct</span> <span class="b">kqid</span><span class="f">,</span> <span class="m">struct</span> <span class="b">fs_disk_quota</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="329" /><span class="True">     329:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">get_xstate</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">struct</span> <span class="b">fs_quota_stat</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="330" /><span class="True">     330:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">set_xstate</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span><span class="f">,</span> <span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="331" /><span class="True">     331:</span>     <span class="m">int</span> <span class="f">(</span><span class="f">*</span><span class="b">get_xstatev</span><span class="f">)</span><span class="f">(</span><span class="m">struct</span> <span class="b">super_block</span> <span class="f">*</span><span class="f">,</span> <span class="m">struct</span> <span class="b">fs_quota_statv</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="332" /><span class="True">     332:</span> <span class="f">}</span><span class="f">;</span>
+<a name="333" /><span class="True">     333:</span> 
+<a name="334" /><span class="True">     334:</span> <span class="m">struct</span> <span class="b">quota_format_type</span> <span class="f">{</span>
+<a name="335" /><span class="True">     335:</span>     <span class="m">int</span> <span class="b">qf_fmt_id</span><span class="f">;</span>    <span class="k">/* Quota format id */</span>
+<a name="336" /><span class="True">     336:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">quota_format_ops</span> <span class="f">*</span><span class="b">qf_ops</span><span class="f">;</span>    <span class="k">/* Operations of format */</span>
+<a name="337" /><span class="True">     337:</span>     <span class="m">struct</span> <span class="b">module</span> <span class="f">*</span><span class="b">qf_owner</span><span class="f">;</span>        <span class="k">/* Module implementing quota format */</span>
+<a name="338" /><span class="True">     338:</span>     <span class="m">struct</span> <span class="b">quota_format_type</span> <span class="f">*</span><span class="b">qf_next</span><span class="f">;</span>
+<a name="339" /><span class="True">     339:</span> <span class="f">}</span><span class="f">;</span>
+<a name="340" /><span class="True">     340:</span> 
+<a name="341" /><span class="True">     341:</span> <span class="k">/* Quota state flags - they actually come in two flavors - for users and groups */</span>
+<a name="342" /><span class="True">     342:</span> <span class="m">enum</span> <span class="f">{</span>
+<a name="343" /><span class="True">     343:</span>     <span class="b">_DQUOT_USAGE_ENABLED</span> <span class="f">=</span> <span class="c">0</span><span class="f">,</span>        <span class="k">/* Track disk usage for users */</span>
+<a name="344" /><span class="True">     344:</span>     <span class="b">_DQUOT_LIMITS_ENABLED</span><span class="f">,</span>            <span class="k">/* Enforce quota limits for users */</span>
+<a name="345" /><span class="True">     345:</span>     <span class="b">_DQUOT_SUSPENDED</span><span class="f">,</span>            <span class="k">/* User diskquotas are off, but</span>
+<a name="346" /><span class="True">     346:</span> <span class="k">                         * we have necessary info in</span>
+<a name="347" /><span class="True">     347:</span> <span class="k">                         * memory to turn them on */</span>
+<a name="348" /><span class="True">     348:</span>     <span class="b">_DQUOT_STATE_FLAGS</span>
+<a name="349" /><span class="True">     349:</span> <span class="f">}</span><span class="f">;</span>
+<a name="350" /><span class="True">     350:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_RFFVT1RfVVNBR0VfRU5BQkxFRF8w"><span class="b">DQUOT_USAGE_ENABLED</span></a>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">_DQUOT_USAGE_ENABLED</span><span class="f">)</span>
+<a name="351" /><span class="True">     351:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_RFFVT1RfTElNSVRTX0VOQUJMRURfMA__"><span class="b">DQUOT_LIMITS_ENABLED</span></a>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">_DQUOT_LIMITS_ENABLED</span><span class="f">)</span>
+<a name="352" /><span class="True">     352:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_RFFVT1RfU1VTUEVOREVEXzA_"><span class="b">DQUOT_SUSPENDED</span></a>        <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">_DQUOT_SUSPENDED</span><span class="f">)</span>
+<a name="353" /><span class="True">     353:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_RFFVT1RfU1RBVEVfRkxBR1NfMA__"><span class="b">DQUOT_STATE_FLAGS</span></a>    <span class="f">(</span><a href="cpu.c_macros_ref.html#_RFFVT1RfVVNBR0VfRU5BQkxFRF8w"><span class="b">DQUOT_USAGE_ENABLED</span></a> <span class="f">|</span> <a href="cpu.c_macros_ref.html#_RFFVT1RfTElNSVRTX0VOQUJMRURfMA__"><span class="b">DQUOT_LIMITS_ENABLED</span></a> <span class="f">|</span> \
+<a name="354" /><span class="True">     354:</span>                  <a href="cpu.c_macros_ref.html#_RFFVT1RfU1VTUEVOREVEXzA_"><span class="b">DQUOT_SUSPENDED</span></a><span class="f">)</span>
+<a name="355" /><span class="True">     355:</span> <span class="k">/* Other quota flags */</span>
+<a name="356" /><span class="True">     356:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfU1RBVEVfTEFTVF8w"><span class="b">DQUOT_STATE_LAST</span></a>    <span class="f">(</span><span class="b">_DQUOT_STATE_FLAGS</span> <span class="f">*</span> <a href="cpu.c_macros_ref.html#_TUFYUVVPVEFTXzA_"><span class="b">MAXQUOTAS</span></a><span class="f">)</span>
+<a name="357" /><span class="True">     357:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfUVVPVEFfU1lTX0ZJTEVfMA__"><span class="b">DQUOT_QUOTA_SYS_FILE</span></a>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfU1RBVEVfTEFTVF8w"><span class="b">DQUOT_STATE_LAST</span></a><span class="f">)</span>
+<a name="358" /><span class="True">     358:</span>                         <span class="k">/* Quota file is a special</span>
+<a name="359" /><span class="True">     359:</span> <span class="k">                         * system file and user cannot</span>
+<a name="360" /><span class="True">     360:</span> <span class="k">                         * touch it. Filesystem is</span>
+<a name="361" /><span class="True">     361:</span> <span class="k">                         * responsible for setting</span>
+<a name="362" /><span class="True">     362:</span> <span class="k">                         * S_NOQUOTA, S_NOATIME flags</span>
+<a name="363" /><span class="True">     363:</span> <span class="k">                         */</span>
+<a name="364" /><span class="True">     364:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_RFFVT1RfTkVHQVRJVkVfVVNBR0VfMA__"><span class="b">DQUOT_NEGATIVE_USAGE</span></a>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="f">(</span><a href="cpu.c_macros_noref.html#_RFFVT1RfU1RBVEVfTEFTVF8w"><span class="b">DQUOT_STATE_LAST</span></a> <span class="f">+</span> <span class="c">1</span><span class="f">)</span><span class="f">)</span>
+<a name="365" /><span class="True">     365:</span>                            <span class="k">/* Allow negative quota usage */</span>
+<a name="366" /><span class="True">     366:</span> 
+<a name="367" /><span class="True">     367:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">dquot_state_flag</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span>
+<a name="368" /><span class="True">     368:</span> <span class="f">{</span>
+<a name="369" /><span class="True">     369:</span>     <span class="m">return</span> <span class="b">flags</span> <span class="f">&lt;&lt;</span> <span class="b">_DQUOT_STATE_FLAGS</span> <span class="f">*</span> <span class="b">type</span><span class="f">;</span>
+<a name="370" /><span class="True">     370:</span> <span class="f">}</span>
+<a name="371" /><span class="True">     371:</span> 
+<a name="372" /><span class="True">     372:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">dquot_generic_flag</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">int</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">type</span><span class="f">)</span>
+<a name="373" /><span class="True">     373:</span> <span class="f">{</span>
+<a name="374" /><span class="True">     374:</span>     <span class="m">return</span> <span class="f">(</span><span class="b">flags</span> <span class="f">&gt;&gt;</span> <span class="b">_DQUOT_STATE_FLAGS</span> <span class="f">*</span> <span class="b">type</span><span class="f">)</span> <span class="f">&amp;</span> <a href="cpu.c_macros_ref.html#_RFFVT1RfU1RBVEVfRkxBR1NfMA__"><span class="b">DQUOT_STATE_FLAGS</span></a><span class="f">;</span>
+<a name="375" /><span class="True">     375:</span> <span class="f">}</span>
+<a name="376" /><span class="True">     376:</span> 
+<a name="377" /><span class="True">     377:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1FVT1RBX05FVExJTktfSU5URVJGQUNFXzA_"><span class="b">CONFIG_QUOTA_NETLINK_INTERFACE</span></a>
+<a name="378" /><span class="True">     378:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">quota_send_warning</span><span class="f">(</span><span class="m">struct</span> <span class="b">kqid</span> <span class="b">qid</span><span class="f">,</span> <span class="b">dev_t</span> <span class="b">dev</span><span class="f">,</span>
+<a name="379" /><span class="True">     379:</span>                    <span class="m">const</span> <span class="m">char</span> <span class="b">warntype</span><span class="f">)</span><span class="f">;</span>
+<a name="380" /><span class="False">     380:</span> <span class="f">#</span><span class="n">else</span>
+<a name="381" /><span class="False">     381:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">quota_send_warning</span><span class="f">(</span><span class="m">struct</span> <span class="b">kqid</span> <span class="b">qid</span><span class="f">,</span> <span class="b">dev_t</span> <span class="b">dev</span><span class="f">,</span>
+<a name="382" /><span class="False">     382:</span>                       <span class="m">const</span> <span class="m">char</span> <span class="b">warntype</span><span class="f">)</span>
+<a name="383" /><span class="False">     383:</span> <span class="f">{</span>
+<a name="384" /><span class="False">     384:</span>     <span class="m">return</span><span class="f">;</span>
+<a name="385" /><span class="False">     385:</span> <span class="f">}</span>
+<a name="386" /><span class="True">     386:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_QUOTA_NETLINK_INTERFACE */</span>
+<a name="387" /><span class="True">     387:</span> 
+<a name="388" /><span class="True">     388:</span> <span class="m">struct</span> <span class="b">quota_info</span> <span class="f">{</span>
+<a name="389" /><span class="True">     389:</span>     <span class="m">unsigned</span> <span class="m">int</span> <span class="b">flags</span><span class="f">;</span>            <span class="k">/* Flags for diskquotas on this device */</span>
+<a name="390" /><span class="True">     390:</span>     <span class="m">struct</span> <span class="b">mutex</span> <span class="b">dqio_mutex</span><span class="f">;</span>        <span class="k">/* lock device while I/O in progress */</span>
+<a name="391" /><span class="True">     391:</span>     <span class="m">struct</span> <span class="b">mutex</span> <span class="b">dqonoff_mutex</span><span class="f">;</span>        <span class="k">/* Serialize quotaon &amp; quotaoff */</span>
+<a name="392" /><span class="True">     392:</span>     <span class="m">struct</span> <span class="b">rw_semaphore</span> <span class="b">dqptr_sem</span><span class="f">;</span>        <span class="k">/* serialize ops using quota_info struct, pointers from inode to dquots */</span>
+<a name="393" /><span class="True">     393:</span>     <span class="m">struct</span> <span class="b">inode</span> <span class="f">*</span><span class="b">files</span><span class="f">[</span><a href="cpu.c_macros_ref.html#_TUFYUVVPVEFTXzA_"><span class="b">MAXQUOTAS</span></a><span class="f">]</span><span class="f">;</span>        <span class="k">/* inodes of quotafiles */</span>
+<a name="394" /><span class="True">     394:</span>     <span class="m">struct</span> <span class="b">mem_dqinfo</span> <span class="b">info</span><span class="f">[</span><a href="cpu.c_macros_ref.html#_TUFYUVVPVEFTXzA_"><span class="b">MAXQUOTAS</span></a><span class="f">]</span><span class="f">;</span>    <span class="k">/* Information for each quota type */</span>
+<a name="395" /><span class="True">     395:</span>     <span class="m">const</span> <span class="m">struct</span> <span class="b">quota_format_ops</span> <span class="f">*</span><span class="b">ops</span><span class="f">[</span><a href="cpu.c_macros_ref.html#_TUFYUVVPVEFTXzA_"><span class="b">MAXQUOTAS</span></a><span class="f">]</span><span class="f">;</span>    <span class="k">/* Operations for each type */</span>
+<a name="396" /><span class="True">     396:</span> <span class="f">}</span><span class="f">;</span>
+<a name="397" /><span class="True">     397:</span> 
+<a name="398" /><span class="True">     398:</span> <span class="m">int</span> <span class="b">register_quota_format</span><span class="f">(</span><span class="m">struct</span> <span class="b">quota_format_type</span> <span class="f">*</span><span class="b">fmt</span><span class="f">)</span><span class="f">;</span>
+<a name="399" /><span class="True">     399:</span> <span class="m">void</span> <span class="b">unregister_quota_format</span><span class="f">(</span><span class="m">struct</span> <span class="b">quota_format_type</span> <span class="f">*</span><span class="b">fmt</span><span class="f">)</span><span class="f">;</span>
+<a name="400" /><span class="True">     400:</span> 
+<a name="401" /><span class="True">     401:</span> <span class="m">struct</span> <span class="b">quota_module_name</span> <span class="f">{</span>
+<a name="402" /><span class="True">     402:</span>     <span class="m">int</span> <span class="b">qm_fmt_id</span><span class="f">;</span>
+<a name="403" /><span class="True">     403:</span>     <span class="m">char</span> <span class="f">*</span><span class="b">qm_mod_name</span><span class="f">;</span>
+<a name="404" /><span class="True">     404:</span> <span class="f">}</span><span class="f">;</span>
+<a name="405" /><span class="True">     405:</span> 
+<a name="406" /><span class="True">     406:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_SU5JVF9RVU9UQV9NT0RVTEVfTkFNRVNfMA__"><span class="b">INIT_QUOTA_MODULE_NAMES</span></a> <span class="f">{\
+</span>    <span class="f">{</span><a href="cpu.c_macros_noref.html#_UUZNVF9WRlNfT0xEXzA_"><span class="b">QFMT_VFS_OLD</span></a><span class="f">,</span> <span class="e">&quot;quota_v1&quot;</span><span class="f">}</span><span class="f">,\
+</span>    <span class="f">{</span><a href="cpu.c_macros_noref.html#_UUZNVF9WRlNfVjBfMA__"><span class="b">QFMT_VFS_V0</span></a><span class="f">,</span> <span class="e">&quot;quota_v2&quot;</span><span class="f">}</span><span class="f">,\
+</span>    <span class="f">{</span><a href="cpu.c_macros_noref.html#_UUZNVF9WRlNfVjFfMA__"><span class="b">QFMT_VFS_V1</span></a><span class="f">,</span> <span class="e">&quot;quota_v2&quot;</span><span class="f">}</span><span class="f">,\
+</span>    <span class="f">{</span><span class="c">0</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">}</span><span class="f">}</span>
+<a name="411" /><span class="True">     411:</span> 
+<a name="412" /><span class="True">     412:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _QUOTA_ */</span>
+<a name="413" /><span class="True">     413:</span> </pre>
+  </body>
+</html>

@@ -103,20 +103,31 @@ structure. theFileLinkS is a list of triples (file_name, href, nav_text).</p>
 <dl class="function">
 <dt id="cpip.util.HtmlUtils.writeFilePathsAsTable">
 <tt class="descclassname">cpip.util.HtmlUtils.</tt><tt class="descname">writeFilePathsAsTable</tt><big>(</big><em>valueType</em>, <em>theS</em>, <em>theKvS</em>, <em>tableStyle</em>, <em>fnTd</em><big>)</big><a class="headerlink" href="#cpip.util.HtmlUtils.writeFilePathsAsTable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Writes file paths as a table, for example as a directory structure.
-valueType - The type of the value; None, <a href="#id1"><span class="problematic" id="id2">|</span></a>&#8216;list&#8217; | &#8216;set&#8217;
-theKvS - A list of pairs (file_path, value).
-tableStyle - The style used for the table.
-fnTd - A callback function that is executed for a &lt;td&gt; element when</p>
-<blockquote>
+<dd><p>Writes file paths as a table, for example as a directory structure.</p>
+<dl class="docutils">
+<dt><em>valueType</em></dt>
+<dd>The type of the value; <tt class="docutils literal"><span class="pre">None,</span> <span class="pre">|'list'</span> <span class="pre">|</span> <span class="pre">'set'</span></tt></dd>
+<dt><em>theKvS</em></dt>
+<dd>A list of pairs <tt class="docutils literal"><span class="pre">(file_path,</span> <span class="pre">value)</span></tt>.</dd>
+<dt><em>tableStyle</em></dt>
+<dd>The style used for the table.</dd>
+<dt><em>fnTd</em></dt>
+<dd><p class="first">A callback function that is executed for a <tt class="docutils literal"><span class="pre">&lt;td&gt;</span></tt> element when
+there is a non-None value. This is called with the following arguments:</p>
+<blockquote class="last">
 <div><dl class="docutils">
-<dt>there is a non-None value. This is called with the following arguments:</dt>
-<dd>theS - The HTML stream.
-attrs - A map of attrs that include the rowspan/colspan for the &lt;td&gt;
-k - The key as a list of path components.
-v - The value given by the caller.</dd>
+<dt><em>theS</em></dt>
+<dd>The HTML stream.</dd>
+<dt><em>attrs</em></dt>
+<dd>A map of attrs that include the rowspan/colspan for the &lt;td&gt;</dd>
+<dt><em>k</em></dt>
+<dd>The key as a list of path components.</dd>
+<dt><em>v</em></dt>
+<dd>The value given by the caller.</dd>
 </dl>
 </div></blockquote>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">

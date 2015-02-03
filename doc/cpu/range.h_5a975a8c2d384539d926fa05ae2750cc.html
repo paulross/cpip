@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/range.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/range.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="Maybe">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1JBTkdFX0hfMA__"><span class="b">_LINUX_RANGE_H</span></a>
+<a name="2" /><span class="Maybe">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_X0xJTlVYX1JBTkdFX0hfMA__"><span class="b">_LINUX_RANGE_H</span></a>
+<a name="3" /><span class="Maybe">       3:</span> 
+<a name="4" /><span class="Maybe">       4:</span> <span class="m">struct</span> <span class="b">range</span> <span class="f">{</span>
+<a name="5" /><span class="Maybe">       5:</span>     <span class="b">u64</span>   <span class="b">start</span><span class="f">;</span>
+<a name="6" /><span class="Maybe">       6:</span>     <span class="b">u64</span>   <span class="b">end</span><span class="f">;</span>
+<a name="7" /><span class="Maybe">       7:</span> <span class="f">}</span><span class="f">;</span>
+<a name="8" /><span class="Maybe">       8:</span> 
+<a name="9" /><span class="Maybe">       9:</span> <span class="m">int</span> <span class="b">add_range</span><span class="f">(</span><span class="m">struct</span> <span class="b">range</span> <span class="f">*</span><span class="b">range</span><span class="f">,</span> <span class="m">int</span> <span class="b">az</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_range</span><span class="f">,</span>
+<a name="10" /><span class="Maybe">      10:</span>         <span class="b">u64</span> <span class="b">start</span><span class="f">,</span> <span class="b">u64</span> <span class="b">end</span><span class="f">)</span><span class="f">;</span>
+<a name="11" /><span class="Maybe">      11:</span> 
+<a name="12" /><span class="Maybe">      12:</span> 
+<a name="13" /><span class="Maybe">      13:</span> <span class="m">int</span> <span class="b">add_range_with_merge</span><span class="f">(</span><span class="m">struct</span> <span class="b">range</span> <span class="f">*</span><span class="b">range</span><span class="f">,</span> <span class="m">int</span> <span class="b">az</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_range</span><span class="f">,</span>
+<a name="14" /><span class="Maybe">      14:</span>                 <span class="b">u64</span> <span class="b">start</span><span class="f">,</span> <span class="b">u64</span> <span class="b">end</span><span class="f">)</span><span class="f">;</span>
+<a name="15" /><span class="Maybe">      15:</span> 
+<a name="16" /><span class="Maybe">      16:</span> <span class="m">void</span> <span class="b">subtract_range</span><span class="f">(</span><span class="m">struct</span> <span class="b">range</span> <span class="f">*</span><span class="b">range</span><span class="f">,</span> <span class="m">int</span> <span class="b">az</span><span class="f">,</span> <span class="b">u64</span> <span class="b">start</span><span class="f">,</span> <span class="b">u64</span> <span class="b">end</span><span class="f">)</span><span class="f">;</span>
+<a name="17" /><span class="Maybe">      17:</span> 
+<a name="18" /><span class="Maybe">      18:</span> <span class="m">int</span> <span class="b">clean_sort_range</span><span class="f">(</span><span class="m">struct</span> <span class="b">range</span> <span class="f">*</span><span class="b">range</span><span class="f">,</span> <span class="m">int</span> <span class="b">az</span><span class="f">)</span><span class="f">;</span>
+<a name="19" /><span class="Maybe">      19:</span> 
+<a name="20" /><span class="Maybe">      20:</span> <span class="m">void</span> <span class="b">sort_range</span><span class="f">(</span><span class="m">struct</span> <span class="b">range</span> <span class="f">*</span><span class="b">range</span><span class="f">,</span> <span class="m">int</span> <span class="b">nr_range</span><span class="f">)</span><span class="f">;</span>
+<a name="21" /><span class="Maybe">      21:</span> 
+<a name="22" /><span class="Maybe">      22:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_TUFYX1JFU09VUkNFXzA_"><span class="b">MAX_RESOURCE</span></a> <span class="f">(</span><span class="f">(</span><span class="b">resource_size_t</span><span class="f">)</span><span class="f">~</span><span class="c">0</span><span class="f">)</span>
+<a name="23" /><span class="Maybe">      23:</span> <span class="m">static</span> <span class="m">inline</span> <span class="b">resource_size_t</span> <span class="b">cap_resource</span><span class="f">(</span><span class="b">u64</span> <span class="b">val</span><span class="f">)</span>
+<a name="24" /><span class="Maybe">      24:</span> <span class="f">{</span>
+<a name="25" /><span class="Maybe">      25:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">val</span> <span class="f">&gt;</span> <a href="cpu.c_macros_ref.html#_TUFYX1JFU09VUkNFXzA_"><span class="b">MAX_RESOURCE</span></a><span class="f">)</span>
+<a name="26" /><span class="Maybe">      26:</span>         <span class="m">return</span> <a href="cpu.c_macros_ref.html#_TUFYX1JFU09VUkNFXzA_"><span class="b">MAX_RESOURCE</span></a><span class="f">;</span>
+<a name="27" /><span class="Maybe">      27:</span> 
+<a name="28" /><span class="Maybe">      28:</span>     <span class="m">return</span> <span class="b">val</span><span class="f">;</span>
+<a name="29" /><span class="Maybe">      29:</span> <span class="f">}</span>
+<a name="30" /><span class="True">      30:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="31" /><span class="True">      31:</span> </pre>
+  </body>
+</html>
