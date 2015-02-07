@@ -130,7 +130,15 @@ class FileIncludeStack(object):
         condStr    - A string of the conditional compilation stack.
         incLogic   - A string that describes the find include logic.
         """
-        logging.debug('FileIncludeStack.includeStart(): %s line=%d', theFpo.filePath, theLineNum)
+        if not theLineNum:
+            logging.debug('FileIncludeStack.includeStart(): %s line=Unknown', 
+                          theFpo.filePath, 
+                      )
+        else:
+            logging.debug('FileIncludeStack.includeStart(): %s line=%d', 
+                          theFpo.filePath, 
+                          theLineNum
+                      )
 #        print 'FileIncludeStack.includeStart(): new file %s included from line=%s' % (theFpo.filePath, str(theLineNum))
         assert(len(self._fincS) == 0 and theLineNum is None or theLineNum == self._fincS[-1].ppt.pLineCol[0])
 #        import traceback
