@@ -46,6 +46,11 @@ class TestPragmaHandlerSTDC(unittest.TestCase):
         myH = PragmaHandler.PragmaHandlerSTDC()
         self.assertNotEqual(myH.replaceTokens, True)
 
+    def test_STDC_01(self):
+        """TestPragmaHandlerEcho: Test isLiteral."""
+        myH = PragmaHandler.PragmaHandlerSTDC()
+        self.assertFalse(myH.isLiteral)
+
     def test_STDC_FP_CONTRACT_ON_fail_00(self):
         """TestPragmaHandlerSTDC: Test missing STDC with FP_CONTRACT ON."""
         myH = PragmaHandler.PragmaHandlerSTDC()
@@ -232,9 +237,44 @@ class TestPragmaHandlerSTDC(unittest.TestCase):
             ]
         self.assertEqual(myH.pragma(myTokS), '#define CX_LIMITED_RANGE DEFAULT\n')
 
+class TestPragmaHandlerEcho(unittest.TestCase):
+    def setUp(self):
+        pass
+    
+    def tearDown(self):
+        pass
+    
+    def testSetUpTearDown(self):
+        """TestPragmaHandlerEcho: Test setUp() and tearDown()."""
+        pass
+    
+    def test_echo_00(self):
+        """TestPragmaHandlerEcho: Test replaceTokens."""
+        myH = PragmaHandler.PragmaHandlerEcho()
+        self.assertNotEqual(myH.replaceTokens, True)
+
+    def test_echo_01(self):
+        """TestPragmaHandlerEcho: Test isLiteral."""
+        myH = PragmaHandler.PragmaHandlerEcho()
+        self.assertTrue(myH.isLiteral)
+
+    def test_STDC_FP_CONTRACT_ON(self):
+        """TestPragmaHandlerSTDC: Test FP_CONTRACT ON."""
+        myH = PragmaHandler.PragmaHandlerEcho()
+        myTokS = [
+                PpToken.PpToken('some',                 'identifier'),
+                PpToken.PpToken(' ',                    'whitespace'),
+                PpToken.PpToken('pragma',               'identifier'),
+                PpToken.PpToken(' ',                    'whitespace'),
+                PpToken.PpToken('command',              'identifier'),
+                PpToken.PpToken('\n',                   'whitespace'),
+            ]
+        self.assertEqual(myH.pragma(myTokS), '#pragma some pragma command\n')
+
+
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestPragmaHandlerSTDC)
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(another class))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPragmaHandlerEcho))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 

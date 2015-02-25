@@ -52,6 +52,12 @@ class PragmaHandlerABC(object):
         terminated string that will be preprocessed in the current environment."""
         raise NotImplementedError('pragma() not implemented.')
 
+    @property
+    def isLiteral(self):
+        """Treat the result of pragma() literally so no further processing required."""
+        return False
+        
+
 class PragmaHandlerNull(PragmaHandlerABC):
     """A pragma handler that does nothing."""
     @property
@@ -123,3 +129,22 @@ class PragmaHandlerSTDC(PragmaHandlerABC):
         if len(myTokS) > 0:
             return '#define %s\n' % ''.join([s for s in myTokS])
         return ''
+
+class PragmaHandlerEcho(PragmaHandlerABC):
+    """A pragma handler that retains the #pragma line verbatim."""
+
+    @property
+    def isLiteral(self):
+        """This class is just going to echo the line back complete with
+        the '#pragma' prefix. If the PpLexer re-interpreted this it would
+        be an infinite loop."""
+        return True
+
+    @property
+    def replaceTokens(self):
+        """Tokens do not require macro replacement."""
+        return False
+    
+    def pragma(self, theTokS):
+        """Consume and return."""
+        return '#pragma%s' % ''.join([t.t for t in theTokS])

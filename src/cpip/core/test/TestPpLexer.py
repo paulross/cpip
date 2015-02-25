@@ -4188,6 +4188,32 @@ class PpLexerPragma(TestPpLexer):
         except CppDiagnostic.ExceptionCppDiagnosticUndefined as err:
             self.assertEqual(str(err), 'pragma() raised at line=1, col=2 of file "hello.c"')
 
+    def test_echo_00(self):
+        """PpLexerPragma with PragmaHandlerEcho."""
+        myStr = u"""#pragma some pragma command
+"""
+        myLexer = PpLexer.PpLexer(
+                    'hello.c',
+                    CppIncludeStringIO([], [], myStr, {}),
+                    pragmaHandler=PragmaHandler.PragmaHandlerEcho(),
+                )
+        myTokS = [t for t in myLexer.ppTokens()]
+        expTokS = [
+            PpToken.PpToken('#', 'preprocessing-op-or-punc'),
+            PpToken.PpToken('pragma', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('some', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('pragma', 'identifier'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('command', 'identifier'),
+            PpToken.PpToken('\n',   'whitespace'),
+            PpToken.PpToken('\n',   'whitespace'),
+        ]
+#         print('PragmaHandlerEcho')
+#         self.pprintTokensAsCtors(myTokS)
+        self.assertEqual(myTokS, expTokS)
+
 class MinimalWhitespace(TestPpLexer):
     """Testign whitespace minimisation"""
     def test_00(self):

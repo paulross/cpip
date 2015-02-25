@@ -1462,7 +1462,11 @@ Footnote 146: An implementation is not required to perform macro replacement in 
 except for in standard pragmas (where STDC immediately follows pragma). If the result of macro
 replacement in a non-standard pragma has the same form as a standard pragma, the behavior is still
 implementation-defined; an implementation is permitted to behave as if it were the standard pragma,
-but is not required to."""
+but is not required to.
+
+In this implementation we have a special rule, if the PragmaHandler has .isLiteral as True
+then we take its response and do no futher processing on it.
+"""
         if self._pragmaHandler is not None:
             try:
                 # It is up to the pragma handler
@@ -1485,8 +1489,13 @@ but is not required to."""
                     # Preprocess the tokens
                     myGen = self._pptPush(myFpo)
                     try:
-                        for aTtt in self._genPpTokensRecursive(myGen):
-                            yield aTtt
+                        if self._pragmaHandler.isLiteral:
+                            # Do no further processing
+                            for aTtt in myGen:
+                                yield aTtt
+                        else:
+                            for aTtt in self._genPpTokensRecursive(myGen):
+                                yield aTtt
                     finally:
                         # Trap any exception in the finally block otherwise that
                         # may displace an exception generated in the try block above.
