@@ -443,7 +443,7 @@ class PpLexer(object):
     #############################
     # Section: PpLexer generators
     #############################
-    def ppTokens(self, incWs=True, minWs=False, condLevel=0):
+    def ppTokens(self, incWs=True, minWs=False, condLevel=0, annotateLineFile=False):
         """A generator for providing PpToken.PpTokens to section 16 of ISO/IEC 14882:1998(E).
         
         *incWs* - if True than whitespace tokens are included (i.e. tok.isWs() == True).
@@ -467,7 +467,15 @@ class PpLexer(object):
             included files. The fileIncludeGraphRoot will have all the
             information about conditionally included files recursively.
 
-        (see _cppInclude where we check if self._condStack.isTrue():)."""
+        (see _cppInclude where we check if self._condStack.isTrue():).
+        
+        *annotateLineFile* - if True will output line number and file as cpp.
+        For example::
+        
+            # 22 "/usr/include/stdio.h" 3 4
+            # 59 "/usr/include/stdio.h" 3 4
+            # 1 "/usr/include/sys/cdefs.h" 1 3 4
+        """
         if self._isGenerating:
             raise ExceptionPpLexerAlreadyGenerating()
         # Mark internal state as having a generator
@@ -490,17 +498,26 @@ class PpLexer(object):
                     for aWsT in wsBuf:
                         if self._wsHandler.isBreakingWhitespace(aWsT.t):
                             yield PpToken.PpToken('\n', 'whitespace')
+                            if annotateLineFile:
+                                for lineTok in self._annotateLine():
+                                    yield lineTok
                             break
                     else:
                         yield PpToken.PpToken(' ', 'whitespace')
                     wsBuf = []
                 yield aTok            
+                if annotateLineFile and self._wsHandler.isBreakingWhitespace(aTok.t):
+                    for lineTok in self._annotateLine():
+                        yield lineTok
                 self._tuIndex += len(aTok.t)
         # Flush the whitespace buffer
         if len(wsBuf) > 0:
             for aWsT in wsBuf:
                 if self._wsHandler.isBreakingWhitespace(aWsT.t):
                     yield PpToken.PpToken('\n', 'whitespace')
+                    if annotateLineFile:
+                        for lineTok in self._annotateLine():
+                            yield lineTok
                     break
             else:
                 yield PpToken.PpToken(' ', 'whitespace')
@@ -523,17 +540,26 @@ class PpLexer(object):
                         for aWsT in wsBuf:
                             if self._wsHandler.isBreakingWhitespace(aWsT.t):
                                 yield PpToken.PpToken('\n', 'whitespace')
+                                if annotateLineFile:
+                                    for lineTok in self._annotateLine():
+                                        yield lineTok
                                 break
                         else:
                             yield PpToken.PpToken(' ', 'whitespace')
                         wsBuf = []
                     yield aTok
+                    if annotateLineFile and self._wsHandler.isBreakingWhitespace(aTok.t):
+                        for lineTok in self._annotateLine():
+                            yield lineTok
                     self._tuIndex += len(aTok.t)
             # Flush the whitespace buffer
             if len(wsBuf) > 0:
                 for aWsT in wsBuf:
                     if self._wsHandler.isBreakingWhitespace(aWsT.t):
                         yield PpToken.PpToken('\n', 'whitespace')
+                        if annotateLineFile:
+                            for lineTok in self._annotateLine():
+                                yield lineTok
                         break
                 else:
                     yield PpToken.PpToken(' ', 'whitespace')
@@ -552,6 +578,25 @@ class PpLexer(object):
                 pass
         # TODO: should finalise be within the finally?
         self.finalise()
+
+    def _annotateLine(self):
+        """Returns a list of PpTokens that represent the line number and file
+        name. For example::
+
+            # 22 "/usr/include/stdio.h" 3 4
+            # 59 "/usr/include/stdio.h" 3 4
+            # 1 "/usr/include/sys/cdefs.h" 1 3 4
+        """
+        # Get the file name from self.currentFile
+        # Line number from self.fileLineCol.lineNum
+        return [
+            PpToken.PpToken('#', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('%d' % self.fileLineCol.lineNum, 'pp-number'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('"%s"' % self.currentFile, 'string-literal'),
+            PpToken.PpToken('\n', 'whitespace'),
+        ]
 
     def _genPpTokensRecursive(self, theGen):
         """Given a token generator this applies the lexical rules.
