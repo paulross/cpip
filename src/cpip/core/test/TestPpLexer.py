@@ -5452,7 +5452,99 @@ BAR
         ]
         self._printDiff(self.stringToTokens(result), expTokS)
         self.assertEqual(self.stringToTokens(result), expTokS)    
-    
+
+
+class TestAnnotateWithLineAndFile(TestIncludeHandlerBase):
+    """Tests that the preprocessor output has a similar output to cpp.
+    For example:
+    # 1 "/usr/include/stdio.h" 1 3 4
+    # 22 "/usr/include/stdio.h" 3 4
+    # 59 "/usr/include/stdio.h" 3 4
+    # 1 "/usr/include/sys/cdefs.h" 1 3 4
+
+    Copied from TestIncludeHandler_UsrSys_MultipleDepth."""
+    def __init__(self, *args):
+        self._pathsUsr = [
+                os.path.join('usr'),
+                os.path.join('usr', 'inc'),
+                ]
+        self._pathsSys = [
+                os.path.join('sys'),
+                os.path.join('sys', 'inc'),
+                ]
+        # The next two arguments mean that:
+        # src/spam.c
+        #   |-> usr/spam.h
+        #       |-> usr/inc/spam.h
+        #           |-> sys/spam.h
+        #               |-> sys/inc/spam.h
+        #                   |-> "Content of: system, include, spam.h"
+        # Initial TU:
+        self._initialTuContents = u"""Starts in spam.c
+#include "spam.h"
+Ends in spam.c
+"""
+        self._incFileMap = {
+                os.path.join('usr', 'spam.h') : u"""Start of usr/spam.h
+#include "inc/spam.h"
+End of usr/spam.h
+""",
+                os.path.join('usr', 'inc', 'spam.h') : u"""Start of usr/inc/spam.h
+#include <spam.h>
+End of usr/inc/spam.h
+""",
+                os.path.join('sys', 'spam.h') : u"""Start of sys/spam.h
+#include <inc/spam.h>
+End of sys/spam.h
+""",
+                os.path.join('sys', 'inc', 'spam.h') : u"""Start of sys/inc/spam.h
+Content of: system, include, spam.h
+End of sys/inc/spam.h
+""",
+            }
+        super(TestAnnotateWithLineAndFile, self).__init__(*args)
+
+    def testSimpleAnnotation(self):
+        """TestAnnotateWithLineAndFile.testSimpleAnnotation(): Tests multiple depth #include statements that resolve to usr/sys."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
+        result = u''.join([t.t for t in myLexer.ppTokens(annotateLineFile=True)])
+        myLexer.finalise()
+#         print('TestAnnotateWithLineAndFile.testSimpleAnnotation():')
+#         print(result)
+        expectedResult = u"""Starts in spam.c
+# 2 "src/spam.c"
+Start of usr/spam.h
+# 2 "usr/spam.h"
+Start of usr/inc/spam.h
+# 2 "usr/inc/spam.h"
+Start of sys/spam.h
+# 2 "sys/spam.h"
+Start of sys/inc/spam.h
+# 2 "sys/inc/spam.h"
+Content of: system, include, spam.h
+# 3 "sys/inc/spam.h"
+End of sys/inc/spam.h
+# 4 "sys/inc/spam.h"
+
+# 3 "sys/spam.h"
+End of sys/spam.h
+# 4 "sys/spam.h"
+
+# 3 "usr/inc/spam.h"
+End of usr/inc/spam.h
+# 4 "usr/inc/spam.h"
+
+# 3 "usr/spam.h"
+End of usr/spam.h
+# 4 "usr/spam.h"
+
+# 3 "src/spam.c"
+Ends in spam.c
+# 4 "src/spam.c"
+"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+
 class Special(TestPpLexer):
     def test_00(self):
         """Sepecial.test_00()."""
@@ -5530,6 +5622,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInTypesH))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxEvalProblem))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLibCelloProblems))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestAnnotateWithLineAndFile))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
