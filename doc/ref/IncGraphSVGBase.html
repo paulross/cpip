@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>IncGraphSVGBase &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../index.html" />
+    <link rel="up" title="CPIP Reference" href="index.html" />
+    <link rel="next" title="IncGraphXML" href="IncGraphXML.html" />
+    <link rel="prev" title="IncGraphSVG" href="IncGraphSVG.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="IncGraphXML.html" title="IncGraphXML"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="IncGraphSVG.html" title="IncGraphSVG"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-cpip.IncGraphSVGBase">
+<span id="incgraphsvgbase"></span><span id="cpip-ref-incgraphsvgbase"></span><h1>IncGraphSVGBase<a class="headerlink" href="#module-cpip.IncGraphSVGBase" title="Permalink to this headline">¶</a></h1>
+<p>Provides basic functionality to take the #include graph of a preprocessed
+file and plots it as a diagram in SVG.</p>
+<div class="section" id="writing-onmouseover-onmouseout-event-handlers-to-provide-additional-information">
+<h2>Writing onmouseover/onmouseout event handlers to provide additional information.<a class="headerlink" href="#writing-onmouseover-onmouseout-event-handlers-to-provide-additional-information" title="Permalink to this headline">¶</a></h2>
+<p>The idea here is to use the &lt;defs&gt; and &lt;use&gt; elements n SVG. It seems that any
+number of &lt;defs&gt; elements can be in an SVG document.</p>
+<p>The original text and the replacement text are paired within a &lt;defs&gt; element
+thus:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;defs&gt;
+    &lt;text id=&quot;original&quot; font-family=&quot;Verdana&quot; font-size=&quot;12&quot; text-anchor=&quot;middle&quot; x=&quot;250&quot; y=&quot;250&quot;&gt;Original text.&lt;/text&gt;
+    &lt;text id=&quot;original.alt&quot; font-family=&quot;Courier&quot; font-size=&quot;12&quot; text-anchor=&quot;middle&quot; x=&quot;250&quot; y=&quot;250&quot;&gt;
+        &lt;tspan xml:space=&quot;preserve&quot;&gt; One&lt;/tspan&gt;
+        &lt;tspan x=&quot;250&quot; dy=&quot;1em&quot; xml:space=&quot;preserve&quot;&gt; Two&lt;/tspan&gt;
+        &lt;tspan x=&quot;250&quot; dy=&quot;1em&quot; xml:space=&quot;preserve&quot;&gt;Three&lt;/tspan&gt;
+    &lt;/text&gt;
+&lt;/defs&gt;
+</pre></div>
+</div>
+<div class="section" id="important-features-using-defs">
+<h3>Important features using &lt;defs&gt;<a class="headerlink" href="#important-features-using-defs" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Pairs have an ID and and ID + &#8221;.alt&#8221;</p>
+</li>
+<li><dl class="first docutils">
+<dt>Original and alt must have the same location and centering otherwise</dt>
+<dd><p class="first last">onmouseover/onmouseout events might not match up.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>xml:space=&#8221;preserve&#8221; is on each tspan element (alternatively space padding</dt>
+<dd><p class="first last">could be suspended in the XmlWriter).</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">The first tspan element does not need an x value (it inherits one).</p>
+</li>
+<li><dl class="first docutils">
+<dt>Subsequent tspan elements do need an x value as x has been incremented by the</dt>
+<dd><p class="first last">previous tspan.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Indentation of tspan has no effect as xml:space=&#8221;preserve&#8221; is not true</dt>
+<dd><p class="first last">at that point.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Space padding needs to be made to line things up.</p>
+</li>
+<li><p class="first">xlink namespace must be declared.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="switching-using-use">
+<h3>Switching using &lt;use&gt;<a class="headerlink" href="#switching-using-use" title="Permalink to this headline">¶</a></h3>
+<p>The use element and event handlers will establish the initial conditions on
+document load:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;use xlink:href=&quot;#original&quot; onmouseover=&quot;switch_to_alt(evt)&quot; onmouseout=&quot;switch_from_alt(evt)&quot; /&gt;
+</pre></div>
+</div>
+</div>
+<div class="section" id="generating-id-values">
+<h3>Generating ID values<a class="headerlink" href="#generating-id-values" title="Permalink to this headline">¶</a></h3>
+<p>They just need to be unique with &#8221;.alt&#8221; as the alternate suffix. A clear way
+would to be pass around an ever increasing integer around the graph.
+Alternately use depth/width e.g. &#8220;1.3.5.2&#8221;. There is no clear advantage to the
+latter.</p>
+</div>
+<div class="section" id="javascript-event-handlers">
+<h3>Javascript Event Handlers<a class="headerlink" href="#javascript-event-handlers" title="Permalink to this headline">¶</a></h3>
+<p>Java script needs to be written within a script element thus:</p>
+<div class="highlight-python"><div class="highlight"><pre>&lt;script type=&quot;text/ecmascript&quot;&gt;
+//&lt;![CDATA[
+...
+// ]]&gt;
+&lt;/script&gt;
+</pre></div>
+</div>
+<p>Switch handlers work are like this (they are fairly defensive):</p>
+<p>These work for IE/Firefox:</p>
+<div class="highlight-python"><div class="highlight"><pre>function switch_to_alt(evt) {
+    var myTextTgt = evt.target;
+    myOldLink = myTextTgt.getAttribute(&quot;xlink:href&quot;);
+    if (myOldLink.lastIndexOf(&quot;.alt&quot;) == -1) {
+        myTextTgt.setAttribute(&quot;xlink:href&quot;, myOldLink+&quot;.alt&quot;);
+    }
+}
+
+function switch_from_alt(evt) {
+    var myTextTgt = evt.target;
+    myOldLink = myTextTgt.getAttribute(&quot;xlink:href&quot;);
+    if (myOldLink.lastIndexOf(&quot;.alt&quot;) != -1) {
+        myOldLink = myOldLink.substring(0, myOldLink.lastIndexOf(&quot;.alt&quot;));
+    }
+    myTextTgt.setAttribute(&quot;xlink:href&quot;, myOldLink);
+}
+
+function swap_id(evt, theId) {
+    var textTgt = evt.target;
+    textTgt.setAttribute(&quot;xlink:href&quot;, theId);
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="opera">
+<h2>Opera<a class="headerlink" href="#opera" title="Permalink to this headline">¶</a></h2>
+<p>This works for Opera: when called with:</p>
+<div class="highlight-python"><div class="highlight"><pre>switch_to_alt(this)
+switch_from_alt(this)
+swap_id(this)
+
+[swap_id() works with Firefox, none of this works with IE.]
+
+  &lt;script type=&quot;text/ecmascript&quot;&gt;
+//&lt;![CDATA[
+var altSuffix = &quot;.alt&quot;;
+
+function switch_to_alt(elem) {
+    myHref = elem.getAttributeNS(&#39;http://www.w3.org/1999/xlink&#39;, &#39;xlink:href&#39;);
+    if (myHref.lastIndexOf(altSuffix) == -1) {
+        elem.setAttributeNS(&#39;http://www.w3.org/1999/xlink&#39;, &#39;xlink:href&#39;, myHref + altSuffix);
+    }
+}
+
+function switch_from_alt(elem) {
+    myHref = elem.getAttributeNS(&#39;http://www.w3.org/1999/xlink&#39;, &#39;xlink:href&#39;);
+    if (myHref.lastIndexOf(altSuffix) != -1) {
+        myHref = myHref.substring(0, myHref.lastIndexOf(altSuffix));
+        elem.setAttributeNS(&#39;http://www.w3.org/1999/xlink&#39;, &#39;xlink:href&#39;, myHref);
+    }
+}
+
+function swap_id(elem, theId) {
+    elem.setAttributeNS(&#39;http://www.w3.org/1999/xlink&#39;, &#39;xlink:href&#39;, theId);
+}
+
+// ]]&gt;
+&lt;/script&gt;
+</pre></div>
+</div>
+<dl class="function">
+<dt id="cpip.IncGraphSVGBase.processIncGraphToSvg">
+<tt class="descclassname">cpip.IncGraphSVGBase.</tt><tt class="descname">processIncGraphToSvg</tt><big>(</big><em>theLex</em>, <em>theFilePath</em>, <em>theClass</em>, <em>tptPos</em>, <em>tptSweep</em><big>)</big><a class="headerlink" href="#cpip.IncGraphSVGBase.processIncGraphToSvg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a Include graph from a PpLexer to SVG in theFilePath.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">IncGraphSVGBase</a><ul>
+<li><a class="reference internal" href="#writing-onmouseover-onmouseout-event-handlers-to-provide-additional-information">Writing onmouseover/onmouseout event handlers to provide additional information.</a><ul>
+<li><a class="reference internal" href="#important-features-using-defs">Important features using &lt;defs&gt;</a></li>
+<li><a class="reference internal" href="#switching-using-use">Switching using &lt;use&gt;</a></li>
+<li><a class="reference internal" href="#generating-id-values">Generating ID values</a></li>
+<li><a class="reference internal" href="#javascript-event-handlers">Javascript Event Handlers</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#opera">Opera</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="IncGraphSVG.html"
+                        title="previous chapter">IncGraphSVG</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="IncGraphXML.html"
+                        title="next chapter">IncGraphXML</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/ref/IncGraphSVGBase.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="IncGraphXML.html" title="IncGraphXML"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="IncGraphSVG.html" title="IncGraphSVG"
+             >previous</a> |</li>
+        <li><a href="../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >CPIP Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

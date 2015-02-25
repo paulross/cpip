@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DirWalk &mdash; CPIP 0.9.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.9.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="CPIP 0.9.1 documentation" href="../../index.html" />
+    <link rel="up" title="cpip.util" href="index.html" />
+    <link rel="next" title="DupeLines" href="DupeLines.html" />
+    <link rel="prev" title="DictTree" href="DictTree.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="DupeLines.html" title="DupeLines"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="DictTree.html" title="DictTree"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">cpip.util</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dirwalk">
+<h1>DirWalk<a class="headerlink" href="#dirwalk" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+<span class="target" id="module-cpip.util.DirWalk"></span><p>Provides various ways of walking a directory tree</p>
+<p>Created on Jun 9, 2011</p>
+<dl class="exception">
+<dt id="cpip.util.DirWalk.ExceptionDirWalk">
+<em class="property">exception </em><tt class="descclassname">cpip.util.DirWalk.</tt><tt class="descname">ExceptionDirWalk</tt><a class="headerlink" href="#cpip.util.DirWalk.ExceptionDirWalk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception class for this module.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="cpip.util.DirWalk.FileInOut">
+<em class="property">class </em><tt class="descclassname">cpip.util.DirWalk.</tt><tt class="descname">FileInOut</tt><a class="headerlink" href="#cpip.util.DirWalk.FileInOut" title="Permalink to this definition">¶</a></dt>
+<dd><p>A pair of (in, out) file paths</p>
+<dl class="attribute">
+<dt id="cpip.util.DirWalk.FileInOut.filePathIn">
+<tt class="descname">filePathIn</tt><a class="headerlink" href="#cpip.util.DirWalk.FileInOut.filePathIn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="cpip.util.DirWalk.FileInOut.filePathOut">
+<tt class="descname">filePathOut</tt><a class="headerlink" href="#cpip.util.DirWalk.FileInOut.filePathOut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.DirWalk.dirWalk">
+<tt class="descclassname">cpip.util.DirWalk.</tt><tt class="descname">dirWalk</tt><big>(</big><em>theIn</em>, <em>theOut=None</em>, <em>theFnMatch=None</em>, <em>recursive=False</em>, <em>bigFirst=False</em><big>)</big><a class="headerlink" href="#cpip.util.DirWalk.dirWalk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Walks a directory tree generating file paths.</p>
+<p>theIn - The input directory.</p>
+<p>theOut - The output directory. If None then input file paths as strings
+will be generated If non-None this function will yield
+FileInOut(in, out) objects.
+NOTE: This does not create the output directory structure, it is up to
+the caller to do that.</p>
+<p>theFnMatch - A glob like match pattern for file names (not tested for directory names).</p>
+<p>recursive - Boolean to recurse or not.</p>
+<p>bigFirst - If True then the largest files in  directory are given first. If False it is alphabetical.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="cpip.util.DirWalk.genBigFirst">
+<tt class="descclassname">cpip.util.DirWalk.</tt><tt class="descname">genBigFirst</tt><big>(</big><em>d</em><big>)</big><a class="headerlink" href="#cpip.util.DirWalk.genBigFirst" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator that yields the biggest files (name not path) first.
+This is fairly simple in that it it only looks the current directory not
+only sub-directories. Useful for multiprocessing.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="DictTree.html"
+                        title="previous chapter">DictTree</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="DupeLines.html"
+                        title="next chapter">DupeLines</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/ref/util/DirWalk.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="DupeLines.html" title="DupeLines"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="DictTree.html" title="DictTree"
+             >previous</a> |</li>
+        <li><a href="../../index.html">CPIP 0.9.1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >CPIP Reference</a> &raquo;</li>
+          <li><a href="index.html" >cpip.util</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2008-2012, Paul Ross.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

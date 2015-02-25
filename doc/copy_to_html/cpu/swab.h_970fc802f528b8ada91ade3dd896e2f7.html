@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/swab.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/swab.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX1NXQUJfSF8w"><span class="b">_LINUX_SWAB_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX1NXQUJfSF8w"><span class="b">_LINUX_SWAB_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">uapi</span><span class="f">/</span><span class="b">linux</span><span class="f">/</span><span class="b">swab</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="True">       5:</span> 
+<a name="6" /><span class="True">       6:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjE2XzA_"><span class="b">swab16</span></a> <a href="cpu.c_macros_ref.html#_X19zd2FiMTZfMA__"><span class="b">__swab16</span></a>
+<a name="7" /><span class="True">       7:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjMyXzA_"><span class="b">swab32</span></a> <a href="cpu.c_macros_ref.html#_X19zd2FiMzJfMA__"><span class="b">__swab32</span></a>
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjY0XzA_"><span class="b">swab64</span></a> <a href="cpu.c_macros_ref.html#_X19zd2FiNjRfMA__"><span class="b">__swab64</span></a>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhaHczMl8w"><span class="b">swahw32</span></a> <a href="cpu.c_macros_ref.html#_X19zd2FodzMyXzA_"><span class="b">__swahw32</span></a>
+<a name="10" /><span class="True">      10:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhaGIzMl8w"><span class="b">swahb32</span></a> <a href="cpu.c_macros_ref.html#_X19zd2FoYjMyXzA_"><span class="b">__swahb32</span></a>
+<a name="11" /><span class="True">      11:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjE2cF8w"><span class="b">swab16p</span></a> <span class="b">__swab16p</span>
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjMycF8w"><span class="b">swab32p</span></a> <span class="b">__swab32p</span>
+<a name="13" /><span class="True">      13:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjY0cF8w"><span class="b">swab64p</span></a> <span class="b">__swab64p</span>
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhaHczMnBfMA__"><span class="b">swahw32p</span></a> <span class="b">__swahw32p</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhaGIzMnBfMA__"><span class="b">swahb32p</span></a> <span class="b">__swahb32p</span>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjE2c18w"><span class="b">swab16s</span></a> <span class="b">__swab16s</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjMyc18w"><span class="b">swab32s</span></a> <span class="b">__swab32s</span>
+<a name="18" /><span class="True">      18:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhYjY0c18w"><span class="b">swab64s</span></a> <span class="b">__swab64s</span>
+<a name="19" /><span class="True">      19:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhaHczMnNfMA__"><span class="b">swahw32s</span></a> <span class="b">__swahw32s</span>
+<a name="20" /><span class="True">      20:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_c3dhaGIzMnNfMA__"><span class="b">swahb32s</span></a> <span class="b">__swahb32s</span>
+<a name="21" /><span class="True">      21:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _LINUX_SWAB_H */</span>
+<a name="22" /><span class="True">      22:</span> </pre>
+  </body>
+</html>

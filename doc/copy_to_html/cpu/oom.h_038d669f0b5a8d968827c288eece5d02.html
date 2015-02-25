@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/oom.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/uapi/linux/oom.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X1VBUElfX0lOQ0xVREVfTElOVVhfT09NX0hfMA__"><span class="b">_UAPI__INCLUDE_LINUX_OOM_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X1VBUElfX0lOQ0xVREVfTElOVVhfT09NX0hfMA__"><span class="b">_UAPI__INCLUDE_LINUX_OOM_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="k">/*</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * /proc/&lt;pid&gt;/oom_score_adj set to OOM_SCORE_ADJ_MIN disables oom killing for</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> * pid.</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> */</span>
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_T09NX1NDT1JFX0FESl9NSU5fMA__"><span class="b">OOM_SCORE_ADJ_MIN</span></a>    <span class="f">(</span><span class="f">-</span><span class="c">1000</span><span class="f">)</span>
+<a name="9" /><span class="True">       9:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_T09NX1NDT1JFX0FESl9NQVhfMA__"><span class="b">OOM_SCORE_ADJ_MAX</span></a>    <span class="c">1000</span>
+<a name="10" /><span class="True">      10:</span> 
+<a name="11" /><span class="True">      11:</span> <span class="k">/*</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> * /proc/&lt;pid&gt;/oom_adj set to -17 protects from the oom killer for legacy</span>
+<a name="13" /><span class="True">      13:</span> <span class="k"> * purposes.</span>
+<a name="14" /><span class="True">      14:</span> <span class="k"> */</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_T09NX0RJU0FCTEVfMA__"><span class="b">OOM_DISABLE</span></a> <span class="f">(</span><span class="f">-</span><span class="c">17</span><span class="f">)</span>
+<a name="16" /><span class="True">      16:</span> <span class="k">/* inclusive */</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_T09NX0FESlVTVF9NSU5fMA__"><span class="b">OOM_ADJUST_MIN</span></a> <span class="f">(</span><span class="f">-</span><span class="c">16</span><span class="f">)</span>
+<a name="18" /><span class="True">      18:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_T09NX0FESlVTVF9NQVhfMA__"><span class="b">OOM_ADJUST_MAX</span></a> <span class="c">15</span>
+<a name="19" /><span class="True">      19:</span> 
+<a name="20" /><span class="True">      20:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* _UAPI__INCLUDE_LINUX_OOM_H */</span>
+<a name="21" /><span class="True">      21:</span> </pre>
+  </body>
+</html>

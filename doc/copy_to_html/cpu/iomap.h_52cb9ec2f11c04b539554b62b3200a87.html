@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/asm-generic/iomap.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/asm-generic/iomap.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X19HRU5FUklDX0lPX0hfMA__"><span class="b">__GENERIC_IO_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_X19HRU5FUklDX0lPX0hfMA__"><span class="b">__GENERIC_IO_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">linkage</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="5" /><span class="True">       5:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">/</span><span class="b">byteorder</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="6" /><span class="True">       6:</span> 
+<a name="7" /><span class="True">       7:</span> <span class="k">/*</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> * These are the &quot;generic&quot; interfaces for doing new-style</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> * memory-mapped or PIO accesses. Architectures may do</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * their own arch-optimized versions, these just act as</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> * wrappers around the old-style IO register access functions:</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> * read[bwl]/write[bwl]/in[bwl]/out[bwl]</span>
+<a name="13" /><span class="True">      13:</span> <span class="k"> *</span>
+<a name="14" /><span class="True">      14:</span> <span class="k"> * Don&apos;t include this directly, include it from &lt;asm/io.h&gt;.</span>
+<a name="15" /><span class="True">      15:</span> <span class="k"> */</span>
+<a name="16" /><span class="True">      16:</span> 
+<a name="17" /><span class="True">      17:</span> <span class="k">/*</span>
+<a name="18" /><span class="True">      18:</span> <span class="k"> * Read/write from/to an (offsettable) iomem cookie. It might be a PIO</span>
+<a name="19" /><span class="True">      19:</span> <span class="k"> * access or a MMIO access, these functions don&apos;t care. The info is</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * encoded in the hardware mapping set up by the mapping functions</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> * (or the cookie itself, depending on implementation and hw).</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> *</span>
+<a name="23" /><span class="True">      23:</span> <span class="k"> * The generic routines just encode the PIO/MMIO as part of the</span>
+<a name="24" /><span class="True">      24:</span> <span class="k"> * cookie, and coldly assume that the MMIO IO mappings are not</span>
+<a name="25" /><span class="True">      25:</span> <span class="k"> * in the low address range. Architectures for which this is not</span>
+<a name="26" /><span class="True">      26:</span> <span class="k"> * true can&apos;t use this generic implementation.</span>
+<a name="27" /><span class="True">      27:</span> <span class="k"> */</span>
+<a name="28" /><span class="True">      28:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">ioread8</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="29" /><span class="True">      29:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">ioread16</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="30" /><span class="True">      30:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">ioread16be</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="31" /><span class="True">      31:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">ioread32</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="32" /><span class="True">      32:</span> <span class="m">extern</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">ioread32be</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="33" /><span class="True">      33:</span> 
+<a name="34" /><span class="True">      34:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite8</span><span class="f">(</span><span class="b">u8</span><span class="f">,</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="35" /><span class="True">      35:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite16</span><span class="f">(</span><span class="b">u16</span><span class="f">,</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="36" /><span class="True">      36:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite16be</span><span class="f">(</span><span class="b">u16</span><span class="f">,</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="37" /><span class="True">      37:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite32</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a><span class="f">,</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="38" /><span class="True">      38:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite32be</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_dTMyXzA_"><span class="b">u32</span></a><span class="f">,</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="39" /><span class="True">      39:</span> 
+<a name="40" /><span class="True">      40:</span> <span class="k">/*</span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> * &quot;string&quot; versions of the above. Note that they</span>
+<a name="42" /><span class="True">      42:</span> <span class="k"> * use native byte ordering for the accesses (on</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"> * the assumption that IO and memory agree on a</span>
+<a name="44" /><span class="True">      44:</span> <span class="k"> * byte order, and CPU byteorder is irrelevant).</span>
+<a name="45" /><span class="True">      45:</span> <span class="k"> *</span>
+<a name="46" /><span class="True">      46:</span> <span class="k"> * They do _not_ update the port address. If you</span>
+<a name="47" /><span class="True">      47:</span> <span class="k"> * want MMIO that copies stuff laid out in MMIO</span>
+<a name="48" /><span class="True">      48:</span> <span class="k"> * memory across multiple ports, use &quot;memcpy_toio()&quot;</span>
+<a name="49" /><span class="True">      49:</span> <span class="k"> * and friends.</span>
+<a name="50" /><span class="True">      50:</span> <span class="k"> */</span>
+<a name="51" /><span class="True">      51:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">ioread8_rep</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">port</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">buf</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">count</span><span class="f">)</span><span class="f">;</span>
+<a name="52" /><span class="True">      52:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">ioread16_rep</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">port</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">buf</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">count</span><span class="f">)</span><span class="f">;</span>
+<a name="53" /><span class="True">      53:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">ioread32_rep</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">port</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">buf</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">count</span><span class="f">)</span><span class="f">;</span>
+<a name="54" /><span class="True">      54:</span> 
+<a name="55" /><span class="True">      55:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite8_rep</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">port</span><span class="f">,</span> <span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="b">buf</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">count</span><span class="f">)</span><span class="f">;</span>
+<a name="56" /><span class="True">      56:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite16_rep</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">port</span><span class="f">,</span> <span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="b">buf</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">count</span><span class="f">)</span><span class="f">;</span>
+<a name="57" /><span class="True">      57:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">iowrite32_rep</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">port</span><span class="f">,</span> <span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="b">buf</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span> <span class="b">count</span><span class="f">)</span><span class="f">;</span>
+<a name="58" /><span class="True">      58:</span> 
+<a name="59" /><span class="True">      59:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX0hBU19JT1BPUlRfMA__"><span class="b">CONFIG_HAS_IOPORT</span></a>
+<a name="60" /><span class="True">      60:</span> <span class="k">/* Create a virtual mapping cookie for an IO port range */</span>
+<a name="61" /><span class="True">      61:</span> <span class="m">extern</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">ioport_map</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="b">port</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">nr</span><span class="f">)</span><span class="f">;</span>
+<a name="62" /><span class="True">      62:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">ioport_unmap</span><span class="f">(</span><span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="63" /><span class="True">      63:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="64" /><span class="True">      64:</span> 
+<a name="65" /><span class="False">      65:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_QVJDSF9IQVNfSU9SRU1BUF9XQ18w"><span class="b">ARCH_HAS_IOREMAP_WC</span></a>
+<a name="66" /><span class="False">      66:</span> <span class="f">#</span><span class="n">define</span> <span class="b">ioremap_wc</span> <span class="b">ioremap_nocache</span>
+<a name="67" /><span class="True">      67:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="68" /><span class="True">      68:</span> 
+<a name="69" /><span class="True">      69:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1BDSV8w"><span class="b">CONFIG_PCI</span></a>
+<a name="70" /><span class="True">      70:</span> <span class="k">/* Destroy a virtual mapping cookie for a PCI BAR (memory or IO) */</span>
+<a name="71" /><span class="True">      71:</span> <span class="m">struct</span> <span class="b">pci_dev</span><span class="f">;</span>
+<a name="72" /><span class="True">      72:</span> <span class="m">extern</span> <span class="m">void</span> <span class="b">pci_iounmap</span><span class="f">(</span><span class="m">struct</span> <span class="b">pci_dev</span> <span class="f">*</span><span class="b">dev</span><span class="f">,</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="73" /><span class="False">      73:</span> <span class="f">#</span><span class="n">elif</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_noref.html#_Q09ORklHX0dFTkVSSUNfSU9NQVBfMA__"><span class="b">CONFIG_GENERIC_IOMAP</span></a><span class="f">)</span>
+<a name="74" /><span class="False">      74:</span> <span class="m">struct</span> <span class="b">pci_dev</span><span class="f">;</span>
+<a name="75" /><span class="False">      75:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="b">pci_iounmap</span><span class="f">(</span><span class="m">struct</span> <span class="b">pci_dev</span> <span class="f">*</span><span class="b">dev</span><span class="f">,</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pb21lbV8w"><span class="b">__iomem</span></a> <span class="f">*</span><span class="b">addr</span><span class="f">)</span>
+<a name="76" /><span class="False">      76:</span> <span class="f">{</span> <span class="f">}</span>
+<a name="77" /><span class="True">      77:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="78" /><span class="True">      78:</span> 
+<a name="79" /><span class="True">      79:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="m">asm</span><span class="f">-</span><span class="b">generic</span><span class="f">/</span><span class="b">pci_iomap</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="80" /><span class="True">      80:</span> 
+<a name="81" /><span class="True">      81:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="82" /><span class="True">      82:</span> </pre>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/page-debug-flags.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/page-debug-flags.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_TElOVVhfUEFHRV9ERUJVR19GTEFHU19IXzA_"><span class="b">LINUX_PAGE_DEBUG_FLAGS_H</span></a>
+<a name="2" /><span class="True">       2:</span> <span class="f">#</span><span class="n">define</span>  <a href="cpu.c_macros_noref.html#_TElOVVhfUEFHRV9ERUJVR19GTEFHU19IXzA_"><span class="b">LINUX_PAGE_DEBUG_FLAGS_H</span></a>
+<a name="3" /><span class="True">       3:</span> 
+<a name="4" /><span class="True">       4:</span> <span class="k">/*</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * page-&gt;debug_flags bits:</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> *</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * PAGE_DEBUG_FLAG_POISON is set for poisoned pages. This is used to</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> * implement generic debug pagealloc feature. The pages are filled with</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> * poison patterns and set this flag after free_pages(). The poisoned</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * pages are verified whether the patterns are not corrupted and clear</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> * the flag before alloc_pages().</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> */</span>
+<a name="13" /><span class="True">      13:</span> 
+<a name="14" /><span class="True">      14:</span> <span class="m">enum</span> <span class="b">page_debug_flags</span> <span class="f">{</span>
+<a name="15" /><span class="True">      15:</span>     <span class="b">PAGE_DEBUG_FLAG_POISON</span><span class="f">,</span>        <span class="k">/* Page is poisoned */</span>
+<a name="16" /><span class="True">      16:</span>     <span class="b">PAGE_DEBUG_FLAG_GUARD</span><span class="f">,</span>
+<a name="17" /><span class="True">      17:</span> <span class="f">}</span><span class="f">;</span>
+<a name="18" /><span class="True">      18:</span> 
+<a name="19" /><span class="True">      19:</span> <span class="k">/*</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * Ensure that CONFIG_WANT_PAGE_DEBUG_FLAGS reliably</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> * gets turned off when no debug features are enabling it!</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> */</span>
+<a name="23" /><span class="True">      23:</span> 
+<a name="24" /><span class="False">      24:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_WANT_PAGE_DEBUG_FLAGS</span>
+<a name="25" /><span class="False">      25:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_PAGE_POISONING</span><span class="f">)</span> <span class="f">&amp;&amp;</span> \
+<a name="26" /><span class="False">      26:</span>     <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_PAGE_GUARD</span><span class="f">)</span> \
+<a name="27" /><span class="False">      27:</span> <span class="k">/* &amp;&amp; !defined(CONFIG_PAGE_DEBUG_SOMETHING_ELSE) &amp;&amp; ... */</span>
+<a name="28" /><span class="False">      28:</span> <span class="f">#</span><span class="n">error</span> <span class="b">WANT_PAGE_DEBUG_FLAGS</span> <span class="b">is</span> <span class="b">turned</span> <span class="b">on</span> <span class="b">with</span> <span class="b">no</span> <span class="b">debug</span> <span class="b">features</span><span class="f">!</span>
+<a name="29" /><span class="False">      29:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="30" /><span class="True">      30:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_WANT_PAGE_DEBUG_FLAGS */</span>
+<a name="31" /><span class="True">      31:</span> 
+<a name="32" /><span class="True">      32:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* LINUX_PAGE_DEBUG_FLAGS_H */</span>
+<a name="33" /><span class="True">      33:</span> </pre>
+  </body>
+</html>

@@ -1,0 +1,675 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/linux/linux-3.13/include/linux/slab.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/linux/linux-3.13/include/linux/slab.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> * Written by Mark Hemment, 1996 (markhe@nextd.demon.co.uk).</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> *</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> * (C) SGI 2006, Christoph Lameter</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> *     Cleaned up and restructured to ease the addition of alternative</span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> *     implementations of SLAB allocators.</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * (C) Linux Foundation 2008-2013</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> *      Unified interface for all slab allocators</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> */</span>
+<a name="10" /><span class="True">      10:</span> 
+<a name="11" /><span class="True">      11:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_X0xJTlVYX1NMQUJfSF8w"><span class="b">_LINUX_SLAB_H</span></a>
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">define</span>    <a href="cpu.c_macros_noref.html#_X0xJTlVYX1NMQUJfSF8w"><span class="b">_LINUX_SLAB_H</span></a>
+<a name="13" /><span class="True">      13:</span> 
+<a name="14" /><span class="True">      14:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">gfp</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="15" /><span class="True">      15:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="16" /><span class="True">      16:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">workqueue</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="17" /><span class="True">      17:</span> 
+<a name="18" /><span class="True">      18:</span> 
+<a name="19" /><span class="True">      19:</span> <span class="k">/*</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * Flags to pass to kmem_cache_create().</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> * The ones marked DEBUG are only valid if CONFIG_SLAB_DEBUG is set.</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> */</span>
+<a name="23" /><span class="True">      23:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9ERUJVR19GUkVFXzA_"><span class="b">SLAB_DEBUG_FREE</span></a>        <span class="c">0x00000100UL</span>    <span class="k">/* DEBUG: Perform (expensive) checks on free */</span>
+<a name="24" /><span class="True">      24:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9SRURfWk9ORV8w"><span class="b">SLAB_RED_ZONE</span></a>        <span class="c">0x00000400UL</span>    <span class="k">/* DEBUG: Red zone objs in a cache */</span>
+<a name="25" /><span class="True">      25:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9QT0lTT05fMA__"><span class="b">SLAB_POISON</span></a>        <span class="c">0x00000800UL</span>    <span class="k">/* DEBUG: Poison objects */</span>
+<a name="26" /><span class="True">      26:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9IV0NBQ0hFX0FMSUdOXzA_"><span class="b">SLAB_HWCACHE_ALIGN</span></a>    <span class="c">0x00002000UL</span>    <span class="k">/* Align objs on cache lines */</span>
+<a name="27" /><span class="True">      27:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9DQUNIRV9ETUFfMA__"><span class="b">SLAB_CACHE_DMA</span></a>        <span class="c">0x00004000UL</span>    <span class="k">/* Use GFP_DMA memory */</span>
+<a name="28" /><span class="True">      28:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9TVE9SRV9VU0VSXzA_"><span class="b">SLAB_STORE_USER</span></a>        <span class="c">0x00010000UL</span>    <span class="k">/* DEBUG: Store the last owner for bug hunting */</span>
+<a name="29" /><span class="True">      29:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9QQU5JQ18w"><span class="b">SLAB_PANIC</span></a>        <span class="c">0x00040000UL</span>    <span class="k">/* Panic if kmem_cache_create() fails */</span>
+<a name="30" /><span class="True">      30:</span> <span class="k">/*</span>
+<a name="31" /><span class="True">      31:</span> <span class="k"> * SLAB_DESTROY_BY_RCU - **WARNING** READ THIS!</span>
+<a name="32" /><span class="True">      32:</span> <span class="k"> *</span>
+<a name="33" /><span class="True">      33:</span> <span class="k"> * This delays freeing the SLAB page by a grace period, it does _NOT_</span>
+<a name="34" /><span class="True">      34:</span> <span class="k"> * delay object freeing. This means that if you do kmem_cache_free()</span>
+<a name="35" /><span class="True">      35:</span> <span class="k"> * that memory location is free to be reused at any time. Thus it may</span>
+<a name="36" /><span class="True">      36:</span> <span class="k"> * be possible to see another object there in the same RCU grace period.</span>
+<a name="37" /><span class="True">      37:</span> <span class="k"> *</span>
+<a name="38" /><span class="True">      38:</span> <span class="k"> * This feature only ensures the memory location backing the object</span>
+<a name="39" /><span class="True">      39:</span> <span class="k"> * stays valid, the trick to using this is relying on an independent</span>
+<a name="40" /><span class="True">      40:</span> <span class="k"> * object validation pass. Something like:</span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> *</span>
+<a name="42" /><span class="True">      42:</span> <span class="k"> *  rcu_read_lock()</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"> * again:</span>
+<a name="44" /><span class="True">      44:</span> <span class="k"> *  obj = lockless_lookup(key);</span>
+<a name="45" /><span class="True">      45:</span> <span class="k"> *  if (obj) {</span>
+<a name="46" /><span class="True">      46:</span> <span class="k"> *    if (!try_get_ref(obj)) // might fail for free objects</span>
+<a name="47" /><span class="True">      47:</span> <span class="k"> *      goto again;</span>
+<a name="48" /><span class="True">      48:</span> <span class="k"> *</span>
+<a name="49" /><span class="True">      49:</span> <span class="k"> *    if (obj-&gt;key != key) { // not the object we expected</span>
+<a name="50" /><span class="True">      50:</span> <span class="k"> *      put_ref(obj);</span>
+<a name="51" /><span class="True">      51:</span> <span class="k"> *      goto again;</span>
+<a name="52" /><span class="True">      52:</span> <span class="k"> *    }</span>
+<a name="53" /><span class="True">      53:</span> <span class="k"> *  }</span>
+<a name="54" /><span class="True">      54:</span> <span class="k"> *  rcu_read_unlock();</span>
+<a name="55" /><span class="True">      55:</span> <span class="k"> *</span>
+<a name="56" /><span class="True">      56:</span> <span class="k"> * This is useful if we need to approach a kernel structure obliquely,</span>
+<a name="57" /><span class="True">      57:</span> <span class="k"> * from its address obtained without the usual locking. We can lock</span>
+<a name="58" /><span class="True">      58:</span> <span class="k"> * the structure to stabilize it and check it&apos;s still at the given address,</span>
+<a name="59" /><span class="True">      59:</span> <span class="k"> * only if we can be sure that the memory has not been meanwhile reused</span>
+<a name="60" /><span class="True">      60:</span> <span class="k"> * for some other kind of object (which our subsystem&apos;s lock might corrupt).</span>
+<a name="61" /><span class="True">      61:</span> <span class="k"> *</span>
+<a name="62" /><span class="True">      62:</span> <span class="k"> * rcu_read_lock before reading the address, then rcu_read_unlock after</span>
+<a name="63" /><span class="True">      63:</span> <span class="k"> * taking the spinlock within the structure expected at that address.</span>
+<a name="64" /><span class="True">      64:</span> <span class="k"> */</span>
+<a name="65" /><span class="True">      65:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9ERVNUUk9ZX0JZX1JDVV8w"><span class="b">SLAB_DESTROY_BY_RCU</span></a>    <span class="c">0x00080000UL</span>    <span class="k">/* Defer freeing slabs to RCU */</span>
+<a name="66" /><span class="True">      66:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9NRU1fU1BSRUFEXzA_"><span class="b">SLAB_MEM_SPREAD</span></a>        <span class="c">0x00100000UL</span>    <span class="k">/* Spread some memory over cpuset */</span>
+<a name="67" /><span class="True">      67:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9UUkFDRV8w"><span class="b">SLAB_TRACE</span></a>        <span class="c">0x00200000UL</span>    <span class="k">/* Trace allocations and frees */</span>
+<a name="68" /><span class="True">      68:</span> 
+<a name="69" /><span class="True">      69:</span> <span class="k">/* Flag to prevent checks on free */</span>
+<a name="70" /><span class="False">      70:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_DEBUG_OBJECTS</span>
+<a name="71" /><span class="False">      71:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9ERUJVR19PQkpFQ1RTXzA_"><span class="b">SLAB_DEBUG_OBJECTS</span></a>    <span class="c">0x00400000UL</span>
+<a name="72" /><span class="True">      72:</span> <span class="f">#</span><span class="n">else</span>
+<a name="73" /><span class="True">      73:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9ERUJVR19PQkpFQ1RTXzA_"><span class="b">SLAB_DEBUG_OBJECTS</span></a>    <span class="c">0x00000000UL</span>
+<a name="74" /><span class="True">      74:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="75" /><span class="True">      75:</span> 
+<a name="76" /><span class="True">      76:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9OT0xFQUtUUkFDRV8w"><span class="b">SLAB_NOLEAKTRACE</span></a>    <span class="c">0x00800000UL</span>    <span class="k">/* Avoid kmemleak tracing */</span>
+<a name="77" /><span class="True">      77:</span> 
+<a name="78" /><span class="True">      78:</span> <span class="k">/* Don&apos;t track use of uninitialized memory */</span>
+<a name="79" /><span class="False">      79:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_KMEMCHECK</span>
+<a name="80" /><span class="False">      80:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9OT1RSQUNLXzA_"><span class="b">SLAB_NOTRACK</span></a>        <span class="c">0x01000000UL</span>
+<a name="81" /><span class="True">      81:</span> <span class="f">#</span><span class="n">else</span>
+<a name="82" /><span class="True">      82:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9OT1RSQUNLXzA_"><span class="b">SLAB_NOTRACK</span></a>        <span class="c">0x00000000UL</span>
+<a name="83" /><span class="True">      83:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="84" /><span class="False">      84:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_FAILSLAB</span>
+<a name="85" /><span class="False">      85:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9GQUlMU0xBQl8w"><span class="b">SLAB_FAILSLAB</span></a>        <span class="c">0x02000000UL</span>    <span class="k">/* Fault injection mark */</span>
+<a name="86" /><span class="True">      86:</span> <span class="f">#</span><span class="n">else</span>
+<a name="87" /><span class="True">      87:</span> <span class="f">#</span> <span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9GQUlMU0xBQl8w"><span class="b">SLAB_FAILSLAB</span></a>        <span class="c">0x00000000UL</span>
+<a name="88" /><span class="True">      88:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="89" /><span class="True">      89:</span> 
+<a name="90" /><span class="True">      90:</span> <span class="k">/* The following flags affect the page allocator grouping pages by mobility */</span>
+<a name="91" /><span class="True">      91:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9SRUNMQUlNX0FDQ09VTlRfMA__"><span class="b">SLAB_RECLAIM_ACCOUNT</span></a>    <span class="c">0x00020000UL</span>        <span class="k">/* Objects are reclaimable */</span>
+<a name="92" /><span class="True">      92:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_U0xBQl9URU1QT1JBUllfMA__"><span class="b">SLAB_TEMPORARY</span></a>        <a href="cpu.c_macros_noref.html#_U0xBQl9SRUNMQUlNX0FDQ09VTlRfMA__"><span class="b">SLAB_RECLAIM_ACCOUNT</span></a>    <span class="k">/* Objects are short-lived */</span>
+<a name="93" /><span class="True">      93:</span> <span class="k">/*</span>
+<a name="94" /><span class="True">      94:</span> <span class="k"> * ZERO_SIZE_PTR will be returned for zero sized kmalloc requests.</span>
+<a name="95" /><span class="True">      95:</span> <span class="k"> *</span>
+<a name="96" /><span class="True">      96:</span> <span class="k"> * Dereferencing ZERO_SIZE_PTR will lead to a distinct access fault.</span>
+<a name="97" /><span class="True">      97:</span> <span class="k"> *</span>
+<a name="98" /><span class="True">      98:</span> <span class="k"> * ZERO_SIZE_PTR can be passed to kfree though in the same way that NULL can.</span>
+<a name="99" /><span class="True">      99:</span> <span class="k"> * Both make kfree a no-op.</span>
+<a name="100" /><span class="True">     100:</span> <span class="k"> */</span>
+<a name="101" /><span class="True">     101:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_WkVST19TSVpFX1BUUl8w"><span class="b">ZERO_SIZE_PTR</span></a> <span class="f">(</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="c">16</span><span class="f">)</span>
+<a name="102" /><span class="True">     102:</span> 
+<a name="103" /><span class="True">     103:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_WkVST19PUl9OVUxMX1BUUl8w"><span class="b">ZERO_OR_NULL_PTR</span></a><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">(</span><span class="b">x</span><span class="f">)</span> <span class="f">&lt;=</span> \
+<a name="104" /><span class="True">     104:</span>                 <span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><a href="cpu.c_macros_ref.html#_WkVST19TSVpFX1BUUl8w"><span class="b">ZERO_SIZE_PTR</span></a><span class="f">)</span>
+<a name="105" /><span class="True">     105:</span> 
+<a name="106" /><span class="True">     106:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">kmemleak</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="107" /><span class="True">     107:</span> 
+<a name="108" /><span class="True">     108:</span> <span class="m">struct</span> <span class="b">mem_cgroup</span><span class="f">;</span>
+<a name="109" /><span class="True">     109:</span> <span class="k">/*</span>
+<a name="110" /><span class="True">     110:</span> <span class="k"> * struct kmem_cache related prototypes</span>
+<a name="111" /><span class="True">     111:</span> <span class="k"> */</span>
+<a name="112" /><span class="True">     112:</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pbml0XzA_"><span class="b">__init</span></a> <span class="b">kmem_cache_init</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="113" /><span class="True">     113:</span> <span class="m">int</span> <span class="b">slab_is_available</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="114" /><span class="True">     114:</span> 
+<a name="115" /><span class="True">     115:</span> <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">kmem_cache_create</span><span class="f">(</span><span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span><span class="f">,</span> <span class="b">size_t</span><span class="f">,</span>
+<a name="116" /><span class="True">     116:</span>             <span class="m">unsigned</span> <span class="m">long</span><span class="f">,</span>
+<a name="117" /><span class="True">     117:</span>             <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">)</span><span class="f">;</span>
+<a name="118" /><span class="True">     118:</span> <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span>
+<a name="119" /><span class="True">     119:</span> <span class="b">kmem_cache_create_memcg</span><span class="f">(</span><span class="m">struct</span> <span class="b">mem_cgroup</span> <span class="f">*</span><span class="f">,</span> <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span><span class="f">,</span> <span class="b">size_t</span><span class="f">,</span>
+<a name="120" /><span class="True">     120:</span>             <span class="m">unsigned</span> <span class="m">long</span><span class="f">,</span> <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">,</span> <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="121" /><span class="True">     121:</span> <span class="m">void</span> <span class="b">kmem_cache_destroy</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="122" /><span class="True">     122:</span> <span class="m">int</span> <span class="b">kmem_cache_shrink</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="123" /><span class="True">     123:</span> <span class="m">void</span> <span class="b">kmem_cache_free</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="124" /><span class="True">     124:</span> 
+<a name="125" /><span class="True">     125:</span> <span class="k">/*</span>
+<a name="126" /><span class="True">     126:</span> <span class="k"> * Please use this macro to create slab caches. Simply specify the</span>
+<a name="127" /><span class="True">     127:</span> <span class="k"> * name of the structure and maybe some flags that are listed above.</span>
+<a name="128" /><span class="True">     128:</span> <span class="k"> *</span>
+<a name="129" /><span class="True">     129:</span> <span class="k"> * The alignment of the struct determines object alignment. If you</span>
+<a name="130" /><span class="True">     130:</span> <span class="k"> * f.e. add ____cacheline_aligned_in_smp to the struct declaration</span>
+<a name="131" /><span class="True">     131:</span> <span class="k"> * then the objects will be properly aligned in SMP configurations.</span>
+<a name="132" /><span class="True">     132:</span> <span class="k"> */</span>
+<a name="133" /><span class="True">     133:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S01FTV9DQUNIRV8w"><span class="b">KMEM_CACHE</span></a><span class="f">(</span><span class="b">__struct</span><span class="f">,</span> <span class="b">__flags</span><span class="f">)</span> <span class="b">kmem_cache_create</span><span class="f">(</span><span class="f">#</span><span class="b">__struct</span><span class="f">,\
+</span>        <span class="m">sizeof</span><span class="f">(</span><span class="m">struct</span> <span class="b">__struct</span><span class="f">)</span><span class="f">,</span> <span class="b">__alignof__</span><span class="f">(</span><span class="m">struct</span> <span class="b">__struct</span><span class="f">)</span><span class="f">,\
+</span>        <span class="f">(</span><span class="b">__flags</span><span class="f">)</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">)</span>
+<a name="136" /><span class="True">     136:</span> 
+<a name="137" /><span class="True">     137:</span> <span class="k">/*</span>
+<a name="138" /><span class="True">     138:</span> <span class="k"> * Common kmalloc functions provided by all allocators</span>
+<a name="139" /><span class="True">     139:</span> <span class="k"> */</span>
+<a name="140" /><span class="True">     140:</span> <span class="m">void</span> <span class="f">*</span> <a href="cpu.c_macros_ref.html#_X19tdXN0X2NoZWNrXzE_"><span class="b">__must_check</span></a> <span class="b">__krealloc</span><span class="f">(</span><span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span><span class="f">,</span> <span class="b">gfp_t</span><span class="f">)</span><span class="f">;</span>
+<a name="141" /><span class="True">     141:</span> <span class="m">void</span> <span class="f">*</span> <a href="cpu.c_macros_ref.html#_X19tdXN0X2NoZWNrXzE_"><span class="b">__must_check</span></a> <span class="b">krealloc</span><span class="f">(</span><span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="f">,</span> <span class="b">size_t</span><span class="f">,</span> <span class="b">gfp_t</span><span class="f">)</span><span class="f">;</span>
+<a name="142" /><span class="True">     142:</span> <span class="m">void</span> <span class="b">kfree</span><span class="f">(</span><span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="143" /><span class="True">     143:</span> <span class="m">void</span> <span class="b">kzfree</span><span class="f">(</span><span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="144" /><span class="True">     144:</span> <span class="b">size_t</span> <span class="b">ksize</span><span class="f">(</span><span class="m">const</span> <span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="145" /><span class="True">     145:</span> 
+<a name="146" /><span class="True">     146:</span> <span class="k">/*</span>
+<a name="147" /><span class="True">     147:</span> <span class="k"> * Some archs want to perform DMA into kmalloc caches and need a guaranteed</span>
+<a name="148" /><span class="True">     148:</span> <span class="k"> * alignment larger than the alignment of a 64-bit integer.</span>
+<a name="149" /><span class="True">     149:</span> <span class="k"> * Setting ARCH_KMALLOC_MINALIGN in arch headers allows that.</span>
+<a name="150" /><span class="True">     150:</span> <span class="k"> */</span>
+<a name="151" /><span class="False">     151:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><span class="b">ARCH_DMA_MINALIGN</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">ARCH_DMA_MINALIGN</span> <span class="f">&gt;</span> <span class="c">8</span>
+<a name="152" /><span class="False">     152:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVJDSF9LTUFMTE9DX01JTkFMSUdOXzA_"><span class="b">ARCH_KMALLOC_MINALIGN</span></a> <span class="b">ARCH_DMA_MINALIGN</span>
+<a name="153" /><span class="False">     153:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a> <span class="b">ARCH_DMA_MINALIGN</span>
+<a name="154" /><span class="False">     154:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a> <a href="cpu.c_macros_ref.html#_aWxvZzJfMA__"><span class="b">ilog2</span></a><span class="f">(</span><span class="b">ARCH_DMA_MINALIGN</span><span class="f">)</span>
+<a name="155" /><span class="True">     155:</span> <span class="f">#</span><span class="n">else</span>
+<a name="156" /><span class="True">     156:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVJDSF9LTUFMTE9DX01JTkFMSUdOXzA_"><span class="b">ARCH_KMALLOC_MINALIGN</span></a> <span class="b">__alignof__</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="m">long</span><span class="f">)</span>
+<a name="157" /><span class="True">     157:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="158" /><span class="True">     158:</span> 
+<a name="159" /><span class="False">     159:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_SLOB</span>
+<a name="160" /><span class="False">     160:</span> <span class="k">/*</span>
+<a name="161" /><span class="False">     161:</span> <span class="k"> * Common fields provided in kmem_cache by all slab allocators</span>
+<a name="162" /><span class="False">     162:</span> <span class="k"> * This struct is either used directly by the allocator (SLOB)</span>
+<a name="163" /><span class="False">     163:</span> <span class="k"> * or the allocator must include definitions for all fields</span>
+<a name="164" /><span class="False">     164:</span> <span class="k"> * provided in kmem_cache_common in their definition of kmem_cache.</span>
+<a name="165" /><span class="False">     165:</span> <span class="k"> *</span>
+<a name="166" /><span class="False">     166:</span> <span class="k"> * Once we can do anonymous structs (C11 standard) we could put a</span>
+<a name="167" /><span class="False">     167:</span> <span class="k"> * anonymous struct definition in these allocators so that the</span>
+<a name="168" /><span class="False">     168:</span> <span class="k"> * separate allocations in the kmem_cache structure of SLAB and</span>
+<a name="169" /><span class="False">     169:</span> <span class="k"> * SLUB is no longer needed.</span>
+<a name="170" /><span class="False">     170:</span> <span class="k"> */</span>
+<a name="171" /><span class="False">     171:</span> <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">{</span>
+<a name="172" /><span class="False">     172:</span>     <span class="m">unsigned</span> <span class="m">int</span> <span class="b">object_size</span><span class="f">;</span><span class="k">/* The original size of the object */</span>
+<a name="173" /><span class="False">     173:</span>     <span class="m">unsigned</span> <span class="m">int</span> <span class="b">size</span><span class="f">;</span>    <span class="k">/* The aligned/padded/added on size  */</span>
+<a name="174" /><span class="False">     174:</span>     <span class="m">unsigned</span> <span class="m">int</span> <span class="b">align</span><span class="f">;</span>    <span class="k">/* Alignment as calculated */</span>
+<a name="175" /><span class="False">     175:</span>     <span class="m">unsigned</span> <span class="m">long</span> <span class="b">flags</span><span class="f">;</span>    <span class="k">/* Active flags on the slab */</span>
+<a name="176" /><span class="False">     176:</span>     <span class="m">const</span> <span class="m">char</span> <span class="f">*</span><span class="b">name</span><span class="f">;</span>    <span class="k">/* Slab name for sysfs */</span>
+<a name="177" /><span class="False">     177:</span>     <span class="m">int</span> <span class="b">refcount</span><span class="f">;</span>        <span class="k">/* Use counter */</span>
+<a name="178" /><span class="False">     178:</span>     <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">ctor</span><span class="f">)</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* Called on object slot creation */</span>
+<a name="179" /><span class="False">     179:</span>     <span class="m">struct</span> <span class="b">list_head</span> <span class="b">list</span><span class="f">;</span>    <span class="k">/* List of all slab caches on the system */</span>
+<a name="180" /><span class="False">     180:</span> <span class="f">}</span><span class="f">;</span>
+<a name="181" /><span class="False">     181:</span> 
+<a name="182" /><span class="True">     182:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_SLOB */</span>
+<a name="183" /><span class="True">     183:</span> 
+<a name="184" /><span class="True">     184:</span> <span class="k">/*</span>
+<a name="185" /><span class="True">     185:</span> <span class="k"> * Kmalloc array related definitions</span>
+<a name="186" /><span class="True">     186:</span> <span class="k"> */</span>
+<a name="187" /><span class="True">     187:</span> 
+<a name="188" /><span class="False">     188:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_SLAB</span>
+<a name="189" /><span class="False">     189:</span> <span class="k">/*</span>
+<a name="190" /><span class="False">     190:</span> <span class="k"> * The largest kmalloc size supported by the SLAB allocators is</span>
+<a name="191" /><span class="False">     191:</span> <span class="k"> * 32 megabyte (2^25) or the maximum allocatable page order if that is</span>
+<a name="192" /><span class="False">     192:</span> <span class="k"> * less than 32 MB.</span>
+<a name="193" /><span class="False">     193:</span> <span class="k"> *</span>
+<a name="194" /><span class="False">     194:</span> <span class="k"> * WARNING: Its not easy to increase this value since the allocators have</span>
+<a name="195" /><span class="False">     195:</span> <span class="k"> * to do various tricks to work around compiler limitations in order to</span>
+<a name="196" /><span class="False">     196:</span> <span class="k"> * ensure proper constant folding.</span>
+<a name="197" /><span class="False">     197:</span> <span class="k"> */</span>
+<a name="198" /><span class="False">     198:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9ISUdIXzA_"><span class="b">KMALLOC_SHIFT_HIGH</span></a>    <span class="f">(</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_TUFYX09SREVSXzA_"><span class="b">MAX_ORDER</span></a> <span class="f">+</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a> <span class="f">-</span> <span class="c">1</span><span class="f">)</span> <span class="f">&lt;=</span> <span class="c">25</span> <span class="f">?</span> \
+<a name="199" /><span class="False">     199:</span>                 <span class="f">(</span><a href="cpu.c_macros_ref.html#_TUFYX09SREVSXzA_"><span class="b">MAX_ORDER</span></a> <span class="f">+</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a> <span class="f">-</span> <span class="c">1</span><span class="f">)</span> <span class="f">:</span> <span class="c">25</span><span class="f">)</span>
+<a name="200" /><span class="False">     200:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S01BTExPQ19TSElGVF9NQVhfMA__"><span class="b">KMALLOC_SHIFT_MAX</span></a>    <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9ISUdIXzA_"><span class="b">KMALLOC_SHIFT_HIGH</span></a>
+<a name="201" /><span class="False">     201:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a>
+<a name="202" /><span class="False">     202:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a>    <span class="c">5</span>
+<a name="203" /><span class="False">     203:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="204" /><span class="True">     204:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="205" /><span class="True">     205:</span> 
+<a name="206" /><span class="True">     206:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1NMVUJfMA__"><span class="b">CONFIG_SLUB</span></a>
+<a name="207" /><span class="True">     207:</span> <span class="k">/*</span>
+<a name="208" /><span class="True">     208:</span> <span class="k"> * SLUB allocates up to order 2 pages directly and otherwise</span>
+<a name="209" /><span class="True">     209:</span> <span class="k"> * passes the request to the page allocator.</span>
+<a name="210" /><span class="True">     210:</span> <span class="k"> */</span>
+<a name="211" /><span class="True">     211:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9ISUdIXzA_"><span class="b">KMALLOC_SHIFT_HIGH</span></a>    <span class="f">(</span><a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a> <span class="f">+</span> <span class="c">1</span><span class="f">)</span>
+<a name="212" /><span class="True">     212:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S01BTExPQ19TSElGVF9NQVhfMA__"><span class="b">KMALLOC_SHIFT_MAX</span></a>    <span class="f">(</span><a href="cpu.c_macros_ref.html#_TUFYX09SREVSXzA_"><span class="b">MAX_ORDER</span></a> <span class="f">+</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="213" /><span class="True">     213:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a>
+<a name="214" /><span class="True">     214:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a>    <span class="c">3</span>
+<a name="215" /><span class="True">     215:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="216" /><span class="True">     216:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="217" /><span class="True">     217:</span> 
+<a name="218" /><span class="False">     218:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_SLOB</span>
+<a name="219" /><span class="False">     219:</span> <span class="k">/*</span>
+<a name="220" /><span class="False">     220:</span> <span class="k"> * SLOB passes all page size and larger requests to the page allocator.</span>
+<a name="221" /><span class="False">     221:</span> <span class="k"> * No kmalloc array is necessary since objects of different sizes can</span>
+<a name="222" /><span class="False">     222:</span> <span class="k"> * be allocated from the same page.</span>
+<a name="223" /><span class="False">     223:</span> <span class="k"> */</span>
+<a name="224" /><span class="False">     224:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S01BTExPQ19TSElGVF9NQVhfMA__"><span class="b">KMALLOC_SHIFT_MAX</span></a>    <span class="c">30</span>
+<a name="225" /><span class="False">     225:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9ISUdIXzA_"><span class="b">KMALLOC_SHIFT_HIGH</span></a>    <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a>
+<a name="226" /><span class="False">     226:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a>
+<a name="227" /><span class="False">     227:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a>    <span class="c">3</span>
+<a name="228" /><span class="False">     228:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="229" /><span class="True">     229:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="230" /><span class="True">     230:</span> 
+<a name="231" /><span class="True">     231:</span> <span class="k">/* Maximum allocatable size */</span>
+<a name="232" /><span class="True">     232:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S01BTExPQ19NQVhfU0laRV8w"><span class="b">KMALLOC_MAX_SIZE</span></a>    <span class="f">(</span><span class="c">1UL</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_noref.html#_S01BTExPQ19TSElGVF9NQVhfMA__"><span class="b">KMALLOC_SHIFT_MAX</span></a><span class="f">)</span>
+<a name="233" /><span class="True">     233:</span> <span class="k">/* Maximum size for which we actually use a slab cache */</span>
+<a name="234" /><span class="True">     234:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NQVhfQ0FDSEVfU0laRV8w"><span class="b">KMALLOC_MAX_CACHE_SIZE</span></a>    <span class="f">(</span><span class="c">1UL</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9ISUdIXzA_"><span class="b">KMALLOC_SHIFT_HIGH</span></a><span class="f">)</span>
+<a name="235" /><span class="True">     235:</span> <span class="k">/* Maximum order allocatable via the slab allocagtor */</span>
+<a name="236" /><span class="True">     236:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_S01BTExPQ19NQVhfT1JERVJfMA__"><span class="b">KMALLOC_MAX_ORDER</span></a>    <span class="f">(</span><a href="cpu.c_macros_noref.html#_S01BTExPQ19TSElGVF9NQVhfMA__"><span class="b">KMALLOC_SHIFT_MAX</span></a> <span class="f">-</span> <a href="cpu.c_macros_ref.html#_UEFHRV9TSElGVF8w"><span class="b">PAGE_SHIFT</span></a><span class="f">)</span>
+<a name="237" /><span class="True">     237:</span> 
+<a name="238" /><span class="True">     238:</span> <span class="k">/*</span>
+<a name="239" /><span class="True">     239:</span> <span class="k"> * Kmalloc subsystem.</span>
+<a name="240" /><span class="True">     240:</span> <span class="k"> */</span>
+<a name="241" /><span class="True">     241:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a>
+<a name="242" /><span class="True">     242:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a> <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a><span class="f">)</span>
+<a name="243" /><span class="True">     243:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="244" /><span class="True">     244:</span> 
+<a name="245" /><span class="True">     245:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">CONFIG_SLOB</span>
+<a name="246" /><span class="True">     246:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">kmalloc_caches</span><span class="f">[</span><a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9ISUdIXzA_"><span class="b">KMALLOC_SHIFT_HIGH</span></a> <span class="f">+</span> <span class="c">1</span><span class="f">]</span><span class="f">;</span>
+<a name="247" /><span class="True">     247:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1pPTkVfRE1BXzA_"><span class="b">CONFIG_ZONE_DMA</span></a>
+<a name="248" /><span class="True">     248:</span> <span class="m">extern</span> <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">kmalloc_dma_caches</span><span class="f">[</span><a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9ISUdIXzA_"><span class="b">KMALLOC_SHIFT_HIGH</span></a> <span class="f">+</span> <span class="c">1</span><span class="f">]</span><span class="f">;</span>
+<a name="249" /><span class="True">     249:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="250" /><span class="True">     250:</span> 
+<a name="251" /><span class="True">     251:</span> <span class="k">/*</span>
+<a name="252" /><span class="True">     252:</span> <span class="k"> * Figure out which kmalloc slab an allocation of a certain size</span>
+<a name="253" /><span class="True">     253:</span> <span class="k"> * belongs to.</span>
+<a name="254" /><span class="True">     254:</span> <span class="k"> * 0 = zero alloc</span>
+<a name="255" /><span class="True">     255:</span> <span class="k"> * 1 =  65 .. 96 bytes</span>
+<a name="256" /><span class="True">     256:</span> <span class="k"> * 2 = 120 .. 192 bytes</span>
+<a name="257" /><span class="True">     257:</span> <span class="k"> * n = 2^(n-1) .. 2^n -1</span>
+<a name="258" /><span class="True">     258:</span> <span class="k"> */</span>
+<a name="259" /><span class="True">     259:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">int</span> <span class="b">kmalloc_index</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">)</span>
+<a name="260" /><span class="True">     260:</span> <span class="f">{</span>
+<a name="261" /><span class="True">     261:</span>     <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">size</span><span class="f">)</span>
+<a name="262" /><span class="True">     262:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="263" /><span class="True">     263:</span> 
+<a name="264" /><span class="True">     264:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a><span class="f">)</span>
+<a name="265" /><span class="True">     265:</span>         <span class="m">return</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19TSElGVF9MT1dfMA__"><span class="b">KMALLOC_SHIFT_LOW</span></a><span class="f">;</span>
+<a name="266" /><span class="True">     266:</span> 
+<a name="267" /><span class="True">     267:</span>     <span class="m">if</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a> <span class="f">&lt;=</span> <span class="c">32</span> <span class="f">&amp;&amp;</span> <span class="b">size</span> <span class="f">&gt;</span> <span class="c">64</span> <span class="f">&amp;&amp;</span> <span class="b">size</span> <span class="f">&lt;=</span> <span class="c">96</span><span class="f">)</span>
+<a name="268" /><span class="True">     268:</span>         <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="269" /><span class="True">     269:</span>     <span class="m">if</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a> <span class="f">&lt;=</span> <span class="c">64</span> <span class="f">&amp;&amp;</span> <span class="b">size</span> <span class="f">&gt;</span> <span class="c">128</span> <span class="f">&amp;&amp;</span> <span class="b">size</span> <span class="f">&lt;=</span> <span class="c">192</span><span class="f">)</span>
+<a name="270" /><span class="True">     270:</span>         <span class="m">return</span> <span class="c">2</span><span class="f">;</span>
+<a name="271" /><span class="True">     271:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>          <span class="c">8</span><span class="f">)</span> <span class="m">return</span> <span class="c">3</span><span class="f">;</span>
+<a name="272" /><span class="True">     272:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>         <span class="c">16</span><span class="f">)</span> <span class="m">return</span> <span class="c">4</span><span class="f">;</span>
+<a name="273" /><span class="True">     273:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>         <span class="c">32</span><span class="f">)</span> <span class="m">return</span> <span class="c">5</span><span class="f">;</span>
+<a name="274" /><span class="True">     274:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>         <span class="c">64</span><span class="f">)</span> <span class="m">return</span> <span class="c">6</span><span class="f">;</span>
+<a name="275" /><span class="True">     275:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>        <span class="c">128</span><span class="f">)</span> <span class="m">return</span> <span class="c">7</span><span class="f">;</span>
+<a name="276" /><span class="True">     276:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>        <span class="c">256</span><span class="f">)</span> <span class="m">return</span> <span class="c">8</span><span class="f">;</span>
+<a name="277" /><span class="True">     277:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>        <span class="c">512</span><span class="f">)</span> <span class="m">return</span> <span class="c">9</span><span class="f">;</span>
+<a name="278" /><span class="True">     278:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>       <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">10</span><span class="f">;</span>
+<a name="279" /><span class="True">     279:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>   <span class="c">2</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">11</span><span class="f">;</span>
+<a name="280" /><span class="True">     280:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>   <span class="c">4</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">12</span><span class="f">;</span>
+<a name="281" /><span class="True">     281:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>   <span class="c">8</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">13</span><span class="f">;</span>
+<a name="282" /><span class="True">     282:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">16</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">14</span><span class="f">;</span>
+<a name="283" /><span class="True">     283:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">32</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">15</span><span class="f">;</span>
+<a name="284" /><span class="True">     284:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">64</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">16</span><span class="f">;</span>
+<a name="285" /><span class="True">     285:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span> <span class="c">128</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">17</span><span class="f">;</span>
+<a name="286" /><span class="True">     286:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span> <span class="c">256</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">18</span><span class="f">;</span>
+<a name="287" /><span class="True">     287:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span> <span class="c">512</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">19</span><span class="f">;</span>
+<a name="288" /><span class="True">     288:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">20</span><span class="f">;</span>
+<a name="289" /><span class="True">     289:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">2</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">21</span><span class="f">;</span>
+<a name="290" /><span class="True">     290:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">4</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">22</span><span class="f">;</span>
+<a name="291" /><span class="True">     291:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">8</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">23</span><span class="f">;</span>
+<a name="292" /><span class="True">     292:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">16</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">24</span><span class="f">;</span>
+<a name="293" /><span class="True">     293:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">32</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">25</span><span class="f">;</span>
+<a name="294" /><span class="True">     294:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&lt;=</span>  <span class="c">64</span> <span class="f">*</span> <span class="c">1024</span> <span class="f">*</span> <span class="c">1024</span><span class="f">)</span> <span class="m">return</span> <span class="c">26</span><span class="f">;</span>
+<a name="295" /><span class="True">     295:</span>     <a href="cpu.c_macros_ref.html#_QlVHXzA_"><span class="b">BUG</span></a><span class="f">(</span><span class="f">)</span><span class="f">;</span>
+<a name="296" /><span class="True">     296:</span> 
+<a name="297" /><span class="True">     297:</span>     <span class="k">/* Will never be reached. Needed because the compiler may complain */</span>
+<a name="298" /><span class="True">     298:</span>     <span class="m">return</span> <span class="f">-</span><span class="c">1</span><span class="f">;</span>
+<a name="299" /><span class="True">     299:</span> <span class="f">}</span>
+<a name="300" /><span class="True">     300:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* !CONFIG_SLOB */</span>
+<a name="301" /><span class="True">     301:</span> 
+<a name="302" /><span class="True">     302:</span> <span class="m">void</span> <span class="f">*</span><span class="b">__kmalloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="303" /><span class="True">     303:</span> <span class="m">void</span> <span class="f">*</span><span class="b">kmem_cache_alloc</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="304" /><span class="True">     304:</span> 
+<a name="305" /><span class="True">     305:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX05VTUFfMA__"><span class="b">CONFIG_NUMA</span></a>
+<a name="306" /><span class="True">     306:</span> <span class="m">void</span> <span class="f">*</span><span class="b">__kmalloc_node</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">)</span><span class="f">;</span>
+<a name="307" /><span class="True">     307:</span> <span class="m">void</span> <span class="f">*</span><span class="b">kmem_cache_alloc_node</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">)</span><span class="f">;</span>
+<a name="308" /><span class="False">     308:</span> <span class="f">#</span><span class="n">else</span>
+<a name="309" /><span class="False">     309:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span><span class="b">__kmalloc_node</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">)</span>
+<a name="310" /><span class="False">     310:</span> <span class="f">{</span>
+<a name="311" /><span class="False">     311:</span>     <span class="m">return</span> <span class="b">__kmalloc</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="312" /><span class="False">     312:</span> <span class="f">}</span>
+<a name="313" /><span class="False">     313:</span> 
+<a name="314" /><span class="False">     314:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span><span class="b">kmem_cache_alloc_node</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">s</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">)</span>
+<a name="315" /><span class="False">     315:</span> <span class="f">{</span>
+<a name="316" /><span class="False">     316:</span>     <span class="m">return</span> <span class="b">kmem_cache_alloc</span><span class="f">(</span><span class="b">s</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="317" /><span class="False">     317:</span> <span class="f">}</span>
+<a name="318" /><span class="True">     318:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="319" /><span class="True">     319:</span> 
+<a name="320" /><span class="True">     320:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1RSQUNJTkdfMA__"><span class="b">CONFIG_TRACING</span></a>
+<a name="321" /><span class="True">     321:</span> <span class="m">extern</span> <span class="m">void</span> <span class="f">*</span><span class="b">kmem_cache_alloc_trace</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="f">,</span> <span class="b">gfp_t</span><span class="f">,</span> <span class="b">size_t</span><span class="f">)</span><span class="f">;</span>
+<a name="322" /><span class="True">     322:</span> 
+<a name="323" /><span class="True">     323:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX05VTUFfMA__"><span class="b">CONFIG_NUMA</span></a>
+<a name="324" /><span class="True">     324:</span> <span class="m">extern</span> <span class="m">void</span> <span class="f">*</span><span class="b">kmem_cache_alloc_node_trace</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">s</span><span class="f">,</span>
+<a name="325" /><span class="True">     325:</span>                        <span class="b">gfp_t</span> <span class="b">gfpflags</span><span class="f">,</span>
+<a name="326" /><span class="True">     326:</span>                        <span class="m">int</span> <span class="b">node</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="327" /><span class="False">     327:</span> <span class="f">#</span><span class="n">else</span>
+<a name="328" /><span class="False">     328:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span>
+<a name="329" /><span class="False">     329:</span> <span class="b">kmem_cache_alloc_node_trace</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">s</span><span class="f">,</span>
+<a name="330" /><span class="False">     330:</span>                   <span class="b">gfp_t</span> <span class="b">gfpflags</span><span class="f">,</span>
+<a name="331" /><span class="False">     331:</span>                   <span class="m">int</span> <span class="b">node</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">)</span>
+<a name="332" /><span class="False">     332:</span> <span class="f">{</span>
+<a name="333" /><span class="False">     333:</span>     <span class="m">return</span> <span class="b">kmem_cache_alloc_trace</span><span class="f">(</span><span class="b">s</span><span class="f">,</span> <span class="b">gfpflags</span><span class="f">,</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="334" /><span class="False">     334:</span> <span class="f">}</span>
+<a name="335" /><span class="True">     335:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_NUMA */</span>
+<a name="336" /><span class="True">     336:</span> 
+<a name="337" /><span class="False">     337:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* CONFIG_TRACING */</span>
+<a name="338" /><span class="False">     338:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span><span class="b">kmem_cache_alloc_trace</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">s</span><span class="f">,</span>
+<a name="339" /><span class="False">     339:</span>         <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">)</span>
+<a name="340" /><span class="False">     340:</span> <span class="f">{</span>
+<a name="341" /><span class="False">     341:</span>     <span class="m">return</span> <span class="b">kmem_cache_alloc</span><span class="f">(</span><span class="b">s</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="342" /><span class="False">     342:</span> <span class="f">}</span>
+<a name="343" /><span class="False">     343:</span> 
+<a name="344" /><span class="False">     344:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span>
+<a name="345" /><span class="False">     345:</span> <span class="b">kmem_cache_alloc_node_trace</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">s</span><span class="f">,</span>
+<a name="346" /><span class="False">     346:</span>                   <span class="b">gfp_t</span> <span class="b">gfpflags</span><span class="f">,</span>
+<a name="347" /><span class="False">     347:</span>                   <span class="m">int</span> <span class="b">node</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">)</span>
+<a name="348" /><span class="False">     348:</span> <span class="f">{</span>
+<a name="349" /><span class="False">     349:</span>     <span class="m">return</span> <span class="b">kmem_cache_alloc_node</span><span class="f">(</span><span class="b">s</span><span class="f">,</span> <span class="b">gfpflags</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span><span class="f">;</span>
+<a name="350" /><span class="False">     350:</span> <span class="f">}</span>
+<a name="351" /><span class="True">     351:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_TRACING */</span>
+<a name="352" /><span class="True">     352:</span> 
+<a name="353" /><span class="False">     353:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">CONFIG_SLAB</span>
+<a name="354" /><span class="False">     354:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">slab_def</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="355" /><span class="True">     355:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="356" /><span class="True">     356:</span> 
+<a name="357" /><span class="True">     357:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1NMVUJfMA__"><span class="b">CONFIG_SLUB</span></a>
+<a name="358" /><span class="True">     358:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">linux</span><span class="f">/</span><span class="b">slub_def</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="359" /><span class="True">     359:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="360" /><span class="True">     360:</span> 
+<a name="361" /><span class="True">     361:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span>
+<a name="362" /><span class="True">     362:</span> <span class="b">kmalloc_order</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">order</span><span class="f">)</span>
+<a name="363" /><span class="True">     363:</span> <span class="f">{</span>
+<a name="364" /><span class="True">     364:</span>     <span class="m">void</span> <span class="f">*</span><span class="b">ret</span><span class="f">;</span>
+<a name="365" /><span class="True">     365:</span> 
+<a name="366" /><span class="True">     366:</span>     <span class="b">flags</span> <span class="f">|=</span> <span class="f">(</span><a href="cpu.c_macros_ref.html#_X19HRlBfQ09NUF8w"><span class="b">__GFP_COMP</span></a> <span class="f">|</span> <a href="cpu.c_macros_ref.html#_X19HRlBfS01FTUNHXzA_"><span class="b">__GFP_KMEMCG</span></a><span class="f">)</span><span class="f">;</span>
+<a name="367" /><span class="True">     367:</span>     <span class="b">ret</span> <span class="f">=</span> <span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span> <span class="b">__get_free_pages</span><span class="f">(</span><span class="b">flags</span><span class="f">,</span> <span class="b">order</span><span class="f">)</span><span class="f">;</span>
+<a name="368" /><span class="True">     368:</span>     <span class="b">kmemleak_alloc</span><span class="f">(</span><span class="b">ret</span><span class="f">,</span> <span class="b">size</span><span class="f">,</span> <span class="c">1</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="369" /><span class="True">     369:</span>     <span class="m">return</span> <span class="b">ret</span><span class="f">;</span>
+<a name="370" /><span class="True">     370:</span> <span class="f">}</span>
+<a name="371" /><span class="True">     371:</span> 
+<a name="372" /><span class="True">     372:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX1RSQUNJTkdfMA__"><span class="b">CONFIG_TRACING</span></a>
+<a name="373" /><span class="True">     373:</span> <span class="m">extern</span> <span class="m">void</span> <span class="f">*</span><span class="b">kmalloc_order_trace</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">order</span><span class="f">)</span><span class="f">;</span>
+<a name="374" /><span class="False">     374:</span> <span class="f">#</span><span class="n">else</span>
+<a name="375" /><span class="False">     375:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span>
+<a name="376" /><span class="False">     376:</span> <span class="b">kmalloc_order_trace</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">order</span><span class="f">)</span>
+<a name="377" /><span class="False">     377:</span> <span class="f">{</span>
+<a name="378" /><span class="False">     378:</span>     <span class="m">return</span> <span class="b">kmalloc_order</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">order</span><span class="f">)</span><span class="f">;</span>
+<a name="379" /><span class="False">     379:</span> <span class="f">}</span>
+<a name="380" /><span class="True">     380:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="381" /><span class="True">     381:</span> 
+<a name="382" /><span class="True">     382:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span><span class="b">kmalloc_large</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span>
+<a name="383" /><span class="True">     383:</span> <span class="f">{</span>
+<a name="384" /><span class="True">     384:</span>     <span class="m">unsigned</span> <span class="m">int</span> <span class="b">order</span> <span class="f">=</span> <a href="cpu.c_macros_ref.html#_Z2V0X29yZGVyXzA_"><span class="b">get_order</span></a><span class="f">(</span><span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="385" /><span class="True">     385:</span>     <span class="m">return</span> <span class="b">kmalloc_order_trace</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">order</span><span class="f">)</span><span class="f">;</span>
+<a name="386" /><span class="True">     386:</span> <span class="f">}</span>
+<a name="387" /><span class="True">     387:</span> 
+<a name="388" /><span class="True">     388:</span> <span class="k">/**</span>
+<a name="389" /><span class="True">     389:</span> <span class="k"> * kmalloc - allocate memory</span>
+<a name="390" /><span class="True">     390:</span> <span class="k"> * @size: how many bytes of memory are required.</span>
+<a name="391" /><span class="True">     391:</span> <span class="k"> * @flags: the type of memory to allocate.</span>
+<a name="392" /><span class="True">     392:</span> <span class="k"> *</span>
+<a name="393" /><span class="True">     393:</span> <span class="k"> * kmalloc is the normal method of allocating memory</span>
+<a name="394" /><span class="True">     394:</span> <span class="k"> * for objects smaller than page size in the kernel.</span>
+<a name="395" /><span class="True">     395:</span> <span class="k"> *</span>
+<a name="396" /><span class="True">     396:</span> <span class="k"> * The @flags argument may be one of:</span>
+<a name="397" /><span class="True">     397:</span> <span class="k"> *</span>
+<a name="398" /><span class="True">     398:</span> <span class="k"> * %GFP_USER - Allocate memory on behalf of user.  May sleep.</span>
+<a name="399" /><span class="True">     399:</span> <span class="k"> *</span>
+<a name="400" /><span class="True">     400:</span> <span class="k"> * %GFP_KERNEL - Allocate normal kernel ram.  May sleep.</span>
+<a name="401" /><span class="True">     401:</span> <span class="k"> *</span>
+<a name="402" /><span class="True">     402:</span> <span class="k"> * %GFP_ATOMIC - Allocation will not sleep.  May use emergency pools.</span>
+<a name="403" /><span class="True">     403:</span> <span class="k"> *   For example, use this inside interrupt handlers.</span>
+<a name="404" /><span class="True">     404:</span> <span class="k"> *</span>
+<a name="405" /><span class="True">     405:</span> <span class="k"> * %GFP_HIGHUSER - Allocate pages from high memory.</span>
+<a name="406" /><span class="True">     406:</span> <span class="k"> *</span>
+<a name="407" /><span class="True">     407:</span> <span class="k"> * %GFP_NOIO - Do not do any I/O at all while trying to get memory.</span>
+<a name="408" /><span class="True">     408:</span> <span class="k"> *</span>
+<a name="409" /><span class="True">     409:</span> <span class="k"> * %GFP_NOFS - Do not make any fs calls while trying to get memory.</span>
+<a name="410" /><span class="True">     410:</span> <span class="k"> *</span>
+<a name="411" /><span class="True">     411:</span> <span class="k"> * %GFP_NOWAIT - Allocation will not sleep.</span>
+<a name="412" /><span class="True">     412:</span> <span class="k"> *</span>
+<a name="413" /><span class="True">     413:</span> <span class="k"> * %GFP_THISNODE - Allocate node-local memory only.</span>
+<a name="414" /><span class="True">     414:</span> <span class="k"> *</span>
+<a name="415" /><span class="True">     415:</span> <span class="k"> * %GFP_DMA - Allocation suitable for DMA.</span>
+<a name="416" /><span class="True">     416:</span> <span class="k"> *   Should only be used for kmalloc() caches. Otherwise, use a</span>
+<a name="417" /><span class="True">     417:</span> <span class="k"> *   slab created with SLAB_DMA.</span>
+<a name="418" /><span class="True">     418:</span> <span class="k"> *</span>
+<a name="419" /><span class="True">     419:</span> <span class="k"> * Also it is possible to set different flags by OR&apos;ing</span>
+<a name="420" /><span class="True">     420:</span> <span class="k"> * in one or more of the following additional @flags:</span>
+<a name="421" /><span class="True">     421:</span> <span class="k"> *</span>
+<a name="422" /><span class="True">     422:</span> <span class="k"> * %__GFP_COLD - Request cache-cold pages instead of</span>
+<a name="423" /><span class="True">     423:</span> <span class="k"> *   trying to return cache-warm pages.</span>
+<a name="424" /><span class="True">     424:</span> <span class="k"> *</span>
+<a name="425" /><span class="True">     425:</span> <span class="k"> * %__GFP_HIGH - This allocation has high priority and may use emergency pools.</span>
+<a name="426" /><span class="True">     426:</span> <span class="k"> *</span>
+<a name="427" /><span class="True">     427:</span> <span class="k"> * %__GFP_NOFAIL - Indicate that this allocation is in no way allowed to fail</span>
+<a name="428" /><span class="True">     428:</span> <span class="k"> *   (think twice before using).</span>
+<a name="429" /><span class="True">     429:</span> <span class="k"> *</span>
+<a name="430" /><span class="True">     430:</span> <span class="k"> * %__GFP_NORETRY - If memory is not immediately available,</span>
+<a name="431" /><span class="True">     431:</span> <span class="k"> *   then give up at once.</span>
+<a name="432" /><span class="True">     432:</span> <span class="k"> *</span>
+<a name="433" /><span class="True">     433:</span> <span class="k"> * %__GFP_NOWARN - If allocation fails, don&apos;t issue any warnings.</span>
+<a name="434" /><span class="True">     434:</span> <span class="k"> *</span>
+<a name="435" /><span class="True">     435:</span> <span class="k"> * %__GFP_REPEAT - If allocation fails initially, try once more before failing.</span>
+<a name="436" /><span class="True">     436:</span> <span class="k"> *</span>
+<a name="437" /><span class="True">     437:</span> <span class="k"> * There are other flags available as well, but these are not intended</span>
+<a name="438" /><span class="True">     438:</span> <span class="k"> * for general use, and so are not documented here. For a full list of</span>
+<a name="439" /><span class="True">     439:</span> <span class="k"> * potential flags, always refer to linux/gfp.h.</span>
+<a name="440" /><span class="True">     440:</span> <span class="k"> */</span>
+<a name="441" /><span class="True">     441:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span><span class="b">kmalloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span>
+<a name="442" /><span class="True">     442:</span> <span class="f">{</span>
+<a name="443" /><span class="True">     443:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">__builtin_constant_p</span><span class="f">(</span><span class="b">size</span><span class="f">)</span><span class="f">)</span> <span class="f">{</span>
+<a name="444" /><span class="True">     444:</span>         <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">&gt;</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NQVhfQ0FDSEVfU0laRV8w"><span class="b">KMALLOC_MAX_CACHE_SIZE</span></a><span class="f">)</span>
+<a name="445" /><span class="True">     445:</span>             <span class="m">return</span> <span class="b">kmalloc_large</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="446" /><span class="True">     446:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">CONFIG_SLOB</span>
+<a name="447" /><span class="True">     447:</span>         <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="f">(</span><span class="b">flags</span> <span class="f">&amp;</span> <a href="cpu.c_macros_ref.html#_R0ZQX0RNQV8w"><span class="b">GFP_DMA</span></a><span class="f">)</span><span class="f">)</span> <span class="f">{</span>
+<a name="448" /><span class="True">     448:</span>             <span class="m">int</span> <span class="b">index</span> <span class="f">=</span> <span class="b">kmalloc_index</span><span class="f">(</span><span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="449" /><span class="True">     449:</span> 
+<a name="450" /><span class="True">     450:</span>             <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">index</span><span class="f">)</span>
+<a name="451" /><span class="True">     451:</span>                 <span class="m">return</span> <a href="cpu.c_macros_ref.html#_WkVST19TSVpFX1BUUl8w"><span class="b">ZERO_SIZE_PTR</span></a><span class="f">;</span>
+<a name="452" /><span class="True">     452:</span> 
+<a name="453" /><span class="True">     453:</span>             <span class="m">return</span> <span class="b">kmem_cache_alloc_trace</span><span class="f">(</span><span class="b">kmalloc_caches</span><span class="f">[</span><span class="b">index</span><span class="f">]</span><span class="f">,</span>
+<a name="454" /><span class="True">     454:</span>                     <span class="b">flags</span><span class="f">,</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="455" /><span class="True">     455:</span>         <span class="f">}</span>
+<a name="456" /><span class="True">     456:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="457" /><span class="True">     457:</span>     <span class="f">}</span>
+<a name="458" /><span class="True">     458:</span>     <span class="m">return</span> <span class="b">__kmalloc</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="459" /><span class="True">     459:</span> <span class="f">}</span>
+<a name="460" /><span class="True">     460:</span> 
+<a name="461" /><span class="True">     461:</span> <span class="k">/*</span>
+<a name="462" /><span class="True">     462:</span> <span class="k"> * Determine size used for the nth kmalloc cache.</span>
+<a name="463" /><span class="True">     463:</span> <span class="k"> * return size or 0 if a kmalloc cache for that</span>
+<a name="464" /><span class="True">     464:</span> <span class="k"> * size does not exist</span>
+<a name="465" /><span class="True">     465:</span> <span class="k"> */</span>
+<a name="466" /><span class="True">     466:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">int</span> <span class="b">kmalloc_size</span><span class="f">(</span><span class="m">int</span> <span class="b">n</span><span class="f">)</span>
+<a name="467" /><span class="True">     467:</span> <span class="f">{</span>
+<a name="468" /><span class="True">     468:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">CONFIG_SLOB</span>
+<a name="469" /><span class="True">     469:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">n</span> <span class="f">&gt;</span> <span class="c">2</span><span class="f">)</span>
+<a name="470" /><span class="True">     470:</span>         <span class="m">return</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="b">n</span><span class="f">;</span>
+<a name="471" /><span class="True">     471:</span> 
+<a name="472" /><span class="True">     472:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">n</span> <span class="f">==</span> <span class="c">1</span> <span class="f">&amp;&amp;</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a> <span class="f">&lt;=</span> <span class="c">32</span><span class="f">)</span>
+<a name="473" /><span class="True">     473:</span>         <span class="m">return</span> <span class="c">96</span><span class="f">;</span>
+<a name="474" /><span class="True">     474:</span> 
+<a name="475" /><span class="True">     475:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">n</span> <span class="f">==</span> <span class="c">2</span> <span class="f">&amp;&amp;</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NSU5fU0laRV8w"><span class="b">KMALLOC_MIN_SIZE</span></a> <span class="f">&lt;=</span> <span class="c">64</span><span class="f">)</span>
+<a name="476" /><span class="True">     476:</span>         <span class="m">return</span> <span class="c">192</span><span class="f">;</span>
+<a name="477" /><span class="True">     477:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="478" /><span class="True">     478:</span>     <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="479" /><span class="True">     479:</span> <span class="f">}</span>
+<a name="480" /><span class="True">     480:</span> 
+<a name="481" /><span class="True">     481:</span> <span class="m">static</span> <a href="cpu.c_macros_ref.html#_X19hbHdheXNfaW5saW5lXzA_"><span class="b">__always_inline</span></a> <span class="m">void</span> <span class="f">*</span><span class="b">kmalloc_node</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">)</span>
+<a name="482" /><span class="True">     482:</span> <span class="f">{</span>
+<a name="483" /><span class="True">     483:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">CONFIG_SLOB</span>
+<a name="484" /><span class="True">     484:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">__builtin_constant_p</span><span class="f">(</span><span class="b">size</span><span class="f">)</span> <span class="f">&amp;&amp;</span>
+<a name="485" /><span class="True">     485:</span>         <span class="b">size</span> <span class="f">&lt;=</span> <a href="cpu.c_macros_ref.html#_S01BTExPQ19NQVhfQ0FDSEVfU0laRV8w"><span class="b">KMALLOC_MAX_CACHE_SIZE</span></a> <span class="f">&amp;&amp;</span> <span class="f">!</span><span class="f">(</span><span class="b">flags</span> <span class="f">&amp;</span> <a href="cpu.c_macros_ref.html#_R0ZQX0RNQV8w"><span class="b">GFP_DMA</span></a><span class="f">)</span><span class="f">)</span> <span class="f">{</span>
+<a name="486" /><span class="True">     486:</span>         <span class="m">int</span> <span class="b">i</span> <span class="f">=</span> <span class="b">kmalloc_index</span><span class="f">(</span><span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="487" /><span class="True">     487:</span> 
+<a name="488" /><span class="True">     488:</span>         <span class="m">if</span> <span class="f">(</span><span class="f">!</span><span class="b">i</span><span class="f">)</span>
+<a name="489" /><span class="True">     489:</span>             <span class="m">return</span> <a href="cpu.c_macros_ref.html#_WkVST19TSVpFX1BUUl8w"><span class="b">ZERO_SIZE_PTR</span></a><span class="f">;</span>
+<a name="490" /><span class="True">     490:</span> 
+<a name="491" /><span class="True">     491:</span>         <span class="m">return</span> <span class="b">kmem_cache_alloc_node_trace</span><span class="f">(</span><span class="b">kmalloc_caches</span><span class="f">[</span><span class="b">i</span><span class="f">]</span><span class="f">,</span>
+<a name="492" /><span class="True">     492:</span>                         <span class="b">flags</span><span class="f">,</span> <span class="b">node</span><span class="f">,</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="493" /><span class="True">     493:</span>     <span class="f">}</span>
+<a name="494" /><span class="True">     494:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="495" /><span class="True">     495:</span>     <span class="m">return</span> <span class="b">__kmalloc_node</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span><span class="f">;</span>
+<a name="496" /><span class="True">     496:</span> <span class="f">}</span>
+<a name="497" /><span class="True">     497:</span> 
+<a name="498" /><span class="True">     498:</span> <span class="k">/*</span>
+<a name="499" /><span class="True">     499:</span> <span class="k"> * Setting ARCH_SLAB_MINALIGN in arch headers allows a different alignment.</span>
+<a name="500" /><span class="True">     500:</span> <span class="k"> * Intended for arches that get misalignment faults even for 64 bit integer</span>
+<a name="501" /><span class="True">     501:</span> <span class="k"> * aligned buffers.</span>
+<a name="502" /><span class="True">     502:</span> <span class="k"> */</span>
+<a name="503" /><span class="True">     503:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="cpu.c_macros_noref.html#_QVJDSF9TTEFCX01JTkFMSUdOXzA_"><span class="b">ARCH_SLAB_MINALIGN</span></a>
+<a name="504" /><span class="True">     504:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_QVJDSF9TTEFCX01JTkFMSUdOXzA_"><span class="b">ARCH_SLAB_MINALIGN</span></a> <span class="b">__alignof__</span><span class="f">(</span><span class="m">unsigned</span> <span class="m">long</span> <span class="m">long</span><span class="f">)</span>
+<a name="505" /><span class="True">     505:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="506" /><span class="True">     506:</span> <span class="k">/*</span>
+<a name="507" /><span class="True">     507:</span> <span class="k"> * This is the main placeholder for memcg-related information in kmem caches.</span>
+<a name="508" /><span class="True">     508:</span> <span class="k"> * struct kmem_cache will hold a pointer to it, so the memory cost while</span>
+<a name="509" /><span class="True">     509:</span> <span class="k"> * disabled is 1 pointer. The runtime cost while enabled, gets bigger than it</span>
+<a name="510" /><span class="True">     510:</span> <span class="k"> * would otherwise be if that would be bundled in kmem_cache: we&apos;ll need an</span>
+<a name="511" /><span class="True">     511:</span> <span class="k"> * extra pointer chase. But the trade off clearly lays in favor of not</span>
+<a name="512" /><span class="True">     512:</span> <span class="k"> * penalizing non-users.</span>
+<a name="513" /><span class="True">     513:</span> <span class="k"> *</span>
+<a name="514" /><span class="True">     514:</span> <span class="k"> * Both the root cache and the child caches will have it. For the root cache,</span>
+<a name="515" /><span class="True">     515:</span> <span class="k"> * this will hold a dynamically allocated array large enough to hold</span>
+<a name="516" /><span class="True">     516:</span> <span class="k"> * information about the currently limited memcgs in the system.</span>
+<a name="517" /><span class="True">     517:</span> <span class="k"> *</span>
+<a name="518" /><span class="True">     518:</span> <span class="k"> * Child caches will hold extra metadata needed for its operation. Fields are:</span>
+<a name="519" /><span class="True">     519:</span> <span class="k"> *</span>
+<a name="520" /><span class="True">     520:</span> <span class="k"> * @memcg: pointer to the memcg this cache belongs to</span>
+<a name="521" /><span class="True">     521:</span> <span class="k"> * @list: list_head for the list of all caches in this memcg</span>
+<a name="522" /><span class="True">     522:</span> <span class="k"> * @root_cache: pointer to the global, root cache, this cache was derived from</span>
+<a name="523" /><span class="True">     523:</span> <span class="k"> * @dead: set to true after the memcg dies; the cache may still be around.</span>
+<a name="524" /><span class="True">     524:</span> <span class="k"> * @nr_pages: number of pages that belongs to this cache.</span>
+<a name="525" /><span class="True">     525:</span> <span class="k"> * @destroy: worker to be called whenever we are ready, or believe we may be</span>
+<a name="526" /><span class="True">     526:</span> <span class="k"> *           ready, to destroy this cache.</span>
+<a name="527" /><span class="True">     527:</span> <span class="k"> */</span>
+<a name="528" /><span class="True">     528:</span> <span class="m">struct</span> <span class="b">memcg_cache_params</span> <span class="f">{</span>
+<a name="529" /><span class="True">     529:</span>     <span class="m">bool</span> <span class="b">is_root_cache</span><span class="f">;</span>
+<a name="530" /><span class="True">     530:</span>     <span class="m">union</span> <span class="f">{</span>
+<a name="531" /><span class="True">     531:</span>         <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">memcg_caches</span><span class="f">[</span><span class="c">0</span><span class="f">]</span><span class="f">;</span>
+<a name="532" /><span class="True">     532:</span>         <span class="m">struct</span> <span class="f">{</span>
+<a name="533" /><span class="True">     533:</span>             <span class="m">struct</span> <span class="b">mem_cgroup</span> <span class="f">*</span><span class="b">memcg</span><span class="f">;</span>
+<a name="534" /><span class="True">     534:</span>             <span class="m">struct</span> <span class="b">list_head</span> <span class="b">list</span><span class="f">;</span>
+<a name="535" /><span class="True">     535:</span>             <span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">root_cache</span><span class="f">;</span>
+<a name="536" /><span class="True">     536:</span>             <span class="m">bool</span> <span class="b">dead</span><span class="f">;</span>
+<a name="537" /><span class="True">     537:</span>             <span class="b">atomic_t</span> <span class="b">nr_pages</span><span class="f">;</span>
+<a name="538" /><span class="True">     538:</span>             <span class="m">struct</span> <span class="b">work_struct</span> <span class="b">destroy</span><span class="f">;</span>
+<a name="539" /><span class="True">     539:</span>         <span class="f">}</span><span class="f">;</span>
+<a name="540" /><span class="True">     540:</span>     <span class="f">}</span><span class="f">;</span>
+<a name="541" /><span class="True">     541:</span> <span class="f">}</span><span class="f">;</span>
+<a name="542" /><span class="True">     542:</span> 
+<a name="543" /><span class="True">     543:</span> <span class="m">int</span> <span class="b">memcg_update_all_caches</span><span class="f">(</span><span class="m">int</span> <span class="b">num_memcgs</span><span class="f">)</span><span class="f">;</span>
+<a name="544" /><span class="True">     544:</span> 
+<a name="545" /><span class="True">     545:</span> <span class="m">struct</span> <span class="b">seq_file</span><span class="f">;</span>
+<a name="546" /><span class="True">     546:</span> <span class="m">int</span> <span class="b">cache_show</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">s</span><span class="f">,</span> <span class="m">struct</span> <span class="b">seq_file</span> <span class="f">*</span><span class="b">m</span><span class="f">)</span><span class="f">;</span>
+<a name="547" /><span class="True">     547:</span> <span class="m">void</span> <span class="b">print_slabinfo_header</span><span class="f">(</span><span class="m">struct</span> <span class="b">seq_file</span> <span class="f">*</span><span class="b">m</span><span class="f">)</span><span class="f">;</span>
+<a name="548" /><span class="True">     548:</span> 
+<a name="549" /><span class="True">     549:</span> <span class="k">/**</span>
+<a name="550" /><span class="True">     550:</span> <span class="k"> * kmalloc_array - allocate memory for an array.</span>
+<a name="551" /><span class="True">     551:</span> <span class="k"> * @n: number of elements.</span>
+<a name="552" /><span class="True">     552:</span> <span class="k"> * @size: element size.</span>
+<a name="553" /><span class="True">     553:</span> <span class="k"> * @flags: the type of memory to allocate (see kmalloc).</span>
+<a name="554" /><span class="True">     554:</span> <span class="k"> */</span>
+<a name="555" /><span class="True">     555:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">kmalloc_array</span><span class="f">(</span><span class="b">size_t</span> <span class="b">n</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span>
+<a name="556" /><span class="True">     556:</span> <span class="f">{</span>
+<a name="557" /><span class="True">     557:</span>     <span class="m">if</span> <span class="f">(</span><span class="b">size</span> <span class="f">!=</span> <span class="c">0</span> <span class="f">&amp;&amp;</span> <span class="b">n</span> <span class="f">&gt;</span> <a href="cpu.c_macros_ref.html#_U0laRV9NQVhfMA__"><span class="b">SIZE_MAX</span></a> <span class="f">/</span> <span class="b">size</span><span class="f">)</span>
+<a name="558" /><span class="True">     558:</span>         <span class="m">return</span> <a href="cpu.c_macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">;</span>
+<a name="559" /><span class="True">     559:</span>     <span class="m">return</span> <span class="b">__kmalloc</span><span class="f">(</span><span class="b">n</span> <span class="f">*</span> <span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span><span class="f">;</span>
+<a name="560" /><span class="True">     560:</span> <span class="f">}</span>
+<a name="561" /><span class="True">     561:</span> 
+<a name="562" /><span class="True">     562:</span> <span class="k">/**</span>
+<a name="563" /><span class="True">     563:</span> <span class="k"> * kcalloc - allocate memory for an array. The memory is set to zero.</span>
+<a name="564" /><span class="True">     564:</span> <span class="k"> * @n: number of elements.</span>
+<a name="565" /><span class="True">     565:</span> <span class="k"> * @size: element size.</span>
+<a name="566" /><span class="True">     566:</span> <span class="k"> * @flags: the type of memory to allocate (see kmalloc).</span>
+<a name="567" /><span class="True">     567:</span> <span class="k"> */</span>
+<a name="568" /><span class="True">     568:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">kcalloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">n</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span>
+<a name="569" /><span class="True">     569:</span> <span class="f">{</span>
+<a name="570" /><span class="True">     570:</span>     <span class="m">return</span> <span class="b">kmalloc_array</span><span class="f">(</span><span class="b">n</span><span class="f">,</span> <span class="b">size</span><span class="f">,</span> <span class="b">flags</span> <span class="f">|</span> <a href="cpu.c_macros_ref.html#_X19HRlBfWkVST18w"><span class="b">__GFP_ZERO</span></a><span class="f">)</span><span class="f">;</span>
+<a name="571" /><span class="True">     571:</span> <span class="f">}</span>
+<a name="572" /><span class="True">     572:</span> 
+<a name="573" /><span class="True">     573:</span> <span class="k">/*</span>
+<a name="574" /><span class="True">     574:</span> <span class="k"> * kmalloc_track_caller is a special version of kmalloc that records the</span>
+<a name="575" /><span class="True">     575:</span> <span class="k"> * calling function of the routine calling it for slab leak tracking instead</span>
+<a name="576" /><span class="True">     576:</span> <span class="k"> * of just the calling function (confusing, eh?).</span>
+<a name="577" /><span class="True">     577:</span> <span class="k"> * It&apos;s useful when the call to kmalloc comes from a widely-used standard</span>
+<a name="578" /><span class="True">     578:</span> <span class="k"> * allocator where we care about the real place the memory allocation</span>
+<a name="579" /><span class="True">     579:</span> <span class="k"> * request comes from.</span>
+<a name="580" /><span class="True">     580:</span> <span class="k"> */</span>
+<a name="581" /><span class="True">     581:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_DEBUG_SLAB</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1NMVUJfMA__"><span class="b">CONFIG_SLUB</span></a><span class="f">)</span> <span class="f">||</span> \
+<a name="582" /><span class="True">     582:</span>     <span class="f">(</span><span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_SLAB</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1RSQUNJTkdfMA__"><span class="b">CONFIG_TRACING</span></a><span class="f">)</span><span class="f">)</span> <span class="f">||</span> \
+<a name="583" /><span class="True">     583:</span>     <span class="f">(</span><span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_SLOB</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1RSQUNJTkdfMA__"><span class="b">CONFIG_TRACING</span></a><span class="f">)</span><span class="f">)</span>
+<a name="584" /><span class="True">     584:</span> <span class="m">extern</span> <span class="m">void</span> <span class="f">*</span><span class="b">__kmalloc_track_caller</span><span class="f">(</span><span class="b">size_t</span><span class="f">,</span> <span class="b">gfp_t</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">;</span>
+<a name="585" /><span class="True">     585:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_a21hbGxvY190cmFja19jYWxsZXJfMA__"><span class="b">kmalloc_track_caller</span></a><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span> \
+<a name="586" /><span class="True">     586:</span>     <span class="b">__kmalloc_track_caller</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <a href="cpu.c_macros_ref.html#_X1JFVF9JUF9fMA__"><span class="b">_RET_IP_</span></a><span class="f">)</span>
+<a name="587" /><span class="False">     587:</span> <span class="f">#</span><span class="n">else</span>
+<a name="588" /><span class="False">     588:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_a21hbGxvY190cmFja19jYWxsZXJfMA__"><span class="b">kmalloc_track_caller</span></a><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span> \
+<a name="589" /><span class="False">     589:</span>     <span class="b">__kmalloc</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span>
+<a name="590" /><span class="True">     590:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* DEBUG_SLAB */</span>
+<a name="591" /><span class="True">     591:</span> 
+<a name="592" /><span class="True">     592:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="cpu.c_macros_ref.html#_Q09ORklHX05VTUFfMA__"><span class="b">CONFIG_NUMA</span></a>
+<a name="593" /><span class="True">     593:</span> <span class="k">/*</span>
+<a name="594" /><span class="True">     594:</span> <span class="k"> * kmalloc_node_track_caller is a special version of kmalloc_node that</span>
+<a name="595" /><span class="True">     595:</span> <span class="k"> * records the calling function of the routine calling it for slab leak</span>
+<a name="596" /><span class="True">     596:</span> <span class="k"> * tracking instead of just the calling function (confusing, eh?).</span>
+<a name="597" /><span class="True">     597:</span> <span class="k"> * It&apos;s useful when the call to kmalloc_node comes from a widely-used</span>
+<a name="598" /><span class="True">     598:</span> <span class="k"> * standard allocator where we care about the real place the memory</span>
+<a name="599" /><span class="True">     599:</span> <span class="k"> * allocation request comes from.</span>
+<a name="600" /><span class="True">     600:</span> <span class="k"> */</span>
+<a name="601" /><span class="True">     601:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_DEBUG_SLAB</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1NMVUJfMA__"><span class="b">CONFIG_SLUB</span></a><span class="f">)</span> <span class="f">||</span> \
+<a name="602" /><span class="True">     602:</span>     <span class="f">(</span><span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_SLAB</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1RSQUNJTkdfMA__"><span class="b">CONFIG_TRACING</span></a><span class="f">)</span><span class="f">)</span> <span class="f">||</span> \
+<a name="603" /><span class="True">     603:</span>     <span class="f">(</span><span class="b">defined</span><span class="f">(</span><span class="b">CONFIG_SLOB</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="b">defined</span><span class="f">(</span><a href="cpu.c_macros_ref.html#_Q09ORklHX1RSQUNJTkdfMA__"><span class="b">CONFIG_TRACING</span></a><span class="f">)</span><span class="f">)</span>
+<a name="604" /><span class="True">     604:</span> <span class="m">extern</span> <span class="m">void</span> <span class="f">*</span><span class="b">__kmalloc_node_track_caller</span><span class="f">(</span><span class="b">size_t</span><span class="f">,</span> <span class="b">gfp_t</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">unsigned</span> <span class="m">long</span><span class="f">)</span><span class="f">;</span>
+<a name="605" /><span class="True">     605:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_a21hbGxvY19ub2RlX3RyYWNrX2NhbGxlcl8w"><span class="b">kmalloc_node_track_caller</span></a><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span> \
+<a name="606" /><span class="True">     606:</span>     <span class="b">__kmalloc_node_track_caller</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">node</span><span class="f">,</span> \
+<a name="607" /><span class="True">     607:</span>             <a href="cpu.c_macros_ref.html#_X1JFVF9JUF9fMA__"><span class="b">_RET_IP_</span></a><span class="f">)</span>
+<a name="608" /><span class="False">     608:</span> <span class="f">#</span><span class="n">else</span>
+<a name="609" /><span class="False">     609:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_a21hbGxvY19ub2RlX3RyYWNrX2NhbGxlcl8w"><span class="b">kmalloc_node_track_caller</span></a><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span> \
+<a name="610" /><span class="False">     610:</span>     <span class="b">__kmalloc_node</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span>
+<a name="611" /><span class="True">     611:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="612" /><span class="True">     612:</span> 
+<a name="613" /><span class="False">     613:</span> <span class="f">#</span><span class="n">else</span> <span class="k">/* CONFIG_NUMA */</span>
+<a name="614" /><span class="False">     614:</span> 
+<a name="615" /><span class="False">     615:</span> <span class="f">#</span><span class="n">define</span> <a href="cpu.c_macros_noref.html#_a21hbGxvY19ub2RlX3RyYWNrX2NhbGxlcl8w"><span class="b">kmalloc_node_track_caller</span></a><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">,</span> <span class="b">node</span><span class="f">)</span> \
+<a name="616" /><span class="False">     616:</span>     <a href="cpu.c_macros_noref.html#_a21hbGxvY190cmFja19jYWxsZXJfMA__"><span class="b">kmalloc_track_caller</span></a><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span><span class="f">)</span>
+<a name="617" /><span class="False">     617:</span> 
+<a name="618" /><span class="True">     618:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* CONFIG_NUMA */</span>
+<a name="619" /><span class="True">     619:</span> 
+<a name="620" /><span class="True">     620:</span> <span class="k">/*</span>
+<a name="621" /><span class="True">     621:</span> <span class="k"> * Shortcuts</span>
+<a name="622" /><span class="True">     622:</span> <span class="k"> */</span>
+<a name="623" /><span class="True">     623:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">kmem_cache_zalloc</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">k</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span>
+<a name="624" /><span class="True">     624:</span> <span class="f">{</span>
+<a name="625" /><span class="True">     625:</span>     <span class="m">return</span> <span class="b">kmem_cache_alloc</span><span class="f">(</span><span class="b">k</span><span class="f">,</span> <span class="b">flags</span> <span class="f">|</span> <a href="cpu.c_macros_ref.html#_X19HRlBfWkVST18w"><span class="b">__GFP_ZERO</span></a><span class="f">)</span><span class="f">;</span>
+<a name="626" /><span class="True">     626:</span> <span class="f">}</span>
+<a name="627" /><span class="True">     627:</span> 
+<a name="628" /><span class="True">     628:</span> <span class="k">/**</span>
+<a name="629" /><span class="True">     629:</span> <span class="k"> * kzalloc - allocate memory. The memory is set to zero.</span>
+<a name="630" /><span class="True">     630:</span> <span class="k"> * @size: how many bytes of memory are required.</span>
+<a name="631" /><span class="True">     631:</span> <span class="k"> * @flags: the type of memory to allocate (see kmalloc).</span>
+<a name="632" /><span class="True">     632:</span> <span class="k"> */</span>
+<a name="633" /><span class="True">     633:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">kzalloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">)</span>
+<a name="634" /><span class="True">     634:</span> <span class="f">{</span>
+<a name="635" /><span class="True">     635:</span>     <span class="m">return</span> <span class="b">kmalloc</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span> <span class="f">|</span> <a href="cpu.c_macros_ref.html#_X19HRlBfWkVST18w"><span class="b">__GFP_ZERO</span></a><span class="f">)</span><span class="f">;</span>
+<a name="636" /><span class="True">     636:</span> <span class="f">}</span>
+<a name="637" /><span class="True">     637:</span> 
+<a name="638" /><span class="True">     638:</span> <span class="k">/**</span>
+<a name="639" /><span class="True">     639:</span> <span class="k"> * kzalloc_node - allocate zeroed memory from a particular memory node.</span>
+<a name="640" /><span class="True">     640:</span> <span class="k"> * @size: how many bytes of memory are required.</span>
+<a name="641" /><span class="True">     641:</span> <span class="k"> * @flags: the type of memory to allocate (see kmalloc).</span>
+<a name="642" /><span class="True">     642:</span> <span class="k"> * @node: memory node from which to allocate</span>
+<a name="643" /><span class="True">     643:</span> <span class="k"> */</span>
+<a name="644" /><span class="True">     644:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">void</span> <span class="f">*</span><span class="b">kzalloc_node</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">,</span> <span class="b">gfp_t</span> <span class="b">flags</span><span class="f">,</span> <span class="m">int</span> <span class="b">node</span><span class="f">)</span>
+<a name="645" /><span class="True">     645:</span> <span class="f">{</span>
+<a name="646" /><span class="True">     646:</span>     <span class="m">return</span> <span class="b">kmalloc_node</span><span class="f">(</span><span class="b">size</span><span class="f">,</span> <span class="b">flags</span> <span class="f">|</span> <a href="cpu.c_macros_ref.html#_X19HRlBfWkVST18w"><span class="b">__GFP_ZERO</span></a><span class="f">,</span> <span class="b">node</span><span class="f">)</span><span class="f">;</span>
+<a name="647" /><span class="True">     647:</span> <span class="f">}</span>
+<a name="648" /><span class="True">     648:</span> 
+<a name="649" /><span class="True">     649:</span> <span class="k">/*</span>
+<a name="650" /><span class="True">     650:</span> <span class="k"> * Determine the size of a slab object</span>
+<a name="651" /><span class="True">     651:</span> <span class="k"> */</span>
+<a name="652" /><span class="True">     652:</span> <span class="m">static</span> <span class="m">inline</span> <span class="m">unsigned</span> <span class="m">int</span> <span class="b">kmem_cache_size</span><span class="f">(</span><span class="m">struct</span> <span class="b">kmem_cache</span> <span class="f">*</span><span class="b">s</span><span class="f">)</span>
+<a name="653" /><span class="True">     653:</span> <span class="f">{</span>
+<a name="654" /><span class="True">     654:</span>     <span class="m">return</span> <span class="b">s</span><span class="f">-&gt;</span><span class="b">object_size</span><span class="f">;</span>
+<a name="655" /><span class="True">     655:</span> <span class="f">}</span>
+<a name="656" /><span class="True">     656:</span> 
+<a name="657" /><span class="True">     657:</span> <span class="m">void</span> <a href="cpu.c_macros_ref.html#_X19pbml0XzA_"><span class="b">__init</span></a> <span class="b">kmem_cache_init_late</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="658" /><span class="True">     658:</span> 
+<a name="659" /><span class="True">     659:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* _LINUX_SLAB_H */</span>
+<a name="660" /><span class="True">     660:</span> </pre>
+  </body>
+</html>
