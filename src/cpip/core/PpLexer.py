@@ -586,6 +586,9 @@ class PpLexer(object):
             # 22 "/usr/include/stdio.h" 3 4
             # 59 "/usr/include/stdio.h" 3 4
             # 1 "/usr/include/sys/cdefs.h" 1 3 4
+        
+        Currently we don't create the trailing numbers as I don't know what they
+        mean.
         """
         # Get the file name from self.currentFile
         # Line number from self.fileLineCol.lineNum
