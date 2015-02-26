@@ -227,6 +227,7 @@ class PpLexer(object):
                  stdPredefMacros=None,
                  autoDefineDateTime=True,
                  gccExtensions=False,
+                 annotateLineFile=False,
                  ):
         """Create a translation unit tokeniser.
         tuFileId        - A file ID that will be given to the include
@@ -264,7 +265,13 @@ class PpLexer(object):
                                 be automatically updated to current locale date/time.
                                 Mostly this is used for testing.
         gccExtensions - Support GCC extensions. Currently just #include_next
+        *annotateLineFile* - if True then PpToken will output line number and file as cpp.
+        For example::
         
+            # 22 "/usr/include/stdio.h" 3 4
+            # 59 "/usr/include/stdio.h" 3 4
+            # 1 "/usr/include/sys/cdefs.h" 1 3 4
+
         TODO: Set flags here rather than supplying them to a generator?
         This would make the API simply the ctor and ppTokens/next().
         Flags would be:
@@ -285,6 +292,7 @@ class PpLexer(object):
         self._includeHandler = includeHandler
         self._preIncFiles = preIncFiles or []
         self._gccExtensions = gccExtensions
+        self._annotateLineFile = annotateLineFile
         # Create the class members
         self._diagnostic = diagnostic or CppDiagnostic.PreprocessDiagnosticStd()
         self._pragmaHandler = pragmaHandler
@@ -389,6 +397,8 @@ class PpLexer(object):
             self._includeHandler.cpStackPush(myFpo)
             # Create a generator from the ITU
             myGen = self._pptPush(myFpo)
+            for optionalLineFileToken in self._pptPostPush():
+                yield optionalLineFileToken
             try:
                 for aTok in self._genPpTokensRecursive(myGen):
                     #print 'TRACE: aTok:', aTok
@@ -415,6 +425,8 @@ class PpLexer(object):
                 else:
                     self._includeHandler.cpStackPop()
                 self._pptPop()
+                for optionalLineFileToken in self._pptPostPop():
+                    yield optionalLineFileToken
 #===============================================================================
 #                # Trap any exception in the finally block otherwise that
 #                # may displace an exception generated above. 
@@ -443,7 +455,7 @@ class PpLexer(object):
     #############################
     # Section: PpLexer generators
     #############################
-    def ppTokens(self, incWs=True, minWs=False, condLevel=0, annotateLineFile=False):
+    def ppTokens(self, incWs=True, minWs=False, condLevel=0):
         """A generator for providing PpToken.PpTokens to section 16 of ISO/IEC 14882:1998(E).
         
         *incWs* - if True than whitespace tokens are included (i.e. tok.isWs() == True).
@@ -468,13 +480,6 @@ class PpLexer(object):
             information about conditionally included files recursively.
 
         (see _cppInclude where we check if self._condStack.isTrue():).
-        
-        *annotateLineFile* - if True will output line number and file as cpp.
-        For example::
-        
-            # 22 "/usr/include/stdio.h" 3 4
-            # 59 "/usr/include/stdio.h" 3 4
-            # 1 "/usr/include/sys/cdefs.h" 1 3 4
         """
         if self._isGenerating:
             raise ExceptionPpLexerAlreadyGenerating()
@@ -498,26 +503,17 @@ class PpLexer(object):
                     for aWsT in wsBuf:
                         if self._wsHandler.isBreakingWhitespace(aWsT.t):
                             yield PpToken.PpToken('\n', 'whitespace')
-                            if annotateLineFile:
-                                for lineTok in self._annotateLine():
-                                    yield lineTok
                             break
                     else:
                         yield PpToken.PpToken(' ', 'whitespace')
                     wsBuf = []
                 yield aTok            
-                if annotateLineFile and self._wsHandler.isBreakingWhitespace(aTok.t):
-                    for lineTok in self._annotateLine():
-                        yield lineTok
                 self._tuIndex += len(aTok.t)
         # Flush the whitespace buffer
         if len(wsBuf) > 0:
             for aWsT in wsBuf:
                 if self._wsHandler.isBreakingWhitespace(aWsT.t):
                     yield PpToken.PpToken('\n', 'whitespace')
-                    if annotateLineFile:
-                        for lineTok in self._annotateLine():
-                            yield lineTok
                     break
             else:
                 yield PpToken.PpToken(' ', 'whitespace')
@@ -529,6 +525,8 @@ class PpLexer(object):
         self._tuFpo.fileObj.seek(0)
         # Create a generator from the ITU
         myGen = self._pptPush(self._tuFpo)
+        for optionalLineFileToken in self._pptPostPush():
+            yield optionalLineFileToken
         try:
             for aTok in self._genPpTokensRecursive(myGen):
                 if minWs and aTok.isWs():
@@ -540,26 +538,17 @@ class PpLexer(object):
                         for aWsT in wsBuf:
                             if self._wsHandler.isBreakingWhitespace(aWsT.t):
                                 yield PpToken.PpToken('\n', 'whitespace')
-                                if annotateLineFile:
-                                    for lineTok in self._annotateLine():
-                                        yield lineTok
                                 break
                         else:
                             yield PpToken.PpToken(' ', 'whitespace')
                         wsBuf = []
                     yield aTok
-                    if annotateLineFile and self._wsHandler.isBreakingWhitespace(aTok.t):
-                        for lineTok in self._annotateLine():
-                            yield lineTok
                     self._tuIndex += len(aTok.t)
             # Flush the whitespace buffer
             if len(wsBuf) > 0:
                 for aWsT in wsBuf:
                     if self._wsHandler.isBreakingWhitespace(aWsT.t):
                         yield PpToken.PpToken('\n', 'whitespace')
-                        if annotateLineFile:
-                            for lineTok in self._annotateLine():
-                                yield lineTok
                         break
                 else:
                     yield PpToken.PpToken(' ', 'whitespace')
@@ -573,33 +562,13 @@ class PpLexer(object):
                 # End the ITU
                 self._includeHandler.endInclude()
                 self._pptPop()
+                for optionalLineFileToken in self._pptPostPop():
+                    yield optionalLineFileToken
             except Exception as err:
                 logging.fatal('PpLexer.ppTokens(): Encountered exception in finally clause: %s' % str(err))
                 pass
         # TODO: should finalise be within the finally?
         self.finalise()
-
-    def _annotateLine(self):
-        """Returns a list of PpTokens that represent the line number and file
-        name. For example::
-
-            # 22 "/usr/include/stdio.h" 3 4
-            # 59 "/usr/include/stdio.h" 3 4
-            # 1 "/usr/include/sys/cdefs.h" 1 3 4
-        
-        Currently we don't create the trailing numbers as I don't know what they
-        mean.
-        """
-        # Get the file name from self.currentFile
-        # Line number from self.fileLineCol.lineNum
-        return [
-            PpToken.PpToken('#', 'preprocessing-op-or-punc'),
-            PpToken.PpToken(' ', 'whitespace'),
-            PpToken.PpToken('%d' % self.fileLineCol.lineNum, 'pp-number'),
-            PpToken.PpToken(' ', 'whitespace'),
-            PpToken.PpToken('"%s"' % self.currentFile, 'string-literal'),
-            PpToken.PpToken('\n', 'whitespace'),
-        ]
 
     def _genPpTokensRecursive(self, theGen):
         """Given a token generator this applies the lexical rules.
@@ -706,6 +675,62 @@ class PpLexer(object):
     def _pptPop(self):
         """End a #included file."""
         self._fis.includeFinish()
+
+    #------------- Handling line number and file output ------------------------
+    def _pptPostPush(self):
+        """Called immediately after _pptPush() this, optionally, returns a list
+        of PpToken's that can be yielded."""
+        if self._annotateLineFile:
+            flags = ['1',]
+            if self._fis.currentFileIsSystemFile:
+                flags.append('3')
+            return self._lineFileAnnotation(flags)
+        return [] 
+
+    def _pptPostPop(self):
+        """Called immediately after _pptPop() this, optionally, returns a list
+        of PpToken's that can be yielded."""
+        if self._annotateLineFile:
+            if self._fis.depth:
+                flags = ['2',]
+                if self._fis.currentFileIsSystemFile:
+                    flags.append('3')
+                return self._lineFileAnnotation(flags)
+        return [] 
+
+    def _lineFileAnnotation(self, flags):
+        """Returns a list of PpTokens that represent the line number and file
+        name. For example::
+
+            # 22 "/usr/include/stdio.h" 3 4
+            # 59 "/usr/include/stdio.h" 3 4
+            # 1 "/usr/include/sys/cdefs.h" 1 3 4
+        
+        Trailing numbers are described here: https://gcc.gnu.org/onlinedocs/cpp/Preprocessor-Output.html
+        '1' - This indicates the start of a new file. 
+        '2' - This indicates returning to a file (after having included another file). 
+        '3' - This indicates that the following text comes from a system header
+                file, so certain warnings should be suppressed. 
+        '4' - This indicates that the following text should be treated as being
+                wrapped in an implicit extern "C" block.
+        We don't support '4'
+        """
+        # Get the file name from self.currentFile
+        # Line number from self.fileLineCol.lineNum
+        ret_val = [
+            PpToken.PpToken('#', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('%d' % self.fileLineCol.lineNum, 'pp-number'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('"%s"' % self.currentFile, 'string-literal'),
+        ]
+        if len(flags):
+            for flag in flags:
+                ret_val.append(PpToken.PpToken(' ', 'whitespace'))
+                ret_val.append(PpToken.PpToken(flag, 'pp-number'))
+        ret_val.append(PpToken.PpToken('\n', 'whitespace'))
+        return ret_val
+    #------------- END: Handling line number and file output -------------------
 
     #=====================================
     # End: PpTokeniser generator handling.
@@ -1295,6 +1320,8 @@ class PpLexer(object):
                         if myFpo is not None:
                             # Note: This call also handles self._fileStack.append()
                             myGen = self._pptPush(myFpo)
+                            for optionalLineFileToken in self._pptPostPush():
+                                yield optionalLineFileToken
                             try:
                                 for aTtt in self._genPpTokensRecursive(myGen):
                                     #print 'aTtt.lineNum', aTtt.lineNum, aTtt.colNum, aTtt
@@ -1304,6 +1331,8 @@ class PpLexer(object):
                                 # may displace an exception generated in the try block above.
                                 try:
                                     self._pptPop()
+                                    for optionalLineFileToken in self._pptPostPop():
+                                        yield optionalLineFileToken
                                 except Exception as err:
                                     logging.fatal('PpLexer._cppInclude(): [0] Encountered exception in finally clause : %s' % str(err))
                         else:
@@ -1536,6 +1565,8 @@ then we take its response and do no futher processing on it.
                     myFpo = myFh.initialTu(fileId)
                     # Preprocess the tokens
                     myGen = self._pptPush(myFpo)
+                    for optionalLineFileToken in self._pptPostPush():
+                        yield optionalLineFileToken
                     try:
                         if self._pragmaHandler.isLiteral:
                             # Do no further processing
@@ -1549,6 +1580,8 @@ then we take its response and do no futher processing on it.
                         # may displace an exception generated in the try block above.
                         try:
                             self._pptPop()
+                            for optionalLineFileToken in self._pptPostPop():
+                                yield optionalLineFileToken
                         except Exception as err:
                             logging.fatal('PpLexer._cppPragma(): Encountered exception in finally clause: %s' % str(err))
                             pass

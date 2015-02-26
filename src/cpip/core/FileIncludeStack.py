@@ -50,6 +50,7 @@ class FileInclude(object):
             theDiagnostic=theDiag,
         )
         self.tokenCounter = PpTokenCount.PpTokenCount()
+        self.origin = theFpo.origin
     
     def tokenCounterAdd(self, theC):
         """Add a token counter to my token counter (used when a macro is
@@ -87,6 +88,21 @@ class FileIncludeStack(object):
         if self.depth < 1:
             raise ExceptionFileIncludeStack('FileIncludeStack.currentFile on zero length stack.')
         return self._fincS[-1].fileName
+    
+    @property
+    def currentFileIsSystemFile(self):
+        """Returns whether the current file is a system file.
+        Used to set flags on optional line/file output.
+        See: PpLexer._pptPostPush() and PpLexer._pptPostPop()"""
+        return self.currentFileOrigin == 'sys'
+    
+    @property
+    def currentFileOrigin(self):
+        """Returns the origin of the current file.
+        Origins are: 'usr', 'sys', 'CP', 'stdin', None."""
+        if self.depth < 1:
+            raise ExceptionFileIncludeStack('FileIncludeStack.currentFileOrigin on zero length stack.')
+        return self._fincS[-1].origin
     
     @property
     def fileStack(self):

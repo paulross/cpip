@@ -5486,18 +5486,22 @@ Ends in spam.c
 """
         self._incFileMap = {
                 os.path.join('usr', 'spam.h') : u"""Start of usr/spam.h
+\n
 #include "inc/spam.h"
 End of usr/spam.h
 """,
                 os.path.join('usr', 'inc', 'spam.h') : u"""Start of usr/inc/spam.h
+\n\n
 #include <spam.h>
 End of usr/inc/spam.h
 """,
                 os.path.join('sys', 'spam.h') : u"""Start of sys/spam.h
+\n\n\n
 #include <inc/spam.h>
 End of sys/spam.h
 """,
                 os.path.join('sys', 'inc', 'spam.h') : u"""Start of sys/inc/spam.h
+\n\n\n\n
 Content of: system, include, spam.h
 End of sys/inc/spam.h
 """,
@@ -5506,41 +5510,49 @@ End of sys/inc/spam.h
 
     def testSimpleAnnotation(self):
         """TestAnnotateWithLineAndFile.testSimpleAnnotation(): Tests multiple depth #include statements that resolve to usr/sys."""
-        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-        result = u''.join([t.t for t in myLexer.ppTokens(annotateLineFile=True)])
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim, annotateLineFile=True)
+        result = u''.join([t.t for t in myLexer.ppTokens()])
         myLexer.finalise()
-#         print('TestAnnotateWithLineAndFile.testSimpleAnnotation():')
-#         print(result)
-        expectedResult = u"""Starts in spam.c
-# 2 "src/spam.c"
+        print('TestAnnotateWithLineAndFile.testSimpleAnnotation():')
+        print(result)
+        expectedResult = u"""# 1 "src/spam.c" 1
+Starts in spam.c
+# 1 "usr/spam.h" 1
 Start of usr/spam.h
-# 2 "usr/spam.h"
+
+
+# 1 "usr/inc/spam.h" 1
 Start of usr/inc/spam.h
-# 2 "usr/inc/spam.h"
+
+
+
+# 1 "sys/spam.h" 1 3
 Start of sys/spam.h
-# 2 "sys/spam.h"
+
+
+
+
+# 1 "sys/inc/spam.h" 1 3
 Start of sys/inc/spam.h
-# 2 "sys/inc/spam.h"
+
+
+
+
+
 Content of: system, include, spam.h
-# 3 "sys/inc/spam.h"
 End of sys/inc/spam.h
-# 4 "sys/inc/spam.h"
+# 7 "sys/spam.h" 2 3
 
-# 3 "sys/spam.h"
 End of sys/spam.h
-# 4 "sys/spam.h"
+# 6 "usr/inc/spam.h" 2
 
-# 3 "usr/inc/spam.h"
 End of usr/inc/spam.h
-# 4 "usr/inc/spam.h"
+# 5 "usr/spam.h" 2
 
-# 3 "usr/spam.h"
 End of usr/spam.h
-# 4 "usr/spam.h"
+# 3 "src/spam.c" 2
 
-# 3 "src/spam.c"
 Ends in spam.c
-# 4 "src/spam.c"
 """
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
