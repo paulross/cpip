@@ -62,3 +62,6 @@ target/
 .python-version
 
 .DS_Store
+
+# Eclipse
+.settings
