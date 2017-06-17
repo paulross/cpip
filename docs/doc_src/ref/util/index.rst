@@ -1,0 +1,23 @@
+.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
+.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+
+***********************************
+cpip.util
+***********************************
+
+.. toctree::
+	:maxdepth: 2
+
+	BufGen
+	CommonPrefix
+	DictTree
+	DirWalk
+	FileStatus
+	HtmlUtils
+	ListGen
+	MatrixRep
+	MaxMunchGen
+	OaS
+	StrTree
+	Tree
+	XmlWrite

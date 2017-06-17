@@ -1,0 +1,48 @@
+Processing: ../src/main.cpp
+============================= Translation Unit ============================
+
+int main(char **argv, int argc)
+{
+printf("Bonjour tout le monde\n");
+return 1;
+}
+
+=========================== Translation Unit END ==========================
+
+============================ File Include Graph ===========================
+../src/main.cpp [43, 21]:  True "" ""
+000002: #include ../usr/user.h
+        ../usr/user.h [10, 6]:  True "" "['"user.h"', 'CP=None', 'usr=../usr']"
+        000004: #include ../sys/system.h
+                ../sys/system.h [10, 6]:  True "!def __USER_H__" "['<system.h>', 'sys=../sys']"
+========================== File Include Graph END =========================
+
+====================== Conditional Compilation Graph ======================
+#ifndef __USER_H__ /* True "../usr/user.h" 1 0 */
+    #ifndef __SYSTEM_H__ /* True "../sys/system.h" 1 4 */
+    #endif /* True "../sys/system.h" 6 13 */
+#endif /* True "../usr/user.h" 7 20 */
+#if defined(LANG_SUPPORT) && defined(FRENCH) /* True "../src/main.cpp" 5 69 */
+#elif defined(LANG_SUPPORT) && defined(AUSTRALIAN) /* False "../src/main.cpp" 7 110 */
+#else /* False "../src/main.cpp" 9 117 */
+#endif /* False "../src/main.cpp" 11 124 */
+==================== Conditional Compilation Graph END ====================
+
+============================ Macro Environment ============================
+#define FRENCH /* ../usr/user.h#5 Ref: 1 True */
+#define LANG_SUPPORT /* ../sys/system.h#4 Ref: 2 True */
+#define __SYSTEM_H__ /* ../sys/system.h#2 Ref: 0 True */
+#define __USER_H__ /* ../usr/user.h#2 Ref: 0 True */
+========================== Macro Environment END ==========================
+
+============================== Macro History ==============================
+Macro History (all macros):
+In scope:
+#define FRENCH /* ../usr/user.h#5 Ref: 1 True */
+    ../src/main.cpp 5 38
+#define LANG_SUPPORT /* ../sys/system.h#4 Ref: 2 True */
+    ../src/main.cpp 5 13
+    ../src/main.cpp 7 15
+#define __SYSTEM_H__ /* ../sys/system.h#2 Ref: 0 True */
+#define __USER_H__ /* ../usr/user.h#2 Ref: 0 True */
+============================ Macro History END ============================

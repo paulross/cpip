@@ -1,0 +1,7 @@
+Processing: proj/src/main.cpp
+
+int   main ( char   * * argv ,   int   argc ) 
+{ 
+printf ( "Bonjour tout le monde\n" ) ; 
+return   1 ; 
+} 
