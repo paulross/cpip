@@ -24,21 +24,21 @@ __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 #import os
+import io
+import logging
 import sys
 import time
-import logging
-import io
+import unittest
 
 from cpip.core import PpToken
 from cpip.core import PpTokeniser
 from cpip.core import PpDefine
 from cpip.core import FileLocation
 
-from cpip.core.test import TestBase
+from . import TestBase
 ######################
 # Section: Unit tests.
 ######################
-import unittest
 # Define unit test classes
 
 """Using cpp.exe to help with test cases:

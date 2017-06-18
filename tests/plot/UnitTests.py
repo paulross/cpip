@@ -67,10 +67,10 @@ def unitTest(theVerbosity=0):
     #print dir()
     #print globals()
     myModules = (
-            'TestCoord',
-            'TestPlotNode',
-            'TestTreePlotTransform',
-            'TestSVGWriter',
+            'test_Coord',
+            'test_PlotNode',
+            'test_TreePlotTransform',
+            'test_SVGWriter',
         )
     #myModules = retPyModuleList()
     #print 'myModules:'

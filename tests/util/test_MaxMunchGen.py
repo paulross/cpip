@@ -23,16 +23,16 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import sys
-#import os
-import unittest
-import time
 import logging
+#import os
 import string
+import sys
+import time
+import unittest
 
 from cpip import ExceptionCpip
 from cpip.util import MaxMunchGen
-import TestBufGen
+from . import test_BufGen
 
 #######################################
 # Section: Unit tests
@@ -97,7 +97,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_00(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: ''."""
-        myStrGen = TestBufGen.StrGen('')
+        myStrGen = test_BufGen.StrGen('')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -112,7 +112,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_01(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'a'."""
-        myStrGen = TestBufGen.StrGen('a')
+        myStrGen = test_BufGen.StrGen('a')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -129,7 +129,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_02(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'aeioubc123daaavfr'."""
-        myStrGen = TestBufGen.StrGen('aeioubc123daaavfr')
+        myStrGen = test_BufGen.StrGen('aeioubc123daaavfr')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -151,7 +151,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_03_00(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'wraexyz'."""
-        myStrGen = TestBufGen.StrGen('wraexyz')
+        myStrGen = test_BufGen.StrGen('wraexyz')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -176,7 +176,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_03_01(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'wraexyz' with alternate function."""
-        myStrGen = TestBufGen.StrGen('wraexyz')
+        myStrGen = test_BufGen.StrGen('wraexyz')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -201,7 +201,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_04_00(self):
         """TestMaximalMunchText: Test parsing vowels, consonants, no whitespace: 'wrae xyz'."""
-        myStrGen = TestBufGen.StrGen('wrae xyz')
+        myStrGen = test_BufGen.StrGen('wrae xyz')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -219,7 +219,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_04_01(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and whitespace: 'wrae xyz'."""
-        myStrGen = TestBufGen.StrGen('wrae xyz')
+        myStrGen = test_BufGen.StrGen('wrae xyz')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -239,7 +239,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_04_02(self):
         """TestMaximalMunchText: Test parsing vowels, consonants, whitespace as anyToken(): 'wrae xyz'."""
-        myStrGen = TestBufGen.StrGen('wrae xyz')
+        myStrGen = test_BufGen.StrGen('wrae xyz')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -265,7 +265,7 @@ class TestMaximalMunchText(unittest.TestCase):
 
     def test_11(self):
         """TestMaximalMunchText: ambiguos result."""
-        myStrGen = TestBufGen.StrGen('aeiou')
+        myStrGen = test_BufGen.StrGen('aeiou')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -312,7 +312,7 @@ class TestMaximalMunchReplace(unittest.TestCase):
     
     def test_00(self):
         """TestMaximalMunchReplace: Space runs to single space."""
-        myStrGen = TestBufGen.StrGen(' abc    def  ghi d ')
+        myStrGen = test_BufGen.StrGen(' abc    def  ghi d ')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -403,7 +403,7 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         """TestMaximalMunchTrigraph: Trigraph replacemnt."""
         myPStr = '??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)'
         myLStr = '#define arraycheck(a,b) a[b] || b[a]'
-        myStrGen = TestBufGen.StrGen(myPStr)
+        myStrGen = test_BufGen.StrGen(myPStr)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -427,7 +427,7 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         """TestMaximalMunchTrigraph: universal-character-name replacemnt."""
         myPStr = 'ab\xa9$@xyz'
         myLStr = 'ab\\u00A9$@xyz'
-        myStrGen = TestBufGen.StrGen(myPStr)
+        myStrGen = test_BufGen.StrGen(myPStr)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -485,7 +485,7 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         """TestMaximalMunchLineContinuation: Line continuation replacement [00]."""
         myStrIn  = 'abc\\\ndef\n'
         myStrOut = 'abcdef\n\n'
-        myStrGen = TestBufGen.StrGen(myStrIn)
+        myStrGen = test_BufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -510,7 +510,7 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         """TestMaximalMunchLineContinuation: Line continuation replacement [01]."""
         myStrIn  = 'a\\\nb\\\nc\n'
         myStrOut = 'abc\n\n\n'
-        myStrGen = TestBufGen.StrGen(myStrIn)
+        myStrGen = test_BufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -535,7 +535,7 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         """TestMaximalMunchLineContinuation: Line continuation replacement - detection of one at EOF [02]."""
         myStrIn  = 'a\\\n'
         myStrOut = 'a\n'
-        myStrGen = TestBufGen.StrGen(myStrIn)
+        myStrGen = test_BufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -629,7 +629,7 @@ class TestMaximalMunchComment(unittest.TestCase):
 /* // CXX in C */
 """
         myStrOut = ' \n\n/  \n\n \n\n \n\n \n'
-        myStrGen = TestBufGen.StrGen(myStrIn)
+        myStrGen = test_BufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -655,7 +655,7 @@ class TestMaximalMunchComment(unittest.TestCase):
         myStrIn  = """/* 
 """
         myStrOut = ''
-        myStrGen = TestBufGen.StrGen(myStrIn)
+        myStrGen = test_BufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [
@@ -679,7 +679,7 @@ class TestMaximalMunchComment(unittest.TestCase):
         """TestMaximalMunchComment: Unclosed CXX Comment."""
         myStrIn  = '//'
         myStrOut = ''
-        myStrGen = TestBufGen.StrGen(myStrIn)
+        myStrGen = test_BufGen.StrGen(myStrIn)
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),
                     [

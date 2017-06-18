@@ -67,7 +67,7 @@ def unitTest(theVerbosity=0):
     #print dir()
     #print globals()
     myModules = (
-            'TestMaxMunchGenPerf',            
+            'test_MaxMunchGenPerf',            
         )
     #myModules = retPyModuleList()
     #print 'myModules:'

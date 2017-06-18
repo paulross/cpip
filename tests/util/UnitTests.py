@@ -67,16 +67,16 @@ def unitTest(theVerbosity=0):
     #print dir()
     #print globals()
     myModules = (
-            'TestBufGen',
-            'TestCpp',
-            'TestDictTree',
-            'TestHtmlUtils',
-            'TestListGen',
-            'TestMatrixRep',
-            'TestMaxMunchGen',            
-            'TestStrTree',            
-            'TestXmlWrite',            
-            'TestMultiPassString',            
+            'test_BufGen',
+            'test_Cpp',
+            'test_DictTree',
+            'test_HtmlUtils',
+            'test_ListGen',
+            'test_MatrixRep',
+            'test_MaxMunchGen',            
+            'test_StrTree',            
+            'test_XmlWrite',            
+            'test_MultiPassString',            
         )
     #myModules = retPyModuleList()
     #print 'myModules:'

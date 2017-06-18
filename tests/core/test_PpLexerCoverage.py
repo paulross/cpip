@@ -27,24 +27,24 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import logging
-import sys
-import os
 try:
     import io as StringIO
 except ImportError:
     import io
+import logging
+import os
 import pprint
+import sys
+import unittest
 
 from cpip.core import PpLexer, CppDiagnostic, FileLocation, PpTokeniser, PpToken, IncludeHandler, MacroEnv
-import TestPpDefine
+from . import test_PpDefine
 
 ######################
 # Section: Unit tests.
 ######################
-import unittest
 
-class TestPpLexerCoverageBase(TestPpDefine.TestPpDefine):
+class TestPpLexerCoverageBase(test_PpDefine.TestPpDefine):
     """Helper class for the unit tests."""
     """Tests the code coverage of the CPIP core."""
     def setUp(self):

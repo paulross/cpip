@@ -67,9 +67,9 @@ def unitTest(theVerbosity=0):
     #print dir()
     #print globals()
     myModules = (
-            'TestIncGraphSVG',
-            'TestItuToHTML',
-            'TestMacroHistoryHTML',
+            'test_IncGraphSVG',
+            'test_ItuToHTML',
+            'test_MacroHistoryHTML',
         )
     #myModules = retPyModuleList()
     #print 'myModules:'

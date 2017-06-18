@@ -23,13 +23,14 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import time
-import logging
-import sys
-import os
-import pprint
-
 import io
+import logging
+import pprint
+import os
+import sys
+import time
+import unittest
+
 
 from cpip.core import PpLexer
 from cpip.core import CppDiagnostic
@@ -37,14 +38,14 @@ from cpip.core import PpTokeniser
 from cpip.core import PpToken
 from cpip.core import CppCond
 from cpip.core import PragmaHandler
-import TestBase
 # File location test classes
 from cpip.core.IncludeHandler import CppIncludeStringIO
+
+from . import TestBase
 
 ######################
 # Section: Unit tests.
 ######################
-import unittest
 
 class TestPpLexer(TestBase.TestCpipBase):
     """Helper class for the unit tests."""

@@ -23,19 +23,19 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import unittest
-import sys
 import logging
 import pprint
+import sys
+import unittest
 
 from cpip.core import PpToken, PpTokenCount
 # Can use some test functionality
-import TestPpDefine
+from . import test_PpDefine
 
 #######################################
 # Section: Unit tests
 ########################################
-class TestPpTokenCount(TestPpDefine.TestPpDefine):
+class TestPpTokenCount(test_PpDefine.TestPpDefine):
     """Test the PpTokenCount."""
     def setUp(self):
         self._ptc = PpTokenCount.PpTokenCount()
@@ -124,7 +124,7 @@ class TestPpTokenCount(TestPpDefine.TestPpDefine):
         ]
         self.assertEqual(expFalse, myTypesCountsFalse)
         
-class TestPpTokenCountMerge(TestPpDefine.TestPpDefine):
+class TestPpTokenCountMerge(test_PpDefine.TestPpDefine):
     """Test the PpTokenCount merging."""
     def setUp(self):
         self._ptc_1 = PpTokenCount.PpTokenCount()
@@ -248,7 +248,7 @@ class TestPpTokenCountMerge(TestPpDefine.TestPpDefine):
         ]
         self.assertEqual(expFalse, myTypesCountsFalse_1)
         
-class TestPpTokenCountStack(TestPpDefine.TestPpDefine):
+class TestPpTokenCountStack(test_PpDefine.TestPpDefine):
     """Test the PpTokenCount."""
     def setUp(self):
         self._ptcs = PpTokenCount.PpTokenCountStack()

@@ -72,22 +72,22 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
+import io
 import logging
 import sys
+import unittest
 import time
 
 from cpip.core import PpToken, PpTokeniser, PpDefine, MacroEnv, FileLocation
-from TestPpDefine import TestPpDefine
+from . import test_PpDefine
 
 ######################
 # Section: Unit tests.
 ######################
-import unittest
-import io
 # Define unit test classes
 
 
-class TestMacroEnv(TestPpDefine):
+class TestMacroEnv(test_PpDefine.TestPpDefine):
     """Sub-class of test class that has some convenience functions."""
 
     def _checkMacroEnv(self, theGen, theEnv, expectedIdentifiers, testNOTHING=True):

@@ -23,16 +23,16 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import sys
-#import os
-import unittest
-import time
-import logging
 import io
+import logging
+#import os
 #import pprint
+import sys
+import time
+import unittest
 
 from cpip.core import PpTokeniser, FileLocation, CppDiagnostic, PpToken  
-import TestBase
+from . import TestBase
 
 ########################################
 # Section: Unit tests

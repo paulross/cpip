@@ -70,25 +70,25 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-import time
-import logging
-import sys
-import os
 try:
     import io as StringIO
 except ImportError:
     import io
+import logging
+import os
 import pprint
+import sys
+import time
+import unittest
 
 from cpip.core import PpLexer, PpTokeniser, PpToken
 # File location test classes
 from cpip.core.IncludeHandler import CppIncludeStringIO
 
-import TestPpDefine
+from . import test_PpDefine
 
-import unittest
 
-class TestPpLexerLimits(TestPpDefine.TestPpDefine):
+class TestPpLexerLimits(test_PpDefine.TestPpDefine):
     """Helper class for the unit tests."""
     pass
 
