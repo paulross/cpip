@@ -63,11 +63,11 @@ class TestPpTokenCount(test_PpDefine.TestPpDefine):
     def test_02(self):
         """TestPpTokenCount increment with more extensive code."""
         cntrAll = cntrUncond = 0
-        for t in self.stringToTokens('#define SPAM 42\n'):
+        for t in self.stringToTokens(u'#define SPAM 42\n'):
             self._ptc.inc(t, True)
             cntrAll += 1
             cntrUncond += 1
-        for t in self.stringToTokens('#define EGGS SPAM\n'):
+        for t in self.stringToTokens(u'#define EGGS SPAM\n'):
             self._ptc.inc(t, False)
             cntrAll += 1
         self.assertEqual(cntrAll, self._ptc.totalAll)
@@ -82,11 +82,11 @@ class TestPpTokenCount(test_PpDefine.TestPpDefine):
     def test_03(self):
         """TestPpTokenCount generator of results."""
         cntrAll = cntrUncond = 0
-        for t in self.stringToTokens('#define SPAM 42\n'):
+        for t in self.stringToTokens(u'#define SPAM 42\n'):
             self._ptc.inc(t, True)
             cntrAll += 1
             cntrUncond += 1
-        for t in self.stringToTokens('#define EGGS SPAM\n'):
+        for t in self.stringToTokens(u'#define EGGS SPAM\n'):
             self._ptc.inc(t, False)
             cntrAll += 1
         self.assertEqual(cntrAll, self._ptc.totalAll)

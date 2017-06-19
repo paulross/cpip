@@ -36,10 +36,11 @@ from cpip.util import DictTree
 def retHtmlFileName(thePath):
     """Creates a unique, short, human readable file name base on the input
     file path."""
+    # Use normpath rather than abspath as the latter makes tests fragile
     if sys.version_info[0] == 2:
-        myBy = bytes(os.path.abspath(thePath))
+        myBy = bytes(os.path.normpath(thePath))
     elif sys.version_info[0] == 3:
-        myBy = bytes(os.path.abspath(thePath), 'ascii')
+        myBy = bytes(os.path.normpath(thePath), 'ascii')
     else:
         assert 0, 'Unknown Python version %d' % sys.version_info.major
     myHash = hashlib.md5(myBy).hexdigest()

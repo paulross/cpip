@@ -9,6 +9,7 @@ Created on 24 Jan 2015
 import io
 import os
 import subprocess
+import sys
 
 def invokeCppForPlatformMacros(*args):
     """Invoke the pre-processor as a sub-process with *args and return a list of macro
@@ -23,7 +24,15 @@ def invokeCppForPlatformMacros(*args):
     except KeyError:
         cmdS = ['cpp']
     cmdS.extend(args)
-    return subprocess.check_output(cmdS, universal_newlines=True, stdin=subprocess.DEVNULL)
+    if sys.version_info[0] == 2:
+        return subprocess.check_output(cmdS, universal_newlines=True,
+                                       stdin=subprocess.PIPE)
+    elif sys.version_info[0] == 3:
+        return subprocess.check_output(cmdS, universal_newlines=True,
+                                       stdin=subprocess.DEVNULL)
+    else:
+        assert 0, 'Unknown Python version %d' % sys.version_info.major
+    
 
 def addStandardArguments(parser):
     """This adds standard command line arguments to an argparse argument parser."""

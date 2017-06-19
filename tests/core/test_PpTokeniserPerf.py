@@ -23,16 +23,17 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
+import io
 import time
 import logging
 import sys
 import os
 import unittest
 import pprint
-try:
-    import io as StringIO
-except ImportError:
-    import io
+# try:
+#     import io as StringIO
+# except ImportError:
+#     import io
 import subprocess
 
 from cpip.core import PpTokeniser
@@ -715,7 +716,7 @@ class TestPpTokeniserOverall(TestPpTokeniserOverallBase):
 
 class TestPpTokeniserRealCode(TestPpTokeniserPerfBase):
     """Test the time taken to process a 'real' code in test/PerfRealCode."""
-    REAL_PATH = os.path.join('test', 'PerfRealCode')
+    REAL_PATH = os.path.join('tests', 'core', 'PerfRealCode')
     def test_00(self):
         """Test the time taken to process a 'real' code in test/PerfRealCode."""
         for aName in os.listdir(self.REAL_PATH):

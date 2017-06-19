@@ -147,4 +147,4 @@ class PragmaHandlerEcho(PragmaHandlerABC):
     
     def pragma(self, theTokS):
         """Consume and return."""
-        return '#pragma%s' % ''.join([t.t for t in theTokS])
+        return '#pragma %s' % ''.join([t.t for t in theTokS])
