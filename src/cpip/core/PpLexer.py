@@ -557,7 +557,7 @@ class PpLexer(object):
             # Trap any exception in the finally block otherwise that
             # may displace an exception generated in the try block above.
             # TODO: Why not?
-#             self._isGenerating = False
+            self._isGenerating = False
             try:
                 # End the ITU
                 self._includeHandler.endInclude()

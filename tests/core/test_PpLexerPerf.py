@@ -66,7 +66,7 @@ class TestPpLexerPerfBase(test_PpDefine.TestPpDefine):
                 myTimS.append(myTime)
         if repeatNum > 1:
             myTimS.sort()
-            myTime = myTimS[(len(myTimS)-1)/2] 
+            myTime = myTimS[int((len(myTimS) - 1) / 2)] 
         sys.stderr.write('Rate (median of %3d: %6.1f tokens/second ... ' \
                          % (repeatNum, len(myToks) / myTime)
                          )
@@ -419,7 +419,7 @@ class TestPpLexerSimpleReplace(TestPpLexerPerfBase):
 
 class TestPpLexerRealCode(TestPpLexerPerfBase):
     """Test the time taken to process a 'real' code in test/PerfRealCode."""
-    REAL_PATH = os.path.join('test', 'PerfRealCode')
+    REAL_PATH = os.path.join(os.path.dirname(__file__), 'PerfRealCode')
     def test_00(self):
         """Test the time taken to process a 'real' code in test/PerfRealCode."""
         for aName in os.listdir(self.REAL_PATH):
