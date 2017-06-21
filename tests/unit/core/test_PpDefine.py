@@ -30,6 +30,8 @@ import sys
 import time
 import unittest
 
+import pytest
+
 from cpip.core import PpToken
 from cpip.core import PpTokeniser
 from cpip.core import PpDefine
@@ -6091,6 +6093,7 @@ al, aq
 
 class TestFromCppInternalsTokenspacing(TestPpDefine):
     """Misc. tests on token spacing from CPP internals documentation."""
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
     def test_09(self):
         """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define f(x) =x="""
         ##define f(x) =x=

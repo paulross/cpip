@@ -262,6 +262,7 @@ class TestPragmaHandlerEcho(unittest.TestCase):
         """TestPragmaHandlerSTDC: Test FP_CONTRACT ON."""
         myH = PragmaHandler.PragmaHandlerEcho()
         myTokS = [
+                PpToken.PpToken(' ',                    'whitespace'),
                 PpToken.PpToken('some',                 'identifier'),
                 PpToken.PpToken(' ',                    'whitespace'),
                 PpToken.PpToken('pragma',               'identifier'),

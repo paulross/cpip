@@ -581,12 +581,22 @@ class PpLexer(object):
                             # and the PpLexer can ignore it but set hasReplToksOnLine?
                             # This is a pretty breaking change however. 
                             hasReplToksOnLine = True
-                            if lastToken and not lastToken.isWs():
+                            # Avoid accidental token pasting with replacement tokens
+                            # #define PLUS +
+                            # PLUS+
+                            # Should be '+ +' not '++'
+                            if lastToken and lastToken.isReplacement and not lastToken.isWs():
                                 yield PpToken.PpToken(' ', 'whitespace') 
                             for aTtt in self._macroEnv.replace(
                                             myTtt,
                                             theGen,
                                             myFlc):
+#                                 # Avoid accidental token pasting with replacement tokens
+#                                 # #define PLUS +
+#                                 # +PLUS
+#                                 # Should be '+ +' not '++'
+#                                 if lastToken and lastToken.isReplacement and not lastToken.isWs():
+#                                     yield PpToken.PpToken(' ', 'whitespace') 
                                 lastToken = aTtt
                                 yield aTtt
                                 self._tuIndex += 1
