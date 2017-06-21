@@ -23,6 +23,7 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
+
 import io
 import logging
 #import os
@@ -3313,6 +3314,22 @@ A function definition
         self.assertEqual(actToks, eToks)
         #print
         #print myObj.fileLocator
+
+    def test_20(self):
+        """TestMisc.test_20(): weirdly '1PLUS2' is a pp-number see:
+        ISO/IEC 9899:1999 (E)  6.4.8 Preprocessing numbers."""
+        myObj = PpTokeniser.PpTokeniser()
+        # q-char sequences
+        myGen = myObj.genLexPptokenAndSeqWs('1PLUS2\n')
+        myToks = [t for t in myGen]
+        eToks = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('1PLUS2', 'pp-number'),
+        ]
+        self._printDiff(myToks, eToks)
+        self.assertEqual(myToks, eToks)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, next, myGen)
 
 class TestPpTokeniserFileLocator(TestPpTokeniserBase):
     """Tests the file locator in the PpTokeniser."""

@@ -18,7 +18,7 @@
 # 
 # Paul Ross: cpipdev@googlemail.com
 
-"""Captures the #include graph of a preprocessed file."""
+"""Captures the ``#include`` graph of a preprocessed file."""
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
@@ -33,7 +33,7 @@ from cpip import ExceptionCpip
 
 class ExceptionFileIncludeGraph(ExceptionCpip):
     """Simple specialisation of an exception class for the
-    FileincludeGraph classes."""
+    :py:class:`FileIncludeGraph` classes."""
     pass
 
 class ExceptionFileIncludeGraphRoot(ExceptionFileIncludeGraph):
@@ -56,7 +56,7 @@ DEFAULT_TEXT_INDENT = 2
 
 class FileIncludeGraphRoot(object):
     """Root class of the file include graph. This is used when there is a
-    virtual or dummy root. It contains a list of FileIncludeGraph objects.
+    virtual or dummy root. It contains a list of :py:class:`FileIncludeGraph` objects.
     In this way it can represent the list of graphs that would result from a
     list of pre-includes followed by the ITU itself.
     
@@ -71,19 +71,19 @@ class FileIncludeGraphRoot(object):
         return '\n'.join([str(fig) for fig in self._incGraphS])
         
     def addGraph(self, theGraph):
-        """Add a FileIncludeGraph object."""
+        """Add a :py:class:`FileIncludeGraph` object."""
         self._incGraphS.append(theGraph)
         
     @property
     def graph(self):
-        """The latest FileIncludeGraph object I have.
-        Will raise a ExceptionFileIncludeGraphRoot if nothing there."""
+        """The latest :py:class:`FileIncludeGraph` object I have.
+        Will raise a :py:class:`ExceptionFileIncludeGraphRoot` if nothing there."""
         if len(self._incGraphS) < 1:
             raise ExceptionFileIncludeGraphRoot('graph on zero length list.')
         return self._incGraphS[-1]
 
     def numTrees(self):
-        """Returns the number of FileIncludeGraph objects."""
+        """Returns the number of :py:class:`FileIncludeGraph` objects."""
         return len(self._incGraphS)
 
     def acceptVisitor(self, visitor):
@@ -218,7 +218,7 @@ class FileIncludeGraph(object):
         """The total number of tokens seen by the PpLexer including tokens
         from files included by this one. Returns None if not initialised.
         
-        May raise ExceptionFileIncludeGraphTokenCounter is the token counters
+        May raise :py:class:`ExceptionFileIncludeGraphTokenCounter` is the token counters
         have been loaded inconsistently (i.e. the children have not been
         loaded)."""
         if self._tokCntr is not None:
@@ -240,7 +240,7 @@ class FileIncludeGraph(object):
         token is a non-whitespace, non-conditionally compiled token.
         Returns None if not initialised.
         
-        May raise ExceptionFileIncludeGraphTokenCounter is the token counters
+        May raise :py:class:`ExceptionFileIncludeGraphTokenCounter` is the token counters
         have been loaded inconsistently (i.e. the children have not been
         loaded)."""
         if self._tokCntr is not None:
@@ -299,7 +299,7 @@ class FileIncludeGraph(object):
     # Section: Child node access
     #===========================================================================
     def genChildNodes(self):
-        """Yields each child node as a FileIncludeGraph object."""
+        """Yields each child node as a :py:class:`FileIncludeGraph` object."""
         for aLine in sorted(self._graph.keys()):
             yield self._graph[aLine]
     #===========================================================================
@@ -325,7 +325,7 @@ class FileIncludeGraph(object):
 
         theLogic is a string representing how the branch was obtained.
         
-        May raise ExceptionFileIncludeGraph if:
+        May raise :py:class:`ExceptionFileIncludeGraph` if:
 
         0. The branch is zero length.
         
@@ -402,14 +402,14 @@ class FileIncludeGraph(object):
             aBranch.pop()
     
     def retLatestLeaf(self):
-        """Returns the last inserted leaf, a FileIncludeGraph object."""
+        """Returns the last inserted leaf, a :py:class:`FileIncludeGraph` object."""
         if len(self._graph) == 0:
             return self
         else:
             return self._graph[max(self._graph.keys())].retLatestLeaf()
         
     def retLatestNode(self, theBranch):
-        """Returns the last inserted node, a FileIncludeGraph object
+        """Returns the last inserted node, a :py:class:`FileIncludeGraph` object
         on the supplied branch.
         
         This is generally used during dynamic construction by a caller
@@ -521,16 +521,16 @@ class FileIncludeGraph(object):
 # Section: Visitor support.
 ###########################
 class FigVisitorBase(object):
-    """Base class for visitors, see FigVisitorTreeNodeBase for base class for
+    """Base class for visitors, see :py:class:`FigVisitorTreeNodeBase` for base class for
     tree visitors."""
     def visitGraph(self, theFigNode, theDepth, theLine): 
-        """Hierarchical visitor pattern. This is given a FileIncludeGraph as a
+        """Hierarchical visitor pattern. This is given a :py:class:`FileIncludeGraph` as a
         graph node. theDepth is the current depth in the graph as an integer,
         theLine the line that is a non-monotonic sibling node ordinal."""
         raise NotImplementedError()
 
 class FigVisitorTreeNodeBase(object):
-    """Base class for nodes created by a tree visitor. See FigVisitorBase for
+    """Base class for nodes created by a tree visitor. See :py:class:`FigVisitorBase` for
     the base class for non-tree visitors."""
     def __init__(self, theLineNum):
         self._lineNum = theLineNum
@@ -555,10 +555,10 @@ class FigVisitorTreeNodeBase(object):
             aChild.finalise()
     
 class FigVisitorTree(object):
-    """This visitor can visit a graph of FileIncludeGraphRoot and
-    FileIncludeGraph that recreates a tree of Node(s) the type of which are
+    """This visitor can visit a graph of :py:class:`FileIncludeGraphRoot` and
+    :py:class:`FileIncludeGraph` that recreates a tree of Node(s) the type of which are
     supplied by the user. Each node instance will be constructed with either an
-    instance of a FileIncludeGraphRoot or FileIncludeGraph or, in the case of a
+    instance of a :py:class:`FileIncludeGraphRoot` or :py:class:`FileIncludeGraph` or, in the case of a
     pseudo root node then None."""
     def __init__(self, theNodeClass):
         self._nodeClass = theNodeClass
@@ -617,7 +617,7 @@ class FigVisitorFileSet(FigVisitorBase):
         self._fileNameMap = collections.defaultdict(int)
         
     def visitGraph(self, theFigNode, theDepth, theLine): 
-        """Hierarchical visitor pattern. This is given a FileIncludeGraph as a
+        """Hierarchical visitor pattern. This is given a :py:class:`FileIncludeGraph` as a
         graph node. theDepth is the current depth in the graph as an integer,
         theLine the line that is a non-monotonic sibling node ordinal."""
         self._fileNameMap[theFigNode.fileName] += 1

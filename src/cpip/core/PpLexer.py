@@ -20,7 +20,9 @@
 
 """Generates tokens from a C or C++ translation unit.
 
-TODO: Fix accidental token pasting.
+TODO: Fix accidental token pasting. See: TestFromCppInternalsTokenspacing
+and, connected is:
+TODO: Set setPrevWs flag on the token where necessary.
 
 TODO: Preprocessor statements in arguments of function like macros. Sect. 3.9
 of cpp.pdf and existing MacroEnv tests.
@@ -130,73 +132,81 @@ PREPROCESSING_DIRECTIVES = [
 UNNAMED_FILE_NAME = 'Unnamed Pre-include'
 
 class PpLexer(object):
-    """Create a translation unit tokeniser that applies ISO/IEC 9899:1999(E)
-    Section 6 and ISO/IEC 14882:1998(E) section 16.
+    """Create a translation unit tokeniser that applies
+    :title-reference:`ISO/IEC 9899:1999(E) Section 6`
+    and/or :title-reference:`ISO/IEC 14882:1998(E) section 16`.
     
     *tuFileId*
-        A file ID that will be given to the include
-        handler to find the translation unit.
-        Typically this will be the file path (as a string)
-        to the file that is the Initial Translation Unit
-        (ITU) i.e. the file being preprocessed.
-    
+        A file ID that will be given to the include handler to find the
+        translation unit. Typically this will be the file path (as a string)
+        to the file that is the Initial Translation Unit (ITU)
+        i.e. the file being preprocessed.
+        
     *includeHandler*
-        A handler to file ``#include``'d files typically a
-        ``IncludeHandler.IncludeHandlerStd()``.
-        This might have user and system include path
-        information and a means of resolving file
-        references.
-    
+        A handler to file ``#includ``'d files typically a
+        :py:class:`.IncludeHandler.IncludeHandlerStd`.
+        This might have user and system include path information and a means
+        of resolving file references.
+
     *preIncFiles*
-        An ordered list of file like objects that are
-        pre-include files. These are processed in order
-        before the ITU is processed. Macro redefinition
-        rules apply.
-    
+        An ordered list of file like objects that are pre-include files.
+        These are processed in order before the ITU is processed.
+        Macro redefinition rules apply.
+
     *diagnostic*
         A diagnostic object, defaults to a
-        CppDiagnostic.PreprocessDiagnosticStd().
-    
+        :py:class:`.CppDiagnostic.PreprocessDiagnosticStd`.
+        
     *pragmaHandler*
-        A handler for #pragma statements. This shall have a
-        function pragma() defined that takes a non-zero
-        length list of PpTokens the last of which will be
-        a newline token.
-    
+        A handler for ``#pragma`` statements.
+        
+        This must have the attribute ``replaceTokens``
+        is to be implemented, if True then the tokens stream will be be
+        macro replaced before being passed to the pragma handler.
+        
+        This must have a function ``pragma()`` defined that takes a non-zero
+        length list of :py:class:`.PpToken.PpToken` the last of which will be a
+        newline token. The tokens returned will be yielded.
+        
     *stdPredefMacros*
-        A dictionary of Standard pre-defined macros.
-        See for example:
-        ISO/IEC 9899:1999 (E) 6.10.8 "Predefined macro names",
-        ISO/IEC 14882:1998 (E) 16.8 "Predefined macro names"
-        and N2800=08-0310 16.8 "Predefined macro names".
+        A dictionary of Standard pre-defined macros. See for example:
+        :title-reference:`ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names`
+        :title-reference:`ISO/IEC 14882:1998 (E) 16.8 Predefined macro names`
+        :title-reference:`N2800=08-0310 16.8 Predefined macro names`
+                        
         The macros ``__DATE__`` and ``__TIME__`` will be automatically
         updated to current locale date/time (see autoDefineDateTime).
         
     *autoDefineDateTime*
-        If True then the macros ``__DATE__`` and ``__TIME__`` will
-        be automatically updated to current locale date/time.
-        Mostly this is used for testing.
-        
+        If True then the macros ``__DATE__`` and ``__TIME__`` will be
+        automatically updated to current locale date/time. Mostly this is
+        used for testing.
+    
     *gccExtensions*
         Support GCC extensions. Currently just ``#include_next`` is supported.
 
+    *annotateLineFile* - if True then PpToken will output line number and file as cpp.
+        For example::
+        
+            # 22 "/usr/include/stdio.h" 3 4
+            # 59 "/usr/include/stdio.h" 3 4
+            # 1 "/usr/include/sys/cdefs.h" 1 3 4
+    
     TODO: Set flags here rather than supplying them to a generator?
     This would make the API simply the ctor and ppTokens/next().
     Flags would be:
-    
     incWs - Include whitespace tokens.
-    
     condLevel - (0, 1, 2) thus:
     
-    0. No conditionally compiled tokens. The fileIncludeGraphRoot will
-        not have any information about conditionally included files.
-    1. Conditionally compiled tokens are generated but not from 
-        conditionally included files. The fileIncludeGraphRoot will have
-        a reference to a conditionally included file but not that
-        included file's includes.
-    2. Conditionally compiled tokens including tokens from conditionally
-        included files. The fileIncludeGraphRoot will have all the
-        information about conditionally included files recursively.    
+        0: No conditionally compiled tokens. The fileIncludeGraphRoot will
+            not have any information about conditionally included files.
+        1: Conditionally compiled tokens are generated but not from 
+            conditionally included files. The fileIncludeGraphRoot will have
+            a reference to a conditionally included file but not that
+            included file's includes.
+        2: Conditionally compiled tokens including tokens from conditionally
+            included files. The fileIncludeGraphRoot will have all the
+            information about conditionally included files recursively.
     """
     PP_DIRECTIVE_PREFIX = '#'
     #: The maximum value of nested #include's
@@ -229,64 +239,6 @@ class PpLexer(object):
                  gccExtensions=False,
                  annotateLineFile=False,
                  ):
-        """Create a translation unit tokeniser.
-        tuFileId        - A file ID that will be given to the include
-                            handler to find the translation unit.
-                            Typically this will be the file path (as a string)
-                            to the file that is the Initial Translation Unit
-                            (ITU) i.e. the file being preprocessed.
-        includeHandler  - A handler to file #includ'ed files typically a
-                            IncludeHandler.IncludeHandlerStd().
-                            This might have user and system include path
-                            information and a means of resolving file
-                            references.
-        preIncFiles     - An ordered list of file like objects that are
-                            pre-include files. These are processed in order
-                            before the ITU is processed. Macro redefinition
-                            rules apply.
-        diagnostic      - A diagnostic object, defaults to a
-                            CppDiagnostic.PreprocessDiagnosticStd().
-        pragmaHandler   - A handler for #pragma statements. This shall have a
-                            function pragma() defined that takes a non-zero
-                            length list of PpTokens the last of which will be
-                            a newline token. The tokens returned will be yielded.
-                            Also the attirbute replaceTokens is to be
-                            implemented, if True then the tokens stream will be
-                            be macro replace before being passed to the pragma
-                            handler.
-        stdPredefMacros  - A dictionary of Standard pre-defined macros.
-                            See for example:
-                            ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names
-                            ISO/IEC 14882:1998 (E) 16.8 Predefined macro names
-                            N2800=08-0310 16.8 Predefined macro names
-                            The macros __DATE__ and __TIME__ will be automatically
-                            updated to current locale date/time (see autoDefineDateTime).
-        autoDefineDateTime - If True then the macros __DATE__ and __TIME__ will
-                                be automatically updated to current locale date/time.
-                                Mostly this is used for testing.
-        gccExtensions - Support GCC extensions. Currently just #include_next
-        *annotateLineFile* - if True then PpToken will output line number and file as cpp.
-        For example::
-        
-            # 22 "/usr/include/stdio.h" 3 4
-            # 59 "/usr/include/stdio.h" 3 4
-            # 1 "/usr/include/sys/cdefs.h" 1 3 4
-
-        TODO: Set flags here rather than supplying them to a generator?
-        This would make the API simply the ctor and ppTokens/next().
-        Flags would be:
-        incWs - Include whitespace tokens.
-        condLevel - (0, 1, 2) thus:
-            0: No conditionally compiled tokens. The fileIncludeGraphRoot will
-                not have any information about conditionally included files.
-            1: Conditionally compiled tokens are generated but not from 
-                conditionally included files. The fileIncludeGraphRoot will have
-                a reference to a conditionally included file but not that
-                included file's includes.
-            2: Conditionally compiled tokens including tokens from conditionally
-                included files. The fileIncludeGraphRoot will have all the
-                information about conditionally included files recursively.
-        """
         # Capture constructor arguments
         self._tuFileId = tuFileId
         self._includeHandler = includeHandler
@@ -456,14 +408,15 @@ class PpLexer(object):
     # Section: PpLexer generators
     #############################
     def ppTokens(self, incWs=True, minWs=False, condLevel=0):
-        """A generator for providing PpToken.PpTokens to section 16 of ISO/IEC 14882:1998(E).
+        """A generator for providing a sequence of :py:class:`.PpToken.PpToken`
+        in accordance with section 16 of :title-reference:`ISO/IEC 14882:1998(E)`.
         
         *incWs* - if True than whitespace tokens are included (i.e. tok.isWs() == True).
         
         *minWs* - if True then whitespace runs will be minimised to a single
-        space or, if  newline is in the whitespce run, a single newline
+        space or, if  newline is in the whitespace run, a single newline
         
-        *condLevel* - if True then conditionally compiled tokens will be yielded
+        *condLevel* - if !=0 then conditionally compiled tokens will be yielded
         and they will have have tok.isCond == True. The fileIncludeGraphRoot
         will be marked up with the appropriate conditionality. Levels are::
 
@@ -479,8 +432,7 @@ class PpLexer(object):
             included files. The fileIncludeGraphRoot will have all the
             information about conditionally included files recursively.
 
-        (see _cppInclude where we check if self._condStack.isTrue():).
-        """
+        (see _cppInclude where we check if self._condStack.isTrue():)."""
         if self._isGenerating:
             raise ExceptionPpLexerAlreadyGenerating()
         # Mark internal state as having a generator
@@ -574,9 +526,24 @@ class PpLexer(object):
         """Given a token generator this applies the lexical rules.
         This means handling preprocessor directives and macro replacement.
         With #included files this become recursive."""
+        # TODO: Insert a whitespace token when the previous token was non-ws
+        # and the tokens are the result of macro replacement. Example
+        ##define PLUS +
+        # +PLUS+
+        # Should give: '+ + +'
         #print '_genPpTokensRecursive() enter', theGen
         # Token counters that influence the FileIncludeGraph
         self._diagnostic.debug('_genPpTokensRecursive() START', self._fis.fileLineCol)
+        # This is to catch the following code:
+        # #define MT
+        # MT #define FOO
+        # Then FOO should _not_ be defined.
+        # See: ISO/IEC 9899:1999 (E) 6.10-8 EXAMPLE using #define EMPTY
+        hasReplToksOnLine = False
+        # We take the last token type so that we can create spacer tokens
+        # to avoid accidental token pasting such as when #define PLUS +
+        # and we have +PLUS. We want '+ +' not '++'
+        lastToken = None
         try:
             while 1:
                 # Take the position just before the token
@@ -586,22 +553,18 @@ class PpLexer(object):
                 # 1. Is it a (potiential) directive?
                 # 2. Otherwise is it unconditional?
                 # 3. Otherwise?
-                # TODO:
-                # DEFECT:
-                # BUG: With the following code:
-                # #define MT
-                # MT #define FOO
-                # Then FOO should _not_ be defined but currently will be.
-                # See: ISO/IEC 9899:1999 (E) 6.10-8 EXAMPLE using #define EMPTY
-                if myTtt.t == self.PP_DIRECTIVE_PREFIX and self._isNewline:
-                    # Possible ISO/IEC 9899:1999 (E) 6.10 group of tokens
+                if myTtt.t == self.PP_DIRECTIVE_PREFIX \
+                and self._isNewline and not hasReplToksOnLine:
+                    # Possible ISO/IEC 9899:1999 (E) 6.10 para. 8 group of tokens
                     for aTtt in self._processCppDirective(myTtt, theGen):
                         if self._condStack.isTrue():
+                            lastToken = aTtt
                             yield aTtt
                             self._tuIndex += 1
                         else:
                             # The token is conditional so set condionality and yield
                             aTtt.setIsCond()
+                            lastToken = aTtt
                             yield aTtt
                             self._tuIndex += 1
                 elif self._condStack.isTrue():
@@ -611,10 +574,20 @@ class PpLexer(object):
                     if self._macroEnv.mightReplace(myTtt):
                         # TODO: This try/except was put in as a hack
                         try:
+                            # TODO: This is dubious as we are not sure that replacement will
+                            # happen but if there are no replacement tokens the
+                            # body of the loop is skipped.
+                            # Solution: The macro env should always yield at least a placemarker
+                            # and the PpLexer can ignore it but set hasReplToksOnLine?
+                            # This is a pretty breaking change however. 
+                            hasReplToksOnLine = True
+                            if lastToken and not lastToken.isWs():
+                                yield PpToken.PpToken(' ', 'whitespace') 
                             for aTtt in self._macroEnv.replace(
                                             myTtt,
                                             theGen,
                                             myFlc):
+                                lastToken = aTtt
                                 yield aTtt
                                 self._tuIndex += 1
                         except ExceptionCpip as err:
@@ -622,7 +595,9 @@ class PpLexer(object):
                     else:
                         # Nothing to replace, just move right along
                         if self._wsHandler.preceedsNewline(myTtt.t):
+                            hasReplToksOnLine = False
                             self._isNewline = True
+                        lastToken = myTtt
                         yield myTtt
                         self._tuIndex += 1
                 else:
@@ -630,6 +605,7 @@ class PpLexer(object):
                     self._fis.tokenCountInc(myTtt, False)
                     # The token is conditional so set condionality and yield
                     myTtt.setIsCond()
+                    lastToken = aTtt
                     yield myTtt
                     self._tuIndex += 1
         finally:
@@ -759,7 +735,7 @@ class PpLexer(object):
     
     @property
     def fileIncludeGraphRoot(self):
-        """Returns the FileIncludeGraphRoot object."""
+        """Returns the :py:class:`.FileIncludeGraph.FileIncludeGraphRoot` object."""
         return self._fis.fileIncludeGraphRoot
     
     @property
@@ -769,7 +745,7 @@ class PpLexer(object):
     
     @property
     def condCompGraph(self):
-        """The conditional compilation graph as a CppCond.CppCondGraph object."""
+        """The conditional compilation graph as a :py:class:`.CppCond.CppCondGraph` object."""
         return self._condCompGraph
     
     @property
@@ -779,9 +755,11 @@ class PpLexer(object):
 
     @property
     def macroEnvironment(self):
-        """The current Macro environment as a MacroEnv object.
-        Caution: Write to this at your own risk. Your write might be ignored or
-        cause undefined behaviour."""
+        """The current Macro environment as a :py:class:`.MacroEnv.MacroEnv` object.
+        
+        .. caution::
+            Write to this at your own risk. Your write might be ignored or
+            cause undefined behaviour."""
         return self._macroEnv
     
     @property
@@ -920,7 +898,7 @@ class PpLexer(object):
     # Section: Processing preprocessor directives.
     ##############################################
     def _processCppDirective(self, theTtt, theGen):
-        """ISO/IEC ISO/IEC 14882:1998(E) 16 Preprocessing directives [cpp]
+        """:title-reference:`ISO/IEC ISO/IEC 14882:1998(E) 16 Preprocessing directives [cpp]`
         This consumes tokens and generates others.
         Returns True of all tokens consumed OK, False otherwise.
         """
@@ -1491,10 +1469,13 @@ class PpLexer(object):
     #=======================================
     def _cppLine(self, theGen, theFlc):
         """Handles a line directive.
-        This also handles ISO/IEC 9899:1999 (E) 6.10.4 Line control
-        In particular 6.10.4-4 where the form is:
-        # line digit-sequence "s-char-sequenceopt" new-line
+        This also handles :title-reference:`ISO/IEC 9899:1999 (E) 6.10.4 Line control`
+        In particular 6.10.4-4 where the form is::
+        
+            # line digit-sequence "s-char-sequenceopt" new-line
+        
         digit-sequence is a a token type pp-number.
+        
         The s-char-sequenceopt is a token type 'string-literal', this
         will have the double quote delimeters and may have a 'L' prefix.
         for example L"abc"."""
@@ -1525,25 +1506,24 @@ class PpLexer(object):
 
     def _cppPragma(self, theGen, theFlc):
         """Handles a pragma directive.
-        ISO/IEC 9899:1999 (E) 6.10.6 Pragma directive
-Semantics
-1 A preprocessing directive of the form
-# pragma pp-tokensopt new-line
-where the preprocessing token STDC does not immediately follow pragma in the
-directive (prior to any macro replacement)146) causes the implementation to behave in an
-implementation-defined manner. The behavior might cause translation to fail or cause the
-translator or the resulting program to behave in a non-conforming manner. Any such
-pragma that is not recognized by the implementation is ignored.
-
-Footnote 146: An implementation is not required to perform macro replacement in pragmas, but it is permitted
-except for in standard pragmas (where STDC immediately follows pragma). If the result of macro
-replacement in a non-standard pragma has the same form as a standard pragma, the behavior is still
-implementation-defined; an implementation is permitted to behave as if it were the standard pragma,
-but is not required to.
-
-In this implementation we have a special rule, if the PragmaHandler has .isLiteral as True
-then we take its response and do no futher processing on it.
-"""
+        :title-reference:`ISO/IEC 9899:1999 (E) 6.10.6 Pragma directive`
+        
+        Semantics:
+        
+        1 A preprocessing directive of the form::
+            # pragma pp-tokensopt new-line
+        
+        where the preprocessing token STDC does not immediately follow pragma in the
+        directive (prior to any macro replacement)146) causes the implementation to behave in an
+        implementation-defined manner. The behavior might cause translation to fail or cause the
+        translator or the resulting program to behave in a non-conforming manner. Any such
+        pragma that is not recognized by the implementation is ignored.
+        
+        Footnote 146: An implementation is not required to perform macro replacement in pragmas, but it is permitted
+        except for in standard pragmas (where STDC immediately follows pragma). If the result of macro
+        replacement in a non-standard pragma has the same form as a standard pragma, the behavior is still
+        implementation-defined; an implementation is permitted to behave as if it were the standard pragma,
+        but is not required to."""
         if self._pragmaHandler is not None:
             try:
                 # It is up to the pragma handler

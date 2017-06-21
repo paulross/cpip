@@ -114,7 +114,7 @@ def writeFileListAsTable(theS, theFileLinkS, tableAttrs, includeKeyTail):
 
 def writeFileListTrippleAsTable(theS, theFileLinkS, tableAttrs, includeKeyTail):
     """Writes a list of file names as an HTML table looking like a directory
-    structure. theFileLinkS is a list of triples (file_name, href, nav_text)."""
+    structure. *theFileLinkS* is a list of triples ``(file_name, href, nav_text)``."""
     #print 'TRACE: theFileLinkS', theFileLinkS
     myDict = DictTree.DictTreeHtmlTable('list')
     for f, h, n in theFileLinkS:
@@ -127,9 +127,10 @@ def writeFileListTrippleAsTable(theS, theFileLinkS, tableAttrs, includeKeyTail):
 def writeDictTreeAsTable(theS, theDt, tableAttrs, includeKeyTail):
     """Writes a DictTreeHtmlTable object as a table, for example as a directory
     structure.
+    
     The key list in the DictTreeHtmlTable object is the path to the file
-    i.e. os.path.abspath(p).split(os.sep) and the value is expected to be a
-    pair of (link, nav_text) or None."""
+    i.e. ``os.path.abspath(p).split(os.sep)`` and the value is expected to be a
+    pair of ``(link, nav_text)`` or ``None``."""
     # Write: <table border="2" width="100%">
     # Propogate table class attribute
     myAttrs = {}

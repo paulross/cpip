@@ -930,7 +930,7 @@ fputs(str(strncmp("abc\\0d", "abc", '\\4') // this goes away
 #fputs( "strncmp(\\"abc\\u0000d\\", \\"abc\\", '\\u0004') == 0"  ": @\n", s);
 #"""
         expectedResult = u"""\n\n\n\n\n\n\n
-fputs( "strncmp(\\"abc\\0d\\", \\"abc\\", \'\\4\') == 0"  ": @\\n", s);
+fputs(  "strncmp(\\"abc\\0d\\", \\"abc\\", \'\\4\') == 0"  ": @\\n", s);
 """
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
@@ -1035,7 +1035,7 @@ xglue(HIGH, LOW)
         #
         expectedResult = u"""\n\n\n\n\n\n\n
 printf("x"  "1" "= %d, x"  "2" "= %s", x1, x2);
-fputs( "strncmp(\\"abc\\0d\\", \\"abc\\", \'\\4\') == 0"  ": @\\n", s);
+fputs(  "strncmp(\\"abc\\0d\\", \\"abc\\", \'\\4\') == 0"  ": @\\n", s);
 CONTENTS_OF_VERS2.H
 
 "hello";
@@ -2965,7 +2965,7 @@ class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
         """TestPpLexerConditionalAllIncludes.test_00(): Tests conditional #include statements; INC = 0, condLevel=0."""
         # Note: Using line splicing in the predef
         preDefMacros=[
-                      u"""#define INC 0
+                      u"""#define INC 1
 """,
                       ]
         myLexer = PpLexer.PpLexer(
@@ -3002,19 +3002,20 @@ class TestPpLexerConditionalAllIncludes(TestIncludeHandlerBase):
             PpToken.PpToken('\n', 'whitespace'),
             PpToken.PpToken('\n', 'whitespace'),
         ]
-        print()
-        print('Expected result:')
-        print(expTokS)
-        print('Actual result:')
+#         print()
+#         print('TestPpLexerConditionalAllIncludes.test_00():')
+#         print('Expected result:')
+#         print(expTokS)
+#         print('Actual result:')
         self.pprintTokensAsCtors(resultTokS)
         self._printDiff(resultTokS, expTokS)
         self.assertEqual(resultTokS, expTokS)
         expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
 src/spam.c [12, 1]:  True "" ""
 000008: #include usr/inc/spam.h
-        usr/inc/spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\""""
-#        print 'FileIncludeGraph:'
-#        print myLexer.fileIncludeGraphRoot
+  usr/inc/spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\""""
+#         print('FileIncludeGraph:')
+#         print(myLexer.fileIncludeGraphRoot)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def test_01(self):
@@ -3068,7 +3069,7 @@ src/spam.c [12, 1]:  True "" ""
         expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
 src/spam.c [12, 1]:  True "" ""
 000008: #include usr/inc/spam.h
-        usr/inc/spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\""""
+  usr/inc/spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\""""
 #        print 'FileIncludeGraph:'
 #        print myLexer.fileIncludeGraphRoot
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
@@ -4458,7 +4459,7 @@ EMPTY #include <file.h>
                     ),
                  )
         result = u''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = u'\n #include <file.h>'
+        expectedResult = u'\n #include <file.h>\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4477,7 +4478,7 @@ EMPTY#include <file.h>
                     ),
                  )
         result = u''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = u'\n #include <file.h>'
+        expectedResult = u'\n#include <file.h>\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4496,7 +4497,7 @@ EMPTY #include "file.h"
                     ),
                  )
         result = u''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = u'\n'
+        expectedResult = u'\n #include "file.h"\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
@@ -4517,13 +4518,151 @@ EMPTY #define NOT_EMPTY
         result = u''.join([t.t for t in myLexer.ppTokens()])
         #print myLexer.macroEnvironment
         #print myLexer.macroEnvironment.macros()
-        self.assertEqual('EMPTY', myLexer.macroEnvironment.macros())
-        expectedResult = u'\n'
+        expMacros = sorted([
+            'EMPTY',
+            '__TIME__',
+            '__DATE__',
+        ])
+        self.assertEqual(expMacros, sorted(myLexer.macroEnvironment.macros()))
+        expectedResult = u'\n #define NOT_EMPTY\n'
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
 
-    #pass
+    def test_07_01(self):
+        """ISO/IEC 9899:1999 (E) 6.10-8 EXAMPLE using #define EMPTY as a function-like macro, no args."""
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#define EMPTY()
+EMPTY() #define NOT_EMPTY
+""",
+                    {}
+                    ),
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        #print myLexer.macroEnvironment
+        #print myLexer.macroEnvironment.macros()
+        expMacros = sorted([
+            'EMPTY',
+            '__TIME__',
+            '__DATE__',
+        ])
+        self.assertEqual(expMacros, sorted(myLexer.macroEnvironment.macros()))
+        expectedResult = u'\n #define NOT_EMPTY\n'
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+
+    def test_07_02(self):
+        """ISO/IEC 9899:1999 (E) 6.10-8 EXAMPLE using #define EMPTY as a function-like macro, one arg."""
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#define EMPTY(x)
+EMPTY(x) #define NOT_EMPTY
+""",
+                    {}
+                    ),
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        #print myLexer.macroEnvironment
+        #print myLexer.macroEnvironment.macros()
+        expMacros = sorted([
+            'EMPTY',
+            '__TIME__',
+            '__DATE__',
+        ])
+        self.assertEqual(expMacros, sorted(myLexer.macroEnvironment.macros()))
+        expectedResult = u'\n #define NOT_EMPTY\n'
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+
+    def test_07_03(self):
+        """ISO/IEC 9899:1999 (E) 6.10-8 EXAMPLE using #define EMPTY as a function-like macro, one arg, none used."""
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#define EMPTY(x)
+EMPTY() #define NOT_EMPTY
+""",
+                    {}
+                    ),
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        #print myLexer.macroEnvironment
+        #print myLexer.macroEnvironment.macros()
+        expMacros = sorted([
+            'EMPTY',
+            '__TIME__',
+            '__DATE__',
+        ])
+        self.assertEqual(expMacros, sorted(myLexer.macroEnvironment.macros()))
+        expectedResult = u'\n #define NOT_EMPTY\n'
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+
+    def test_08_01(self):
+        """ISO/IEC 9899:1999 (E) 6.10-8 EXAMPLE using #define EMPTY as a function-like macro, one arg, none used."""
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#define EMPTY(x)
+EMPTY #define NOT_EMPTY
+""",
+                    {}
+                    ),
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        #print myLexer.macroEnvironment
+        #print myLexer.macroEnvironment.macros()
+        expMacros = sorted([
+            'EMPTY',
+            '__TIME__',
+            '__DATE__',
+        ])
+        self.assertEqual(expMacros, sorted(myLexer.macroEnvironment.macros()))
+        expectedResult = u'\nEMPTY #define NOT_EMPTY\n'
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+
+    def test_08_02(self):
+        """ISO/IEC 9899:1999 (E) 6.10-8 EXAMPLE using #define EMPTY as a function-like macro, one arg, none used."""
+        myLexer = PpLexer.PpLexer(
+                 'define.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#define EMPTY
+EMPTY(x) #define NOT_EMPTY
+""",
+                    {}
+                    ),
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        #print myLexer.macroEnvironment
+        #print myLexer.macroEnvironment.macros()
+        expMacros = sorted([
+            'EMPTY',
+            '__TIME__',
+            '__DATE__',
+        ])
+        self.assertEqual(expMacros, sorted(myLexer.macroEnvironment.macros()))
+        expectedResult = u'\n(x) #define NOT_EMPTY\n'
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
 
 class TestPpLexerMacroLineContinuation(TestPpLexer):
     """Tests macro locations with line continuation.
@@ -5455,108 +5594,200 @@ BAR
         self.assertEqual(self.stringToTokens(result), expTokS)    
 
 
-class TestAnnotateWithLineAndFile(TestIncludeHandlerBase):
-    """Tests that the preprocessor output has a similar output to cpp.
-    For example:
-    # 1 "/usr/include/stdio.h" 1 3 4
-    # 22 "/usr/include/stdio.h" 3 4
-    # 59 "/usr/include/stdio.h" 3 4
-    # 1 "/usr/include/sys/cdefs.h" 1 3 4
-
-    Copied from TestIncludeHandler_UsrSys_MultipleDepth."""
-    def __init__(self, *args):
-        self._pathsUsr = [
-                os.path.join('usr'),
-                os.path.join('usr', 'inc'),
-                ]
-        self._pathsSys = [
-                os.path.join('sys'),
-                os.path.join('sys', 'inc'),
-                ]
-        # The next two arguments mean that:
-        # src/spam.c
-        #   |-> usr/spam.h
-        #       |-> usr/inc/spam.h
-        #           |-> sys/spam.h
-        #               |-> sys/inc/spam.h
-        #                   |-> "Content of: system, include, spam.h"
-        # Initial TU:
-        self._initialTuContents = u"""Starts in spam.c
-#include "spam.h"
-Ends in spam.c
+class TestFromCppInternalsTokenspacing(TestPpLexer):
+    """Misc. tests on token spacing. This was originally (and wrongly in
+    TestMacroEnv)."""
+    def test_01(self):
+        """TestFromCppInternalsTokenspacing.test_01 - Token spacing torture test #define PLUS +"""
+        ##define PLUS +
+        #+PLUS 
+        #-> + + 
+        #not
+        #-> ++ 
+        src = u"""#define PLUS +
++PLUS x
 """
-        self._incFileMap = {
-                os.path.join('usr', 'spam.h') : u"""Start of usr/spam.h
-\n
-#include "inc/spam.h"
-End of usr/spam.h
-""",
-                os.path.join('usr', 'inc', 'spam.h') : u"""Start of usr/inc/spam.h
-\n\n
-#include <spam.h>
-End of usr/inc/spam.h
-""",
-                os.path.join('sys', 'spam.h') : u"""Start of sys/spam.h
-\n\n\n
-#include <inc/spam.h>
-End of sys/spam.h
-""",
-                os.path.join('sys', 'inc', 'spam.h') : u"""Start of sys/inc/spam.h
-\n\n\n\n
-Content of: system, include, spam.h
-End of sys/inc/spam.h
-""",
-            }
-        super(TestAnnotateWithLineAndFile, self).__init__(*args)
-
-    def testSimpleAnnotation(self):
-        """TestAnnotateWithLineAndFile.testSimpleAnnotation(): Tests multiple depth #include statements that resolve to usr/sys."""
-        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim, annotateLineFile=True)
-        result = u''.join([t.t for t in myLexer.ppTokens()])
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    src,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
         myLexer.finalise()
-        print('TestAnnotateWithLineAndFile.testSimpleAnnotation():')
-        print(result)
-        expectedResult = u"""# 1 "src/spam.c" 1
-Starts in spam.c
-# 1 "usr/spam.h" 1
-Start of usr/spam.h
+        result = u''.join([t.t for t in tokS])
+        print('Result:\n', result)
+        self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('+', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('+', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('x', 'identifier'),
+            PpToken.PpToken('\n', 'whitespace'),
+        ]
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)
 
-
-# 1 "usr/inc/spam.h" 1
-Start of usr/inc/spam.h
-
-
-
-# 1 "sys/spam.h" 1 3
-Start of sys/spam.h
-
-
-
-
-# 1 "sys/inc/spam.h" 1 3
-Start of sys/inc/spam.h
-
-
-
-
-
-Content of: system, include, spam.h
-End of sys/inc/spam.h
-# 7 "sys/spam.h" 2 3
-
-End of sys/spam.h
-# 6 "usr/inc/spam.h" 2
-
-End of usr/inc/spam.h
-# 5 "usr/spam.h" 2
-
-End of usr/spam.h
-# 3 "src/spam.c" 2
-
-Ends in spam.c
+    # test_09 and test_10 have been moved from TestMacroEnv.py and widely modified
+    def test_09(self):
+        """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define PLUS +"""
+        ##define f(x) =x=
+        #f(=)
+        #-> = = =
+        #not
+        #-> ===
+        myStr = u"""#define f(x) =x=
+f(=)
 """
-        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-        self.assertEqual(result, expectedResult)
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    myStr,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+        print('Result:\n', result)
+        self.pprintTokensAsCtors(tokS)
+#         expectedString = """= = =\n"""
+        expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('=', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('=', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('=', 'identifier'),
+            PpToken.PpToken('\n', 'whitespace'),
+        ]
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)
+# #         repString = self.tokensToString(result)
+#         expTokS = self.stringToTokens(expectedString)
+#         self._printDiff(self.stringToTokens(result), expTokS)
+#         self.assertEqual(self.stringToTokens(result), expTokS)
+
+    def test_10(self):
+        """TestFromCppInternalsTokenspacing.test_10 - Token spacing torture test #define PLUS + only"""
+        ##define PLUS +
+        ##define EMPTY
+        ##define f(x) =x=
+        #+PLUS -EMPTY- PLUS+ f(=)
+        #-> + + - - + + = = =
+        #not
+        #-> ++ -- ++ ===
+        myStr = u"""#define PLUS +
+#define EMPTY
+#define f(x) =x=
++PLUS -EMPTY- PLUS+ f(=)
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    myStr,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+        print('Result:\n', result)
+        self.pprintTokensAsCtors(tokS)
+        expectedString = """+ + - - + + = = ="""
+#         repString = self.tokensToString(result)
+        expTokS = self.stringToTokens(expectedString)
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)
+
+    def test_11(self):
+        """TestFromCppInternalsTokenspacing.test_11 - Token spacing torture test mixed object/function."""
+        ##define EQ =
+        ##define f(x) =x=
+        #f(EQ)
+        #-> = = =
+        #not
+        #-> ===
+        myStr = u"""#define EQ =
+#define f(x) =x=
+f(EQ)
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    myStr,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+        print('Result:\n', result)
+        self.pprintTokensAsCtors(tokS)
+        expectedString = """\n\n= = ="""
+#         repString = self.tokensToString(result)
+        expTokS = self.stringToTokens(expectedString)
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)
+
+
+class TestVariousOddProblems(TestPpLexer):
+    """Misc problems found."""
+    def test_01(self):
+        """TestVariousOddProblems.test_01 - weirdly '1PLUS2' is a pp-number see:
+        ISO/IEC 9899:1999 (E)  6.4.8 Preprocessing numbers.
+        See also TestPpTokeniser.TestMisc.test_20()"""
+        ##define PLUS +
+        #1PLUS2 
+        #-> 1PLUS2 is, strangely:
+        # PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+        # PpToken(t="1PLUS2", tt=pp-number, line=False, prev=False, ?=False)
+        # PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False) 
+        src = u"""#define PLUS +
+1PLUS2
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    src,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+        print('Result:\n', result)
+        self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('1PLUS2', 'pp-number'),
+            PpToken.PpToken('\n', 'whitespace'),
+        ]
+        self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)
 
 class Special(TestPpLexer):
     def test_00(self):
@@ -5611,8 +5842,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalWithState))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditional_LowLevel))
-    ## When condLevel != 0. We a re not interested in that just yet
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalAllIncludes))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalAllIncludes))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerError))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerWarning))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerBadMacroDirective))
@@ -5628,14 +5858,15 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Unmaintainable))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerErrorInCondStack))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerMacroLineContinuation))
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDefineEMPTY))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDefineEMPTY))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerHeaderName))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinux))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInclude))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxMacroInTypesH))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxEvalProblem))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLibCelloProblems))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestAnnotateWithLineAndFile))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromCppInternalsTokenspacing))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestVariousOddProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))

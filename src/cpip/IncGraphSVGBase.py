@@ -21,124 +21,13 @@
 """Provides basic functionality to take the #include graph of a preprocessed
 file and plots it as a diagram in SVG.
 
-Writing onmouseover/onmouseout event handlers to provide additional information.
-================================================================================
-The idea here is to use the <defs> and <use> elements n SVG. It seems that any
-number of <defs> elements can be in an SVG document.
+Event handlers for onmouseover/onmouseout
+-----------------------------------------
 
-The original text and the replacement text are paired within a <defs> element
-thus::
-
-    <defs>
-        <text id="original" font-family="Verdana" font-size="12" text-anchor="middle" x="250" y="250">Original text.</text>
-        <text id="original.alt" font-family="Courier" font-size="12" text-anchor="middle" x="250" y="250">
-            <tspan xml:space="preserve"> One</tspan>
-            <tspan x="250" dy="1em" xml:space="preserve"> Two</tspan>
-            <tspan x="250" dy="1em" xml:space="preserve">Three</tspan>
-        </text>
-    </defs>
-
-Important features using <defs>
--------------------------------
-- Pairs have an ID and and ID + ".alt"
-- Original and alt must have the same location and centering otherwise
-    onmouseover/onmouseout events might not match up. 
-- xml:space="preserve" is on each tspan element (alternatively space padding
-    could be suspended in the XmlWriter).
-- The first tspan element does not need an x value (it inherits one).
-- Subsequent tspan elements do need an x value as x has been incremented by the
-    previous tspan.
-- Indentation of tspan has no effect as xml:space="preserve" is not true
-    at that point.
-- Space padding needs to be made to line things up.
-- xlink namespace must be declared.
-
-Switching using <use>
----------------------
-The use element and event handlers will establish the initial conditions on
-document load::
- 
-    <use xlink:href="#original" onmouseover="switch_to_alt(evt)" onmouseout="switch_from_alt(evt)" />
-
-Generating ID values
---------------------
-They just need to be unique with ".alt" as the alternate suffix. A clear way
-would to be pass around an ever increasing integer around the graph.
-Alternately use depth/width e.g. "1.3.5.2". There is no clear advantage to the
-latter.
-
-Javascript Event Handlers
--------------------------
-Java script needs to be written within a script element thus::
-
-    <script type="text/ecmascript">
-    //<![CDATA[
-    ...
-    // ]]>
-    </script>
-
-Switch handlers work are like this (they are fairly defensive):
-
-These work for IE/Firefox::
-
-    function switch_to_alt(evt) {
-        var myTextTgt = evt.target;
-        myOldLink = myTextTgt.getAttribute("xlink:href");
-        if (myOldLink.lastIndexOf(".alt") == -1) {
-            myTextTgt.setAttribute("xlink:href", myOldLink+".alt");
-        }
-    }
-    
-    function switch_from_alt(evt) {
-        var myTextTgt = evt.target;
-        myOldLink = myTextTgt.getAttribute("xlink:href");
-        if (myOldLink.lastIndexOf(".alt") != -1) {
-            myOldLink = myOldLink.substring(0, myOldLink.lastIndexOf(".alt"));
-        }
-        myTextTgt.setAttribute("xlink:href", myOldLink);
-    }
-    
-    function swap_id(evt, theId) {
-        var textTgt = evt.target;
-        textTgt.setAttribute("xlink:href", theId);
-    }
-
-Opera
-=====
-This works for Opera: when called with::
-
-    switch_to_alt(this)
-    switch_from_alt(this)
-    swap_id(this)
-    
-    [swap_id() works with Firefox, none of this works with IE.]
-    
-      <script type="text/ecmascript">
-    //<![CDATA[
-    var altSuffix = ".alt";
-    
-    function switch_to_alt(elem) {
-        myHref = elem.getAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href');
-        if (myHref.lastIndexOf(altSuffix) == -1) {
-            elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', myHref + altSuffix);
-        }
-    }
-    
-    function switch_from_alt(elem) {
-        myHref = elem.getAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href');
-        if (myHref.lastIndexOf(altSuffix) != -1) {
-            myHref = myHref.substring(0, myHref.lastIndexOf(altSuffix));
-            elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', myHref);
-        }
-    }
-    
-    function swap_id(elem, theId) {
-        elem.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', theId);
-    }
-    
-    // ]]>
-    </script>
-
+We would like to have more detailed information available to the user when they
+mouseover an object on the SVG image. After a lot of experiment the most cross
+browser way this is done by providing an event handler to switch the opacity of
+an element between 0 and 1. See :py:meth:`IncGraphSVG.writeAltTextAndMouseOverRect`.
 """
 
 __author__  = 'Paul Ross'

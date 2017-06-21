@@ -39,6 +39,7 @@ from . import TestBase
 ######################
 # Section: Unit tests.
 ######################
+
 # Define unit test classes
 
 """Using cpp.exe to help with test cases:
@@ -3334,6 +3335,31 @@ class TestPpDefineReplaceObjectStyle(TestPpDefine):
 
     # Failures: None for object macros as it is so simple?
 
+    def testReplaceObject_10(self):
+        """PpDefine: Replacement all have isReplacement flag set for: <#define> 'FOO 1+2+3\\n'."""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(u'FOO 1+2+3\n')
+            )
+        myGen = myCpp.next()
+        myCppDef = PpDefine.PpDefine(myGen, '', 1)
+        self.assertEqual(True, myCppDef.isObjectTypeMacro)
+        self.assertEqual(8, myCppDef.tokensConsumed)
+        self.assertEqual('FOO', myCppDef.identifier)
+        self.assertEqual(None, myCppDef.parameters)
+        self.assertEqual(['1', '+', '2', '+', '3'], myCppDef.replacements)
+        self.assertEqual(
+            [
+                PpToken.PpToken('1',       'pp-number'),
+                PpToken.PpToken('+',       'preprocessing-op-or-punc'),
+                PpToken.PpToken('2',       'pp-number'),
+                PpToken.PpToken('+',       'preprocessing-op-or-punc'),
+                PpToken.PpToken('3',       'pp-number'),
+            ],
+            myCppDef.replacementTokens,
+            )
+        self.assertTrue(all([t.isReplacement for t in myCppDef.replacementTokens]))
+
+
 class TestPpDefineReplaceFunctionStyle(TestPpDefine):
     """Tests the replace functionality of PpDefine of an function style macro
     We simulate part of what PpDefine.MacroReplacementEnv must do to replace a function style
@@ -3429,6 +3455,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_02(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' called with FOO(,2,3)."""
@@ -3477,6 +3504,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_03(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' called with FOO(1,,3)."""
@@ -3524,6 +3552,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_04(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a+b+c\\n' called with FOO(1,2,)."""
@@ -3571,6 +3600,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_05(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a++b++c\\n' called with FOO(+,+,+)."""
@@ -3626,6 +3656,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_06(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'p() int\\n' called with p()."""
@@ -3663,6 +3694,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_07(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'q(x) x\\n' called with q()."""
@@ -3697,6 +3729,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             [],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_08(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'r(x,y) x ## y\\n' called with r(2,3)"""
@@ -3741,6 +3774,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_09(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'f(a) a+a\\n' called with f(\\n1\\n) C: 6.10.3-10, C++: 16.3-9."""
@@ -3790,6 +3824,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_10(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'f(a,b) a+b\\n' called with f(\\n1\\n,\\n2) C: 6.10.3-10, C++: 16.3-9."""
@@ -3836,6 +3871,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_20(self):
         """PpDefine: Replacement OK from function type macro: <#define> 'r(x,y) x ## y, y ## x\\n' called with r(2,3)"""
@@ -3890,7 +3926,7 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
             ],
             myReplaceToks,
             )
-
+        self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     # Testing failure
     def testReplaceFunction_50(self):
@@ -5940,7 +5976,7 @@ F_3_END
 #===============================================================================
 
 class TestPpDefineLinux(TestPpDefine):
-    """Tests exposed by preprocessing the Linus Kernel"""
+    """Tests exposed by preprocessing the Linux Kernel"""
 
     def test_00(self):
         """PpDefine: Linux issue with: #define __ASM_SIZE(inst) inst##l, inst##q"""
@@ -6052,6 +6088,48 @@ al, aq
             myReplaceToks,
             )
 
+
+class TestFromCppInternalsTokenspacing(TestPpDefine):
+    """Misc. tests on token spacing from CPP internals documentation."""
+    def test_09(self):
+        """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define f(x) =x="""
+        ##define f(x) =x=
+        #f(=)
+        #-> = = =
+        #not
+        #-> ===
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(u'FOO(x) =x=\n')
+            )
+        myGen = myCpp.next()
+        myCppDef = PpDefine.PpDefine(myGen, '', 1)
+        self.assertEqual(['=', 'x', '='], myCppDef.replacements)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, next, myGen)
+        # Replacement
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(u'(=)')
+            )
+        myGen = myCpp.next()
+        # First consume the preamble i.e. LPAREN
+        self.assertEqual(None, myCppDef.consumeFunctionPreamble(myGen))
+        # Now consume the arguments
+        myArgS = myCppDef.retArgumentListTokens(myGen)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, next, myGen)
+        myReplaceToks = myCppDef.replaceArgumentList(myArgS)
+#         self.assertEqual([], myReplaceToks)
+        self.pprintTokensAsCtors(myReplaceToks)
+        expTokS = [
+            PpToken.PpToken('=', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('=', 'preprocessing-op-or-punc'),
+            PpToken.PpToken(' ', 'whitespace'),
+            PpToken.PpToken('=', 'identifier'),
+        ]
+        self._printDiff(myReplaceToks, expTokS)
+        self.assertEqual(myReplaceToks, expTokS)
+
 class NullClass(TestPpDefine):
     pass
 
@@ -6092,6 +6170,8 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpDefineFunctionLikeAcceptableVariadicArguments))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpDefineLinux))
+    # - OK
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromCppInternalsTokenspacing))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

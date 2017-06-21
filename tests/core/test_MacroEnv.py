@@ -388,6 +388,38 @@ EGGS 2
             repList,
             )
 
+    def testDefineMapSimpleReplaceObject_02(self):
+        """MacroEnv.MacroEnv - simple replacement of object style macros, where there is no replacement tokens."""
+        myMap = MacroEnv.MacroEnv()
+        myStr = u"""SPAM
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(myStr)
+            )
+        myGen = myCpp.next()
+        myMap.define(myGen, '', 1)
+        self._checkMacroEnv(myGen, myMap, ['SPAM',])
+        self.assertEqual(
+            [],
+            myMap.replace(
+                PpToken.PpToken('SPAM', 'identifier'),
+                myGen)
+            )
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(u'SPAM SPAM')
+            )
+        repList = []
+        myGen = myCpp.next()
+        for ttt in myGen:
+            myReplacements = myMap.replace(ttt, myGen)
+            repList += myReplacements
+        self.assertEqual(
+            [
+                PpToken.PpToken(" ", 'whitespace'),
+            ],
+            repList,
+            )
+
 class MacroEnvReplaceObject(TestMacroEnv):
     """Tests the MacroEnv.MacroEnv more complex replacement of Object only style macros."""
 
@@ -572,7 +604,7 @@ class MacroEnvSimpleReplaceFunction(TestMacroEnv):
             )
 
     def testDefineMapSimpleReplaceFunction_01_00(self):
-        """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC" is called."""
+        """MacroEnv.MacroEnv - simple replacement of function style macros #define FUNC(a) a\\n where "FUNC" is present."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""FUNC(a) a
 """

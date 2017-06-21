@@ -18,7 +18,8 @@
 # 
 # Paul Ross: cpipdev@googlemail.com
 
-"""This module represents a stack of file includes as used by the PpLexer
+"""This module represents a stack of file includes as used by the
+:py:class:`.PpLexer.PpLexer`
 """
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
@@ -37,11 +38,15 @@ class ExceptionFileIncludeStack(ExceptionCpip):
     pass
 
 class FileInclude(object):
-    """Represents a single TU fragment with a PpTokeniser and a token counter."""
+    """Represents a single TU fragment with a PpTokeniser and a token counter.
+    
+    *theFpo*
+        A FilePathOrigin object that identifies the file.
+        
+    *theDiag*
+        A CppDiagnostic object to give to the PpTokeniser.
+    """
     def __init__(self, theFpo, theDiag):
-        """Constructor
-        theFpo     - A FilePathOrigin object that identifies the file.
-        theDiag    - A CppDiagnostic object to give to the PpTokeniser."""
         self.fileName = theFpo.filePath
         # Create a new PpTokeniser
         self.ppt = PpTokeniser.PpTokeniser(
@@ -50,7 +55,6 @@ class FileInclude(object):
             theDiagnostic=theDiag,
         )
         self.tokenCounter = PpTokenCount.PpTokenCount()
-        self.origin = theFpo.origin
     
     def tokenCounterAdd(self, theC):
         """Add a token counter to my token counter (used when a macro is
@@ -64,10 +68,18 @@ class FileInclude(object):
 class FileIncludeStack(object):
     """This maintains information about the stack of file includes.
     This holds several stacks (or representations of them):
-    self._ppts is a stack of PpTokeniser.PpTokeniser() objects.
-    self._figr is a FileIncludeGraph.FileIncludeGraphRoot() for tracking the #include graph.
-    self._fns is a stack of file IDs as strings (e.g. the file path).
-    self._tcs is a PpTokenCount.PpTokenCountStack() object for counting tokens.
+    
+    *self._ppts*
+        A stack of :py:class:`.PpTokeniser.PpTokeniser` objects.
+        
+    *self._figr*
+        A :py:class:`.FileIncludeGraph.FileIncludeGraphRoot` for tracking the ``#include`` graph.
+        
+    *self._fns*
+        A stack of file IDs as strings (e.g. the file path).
+        
+    *self._tcs*
+        A :py:class:`.PpTokenCount.PpTokenCountStack` object for counting tokens.
     """
     def __init__(self, theDiagnostic):
         """Constructor, takes a CppDiagnostic object to give to the PpTokeniser."""
@@ -90,21 +102,6 @@ class FileIncludeStack(object):
         return self._fincS[-1].fileName
     
     @property
-    def currentFileIsSystemFile(self):
-        """Returns whether the current file is a system file.
-        Used to set flags on optional line/file output.
-        See: PpLexer._pptPostPush() and PpLexer._pptPostPop()"""
-        return self.currentFileOrigin == 'sys'
-    
-    @property
-    def currentFileOrigin(self):
-        """Returns the origin of the current file.
-        Origins are: 'usr', 'sys', 'CP', 'stdin', None."""
-        if self.depth < 1:
-            raise ExceptionFileIncludeStack('FileIncludeStack.currentFileOrigin on zero length stack.')
-        return self._fincS[-1].origin
-    
-    @property
     def fileStack(self):
         """Returns a copy of the stack of file IDs."""
         return [fi.fileName for fi in self._fincS]
@@ -118,7 +115,7 @@ class FileIncludeStack(object):
     
     @property
     def fileIncludeGraphRoot(self):
-        """The FileIncludeGraph.FileIncludeGraphRoot() object."""
+        """The :py:class:`.FileIncludeGraph.FileIncludeGraphRoot` object."""
         return self._figr
     
     @property
@@ -139,22 +136,24 @@ class FileIncludeStack(object):
         print(thePref, [f[l+1:] for f in theL])
 
     def includeStart(self, theFpo, theLineNum, isUncond, condStr, incLogic):
-        """Start an #include file.
-        theFpo     - A FilePathOrigin object that identifies the file.
-        theLineNum - The integer line number of the file that includes (None if Root).
-        isUncond   - A boolean that is the conditional compilation state.
-        condStr    - A string of the conditional compilation stack.
-        incLogic   - A string that describes the find include logic.
+        """Start an ``#include`` file.
+        
+        *theFpo*
+            A :py:class:`.FileLocation.FilePathOrigin` object that identifies the file.
+            
+        *theLineNum*
+            The integer line number of the file that includes (None if Root).
+        
+        *isUncond*
+            A boolean that is the conditional compilation state.
+            
+        *condStr*
+            A string of the conditional compilation stack.
+            
+        *incLogic*
+            A string that describes the find include logic.
         """
-        if not theLineNum:
-            logging.debug('FileIncludeStack.includeStart(): %s line=Unknown', 
-                          theFpo.filePath, 
-                      )
-        else:
-            logging.debug('FileIncludeStack.includeStart(): %s line=%d', 
-                          theFpo.filePath, 
-                          theLineNum
-                      )
+        logging.debug('FileIncludeStack.includeStart(): %s line=%d', theFpo.filePath, theLineNum)
 #        print 'FileIncludeStack.includeStart(): new file %s included from line=%s' % (theFpo.filePath, str(theLineNum))
         assert(len(self._fincS) == 0 and theLineNum is None or theLineNum == self._fincS[-1].ppt.pLineCol[0])
 #        import traceback
@@ -199,7 +198,7 @@ class FileIncludeStack(object):
                         ) 
         
     def includeFinish(self):
-        """End an #include file, returns the file ID that has been finished."""
+        """End an ``#include`` file, returns the file ID that has been finished."""
         if self.depth < 1:
             raise ExceptionFileIncludeStack('FileIncludeStack.includeFinish() on zero length stack.')
 #        print('includeFinish(): myFileStack:', [os.path.basename(p)for p in self.fileStack])

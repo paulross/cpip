@@ -37,12 +37,16 @@ from cpip import IncGraphSVGBase
 
 class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     """This does most of the heavy lifting of plotting the include graph SVG.
-    Challenges are plotting things in the 'right' order and with the 'right'
+    The challenges are plotting things in the 'right' order and with the 'right'
     JavaScript so that the DHTML does not look too hideous.
-    Basic principle here is that `plotInitialise()` writes static data. In
+    
+    Basic principle here is that :py:meth:`plotInitialise` writes static data. In
     our case just the pretty histogram pop-up (Ed. is this right???).
-    Then `plotToSVGStream()` is called - this is implemented in the base class.
-    FInally `plotFinalise()` is called - this overlays the DHTML text. This is
+    
+    Then :py:meth:`.SVGTreeNodeBase.plotToSVGStream` is called -
+    this is implemented in the base class.
+    
+    Finally :py:meth:`plotFinalise` is called - this overlays the DHTML text. This is
     a little tricky as our way of DHTML is to switch opacity on underlying
     objects the switching boundary being the overlying object (e.g. '?').
     So _all_ the underlying objects need to be written first so that the
@@ -970,30 +974,6 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 pass
             j += 1
 
-#     def writeAltTextAndMouseOverText(
-#                         self, theSvg, thePoint, theId, theText, theAltS, yOffs):
-#         """Writes out the alternate text to the SVG stream immediately and returns
-#         a tuple of (thePoint, 'Verdana', 12, myAttrs, theText) to write out later
-#         (so it is on top)."""
-#         self._writeAlternateText(theSvg, thePoint, theId, theText, theAltS, yOffs)
-#         # <text id="original" font-family="Verdana" font-size="12" text-anchor="middle" x="250" y="250">Original text.</text>
-#         myAttrs = {
-#             'id'                : 't%s' % theId,
-#             'class'             : self.CLASS_VERDANA_12,
-#             'opacity'           : '1.0',
-# #             #'font-weight'       : "bold",
-# #             'text-decoration'   : "underline",
-# #             'text-anchor'       : "middle",
-# #             'dominant-baseline' : "middle",
-# #             #'dominant-baseline' : "text-after-edge",
-#             'onmouseover'       : "swapOpacity('t%s', 't%s')" \
-#                         % (theId, theId+self.ALT_ID_SUFFIX),
-#             'onmouseout'        : "swapOpacity('t%s', 't%s')" \
-#                         % (theId, theId+self.ALT_ID_SUFFIX),
-#         }
-# #         self._addECMAScriptMouseOverAttrs(myAttrs, theId, theId+self.ALT_ID_SUFFIX)
-#         self._triggerText.append((thePoint, None, None, myAttrs, theText))
-    
     def writeAltTextAndMouseOverRect(
                 self, theSvg, theId, theAltPt, theAltS, theTrigPt, theTrigRect):
         """Composes and writes the (pop-up) alternate text.
@@ -1043,5 +1023,3 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                         % (theId, theId+self.ALT_ID_SUFFIX),
         }
         self._triggerS.append((theTrigPt, theTrigRect, boxAttrs))
-#         with SVGWriter.SVGRect(theSvg, theTrigPt, theTrigRect, boxAttrs):
-#             pass

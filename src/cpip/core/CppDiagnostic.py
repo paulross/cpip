@@ -66,18 +66,21 @@ class PreprocessDiagnosticStd(object):
     @property
     def eventList(self):
         """A list of events in the order that they appear.
-        An event is a pair of strings: (type, message)"""
+        An event is a pair of strings: ``(type, message)``"""
         return self._eventList
     
     def _prepareMsg(self, event, msg, theLoc):
         """Prepares a message.
         
-        event - The event e.g. 'error', if None it is not accumulated
+        *event*
+            The event e.g. 'error', if None it is not accumulated
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         if theLoc is None:
             myMsg = msg
         else:
@@ -93,12 +96,14 @@ class PreprocessDiagnosticStd(object):
         return myMsg
 
     def undefined(self, msg, theLoc=None):
-        """Reports when an 'undefined' event happens.
+        """Reports when an *undefined* event happens.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrUndefined += 1
         self._isWellFormed = False
         raise ExceptionCppDiagnosticUndefined(
@@ -112,10 +117,12 @@ class PreprocessDiagnosticStd(object):
     def partialTokenStream(self, msg, theLoc=None):
         """Reports when an partial token stream exists (e.g. an unclosed comment).
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrPartialTokenStream += 1
         self._isWellFormed = False
         raise ExceptionCppDiagnosticPartialTokenStream(
@@ -127,12 +134,14 @@ class PreprocessDiagnosticStd(object):
                         )
 
     def implementationDefined(self, msg, theLoc=None):
-        """Reports when an 'implementation defined' event happens.
+        """Reports when an *implementation defined* event happens.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrImplDefined += 1
         logging.warning(
                         self._prepareMsg(
@@ -145,10 +154,12 @@ class PreprocessDiagnosticStd(object):
     def error(self, msg, theLoc=None):
         """Reports when an error event happens.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrError += 1
         logging.error(self._prepareMsg(
                                        'error',
@@ -160,10 +171,12 @@ class PreprocessDiagnosticStd(object):
     def warning(self, msg, theLoc=None):
         """Reports when an warning event happens.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrWarning += 1
         logging.warning(self._prepareMsg(
                                          'warning',
@@ -175,20 +188,24 @@ class PreprocessDiagnosticStd(object):
     def handleUnclosedComment(self, msg, theLoc=None):
         """Reports when an unclosed comment is seen at EOF.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self.partialTokenStream(msg, theLoc)
 
     def unspecified(self, msg, theLoc=None):
         """Reports when unspecified behaviour is happening.
-        For example order of evaluation of '#' and '##'.
+        For example order of evaluation of ``'#'`` and ``'##'``.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrUnspecified += 1
         logging.info(self._prepareMsg(
                                       'unspecified',
@@ -205,21 +222,25 @@ class PreprocessDiagnosticStd(object):
     def debug(self, msg, theLoc=None):
         """Reports a debug message.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         logging.debug(self._prepareMsg(None, msg, theLoc))
 
 class PreprocessDiagnosticKeepGoing(PreprocessDiagnosticStd):
     """Sub-class that does not raise exceptions."""
     def undefined(self, msg, theLoc=None):
-        """Reports when an 'undefined' event happens.
+        """Reports when an *undefined* event happens.
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         try:
             super(PreprocessDiagnosticKeepGoing, self).undefined(msg, theLoc)
         except ExceptionCppDiagnostic as err:
@@ -228,22 +249,28 @@ class PreprocessDiagnosticKeepGoing(PreprocessDiagnosticStd):
     def partialTokenStream(self, msg, theLoc=None):
         """Reports when an partial token stream exists (e.g. an unclosed comment).
         
-        msg - The main message, a string.
+        *msg*
+            The main message, a string.
         
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         try:
             super(PreprocessDiagnosticKeepGoing, self).partialTokenStream(msg, theLoc)
         except ExceptionCppDiagnostic as err:
             self.warning('Undefined behaviour: %s' % str(err), theLoc)
 
 class PreprocessDiagnosticRaiseOnError(PreprocessDiagnosticStd):
-    """Sub-class that raises an exception on a #'error directive."""
+    """Sub-class that raises an exception on a ``#error`` directive."""
     def error(self, msg, theLoc=None):
         """Reports when an error event happens.
-        msg - The main message.
-        theLoc - the file locator e.g. FileLocation.FileLineCol.
-        If present it must have: (fileId, lineNum colNum) attributes."""
+
+        *msg*
+            The main message, a string.
+        
+        *theLoc*
+            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         try:
             super(PreprocessDiagnosticRaiseOnError, self).error(msg, theLoc)
         except ExceptionCppDiagnostic:

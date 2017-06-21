@@ -21,8 +21,8 @@
 """This handles definition, undefinition, redefintion, replacement
 and rescaning of macro declarations
 
-It implements: ISO/IEC 9899:1999(E) section 6 (aka 'C99')
-and/or: ISO/IEC 14882:1998(E) section 16 (aka 'C++98')
+It implements: :title-reference:`ISO/IEC 9899:1999(E) section 6 (aka 'C99')`
+and/or: :title-reference:`ISO/IEC 14882:1998(E) section 16 (aka 'C++98')`
 
 """
 __author__  = 'Paul Ross'
@@ -54,15 +54,21 @@ class ExceptionCpipDefineInit(ExceptionCpipDefine):
 class ExceptionCpipDefineMissingWs(ExceptionCpipDefineInit):
     """Exception when calling missing ws between identifier and replacement tokens.
     
-    See: ISO/IEC 9899:1999(E) Section 6.10.3-3 and ISO/IEC 14882:1998(E) Section ???
+    See: :title-reference:`ISO/IEC 9899:1999(E) Section 6.10.3-3`
+    and :title-reference:`ISO/IEC 14882:1998(E) Section ???`
     
-    Note: cpp says for "#define PLUS+":
-    src.h:1:13: warning: ISO C requires whitespace after the macro name"""
+    .. note::
+        
+        The executable, cpp, says for ``#define PLUS+`` ::
+        
+            src.h:1:13: warning: ISO C requires whitespace after the macro name"""
     pass
 
 class ExceptionCpipDefineBadWs(ExceptionCpipDefineInit):
     """Exception when calling bad whitespace is in a define statement.
-    See: ISO/IEC 9899:1999(E) Section 6.10-f and ISO/IEC 14882:1998(E) 16-2"""
+    See: :title-reference:`ISO/IEC 9899:1999(E) Section 6.10-f`
+    and :title-reference:`ISO/IEC 14882:1998(E) 16-2`
+    """
     pass
 
 class ExceptionCpipDefineInvalidCmp(ExceptionCpipDefineInit):
@@ -90,17 +96,21 @@ class ExceptionCpipDefineBadArguments(ExceptionCpipDefine):
     pass
 
 class PpDefine(object):
-    """Represents a single #define directive and performs ISO/IEC 9899:1999 (E) 6.10.3 Macro replacement.
+    """Represents a single #define directive and performs
+    :title-reference:`ISO/IECISO/IEC 9899:1999 (E) 6.10.3 Macro replacement.`
     
-    theTokGen is a PpToken generator that is expected to
-    generate pp-tokens that appear after the start of the #define directive
-    from the first non-whitespace token onwards i.e. the __init__ will,
-    itself, consume leading whitespace.
+    *theTokGen*
+        A PpToken generator that is expected to
+        generate pp-tokens that appear after the start of the #define directive
+        from the first non-whitespace token onwards i.e. the __init__ will,
+        itself, consume leading whitespace.
     
-    theFileId is a string that represents the file ID.
+    *theFileId*
+        A string that represents the file ID.
     
-    theLine is a positive integer that represents the line in theFile that
-    the #define statement occurred.
+    *theLine*
+        A positive integer that represents the line in theFile that
+        the ``#define`` statement occurred.
     
     Definition example, object-like macros: ::
     
@@ -118,8 +128,9 @@ class PpDefine(object):
             ...
         ]
     
-    NOTE: No whitespace is allowed between the identifier and the lparen
-    of function-like macros.
+    .. note::
+        No whitespace is allowed between the identifier and the lparen
+        of function-like macros.
     
     The ``identifier-list`` of parameters is stored as a list of names.
     The replacement-list is stored as a list of
@@ -414,13 +425,14 @@ class PpDefine(object):
                         )
 
     def __addTokenAndTypeToReplacementList(self, theTtt):
-        """Adds a token and a token type to the replacment list. Runs of
+        """Adds a token and a token type to the replacement list. Runs of
         whitespace tokens are concatenated."""
         assert(self.isCurrentlyDefined)
         if len(self._replaceTokTypesS) > 0 \
         and theTtt.isWs() and self._replaceTokTypesS[-1].isWs():
             self._replaceTokTypesS[-1].merge(theTtt)
         else:
+            theTtt.isReplacement = True
             self._replaceTokTypesS.append(theTtt)
     ####################
     # End: Construction.
@@ -430,7 +442,7 @@ class PpDefine(object):
     # Section: Utility functions.
     #############################
     def _isPlacemarker(self, theTok):
-        """Returns True if the Tok represents a PLACEMARKER token.
+        """Returns True if the Token represents a PLACEMARKER token.
         This is the correct comparison operator can be used if self.PLACEMARKER
         is defined as None."""
         return theTok is self.PLACEMARKER
@@ -579,11 +591,19 @@ class PpDefine(object):
     ############################################
     def incRefCount(self, theFileLineCol=None):
         """Increment the reference count. Typically callers do this when
-        replacement is certain of in the event of definition testing e.g.
-        ``#ifdef SPAM or defined(SPAM)`` etc. Or if the macro is expanded e.g.
-        ``#define SPAM_N_EGGS spam and eggs``
+        replacement is certain of in the event of definition testing
+        
+        *theFileLineCol*
+            A FileLocation.FileLineCol object.
+        
+        For example:
+        
+        ``#ifdef SPAM or defined(SPAM)`` etc.
+        
+        Or if the macro is expanded e.g. ``#define SPAM_N_EGGS spam and eggs``
+        
         The menu is SPAM_N_EGGS.
-        theFileLineCol is a FileLocation.FileLineCol object.
+        
         """ 
         if not self.isCurrentlyDefined:
             raise ExceptionCpipDefine(
@@ -597,7 +617,7 @@ class PpDefine(object):
     # Section: Replacement of object style macros.
     #=============================================
     def replaceObjectStyleMacro(self):
-        """Returns a list of [(token, token_type), ...] from the replacement
+        """Returns a list of ``[(token, token_type), ...]`` from the replacement
         of an object style macro."""
         assert(self.isCurrentlyDefined)
         assert(self.isObjectTypeMacro), \
@@ -606,8 +626,9 @@ class PpDefine(object):
 
     def _objectLikeReplacement(self):
         """Returns the replacement list for an object like macro.
-        This handles the '##' token i.e. [cpp.concat].
-        Returns a list of pairs i.e. [(token, token_type), ...]"""
+        This handles the ``##`` token i.e. [cpp.concat].
+        
+        Returns a list of pairs i.e. ``[(token, token_type), ...]``"""
         assert(self.isCurrentlyDefined)
         assert(self.isObjectTypeMacro), \
             '_objectLikeReplacement() called on non-object like macro'
@@ -662,7 +683,7 @@ class PpDefine(object):
         This will return either:
         
         * None - Tokens including the leading LPAREN have been consumed.
-        * List of (token, token_type) if the LPAREN is not found.
+        * List of ``(token, token_type)`` if the LPAREN is not found.
         
         For example given this: ::
 
@@ -736,13 +757,13 @@ class PpDefine(object):
         returns a list of arguments where each argument is a list of
         PpToken objects.
         
-        Thus this function returns a list of lists of PpToken objects,
+        Thus this function returns a list of lists of :py:class:`.PpToken.PpToken` objects,
         for example given this: ::
         
             #define f(x,y) ...
             f(a,b)
         
-        This function, then passed "a,b)" returns: ::
+        This function, then passed ``a,b)`` returns: ::
         
             [
                 [
@@ -796,20 +817,19 @@ class PpDefine(object):
         
         Placemarker tokens are not used if the macro is defined with no
         arguments.
-        This might raise a ExceptionCpipDefineBadArguments if the list
+        This might raise a :py:class:`ExceptionCpipDefineBadArguments` if the list
         does not match the prototype or a StopIteration if the token list is
         too short.
         This ignores leading and trailing whitespace for each argument.
         
-        TODO: Raise an ExceptionCpipDefineBadArguments if there is a #define
-        statement. e.g.: ::
-        
+        TODO: Raise an :py:class:`ExceptionCpipDefineBadArguments` if there is a
+        ``#define`` statement. e.g.: ::
+    
             #define f(x) x x
             f (1
             #undef f
             #define f 2
             f)
-        
         """
         assert(self.isCurrentlyDefined)
         assert(not self.isObjectTypeMacro), \
@@ -931,9 +951,12 @@ class PpDefine(object):
     def replaceArgumentList(self, theArgList):
         """Given an list of arguments this does argument substitution and
         returns the replacement token list. The argument list is of the form
-        given by retArgumentListTokens(). The caller must have replaced any
+        given by :py:meth:`retArgumentListTokens`. The caller must have replaced any
         macro invocations in theArgList before calling this method.
-        NOTE: For function style macros only."""
+        
+        .. note::
+            For function style macros only.
+        """
         assert(self.isCurrentlyDefined)
         assert(not self.isObjectTypeMacro), \
             'replaceArgumentList() called on object like macro'
@@ -1073,6 +1096,11 @@ class PpDefine(object):
                     break
                 elif not self._isPlacemarker(tok):
                     retMap[tok] = self.PLACEMARKER
+        # Mark all tokens as isReplacement = True
+        for arg in retMap:
+            if retMap[arg] is not self.PLACEMARKER:
+                for t in retMap[arg]:
+                    t.isReplacement = True
         return retMap
 
     def _functionLikeReplacement(self, theArgMap):
@@ -1082,11 +1110,23 @@ class PpDefine(object):
         theArgMap is of the form returned by _retReplacementMap().
         This also handles the '#' token i.e. [cpp.stringize]
         and '##' token i.e. [cpp.concat].
-        Returns a list of pairs i.e. [(token, token_type), ...]"""
+        Returns a list of pairs i.e. [(token, token_type), ...]
+        
+        TODO: Accidental token pasting
+        #define f(x) =x=
+        f(=)
+        We want '= = =' not '==='.
+        """
         assert(self.isCurrentlyDefined), \
             '_functionLikeReplacement() called on undefined macro'
         assert(not self.isObjectTypeMacro), \
             '_functionLikeReplacement() called on object like macro'
+        def _avoidTokenPasting(t):
+            return
+            if len(retReplList) \
+            and t.tt ==  'preprocessing-op-or-punc' \
+            and retReplList[-1].tt == 'preprocessing-op-or-punc':
+                retReplList.append(PpToken.PpToken(' ', 'whitespace')) 
         retReplList = []
         flagStringize = False
         flagConcatSeen = False
@@ -1145,7 +1185,7 @@ class PpDefine(object):
                 if flagStringize:
                     self.__logWarningHashHashHash()
                 # Unwind any whitespace tokens
-                while len(retReplList) > 0 and retReplList[-1].isWs():
+                while len(retReplList) and retReplList[-1].isWs():
                     retReplList.pop()
             # Variable argument processing
             elif self._isVariadic and myTtt.t == self.VARIABLE_ARGUMENT_SUBSTITUTE:
@@ -1178,6 +1218,7 @@ class PpDefine(object):
                     # Otherwise ignore whitespace after '##'
                 else:
                     # Normal, no '#' or '##' involved
+                    _avoidTokenPasting(myTtt)
                     retReplList.append(myTtt)
         #assert(not flagStringize), 'Trailing # has crept through the constructor'
         #assert(not flagConcatSeen), 'Trailing ## has crept through the constructor'
@@ -1215,7 +1256,7 @@ class PpDefine(object):
             tempList.pop()
         return PpToken.PpToken(
             '"%s"' % ''.join(tempList).replace('"', '\\"'),
-            'string-literal')
+            'string-literal', isReplacement=True)
 
     #===============================================
     # Section: Replacement of function style macros.
@@ -1259,8 +1300,9 @@ class PpDefine(object):
 
     @property
     def replacementTokens(self):
-        """The list of zero or more replacement token
-        i.e. [class PpToken, ...]."""
+        """The list of zero or more replacement token as a list of
+        :py:class:`.PpToken.PpToken`
+        """
         return self._replaceTokTypesS
 
     @property
@@ -1273,8 +1315,8 @@ class PpDefine(object):
     def expandArguments(self):
         """The flag that says whether arguments should be expanded.
         For object like macros this will be False. For function like macros
-        this will be False if there is a stringize ('#') or a token pasting
-        operator ('##'). True otherwise."""
+        this will be False if there is a stringize (``#``) or a token pasting
+        operator (``##``). True otherwise."""
         return self._expandArguments
     
     @property
@@ -1353,9 +1395,9 @@ class PpDefine(object):
 
     def isValidRefefinition(self, other):
         """Returns True if this is a valid redefinition of *other*, False otherwise.
-        Will raise an ``ExceptionCpipDefineInvalidCmp`` if the identifiers are
+        Will raise an :py:class:`ExceptionCpipDefineInvalidCmp` if the identifiers are
         different.
-        Will raise an ``ExceptionCpipDefine`` if either is not currently defined.
+        Will raise an :py:class:`ExceptionCpipDefine` if either is not currently defined.
         
         From: **ISO/IEC 9899:1999 (E) 6.10.3:**
         
@@ -1419,9 +1461,9 @@ class PpDefine(object):
     #==================================
     
     def undef(self, theFileId, theLineNum):
-        """Records this instance of a macro #undef'd at a particular file
-        and line number. May raise an ExceptionCpipDefine if already undefined
-        of the line number is bad."""
+        """Records this instance of a macro ``#undef``'d at a particular file
+        and line number. May raise an :py:class:`ExceptionCpipDefine` if already
+        undefined or the line number is bad."""
         if not self.isCurrentlyDefined:
             raise ExceptionCpipDefine(
                 "#undef on already #undef'd instance of macro"

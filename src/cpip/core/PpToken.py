@@ -30,28 +30,28 @@ __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 from cpip import ExceptionCpip
 
 class ExceptionCpipToken(ExceptionCpip):
-    """Used by PpToken."""
+    """Used by :py:class:`PpToken`."""
     pass
 
 class ExceptionCpipTokenUnknownType(ExceptionCpipToken):
-    """Used by PpToken when the token type is out of range."""
+    """Used by :py:class:`PpToken` when the token type is out of range."""
     pass
 
 class ExceptionCpipTokenIllegalOperation(ExceptionCpipToken):
-    """Used by PpToken when an illegal operation is performed."""
+    """Used by :py:class:`PpToken` when an illegal operation is performed."""
     pass
 
 class ExceptionCpipTokenReopenForExpansion(
     ExceptionCpipTokenIllegalOperation
     ):
-    """Used by PpToken when a non-expandable token is
+    """Used by :py:class:`PpToken` when a non-expandable token is
     made available for expansion."""
     pass
 
 class ExceptionCpipTokenIllegalMerge(
     ExceptionCpipTokenIllegalOperation
     ):
-    """Used by PpToken when merge() is called illegally."""
+    """Used by :py:class:`PpToken` when :py:meth:`PpToken.merge()` is called illegally."""
     pass
 
 ############################################################
@@ -59,14 +59,15 @@ class ExceptionCpipTokenIllegalMerge(
 ############################################################
 
 #: Types of preprocessing-token
-#: From: ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken]
-#: NOTE: ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 says that:
+#: From: :title-reference:`ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken]`
+#: and :title-reference:`ISO/IEC 9899:1999 (E) 6.4.7 Header names`
+#: .. note::
+#: 
+#:    Para 3 of the latter says that: "A header name preprocessing token is
+#:    recognized only within a ``#include`` preprocessing directive."
 #:
-#: "A header name preprocessing token is recognized only within a #include
-#: preprocessing directive."
-#:
-#: So in other contexts a header-name that is a q-char-sequence should be treated
-#: as a string-literal
+#:    So in other contexts a header-name that is a q-char-sequence should be treated
+#:    as a string-literal
 #:
 #: This produces interesting issues in this case::
 #:
@@ -77,7 +78,8 @@ class ExceptionCpipTokenIllegalMerge(
 #: directive expects a header-name.
 #: So in certain contexts (macro stringising followed by #include instruction)
 #: we need to 'downcast' a string-literal to a header-name.
-#: See PpLexer for how this is done
+#:
+#: See :py:class:`cpip.core.PpLexer.PpLexer` for how this is done
 LEX_PPTOKEN_TYPES = [
     'header-name',
     'identifier',
@@ -94,17 +96,20 @@ LEX_PPTOKEN_TYPES = [
     'concat',
 ]
 
-#: Map of {PREPROCESS_TOKEN_TYPE : integer, ...}
-#: So this can be used thus:
-#: self._cppTokType = NAME_ENUM['header-name']
+#: Map of ``{PREPROCESS_TOKEN_TYPE : integer, ...}``
+#: So this can be used thus::
+#:
+#:     self._cppTokType = NAME_ENUM['header-name']
 NAME_ENUM = {}
-#: Map of {integer : PREPROCESS_TOKEN_TYPE, ...}
-#: So this can be used thus:
-#: if ENUM_NAME[token_type] == 'header-name':
+
+#: Map of ``{integer : PREPROCESS_TOKEN_TYPE, ...}``
+#: So this can be used thus::
+#:
+#:     if ENUM_NAME[token_type] == 'header-name':
 ENUM_NAME = {}
 #: Range of allowable enum values
 LEX_PPTOKEN_TYPE_ENUM_RANGE = range(len(LEX_PPTOKEN_TYPES))
-# Initialise maps without poluting the global namespace
+# Initialise maps without polluting the global namespace
 # with variables.
 def __initPptokenMaps():
     """Initialise the reverse map on module load."""
@@ -122,7 +127,7 @@ __initPptokenMaps()
 def tokensStr(theTokens, shortForm=True):
     """Given a list of tokens this returns them as a string.
     If shortForm is True then the lexical string is returned.
-    If False then the PpToken representations separated by ' | ' is returned.
+    If False then the :py:class:`PpToken` representations separated by ' | ' is returned.
     e.g. ``PpToken(t="f", tt=identifier, line=True, prev=False, ?=False) | ...``
     """
     assert(theTokens is not None)
@@ -155,7 +160,7 @@ class PpToken(object):
         # Python 3 support where '/' can result in a float
         '/'     : '//',
     }
-    def __init__(self, t, tt, lineNum=0, colNum=0):
+    def __init__(self, t, tt, lineNum=0, colNum=0, isReplacement=False):
         """T is the token (a string) and tt is either an enumerated integer or
         a string. Internally tt is stored as an enumerated integer.
         If the token is an identifier then it is eligible for replacement
@@ -181,6 +186,18 @@ class PpToken(object):
         # that was conditionally compiled. This is False on construction and
         # can only be set True.
         self._isCond = False
+        # Flag that indicates that this token is the result of macro expansion.
+        # This is so the lexer can spot this situation:
+        # #define PLUS +
+        # +PLUS+
+        # And insert whitespace to make this, correctly:
+        # + + +
+        # Also used for this situation:
+        # #define EMPTY
+        # EMPTY # include <file.h>
+        # In the latter case the #include is not recognised even though it is
+        # preceeded with whitespace
+        self._isReplacement = isReplacement
         
     def copy(self):
         """Returns a shallow copy of self. This is useful where the same token is
@@ -245,9 +262,10 @@ class PpToken(object):
     def replaceNewLine(self):
         """Replace any newline with a single whitespace character in-place.
         
-        See: C ISO/IEC 9899:1999(E) 6.10-3 and C++ ISO/IEC 14882:1998(E) 16.3-9
+        See:
+        :title-reference:`ISO/IEC 9899:1999(E) 6.10-3 and C++ ISO/IEC 14882:1998(E) 16.3-9`
         
-        This will raise a ExceptionCpipTokenIllegalOperation if I am not
+        This will raise a :py:class:`ExceptionCpipTokenIllegalOperation` if I am not
         a whitespace token."""
         if self.isWs():
             self._t = self._t.replace('\n', self.SINGLE_SPACE)
@@ -259,7 +277,7 @@ class PpToken(object):
     def shrinkWs(self):
         """Replace all whitespace with a single ' '
         
-        This will raise a ExceptionCpipTokenIllegalOperation if I am not
+        This will raise a :py:class:`ExceptionCpipTokenIllegalOperation` if I am not
         a whitespace token."""
         if self.isWs():
             self._t = self.SINGLE_SPACE
@@ -271,9 +289,14 @@ class PpToken(object):
         For numbers this removes such tiresome trivia as 'u', 'L' etc. For others
         it replaces '&&' with 'and' and so on.
         
-        See ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4
-        i.e. section 16.1-4 and: ISO/IEC 9899:1999 (E) 6.10.1 Conditional
-        inclusion sub-section 3 i.e. section 6.10.1-3"""
+        See
+        :title-reference:`ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4`
+        i.e. section 16.1-4
+        
+        and:
+        :title-reference:`ISO/IEC 9899:1999 (E) 6.10.1 Conditional
+        inclusion sub-section 3`
+        i.e. section 6.10.1-3"""
         # TODO: This test of 'concat' is a flakey and to get round a Linux problem
         # Need to review the whole 'concat' thing. Probably re-classify it.
         if self._tt == NAME_ENUM['pp-number'] or self._tt == NAME_ENUM['concat']:
@@ -370,6 +393,10 @@ class PpToken(object):
         """Returns the column number of the start of the token as an integer."""
         return self._colNum
 
+    def getReplace(self):
+        """Gets the flag that controls whether this can be replaced."""
+        return self._canReplace
+
     # Read/write methods
     def setReplace(self, val):
         """Setter, will raise if I am not an identifier or val is True and
@@ -386,10 +413,6 @@ class PpToken(object):
         #print ''.join(traceback.format_stack(limit=2))
         self._canReplace = val
 
-    def getReplace(self):
-        """Gets the flag that controls whether this can be replaced."""
-        return self._canReplace
-
     canReplace = property(
         getReplace,
         setReplace,
@@ -397,19 +420,34 @@ class PpToken(object):
         'Flag to control whether this token is eligible for replacement'
         )
 
-    def setPrevWs(self, val):
-        """Sets the flag that records prior whitespace."""
-        self._prevWs = val
-
     def getPrevWs(self):
         """Gets the flag that records prior whitespace."""
         return self._prevWs
+
+    def setPrevWs(self, val):
+        """Sets the flag that records prior whitespace."""
+        self._prevWs = val
 
     prevWs = property(
         getPrevWs,
         setPrevWs,
         None,
         'Flag to indicate whether this token is preceded by whitespace'
+        )
+
+    def getIsReplacement(self):
+        """Gets the flag that records that this token is the result of macro replacement"""
+        return self._isReplacement
+
+    def setIsReplacement(self, val):
+        """Sets the flag that records that this token is the result of macro replacement."""
+        self._isReplacement = val
+
+    isReplacement = property(
+        getIsReplacement,
+        setIsReplacement,
+        None,
+        'Flag that records that this token is the result of macro replacement'
         )
 
     @property

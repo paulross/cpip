@@ -18,8 +18,8 @@
 # 
 # Paul Ross: cpipdev@googlemail.com
 
-"""Handles the Python interpretation of a constant-expression.
-See ISO/IEC 14882:1998(E)
+"""Handles the Python interpretation of a constant-expression. See
+:title-reference:`ISO/IEC 14882:1998(E)`
 """
 
 __author__  = 'Paul Ross'
@@ -50,8 +50,8 @@ class ExceptionEvaluateExpression(ExceptionConstantExpression):
     pass
 
 class ConstantExpression(object):
-    """Class that interpret a stream of preprocessing tokens (class PpToken)
-    and evaluate it as a constant expression.
+    """Class that interpret a stream of pre-processing tokens
+    (:py:class:`cpip.core.PpToken.PpToken` objects) and evaluate it as a constant expression.
     """
     # Regex for conditional-expression
     # For example: '(a) > (b) ? (a) : (b)'
@@ -67,8 +67,10 @@ class ConstantExpression(object):
 
     def translateTokensToString(self):
         """Returns a string to be evaluated as a constant-expression.
-        ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4
+        
+        :title-reference:`ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4`
         i.e. 16.1-4
+        
         All remaining identifiers and keywords 137) , except for true and
         false, are replaced with the pp-number 0"""
         return ''.join([aTok.evalConstExpr() for aTok in self._tokTypeS])

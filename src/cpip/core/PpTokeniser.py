@@ -20,7 +20,7 @@
 
 """Performs translation phases 0, 1, 2, 3 on C/C++ source code.
 
-Translation phases from ISO/IEC 9899:1999 (E):
+Translation phases from :title-reference:`ISO/IEC 9899:1999 (E)`:
 
 5.1.1.2 Translation phases
 5.1.1.2-1 The precedence among the syntax rules of translation is specified by
@@ -69,8 +69,8 @@ __date__    = '2011-07-10'
 __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
-# TODO: 'C' keywords
-#: ISO/IEC 9899:1999 (E) 6.4.1 Keywords
+# 'C' keywords
+#: :title-reference:`ISO/IEC 9899:1999 (E) 6.4.1 Keywords`
 C_KEYWORDS = tuple("""auto
 break
 case
@@ -375,7 +375,7 @@ COMMENT_TYPES = (COMMENT_TYPE_C, COMMENT_TYPE_CXX)
 # Section: Tokeniser
 ####################
 class PpTokeniser(object):
-    """Imitates a Preprocessor that conforms to ISO/IEC 14882:1998(E).
+    """Imitates a Preprocessor that conforms to :title-reference:`ISO/IEC 14882:1998(E).`
     
     Takes an optional file like object.
     If theFileObj has a 'name' attribute then that will be use as the name
@@ -425,7 +425,7 @@ class PpTokeniser(object):
     NOTE: Functions starting with ``__slice...`` do not trap the IndexError, the
     caller must do that.
     
-    TODO: ISO/IEC 14882:1998(E) Escape sequences Table 5?
+    TODO: :title-reference:`ISO/IEC 14882:1998(E) Escape sequences` Table 5?
     """
     # We support translation phases (0), 1, 2, 3
     PHASES_SUPPORTED = range(0, 4)
@@ -514,11 +514,14 @@ class PpTokeniser(object):
     def _convertToLexCharset(self, theLineS):
         """Converts a list of lines expanding non-lex.charset characters to
         universal-character-name and returns a set of lines so encoded.
-        ISO/IEC 9899:1999 (E) 6.4.3
-        NOTE: ISO/IEC 9899:1999 (E) 6.4.3-2 "A universal character name shall
-        not specify a character whose short identifier is less than 00A0 other
-        than 0024 ($), 0040 (@), or 0060 (back tick), nor one in the range D800 through
-        DFFF inclusive.61).
+        :title-reference:`ISO/IEC 9899:1999 (E) 6.4.3`
+        
+        .. note::
+        
+            :title-reference:`ISO/IEC 9899:1999 (E) 6.4.3-2 "A universal character name` shall
+            not specify a character whose short identifier is less than 00A0 other
+            than 0024 ($), 0040 (@), or 0060 (back tick), nor one in the range D800 through
+            DFFF inclusive.61).
         """
         myCharSet = CHAR_SET_MAP['lex.charset']['source character set']
         # myUcnOrdinals is not 0024 ($), 0040 (@), or 0060 (back tick)
@@ -556,7 +559,7 @@ class PpTokeniser(object):
         #print 'TRACE: theLineS', theLineS
 
     def lexPhases_1(self, theLineS):
-        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase one
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase one`
         Takes a list of lines (including EOL characters), replaces trigraphs
         and returns the new list of lines."""
         self._convertToLexCharset(theLineS)
@@ -598,7 +601,7 @@ class PpTokeniser(object):
         return i
 
     def lexPhases_2(self, theLineS):
-        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase two
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase two`
         This joins physical to logical lines. NOTE: This side-effects the
         supplied lines and returns None."""        
         #print '\nlexPhases_2() was [%d]:' % len(theLineS), theLineS
@@ -646,7 +649,7 @@ class PpTokeniser(object):
     # Section: Trigraphs and Digraphs
     ##################################
     def _translateTrigraphs(self, theLineS):
-        """ISO/IEC 14882:1998(E) 2.3 Trigraph sequences [lex.trigraphs]
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.3 Trigraph sequences [lex.trigraphs]`
         This returns a new set of lines with the trigraphs replaced and
         updates the FileLocator so that the physical lines and columns
         can be recovered."""
@@ -767,7 +770,9 @@ class PpTokeniser(object):
         
         NOTE: This does not generate 'header-name' tokens as these are context
         dependent i.e. they are only valid in the context of a ``#include``
-        directive. ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 says that:
+        directive.
+        
+        :title-reference:`ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3` says that:
         *"A header name preprocessing token is recognised only within a #include
         preprocessing directive."*.
         """
@@ -942,8 +947,8 @@ class PpTokeniser(object):
     """
     
     def _sliceLexPptoken(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken].
-        ISO/IEC 9899:1999 (E) 6.4 Lexical elements
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken].`
+        :title-reference:`ISO/IEC 9899:1999 (E) 6.4 Lexical elements`
         NOTE: Does not identify header-name tokens. See NOTE on
         genLexPptokenAndSeqWs()
         Note: _sliceLexPptokenGeneral is an exclusive search as 'bitand' can
@@ -988,8 +993,11 @@ class PpTokeniser(object):
         return retVal
 
     def _sliceLexPptokenWithHeaderName(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken].
-        NOTE: This does identify header-name tokens where possible."""
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken].`
+        
+        .. note::
+        
+            This does identify header-name tokens where possible."""
         retVal = self._sliceLexPptokenGeneral(
                                 theBuf,
                                 theOfs,
@@ -1032,8 +1040,8 @@ class PpTokeniser(object):
     
     def _sliceNonWhitespaceSingleChar(self, theBuf, theOfs=0):
         """Returns 1 if the first character is non-whitespace, 0 otherwise.
-        TODO: ISO/IEC 9899:1999 (E) 6.4-3 and ISO/IEC 14882:1998(E) 2.4.2 States that
-        if the character is ' or " the behaviour is undefined."""
+        :title-reference:`ISO/IEC 9899:1999 (E) 6.4-3 and ISO/IEC 14882:1998(E) 2.4.2`
+         States that if the character is ' or " the behaviour is undefined."""
         i = theOfs
         try:
             # Only access theBuf with [i] so that __getitem__() is called
@@ -1053,7 +1061,7 @@ class PpTokeniser(object):
     # Section: lex.charset
     #=========================
     def _sliceHexQuad(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - hex-quad."""
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - hex-quad.`"""
         retLen = 4
         try:
             for i in range(retLen):
@@ -1065,7 +1073,7 @@ class PpTokeniser(object):
         return 0
     
     def __sliceUniversalCharacterName(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - universal-character-name."""
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - universal-character-name.`"""
         # \u hex-quad
         # \U hex-quad hex-quad
         if theBuf[theOfs] == '\\':
