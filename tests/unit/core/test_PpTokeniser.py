@@ -3317,14 +3317,15 @@ A function definition
 
     def test_20(self):
         """TestMisc.test_20(): weirdly '1PLUS2' is a pp-number see:
-        ISO/IEC 9899:1999 (E)  6.4.8 Preprocessing numbers."""
+        ISO/IEC 9899:1999 (E)  6.4.8 Preprocessing numbers.
+        Where: pp-number identifier-nondigit"""
         myObj = PpTokeniser.PpTokeniser()
         # q-char sequences
         myGen = myObj.genLexPptokenAndSeqWs('1PLUS2\n')
         myToks = [t for t in myGen]
         eToks = [
-            PpToken.PpToken('\n', 'whitespace'),
             PpToken.PpToken('1PLUS2', 'pp-number'),
+            PpToken.PpToken('\n', 'whitespace'),
         ]
         self._printDiff(myToks, eToks)
         self.assertEqual(myToks, eToks)
