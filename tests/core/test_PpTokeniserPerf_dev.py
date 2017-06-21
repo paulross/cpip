@@ -28,10 +28,11 @@ import logging
 import sys
 import os
 import unittest
-try:
-    import io as StringIO
-except ImportError:
-    import io
+# try:
+#     import io as StringIO
+# except ImportError:
+#     import io
+import io
 import subprocess
 
 from cpip.core import PpTokeniser
