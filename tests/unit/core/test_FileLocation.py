@@ -28,6 +28,7 @@ __version__ = '0.9.1'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import logging
+import pprint
 import sys
 import time
 import unittest
@@ -1043,7 +1044,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
                           FileLocation.START_COLUMN,
                           len('d'),
                           len('dddd'))
-        #pprint.pprint(myObj._ir)
+        pprint.pprint(myObj._ir)
         print('\nTRACE: testSingleExpandingSubst()')
         print(myObj)
         # Test the first line, pLine, pCol should equal lLine, lCol

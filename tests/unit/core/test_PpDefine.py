@@ -37,7 +37,8 @@ from cpip.core import PpTokeniser
 from cpip.core import PpDefine
 from cpip.core import FileLocation
 
-from . import TestBase
+from tests.unit.core import TestBase
+# from . import TestBase
 ######################
 # Section: Unit tests.
 ######################
@@ -3605,7 +3606,12 @@ class TestPpDefineReplaceFunctionStyle(TestPpDefine):
         self.assertTrue(all([t.isReplacement for t in myReplaceToks]))
 
     def testReplaceFunction_05(self):
-        """PpDefine: Replacement OK from function type macro: <#define> 'FOO(a,b,c) a++b++c\\n' called with FOO(+,+,+)."""
+        """PpDefine: Replacement OK from function type macro::
+        
+            #define FOO(a,b,c) a++b++c
+            
+        called with FOO(+,+,+) gives + +++ +++
+        """
         # cpp.exe behaviour:
         # #define FOO(a,b,c) a++b++c
         # FOO(+,+,+)
@@ -5006,9 +5012,9 @@ F0(,,,)         // |-| ,,, EOL
                             ['...',],
                             ['|', '-', '|', ' ', '__VA_ARGS__', ' ', 'EOL',],
                         )
-        myExpArgTokens = [
-            myCppDef.PLACEMARKER,
-            ]
+#         myExpArgTokens = [
+#             myCppDef.PLACEMARKER,
+#             ]
         myArgsExpToksAndReplMap = (
             # F0()
             (
@@ -6093,7 +6099,7 @@ al, aq
 
 class TestFromCppInternalsTokenspacing(TestPpDefine):
     """Misc. tests on token spacing from CPP internals documentation."""
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+#     @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
     def test_09(self):
         """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define f(x) =x="""
         ##define f(x) =x=
@@ -6128,7 +6134,7 @@ class TestFromCppInternalsTokenspacing(TestPpDefine):
             PpToken.PpToken(' ', 'whitespace'),
             PpToken.PpToken('=', 'preprocessing-op-or-punc'),
             PpToken.PpToken(' ', 'whitespace'),
-            PpToken.PpToken('=', 'identifier'),
+            PpToken.PpToken('=', 'preprocessing-op-or-punc'),
         ]
         self._printDiff(myReplaceToks, expTokS)
         self.assertEqual(myReplaceToks, expTokS)

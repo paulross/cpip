@@ -1121,11 +1121,12 @@ class PpDefine(object):
             '_functionLikeReplacement() called on undefined macro'
         assert(not self.isObjectTypeMacro), \
             '_functionLikeReplacement() called on object like macro'
-        def _avoidTokenPasting(t):
-            return
+        def _avoidTokenPasting(retReplList, t):
+#             return
             if len(retReplList) \
             and t.tt ==  'preprocessing-op-or-punc' \
-            and retReplList[-1].tt == 'preprocessing-op-or-punc':
+            and retReplList[-1].tt == 'preprocessing-op-or-punc' \
+            and retReplList[-1].t == t.t:
                 retReplList.append(PpToken.PpToken(' ', 'whitespace')) 
         retReplList = []
         flagStringize = False
@@ -1175,7 +1176,10 @@ class PpDefine(object):
                                 retReplList += theArgMap[myTtt.t]
                             flagConcatSeen = False
                         else:
-                            retReplList += copy.deepcopy(theArgMap[myTtt.t])
+                            replaceTokens = copy.deepcopy(theArgMap[myTtt.t])
+                            if len(replaceTokens):
+                                _avoidTokenPasting(retReplList, replaceTokens[0])
+                            retReplList += replaceTokens
             elif myTtt.t == self.CPP_STRINGIZE_OP:
                 flagStringize = True
                 if flagConcatSeen:
@@ -1218,7 +1222,7 @@ class PpDefine(object):
                     # Otherwise ignore whitespace after '##'
                 else:
                     # Normal, no '#' or '##' involved
-                    _avoidTokenPasting(myTtt)
+#                     _avoidTokenPasting(retReplList, myTtt)
                     retReplList.append(myTtt)
         #assert(not flagStringize), 'Trailing # has crept through the constructor'
         #assert(not flagConcatSeen), 'Trailing ## has crept through the constructor'
