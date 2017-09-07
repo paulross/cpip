@@ -21,6 +21,7 @@
 """Represents a preprocessing Token in C/C++ source code.
 """
 import copy
+import sys
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
@@ -284,6 +285,34 @@ class PpToken(object):
         else:
             raise ExceptionCpipTokenIllegalOperation('replaceNewLine() on non-whitespace token.')
     
+    def _isOctalInteger(self, value):
+        """Returns True is value is an octal digit according to:
+        ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - octal-literal.
+        Value must have been shorn of integer-suffix
+        """ 
+        if len(value) < 2:
+            return False
+        if value[0] != '0':
+            return False
+        i = 1
+        chars = set('01234567')
+        while i < len(value):
+            if value[i] not in chars:
+                return False
+            i += 1
+        return True            
+    
+    def _convertOctalInteger(self, value):
+        """If value is an octal integer then this converts it to a string
+        suitable for eval().
+        If not the value is returned unchanged.""" 
+        assert self._tt == NAME_ENUM['pp-number'] or self._tt == NAME_ENUM['concat']
+        assert '.' not in self._t, 'Floating point can not be octal.'
+        # Handle octal with Python 3
+        if sys.version_info.major == 3 and self._isOctalInteger(value):
+            value = '0o' + value[1:]
+        return value        
+    
     def evalConstExpr(self):
         """Returns an string value suitable for eval'ing in a constant expression.
         For numbers this removes such tiresome trivia as 'u', 'L' etc. For others
@@ -316,14 +345,20 @@ class PpToken(object):
                     if s.endswith(fSuffix):
                         endI = -len(fSuffix)
                         break
+                if endI != 0:
+                    return self._t[:endI]
             else:
                 # Integer
+                # TODO: ll and LL suffix
                 for iSuffix in ('ul', 'lu', 'u', 'l'):
                     if s.endswith(iSuffix):
                         endI = -len(iSuffix)
                         break
-            if endI != 0:
-                return self._t[:endI]
+                if endI != 0:
+                    ret_val = self._t[:endI]
+                else:
+                    ret_val = self._t[:]
+                return self._convertOctalInteger(ret_val)
             return self._t
         if self.isWs():
             # Remove newlines, make whitespace runs a single space

@@ -65,3 +65,7 @@ target/
 
 # Eclipse
 .settings
+
+# Temporary area
+tmp/
+

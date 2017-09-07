@@ -6,17 +6,17 @@
     <title>CPIP Processing</title>
   </head>
   <body>
-    <h1>CPIP Processing in output location: ../demo/output</h1>
+    <h1>CPIP Processing in output location: ../../demo/output</h1>
     <h2>Files Processed as Translation Units:</h2>
     <ul>
       <li>
         <tt>
-          <a href="index_main.cpp_be98ae4cf5180b770920cbdf9e5f8087.html">../demo/src/main.cpp</a>
+          <a href="index_main.cpp_d1a72b07dd5fc43d17f6c1e50fabed76.html">../../demo/src/main.cpp</a>
         </tt>
       </li>
     </ul>
     <h2>CPIP Command line:</h2>
-    <pre>CPIPMain.py -l20 -o ../demo/output -J ../demo/sys/ -I ../demo/usr/ ../demo/src/main.cpp</pre>
+    <pre>CPIPMain.py -l20 -o ../../demo/output -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp</pre>
     <table border="1">
       <tr>
         <th style="padding: 2px 6px 2px 6px">Option</th>
@@ -34,12 +34,12 @@
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>--version</tt>
+          <tt>-C/--CPP</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>None</tt>
+          <tt>False</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">show program&apos;s version number and exit</td>
+        <td style="padding: 2px 6px 2px 6px">Sys call &apos;cpp -dM&apos; to extract and use platform<br />specific macros. These are inserted after -S option and<br />before the -D option.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -48,14 +48,23 @@
         <td style="padding: 2px 6px 2px 6px">
           <tt>&nbsp;</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Add macro defintions of the form name&lt;=defintion&gt;.<br />                      These are introduced into the environment before<br />                      any pre-include.</td>
+        <td style="padding: 2px 6px 2px 6px">Add macro definitions of the form name&lt;=definition&gt;.<br />These are introduced into the environment before<br />any pre-include.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-G</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>False</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Support GCC extensions. Currently only #include_next.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
           <tt>-I/--usr</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>../demo/usr/</tt>
+          <tt>../../demo/usr/</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Add user include search path.</td>
       </tr>
@@ -64,7 +73,7 @@
           <tt>-J/--sys</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>../demo/sys/</tt>
+          <tt>../../demo/sys/</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Add system include search path.</td>
       </tr>
@@ -75,7 +84,7 @@
         <td style="padding: 2px 6px 2px 6px">
           <tt>&nbsp;</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Add pre-include file path.</td>
+        <td style="padding: 2px 6px 2px 6px">Add pre-include file path, this file precedes the<br />initial translation unit.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -84,7 +93,7 @@
         <td style="padding: 2px 6px 2px 6px">
           <tt>&nbsp;</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Add standard predefined macro defintions of the<br />form name&lt;=defintion&gt;. These are introduced into the<br />environment before anything else. These macros can not be<br />redefined. __DATE__ and __TIME__ will be automatically<br />allocated in here.</td>
+        <td style="padding: 2px 6px 2px 6px">Add standard predefined macro definitions of the<br />form name&lt;=definition&gt;. They are introduced into the<br />environment before anything else. They can not be<br />redefined. __DATE__ and __TIME__ will be automatically<br />allocated in here. __FILE__ and __LINE__ are defined dynamically.<br />See ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -112,15 +121,6 @@
           <tt>*.*</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Pattern match to use when processing directories.</td>
-      </tr>
-      <tr>
-        <td style="padding: 2px 6px 2px 6px">
-          <tt>-h/--help</tt>
-        </td>
-        <td style="padding: 2px 6px 2px 6px">
-          <tt>None</tt>
-        </td>
-        <td style="padding: 2px 6px 2px 6px">show this help message and exit</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -154,7 +154,7 @@
           <tt>-o/--output</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>../demo/output</tt>
+          <tt>../../demo/output</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Output directory.</td>
       </tr>

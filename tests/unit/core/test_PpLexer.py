@@ -5867,6 +5867,41 @@ f(EQ)
         self.assertEqual(self.stringToTokens(result), expTokS)
 
 
+class TestPythonCodeProblems(TestPpLexer):
+    """Problems found with preprocessing Python code:
+    cpip.core.CppDiagnostic.ExceptionCppDiagnosticUndefined: Can not evaluate constant expression "__DARWIN_C_LEVEL > __DARWIN_C_ANSI", error: Evaluation of " 900000 > 010000 " gives error: invalid token (<string>, line 1) at line=68, col=1 of file "/usr/include/limits.h"
+    """
+    def test_00(self):
+        """Tests:
+        cpip.core.CppDiagnostic.ExceptionCppDiagnosticUndefined: Can not evaluate constant expression "__DARWIN_C_LEVEL > __DARWIN_C_ANSI", error: Evaluation of " 900000 > 010000 " gives error: invalid token (<string>, line 1) at line=68, col=1 of file "/usr/include/limits.h"
+        """
+        content = u"""#define __DARWIN_C_LEVEL 900000
+#define __DARWIN_C_ANSI 010000
+#if __DARWIN_C_LEVEL > __DARWIN_C_ANSI
+#endif
+"""
+        myLexer = PpLexer.PpLexer(
+                 '',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    content,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        result = u''.join([t.t for t in tokS])
+#         self.pprintTokensAsCtors(tokS)
+#         print('WTF')
+#         print(result)
+#         print('WTF')
+        expectedResult = u'\n\n\n\n'
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+
 class TestVariousOddProblems(TestPpLexer):
     """Misc problems found."""
     def test_01(self):
@@ -5983,6 +6018,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinuxEvalProblem))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLibCelloProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromCppInternalsTokenspacing))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPythonCodeProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestVariousOddProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)

@@ -529,14 +529,26 @@ class TestPpTokenEvalConstExpr(unittest.TestCase):
 
     def test_07(self):
         """TestPpTokenEvalConstExpr.test_07(): Integer literals, Octal and unsigned/long."""
-        myTok = PpToken.PpToken('012', 'pp-number')
-        self.assertEqual('012', myTok.evalConstExpr())
-        myTok = PpToken.PpToken('017', 'pp-number')
-        self.assertEqual('017', myTok.evalConstExpr())
-        myTok = PpToken.PpToken('017uL', 'pp-number')
-        self.assertEqual('017', myTok.evalConstExpr())
-        myTok = PpToken.PpToken('017l', 'pp-number')
-        self.assertEqual('017', myTok.evalConstExpr())
+        if sys.version_info.major == 2:
+            myTok = PpToken.PpToken('012', 'pp-number')
+            self.assertEqual('012', myTok.evalConstExpr())
+            myTok = PpToken.PpToken('017', 'pp-number')
+            self.assertEqual('017', myTok.evalConstExpr())
+            myTok = PpToken.PpToken('017uL', 'pp-number')
+            self.assertEqual('017', myTok.evalConstExpr())
+            myTok = PpToken.PpToken('017l', 'pp-number')
+            self.assertEqual('017', myTok.evalConstExpr())
+        elif sys.version_info.major == 3:
+            myTok = PpToken.PpToken('012', 'pp-number')
+            self.assertEqual('0o12', myTok.evalConstExpr())
+            myTok = PpToken.PpToken('017', 'pp-number')
+            self.assertEqual('0o17', myTok.evalConstExpr())
+            myTok = PpToken.PpToken('017uL', 'pp-number')
+            self.assertEqual('0o17', myTok.evalConstExpr())
+            myTok = PpToken.PpToken('017l', 'pp-number')
+            self.assertEqual('0o17', myTok.evalConstExpr())
+        else:
+            self.fail('Unsupported Python version: %s' % str(sys.version_info))
 
     def test_10(self):
         """TestPpTokenEvalConstExpr.test_10(): Identifiers."""
