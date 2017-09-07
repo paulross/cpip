@@ -9,14 +9,8 @@ Welcome to CPIP’s documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-    # TODO: Organise this.
-    
-    # From cookiecutter index.rst
-    readme
-    
-    # From original index.rst
     intro
     down_install
     examples/examples
@@ -24,10 +18,8 @@ Contents:
     tutorial/index
     ref/index
 
-    # From cookiecutter index.rst
     installation
     usage
-    modules
     contributing
     authors
     history

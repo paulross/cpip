@@ -234,7 +234,7 @@ CPIPMain is a command line tool that you can invoke very much like your favorite
 The Linux Kernel
 =======================================
 
-Here is :file:`CPIPMain.py` pre-processing the `cpu.c <../copy_to_html/cpu/index.html>`_ file from the Linux Kernel.
+Here is :file:`CPIPMain.py` pre-processing the `cpu.c <../_static/index.html>`_ file from the Linux Kernel.
 
 
 .. rubric:: Footnotes
