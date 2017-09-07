@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # 
-# Paul Ross: cpipdev@googlemail.com
+# Paul Ross: apaulross@gmail.com
 
 __author__  = 'Paul Ross'
 __date__    = '2012-03-26'
@@ -30,7 +30,7 @@ setup(
     version='0.9.1',
     description='A C Preprocessor implemented in Python.',
     author='Paul Ross',
-    author_email='cpipdev@googlemail.com',
+    author_email='apaulross@gmail.com',
     url='http://cpip.sourceforge.net/',
     packages=[
         'core',

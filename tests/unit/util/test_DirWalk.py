@@ -16,7 +16,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # 
-# Paul Ross: cpipdev@googlemail.com
+# Paul Ross: apaulross@gmail.com
 """Unit tests for DirWalk.py. Actually this does not 'test' anything as it
 just prints out various things about the file system for human interpration.
 

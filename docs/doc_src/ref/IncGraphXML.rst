@@ -1,5 +1,5 @@
-.. moduleauthor:: Paul Ross <cpipdev@googlemail.com>
-.. sectionauthor:: Paul Ross <cpipdev@googlemail.com>
+.. moduleauthor:: Paul Ross <apaulross@gmail.com>
+.. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
 .. _cpip.ref.IncGraphXML:
 
