@@ -349,8 +349,7 @@ class PpToken(object):
                     return self._t[:endI]
             else:
                 # Integer
-                # TODO: ll and LL suffix
-                for iSuffix in ('ul', 'lu', 'u', 'l'):
+                for iSuffix in ('llu', 'ull', 'll', 'ul', 'lu', 'u', 'l'):
                     if s.endswith(iSuffix):
                         endI = -len(iSuffix)
                         break

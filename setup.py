@@ -33,7 +33,7 @@ setup(
     author="Paul Ross",
     author_email='apaulross@gmail.com',
     url='https://github.com/paulross/cpip',
-    packages=find_packages('src', include=['cpip']),
+    packages=find_packages('src'),#, include=['cpip']),
     package_dir={'':'src'},
     entry_points={
         'console_scripts': [
