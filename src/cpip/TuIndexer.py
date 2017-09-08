@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2014 Paul Ross
+# Copyright (C) 2008-2017 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
 __version__ = '0.9.5'
-__rights__  = 'Copyright (c) 2008-2014 Paul Ross'
+__rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
 from cpip import ExceptionCpip
 from cpip.util import OaS

@@ -1,5 +1,5 @@
 CPIP is a C/C++ Preprocessor implemented in Python.
-Copyright (C) 2008-2012 Paul Ross
+Copyright (C) 2008-2017 Paul Ross
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

@@ -288,7 +288,7 @@ texinfo_documents = [
 epub_title = u'CPIP'
 epub_author = u'Paul Ross'
 epub_publisher = u'Paul Ross'
-epub_copyright = u'2011-2014, Paul Ross'
+epub_copyright = u'2011-2017, Paul Ross'
 
 # The language of the text. It defaults to the language option
 # or en if the language is not set.
