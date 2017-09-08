@@ -20,7 +20,7 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2014-03-03'
-__version__ = '0.9.1'
+__version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 __all__ = ['core', 'util', 'plot']
@@ -33,6 +33,8 @@ CPIP_VERSION = (0, 9, 1)
 RELEASE_NOTES = [
     """Release Notes (latest at top).
 ==============================
+2017-09-08: Version 0.9.5, migrate to GitHub. Tested on Python 2.7 and 3.6.
+
 2014-09-03: Version 0.9.1, various minor fixes. Tested on Python 2.7 and 3.3.
 
 2014-01-11: Revisited SVG and HTML code to make it faster and cross browser.

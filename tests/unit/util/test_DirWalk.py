@@ -27,7 +27,7 @@ Created on Jun 10, 2011
 
 __author__  = 'Paul Ross'
 __date__    = 'Jun 10, 2011'
-__version__ = '0.9.1'
+__version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2011 paulross.'
 
 #import pprint

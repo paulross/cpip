@@ -131,7 +131,7 @@ CP_land and CP_stop are determined by the parent.
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.9.1'
+__version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 from . import Coord

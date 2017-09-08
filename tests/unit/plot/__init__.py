@@ -20,5 +20,5 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2012-03-26'
-__version__ = '0.9.1'
+__version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2012 Paul Ross'

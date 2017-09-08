@@ -116,7 +116,7 @@ In all the examples above f = 2
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.9.1'
+__version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2014 Paul Ross'
 
 import collections
