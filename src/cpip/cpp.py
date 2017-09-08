@@ -1,15 +1,12 @@
 #!/usr/local/bin/python2.7
 # encoding: utf-8
 """
-cpip.cpp -- Pretends to be like cpp, Will take options and a file (or stdin) and process it.
-
-cpip.cpp is a description
-
-It defines classes_and_methods
+cpip.cpp -- Pretends to be like cpp, Will take options and a file (or stdin)
+and process it.
 
 @author:     Paul Ross
 
-@copyright:  2015 organization_name. All rights reserved.
+@copyright:  2015 Paul Ross. All rights reserved.
 
 @license:    license
 
@@ -29,7 +26,12 @@ __version__ = 0.1
 __date__ = '2015-01-16'
 __updated__ = '2015-01-16'
 
-def _processFile(ituName, incHandler, stdPredefMacros, preIncFiles, showTokens, dOptions):
+def _processFile(ituName,
+                 incHandler,
+                 stdPredefMacros,
+                 preIncFiles,
+                 showTokens,
+                 dOptions):
     myLexer = PpLexer.PpLexer(
                               ituName,
                               incHandler,
@@ -65,7 +67,8 @@ def main(argv=None):
     program_name = os.path.basename(sys.argv[0])
     program_version = "v%s" % __version__
     program_build_date = str(__updated__)
-    program_version_message = '%%(prog)s %s (%s)' % (program_version, program_build_date)
+    program_version_message = '%%(prog)s %s (%s)' \
+        % (program_version, program_build_date)
     program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
     program_license = """%s
 
@@ -79,7 +82,7 @@ USAGE
 
     # Setup argument parser
     parser = argparse.ArgumentParser(description=program_license,
-                            formatter_class=argparse.RawDescriptionHelpFormatter)
+                        formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-v", "--verbose", dest="verbose",
                         action="count", default=0,
                         help="set verbosity level [default: %(default)s]")
@@ -88,7 +91,8 @@ USAGE
     parser.add_argument('-V', '--version', action='version',
                         version=program_version_message)
     parser.add_argument(dest="path", metavar="path", nargs='?',
-                        help="Paths to source file. If absent then stdin is processed."
+                        help="Paths to source file. "
+                        "If absent then stdin is processed."
                         " [default: %(default)s]")
     
     # cpp like options

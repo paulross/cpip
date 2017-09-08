@@ -18,12 +18,12 @@
 #
 # Paul Ross: apaulross@gmail.com
 """
-cpip.cpp -- Preprocess the file or the files in the directory.
+CPIPMain.py -- Preprocess the file or the files in a directory.
 """
 __author__ = 'Paul Ross'
 __date__ = '2011-07-10'
 __version__ = '0.9.1'
-__rights__ = 'Copyright (c) 2008-2014 Paul Ross'
+__rights__ = 'Copyright (c) 2008-2017 Paul Ross'
 
 import argparse
 import collections
@@ -913,10 +913,10 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
 def main():
     """Processes command line to preprocess a file or a directory."""
     program_version = "v%s" % __version__
-    program_shortdesc = __import__('__main__').__doc__.split("\n")[1]
+    program_shortdesc = 'CPIPMain.py - Preprocess the file or the files in a directory.'
     program_license = """%s
   Created by Paul Ross on %s.
-  Copyright 2008-2015. All rights reserved.
+  Copyright 2008-2017. All rights reserved.
   Licensed under GPL 2.0
 USAGE
 """ % (program_shortdesc, str(__date__))

@@ -33,19 +33,20 @@ setup(
     author="Paul Ross",
     author_email='apaulross@gmail.com',
     url='https://github.com/paulross/cpip',
-    packages=find_packages(include=['cpip']),
+    packages=find_packages('src', include=['cpip']),
+    package_dir={'':'src'},
     entry_points={
         'console_scripts': [
-            'cpip=cpip.cli:main'
+            'cpipmain=cpip.CPIPMain:main'
         ]
     },
     include_package_data=True,
     install_requires=requirements,
-    license="GNU General Public License v3",
+    license="GNU General Public License v2",
     zip_safe=False,
     keywords='cpip',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: GNU General Public License v2 (GPL2)',
         'Natural Language :: English',
