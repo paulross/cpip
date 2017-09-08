@@ -9,7 +9,9 @@
 Command Line Tools
 ###################################
 
-CPIP has a number of tools run from the command line that can analyse source code. The main one is :file:`CPIPMain.py`
+CPIP has a number of tools run from the command line that can analyse source code.
+The main one is :file:`CPIPMain.py`.
+On installation the command line tool ``cpipmain`` is created which just calls ``main()`` in  :file:`CPIPMain.py`.
 
 ***********************************
 CPIPMain
@@ -28,14 +30,14 @@ Usage
                        [-J INCSYS]
                        path
 
-    cpip.cpp -- Preprocess the file or the files in the directory.
+    CPIPMain.py - Preprocess the file or the files in a directory.
       Created by Paul Ross on 2011-07-10.
-      Copyright 2008-2015. All rights reserved.
+      Copyright 2008-2017. All rights reserved.
       Licensed under GPL 2.0
     USAGE
 
     positional arguments:
-      path                  Path to source file.
+      path                  Path to source file or directory.
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -104,16 +106,19 @@ Options
 | ``-c``                               | Even if a file is conditionally included then add it to the plot.               |
 |                                      | This is experimental so use it at your own risk! [default False]                |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-d DUMP, --dump=DUMP``             | Dump various outputs to stdout (see below). [default: []]                       |
+| ``-d DUMP, --dump=DUMP``             | Dump various outputs to stdout (see below).                                     |
+|                                      | This option can be repeated [default: []]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-g GLOB, --glob=GLOB``             | Pattern to use when searching directories (ignored for #includes. [default: *.*]|
+| ``-g GLOB, --glob=GLOB``             | Pattern to use when searching directories                                       |
+|                                      | (ignored for ``#includes``). [default: ``*.*``]                                 |
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``--heap``                           | Profile memory usage (requires ``guppy`` to be installed). [default: False]     |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-j JOBS, --jobs=JOBS``             | Max processes when multiprocessing. Zero uses number of native CPUs [8].        |
-|                                      | -1 disables multiprocessing. [default: -1]                                      |
+| ``-j JOBS, --jobs=JOBS``             | Max processes when multiprocessing. Zero uses number of native CPUs [4].        |
+|                                      | Value of 1 disables multiprocessing. [default: 0]                               |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-k``                               | Keep going as far as sensible. [default: False]                                 |
+| ``-k``                               | Keep going as far as sensible, for some definition of "sensible".               |
+|                                      | [default: False]                                                                |
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-l LOGLEVEL, --loglevel=LOGLEVEL`` | Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: 30]  |
 +--------------------------------------+---------------------------------------------------------------------------------+
@@ -123,28 +128,32 @@ Options
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-r``                               | Recursively provesses directories. [default: False]                             |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-t, --dot``                        | Write an DOT include dependency table and execute DOT on it to create a SVG     |
-|                                      | file. [default: False]                                                          |
+| ``-t, --dot``                        | Write an DOT include dependency file and execute DOT on it to create a SVG      |
+|                                      | file. Requires GraphViz. [default: False]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-C , --CPP``                       | Sys call ``cpp -dM`` to extract and use platform specific macros. These are     |
-|                                      | inserted after -S option and before the -D option. [default: False]             |
+|                                      | inserted after ``-S`` option and before the ``-D`` option. [default: False]     |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-G``                               | Support GCC extensions. Currently only #include_next. [default: False]          |
+| ``-G``                               | Support GCC extensions. Currently only ``#include_next``. [default: False]      |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-I INCUSR, --usr=INCUSR``          | Add user include search path (additive). [default: []]                          |
+| ``-I INCUSR, --usr=INCUSR``          | Add user include search path (additive).                                        |
+|                                      | This option can be repeated [default: []]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-J INCSYS, --sys=INCSYS``          | Add system include search path (additive). [default: []]                        |
+| ``-J INCSYS, --sys=INCSYS``          | Add system include search path (additive).                                      |
+|                                      | This option can be repeated [default: []]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-S PREDEFINES,``                   | Add standard predefined macro defintions of the form ``name<=defintion>``.      |
 | ``--predefine=PREDEFINES``           | These are introduced into the environment before anything else. These macros    |
 |                                      | can not be redefined. ``__DATE__`` and ``__TIME__`` will be automatically       |
-|                                      | defined. [default: []]                                                          |
+|                                      | defined.                                                                        |
+|                                      | This option can be repeated [default: []]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-D DEFINES, --define=DEFINES``     | Add macro definitions of the form name<=definition>. These are introduced into  |
-|                                      | the environment before any pre-include. [default: []]                           |
+| ``-D DEFINES, --define=DEFINES``     | Add macro definitions of the form ``name<=definition>``. These are introduced   |
+|                                      | into the environment before any pre-include.                                    |
+|                                      | This option can be repeated [default: []]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
-| ``-P PREINC, --pre=PREINC``          | Add pre-include file, this will be included before any header (additive).       |
-|                                      | [default: []]                                                                   |
+| ``-P PREINC, --pre=PREINC``          | Add a pre-include file, this will be included before any header.                |
+|                                      | This option can be repeated [default: []]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
 
 The `-d` option can be repeated to generate multiple text outputs on stdout:

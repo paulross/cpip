@@ -976,7 +976,7 @@ on it to create a SVG file. [default: %(default)s]""")
     parser.add_argument("-G", action="store_true", dest="gcc_extensions",
                          default=False,
                       help="""Support GCC extensions. Currently only #include_next. [default: %(default)s]""")
-    parser.add_argument(dest="path", nargs=1, help="Path to source file.")
+    parser.add_argument(dest="path", nargs=1, help="Path to source file or directory.")
     Cpp.addStandardArguments(parser)
     args = parser.parse_args()
 #     print(' ARGS '.center(75, '-'))
