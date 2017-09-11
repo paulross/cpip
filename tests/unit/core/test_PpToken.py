@@ -507,6 +507,25 @@ class TestPpTokenEvalConstExpr(unittest.TestCase):
         myTok = PpToken.PpToken('123LU', 'pp-number')
         self.assertEqual('123', myTok.evalConstExpr())
 
+    def test_04_01(self):
+        """TestPpTokenEvalConstExpr.test_04(): Integer literals, unsigned/long long."""
+        myTok = PpToken.PpToken('123ull', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('123Ull', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('123uLL', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('123ULL', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('123llu', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('123llU', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('123LLu', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+        myTok = PpToken.PpToken('123LLU', 'pp-number')
+        self.assertEqual('123', myTok.evalConstExpr())
+
     def test_05(self):
         """TestPpTokenEvalConstExpr.test_05(): Integer literals, unsigned/long, short strings."""
         myTok = PpToken.PpToken('1ul', 'pp-number')
