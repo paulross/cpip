@@ -124,12 +124,12 @@ class TestDirWalk(unittest.TestCase):
         except DirWalk.ExceptionDirWalk:
             pass
 
-class Special(unittest.TestCase):
+class TestSpecial(unittest.TestCase):
     """Special tests."""
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(Special)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestSpecial)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDirWalk))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestGenBigFirst))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)

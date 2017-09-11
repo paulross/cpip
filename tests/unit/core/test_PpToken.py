@@ -578,9 +578,9 @@ class TestPpTokenEvalConstExpr(unittest.TestCase):
         myTok = PpToken.PpToken('false', 'identifier')
         self.assertEqual('False', myTok.evalConstExpr())
         myTok = PpToken.PpToken('&&', 'preprocessing-op-or-punc')
-        self.assertEqual('and', myTok.evalConstExpr())
+        self.assertEqual(' and ', myTok.evalConstExpr())
         myTok = PpToken.PpToken('||', 'preprocessing-op-or-punc')
-        self.assertEqual('or', myTok.evalConstExpr())
+        self.assertEqual(' or ', myTok.evalConstExpr())
         
     def test_11(self):
         """TestPpTokenEvalConstExpr.test_11(): '/' gets converted to '//' for true division."""

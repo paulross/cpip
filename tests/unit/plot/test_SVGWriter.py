@@ -384,11 +384,11 @@ class TestSVGWriter(unittest.TestCase):
 </svg>
 """)
 
-class NullClass(unittest.TestCase):
+class TestNullClass(unittest.TestCase):
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSVGWriter))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))

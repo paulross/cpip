@@ -497,12 +497,12 @@ class Test_writeFileListTrippleAsTable(unittest.TestCase):
 </html>
 """)
 
-class Special(unittest.TestCase):
+class TestSpecial(unittest.TestCase):
     """Special tests."""
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(Special)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestSpecial)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Test_retHtmlFileName))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Test_XhtmlWrite))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Test_PathSplit))

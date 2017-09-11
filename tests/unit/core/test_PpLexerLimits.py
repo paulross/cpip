@@ -393,19 +393,19 @@ class TestPpLexerCondInc64NonExhaustive(TestPpLexerCondIncBase):
                 break
             myIntRepr -= 1
 
-class Special(TestPpLexerLimits):
+class TestSpecial(TestPpLexerLimits):
     pass
     
-class NullClass(TestPpLexerLimits):
+class TestNullClass(TestPpLexerLimits):
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCondIncBase))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCondIncFour))
     #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCondIncEight))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCondInc64NonExhaustive))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSpecial))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

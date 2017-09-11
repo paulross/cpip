@@ -154,8 +154,8 @@ class PpToken(object):
     SINGLE_SPACE = ' '
     #: Operators that are replaced directly by Python equivalents for constant evaluation
     WORD_REPLACE_MAP = {
-        '&&'    : 'and',
-        '||'    : 'or',
+        '&&'    : ' and ', # Need whitespace for the case #if defined(__sgi)&&_COMPILER_VERSION>=700
+        '||'    : ' or ', # Ditto whitespace.
         'true'  : 'True',
         'false' : 'False',
         # Python 3 support where '/' can result in a float

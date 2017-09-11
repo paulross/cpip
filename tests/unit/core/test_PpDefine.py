@@ -6099,7 +6099,7 @@ al, aq
 
 class TestFromCppInternalsTokenspacing(TestPpDefine):
     """Misc. tests on token spacing from CPP internals documentation."""
-#     @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
     def test_09(self):
         """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define f(x) =x="""
         ##define f(x) =x=
@@ -6139,12 +6139,12 @@ class TestFromCppInternalsTokenspacing(TestPpDefine):
         self._printDiff(myReplaceToks, expTokS)
         self.assertEqual(myReplaceToks, expTokS)
 
-class NullClass(TestPpDefine):
+class TestNullClass(TestPpDefine):
     pass
 
 def unitTest(theVerbosity=2):
     # - OK
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpDefineInit))
     # - OK

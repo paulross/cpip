@@ -1249,11 +1249,11 @@ sf/
             self._retHtmlTableString(cellContentsIsValue=True))
 
 
-class NullClass(unittest.TestCase):
+class TestNullClass(unittest.TestCase):
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDictTreeCtor))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDictTreeAdd))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDictTreeAddList))

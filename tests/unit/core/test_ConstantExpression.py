@@ -172,6 +172,35 @@ class TestConstantExpressionEvaluateWordReplace(unittest.TestCase):
         myObj = ConstantExpression.ConstantExpression(myToksTypes)
         self.assertEqual(1, myObj.evaluate())
 
+    def testEval_Word_10(self):
+        """ConstantExpression - evaluation of "1&&1"."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('1&&1')]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(1, myObj.evaluate())
+
+    def testEval_Word_11(self):
+        """ConstantExpression - evaluation of "1&&0"."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('1&&0')]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(0, myObj.evaluate())
+
+    def testEval_Word_12(self):
+        """ConstantExpression - evaluation of "1||0"."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('1||0')]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(1, myObj.evaluate())
+
+    def testEval_Word_13(self):
+        """ConstantExpression - evaluation of "0||0"."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('0||0')]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(0, myObj.evaluate())
+
+
 class TestConstantExpressionRegex(unittest.TestCase):
     """Tests the regular expressions in class ConstantExpression."""
 

@@ -4182,7 +4182,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
             myLines,
         )
 
-class Special(TestPpTokeniserBase):
+class TestSpecial(TestPpTokeniserBase):
     def test_00(self):
         """Special.test_00(): """
         myStr = u"""Debug::print(Debug::Classes,0,"  New class `%s' (sec=0x%08x)! #tArgLists=%d\n",
@@ -4302,11 +4302,11 @@ struct _complex {
 #            print i, t
 #            i += 1
     
-class NullClass(TestPpTokeniserBase):
+class TestNullClass(TestPpTokeniserBase):
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestWordsFoundIn))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestWordsFoundInUpTo))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestExpressionLexCharset))
@@ -4337,7 +4337,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpTokeniserPartialTokenStream))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpTokeniserLinux))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLexPhases_2_Linux))
-#    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSpecial))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 

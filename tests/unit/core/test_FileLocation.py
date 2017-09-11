@@ -2051,7 +2051,7 @@ class TestFileLineColPod(unittest.TestCase):
         except AttributeError:
             pass
 
-class Special(unittest.TestCase):
+class TestSpecial(unittest.TestCase):
     """Special tests."""
 
 
@@ -2090,7 +2090,7 @@ class Special(unittest.TestCase):
         self.assertEqual((1, 5), myObj.pLineCol(1, 3))
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(Special)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestSpecial)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
                                         TestLogicalPhysicalLineMapLowLevel))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(

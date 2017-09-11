@@ -971,21 +971,21 @@ class TestPlotNodeBboxRoundy(unittest.TestCase):
             self._pnbcObj.cpTo(self._logicalDatum),
         )
 
-class Special(unittest.TestCase):
+class TestSpecial(unittest.TestCase):
     pass
 
-class NullClass(unittest.TestCase):
+class TestNullClass(unittest.TestCase):
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPlotNodeCtor))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPlotNodeSetting))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPlotNodeBboxWithChildren))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPlotNodeBboxBoxy))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPlotNodeBboxBoxyChildren))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPlotNodeBboxRoundy))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSpecial))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

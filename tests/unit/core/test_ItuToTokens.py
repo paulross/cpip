@@ -861,12 +861,12 @@ class TestItuToHtmlTokenGenLinux(unittest.TestCase):
         ]
         self.assertEqual(expTokS, myTokS)
 
-class NullClass(unittest.TestCase):
+class TestNullClass(unittest.TestCase):
     pass
 
 def unitTest(theVerbosity=2):
     """Execute unit tests."""
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestItuToHtmlLowLevel))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestItuToHtmlPhase3))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestItuToHtmlTokenGen))

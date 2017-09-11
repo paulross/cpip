@@ -237,12 +237,12 @@ class TestBufGenIndex(unittest.TestCase):
         except IndexError:
             pass
 
-class NullClass(unittest.TestCase):
+class TestNullClass(unittest.TestCase):
     pass
 
 def unitTest(theVerbosity=2):
     """Execute unit tests."""
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestBufGen))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestBufGenReplace))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestBufGenIndex))

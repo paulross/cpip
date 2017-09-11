@@ -3352,10 +3352,10 @@ class TestPpLexerBadMacroDirective(TestPpLexer):
 """)
         myLexer.finalise()
 
-class C99Rationale(TestPpLexer):
-    """Tests examples found in C99RationaleV5.10.pdf."""
+class TestC99Rationale(TestPpLexer):
+    """Tests examples found in TestC99RationaleV5.10.pdf."""
     def test_6_10_00_00(self):
-        """C99Rationale.6.10 [00] - Whitespace preceeding #if."""
+        """TestC99Rationale.6.10 [00] - Whitespace preceeding #if."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3373,7 +3373,7 @@ PASS
         myLexer.finalise()
 
     def test_6_10_00_01(self):
-        """C99Rationale.6.10 [01] - Whitespace preceeding #if."""
+        """TestC99Rationale.6.10 [01] - Whitespace preceeding #if."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3392,7 +3392,7 @@ PASS
         myLexer.finalise()
 
     def test_6_10_00_02(self):
-        """C99Rationale.6.10 [02] - Whitespace preceeding #if."""
+        """TestC99Rationale.6.10 [02] - Whitespace preceeding #if."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3411,7 +3411,7 @@ PASS
         myLexer.finalise()
 
     def test_6_10_00_03(self):
-        """C99Rationale.6.10 [03] - Invalid comparison in conditional #elif."""
+        """TestC99Rationale.6.10 [03] - Invalid comparison in conditional #elif."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3431,7 +3431,7 @@ FAIL
         myLexer.finalise()
 
     def test_6_10_3_00(self):
-        """C99Rationale.6.10.3 [00] - Redefinition of NBUFS "with diagnostics generated only if the definitions differ."."""
+        """TestC99Rationale.6.10.3 [00] - Redefinition of NBUFS "with diagnostics generated only if the definitions differ."."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3448,7 +3448,7 @@ FAIL
         self.assertEqual('#define NUFS 10 /* spam.h#1 Ref: 0 True */', str(myLexer.macroEnvironment.macro('NUFS')))
 
     def test_6_10_3_01(self):
-        """C99Rationale.6.10.3 [01] - Valid redefinition of NULL_DEV."""
+        """TestC99Rationale.6.10.3 [01] - Valid redefinition of NULL_DEV."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3464,7 +3464,7 @@ FAIL
         myLexer.finalise()
 
     def test_6_10_3_02(self):
-        """C99Rationale.6.10.3 [02] - Function like macros with missing arguments."""
+        """TestC99Rationale.6.10.3 [02] - Function like macros with missing arguments."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3492,7 +3492,7 @@ long double ld = 0.1L;
         myLexer.finalise()
 
     def test_6_10_3_03_00(self):
-        """C99Rationale.6.10.3 [03_00] - Variable argument example with macro DEBUG not defined."""
+        """TestC99Rationale.6.10.3 [03_00] - Variable argument example with macro DEBUG not defined."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3518,7 +3518,7 @@ dprintf("X = %d\n", x);
         myLexer.finalise()
 
     def test_6_10_3_03_01(self):
-        """C99Rationale.6.10.3 [03_01] - Variable argument example with macro DEBUG defined."""
+        """TestC99Rationale.6.10.3 [03_01] - Variable argument example with macro DEBUG defined."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3545,7 +3545,7 @@ fprintf(stderr, "DEBUG: " "X = %d\n",x);
         myLexer.finalise()
 
     def test_6_10_3_3_00(self):
-        """C99Rationale.6.10.3.3 - Token pasting."""
+        """TestC99Rationale.6.10.3.3 - Token pasting."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3562,7 +3562,7 @@ a(b)
         myLexer.finalise()
 
     def test_6_10_3_4_00(self):
-        """C99Rationale.6.10.3.4 - Rescanning with no ambiguity."""
+        """TestC99Rationale.6.10.3.4 - Rescanning with no ambiguity."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -3579,7 +3579,7 @@ f(2)(9)
         myLexer.finalise()
 
     def test_6_10_3_4_01(self):
-        """C99Rationale.6.10.3.4 - Rescanning with ambiguity.."""
+        """TestC99Rationale.6.10.3.4 - Rescanning with ambiguity.."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -4189,10 +4189,10 @@ class TestPpLexerRaiseOnError(TestIncludeHandlerBase):
 #        print myLexer.fileIncludeGraphRoot
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
-class PpLexerReadOnly(TestPpLexer):
+class TestPpLexerReadOnly(TestPpLexer):
     """Tests access of read only attributes while lexing."""
     def test_00(self):
-        """PpLexerReadOnly - fileName."""
+        """TestPpLexerReadOnly - fileName."""
         myStr = u"""int main()
 {
     printf("Hello WOrld.");
@@ -4206,7 +4206,7 @@ class PpLexerReadOnly(TestPpLexer):
             i += 1
 
     def test_01(self):
-        """PpLexerReadOnly - lineNUm, colNum."""
+        """TestPpLexerReadOnly - lineNUm, colNum."""
         myStr = u"""int main()
 {
     printf("Hello WOrld.");
@@ -4229,10 +4229,10 @@ class PpLexerReadOnly(TestPpLexer):
 #                c += 1
             i += 1
 
-class PpLexerPragma(TestPpLexer):
+class TestPpLexerPragma(TestPpLexer):
     """Tests #pragma processing while lexing."""
     def test_none_00(self):
-        """PpLexerPragma - no pragma handler"""
+        """TestPpLexerPragma - no pragma handler"""
         myStr = u"""#pragma STDC FP_CONTRACT ON
 """
         myLexer = PpLexer.PpLexer(
@@ -4255,7 +4255,7 @@ class PpLexerPragma(TestPpLexer):
         )
 
     def test_STDC_00(self):
-        """PpLexerPragma - STDC."""
+        """TestPpLexerPragma - STDC."""
         myStr = u"""#pragma STDC FP_CONTRACT ON
 """
         myLexer = PpLexer.PpLexer(
@@ -4283,7 +4283,7 @@ class PpLexerPragma(TestPpLexer):
         )
 
     def test_pragma_raises_00(self):
-        """PpLexerPragma - raising ExceptionPragmaHandler."""
+        """TestPpLexerPragma - raising ExceptionPragmaHandler."""
         myStr = u"""#pragma STDC FP_CONTRACT ON
 """
         class PragmaHandlerRaises(PragmaHandler.PragmaHandlerABC):
@@ -4305,7 +4305,7 @@ class PpLexerPragma(TestPpLexer):
             self.assertEqual(str(err), 'pragma() raised at line=1, col=2 of file "hello.c"')
 
     def test_echo_00(self):
-        """PpLexerPragma with PragmaHandlerEcho."""
+        """TestPpLexerPragma with PragmaHandlerEcho."""
         myStr = u"""#pragma some pragma command
 """
         myLexer = PpLexer.PpLexer(
@@ -4330,10 +4330,10 @@ class PpLexerPragma(TestPpLexer):
 #         self.pprintTokensAsCtors(myTokS)
         self.assertEqual(myTokS, expTokS)
 
-class MinimalWhitespace(TestPpLexer):
+class TestMinimalWhitespace(TestPpLexer):
     """Testign whitespace minimisation"""
     def test_00(self):
-        """MinimalWhitespace.test_00(): Non-minimal whitespace."""
+        """TestMinimalWhitespace.test_00(): Non-minimal whitespace."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -4381,7 +4381,7 @@ long double ld = 0.1L   ;
         myLexer.finalise()
 
     def test_01(self):
-        """MinimalWhitespace.test_01(): Minimal whitespace."""
+        """TestMinimalWhitespace.test_01(): Minimal whitespace."""
         myLexer = PpLexer.PpLexer(
                  'spam.h',
                  CppIncludeStringIO(
@@ -4425,10 +4425,10 @@ long double ld = 0.1L ;
         self.assertEqual(86, myLexer.tuIndex)
         myLexer.finalise()
 
-class Unmaintainable(TestPpLexer):
+class TestUnmaintainable(TestPpLexer):
     """From: http://mindprod.com/jgloss/unmaincamouflage.html"""
     def test_00(self):
-        """Unmaintainable.test_00() from http://mindprod.com/jgloss/unmaincamouflage.html"""
+        """TestUnmaintainable.test_00() from http://mindprod.com/jgloss/unmaincamouflage.html"""
         myStr = u"""#ifndef DONE
 #ifdef TWICE
 // put stuff here to declare 3rd time around
@@ -5711,6 +5711,7 @@ BAR
 class TestFromCppInternalsTokenspacing(TestPpLexer):
     """Misc. tests on token spacing. This was originally (and wrongly in
     TestMacroEnv)."""
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
     def test_01(self):
         """TestFromCppInternalsTokenspacing.test_01 - Token spacing torture test #define PLUS +"""
         ##define PLUS +
@@ -5941,7 +5942,41 @@ class TestVariousOddProblems(TestPpLexer):
         self._printDiff(self.stringToTokens(result), expTokS)
         self.assertEqual(self.stringToTokens(result), expTokS)
 
-class Special(TestPpLexer):
+
+    def test_02(self):
+        """TestVariousOddProblems.test_00() - Missing whitespace around &&"""
+        # Noted in Python-3.6.2/Modules/posixmodule.c line 205
+        src = """#if defined(__sgi)&&_COMPILER_VERSION>=700
+foo
+#else
+bar
+#endif
+"""
+        myLexer = PpLexer.PpLexer(
+                 'example.c',
+                 CppIncludeStringIO(
+                    ['.'],
+                    ['.'],
+                    src,
+                    {},
+                    ),
+                 )
+        tokS = []
+        for t in myLexer.ppTokens():
+            tokS.append(t)
+        myLexer.finalise()
+        result = u''.join([t.t for t in tokS])
+        # print('Result:\n', result)
+        # self.pprintTokensAsCtors(tokS)
+        expTokS = [
+            PpToken.PpToken('\n', 'whitespace'),
+            PpToken.PpToken('bar', 'identifier'),
+            PpToken.PpToken('\n\n', 'whitespace'),
+        ]
+        # self._printDiff(self.stringToTokens(result), expTokS)
+        self.assertEqual(self.stringToTokens(result), expTokS)
+
+class TestSpecial(TestPpLexer):
     def test_00(self):
         """Sepecial.test_00()."""
         myStr = u"""    Debug::print(Debug::Classes,0,"  New class `%s' (sec=0x%08x)! #tArgLists=%d\\n",
@@ -5963,11 +5998,11 @@ class Special(TestPpLexer):
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
 
-class NullClass(TestPpLexer):
+class TestNullClass(TestPpLexer):
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCtor))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerLowLevel))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerPreDefine))
@@ -5998,16 +6033,16 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerError))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerWarning))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerBadMacroDirective))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(C99Rationale))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestC99Rationale))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeGraph))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeGraphReplacement))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerConditionalSpurious))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerFileIncludeRecursion))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerRaiseOnError))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(PpLexerReadOnly))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(PpLexerPragma))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MinimalWhitespace))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Unmaintainable))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerReadOnly))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerPragma))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMinimalWhitespace))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestUnmaintainable))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerErrorInCondStack))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerMacroLineContinuation))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestDefineEMPTY))
@@ -6020,7 +6055,7 @@ def unitTest(theVerbosity=2):
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromCppInternalsTokenspacing))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPythonCodeProblems))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestVariousOddProblems))
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSpecial))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################

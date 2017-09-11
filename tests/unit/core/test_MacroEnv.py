@@ -126,7 +126,7 @@ class TestMacroEnv(test_PpDefine.TestPpDefine):
                 )
             )
 
-class MacroEnvInit(TestMacroEnv):
+class TestMacroEnvInit(TestMacroEnv):
     """Tests the MacroEnv.MacroEnv initialisation."""
 
     def testDefineMapInit_00(self):
@@ -230,11 +230,11 @@ EGGS 2
             1,
             )
 
-class MacroEnvDefined(TestMacroEnv):
+class TestMacroEnvDefined(TestMacroEnv):
     """Tests the MacroEnv.MacroEnv with defined()."""
 
     def test_00(self):
-        """MacroEnvDefined.test_00 - check defined()."""
+        """TestMacroEnvDefined.test_00 - check defined()."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
 EGGS 2
@@ -263,7 +263,7 @@ EGGS 2
                 )
 
     def test_01(self):
-        """MacroEnvDefined.test_01 - check defined() raises on non-identifier."""
+        """TestMacroEnvDefined.test_01 - check defined() raises on non-identifier."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
 EGGS 2
@@ -293,7 +293,7 @@ EGGS 2
                 True,
                 )
 
-class MacroEnvSimpleReplaceObject(TestMacroEnv):
+class TestMacroEnvSimpleReplaceObject(TestMacroEnv):
     """Tests the MacroEnv.MacroEnv simple replacement of Object only style macros."""
 
     def testDefineMapSimpleReplaceObject_00(self):
@@ -422,7 +422,7 @@ EGGS 2
             repList,
             )
 
-class MacroEnvReplaceObject(TestMacroEnv):
+class TestMacroEnvReplaceObject(TestMacroEnv):
     """Tests the MacroEnv.MacroEnv more complex replacement of Object only style macros."""
 
     def testDefineMapReplaceObject_00(self):
@@ -575,7 +575,7 @@ SALT sel
             repList,
             )
 
-class MacroEnvSimpleReplaceFunction(TestMacroEnv):
+class TestMacroEnvSimpleReplaceFunction(TestMacroEnv):
     """Tests replacement with function style macros."""
 
     def testDefineMapSimpleReplaceFunction_00(self):
@@ -840,7 +840,7 @@ g(a) a(2)
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(u'g(f);')
             )
-        myMap.debugMarker = 'MacroEnvSimpleReplaceFunction.testDefineMapSimpleReplaceFunction_03()'
+        myMap.debugMarker = 'TestMacroEnvSimpleReplaceFunction.testDefineMapSimpleReplaceFunction_03()'
         repList = []
         myGen = myCpp.next()
         for ttt in myGen:
@@ -854,7 +854,7 @@ g(a) a(2)
             repList,
             )
 
-class MacroEnvCycles(TestMacroEnv):
+class TestMacroEnvCycles(TestMacroEnv):
     """Tests the MacroEnv.MacroEnv.
     cpp.exe produces the following output:
 
@@ -1139,7 +1139,7 @@ CHIPS SPAM
         self._printDiff(actTokS, expTokS)
         self.assertEqual(actTokS, expTokS)
 
-class MacroEnvReplaceMixed(TestMacroEnv):
+class TestMacroEnvReplaceMixed(TestMacroEnv):
     """Tests replacement with mixed object and function style macros with complex declarations."""
 
     def testDefineMapReplace_00(self):
@@ -1321,7 +1321,7 @@ z z[0]
             )
         repList = []
         myGen = myCpp.next()
-        myMap.debugMarker = 'MacroEnvReplaceMixed.testDefineMapReplace_03a()'
+        myMap.debugMarker = 'TestMacroEnvReplaceMixed.testDefineMapReplace_03a()'
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             #print '\nTRACE: testDefineMapReplace_03a [%d]' % r
@@ -1780,7 +1780,7 @@ h g(~
             )
 
 
-class SpecialClass(TestMacroEnv):
+class TestSpecialClass(TestMacroEnv):
     pass
 
     def testDefineMapReplace_03_00(self):
@@ -3009,7 +3009,7 @@ t(10,,), t(,11,), t(,,12), t(,,) };
             str(self._macroEnv)
             )
 
-class MacroEnvReplaceFunctionLowLevel(TestMacroEnv):
+class TestMacroEnvReplaceFunctionLowLevel(TestMacroEnv):
     """Tests low level operation on a MacroEnv.MacroEnv for function like macros."""
     def _genMap_00(self):
         """Return a map of four defines."""
@@ -3146,7 +3146,7 @@ f(a) f(x+a)
         self._printDiff(myReplacements, expectedTokens)
         self.assertEqual(myReplacements, expectedTokens)
 
-class RecursiveFunctionLike(TestMacroEnv):
+class TestRecursiveFunctionLike(TestMacroEnv):
     pass
 
     def _genMap_00(self):
@@ -3177,7 +3177,7 @@ z z[0]
             )
         repList = []
         myGen = myCpp.next()
-        myMap.debugMarker = 'RecursiveFunctionLike.testRecursiveFunctionLike_00()'
+        myMap.debugMarker = 'TestRecursiveFunctionLike.testRecursiveFunctionLike_00()'
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             #print '%s -> %s' % (t, myReplacements)
@@ -3214,7 +3214,7 @@ z z[0]
             )
         repList = []
         myGen = myCpp.next()
-        myMap.debugMarker = 'RecursiveFunctionLike.testRecursiveFunctionLike_01()'
+        myMap.debugMarker = 'TestRecursiveFunctionLike.testRecursiveFunctionLike_01()'
         for ttt in myGen:
             myReplacements = myMap.replace(ttt, myGen)
             #print '%s -> %s' % (t, myReplacements)
@@ -3252,11 +3252,11 @@ z z[0]
         #    )
 
 
-class MacroEnvFuncReexamine(TestMacroEnv):
+class TestMacroEnvFuncReexamine(TestMacroEnv):
     """Tests reexamination with function style macros."""
 
     def testDefineFunction_00(self):
-        """MacroEnvFuncReexamine.testDefineFunction_00 - function like macros with rescanning replacement [00]."""
+        """TestMacroEnvFuncReexamine.testDefineFunction_00 - function like macros with rescanning replacement [00]."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""f(a) a+a
 g(a) a(2)
@@ -3271,7 +3271,7 @@ g(a) a(2)
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(u'g(f);')
             )
-        myMap.debugMarker = 'MacroEnvFuncReexamine.testDefineFunction_00()'
+        myMap.debugMarker = 'TestMacroEnvFuncReexamine.testDefineFunction_00()'
         repList = []
         myGen = myCpp.next()
         for ttt in myGen:
@@ -3284,7 +3284,7 @@ g(a) a(2)
         self.assertEqual(self.stringToTokens(u'2+2;'), repList)
 
     def testDefineFunction_01(self):
-        """MacroEnvFuncReexamine.testDefineFunction_01 - function like macros with rescanning replacement [01]."""
+        """TestMacroEnvFuncReexamine.testDefineFunction_01 - function like macros with rescanning replacement [01]."""
         """#define x 2
 #define f(a) f(x * (a))
 #define g f
@@ -3322,7 +3322,7 @@ t(a) a
             (u't(t)(1)',                  't(1)'),
         )
         #print
-        myMap.debugMarker = 'MacroEnvFuncReexamine.testDefineFunction_00()'
+        myMap.debugMarker = 'TestMacroEnvFuncReexamine.testDefineFunction_00()'
         for tIn, tExp in myResultPairs:
             myCpp = PpTokeniser.PpTokeniser(
                 theFileObj=io.StringIO(tIn)
@@ -4603,11 +4603,11 @@ class TestPredefined__LINE__(TestMacroEnv):
                 PpToken.PpToken(self._macroName, 'identifier'), None)
             )
 
-class MacroEnvIncRefCount(TestMacroEnv):
+class TestMacroEnvIncRefCount(TestMacroEnv):
     """Tests that the reference count of a macro is appropriatly incremented."""
 
     def test_00(self):
-        """MacroEnvIncRefCount.test_00() refcount zero on definition.""" 
+        """TestMacroEnvIncRefCount.test_00() refcount zero on definition."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""REFCOUNT 1
 """
@@ -4623,7 +4623,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         self.assertEqual(1, myMap.macro('REFCOUNT').refCount)
 
     def test_00_00(self):
-        """MacroEnvIncRefCount.test_00_00() refcount raises on macro() if name not defined.""" 
+        """TestMacroEnvIncRefCount.test_00_00() refcount raises on macro() if name not defined."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""REFCOUNT 1
 """
@@ -4644,7 +4644,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
             )
 
     def test_01(self):
-        """MacroEnvIncRefCount.test_01() refcount increments on isDefined().""" 
+        """TestMacroEnvIncRefCount.test_01() refcount increments on isDefined()."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""REFCOUNT 1
 """
@@ -4662,7 +4662,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         self.assertEqual(2, myMap.macro('REFCOUNT').refCount)
 
     def test_02(self):
-        """MacroEnvIncRefCount.test_02() refcount increments on defined().""" 
+        """TestMacroEnvIncRefCount.test_02() refcount increments on defined()."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""REFCOUNT 1
 """
@@ -4682,7 +4682,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         self.assertEqual(3, myMap.macro('REFCOUNT').refCount)
 
     def test_03(self):
-        """MacroEnvIncRefCount.test_03() refcount increments on isDefined().""" 
+        """TestMacroEnvIncRefCount.test_03() refcount increments on isDefined()."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""REFCOUNT 1
 """
@@ -4700,7 +4700,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         self.assertEqual(2, myMap.macro('REFCOUNT').refCount)
 
     def test_04(self):
-        """MacroEnvIncRefCount.test_04() refcount does not increment on undef.""" 
+        """TestMacroEnvIncRefCount.test_04() refcount does not increment on undef."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""REFCOUNT 1
 """
@@ -4729,7 +4729,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
             self.assertEqual(2, aMacro.refCount)
 
     def test_05(self):
-        """MacroEnvIncRefCount.test_05() refcount increments on simple replacement.""" 
+        """TestMacroEnvIncRefCount.test_05() refcount increments on simple replacement."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""REFCOUNT 1
 """
@@ -4751,7 +4751,7 @@ class MacroEnvIncRefCount(TestMacroEnv):
         self.assertEqual(2, myMap.macro('REFCOUNT').refCount)
 
     def test_06(self):
-        """MacroEnvIncRefCount.test_05() refcount increments on replacement with re-examination.""" 
+        """TestMacroEnvIncRefCount.test_05() refcount increments on replacement with re-examination."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""glue(a, b) a ## b
 xglue(a, b) glue(a, b)
@@ -4829,10 +4829,10 @@ xglue(HIGH, LOW)
         self.assertEqual(3, myEnv.macro('glue').refCount)
         self.assertEqual(2, myEnv.macro('xglue').refCount)
 
-class MacroEnvAccess(TestMacroEnv):
+class TestMacroEnvAccess(TestMacroEnv):
     """Tests that the macro can be accessed."""
     def test_00(self):
-        """MacroEnvAccess.test_00() accessing the macro environment after processing.""" 
+        """TestMacroEnvAccess.test_00() accessing the macro environment after processing."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM -1
 EGGS -2+SPAM
@@ -4953,10 +4953,10 @@ BEANS
                          )
         
 
-class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
+class TestMacroEnvPreserveStateOnRedefinition(TestMacroEnv):
     """Test state (refcount etc.) is preserved on redefinition."""
     def test_00(self):
-        """MacroEnvPreserveStateOnRedefinition.test_00(): Test state (refcount etc.) is preserved on redefinition.""" 
+        """TestMacroEnvPreserveStateOnRedefinition.test_00(): Test state (refcount etc.) is preserved on redefinition."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""DEF 1 + 2
  """
@@ -5003,7 +5003,7 @@ class MacroEnvPreserveStateOnRedefinition(TestMacroEnv):
         self.assertNotEqual(112, myMap.macro('DEF').line)
         self.assertNotEqual(0, myMap.macro('DEF').refCount)
         
-class SpecialParsingOverRun(TestMacroEnv):
+class TestSpecialParsingOverRun(TestMacroEnv):
     """Special tests."""
 
     def test_00(self):
@@ -5076,11 +5076,11 @@ class SpecialParsingOverRun(TestMacroEnv):
         )
 
 
-class MacroEnvCppInternals(TestMacroEnv):
+class TestMacroEnvCppInternals(TestMacroEnv):
     """Test from cpp.pdf.
     TODO: Identify source of this doc."""
     def test_3_9_00(self):
-        """MacroEnvCppInternals.test_3_9_00(): 3.9 [0]. TODO: Raise an exception.""" 
+        """TestMacroEnvCppInternals.test_3_9_00(): 3.9 [0]. TODO: Raise an exception."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""f(x) x x
 """
@@ -5172,7 +5172,7 @@ f)
     
     
     def test_3_10_1_00(self):
-        """MacroEnvCppInternals.test_00(): 3.10.1 [0].""" 
+        """TestMacroEnvCppInternals.test_00(): 3.10.1 [0]."""
         # #define twice(x) (2*(x))
         # #define call_with_1(x) x(1)
         # call_with_1 (twice)
@@ -5216,7 +5216,7 @@ call_with_1(x) x(1)
         self.assertEqual(expectedTokens, repList)
         
     def test_3_10_1_01(self):
-        """MacroEnvCppInternals.test_01(): 3.10.1 [1].""" 
+        """TestMacroEnvCppInternals.test_01(): 3.10.1 [1]."""
         # Macro definitions do not have to have balanced parentheses.
         # By writing an unbalanced open parenthesis in a macro body,
         # it is possible to create a macro call that begins inside
@@ -5268,10 +5268,10 @@ call_with_1(x) x(1)
         self._printDiff(repList, expectedTokens)
         self.assertEqual(expectedTokens, repList)
 
-class VariableArgumentMacros(TestMacroEnv):
+class TestVariableArgumentMacros(TestMacroEnv):
     """Test of adding a variable argument function like macro to the environment."""
     def test_00(self):
-        """VariableArgumentMacros.test_00(): - Function like macro with variable arguments."""
+        """TestVariableArgumentMacros.test_00(): - Function like macro with variable arguments."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""showlist(...) puts(#__VA_ARGS__)
 """
@@ -5297,10 +5297,10 @@ class VariableArgumentMacros(TestMacroEnv):
             repList,
             )
 
-class MacroHistory(TestMacroEnv):
+class TestMacroHistory(TestMacroEnv):
     """Test of macro history."""
     def test_00(self):
-        """MacroHistory.test_00(): - Basic macro history."""
+        """TestMacroHistory.test_00(): - Basic macro history."""
 
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
@@ -5333,7 +5333,7 @@ In scope:""")
         )
 
     def test_01(self):
-        """MacroHistory.test_01(): - define, undef and define again."""
+        """TestMacroHistory.test_01(): - define, undef and define again."""
 
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
@@ -5369,7 +5369,7 @@ In scope:
         )
 
     def test_02(self):
-        """MacroHistory.test_02(): - Multiple definition and undefinition."""
+        """TestMacroHistory.test_02(): - Multiple definition and undefinition."""
 
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
@@ -5415,7 +5415,7 @@ In scope:
         )
 
     def test_03(self):
-        """MacroHistory.test_01(): - define, undef and get the undef macro."""
+        """TestMacroHistory.test_01(): - define, undef and get the undef macro."""
 
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
@@ -5462,7 +5462,7 @@ Out-of-scope:
             pass
 
     def test_04(self):
-        """MacroHistory.test_04(): - define, undef and define again with references."""
+        """TestMacroHistory.test_04(): - define, undef and define again with references."""
 
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
@@ -5527,7 +5527,7 @@ In scope:
         )
 
     def test_05(self):
-        """MacroHistory.test_05(): - references to ifdef'd macros that are not defined."""
+        """TestMacroHistory.test_05(): - references to ifdef'd macros that are not defined."""
 
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
@@ -5742,10 +5742,10 @@ _ASM_ADD    __ASM_SIZE(add)
 #         print(repString)
         self.assertEqual(repString, 'f(" " "addq" " ")\n')
 
-class MacroDependencies(TestMacroEnv):
+class TestMacroDependencies(TestMacroEnv):
     """Test of macro dependencies."""
     def test_00(self):
-        """MacroDependencies.test_00(): - No macro dependencies."""
+        """TestMacroDependencies.test_00(): - No macro dependencies."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
 EGGS 2
@@ -5762,7 +5762,7 @@ EGGS 2
         self.assertEquals([], myEnv._staticMacroDependencies('EGGS'))
 
     def test_01(self):
-        """MacroDependencies.test_01(): - Simple macro dependency."""
+        """TestMacroDependencies.test_01(): - Simple macro dependency."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM EGGS
 EGGS 2
@@ -5782,7 +5782,7 @@ EGGS 2
         self.assertRaises(KeyError, myAdjList.parents, 'SPAM')
         
     def test_02(self):
-        """MacroDependencies.test_02(): - Macro dependency on self."""
+        """TestMacroDependencies.test_02(): - Macro dependency on self."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM SPAM\n"""
         myCpp = PpTokeniser.PpTokeniser(
@@ -5796,7 +5796,7 @@ EGGS 2
         self.assertEquals(['SPAM',], myAdjList.parents('SPAM'))
 
     def test_03(self):
-        """MacroDependencies.test_03(): - Macro cyclic dependency."""
+        """TestMacroDependencies.test_03(): - Macro cyclic dependency."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM EGGS
 EGGS SPAM
@@ -5821,7 +5821,7 @@ EGGS SPAM
         self.assertEquals(['EGGS',], myAdjList.parents('SPAM'))
 
     def test_04(self):
-        """MacroDependencies.test_04(): - Non-existent macro."""
+        """TestMacroDependencies.test_04(): - Non-existent macro."""
         myEnv = MacroEnv.MacroEnv()
         myStr = u"""SPAM 1
 EGGS 2
@@ -5842,7 +5842,7 @@ EGGS 2
 class TestLibCello(TestMacroEnv):
     """Tests that resulted in processing libCello."""
     def test_00(self):
-        """MacroEnvDefined.test_00 - check defined()."""
+        """TestMacroEnvDefined.test_00 - check defined()."""
         myMap = MacroEnv.MacroEnv()
         myStr = u"""X (    (  (defined (SPAM))))
 """
@@ -5874,46 +5874,46 @@ class TestLibCello(TestMacroEnv):
         repString = self.tokensToString(repList)
         self.assertEqual(repString, '(    (  (defined (SPAM))))')
     
-class NullClass(TestMacroEnv):
+class TestNullClass(TestMacroEnv):
     pass
 
 def unitTest(theVerbosity=2):
     # - OK
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvInit))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvInit))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvDefined))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvDefined))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvSimpleReplaceObject))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvSimpleReplaceObject))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvReplaceObject))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvReplaceObject))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvSimpleReplaceFunction))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvSimpleReplaceFunction))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvReplaceFunctionLowLevel))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvReplaceFunctionLowLevel))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvCycles))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvCycles))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvReplaceMixed))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvReplaceMixed))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestExample3))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpDefineReplace_Special_00))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(SpecialClass))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSpecialClass))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestExample4))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestExample5))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(RecursiveFunctionLike))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestRecursiveFunctionLike))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroReplacementFuncRecursive))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroReplacementFuncRecursive_01))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvFuncReexamine))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvFuncReexamine))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroRedefinition))
     # - OK
@@ -5921,7 +5921,7 @@ def unitTest(theVerbosity=2):
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromCppInternals))
     ## - OK - needs work?
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromCppInternalsTokenspacing))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromCppInternalsTokenspacing))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestFromStandardMisc))
     # - OK
@@ -5933,23 +5933,23 @@ def unitTest(theVerbosity=2):
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPredefined__LINE__))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvIncRefCount))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvIncRefCount))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvAccess))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvAccess))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvPreserveStateOnRedefinition))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvPreserveStateOnRedefinition))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroEnvCppInternals))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroEnvCppInternals))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(SpecialParsingOverRun))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestSpecialParsingOverRun))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(VariableArgumentMacros))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestVariableArgumentMacros))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroHistory))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroHistory))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLinux))
     # - OK
-    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(MacroDependencies))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestMacroDependencies))
     # - OK
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestLibCello))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)

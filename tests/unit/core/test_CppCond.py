@@ -1559,10 +1559,10 @@ class TestCppCondGraphFail(unittest.TestCase):
         except CppCond.ExceptionCppCondGraph:
             pass
     
-class TestCcgVisitor(CppCond.CppCondGraphVisitorBase):
+class CcgVisitorTest(CppCond.CppCondGraphVisitorBase):
     """Test class for a CppCondGraph visitor object."""
     def __init__(self):
-        super(TestCcgVisitor, self).__init__()
+        super(CcgVisitorTest, self).__init__()
         self._lineS = []
         
     def __str__(self):
@@ -1632,7 +1632,7 @@ class TestCppCondGraphVisitor(unittest.TestCase):
 #endif /* False "file" 401 0 */""",
             str(myCcg),
         )
-        myV = TestCcgVisitor()
+        myV = CcgVisitorTest()
         myCcg.visit(myV)
         #print
         #print myV
@@ -1808,11 +1808,11 @@ class TestCppCondGraphVisitorLineCondCompilation(unittest.TestCase):
             myV._lineCondition('file_3'),
         )
         
-class Special(unittest.TestCase):
+class TestSpecial(unittest.TestCase):
     pass
 
 def unitTest(theVerbosity=2):
-    suite = unittest.TestLoader().loadTestsFromTestCase(Special)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestSpecial)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestConditionalState))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppCondLowLevel))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppCondConstExpr))

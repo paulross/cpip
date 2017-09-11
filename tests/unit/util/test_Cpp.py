@@ -72,12 +72,12 @@ class TestCppMacroDefinitionString(unittest.TestCase):
         self.assertEqual('#define FOO(n) n * BAR\n', Cpp.macroDefinitionString(['FOO(n)=n * BAR']))
 
 
-class NullClass(unittest.TestCase):
+class TestNullClass(unittest.TestCase):
     pass
 
 def unitTest(theVerbosity=2):
     """Execute unit tests."""
-    suite = unittest.TestLoader().loadTestsFromTestCase(NullClass)
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppSubprocess))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppMacroDefinitionDict))
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestCppMacroDefinitionString))
