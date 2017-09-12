@@ -31,37 +31,46 @@ Legend for the drawing below: ::
 
 i.e. For a child its ``++++`` is equivalent to my ``****``.
 
-D      - Self datum point.
-S      - Self plot datum point.
-x[n]   - Child datum point.
-Pl     - Parent landing point to self.
-Pt     - Parent take-off point from self.
-P[n]   - Self take off point and landing point to child n.
-pl[n]  - Child n landing point from self.
-pt[n]  - Child n take-off point to self.
-tdc    - Top dead centre.
+Points in the drawing below:
 
-Box .... has depth of max(Boxes(++++).width) and
-width max(Box(~~~~), sum(Boxes(++++).depth)). 
+* ``D``      - Self datum point.
+* ``S``      - Self plot datum point.
+* ``x[n]``   - Child datum point.
+* ``Pl``     - Parent landing point to self.
+* ``Pt``     - Parent take-off point from self.
+* ``P[n]``   - Self take off point and landing point to child n.
+* ``pl[n]``  - Child n landing point from self.
+* ``pt[n]``  - Child n take-off point to self.
+* ``tdc``    - Top dead centre.
+
+
+Box ``....`` has depth of ``max(Boxes(++++).width)`` and
+width ``max(Box(~~~~)``, ``sum(Boxes(++++).depth))``. 
 
 Each instance of class knows about the following:
-Boxes: ::
 
-* ``****`` - Self sigma BB as computed Dim() objects: self.bbSigmaDepth and self.bbSigmaWidth. Or as computed Box() object self.bbSigma
+Boxes:
+
+* ``****`` - Self sigma BB as computed ``Dim()`` objects: ``self.bbSigmaDepth``
+    and ``self.bbSigmaWidth``. Or as computed ``Box()`` object ``self.bbSigma``
 * ``~~~~`` - As computed Dim() objects: self.bbSelfWidth, self.bbSelfDepth
 * ``####`` - Self width and depth as Dim() objects: self.width and self.depth
 * ``....`` - All children as a Box() object: self.bbChildren
 
-And padding between ``~~~~`` and ``....`` as Dim() object self.bbSpaceChildren
+And padding between ``~~~~`` and ``....`` as ``Dim()`` object
+``self.bbSpaceChildren``
 
-i.e. not ++++ - Child[n] sigma BB. That the caller knows about its children.
+i.e. not ``++++ - Child[n] sigma BB``. That the caller knows about its children.
 
-Points:
-Given D each instance of this class knows:
-S, Pl, Pt, P[0] to P[N-1], x[0], tdc (only).
+Points: given D each instance of this class knows: ::
 
-In the following diagrams where lines are adjacent that means that there is no
-spacing between them. ::
+    S, Pl, Pt, P[0] to P[N-1], x[0], tdc (only).
+
+In the following diagram where lines are adjacent that means that there is no
+spacing between them. This diagram shows the root at top left and the children
+from left to right. The default plot of the include graph is to have the root
+at top left with the processed file centre left with the children running from
+top to bottom. It is felt that this is more intuitive for source code. ::
 
     -|-----> x increases
      |
@@ -75,20 +84,20 @@ spacing between them. ::
     *                ~    S ### Pl ###tdc### Pt ######    ~                     *
     *                ~    #                          #    ~                     *
     *                ~    #                          #    ~                     *
-    *                ~    #                          #    ~                     *
+    *                ~    #         Parent           #    ~                     *
     *                ~    #                          #    ~                     *
     *                ~    ## P[0] ## P[c] ## P[C-1] ##    ~                     *
     *                ~                                    ~                     *
     *                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~                     *
-    *                                        |                                  *
-    *                                        |= self._bbSpaceChildren           *
-    *                                        |                                  *
+    *                                 ^                                         *
+    *                                 | == self._bbSpaceChildren                *
+    *                                 |                                         *
     *...........................................................................*
     *.x[0] + pl[0] + pt[0] +x[c] + pl[c] + pt[c] ++++++++++++x[C-1]+pl/pt[C-1]+.*
     *.+                    ++                               ++                +.*
-    *.+                    ++                               ++                +.*
-    *.+++++++++++++++++++++++                               ++                +.*
-    *.                      +                               ++                +.*
+    *.+     Child[0]       ++                               ++                +.*
+    *.+                    ++                               ++   Child[C-1]   +.*
+    *.+++++++++++++++++++++++           Child[c]            ++                +.*
     *.                      +                               +++++++++++++++++++.*
     *.                      +                               +                  .*
     *.                      +++++++++++++++++++++++++++++++++                  .*
@@ -97,8 +106,8 @@ spacing between them. ::
 
 Note: ``....`` can be narrower than ``~~~~``
 
-Verticies
-=========
+Vertices
+========
 
 The following show root at the left. Linking parent to child: ::
 
@@ -118,9 +127,9 @@ And child to parent: ::
 
     CP_stop     CP_land
         |          |
-        x<<<<<<<<<<x\
-                     \
-                      \
+        x<<<<<<<<<<x\\
+                     \\
+                      \\
                        x<<<<<<<<<<<<x
                        |            |
                     CP_to        CP_roll

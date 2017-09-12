@@ -194,7 +194,9 @@ Here we set:
 * ``-J`` is used to set a single system include as :file:`../../demo/sys/`
 * ``-I`` is used to set a single user include as :file:`../../demo/usr/`
 
-We are processing :file:`../../demo/src/main.cpp` and stdout is something like this::
+We are processing :file:`../../demo/src/main.cpp` and stdout is something like this:
+
+.. code-block: sh
 
     $ python3 CPIPMain.py -l 20 -C -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp 
     2012-03-20 07:41:38,655 INFO     TU in HTML:
@@ -228,7 +230,9 @@ In the output directory will be the HTML and SVG results.
 Using ``-d`` Option
 ------------------------
 
-All these are using the following command where ``?`` is replace with a letter::
+All these are using the following command where ``?`` is replace with a letter:
+
+.. code-block: sh
 
     $ python3 CPIPMain.py -d? -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp
 

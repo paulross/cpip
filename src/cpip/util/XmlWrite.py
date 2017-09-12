@@ -50,8 +50,10 @@ class ExceptionXmlEndElement(ExceptionXml):
 #####################################
 def encodeString(theS, theCharPrefix='_'):
     """Returns a string that is the argument encoded.
-    RFC3548::
+    RFC3548:
     
+    .. code-block:
+
                            Table 1: The Base 64 Alphabet
         Value Encoding  Value Encoding  Value Encoding  Value Encoding
             0 A            17 R            34 i            51 z
@@ -262,8 +264,10 @@ class XmlStream(object):
     def writeECMAScript(self, theScript):
         """Writes the ECMA script.
         
-        Example::
+        Example:
         
+        .. code-block: c
+
             <script type="text/ecmascript">
             //<![CDATA[
             ...
@@ -277,8 +281,10 @@ class XmlStream(object):
     def writeCDATA(self, theData):
         """Writes a CDATA section.
         
-        Example::
+        Example:
         
+        .. code-block: c
+
             <![CDATA[
             ...
             ]]>
@@ -293,8 +299,10 @@ class XmlStream(object):
     def writeCSS(self, theCSSMap):
         """Writes a style sheet as a CDATA section. Expects a dict of dicts.
         
-        Example::
+        Example:
         
+        .. code-block: c
+
             <style type="text/css"><![CDATA[
                 ...
             ]]></style>

@@ -35,7 +35,9 @@ Releases are made irregularly and they are on the `downloads page <http://source
 From the Hg Repo
 ===========================
 
-The Mercurial repository has the most up-to-date code, get it with::
+The Mercurial repository has the most up-to-date code, get it with:
+
+.. code-block: sh
 
 	$ mkdir <cpip>
 	$ cd <cpip>
@@ -58,7 +60,9 @@ Put :file:`{<cpip>}` on your ``$PYTHONPATH``
 Testing
 ============================
 
-To make sure that cpip can be imported from your ``$PYTHONPATH`` do this::
+To make sure that cpip can be imported from your ``$PYTHONPATH`` do this:
+
+.. code-block: sh
 
 	$ python3
 	Python 3.2 (r32:88452, Feb 20 2011, 11:12:31) 
@@ -74,7 +78,9 @@ To make sure that cpip can be imported from your ``$PYTHONPATH`` do this::
 Unit Testing
 --------------------------
 
-To run all the unit tests in the core::
+To run all the unit tests in the core:
+
+.. code-block: sh
 
 	$ cd <cpip>
 	$ python3 core/test/UnitTest.py

@@ -27,7 +27,9 @@ And:
 Referenced - Have had some influence over the processing of the translation unit.
 Not Referenced - No influence over the processing of the translation unit.
 
-Example test::
+Example test:
+
+.. code-block: c
 
     /* Source         Active?    Refs    ID   */
     #define FOO    /*     N        0    FOO_0 */
@@ -52,10 +54,11 @@ definition, where defined,
 
 These two HTML pages are joined by a <file>_macros.html this lists (and links to)
 the identifiers in this order:
-- Active, ref count >0
-- Inactive, ref count >0
-- Active, ref count =0
-- Inactive, ref count =0
+
+* Active, ref count >0
+* Inactive, ref count >0
+* Active, ref count =0
+* Inactive, ref count =0
 
 Macro HTML IDs
 --------------

@@ -76,10 +76,11 @@ single argument from the command line ``sys.argv[1]``:
 
 .. literalinclude:: demo/cpip_00.py
     :linenos:
+    :language: python
 
 Of course this doesn't do much yet, invoking it just gives::
 
-    $ python cpip.py proj/src/main.cpp
+    python cpip.py proj/src/main.cpp
     Processing: proj/src/main.cpp
 
 We now need to import and create and :class:`PpLexer.PpLexer` object, and this
@@ -103,7 +104,7 @@ search paths to the system include directories. With this we can construct a
 
 This still doesn't do much yet, invoking it just gives::
 
-    $ python cpip.py proj/src/main.cpp
+    python cpip.py proj/src/main.cpp
     Processing: proj/src/main.cpp
 
 But, in the absence of error, shows that we can construct a
@@ -245,6 +246,7 @@ Changing the code to this::
 Produces this output:
 
 .. literalinclude:: demo/cpip_05.out.txt
+    :language: sh
 
 State of the ``PpLexer`` After Pre-processing
 ===============================================
@@ -270,6 +272,7 @@ Invoking this code thus::
 Gives this output:
 
 .. literalinclude:: demo/cpip_07.out.txt
+    :language: sh
 
 This is simple to the point of crude as the ``PpLexer`` supplies a far richer data seam than just text.
 
@@ -333,8 +336,10 @@ Sub-classing this requires implementing the following methods :
     class FilePathOrigin or None for the initial translation unit.
     As a precaution this should include code to check that the stack
     of current places is empty.
-    For example::
+    For example:
 
+    .. code-block:: python
+    
         if len(self._cpStack) != 0:
             raise ExceptionCppInclude('setTu() with CP stack: %s' % self._cpStack)
 
@@ -403,6 +408,3 @@ You can pass in a specialised handler for ``#pragma`` statements [default: None]
 * A method ``def pragma(self, theTokS):`` that takes a non-zero length list of ``PpTokens`` the last of which will be a newline token. Any token this method returns will be yielded as part of the Translation Unit (and thus subject to macro replacement for example).
 
 Have a look at the core module :ref:`cpip.ref.PragmaHandler` for some example implementations.
-
-
-

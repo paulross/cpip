@@ -29,19 +29,19 @@ A 'physical' position is a plot-able position where the root of the tree is
 top/left/bottom or right and the child nodes are in anti-clockwise or
 clockwise order.
 
-Transfoming sizes and positions
--------------------------------
+Transforming sizes and positions
+--------------------------------
 
 If the first suffix is 'l' this is the "logical" coordinate system.                                
 If the first suffix is 'p' this is the "physical" coordinate system.                                
   
-Then: ::
+Then:
                               
-    C    The canvas dimension, Cpw is "Canvas physical width"                            
-    W    Width dimension, physical and logical.                            
-    D    Depth dimension, physical and logical.                            
-    B    Box datum position ("top-left"), physical and logical, x and y.                            
-    P    Arbitrary point, physical and logical, x and y.                            
+* ``C`` - The canvas dimension, Cpw is "Canvas physical width"                            
+* ``W`` - Width dimension, physical and logical.                            
+* ``D`` - Depth dimension, physical and logical.                            
+* ``B`` - Box datum position ("top-left"), physical and logical, x and y.                            
+* ``P`` - Arbitrary point, physical and logical, x and y.                            
                                 
 So this "logical view" of the tree graph ('top' and '-'):
 i.e. Root(s) is a top and children are written in an anti-clockwise. ::

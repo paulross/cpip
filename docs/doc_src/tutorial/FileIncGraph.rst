@@ -24,9 +24,9 @@ Here is the code to create a file include graph:
     :language: python
     :linenos:
 
-Invoking this code thus (in the manner of the :ref:`cpip.tutorial.PpLexer`)::
+Invoking this code thus (in the manner of the :ref:`cpip.tutorial.PpLexer`):
 
-    $ python3 cpip_08.py ../src/main.cpp
+``$ python3 cpip_08.py ../src/main.cpp``
 
 Gives this output::
 
@@ -61,9 +61,9 @@ Here we create a simple visitor [lines 6-9]. After processing the Translation Un
     :language: python
     :linenos:
 
-Invoking this code thus (in the manner of the :ref:`cpip.tutorial.PpLexer`)::
+Invoking this code thus (in the manner of the :ref:`cpip.tutorial.PpLexer`):
 
-    $ python3 cpip_09.py ../src/main.cpp
+``$ python3 cpip_09.py ../src/main.cpp``
 
 Gives this output::
 
@@ -89,9 +89,9 @@ The special code is on lines 40-43 where the ``FileIncludeGraph.FigVisitorTree``
     :language: python
     :linenos:
 
-Invoking this so::
+Invoking this so:
 
-    $ python3 cpip_10.py ../src/main.cpp
+``$ python3 cpip_10.py ../src/main.cpp``
 
 Gives this output::
 

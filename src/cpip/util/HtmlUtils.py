@@ -47,15 +47,29 @@ def retHtmlFileName(thePath):
     return '%s_%s%s' % (os.path.basename(thePath), myHash, '.html')
 
 def retHtmlFileLink(theSrcPath, theLineNum):
+    """Returns a string that is a link to a HTML file.
+    
+    *theSrcPath : str*
+        The path of the original source, whis will be encoded with retHtmlFileName().
+    *theLineNum : int*
+        An integer line number in the target.
+    """
     return "%s#%d" % (retHtmlFileName(theSrcPath), theLineNum)
 
 def writeHtmlFileLink(theS, theSrcPath, theLineNum, theText='', theClass=None):
     """Writes a link to another HTML file that represents source code.
-    theS is an XHTML stream.
-    theSrcPath is the path of the original source, whis will be encoded with retHtmlFileName().
-    theLineNum is an integer line number in the target.
-    theText is optional navigation text.
-    theClass is optional CSS class for the navigational text."""
+    
+    *theS*
+        The XHTML stream.
+    *theSrcPath : str*
+        The path of the original source, this will be encoded with retHtmlFileName().
+    *theLineNum : int*
+        An integer line number in the target.
+    *theText : str, optional*
+        Navigation text.
+    *theClass : obj, optional*
+        CSS class for the navigation text.
+    """
     with XmlWrite.Element(
             theS,
             'a',
@@ -71,6 +85,16 @@ def writeHtmlFileLink(theS, theSrcPath, theLineNum, theText='', theClass=None):
                     theS.characters(theText)
 
 def writeCharsAndSpan(theS, theText, theSpan):
+    """Write theText to the stream theS. If theSpan is not None the text is
+    enclosed in a ``<span class=theSpan>`` element.
+
+    *theS*
+        The XHTML stream.
+    *theText : str*
+        The text to write, must be non-empty.
+    *theClass : str, optional*
+        CSS class for the text.
+    """
     assert theText
     if theSpan is None:
         theS.characters(theText)
@@ -79,6 +103,19 @@ def writeCharsAndSpan(theS, theText, theSpan):
             theS.characters(theText)
 
 def writeHtmlFileAnchor(theS, theLineNum, theText='', theClass=None, theHref=None):
+    """Writes an anchor.
+    
+    *theS*
+        The XHTML stream.
+    *theLineNum : int*
+        An integer line number in the target.
+    *theText : str, optional*
+        Navigation text.
+    *theClass : str, optional*
+        CSS class for the navigation text.
+    *theHref : str, optional*
+        The href=.
+    """
     with XmlWrite.Element(theS, 'a', {'name' : "%d" % theLineNum}):
         pass
     if theText:
@@ -182,14 +219,13 @@ def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
     """Writes file paths as a table, for example as a directory structure.
     
     *valueType*
-        The type of the value; ``None, |'list' | 'set'``
-        
-    *theKvS*
+        The type of the value: ``None, |'list' | 'set'``
+    *theS*
+        The HTML stream.
+    *theKvS: list*
         A list of pairs ``(file_path, value)``.
-    
-    *tableStyle*
+    *tableStyle: str*
         The style used for the table.
-        
     *fnTd*
         A callback function that is executed for a ``<td>`` element when
         there is a non-None value. This is called with the following arguments:
@@ -197,10 +233,10 @@ def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
             *theS*
                 The HTML stream.
                 
-            *attrs*
+            *attrs : dict*
                 A map of attrs that include the rowspan/colspan for the <td>
                 
-            *k*
+            *k : list*
                 The key as a list of path components.
                 
             *v*
@@ -234,4 +270,3 @@ def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
                         # Write out part of the file name
                         theS.characters(k[-1])
     # Write: </table>
-

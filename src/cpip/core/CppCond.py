@@ -26,7 +26,9 @@ This does not interpret any semantics of either standard but instead provides
 a state class that callers that do interpret the language semantics can use.
 
 In particular this provides state change operations that might be triggered by
-the following six pre-processing directives: ::
+the following six pre-processing directives:
+
+.. code-block:: c
 
     #if constant-expression new-line group opt
     #ifdef identifier new-line group opt
@@ -44,7 +46,9 @@ constant-expression or identifier tokens.
 The stack i.e. :py:class:`CppCond` can also be queried for its net boolean state and its
 net 'explanation'.
 
-Basic boolean stack operations ::
+Basic boolean stack operations:
+
+.. code-block:: sh
 
     Directive   Argument                Stack, s, boolean operation
     ---------   --------                -----------------------
@@ -57,10 +61,10 @@ Basic boolean stack operations ::
 
 Basic boolean 'explanation' string operations:
 
-.. note::
+The ``'!'`` prefix is parameterised as :py:const:`TOKEN_NEGATION` so that any
+subsequent processing can recognise ``'!!'`` as ``''`` and ``'!!!'`` as ``'!'``:
 
-    The ``'!'`` prefix is parameterised as :py:const:`TOKEN_NEGATION` so that any subsequent
-    processing can recognise ``'!!'`` as ``''`` and ``'!!!'`` as ``'!'``. ::
+.. code-block:: none
 
         Directive   Argument                Matrix, m, strings
         ---------   --------                ------------------
