@@ -46,9 +46,11 @@ from . import test_PpLexer
 # Section: Unit tests.
 ######################
 
-class TestPpLexerCoverageBase(test_PpDefine.TestPpDefine):
+# Do not prefix/suffix this class name with 'Test' as pytest will pick up on that.
+class PpLexerCoverageBase(test_PpDefine.TestPpDefine):
     """Helper class for the unit tests."""
     """Tests the code coverage of the CPIP core."""
+    
     def setUp(self):
         self._incSim = IncludeHandler.CppIncludeStringIO(
             self._pathsUsr,
@@ -64,11 +66,8 @@ class TestPpLexerCoverageBase(test_PpDefine.TestPpDefine):
         self.assertEqual([], self._incSim.cpStack)
         self._incSim.validateCpStack()
 
-    def testSetUpTearDown(self):
-        """TestIncludeHandlerBase.testSetUpTearDown(): Tests setUp() and tearDown()."""
-        self.assertEqual(1,1)
 
-class TestPpLexerCoverage(TestPpLexerCoverageBase):
+class TestPpLexerCoverage(PpLexerCoverageBase):
     """Tests the code coverage of the CPIP core."""
     def __init__(self, *args):
         # The next two arguments mean that:
@@ -177,19 +176,19 @@ VA(1,,3)
     
 #===============================================================================
  
-class TestIncludeHandler_UsrSys_Conditional(TestPpLexerCoverageBase):
-   """Tests #include statements. Note: This is similar to stuff
-   in TestIncludeHandler.py"""
-   def __init__(self, *args):
-       self._pathsUsr = [
-               os.path.join('usr'),
-               os.path.join('usr', 'inc'),
-               ]
-       self._pathsSys = [
-               os.path.join('sys'),
-               os.path.join('sys', 'inc'),
-               ]
-       self._initialTuContents = """#if INC == 0
+class TestIncludeHandler_UsrSys_Conditional(PpLexerCoverageBase):
+    """Tests #include statements. Note: This is similar to stuff
+    in TestIncludeHandler.py"""
+    def __init__(self, *args):
+        self._pathsUsr = [
+                os.path.join('usr'),
+                os.path.join('usr', 'inc'),
+                ]
+        self._pathsSys = [
+                os.path.join('sys'),
+                os.path.join('sys', 'inc'),
+                ]
+        self._initialTuContents = """#if INC == 0
 #include "spam.h"
 #elif INC == 1
 #include "inc/spam.h"
@@ -199,7 +198,7 @@ class TestIncludeHandler_UsrSys_Conditional(TestPpLexerCoverageBase):
 #include <inc/spam.h>
 #endif
 """
-       self._incFileMap = {
+        self._incFileMap = {
                os.path.join('usr', 'spam.h') : """Content of: user, spam.h
 """,
                os.path.join('usr', 'inc', 'spam.h') : """Content of: user, include, spam.h
@@ -209,31 +208,31 @@ class TestIncludeHandler_UsrSys_Conditional(TestPpLexerCoverageBase):
                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
 """,
            }
-       super(TestIncludeHandler_UsrSys_Conditional, self).__init__(*args)
+        super(TestIncludeHandler_UsrSys_Conditional, self).__init__(*args)
  
-   def testSimpleInclude_00(self):
-       """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_00(): Tests conditional #include statements."""
-       # Note: Using line splicing in the predef
-       preDefMacros=[
+    def testSimpleInclude_00(self):
+        """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_00(): Tests conditional #include statements."""
+        # Note: Using line splicing in the predef
+        preDefMacros=[
                      """#define INC \\
 0
 """,
                      ]
-       myLexer = PpLexer.PpLexer(
+        myLexer = PpLexer.PpLexer(
                                  'src/spam.c',
                                  self._incSim,
                                  preIncFiles=[
                                               StringIO.StringIO(x) for x in preDefMacros
                                               ],
                                  )
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """\n\nContent of: user, spam.h\n\n\n"""
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
-       #print 'FileIncludeGraph:'
-       #print myLexer.fileIncludeGraphRoot
-       expGraph = """Unknown Pre-include [1, 0]:  True ""
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """\n\nContent of: user, spam.h\n\n\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        #print 'FileIncludeGraph:'
+        #print myLexer.fileIncludeGraphRoot
+        expGraph = """Unknown Pre-include [1, 0]:  True ""
 src/spam.c [63, 36]:  True ""
 000002: #include usr\spam.h
        usr\spam.h [12, 8]:  True "INC == 0"
@@ -243,30 +242,30 @@ src/spam.c [63, 36]:  True ""
        sys\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && INC == 2)"
 000008: #include sys\inc\spam.h
        sys\inc\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
-       self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+        self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
-   def testSimpleInclude_01(self):
-       """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_01(): Tests conditional #include statements."""
-       # Note using comments in the predef
-       preDefMacros=[
+    def testSimpleInclude_01(self):
+        """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_01(): Tests conditional #include statements."""
+        # Note using comments in the predef
+        preDefMacros=[
                      """#define INC /* comment */ 1
 """,
                      ]
-       myLexer = PpLexer.PpLexer(
+        myLexer = PpLexer.PpLexer(
                                  'src/spam.c',
                                  self._incSim,
                                  preIncFiles=[
                                               StringIO.StringIO(x) for x in preDefMacros
                                               ],
                                  )
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """\n\nContent of: user, include, spam.h\n\n\n"""
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
-       #print 'FileIncludeGraph:'
-       #print myLexer.fileIncludeGraphRoot
-       expGraph = """Unknown Pre-include [1, 0]:  True ""
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """\n\nContent of: user, include, spam.h\n\n\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        #print 'FileIncludeGraph:'
+        #print myLexer.fileIncludeGraphRoot
+        expGraph = """Unknown Pre-include [1, 0]:  True ""
 src/spam.c [63, 36]:  True ""
 000002: #include usr\spam.h
        usr\spam.h [0, 0]: False "INC == 0"
@@ -276,32 +275,32 @@ src/spam.c [63, 36]:  True ""
        sys\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && INC == 2)"
 000008: #include sys\inc\spam.h
        sys\inc\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
-       self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+        self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
-   def testSimpleInclude_02(self):
-       """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_02(): Tests conditional #include statements."""
-       # Note using comments and line splicing in the predef
-       preDefMacros=[
+    def testSimpleInclude_02(self):
+        """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_02(): Tests conditional #include statements."""
+        # Note using comments and line splicing in the predef
+        preDefMacros=[
                      """#define /* C comment */ INC \\
 2
 // C++ comment
 """,
                      ]
-       myLexer = PpLexer.PpLexer(
+        myLexer = PpLexer.PpLexer(
                                  'src/spam.c',
                                  self._incSim,
                                  preIncFiles=[
                                               StringIO.StringIO(x) for x in preDefMacros
                                               ],
                                  )
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """\n \nContent of: system, spam.h\n\n\n"""
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
-       #print 'FileIncludeGraph:'
-       #print myLexer.fileIncludeGraphRoot
-       expGraph = """Unknown Pre-include [3, 0]:  True ""
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """\n \n\nContent of: system, spam.h\n\n\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        #print 'FileIncludeGraph:'
+        #print myLexer.fileIncludeGraphRoot
+        expGraph = """Unknown Pre-include [3, 0]:  True ""
 src/spam.c [63, 36]:  True ""
 000002: #include usr\spam.h
        usr\spam.h [0, 0]: False "INC == 0"
@@ -311,29 +310,29 @@ src/spam.c [63, 36]:  True ""
        sys\spam.h [12, 8]:  True "(!(INC == 0) && !(INC == 1) && INC == 2)"
 000008: #include sys\inc\spam.h
        sys\inc\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
-       self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+        self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
-   def testSimpleInclude_03(self):
-       """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_03(): Tests conditional #include statements."""
-       preDefMacros=[
+    def testSimpleInclude_03(self):
+        """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_03(): Tests conditional #include statements."""
+        preDefMacros=[
                      """#define INC 3
 """,
                      ]
-       myLexer = PpLexer.PpLexer(
+        myLexer = PpLexer.PpLexer(
                                  'src/spam.c',
                                  self._incSim,
                                  preIncFiles=[
                                               StringIO.StringIO(x) for x in preDefMacros
                                               ],
                                  )
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """\n\nContent of: system, include, spam.h\n\n\n"""
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
-       #print 'FileIncludeGraph:'
-       #print myLexer.fileIncludeGraphRoot
-       expGraph = """Unknown Pre-include [1, 0]:  True ""
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """\n\nContent of: system, include, spam.h\n\n\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        #print 'FileIncludeGraph:'
+        #print myLexer.fileIncludeGraphRoot
+        expGraph = """Unknown Pre-include [1, 0]:  True ""
 src/spam.c [63, 36]:  True ""
 000002: #include usr\spam.h
        usr\spam.h [0, 0]: False "INC == 0"
@@ -343,24 +342,24 @@ src/spam.c [63, 36]:  True ""
        sys\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && INC == 2)"
 000008: #include sys\inc\spam.h
        sys\inc\spam.h [15, 10]:  True "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
-       self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+        self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
 class TestIncludeHandlerMacroBase(test_PpLexer.TestIncludeHandlerBase):
-   """Tests #include statements that have macros that expand to the
-   file identifier.
-   in TestIncludeHandler.py"""
-   def __init__(self, *args):
-       self._pathsUsr = [
+    """Tests #include statements that have macros that expand to the
+    file identifier.
+    in TestIncludeHandler.py"""
+    def __init__(self, *args):
+        self._pathsUsr = [
                os.path.join('usr'),
                os.path.join('usr', 'inc'),
                ]
-       self._pathsSys = [
+        self._pathsSys = [
                os.path.join('sys'),
                os.path.join('sys', 'inc'),
                ]
-       # Child classes inplement this
-       #self._initialTuContents = ...
-       self._incFileMap = {
+        # Child classes inplement this
+        #self._initialTuContents = ...
+        self._incFileMap = {
                os.path.join('usr', 'spam.h') : """Content of: user, spam.h
 """,
                os.path.join('usr', 'inc', 'spam.h') : """Content of: user, include, spam.h
@@ -370,66 +369,66 @@ class TestIncludeHandlerMacroBase(test_PpLexer.TestIncludeHandlerBase):
                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
 """,
            }
-       super(TestIncludeHandlerMacroBase, self).__init__(*args)
+        super(TestIncludeHandlerMacroBase, self).__init__(*args)
  
 class TestIncludeHandlerMacro_Simple(TestIncludeHandlerMacroBase):
-   """Tests #include statements. Note: This is similar to stuff
-   in TestIncludeHandler.py"""
-   def __init__(self, *args):
-       self._initialTuContents = """#define FILE "spam.h"
+    """Tests #include statements. Note: This is similar to stuff
+    in TestIncludeHandler.py"""
+    def __init__(self, *args):
+        self._initialTuContents = """#define FILE "spam.h"
 #include FILE
 """
-       super(TestIncludeHandlerMacro_Simple, self).__init__(*args)
+        super(TestIncludeHandlerMacro_Simple, self).__init__(*args)
  
-   def testSimpleInclude(self):
-       """TestIncludeHandlerMacro_Simple.testSimpleInclude(): Tests multiple #include statements that resolve to usr/sys when expanded."""
-       myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """
+    def testSimpleInclude(self):
+        """TestIncludeHandlerMacro_Simple.testSimpleInclude(): Tests multiple #include statements that resolve to usr/sys when expanded."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """
 Content of: user, spam.h
- 
+
 """
-       #print '  Actual:\n%s' % result
-       #print 'Expected:\n%s' % expectedResult
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
+        #print '  Actual:\n%s' % result
+        #print 'Expected:\n%s' % expectedResult
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
  
 class TestIncludeHandlerMacro_SimpleUndef(TestIncludeHandlerMacroBase):
-   """Tests #include statements. Note: This is similar to stuff
-   in TestIncludeHandler.py"""
-   def __init__(self, *args):
-       self._initialTuContents = """#define FILE "spam.h"
+    """Tests #include statements. Note: This is similar to stuff
+    in TestIncludeHandler.py"""
+    def __init__(self, *args):
+        self._initialTuContents = """#define FILE "spam.h"
 #include FILE
 #undef FILE
 #define FILE "inc/spam.h"
 #include FILE
 """
-       super(TestIncludeHandlerMacro_SimpleUndef, self).__init__(*args)
+        super(TestIncludeHandlerMacro_SimpleUndef, self).__init__(*args)
  
-   def testSimpleInclude(self):
-       """TestIncludeHandlerMacro_SimpleUndef.testSimpleInclude(): Tests multiple #include statements that resolve to usr/sys when expanded."""
-       myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """
+    def testSimpleInclude(self):
+        """TestIncludeHandlerMacro_SimpleUndef.testSimpleInclude(): Tests multiple #include statements that resolve to usr/sys when expanded."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """
 Content of: user, spam.h
- 
- 
- 
+
+
+
 Content of: user, include, spam.h
- 
+
 """
-       #print '  Actual:\n%s' % result
-       #print 'Expected:\n%s' % expectedResult
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
+        #print '  Actual:\n%s' % result
+        #print 'Expected:\n%s' % expectedResult
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
  
 class TestIncludeHandler_UsrSys_MacroObject(TestIncludeHandlerMacroBase):
-   """Tests #include statements using object-like macros. Note: This is similar to stuff
-   in TestIncludeHandler.py"""
-   def __init__(self, *args):
-       self._initialTuContents = """#define FILE "spam.h"
+    """Tests #include statements using object-like macros. Note: This is similar to stuff
+    in TestIncludeHandler.py"""
+    def __init__(self, *args):
+        self._initialTuContents = """#define FILE "spam.h"
 #include FILE
 #undef FILE
 #define FILE "inc/spam.h"
@@ -441,13 +440,13 @@ class TestIncludeHandler_UsrSys_MacroObject(TestIncludeHandlerMacroBase):
 #define FILE <inc/spam.h>
 #include FILE
 """
-       super(TestIncludeHandler_UsrSys_MacroObject, self).__init__(*args)
+        super(TestIncludeHandler_UsrSys_MacroObject, self).__init__(*args)
  
-   def testSimpleInclude(self):
-       """TestIncludeHandler_UsrSys_MacroObject.testSimpleInclude(): Tests multiple #include statements with object-like macros."""
-       myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """
+    def testSimpleInclude(self):
+        """TestIncludeHandler_UsrSys_MacroObject.testSimpleInclude(): Tests multiple #include statements with object-like macros."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """
 Content of: user, spam.h
 \n\n
 Content of: user, include, spam.h
@@ -456,17 +455,17 @@ Content of: system, spam.h
 \n\n
 Content of: system, include, spam.h
 \n"""
-       #print '  Actual:\n%s' % result
-       #print 'Expected:\n%s' % expectedResult
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
+        #print '  Actual:\n%s' % result
+        #print 'Expected:\n%s' % expectedResult
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
  
 class TestIncludeHandler_UsrSys_MacroFunction(TestIncludeHandlerMacroBase):
-   """Tests #include statements. Note: This is similar to stuff
-   in TestIncludeHandler.py"""
-   def __init__(self, *args):
-       self._initialTuContents = """#define FILE(f) # f
+    """Tests #include statements. Note: This is similar to stuff
+    in TestIncludeHandler.py"""
+    def __init__(self, *args):
+        self._initialTuContents = """#define FILE(f) # f
 #include FILE(spam.h)
 #include FILE(inc/spam.h)
 #undef FILE
@@ -474,49 +473,49 @@ class TestIncludeHandler_UsrSys_MacroFunction(TestIncludeHandlerMacroBase):
 #include FILE(spam.h)
 #include FILE(inc/spam.h)
 """
-       super(TestIncludeHandler_UsrSys_MacroFunction, self).__init__(*args)
+        super(TestIncludeHandler_UsrSys_MacroFunction, self).__init__(*args)
  
-   def testSimpleInclude(self):
-       """TestIncludeHandler_UsrSys_MacroFunction.testSimpleInclude(): Tests multiple #include statements with function-like macros."""
-       myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """
+    def testSimpleInclude(self):
+        """TestIncludeHandler_UsrSys_MacroFunction.testSimpleInclude(): Tests multiple #include statements with function-like macros."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """
 Content of: user, spam.h
- 
+
 Content of: user, include, spam.h
 \n\n
 Content of: system, spam.h
- 
+
 Content of: system, include, spam.h
 \n"""
-       #print '  Actual:\n%s' % result
-       #print 'Expected:\n%s' % expectedResult
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
+        #print '  Actual:\n%s' % result
+        #print 'Expected:\n%s' % expectedResult
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
  
 class TestIncludeHandler_UsrSys_MultipleDepth(test_PpLexer.TestIncludeHandlerBase):
-   """Tests #include statements that are multiple depth."""
-   def __init__(self, *args):
-       self._pathsUsr = [
-               os.path.join('usr'),
-               os.path.join('usr', 'inc'),
-               ]
-       self._pathsSys = [
-               os.path.join('sys'),
-               os.path.join('sys', 'inc'),
-               ]
-       # The next two arguments mean that:
-       # src/spam.c
-       #   |-> usr/spam.h
-       #       |-> usr/inc/spam.h
-       #           |-> sys/spam.h
-       #               |-> sys/inc/spam.h
-       #                   |-> "Content of: system, include, spam.h"
-       # Initial TU:
-       self._initialTuContents = """#include "spam.h"
+    """Tests #include statements that are multiple depth."""
+    def __init__(self, *args):
+        self._pathsUsr = [
+                os.path.join('usr'),
+                os.path.join('usr', 'inc'),
+                ]
+        self._pathsSys = [
+                os.path.join('sys'),
+                os.path.join('sys', 'inc'),
+                ]
+        # The next two arguments mean that:
+        # src/spam.c
+        #   |-> usr/spam.h
+        #       |-> usr/inc/spam.h
+        #           |-> sys/spam.h
+        #               |-> sys/inc/spam.h
+        #                   |-> "Content of: system, include, spam.h"
+        # Initial TU:
+        self._initialTuContents = """#include "spam.h"
 """
-       self._incFileMap = {
+        self._incFileMap = {
                os.path.join('usr', 'spam.h') : """#include "inc/spam.h"
 """,
                os.path.join('usr', 'inc', 'spam.h') : """#include <spam.h>
@@ -526,20 +525,20 @@ class TestIncludeHandler_UsrSys_MultipleDepth(test_PpLexer.TestIncludeHandlerBas
                os.path.join('sys', 'inc', 'spam.h') : """Content of: system, include, spam.h
 """,
            }
-       super(TestIncludeHandler_UsrSys_MultipleDepth, self).__init__(*args)
+        super(TestIncludeHandler_UsrSys_MultipleDepth, self).__init__(*args)
  
-   def testSimpleInclude(self):
-       """TestIncludeHandler_UsrSys_MultipleDepth.testSimpleInclude(): Tests multiple depth #include statements that resolve to usr/sys."""
-       #print
-       myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
-       result = ''.join([t.t for t in myLexer.ppTokens()])
-       expectedResult = """Content of: system, include, spam.h\n\n\n\n\n"""
-       self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-       self.assertEqual(result, expectedResult)
-       myLexer.finalise()
-       #print 'FileIncludeGraph:'
-       #print myLexer.fileIncludeGraphRoot
-       expGraph = """src/spam.c [19, 10]:  True ""
+    def testSimpleInclude(self):
+        """TestIncludeHandler_UsrSys_MultipleDepth.testSimpleInclude(): Tests multiple depth #include statements that resolve to usr/sys."""
+        #print
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim)
+        result = ''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = """Content of: system, include, spam.h\n\n\n\n\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        #print 'FileIncludeGraph:'
+        #print myLexer.fileIncludeGraphRoot
+        expGraph = """src/spam.c [19, 10]:  True ""
 000001: #include usr\spam.h
        usr\spam.h [0, 0]:  True ""
        000001: #include usr\inc\spam.h
@@ -549,14 +548,18 @@ class TestIncludeHandler_UsrSys_MultipleDepth(test_PpLexer.TestIncludeHandlerBas
                        000001: #include sys\inc\spam.h
                                sys\inc\spam.h [15, 10]:  True \"\""""
         
-       self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
+        self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 #===============================================================================
 
 
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCoverage)
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestPpLexerCoverage))
-    #suite.addTests(unittest.TestLoader().loadTestsFromTestCase(Special))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_Conditional))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandlerMacro_Simple))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandlerMacro_SimpleUndef))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MacroObject))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MacroFunction))
+    suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestIncludeHandler_UsrSys_MultipleDepth))
     myResult = unittest.TextTestRunner(verbosity=theVerbosity).run(suite)
     return (myResult.testsRun, len(myResult.errors), len(myResult.failures))
 ##################
