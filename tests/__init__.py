@@ -22,3 +22,12 @@ __author__  = 'Paul Ross'
 __date__    = '2012-03-26'
 __version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
+
+# import os
+# import sys
+# 
+# sys.path.append(os.path.dirname(__file__))
+# sys.path.append(os.path.join(os.path.dirname(__file__), 'unit'))
+# sys.path.append(os.path.join(os.path.dirname(__file__), 'unit', 'test_core'))
+# print('++++++++++++++++++++++++++++')
+# print(sys.path)

@@ -33,7 +33,7 @@ import time
 import unittest
 
 from cpip.core import PpTokeniser, FileLocation, CppDiagnostic, PpToken  
-from . import TestBase
+from tests.unit.test_core import TestBase
 
 ########################################
 # Section: Unit tests

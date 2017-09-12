@@ -52,9 +52,9 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         (tokens, time_in_seconds_as_a_float)."""
         myTimStart = time.clock()
         if incWs:
-            myToks = [t for t in next(thePpTok)]
+            myToks = [t for t in thePpTok.next()]
         else:
-            myToks = [t for t in next(thePpTok) if not t.isWs()]
+            myToks = [t for t in thePpTok.next() if not t.isWs()]
         myTime = time.clock() - myTimStart
         myCntr = len(myToks)
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
@@ -65,7 +65,7 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         (number_of_tokens, time_in_seconds_as_a_float)."""
         myCntr = 0
         myTimStart = time.clock()
-        for t in next(thePpTok):
+        for t in thePpTok.next():
             myCntr += 1
         myTime = time.clock() - myTimStart
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
@@ -716,7 +716,7 @@ class TestPpTokeniserOverall(TestPpTokeniserOverallBase):
 
 class TestPpTokeniserRealCode(TestPpTokeniserPerfBase):
     """Test the time taken to process a 'real' code in test/PerfRealCode."""
-    REAL_PATH = os.path.join('tests', 'core', 'PerfRealCode')
+    REAL_PATH = os.path.join('tests', 'integration', 'core', 'PerfRealCode')
     def test_00(self):
         """Test the time taken to process a 'real' code in test/PerfRealCode."""
         for aName in os.listdir(self.REAL_PATH):

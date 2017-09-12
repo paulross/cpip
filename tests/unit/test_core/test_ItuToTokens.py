@@ -34,19 +34,6 @@ from cpip.core import ItuToTokens
 #######################################
 # Section: Unit tests
 ########################################
-class TestBase(unittest.TestCase):
-    """Test the simple stuff."""
-    
-    def setUp(self):
-        pass
-        
-    def tearDown(self):
-        pass
-
-    def test_00(self):
-        """TestBase.test_00(): setUp() and tearDown()."""
-        pass
-
 class TestItuToHtmlLowLevel(unittest.TestCase):
     """Test the ItuToHtml low level functionality."""
     def setUp(self):

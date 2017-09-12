@@ -51,9 +51,9 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         (tokens, time_in_seconds_as_a_float)."""
         myTimStart = time.clock()
         if incWs:
-            myToks = [t for t in next(thePpTok)]
+            myToks = [t for t in thePpTok.next()]
         else:
-            myToks = [t for t in next(thePpTok) if not t.isWs()]
+            myToks = [t for t in thePpTok.next() if not t.isWs()]
         myTime = time.clock() - myTimStart
         myCntr = len(myToks)
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
@@ -64,7 +64,7 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         (number_of_tokens, time_in_seconds_as_a_float)."""
         myCntr = 0
         myTimStart = time.clock()
-        for t in next(thePpTok):
+        for _t in thePpTok.next():
             myCntr += 1
         myTime = time.clock() - myTimStart
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
@@ -81,22 +81,10 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         #sys.stderr.write('Rate: %8.1f kb/s ... ' % (c / (1024*myTime)))
         return myLines, myTime
         
-    def run_genStrTypRep_0(self, thePpTok):
-        myTimStart = time.clock()
-        myLines = [t for t in thePpTok.genStrTypRep_0()]
-        myTime = time.clock() - myTimStart
-        c = 0
-        for aLine in myLines:
-            c += len(aLine)
-        sys.stderr.write('Time: %10.6f Rate: %8.1f kb/s ... ' % (myTime, c / (1024*myTime)))
-        return myLines, myTime
-    
     def run_lexPhases_01(self, thePpTok):
         myLines_0 = thePpTok.lexPhases_0()
         myTimStart = time.clock()
-        #tt = [t for t in thePpTok.genLexPhase1(myLines_0)]
-        for t in thePpTok.genLexPhase1(myLines_0):
-            pass
+        thePpTok.lexPhases_1(myLines_0)
         myTime = time.clock() - myTimStart
         c = 0
         for aLine in myLines_0:
@@ -121,8 +109,7 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         myTimStart = time.clock()
         myLines_0 = thePpTok.lexPhases_0()
         thePpTok._convertToLexCharset(myLines_0)
-        for t in thePpTok._genTrigraphs(myLines_0):
-            pass
+        thePpTok._translateTrigraphs(myLines_0)
         myTime = time.clock() - myTimStart
         c = 0
         for aLine in myLines_0:
@@ -133,8 +120,7 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
     def run_lexPhases_012(self, thePpTok):
         myTimStart = time.clock()
         myLines_0 = thePpTok.lexPhases_0()
-        for t in thePpTok.genLexPhase1(myLines_0):
-            pass
+        thePpTok.lexPhases_1(myLines_0)
         #assert(0)
         #thePpTok.genLexPhase1(myLines_0)
         myTime = time.clock() - myTimStart
@@ -679,57 +665,6 @@ class TestPpTokeniserIsInCharSet(TestPpTokeniserPerfBase):
                 myBool = self.isInCharSet(aChr)
         myTime = time.clock() - myTimStart
         sys.stderr.write('Rate: %8.1f kchars/s ... ' % (i * 256 / (myTime*1024)))
-
-class TestPpTokeniser_run_genStrTypRep_0(TestPpTokeniserPerfBase):
-    """Tests run_genStrTypRep_0()."""
-    def test_0_00(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" *      1."""
-        myInput = 'spam\n' * 1
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
-    def test_0_00_01(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" *      2."""
-        myInput = 'spam\n' * 2
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
-    def test_0_00_02(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" *      4."""
-        myInput = 'spam\n' * 4
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
-    def test_0_01(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" *     10."""
-        myInput = 'spam\n' * 10
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
-    def test_0_02(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" *    100."""
-        myInput = 'spam\n' * 100
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
-    def test_0_03(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" *   1000."""
-        myInput = 'spam\n' * 1000
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
-    def test_0_04(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" *  10000."""
-        myInput = 'spam\n' * 10000
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
-    def test_0_05(self):
-        """TestPpTokeniser_run_genStrTypRep_0: Phase 0 with "spam\\n" * 100000."""
-        myInput = 'spam\n' * 100000
-        myP = self.retPpTokeniser(myInput)
-        myOutput, myTime = self.run_genStrTypRep_0(myP)
-
 
 class TestPpTokeniserOverallBase(TestPpTokeniserPerfBase):
     """Test the time taken to process a 'typical' file."""

@@ -38,7 +38,7 @@ from cpip.core import PpLexer, PpTokeniser, PpToken
 # File location test classes
 from cpip.core.IncludeHandler import CppIncludeStringIO, CppIncludeStdOs
 
-from . import test_PpDefine
+from tests.unit.test_core import test_PpDefine
 
 
 class TestPpLexerPerfBase(test_PpDefine.TestPpDefine):
