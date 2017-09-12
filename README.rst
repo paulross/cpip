@@ -13,6 +13,34 @@ Features
 * Fully documented: https://cpip.readthedocs.io.
 * Free software: GNU General Public License v2
 
+Installation
+------------
+
+You can either clone the public repository:
+
+.. code-block:: console
+
+    $ git clone git://github.com/paulross/cpip
+
+Or download the tarball:
+
+.. code-block:: console
+
+    $ curl  -OL https://github.com/paulross/cpip/tarball/master
+
+Once you have a copy of the source, you can install it with:
+
+.. code-block:: console
+
+    $ python setup.py install
+
+To run the tests:
+
+.. code-block:: console
+
+    $ python setup.py test
+
+
 Visualising Preprocessing
 =============================
 
