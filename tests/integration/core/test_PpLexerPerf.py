@@ -67,7 +67,7 @@ class TestPpLexerPerfBase(test_PpDefine.TestPpDefine):
         if repeatNum > 1:
             myTimS.sort()
             myTime = myTimS[int((len(myTimS) - 1) / 2)] 
-        sys.stderr.write('Rate (median of %3d: %6.1f tokens/second ... ' \
+        sys.stderr.write('Rate (median of %3d): %6.1f tokens/second ...\n' \
                          % (repeatNum, len(myToks) / myTime)
                          )
         return myToks, myTime

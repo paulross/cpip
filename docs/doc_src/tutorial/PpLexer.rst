@@ -121,7 +121,9 @@ Lets just print them out with this code:
     :language: python
     :emphasize-lines: 11,12
 
-Invoking it now gives::
+Invoking it now gives:
+
+.. code-block:: console
 
     $ python cpip.py proj/src/main.cpp
     Processing: proj/src/main.cpp
@@ -219,7 +221,9 @@ hierarchy every step of the way::
     for tok in myLex.ppTokens():
         print myLex.fileStack
 
-Gives the following output::
+Gives the following output:
+
+.. code-block:: console
 
     $ python cpip.py proj/src/main.cpp
     Processing: proj/src/main.cpp
@@ -265,7 +269,9 @@ Here is the code, named :file:`cpip_07.py`:
     :language: python
     :linenos:
 
-Invoking this code thus::
+Invoking this code thus:
+
+.. code-block:: console
 
     $ python3 cpip_07.py ../src/main.cpp
 

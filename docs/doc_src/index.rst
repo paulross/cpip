@@ -12,14 +12,12 @@ Contents:
     :maxdepth: 2
 
     readme
+    installation
     intro
-    down_install
     examples/examples
     cmd_line_tools/index
     tutorial/index
     ref/index
-
-    installation
     usage
     contributing
     authors

@@ -4,6 +4,7 @@
 Installation
 ============
 
+CPIP has been tested with Python 2.7 and 3.3 to 3.6. CPIP used to run just fine on Windows but I haven't had a recent opportunity (or reason) to test CPIP on a Windows box.
 
 Stable release
 --------------
@@ -46,6 +47,17 @@ Once you have a copy of the source, you can install it with:
 
     $ python setup.py install
 
+To run the tests:
+
+.. code-block:: console
+
+    $ python setup.py test
+
+
+Testing the Demo Code
+--------------------------
+
+See the :ref:`cpip.tutorial.PpLexer` for an example of running a CPIP ``PpLexer`` on the demonstration code. This gives the core CPIP software a good workout.
 
 .. _Github repo: https://github.com/paulross/cpip
 .. _tarball: https://github.com/paulross/cpip/tarball/master
