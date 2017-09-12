@@ -20,21 +20,21 @@ The top level script ``CPIPMain.py`` acts like a preprocessor that generates HTM
 
 Here is that output when preprocessing a single Linux kernel file ``cpu.c``, the ``index.html`` page shows how ``CPIPMain.py`` was invoked [#f1]_ with a link to to preprocessing pages:
 
-.. Comment: docs/doc_src/ prefix in front of examples/ is required at top level
+.. Comment: Git hub does not size images so we have to have duplicates here. https://github.com/github/markup/issues/295
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_Index.png
+.. image:: screenshots/HTMLLinux_cpu.c_Index.png
     :alt: CPIPMain.py's index.html landing page.
     :width: 640
 
 This page has a single link that takes you to the landing page for the file ``cpu.c``, at the top this links to other pages that visualise source code, ``#include`` dependencies, conditional compilation and macros:
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_Home_Top.png
+.. image:: screenshots/HTMLLinux_cpu.c_Home_Top.png
     :alt: CPIP landing page after preprocessing cpu.c from the Linux kernel.
     :width: 640
     
 Lower down this page is a table of files that were involved in preprocessing:
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_Home_Lower_Lower_edit.png
+.. image:: screenshots/HTMLLinux_cpu.c_Home_Lower_Lower_edit.png
     :alt: CPIP landing page after preprocessing cpu.c from the Linux kernel.
     :width: 480
 
@@ -43,13 +43,13 @@ Visualising the Source Code
 
 From the ``cpu.c`` landing page the link "Original Source" takes you to a syntax highlighted page of the original source of ``cpu.c``.
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_ITU_edit.png
+.. image:: screenshots/HTMLLinux_cpu.c_ITU_edit.png
     :alt: Annotated source code of cpu.c
     :width: 480
 
 The ``cpu.c`` landing page link "Translation Unit" takes you to a page that shows the complete translation unit of ``cpu.c`` (i.e. incorporating all the ``#include`` files). This page is annotated so that you can understand what part of the translation unit comes from which file.
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_TU_edit.png
+.. image:: screenshots/HTMLLinux_cpu.c_TU_edit.png
     :alt: Annotated translation unit produced by cpu.c
     :width: 480
 
@@ -58,13 +58,13 @@ Visualising the ``#include`` Dependencies
 
 The ``cpu.c`` landing page link "Normal [SVG]" takes you to a page that shows the dependencies created by ``#include`` directives. This is a very rich page that represents a tree with the root at center left. ``#include``'s are in order from top to bottom. Each block represents a file, the size is proportional to the number of preprocessing tokens.
 
-.. image:: docs/doc_src/examples/images/SVG_CPU_OpeningPage_10pc.png
+.. image:: screenshots/SVG_CPU_OpeningPage_10pc.png
     :alt: Example of the file stack pop-up in the SVG include graph.
     :width: 640
 
 Zooming in with the controls at the top gives more detail. If the box is coloured cyan it is because the file does not add any content to the translation unit, usually because of conditional compilation:
 
-.. image:: docs/doc_src/examples/images/SVG_CPU_FileDetail.png
+.. image:: screenshots/SVG_CPU_FileDetail.png
     :alt: Example of the file stack pop-up in the SVG include graph.
     :width: 640
 
@@ -79,25 +79,25 @@ Hovering just to the left of the file box produces a popup that explains how the
 * As: The conditional compilation state at the point of the ``#include`` directive.
 * How: The text of the ``#include`` directive followed by the directory that this file was found in, this directory is prefixed by ``sys=`` for a system include and ``usr=`` for a user include.
 
-.. image:: docs/doc_src/examples/images/SVGIncPath.png
+.. image:: screenshots/SVGIncPath.png
     :alt: How the file got included
     :width: 640
 
 Hovering over the filename above the file box shows the file stack (children are below parents).
 
-.. image:: docs/doc_src/examples/images/SVG_CPU_FileDetail_FileStack.png
+.. image:: screenshots/SVG_CPU_FileDetail_FileStack.png
     :alt: Example of the file stack pop-up in the SVG include graph.
     :width: 640
 
 This plot can also tell you what types of preprocessor tokens were processed for each file. The coloured bars on the left of the file box indicate the proportion of preprocessing token types, the left is the file on its own, the right is the file and its child files. To understand the legend hover over those bars:
 
-.. image:: docs/doc_src/examples/images/SVG_CPU_FileDetail_HistLegend.png
+.. image:: screenshots/SVG_CPU_FileDetail_HistLegend.png
     :alt: Legend for preprocessing token types.
     :width: 640
 
 To see the actual count of preprocessing tokens hover over the file box:
 
-.. image:: docs/doc_src/examples/images/SVG_CPU_FileDetail_TokenCount.png
+.. image:: screenshots/SVG_CPU_FileDetail_TokenCount.png
     :alt: Count of preprocessing token types.
     :width: 640
 
@@ -106,7 +106,7 @@ Visualising Conditional Compilation
 
 The preprocessor is also responsible for handling conditional compilation which becomes very complicated for large projects. ``CPIPMain.py`` produces a succinct representation showing only the conditional directives. The links in each comment takes you to the syntax highlighted page for that file.
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_CondComp.png
+.. image:: screenshots/HTMLLinux_cpu.c_CondComp.png
     :alt: Conditional compilation in the translation unit.
     :width: 640
 
@@ -115,7 +115,7 @@ Understanding Macros
 
 CPIP tracks every macro definition and usage and ``CPIPMain.py`` produces a page that describes all the macros encountered:
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_Macro_Top.png
+.. image:: screenshots/HTMLLinux_cpu.c_Macro_Top.png
     :alt: The top of the macro page with down page links to details of each macro.
     :width: 640
 
@@ -129,7 +129,7 @@ Each link on the page takes you to a description of the macro containing:
     * Macros that this macro invokes.
     * Macros that invoke this macro.
 
-.. image:: docs/doc_src/examples/images/HTMLLinux_cpu.c_Macro_Detail.png
+.. image:: screenshots/HTMLLinux_cpu.c_Macro_Detail.png
     :alt: Macro BITMAP_LAST_WORD_MASK details: definition, where defined, where used and two way dependencies.
     :width: 640
 
