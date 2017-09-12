@@ -29,9 +29,9 @@ project_root = os.path.dirname(os.path.dirname(cwd))
 # This lets us ensure that the source package is imported, and that its
 # version is used.
 sys.path.insert(0, project_root)
-sys.path.insert(0, os.path.abspath('../../../src'))
-sys.path.insert(0, os.path.abspath('../../../src/cpip'))
-sys.path.insert(0, os.path.abspath('../../../src/cpip/core'))
+sys.path.insert(0, os.path.abspath('../../src'))
+sys.path.insert(0, os.path.abspath('../../src/cpip'))
+sys.path.insert(0, os.path.abspath('../../src/cpip/core'))
 
 import cpip
 
