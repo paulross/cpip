@@ -290,7 +290,7 @@ class TestPpLexerCondIncFour(TestPpLexerCondIncBase):
                 break
             myIntRepr -= 1
 
-@pytest.mark.skip(reason='TODO: Fix this')
+# @pytest.mark.skip(reason='TODO: Fix this')
 class TestPpLexerCondIncEight(TestPpLexerCondIncBase):
     """Tests 5.2.4.1 Translation limits - 8 nesting levels of conditional inclusion, exhaustive."""
     # NOTE: 2 means 0, 1, 2 will be generated
@@ -312,6 +312,7 @@ class TestPpLexerCondIncEight(TestPpLexerCondIncBase):
         self.assertEqual(self.retExpTokensNoWs(0), myToks)
         myLexer.finalise()
  
+    @pytest.mark.skip(reason='TODO: Fix this')
     def test_01(self):
         """Tests 5.2.4.1 Translation limits - 8 nesting levels of conditional inclusion, exhaustive."""
         myIntRepr = self.retIntRep()

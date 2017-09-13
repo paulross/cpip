@@ -230,18 +230,15 @@ class TestIncludeHandler_UsrSys_Conditional(PpLexerCoverageBase):
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
-        #print 'FileIncludeGraph:'
-        #print myLexer.fileIncludeGraphRoot
-        expGraph = """Unknown Pre-include [1, 0]:  True ""
-src/spam.c [63, 36]:  True ""
-000002: #include usr\spam.h
-       usr\spam.h [12, 8]:  True "INC == 0"
-000004: #include usr\inc\spam.h
-       usr\inc\spam.h [0, 0]: False "(!(INC == 0) && INC == 1)"
-000006: #include sys\spam.h
-       sys\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && INC == 2)"
-000008: #include sys\inc\spam.h
-       sys\inc\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
+        expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
+src/spam.c [0, 0]:  True "" ""
+000002: #include usr/spam.h
+  usr/spam.h [12, 8]:  True "INC == 0" "['"spam.h"', 'CP=None', 'usr=usr']\""""
+        # print('\nFileIncludeGraph:')
+        # print('Actual:')
+        # print(str(myLexer.fileIncludeGraphRoot))
+        # print('Expected:')
+        # print(str(expGraph))
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
     def testSimpleInclude_01(self):
@@ -265,16 +262,15 @@ src/spam.c [63, 36]:  True ""
         myLexer.finalise()
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
-        expGraph = """Unknown Pre-include [1, 0]:  True ""
-src/spam.c [63, 36]:  True ""
-000002: #include usr\spam.h
-       usr\spam.h [0, 0]: False "INC == 0"
-000004: #include usr\inc\spam.h
-       usr\inc\spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)"
-000006: #include sys\spam.h
-       sys\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && INC == 2)"
-000008: #include sys\inc\spam.h
-       sys\inc\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
+        expGraph = """Unnamed Pre-include [9, 4]:  True "" ""
+src/spam.c [0, 0]:  True "" ""
+000004: #include usr/inc/spam.h
+  usr/inc/spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\""""
+        # print('\nFileIncludeGraph:')
+        # print('Actual:')
+        # print(str(myLexer.fileIncludeGraphRoot))
+        # print('Expected:')
+        # print(str(expGraph))
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
     def testSimpleInclude_02(self):
@@ -300,16 +296,15 @@ src/spam.c [63, 36]:  True ""
         myLexer.finalise()
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
-        expGraph = """Unknown Pre-include [3, 0]:  True ""
-src/spam.c [63, 36]:  True ""
-000002: #include usr\spam.h
-       usr\spam.h [0, 0]: False "INC == 0"
-000004: #include usr\inc\spam.h
-       usr\inc\spam.h [0, 0]: False "(!(INC == 0) && INC == 1)"
-000006: #include sys\spam.h
-       sys\spam.h [12, 8]:  True "(!(INC == 0) && !(INC == 1) && INC == 2)"
-000008: #include sys\inc\spam.h
-       sys\inc\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
+        expGraph = """Unnamed Pre-include [11, 4]:  True "" ""
+src/spam.c [0, 0]:  True "" ""
+000006: #include sys/spam.h
+  sys/spam.h [12, 8]:  True "(!(INC == 0) && !(INC == 1) && INC == 2)" "['<spam.h>', 'sys=sys']\""""
+        # print('\nFileIncludeGraph:')
+        # print('Actual:')
+        # print(str(myLexer.fileIncludeGraphRoot))
+        # print('Expected:')
+        # print(str(expGraph))
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
     def testSimpleInclude_03(self):
@@ -332,16 +327,15 @@ src/spam.c [63, 36]:  True ""
         myLexer.finalise()
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
-        expGraph = """Unknown Pre-include [1, 0]:  True ""
-src/spam.c [63, 36]:  True ""
-000002: #include usr\spam.h
-       usr\spam.h [0, 0]: False "INC == 0"
-000004: #include usr\inc\spam.h
-       usr\inc\spam.h [0, 0]: False "(!(INC == 0) && INC == 1)"
-000006: #include sys\spam.h
-       sys\spam.h [0, 0]: False "(!(INC == 0) && !(INC == 1) && INC == 2)"
-000008: #include sys\inc\spam.h
-       sys\inc\spam.h [15, 10]:  True "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)\""""
+        expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
+src/spam.c [0, 0]:  True "" ""
+000008: #include sys/inc/spam.h
+  sys/inc/spam.h [15, 10]:  True "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)" "['<inc/spam.h>', 'sys=sys']\""""
+        # print('\nFileIncludeGraph:')
+        # print('Actual:')
+        # print(str(myLexer.fileIncludeGraphRoot))
+        # print('Expected:')
+        # print(str(expGraph))
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
  
 class TestIncludeHandlerMacroBase(test_PpLexer.TestIncludeHandlerBase):
@@ -538,16 +532,20 @@ class TestIncludeHandler_UsrSys_MultipleDepth(test_PpLexer.TestIncludeHandlerBas
         myLexer.finalise()
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
-        expGraph = """src/spam.c [19, 10]:  True ""
-000001: #include usr\spam.h
-       usr\spam.h [0, 0]:  True ""
-       000001: #include usr\inc\spam.h
-               usr\inc\spam.h [0, 0]:  True ""
-               000001: #include sys\spam.h
-                       sys\spam.h [0, 0]:  True ""
-                       000001: #include sys\inc\spam.h
-                               sys\inc\spam.h [15, 10]:  True \"\""""
-        
+        expGraph = """src/spam.c [0, 0]:  True "" ""
+000001: #include usr/spam.h
+  usr/spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+  000001: #include usr/inc/spam.h
+    usr/inc/spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
+    000001: #include sys/spam.h
+      sys/spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
+      000001: #include sys/inc/spam.h
+        sys/inc/spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\""""
+        # print('\nFileIncludeGraph:')
+        # print('Actual:')
+        # print(str(myLexer.fileIncludeGraphRoot))
+        # print('Expected:')
+        # print(str(expGraph))
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 #===============================================================================
 
