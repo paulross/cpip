@@ -76,7 +76,7 @@ You can check that the left and right sides of the comment are the same.
 
 Could use -dD option as well to get the macro definitions out.
 
-Using the regex to teh source file:
+Using the regex to the source file:
 ^(.+?)(\s+)//\s+(.+)\s*$
 Replacing with:
 ('\1',\2 '\3'),

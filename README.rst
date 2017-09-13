@@ -46,7 +46,7 @@ Visualising Preprocessing
 
 The top level script ``CPIPMain.py`` acts like a preprocessor that generates HTML and SVG output for a source code file or directory. This output makes it easy to understand what the preprocessor is doing to your source.
 
-Here is that output when preprocessing a single Linux kernel file ``cpu.c``, the ``index.html`` page shows how ``CPIPMain.py`` was invoked [#f1]_ with a link to to preprocessing pages:
+Here is some of that output when preprocessing a single Linux kernel file ``cpu.c`` (`complete output <https://cpip.readthedocs.io/en/latest/_static/index.html>`_). The ``index.html`` page shows how ``CPIPMain.py`` was invoked [#f1]_, this has a link to to preprocessing pages for that file:
 
 .. Comment: Git hub does not size images so we have to have duplicates here. https://github.com/github/markup/issues/295
 
