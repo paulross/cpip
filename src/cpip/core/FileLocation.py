@@ -214,7 +214,14 @@ class LogicalPhysicalLineMap(object):
             for lc, dl, dc in self._ir[lLine]:
                 if lCol >= lc:
                     pLine += dl
-                    pCol += dc
+                    if dc < 0:
+                        # Physical < logical
+                        # 'abc' -> 'aaabc'
+                        # So first three logical columns are the first physical column:
+                        # '123' -> '11123'
+                        pCol = max([lc, pCol + dc])
+                    else:
+                        pCol += dc
                 else:
                     break
         return pLine, pCol
@@ -370,10 +377,18 @@ class FileLocation(object):
         myTriLen = 3
         self._logicalPhysMapStack[-1].substString(self.lineNum, self.colNum+1, myTriLen, 1)
         
-    def spliceLine(self, thePhysicalLine):
-        """Update the line/column mapping to record a line splice."""
-        assert(thePhysicalLine.endswith('\\\n'))
-        lP = len(thePhysicalLine)-len('\\\n')
+    def spliceLine(self, thePhysicalLine, countLinesSpliced):
+        """Update the line/column mapping to record a line splice.
+
+        *thePhysicalLine str*
+            The following line that that is to be added to the original line that has the continuation character.
+
+        *countLinesSpliced int*
+            Number of lines spliced so we can adjust the logical to physical mapping, starts with 1.
+        """
+        assert thePhysicalLine.endswith('\\\n')
+        assert countLinesSpliced > 0
+        lP = len(thePhysicalLine) - len('\\\n')
         if self._lineSpliceCount == 0:
             self._lineSpliceColInc = lP
         else:
@@ -383,6 +398,12 @@ class FileLocation(object):
                             theLogicalCol=1+self._lineSpliceColInc,
                             dLine=1,
                             dColumn=-1*lP,
+                            )
+        self.logicalPhysicalLineMap._addToIr(
+                            theLogicalLine=self.lineNum + countLinesSpliced,
+                            theLogicalCol=1,
+                            dLine=0,
+                            dColumn=lP,
                             )
         self._lineSpliceCount +=1
         self._colNum += lP

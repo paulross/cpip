@@ -573,9 +573,10 @@ class PpTokeniser(object):
     # Section: Phase 2
     #=================
     def _spliceLineS(self, theLineS, i):
-        assert(theLineS[i].endswith(self.CONT_STR))
-        self._fileLocator.spliceLine(theLineS[i])
+        assert i >= 0
+        assert theLineS[i].endswith(self.CONT_STR)
         j = 0
+        self._fileLocator.spliceLine(theLineS[i], j+1)
         while theLineS[i].endswith(self.CONT_STR):
             j += 1
             if i+j == len(theLineS):
@@ -585,7 +586,7 @@ class PpTokeniser(object):
                 # possible here.
                 break
             if theLineS[i+j].endswith(self.CONT_STR):
-                self._fileLocator.spliceLine(theLineS[i+j])
+                self._fileLocator.spliceLine(theLineS[i+j], j+1)
             # Need to check if the spliced line generates a universal-character-name
             # \u hex-quad
             # \U hex-quad hex-quad
