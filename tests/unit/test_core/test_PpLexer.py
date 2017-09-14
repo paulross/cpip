@@ -2584,7 +2584,62 @@ PASS
         self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
         self.assertEqual(result, expectedResult)
         myLexer.finalise()
-            
+
+    def test_15(self):
+        """TestPpLexerConditional.test_00(): Test character equivalence #if 'A' == 'A'."""
+        myLexer = PpLexer.PpLexer(
+                 'mt.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#if 'A' == 'A'
+PASS
+#else
+FAIL
+#endif
+""",
+                    {}
+                    ),
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nPASS\n\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        #print
+        #print str(myLexer.condCompGraph)
+        self.assertEqual("""#if 'A' == 'A' /* True "mt.h" 1 0 */
+#else /* False "mt.h" 3 9 */
+#endif /* True "mt.h" 5 12 */""", str(myLexer.condCompGraph))
+
+    def test_16(self):
+        """TestPpLexerConditional.test_00(): Test wide character equivalence #if L'A' == u'A' and variants."""
+        myLexer = PpLexer.PpLexer(
+                 'mt.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#if L'A' == 'A' && 'A' == L'A' && 'A' == U'A' && 'A' == u'A' && L'A' == U'A'
+PASS
+#else
+FAIL
+#endif
+""",
+                    {}
+                    ),
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""\nPASS\n\n"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+        #print
+        #print str(myLexer.condCompGraph)
+        self.assertEqual("""#if L'A' == 'A' && 'A' == L'A' && 'A' == U'A' && 'A' == u'A' && L'A' == U'A' /* True "mt.h" 1 0 */
+#else /* False "mt.h" 3 9 */
+#endif /* True "mt.h" 5 12 */""", str(myLexer.condCompGraph))
+
+
 class TestPpLexerConditionalProblems(TestPpLexer):
     """Tests PpLexer with conditional source code with problems."""
     def test_00(self):

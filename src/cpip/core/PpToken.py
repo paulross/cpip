@@ -161,6 +161,8 @@ class PpToken(object):
         # Python 3 support where '/' can result in a float
         '/'     : '//',
     }
+    # See: ISO/IEC 14882 / N3242 :2011(E) 2.14.2 Character literals [lex.ccon], ISO/IEC 9899:2011 6.4.4.4 etc.
+    CHARACTER_LITERAL_PREFIXES = {'L', 'u', 'U'}
     def __init__(self, t, tt, lineNum=0, colNum=0, isReplacement=False):
         """T is the token (a string) and tt is either an enumerated integer or
         a string. Internally tt is stored as an enumerated integer.
@@ -376,6 +378,9 @@ class PpToken(object):
             # i.e. 6.10.1-3
             # returns the pp-number of 0
             return '0'
+        # Strip leading 'L' etc. from character literals.
+        if self._tt == NAME_ENUM['character-literal'] and len(self.t) and self._t[0] in self.CHARACTER_LITERAL_PREFIXES:
+            return self._t[1:]
         return self._t
 
     def merge(self, other):

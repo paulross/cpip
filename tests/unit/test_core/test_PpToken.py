@@ -448,7 +448,7 @@ class TestPpTokenLineColumn(unittest.TestCase):
         self.assertEqual(2, myTok.colNum)
         
 class TestPpTokenEvalConstExpr(unittest.TestCase):
-    """Tests line number and column number."""
+    """Tests evalConstExpr() correctly prepares tokens for Python's eval() function."""
 
     def test_00(self):
         """TestPpTokenEvalConstExpr.test_00(): Floating point literals."""
@@ -586,7 +586,14 @@ class TestPpTokenEvalConstExpr(unittest.TestCase):
         """TestPpTokenEvalConstExpr.test_11(): '/' gets converted to '//' for true division."""
         myTok = PpToken.PpToken('/', 'preprocessing-op-or-punc')
         self.assertEqual('//', myTok.evalConstExpr())
-        
+
+    def test_12(self):
+        """TestPpTokenEvalConstExpr.test_10(): Character literals."""
+        myTok = PpToken.PpToken("'A'", 'character-literal')
+        self.assertEqual("'A'", myTok.evalConstExpr())
+        myTok = PpToken.PpToken("L'A'", 'character-literal')
+        self.assertEqual("'A'", myTok.evalConstExpr())
+
         
 class TestPpTokenEscapeCodes(unittest.TestCase):
     """Tests escape codes."""

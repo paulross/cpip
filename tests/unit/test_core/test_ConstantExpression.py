@@ -120,6 +120,64 @@ class TestConstantExpressionEvaluateSimple(unittest.TestCase):
             myObj.evaluate
             )
 
+    def testEval_04(self):
+        """Evaluation of character-literal comparison "'A' == 'A'" is True."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("'A' == 'A'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(1, myObj.evaluate())
+
+    def testEval_05(self):
+        """Evaluation of character-literal comparison "'A' == 'B'" is False."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("'A' == 'B'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(0, myObj.evaluate())
+
+
+    def testEval_06(self):
+        """Evaluation of long character-literal comparison "L'A' == 'A'" is True."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("L'A' == 'A'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(1, myObj.evaluate())
+
+    def testEval_07(self):
+        """Evaluation of long character-literal comparison "L'A' == 'B'" is False."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("'A' == 'B'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(0, myObj.evaluate())
+
+    def testEval_08(self):
+        """Evaluation of long character-literal comparison "'A' == L'A'" is True."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("'A' == L'A'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(1, myObj.evaluate())
+
+    def testEval_09(self):
+        """Evaluation of long character-literal comparison "'A' == L'B'" is False."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("'A' == L'B'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(0, myObj.evaluate())
+
+    def testEval_10(self):
+        """Evaluation of long character-literal comparison "L'A' == L'A'" is True."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("L'A' == L'A'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(1, myObj.evaluate())
+
+    def testEval_11(self):
+        """Evaluation of long character-literal comparison "L'A' == L'B'" is False."""
+        myCpp = PpTokeniser.PpTokeniser()
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs("L'A' == L'B'")]
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertEqual(0, myObj.evaluate())
+
+
 class TestConstantExpressionEvaluateWordReplace(unittest.TestCase):
     """Tests evaluation of things like &&, ||, true, False."""
 

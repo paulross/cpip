@@ -991,6 +991,7 @@ class TestExpressionLexLiteral(TestPpTokeniserBase):
     def testLexLiteralUcnOrdinals_char_wide(self):
         """ISO/IEC 14882:1998(E) 2.13 Literals [lex.literal] with UCN Ordinals in wide character literals."""
         myObj = PpTokeniser.PpTokeniser()
+        # 'L' prefix
         myObj.resetTokType()
         self.assertEqual(4, myObj._sliceLiteral("L'$'"))
         myObj.resetTokType()
@@ -1001,6 +1002,27 @@ class TestExpressionLexLiteral(TestPpTokeniserBase):
         self.assertEqual(6, myObj._sliceLiteral("L'$@`'"))
         myObj.resetTokType()
         self.assertEqual(6, myObj._sliceLiteral("L'$@`'       "))
+        myObj.resetTokType()
+        # 'u' prefix
+        self.assertEqual(4, myObj._sliceLiteral("u'$'"))
+        myObj.resetTokType()
+        self.assertEqual(4, myObj._sliceLiteral("u'@'"))
+        myObj.resetTokType()
+        self.assertEqual(4, myObj._sliceLiteral("u'`'"))
+        myObj.resetTokType()
+        self.assertEqual(6, myObj._sliceLiteral("u'$@`'"))
+        myObj.resetTokType()
+        self.assertEqual(6, myObj._sliceLiteral("u'$@`'       "))
+        # 'U' prefix
+        self.assertEqual(4, myObj._sliceLiteral("U'$'"))
+        myObj.resetTokType()
+        self.assertEqual(4, myObj._sliceLiteral("U'@'"))
+        myObj.resetTokType()
+        self.assertEqual(4, myObj._sliceLiteral("U'`'"))
+        myObj.resetTokType()
+        self.assertEqual(6, myObj._sliceLiteral("U'$@`'"))
+        myObj.resetTokType()
+        self.assertEqual(6, myObj._sliceLiteral("U'$@`'       "))
 
 class TestExpressionLexIcon(TestPpTokeniserBase):
     def setUp(self):
