@@ -37,8 +37,14 @@ from cpip.core import PpTokeniser
 from cpip.core import PpDefine
 from cpip.core import FileLocation
 
-from tests.unit.test_core import TestBase
-# from . import TestBase
+try:
+    from tests.unit.test_core import TestBase
+except ImportError:
+    # Python 2.7
+    try:
+        import TestBase
+    except ImportError:
+        from . import TestBase
 ######################
 # Section: Unit tests.
 ######################

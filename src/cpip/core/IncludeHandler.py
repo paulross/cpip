@@ -393,8 +393,14 @@ class CppIncludeStringIO(CppIncludeStd):
         map that is a {path_string : content_string, ...}.
         This will be used to simulate resolving a #include statement."""
         super(CppIncludeStringIO, self).__init__(theUsrDirs, theSysDirs)
-        self._initialTuContent = theInitialTuContent
-        self._filePathToContent = theFilePathToContent
+        # io.StringIO expects Unicode
+        if sys.version_info.major == 2:
+            self._initialTuContent = theInitialTuContent.decode('ascii')
+            self._filePathToContent = {k : v.decode('ascii')
+                                       for k, v in theFilePathToContent.items()}
+        else:
+            self._initialTuContent = theInitialTuContent
+            self._filePathToContent = theFilePathToContent
 
     def _searchFile(self, theCharSeq, theSearchPath):
         """Given an HcharSeq/Qcharseq and a searchpath this tries the

@@ -240,7 +240,7 @@ class TestPpLexerCondIncFour(TestPpLexerCondIncBase):
                  'mt.h',
                  self.retIncHandler(),
                  preIncFiles=[
-                              io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                              io.StringIO(u'#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
                               ],
                  diagnostic=None,
                  )
@@ -290,7 +290,6 @@ class TestPpLexerCondIncFour(TestPpLexerCondIncBase):
                 break
             myIntRepr -= 1
 
-# @pytest.mark.skip(reason='TODO: Fix this')
 class TestPpLexerCondIncEight(TestPpLexerCondIncBase):
     """Tests 5.2.4.1 Translation limits - 8 nesting levels of conditional inclusion, exhaustive."""
     # NOTE: 2 means 0, 1, 2 will be generated
@@ -304,7 +303,7 @@ class TestPpLexerCondIncEight(TestPpLexerCondIncBase):
                  'mt.h',
                  self.retIncHandler(),
                  preIncFiles=[
-                              io.StringIO('#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
+                              io.StringIO(u'#define SPAM(x,y) x+y\n#define EGGS SPAM\n'),
                               ],
                  diagnostic=None,
                  )

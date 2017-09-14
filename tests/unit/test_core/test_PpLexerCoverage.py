@@ -214,7 +214,7 @@ class TestIncludeHandler_UsrSys_Conditional(PpLexerCoverageBase):
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_00(): Tests conditional #include statements."""
         # Note: Using line splicing in the predef
         preDefMacros=[
-                     """#define INC \\
+                     u"""#define INC \\
 0
 """,
                      ]
@@ -245,7 +245,7 @@ src/spam.c [0, 0]:  True "" ""
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_01(): Tests conditional #include statements."""
         # Note using comments in the predef
         preDefMacros=[
-                     """#define INC /* comment */ 1
+                     u"""#define INC /* comment */ 1
 """,
                      ]
         myLexer = PpLexer.PpLexer(
@@ -277,7 +277,7 @@ src/spam.c [0, 0]:  True "" ""
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_02(): Tests conditional #include statements."""
         # Note using comments and line splicing in the predef
         preDefMacros=[
-                     """#define /* C comment */ INC \\
+                     u"""#define /* C comment */ INC \\
 2
 // C++ comment
 """,
@@ -310,7 +310,7 @@ src/spam.c [0, 0]:  True "" ""
     def testSimpleInclude_03(self):
         """TestIncludeHandler_UsrSys_Conditional.testSimpleInclude_03(): Tests conditional #include statements."""
         preDefMacros=[
-                     """#define INC 3
+                     u"""#define INC 3
 """,
                      ]
         myLexer = PpLexer.PpLexer(

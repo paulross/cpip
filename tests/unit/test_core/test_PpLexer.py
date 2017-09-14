@@ -42,7 +42,11 @@ from cpip.core import PragmaHandler
 # File location test classes
 from cpip.core.IncludeHandler import CppIncludeStringIO
 
-from tests.unit.test_core import TestBase
+try:
+    from tests.unit.test_core import TestBase
+except ImportError:
+    # Python 2.7
+    from . import TestBase
 
 ######################
 # Section: Unit tests.

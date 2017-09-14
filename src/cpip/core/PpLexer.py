@@ -1550,7 +1550,7 @@ class PpLexer(object):
                                 theUsrDirs=[],
                                 theSysDirs=[],
                                 theInitialTuContent=pragmaStr,
-                                theFilePathToContent=fileId,
+                                theFilePathToContent={fileId : pragmaStr},
                             )
                     myFpo = myFh.initialTu(fileId)
                     # Preprocess the tokens

@@ -28,6 +28,7 @@ __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 #import logging
 import difflib
 import io
+import sys
 
 from cpip.core import PpToken
 from cpip.core import PpTokeniser
@@ -97,9 +98,15 @@ class TestCpipBase(unittest.TestCase):
     def stringToTokens(self, theString):
         """Returns a list of preprocessing tokens from a string. This can be
         used to test against expected values."""
-        myCpp = PpTokeniser.PpTokeniser(
-            theFileObj=io.StringIO(theString)
-            )
+        # io.StringIO expects Unicode
+        if sys.version_info.major == 2:
+            myCpp = PpTokeniser.PpTokeniser(
+                theFileObj=io.StringIO(theString.decode('ascii'))
+                )
+        else:
+            myCpp = PpTokeniser.PpTokeniser(
+                theFileObj=io.StringIO(theString)
+                )
         return [t_tt for t_tt in myCpp.next()]
 
     def tokensToString(self, theTokens):

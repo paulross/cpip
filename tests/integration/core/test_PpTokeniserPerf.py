@@ -43,9 +43,15 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
 
     def retPpTokeniser(self, theContent):
         """Returns a PpTokeniser object with the supplied content."""
-        return PpTokeniser.PpTokeniser(
-                theFileObj=io.StringIO(theContent)
-                )
+        # io.StringIO expects Unicode
+        if sys.version_info.major == 2:
+            return PpTokeniser.PpTokeniser(
+                    theFileObj=io.StringIO(theContent.decode('ascii'))
+                    )
+        else:
+            return PpTokeniser.PpTokeniser(
+                    theFileObj=io.StringIO(theContent)
+                    )
 
     def runTokGen(self, thePpTok, incWs=True):
         """causes theLex to preprocess and returns:
