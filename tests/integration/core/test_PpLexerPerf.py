@@ -23,25 +23,15 @@ __date__    = '2011-07-10'
 __version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
-try:
-    import io as StringIO
-except ImportError:
-    import io
 import logging
 import os
-import pprint
 import sys
 import time
 import unittest
 
-from cpip.core import PpLexer, PpTokeniser, PpToken
+from cpip.core import PpLexer, PpToken
 # File location test classes
 from cpip.core.IncludeHandler import CppIncludeStringIO, CppIncludeStdOs
-
-# import pprint
-# pprint.pprint(sys.path)
-
-# from tests.unit.test_core import test_PpDefine
 
 try:
     from tests.unit.test_core import test_PpDefine
@@ -56,8 +46,6 @@ except ImportError:
             'test_core',
         )
     )
-    import pprint
-    pprint.pprint(sys.path)
     import test_PpDefine
 
 class TestPpLexerPerfBase(test_PpDefine.TestPpDefine):
