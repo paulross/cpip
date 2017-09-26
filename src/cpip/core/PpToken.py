@@ -379,7 +379,7 @@ class PpToken(object):
             # returns the pp-number of 0
             return '0'
         # Strip leading 'L' etc. from character literals.
-        if self._tt == NAME_ENUM['character-literal'] and len(self.t) and self._t[0] in self.CHARACTER_LITERAL_PREFIXES:
+        if self._tt == NAME_ENUM['character-literal'] and len(self._t) and self._t[0] in self.CHARACTER_LITERAL_PREFIXES:
             return self._t[1:]
         return self._t
 

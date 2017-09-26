@@ -1590,7 +1590,6 @@ class PpTokeniser(object):
         #L'c-char-sequence'
         i = theOfs
         try:
-            # if theBuf[i] == 'L':
             if theBuf[i] in PpToken.PpToken.CHARACTER_LITERAL_PREFIXES:
                 i += 1
             if theBuf[i] == "'":
