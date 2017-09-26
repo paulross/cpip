@@ -17,7 +17,6 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # 
 # Paul Ross: apaulross@gmail.com
-
 """Writes out a macro history in HTML.
 
 Macros can be:
@@ -676,13 +675,13 @@ def _retMacroIdHrefNames(theEnv, theItu):
     return retVal
 
 def _macroHistoryIndexName(theItu):
-    return os.path.basename(theItu) + '_macros' + '.html'
+    return 'macros.html'
 
 def _macroHistoryRefName(theItu):
-    return os.path.basename(theItu) + '_macros' + '_ref' + '.html'
+    return 'macros_ref.html'
 
 def _macroHistoryNorefName(theItu):
-    return os.path.basename(theItu) + '_macros' + '_noref' + '.html'
+    return 'macros_noref.html'
 
 def _linkToIndex(theS, theIdx):
     with XmlWrite.Element(theS, 'p'):
