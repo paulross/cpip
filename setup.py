@@ -37,7 +37,8 @@ setup(
     package_dir={'':'src'},
     entry_points={
         'console_scripts': [
-            'cpipmain=cpip.CPIPMain:main'
+            'cpipmain=cpip.CPIPMain:main',
+            'cpipduperelink=cpip.DupeRelink:main',
         ]
     },
     include_package_data=True,
