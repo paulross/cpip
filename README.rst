@@ -1,4 +1,4 @@
-cpip
+CPIP
 ====
 
 CPIP is a C/C++ Preprocessor implemented in Python. It faithfully records all aspects of preprocessing and can produce visualisations that make debugging preprocessing far easier.
@@ -26,7 +26,7 @@ Or download the tarball:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/paulross/cpip/tarball/master
+    $ curl -OL https://github.com/paulross/cpip/tarball/master
 
 Once you have a copy of the source, you can install it with:
 

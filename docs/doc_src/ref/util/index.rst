@@ -12,7 +12,6 @@ cpip.util
 	CommonPrefix
 	DictTree
 	DirWalk
-	FileStatus
 	HtmlUtils
 	ListGen
 	MatrixRep

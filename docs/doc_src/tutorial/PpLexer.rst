@@ -309,7 +309,7 @@ Include Handler
 
 When an ``#include`` directive is encountered a compliant implementation is required to search for and insert into the Translation Unit the content referenced by the payload of the ``#include`` directive.
 
-The standard does not specify *how* this should be accomplished. In CPIP the *how* is achieved by an implementation of an ``cpip.core.IncludeHandler``.
+The standard does not specify *how* this should be accomplished. In CPIP the *how* is achieved by an implementation of an :py:mod:`cpip.core.IncludeHandler`.
 
 An Aside
 ^^^^^^^^^^^^^^^
@@ -333,7 +333,7 @@ That leads to a fairly obvious way of managing that ``#include`` payload.
 Implementation
 ^^^^^^^^^^^^^^^^^^^
 
-If you want to create a new include mechanism then you should sub-class the base class ``cpip.core.IncludeHandler.CppIncludeStd`` [reference documentation: :ref:`cpip.ref.IncludeHandler`]. 
+If you want to create a new include mechanism then you should sub-class the base class :py:class:`cpip.core.IncludeHandler.CppIncludeStd` [reference documentation: :ref:`cpip.ref.IncludeHandler`]. 
 
 Sub-classing this requires implementing the following methods :
 
@@ -354,8 +354,8 @@ Sub-classing this requires implementing the following methods :
 
 As examples there are a couple of reference implementations in :file:`cpip.core.IncludeHandler`:
 
-* ``CppIncludeStdOs`` - An implementation that behaves as most developers think the ``#include`` mechanism works.
-* ``CppIncludeStringIO`` - An implementation that recovers content from a dictionary of in-memory files. This is used a lot within CPIP for unit testing.
+* :py:class:`cpip.core.IncludeHandler.CppIncludeStdOs` - An implementation that behaves as most developers think the ``#include`` mechanism works.
+* :py:class:`cpip.core.IncludeHandler.CppIncludeStringIO` - An implementation that recovers content from a dictionary of in-memory files. This is used a lot within CPIP for unit testing.
 
 Pre-includes
 ------------
@@ -386,7 +386,7 @@ Diagnostic
 
 You can pass in to ``PpLexer`` a diagnostic object, this controls how the lexer responds to various conditions such as warning error etc. The default is for the lexer to create a :class:`CppDiagnostic.PreprocessDiagnosticStd`.
 
-If you want to create your own then sub-class the ``PreprocessDiagnosticStd`` class in the module :ref:`cpip.ref.CppDiagnostic`.
+If you want to create your own then sub-class the :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticStd` class in the module :py:mod:`cpip.ref.CppDiagnostic`.
 
 Sub-classing ``PreprocessDiagnosticStd`` allows you to override any of the following that might be called by the ``PpLexer``:
 
@@ -401,16 +401,16 @@ Sub-classing ``PreprocessDiagnosticStd`` allows you to override any of the follo
 
 There are a couple of implementations in the :ref:`cpip.ref.CppDiagnostic` module that may be of interest:
 
-* ``PreprocessDiagnosticKeepGoing``: Sub-class that does not raise exceptions.
-* ``PreprocessDiagnosticRaiseOnError``: Sub-class that raises an exception on a #'error directive.
+* :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticKeepGoing`: Sub-class that does not raise exceptions.
+* :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticRaiseOnError`: Sub-class that raises an exception on a ``#error`` directive.
 
 
 Pragma
 ------
 
-You can pass in a specialised handler for ``#pragma`` statements [default: None]. This shall sub-class ``PragmaHandlerABC`` and can implement:
+You can pass in a specialised handler for ``#pragma`` statements [default: None]. This shall sub-class :py:class:`cpip.core.PragmaHandler.PragmaHandlerABC` and can implement:
 
 * The boolean attribute ``replaceTokens`` is to be implemented. If True then the tokens following the ``#pragma`` statement will be be macro replaced by the PpLexer using the current macro environment before being passed to this pragma handler.
 * A method ``def pragma(self, theTokS):`` that takes a non-zero length list of ``PpTokens`` the last of which will be a newline token. Any token this method returns will be yielded as part of the Translation Unit (and thus subject to macro replacement for example).
 
-Have a look at the core module :ref:`cpip.ref.PragmaHandler` for some example implementations.
+Have a look at the core module :py:mod:`cpip.core.PragmaHandler` for some example implementations.

@@ -6,6 +6,14 @@ Installation
 
 CPIP has been tested with Python 2.7 and 3.3 to 3.6. CPIP used to run just fine on Windows but I haven't had a recent opportunity (or reason) to test CPIP on a Windows box.
 
+First make a virtual environment in your :file:`{<PYTHONVENVS>}`, say :file:`{~/pyvenvs}`:
+
+.. code-block:: console
+
+    $ python3 -m venv <PYTHONVENVS>/CPIP
+    $ . <PYTHONVENVS>/CPIP/bin/activate
+    (CPIP) $
+
 Stable release
 --------------
 
@@ -13,7 +21,7 @@ To install cpip, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install cpip
+    (CPIP) $ pip install cpip
 
 This is the preferred method to install cpip, as it will always install the most recent stable release. 
 
@@ -33,26 +41,60 @@ You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/paulross/cpip
+    (CPIP) $ git clone git://github.com/paulross/cpip
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl  -OL https://github.com/paulross/cpip/tarball/master
+    (CPIP) $ curl -OL https://github.com/paulross/cpip/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
 .. code-block:: console
 
-    $ python setup.py install
+    (CPIP) $ python setup.py install
 
-To run the tests:
+Install the test dependencies and run CPIP's tests:
 
 .. code-block:: console
 
-    $ python setup.py test
+    (CPIP) $ pip install pytest
+    (CPIP) $ pip install pytest-runner
+    (CPIP) $ python setup.py test
 
+Developing with CPIP
+----------------------------
+
+If you are developing with CPIP you need test coverage and documentation tools.
+
+Test Coverage
+^^^^^^^^^^^^^^^^
+
+Install ``pytest-cov``:
+
+.. code-block:: console
+
+    (CPIP) $ pip install pytest-cov
+
+The most meaningful invocation that elimates the top level tools is:
+
+.. code-block:: console
+
+    (CPIP) $ pytest --cov=cpip.core --cov=cpip.plot --cov=cpip.util --cov-report html tests/
+
+Documentation
+^^^^^^^^^^^^^^^^
+
+If you want to build the documentation you need to:
+
+.. code-block:: console
+
+    (CPIP) $ pip install Sphinx
+    (CPIP) $ cd docs
+    (CPIP) $ make html
+
+The landing page is *docs/_build/html/index.html*.
 
 Testing the Demo Code
 --------------------------

@@ -17,12 +17,33 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # 
 # Paul Ross: apaulross@gmail.com
+"""Provides a command line tool for finding out information on files:
+
+.. code-block:: console
+
+    $ python3 src/cpip/FileStatus.py -r src/cpip/
+    Cmd: src/cpip/FileStatus.py -r src/cpip/
+    File                                     SLOC      Size                               MD5  Last modified
+    src/cpip/CPIPMain.py                     1072     44829  4dee8712b7d51f978689ef257cf1fd34  Wed Sep 27 08:57:00 2017
+    src/cpip/CppCondGraphToHtml.py            124      4862  4f0d5731ef6f3d47ec638f00e7646a9f  Fri Sep  8 15:30:41 2017
+    src/cpip/DupeRelink.py                    269     11795  914ed2149dce6584e6f3f55ec0e2b923  Wed Sep 27 11:35:32 2017
+    src/cpip/FileStatus.py                    218      8015  6db0658622e82d32a9a9b4c8eb9e82e5  Thu Sep 28 11:13:40 2017
+    src/cpip/IncGraphSVG.py                  1026     45049  7b82651dadd44eb4ed65d390f6c052df  Fri Sep  8 15:30:41 2017
+    ...
+    src/cpip/util/Tree.py                     166      5719  cdb81d1eaaf6a1743e5182355f2e75bb  Fri Sep  8 15:30:41 2017
+    src/cpip/util/XmlWrite.py                 425     15114  48563685ace3ec0f6d734695cac17ede  Tue Sep 12 15:38:55 2017
+    src/cpip/util/__init__.py                  31      1161  208abac9edd9682f438945906a451473  Fri Sep  8 15:30:41 2017
+    Total [54]                              19475    789349
+    CPU time =    0.041 (S)
+    Bye, bye!
+"""
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
 __version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
+import datetime
 import os
 import sys
 import time
@@ -44,6 +65,7 @@ class FileInfo(object):
         self._size = 0
         self._hash = hashlib.md5()
         self._count = 0
+        self._mod_time = 0
         if self._path is not None:
             if not os.path.isfile(thePath):
                 raise ExceptionFileStatus('Not a file path: %s' % thePath)
@@ -53,19 +75,22 @@ class FileInfo(object):
                 self._hash.update(aLine.encode('utf-8'))
                 self._sloc += 1
             self._count += 1
-        
+            self._mod_time = os.stat(self._path).st_mtime
+
     def writeHeader(self, theS=sys.stdout):
         """Writes header to stream."""
         theS.write('%8s  ' % 'SLOC')
         theS.write('%8s  ' % 'Size')
-        theS.write('%s' % 'MD5')
-    
+        theS.write('%32s  ' % 'MD5')
+        theS.write('%s  ' % 'Last modified')
+
     def write(self, theS=sys.stdout, incHash=True):
         """Writes the number of lines and bytes (optionally MD5) to stream."""
         theS.write('%8d  ' % self._sloc)
         theS.write('%8d  ' % self._size)
         if incHash:
-            theS.write('%s' % self._hash.hexdigest())
+            theS.write('%32s' % self._hash.hexdigest())
+        theS.write('  %s' % datetime.datetime.fromtimestamp(self._mod_time).strftime('%c'))
     
     @property
     def sloc(self):
@@ -137,6 +162,25 @@ class FileInfoSet(object):
         theS.write('\n')
         
 def main():
+    """Prints out the status of files in a directory:
+
+    .. code-block:: console
+
+        $ python ../src/cpip/FileStatus.py --help
+        Cmd: ../src/cpip/FileStatus.py --help
+        Usage: FileStatus.py [options] dir
+        Counts files and sizes.
+
+        Options:
+          --version             show program's version number and exit
+          -h, --help            show this help message and exit
+          -g GLOB, --glob=GLOB  Space separated list of file match patterns. [default:
+                                *.py]
+          -l LOGLEVEL, --loglevel=LOGLEVEL
+                                Log Level (debug=10, info=20, warning=30, error=40,
+                                critical=50) [default: 30]
+          -r                    Recursive. [default: False]
+    """
     usage = """usage: %prog [options] dir
 Counts files and sizes."""
     print('Cmd: %s' % ' '.join(sys.argv))

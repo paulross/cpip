@@ -7,6 +7,7 @@ CPIP Reference
 
     CPIPMain
     CppCondGraphToHtml
+    FileStatus
     IncGraphSVG
     IncGraphSVGBase
     IncGraphXML
