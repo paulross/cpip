@@ -2,6 +2,7 @@
 setup.py
 cpip/CPIPMain.py
 cpip/CppCondGraphToHtml.py
+cpip/FileStatus.py
 cpip/IncGraphSVG.py
 cpip/IncGraphSVGBase.py
 cpip/IncGraphSVGPpi.py
@@ -76,7 +77,6 @@ cpip/test/TestItuToHtml.py
 cpip/test/__init__.py
 cpip/util/BufGen.py
 cpip/util/DictTree.py
-cpip/util/FileStatus.py
 cpip/util/HtmlUtils.py
 cpip/util/ListGen.py
 cpip/util/MatrixRep.py
