@@ -181,7 +181,11 @@ def _rewrite_links_where_files_deleted(root_dir,
     common directory."""
     logging.info(' Rewriting links '.center(75, "="))
     root_depth = root_dir.count(os.sep)
+    count = 1
     for k, v in hash_result.items():
+        assert len(v) > 1
+        count_str = '[{:d}/{:d}]'.format(count, len(hash_result))
+        logging.info('{:16s} Rewriting links to "{:s}"'.format(count_str, os.path.basename(v[0])))
         for dupe_file_path in v:
             # Look at all HTML files in this directory and relink them to the
             # common_dir/file
@@ -206,11 +210,12 @@ def _rewrite_links_where_files_deleted(root_dir,
                                          text_repl,
                                          nervous_mode,
                                          len_root_dir)
+        count += 1
     logging.info(' DONE: Rewriting links '.center(75, "="))
 
 
 def process(root_dir, sub_dir_for_common_files=SUB_DIR_FOR_COMMON_FILES,
-            file_glob=FILE_GLOB, nervous_mode=False):
+            file_glob=FILE_GLOB, nervous_mode=False, verbose=False):
     """Process a directory in-place by making a single copy of common files,
     deleting the rest and fixing the links."""
     if not (os.path.exists(root_dir) and os.path.isdir(root_dir)):
@@ -240,6 +245,22 @@ def process(root_dir, sub_dir_for_common_files=SUB_DIR_FOR_COMMON_FILES,
                                        nervous_mode,
                                        hash_result,
                                        len_root_dir)
+    if verbose:
+        file_map = {v[0] : len(v) for v in hash_result.values()}
+        print('Files and sizes [{:d}]. Columns are file bytes, file MB, count, file bytes * count, file MB * count, name:'.format(len(file_map)))
+        hdr = '{:>12s} {:>8s}      [{:5s}] {:12s} {:8s}      {:s}'.format('Bytes', 'MB', 'Count', 'Bytes*count', 'MB*count', 'Name')
+        print(hdr)
+        print('-' * len(hdr))
+        for f in sorted(file_map.keys()):
+            siz = os.stat(f).st_size
+            print('{:12d} {:8.3f} (MB) [{:5d}] {:12d} {:8.3f} (MB) {:s}'.format(
+                siz,
+                siz / 1024**2,
+                file_map[f],
+                siz * file_map[f],
+                siz / 1024**2 * file_map[f],
+                os.path.basename(f)
+            ))
     return statistics
 
 
@@ -266,7 +287,10 @@ USAGE
     parser.add_argument("-n", "--nervous", action="store_true", dest="nervous",
                         default=False,
         help="Nervous mode, don't do anything but report what would be done."
-             " Sets logging to INFO. [default: %(default)s]")
+             " Use -l20 to see detailed result. [default: %(default)s]")
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose",
+                        default=False,
+        help="Verbose, lists duplicate files and sizes. [default: %(default)s]")
     parser.add_argument(
         "-l", "--loglevel",
         type=int,
@@ -284,10 +308,9 @@ USAGE
     clkStart = time.clock()
     # Initialise logging etc.
     inPath = args.path[0]
-    if args.nervous:
-        log_level = min([args.loglevel, 20])
-    else:
-        log_level = args.loglevel
+    log_level = args.loglevel
+    # if args.nervous:
+    #     log_level = min([log_level, 20])
     logFormat = '%(asctime)s %(levelname)-8s %(message)s'
     logging.basicConfig(level=log_level,
                     format=logFormat,
@@ -299,10 +322,11 @@ USAGE
     elif os.path.isdir(inPath):
         print('Procesing: "{:s}" '.format(inPath))
         count_deleted, count_bytes_saved = process(
-           inPath,
-           sub_dir_for_common_files=args.subdir,
-           file_glob=FILE_GLOB,
-           nervous_mode=args.nervous
+            inPath,
+            sub_dir_for_common_files=args.subdir,
+            file_glob=FILE_GLOB,
+            nervous_mode=args.nervous,
+            verbose=args.verbose,
         )
         print('Files deleted: {:12d}'.format(count_deleted))
         print('  Bytes saved: {:12d} {:8.3f} (MB)'.format(
