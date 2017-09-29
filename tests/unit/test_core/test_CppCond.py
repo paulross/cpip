@@ -1666,7 +1666,7 @@ class TestCppCondGraphVisitor(unittest.TestCase):
 class TestLineConditionalInterpretation(unittest.TestCase):
     def test_00(self):
         """TestLineConditionalInterpretation.test_00(): Basic test, no conditions."""
-        lst = [(0, True),]
+        lst = [(1, True),]
         lci = CppCond.LineConditionalInterpretation(lst)
         self.assertEqual(lci.isCompiled(1), 1)
         self.assertEqual(lci.isCompiled(100), 1)
@@ -1674,14 +1674,14 @@ class TestLineConditionalInterpretation(unittest.TestCase):
 
     def test_01(self):
         """TestLineConditionalInterpretation.test_01(): Basic test, no conditions, raises on line number == -1."""
-        lst = [(0, True),]
+        lst = [(1, True),]
         lci = CppCond.LineConditionalInterpretation(lst)
-        self.assertEqual(lci.isCompiled(0), 1)
-        self.assertRaises(ValueError, lci.isCompiled, -1)
+        self.assertEqual(lci.isCompiled(1), 1)
+        self.assertRaises(ValueError, lci.isCompiled, 0)
 
     def test_02(self):
         """TestLineConditionalInterpretation.test_02(): Basic test, with conditions."""
-        lst = [(0, True), (10, False), (20, True),]
+        lst = [(1, True), (10, False), (20, True),]
         lci = CppCond.LineConditionalInterpretation(lst)
         self.assertEqual(lci.isCompiled(1), 1)
         self.assertEqual(lci.isCompiled(9), 1)
@@ -1693,7 +1693,7 @@ class TestLineConditionalInterpretation(unittest.TestCase):
 
     def test_03(self):
         """TestLineConditionalInterpretation.test_03(): Basic test, with conditions, inverted."""
-        lst = [(0, False), (10, True), (20, False),]
+        lst = [(1, False), (10, True), (20, False),]
         lci = CppCond.LineConditionalInterpretation(lst)
         self.assertEqual(lci.isCompiled(1), 0)
         self.assertEqual(lci.isCompiled(9), 0)
@@ -1705,7 +1705,7 @@ class TestLineConditionalInterpretation(unittest.TestCase):
 
     def test_04(self):
         """TestLineConditionalInterpretation.test_04(): Basic test, with conditions, duplicate, same."""
-        lst = [(0, True), (10, False), (20, True), (10, False), (20, True),]
+        lst = [(1, True), (10, False), (20, True), (10, False), (20, True),]
         lci = CppCond.LineConditionalInterpretation(lst)
         self.assertEqual(lci.isCompiled(1), 1)
         self.assertEqual(lci.isCompiled(9), 1)
@@ -1717,7 +1717,7 @@ class TestLineConditionalInterpretation(unittest.TestCase):
 
     def test_05(self):
         """TestLineConditionalInterpretation.test_05(): Basic test, with conditions, duplicate, same."""
-        lst = [(0, True), (10, False), (20, True), (10, False), (20, True),]
+        lst = [(1, True), (10, False), (20, True), (10, False), (20, True),]
         lci = CppCond.LineConditionalInterpretation(lst)
         self.assertEqual(lci.isCompiled(1), 1)
         self.assertEqual(lci.isCompiled(9), 1)
@@ -1729,7 +1729,7 @@ class TestLineConditionalInterpretation(unittest.TestCase):
 
     def test_06(self):
         """TestLineConditionalInterpretation.test_06(): Basic test, with conditions, duplicate, different."""
-        lst = [(0, True), (10, False), (20, True), (30, True), (10, True), (20, False), (30, True)]
+        lst = [(1, True), (10, False), (20, True), (30, True), (10, True), (20, False), (30, True)]
         lci = CppCond.LineConditionalInterpretation(lst)
         self.assertEqual(lci.isCompiled(1), 1)
         self.assertEqual(lci.isCompiled(9), 1)
@@ -1742,9 +1742,137 @@ class TestLineConditionalInterpretation(unittest.TestCase):
         self.assertEqual(lci.isCompiled(30), 1)
         self.assertEqual(lci.isCompiled(31), 1)
 
+
+class TestCppCondGraphVisitorBase(unittest.TestCase):
+    """Tests the CppCondGraphVisitorBase."""
+    def test_visitPre_raises(self):
+        my_class = CppCond.CppCondGraphVisitorBase()
+        with self.assertRaises(NotImplementedError):
+            my_class.visitPre(None, None)
+
+
+    def test_visitPost_raises(self):
+        my_class = CppCond.CppCondGraphVisitorBase()
+        with self.assertRaises(NotImplementedError):
+            my_class.visitPost(None, None)
+
+
+class TestCppCondLineConditionalInterpretation(unittest.TestCase):
+    """Tests LineConditionalInterpretation the class that interpolates conditional state between lines."""
+    def test_mt_interpretation(self):
+        lci = CppCond.LineConditionalInterpretation([])
+        with self.assertRaises(ValueError):
+            lci.isCompiled(21)
+
+    def test_interpretation_raises_lines_less_than_one(self):
+        with self.assertRaises(ValueError):
+            lci = CppCond.LineConditionalInterpretation([(0, True)])
+
+    def test_interpretation_one_if_else(self):
+        lci = CppCond.LineConditionalInterpretation([(20, False), (30, True)])
+        self.assertEqual(0, lci.isCompiled(20))
+        self.assertEqual(0, lci.isCompiled(21))
+        self.assertEqual(0, lci.isCompiled(29))
+        self.assertEqual(1, lci.isCompiled(30))
+        self.assertEqual(1, lci.isCompiled(31))
+        self.assertEqual(1, lci.isCompiled(32))
+
+    def test_interpretation_one_if_else_raises_prior_to_if(self):
+        lci = CppCond.LineConditionalInterpretation([(20, False), (30, True)])
+        with self.assertRaises(ValueError):
+            lci.isCompiled(1)
+        with self.assertRaises(ValueError):
+            lci.isCompiled(19)
+
+    def test_interpretation_str(self):
+        lci = CppCond.LineConditionalInterpretation([(20, False), (30, True)])
+        self.assertEqual(str(lci), '[(20, False), (30, True)]')
+
 class TestCppCondGraphVisitorLineCondCompilation(unittest.TestCase):
     """Tests the CppCondGraph visitor."""
-    def test_00(self):
+    def test_absent_conditionals(self):
+        myCcg = CppCond.CppCondGraph()
+#        print()
+#        print(myCcg)
+        self.assertTrue(myCcg.isComplete)
+        self.assertEqual('', str(myCcg))
+        myV = CppCond.CppCondGraphVisitorConditionalLines()
+        myCcg.visit(myV)
+#         print()
+#         pprint.pprint(myV._fileMap)
+        self.assertEqual(sorted(myV.fileIdS), [])
+        self.assertTrue(myV.isCompiled('Unknown file', 9))
+        self.assertEqual(myV.fileLineCondition, {})
+
+    def test_single_if_0_else(self):
+        """TestCppCondGraphVisitor.test_00() - Test a visitor object."""
+        myCcg = CppCond.CppCondGraph()
+        # Level 0, single file
+        myCcg.oIf(FileLocation.FileLineCol('file_0', 10, 1), 10, False, '0')
+        myCcg.oElse(FileLocation.FileLineCol('file_0', 60, 1), 60, True)
+        myCcg.oEndif(FileLocation.FileLineCol('file_0', 401, 1), 401, True)
+        # print()
+        # print(myCcg)
+        self.assertTrue(myCcg.isComplete)
+        self.assertEqual(
+            """#if 0 /* False "file_0" 10 10 */
+#else /* True "file_0" 60 60 */
+#endif /* True "file_0" 401 401 */""",
+            str(myCcg),
+        )
+        myV = CppCond.CppCondGraphVisitorConditionalLines()
+        myCcg.visit(myV)
+        # print()
+        # pprint.pprint(myV._fileMap)
+        # {'file_0': [(0, True), (10, True), (60, True), (401, False)]}
+        self.assertEqual(sorted(myV.fileIdS), ['file_0'])
+        self.assertEqual(
+            myV._lineCondition('file_0'),
+            [(1, True), (10, False), (60, True), (401, True)],
+        )
+        self.assertEqual(sorted(myV.fileLineCondition.keys()), sorted(['file_0']))
+        myLineCondition = myV.fileLineCondition['file_0']
+        self.assertEqual(myLineCondition._lines, [1, 10, 60, 401])
+        self.assertEqual(myLineCondition._bools, [True, False, True, True])
+        # Check .isCompiled() at various lines.
+        self.assertTrue(myV.isCompiled('file_0', 1))
+        self.assertTrue(myV.isCompiled('file_0', 9))
+        self.assertFalse(myV.isCompiled('file_0', 10))
+        self.assertFalse(myV.isCompiled('file_0', 11))
+        self.assertFalse(myV.isCompiled('file_0', 59))
+        self.assertTrue(myV.isCompiled('file_0', 60))
+        self.assertTrue(myV.isCompiled('file_0', 61))
+        self.assertTrue(myV.isCompiled('file_0', 400))
+        self.assertTrue(myV.isCompiled('file_0', 401))
+        self.assertTrue(myV.isCompiled('file_0', 402))
+
+    def test_single_if_1_else(self):
+        """TestCppCondGraphVisitor.test_00() - Test a visitor object."""
+        myCcg = CppCond.CppCondGraph()
+        # Level 0, single file
+        myCcg.oIf(FileLocation.FileLineCol('file_0', 10, 1), 0, True, '1')
+        myCcg.oElse(FileLocation.FileLineCol('file_0', 60, 1), 0, False)
+        myCcg.oEndif(FileLocation.FileLineCol('file_0', 401, 1), 0, True)
+        # print()
+        # print(myCcg)
+        self.assertTrue(myCcg.isComplete)
+        self.assertEqual(
+            """#if 1 /* True "file_0" 10 0 */
+#else /* False "file_0" 60 0 */
+#endif /* True "file_0" 401 0 */""",
+            str(myCcg),
+        )
+        myV = CppCond.CppCondGraphVisitorConditionalLines()
+        myCcg.visit(myV)
+        # print()
+        # pprint.pprint(myV._fileMap)
+        self.assertEqual(sorted(myV.fileIdS), ['file_0'])
+        self.assertEqual(
+            [(1, True), (10, True), (60, False), (401, True)],
+            myV._lineCondition('file_0')
+        )
+
+    def test_complex_case(self):
         """TestCppCondGraphVisitor.test_00() - Test a visitor object."""
         myCcg = CppCond.CppCondGraph()
         # 0
@@ -1792,19 +1920,19 @@ class TestCppCondGraphVisitorLineCondCompilation(unittest.TestCase):
 #         pprint.pprint(myV._fileMap)
         self.assertEqual(sorted(myV.fileIdS), ['file_%d' % n for n in range(4)])
         self.assertEqual(
-            [(0, True), (10, True), (0, True), (401, False)],
+            [(1, True), (10, True), (1, True), (401, False)],
             myV._lineCondition('file_0')
         )
         self.assertEqual(
-            [(0, True), (20, False), (0, False), (301, True)],
+            [(1, True), (20, False), (1, False), (301, True)],
             myV._lineCondition('file_1')
         )
         self.assertEqual(
-            [(0, False), (30, False), (40, False), (50, False), (60, True), (0, True), (201, False)],
+            [(1, False), (30, False), (40, False), (50, False), (60, True), (1, True), (201, False)],
             myV._lineCondition('file_2'),
         )
         self.assertEqual(
-            [(0, True), (70, True), (80, False), (90, False), (100, True)],
+            [(1, True), (70, True), (80, False), (90, False), (100, True)],
             myV._lineCondition('file_3'),
         )
         

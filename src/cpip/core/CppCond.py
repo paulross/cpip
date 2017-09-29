@@ -113,6 +113,7 @@ import collections
 import bisect
 
 from cpip import ExceptionCpip
+from cpip.core.FileLocation import START_LINE
 
 CPP_COND_DIRECTIVES = ('if', 'ifdef', 'ifndef', 'elif', 'else', 'endif')
 CPP_COND_IF_DIRECTIVES = ('if', 'ifdef', 'ifndef')
@@ -514,36 +515,114 @@ class CppCondGraph(object):
                 self._ifSectS[-1].oIfndef(theFlc, theTuIdx, theBool, theCe)
 
     def oIf(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#if``."""
+        """Deal with the result of a ``#if``.
+
+        *theFlc*
+            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+
+        *theTuIndex*
+            An integer that represents the position in the translation unit.
+
+        *theBool*
+            The current state of the conditional stack.
+
+        *theCe*
+            The constant expression as a string (not evaluated).
+        """
         logging.debug('CppCondGraph.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('if', theFlc, theTuIdx, theBool, theCe)
 
     def oIfdef(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#ifdef``."""
+        """Deal with the result of a ``#ifdef``.
+
+        *theFlc*
+            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+
+        *theTuIndex*
+            An integer that represents the position in the translation unit.
+
+        *theBool*
+            The current state of the conditional stack.
+
+        *theCe*
+            The constant expression as a string (not evaluated).
+        """
         logging.debug('CppCondGraph.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifdef', theFlc, theTuIdx, theBool, theCe)
 
     def oIfndef(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#ifndef``."""
+        """Deal with the result of a ``#ifndef``.
+
+        *theFlc*
+            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+
+        *theTuIndex*
+            An integer that represents the position in the translation unit.
+
+        *theBool*
+            The current state of the conditional stack.
+
+        *theCe*
+            The constant expression as a string (not evaluated).
+        """
         logging.debug('CppCondGraph.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifndef', theFlc, theTuIdx, theBool, theCe)
 
     def oElif(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#elif``."""
+        """Deal with the result of a ``#elif``.
+
+        *theFlc*
+            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+
+        *theTuIndex*
+            An integer that represents the position in the translation unit.
+
+        *theBool*
+            The current state of the conditional stack.
+
+        *theCe*
+            The constant expression as a string (not evaluated).
+        """
         logging.debug('CppCondGraph.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._raiseIfComplete('elif')
         assert(len(self._ifSectS) > 0)
         self._ifSectS[-1].oElif(theFlc, theTuIdx, theBool, theCe)
 
     def oElse(self, theFlc, theTuIdx, theBool):
-        """Deal with the result of a ``#else``."""
+        """Deal with the result of a ``#else``.
+
+        *theFlc*
+            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+
+        *theTuIndex*
+            An integer that represents the position in the translation unit.
+
+        *theBool*
+            The current state of the conditional stack.
+        """
         logging.debug('CppCondGraph.oElse():   %s %s', theFlc, theTuIdx)
         self._raiseIfComplete('else')
         assert(len(self._ifSectS) > 0)
         self._ifSectS[-1].oElse(theFlc, theTuIdx, theBool)
 
     def oEndif(self, theFlc, theTuIdx, theBool):
-        """Deal with the result of a ``#endif``."""
+        """Deal with the result of a ``#endif``.
+
+        *theFlc*
+            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+
+        *theTuIndex*
+            An integer that represents the position in the translation unit.
+
+        *theBool*
+            The current state of the conditional stack.
+        """
         logging.debug('CppCondGraph.oEndif():  %s %s', theFlc, theTuIdx)
         self._raiseIfComplete('endif')
         assert(len(self._ifSectS) > 0)
@@ -555,9 +634,7 @@ class CppCondGraphNode(object):
     DUMP_PAD_SPACES = 4
     def __init__(self, theCppDirective, theFileLineCol, theTuIdx, theBool, theConstExpr=None):
         super(CppCondGraphNode, self).__init__()
-        if theCppDirective not in CPP_COND_DIRECTIVES:
-            raise ExceptionCppCondGraphNode('Unknown directive: %s' \
-                                            % theCppDirective) 
+        assert theCppDirective in CPP_COND_DIRECTIVES, 'Unknown directive: %s' % theCppDirective
         self._cppDir = theCppDirective
         # Location and constant expression StateConstExprFileLine
         # Make consistent rather than True/1
@@ -575,9 +652,6 @@ class CppCondGraphNode(object):
         # List of CppCondGraphIfSection child objects as if-sections
         self._childIfSectS = []
 
-    def __str__(self):
-        return '\n'.join(self.retStrList(0))
-    
     def visit(self, theVisitor, theDepth):
         """Take a visitor object make the pre/post calls."""
         theVisitor.visitPre(self, theDepth)
@@ -736,7 +810,7 @@ class CppCondGraphIfSection(object):
         The current state of the conditional stack.
         
     *theCe*
-        The constant expression to be evaluated as a string.
+        The constant expression as a string (not evaluated).
     """ 
     def __init__(self, theIfCppD, theFlc, theTuIdx, theBool, theCe):
         super(CppCondGraphIfSection, self).__init__()
@@ -855,11 +929,15 @@ class LineConditionalInterpretation(object):
     """Class that represents the conditional compilation state of every line in
     a file. This takes a list of ``[(line_num, boolean), ...]`` and interprets
     individual line numbers as to whether they are compiled or not.
+
     If the same file is included twice with a different macro environment then
-    it is entirely possible that line_num is not monotonic.
+    it is entirely possible that line_num is not monotonic. In any case not every
+    line number is present, the state of any unmentioned line is the state of the
+    last mentioned line. Thus a simple dict is not useful.
+
     We have to sort theList by line_num and if there are duplicate line_num
     with different boolean values then the conditional compilation state at
-    then point is ambiguos.
+    that point is ambiguous.
     """
     def __init__(self, theList):
         self._lines = []
@@ -867,12 +945,24 @@ class LineConditionalInterpretation(object):
         # Only keep unique values then sort, this means we might have:
         # [(10, False), (10, True), ...]
         for l, b in sorted(set(theList)):
+            if l < START_LINE:
+                raise ValueError(
+                    'LineConditionalInterpretation: line number {:d} can not be < {:d}'.format(l, START_LINE)
+                )
             self._lines.append(l)
             self._bools.append(b)
-            
+
     def isCompiled(self, lineNum):
-        """Returns 1 if this line is compiled, 0 if not or -1 if it is ambiguos
-        i.e. sometimes it is and somtimes not when multiply included."""
+        """Returns 1 if this line is compiled, 0 if not or -1 if it is ambiguous
+        i.e. sometimes it is and sometimes not when multiply included.
+
+        This requires a search for the previously mentioned line state.
+
+        Will raise a ValueError if no prior state can be found, for example if there
+        are no conditional compilation directives in the file. In this case it is up
+        to the caller to handle this. ``CppCondGraphVisitorConditionalLines`` does
+        this during ``visitPre()`` by artificially inserting line 1.
+        See ``CppCondGraphVisitorConditionalLines.isCompiled()``"""
         idx = bisect.bisect_right(self._lines, lineNum)
         if idx == 0:
             raise ValueError('LineConditionInterpretation.isCompiled(): Can not find %s in %s' % (lineNum, self._lines))
@@ -884,7 +974,7 @@ class LineConditionalInterpretation(object):
         return 1 if self._bools[idx] else 0
     
     def __str__(self):
-        return str(zip(self._lines, self._bools))
+        return str(list(zip(self._lines, self._bools)))
 
 class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
     """Allows you to find out if any particular line in a file is compiled or
@@ -916,7 +1006,8 @@ class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
         """Capture the fileID, line number and state."""
         # Carry over state from previous file
         if self._prevFile != theCcgNode.fileId:
-            self._addFileLineState(theCcgNode.fileId, 0, self._prevState)
+            # Pre populate with start line of 1 as state as previous file
+            self._addFileLineState(theCcgNode.fileId, START_LINE, self._prevState)
         self._prevFile = theCcgNode.fileId
         self._prevState = theCcgNode.state
         # Add current state
@@ -953,13 +1044,13 @@ class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
         """An ordered list of (line_num, boolean)."""
         return self._fileMap[theFile]
     
-    def pprint(self):
-        for f in sorted(self.fileLineCondition.keys()):
-            print(f, str(self.fileLineCondition[f]))
-
     def isCompiled(self, fileId, lineNum):
-        """Returns 1 if this line is compiled, 0 if not or -1 if it is ambiguos
+        """Returns 1 if this line is compiled, 0 if not or -1 if it is ambiguous
         i.e. sometimes it is and somtimes not when multiple inclusions."""
+        # If there is no record of the fileId in the self.fileLineCondition it is because there is no record
+        # of any conditional compilation directives in the file. Therefore the whole file is compiled.
+        if fileId not in self.fileLineCondition:
+            return 1
         return self.fileLineCondition[fileId].isCompiled(lineNum)
     #---------------------
     # END: Accessor methods

@@ -175,6 +175,7 @@ the macro page.""")
             try:
                 lineIsCompiled = self._cppCondMap.isCompiled(self._fpIn, self._lineNum)
             except KeyError:
+                logging.error('_incAndWriteLine(): Ambiguous compilation: path: "{!r:s}" Line: {!r:s}'.format(self._fpIn, self._lineNum))
                 pass
             else:
                 classAttr = self._condCompClassMap[lineIsCompiled]
@@ -185,11 +186,11 @@ the macro page.""")
         else:
             myHref = None
         HtmlUtils.writeHtmlFileAnchor(
-                theS,
-                self._lineNum,
-                '%8d:' % self._lineNum,
-                classAttr,
-                theHref=myHref)
+                theS,                   # The html stream
+                self._lineNum,          # <a name="self._lineNum"
+                '%8d:' % self._lineNum, # Characters to write
+                classAttr,              # <span class="classAttr"> to wrap the characters
+                theHref=myHref)         # In not None then insert <a href="theHref"
         theS.characters(' ')
         
     def _initReader(self):
