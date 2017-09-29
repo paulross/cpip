@@ -27,6 +27,7 @@ __rights__ = 'Copyright (c) 2008-2017 Paul Ross'
 
 import argparse
 import collections
+import datetime
 import io
 import logging
 import multiprocessing
@@ -369,7 +370,8 @@ def _writeParagraphWithBreaks(theS, theParas):
         with XmlWrite.Element(theS, 'p'):
             theS.characters(p)
             
-def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap, theTokenCntr, hasIncDot, macroHistoryIndexName):
+def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap,
+                     theTokenCntr, hasIncDot, macroHistoryIndexName):
     with XmlWrite.XhtmlStream(
             os.path.join(theOutDir, tuIndexFileName(theTuPath)),
             mustIndent=INDENT_ML,
@@ -505,9 +507,7 @@ pre-processing of this file.""")
             HtmlUtils.writeFilePathsAsTable(None, myS, myFileLinkS, 'filetable', _tdCallback)
             with XmlWrite.Element(myS, 'br'):
                 pass
-            # TODO...
-            with XmlWrite.Element(myS, 'p'):
-                myS.characters('Produced by %s version: %s' % ('CPIPMain', __version__))
+            _writeIndexHtmlTrailer(myS, time_start=None)
             # Back link
             with XmlWrite.Element(myS, 'p'):
                 myS.characters('Back to: ')
@@ -540,7 +540,38 @@ def _tdCallback(theS, attrs, k, v):
         # Write the nav text
         theS.characters('%d' % count)
 
-def writeIndexHtml(theItuS, theOutDir, theJobSpec):
+def _writeIndexHtmlTrailer(theS, time_start):
+    """Write a trailer to the index.html page with the start/finish time and
+    version. If time_start is None then only the current time is written."""
+    dt_finish = datetime.datetime.fromtimestamp(time.time())
+    time_bits = []
+    if time_start is not None:
+        dt_start = datetime.datetime.fromtimestamp(time_start)
+        seconds = (dt_finish - dt_start).total_seconds()
+        factor = 24 * 3600
+        if seconds > factor:
+            time_bits.append('{:d} days'.format(int(seconds // factor)))
+            seconds %= factor
+        factor = 3600
+        if seconds > factor:
+            time_bits.append('{:d} hours'.format(int(seconds // factor)))
+            seconds %= factor
+        factor = 60
+        if seconds > factor:
+            time_bits.append('{:d} minutes'.format(int(seconds // factor)))
+            seconds %= factor
+        time_bits.append('{:.3f} seconds'.format(seconds))
+        with XmlWrite.Element(theS, 'p'):
+            theS.characters('Time start: {:s}'.format(dt_start.strftime('%c')))
+            theS.characters(' Time finish: {:s}'.format(dt_finish.strftime('%c')))
+            theS.characters(' Duration: {:s}.'.format(', '.join(time_bits)))
+            theS.characters(' CPIP version: {:s}'.format(__version__))
+    else:
+        with XmlWrite.Element(theS, 'p'):
+            theS.characters(' Time: {:s}'.format(dt_finish.strftime('%c')))
+            theS.characters(' CPIP version: {:s}'.format(__version__))
+
+def writeIndexHtml(theItuS, theOutDir, theJobSpec, time_start):
     """Writes the top level index.html page for a pre-processed file.
     
     theOutDir - The output directory.
@@ -586,6 +617,7 @@ def writeIndexHtml(theItuS, theOutDir, theJobSpec):
                                     ):
                                 myS.characters(anItu)
             _writeCommandLineInvocationToHTML(myS, theJobSpec)
+        _writeIndexHtmlTrailer(myS, time_start)
     return indexPath
 
 def _writeCommandLineInvocationToHTML(theS, theJobSpec):
@@ -702,7 +734,8 @@ def _removeCommonPrefixFromResults(titlePathTupleS):
                 break
     return prefixOut, sorted([PpProcessResult(t[l:], p, i) for t, p, i in titlePathTupleS])
 
-def _writeDirectoryIndexHTML(theInDir, theOutDir, titlePathTupleS, theJobSpec):
+def _writeDirectoryIndexHTML(theInDir, theOutDir,
+                             titlePathTupleS, theJobSpec, time_start):
     """Writes a super index.html when a directory has been processed.
     titlePathTuples is a list of:
         PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath))."""
@@ -754,11 +787,13 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir, titlePathTupleS, theJobSpec):
                             else:
                                 myS.characters('%s [FAILED]' % title)
             _writeCommandLineInvocationToHTML(myS, theJobSpec)
+        _writeIndexHtmlTrailer(myS, time_start)
 
 def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs):
     """Pre-process all the files in a directory. Returns a count of the TUs.
     This uses multiprocessing where possible."""
     assert os.path.isdir(inDir)
+    time_start = time.time()
     if numJobs != 1:
         results = preProcessFilesMP(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
     else:
@@ -788,6 +823,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
     """Preprocess a single file. May raise ExceptionCpip (or worse!).
     Returns a PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath))."""
     assert os.path.isfile(ituPath)
+    time_start = time.time()
     logging.info('preprocessFileToOutput(): %s' % ituPath)
     if not os.path.exists(outDir):
         try:
@@ -904,7 +940,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                 )
         except ItuToHtml.ExceptionItuToHTML as err:
             logging.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
-    indexPath = writeIndexHtml([ituPath, ], outDir, jobSpec)
+    indexPath = writeIndexHtml([ituPath, ], outDir, jobSpec, time_start)
     logging.info('preprocessFileToOutput(): %s DONE' % ituPath)
     # Return the path to the ITU and to the index.html path for consolidation
     # by the caller - to be used in multiprocessing.
@@ -1039,8 +1075,9 @@ on it to create a SVG file. [default: %(default)s]""")
         gccExtensions=args.gcc_extensions,
     )
     if os.path.isfile(inPath):
+        time_start = time.time()
         preprocessFileToOutput(inPath, args.output, jobSpec)
-        writeIndexHtml([inPath], args.output, jobSpec)
+        writeIndexHtml([inPath], args.output, jobSpec, time_start)
     elif os.path.isdir(inPath):
         preprocessDirToOutput(
             inPath,
