@@ -808,7 +808,7 @@ def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
             )
     # Write the linking HTML from the title and file paths.
 #     print('results', results)
-    _writeDirectoryIndexHTML(inDir, outDir, results, jobSpec)
+    _writeDirectoryIndexHTML(inDir, outDir, results, jobSpec, time_start)
 
 def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
     """Preprocess a single file and catch all ExceptionCpip
