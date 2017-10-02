@@ -104,6 +104,10 @@ class ExceptionPpLexerAlreadyGenerating(ExceptionPpLexer):
             'A generator is already active and the PpLexer internal state will become inconsistent. Create a new PpLexer for each generator.'
         )
 
+class ExceptionConditionalExpression(ExceptionPpLexer):
+    """Exception when eval() conditional expressions."""
+    pass
+
 ##################
 # End: Exceptions.
 ##################
@@ -1084,6 +1088,12 @@ class PpLexer(object):
                     'Can not evaluate constant expression "%s", error: %s' \
                         % (myTokStr, str(err)),
                     self._fis.fileLineCol)
+            # We need to raise here as we can not know the state of the conditional stack.
+            # Say we have and if/else then within the else that is another if/else and _that_ if fails, for example
+            # if 1 && FOO when FOO is defined but not ascribed a value the eval() will fail since eval('1 and ') will
+            # raise. Then if we continue we will see two #else statements, one from the outer if and one from the inner
+            # so the conditional stack is now corrupt.
+            raise ExceptionConditionalExpression('Error: {:s} File: {!s:s}'.format(str(err), str(self.fileLineCol)))
         return myBool, myTokStr
 
     def _retDefineAndTokens(self, theGen):

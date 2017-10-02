@@ -892,8 +892,10 @@ class CppCondGraphIfSection(object):
         else:
             # Raise on #if/#else/#elif
             if self._siblingNodeS[-1].cppDirective == 'else':
-                raise ExceptionCppCondGraphElif('#elif follows %s' \
-                                        % self._siblingNodeS[-1].cppDirective)
+                raise ExceptionCppCondGraphElif(
+                    '#elif followed %s File: %s line: %d column: %d' % (
+                        self._siblingNodeS[-1].cppDirective, theFlc.fileId, theFlc.lineNum, theFlc.colNum)
+                )
             else:
                 self._siblingNodeS.append(CppCondGraphNode('elif', theFlc, theTuIdx, theBool, theCe))
 
@@ -908,8 +910,10 @@ class CppCondGraphIfSection(object):
         else:
             # Raise on #if/#else/#else
             if self._siblingNodeS[-1].cppDirective == 'else':
-                raise ExceptionCppCondGraphElse('#else follows by %s' \
-                                        % self._siblingNodeS[-1].cppDirective)
+                raise ExceptionCppCondGraphElse(
+                    '#else followed %s File: %s line: %d column: %d' % (
+                        self._siblingNodeS[-1].cppDirective, theFlc.fileId, theFlc.lineNum, theFlc.colNum)
+                )
             else:
                 self._siblingNodeS.append(CppCondGraphNode('else', theFlc, theTuIdx, theBool))
 
