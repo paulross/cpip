@@ -196,7 +196,7 @@ Here we set:
 
 We are processing :file:`../../demo/src/main.cpp` and stdout is something like this:
 
-.. code-block: sh
+.. code-block:: console
 
     $ python3 CPIPMain.py -l 20 -C -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp 
     2012-03-20 07:41:38,655 INFO     TU in HTML:
@@ -232,7 +232,7 @@ Using ``-d`` Option
 
 All these are using the following command where ``?`` is replace with a letter:
 
-.. code-block: sh
+.. code-block:: console
 
     $ python3 CPIPMain.py -d? -o ../../demo/output_00/ -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp
 
@@ -317,3 +317,28 @@ The token count::
           32  TOTAL
     ----------------------------- END Token count -----------------------------
 
+Performance
+=======================
+
+As ``CPIPMain.py``/``cpipmain`` is written in Python it is pretty slow, far slower than ``gcc`` or ``clang``.
+Internally in ``cpip`` there are some fairly agressive integrity checks such as
+``_assertDefineMapIntegrity()`` in :py:class:`cpip.core.MacroEnv.MacroEnv`.
+These integrity checks are invoked as asserts, for example::
+
+    assert(self._assertDefineMapIntegrity())
+
+So that they can be turned off by using optimisation level 1.
+
+For ``CPIPMain.py``:
+
+.. code-block:: console
+
+    $ python3 -O CPIPMain.py ...
+
+And ``cpipmain``: 
+
+.. code-block:: console
+
+    $ PYTHONOPTIMIZE=1 cpipmain ... 
+
+This optimisation can reduce the execution time by around 30%.
