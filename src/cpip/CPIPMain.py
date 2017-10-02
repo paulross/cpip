@@ -992,9 +992,8 @@ def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
 
 def preprocessFileToOutput(ituPath, outDir, jobSpec):
     """Preprocess a single file. May raise ExceptionCpip (or worse!).
-    Returns a:
-    ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath),
-                      total_files, total_lines, total_bytes)``
+    Returns a: ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath)
+    total_files, total_lines, total_bytes)``
     """
     assert os.path.isfile(ituPath)
     time_start = time.time()
