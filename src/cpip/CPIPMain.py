@@ -629,7 +629,7 @@ def _trThCallback(theS, theDepth):
         with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
             theS.characters('Total Lines')
         with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
-            theS.characters('TotalBytes')
+            theS.characters('Total Bytes')
 
 def _tdCallback(theS, attrs, _k, href_nav_text_file_data):
     """Callback function for the file count table."""
@@ -1153,8 +1153,8 @@ M - Macro environment.
 T - Token count.
 R - Macro dependencies as an input to DOT.
 [default: %(default)s]""")
-    parser.add_argument("-g", "--glob", type=str, dest="glob", default="*.*",
-            help="Pattern match to use when processing directories. [default: %(default)s]")
+    parser.add_argument("-g", "--glob", action='append', default=[],
+            help="Pattern match to use when processing directories. [default: %(default)s] i.e. every file.")
     parser.add_argument("--heap", action="store_true", dest="heap", default=False,
                       help="Profile memory usage. [default: %(default)s]")
     parser.add_argument(
@@ -1199,9 +1199,10 @@ on it to create a SVG file. [default: %(default)s]""")
     parser.add_argument(dest="path", nargs=1, help="Path to source file or directory.")
     Cpp.addStandardArguments(parser)
     args = parser.parse_args()
-#     print(' ARGS '.center(75, '-'))
-#     print(args)
-#     print(' END: ARGS '.center(75, '-'))
+    # print(' ARGS '.center(75, '-'))
+    # print(args)
+    # print(' END: ARGS '.center(75, '-'))
+    # exit()
     clkStart = time.clock()
     # Initialise logging etc.
     inPath = args.path[0]

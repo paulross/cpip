@@ -54,27 +54,42 @@ def genBigFirst(d):
 def dirWalk(theIn, theOut=None, theFnMatch=None, recursive=False, bigFirst=False):
     """Walks a directory tree generating file paths.
 
-    theIn - The input directory.
+    *theIn*
+        The input directory.
 
-    theOut - The output directory. If None then input file paths as strings
-    will be generated If non-None this function will yield
-    FileInOut(in, out) objects.
-    NOTE: This does not create the output directory structure, it is up to
-    the caller to do that.
+    *theOut*
+        The output directory. If None then input file paths as strings
+        will be generated If non-None this function will yield
+        FileInOut(in, out) objects.
+        NOTE: This does not create the output directory structure, it is up to
+        the caller to do that.
 
-    theFnMatch - A glob like match pattern for file names (not tested for directory names).
+    *theFnMatch*
+        A glob like match pattern for file names (not tested for directory names).
+        Can be a list of strings any of which can match. If None or empty list then all files match.
 
-    recursive - Boolean to recurse or not.
+    *recursive*
+        Boolean to recurse into directories or not.
 
-    bigFirst - If True then the largest files in  directory are given first. If False it is alphabetical.
+    *bigFirst*
+        If True then the largest files in  directory are given first. If False it is alphabetical.
     """
+    def _matches(file_path, fn_match):
+        if fn_match is None:
+            return True
+        if isinstance(fn_match, str):
+            return fnmatch.fnmatch(file_path, fn_match)
+        if isinstance(fn_match, list):
+            return len(fn_match) == 0 or any([fnmatch.fnmatch(file_path, v) for v in fn_match])
+        raise ValueError('Can not process fn_match: {!r:s} of type {!r:s}'.format(fn_match, type(fn_match)))
+
     if not os.path.isdir(theIn):
         raise ExceptionDirWalk('{:s} is not a directory.'.format(theIn))
     if bigFirst:
         # First files
         for fn in genBigFirst(theIn):
             fp = os.path.join(theIn, fn)
-            if theFnMatch is None or fnmatch.fnmatch(fp, theFnMatch):
+            if _matches(fp, theFnMatch):
                 if theOut is None:
                     yield fp
                 else:
@@ -95,7 +110,7 @@ def dirWalk(theIn, theOut=None, theFnMatch=None, recursive=False, bigFirst=False
         for fn in os.listdir(theIn):
             fp = os.path.join(theIn, fn)
             if os.path.isfile(fp) \
-            and (theFnMatch is None or fnmatch.fnmatch(fp, theFnMatch)):
+            and _matches(fp, theFnMatch):
                 if theOut is None:
                     yield fp
                 else:
