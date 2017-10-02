@@ -134,7 +134,15 @@ were included.
 # indexPath - the path to the index.html that describes the job.
 # tuIndexFileName - thePath to the index HTML page that describes the ITU
 PpProcessResult = collections.namedtuple('PpProcessResult',
-                            ['ituPath', 'indexPath', 'tuIndexFileName'])
+                            ['ituPath',
+                             'indexPath',
+                             'tuIndexFileName',
+                             'total_files',
+                             'total_lines',
+                             'total_bytes',
+                             ]
+)
+
 class FigVisitorLargestCommanPrefix(FileIncludeGraph.FigVisitorBase):
     """Simple visitor that walks the tree and finds the largest common file name prefix."""
     def __init__(self):
@@ -244,10 +252,27 @@ def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
     return result
 
 def retFileCountMap(theLexer):
+    """Visits the Lexers file include graph and returns a dict of:
+    {file_name : (inclusion_count, line_count, bytes_count).
+    
+    The line_count, bytes_count are obtained by reading the file.
+    """
     myFigr = theLexer.fileIncludeGraphRoot
     myFileNameVis = FileIncludeGraph.FigVisitorFileSet()
     myFigr.acceptVisitor(myFileNameVis)
-    return myFileNameVis.fileNameMap
+    file_name_map = myFileNameVis.fileNameMap
+    ret_map = {}
+    for file_name, inc_count in file_name_map.items():
+        count_lines = 0
+        count_bytes = 0
+        if file_name != PpLexer.UNNAMED_FILE_NAME:
+            # Count the SLOC, bytes
+            with open(file_name) as fobj:
+                for line in fobj:
+                    count_lines += 1
+                    count_bytes += len(line)
+        ret_map[file_name] = (inc_count, count_lines, count_bytes)
+    return ret_map
 
 def _dumpCondCompGraph(theLexer):
     print()
@@ -372,6 +397,35 @@ def _writeParagraphWithBreaks(theS, theParas):
             
 def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap,
                      theTokenCntr, hasIncDot, macroHistoryIndexName):
+    """Write the index.html for a single TU.
+    
+    *theOutDir*
+        The output directory to write to.
+    
+    *theTuPath*
+        The path to the original ITU.
+    
+    *theLexer*
+        The pre-processing Lexer that has pre-processed the ITU/TU. 
+    
+    *theFileCountMap*
+        dict of {file_path : data, ...} where data is things like inclusion
+        count, lines, bytes and so on.
+    
+    *theTokenCntr*
+        :py:class:`cpip.core.PpTokenCount.PpTokenCount` containing the token
+        counts.
+    
+    *hasIncDot*
+        bool to emit graphviz .dot files.
+    
+    *macroHistoryIndexName*
+        String of the filename of the macro history.
+        
+    Returns: (total_files, total_lines, total_bytes) as integers.
+    """
+    # Return values
+    total_files = total_lines = total_bytes = 0
     with XmlWrite.XhtmlStream(
             os.path.join(theOutDir, tuIndexFileName(theTuPath)),
             mustIndent=INDENT_ML,
@@ -486,27 +540,54 @@ pre-processing of this file.""")
             with XmlWrite.Element(myS, 'h2'):
                 myS.characters('6. Files Included and Count')
             _writeParagraphWithBreaks(myS, FILES_INCLUDED_INTRO)
-            with XmlWrite.Element(myS, 'p'):
-                myS.characters('Total number of unique files: %d' % len(theFileCountMap))
-            # TODO: Value count
-            # with XmlWrite.Element(myS, 'p'):
-            #    myS.characters('Total files processed: %d' % sum(theFileCountMap.values()))
-            myItuFileS = sorted(theFileCountMap.keys())
             # Create a list for the DictTree
-            myFileLinkS = [
-                (
-                    p,
-                    # Value is a tripple (href, basename, count)
-                    (
-                        HtmlUtils.retHtmlFileName(p),
-                        os.path.basename(p),
-                        theFileCountMap[p]),
+            myFileLinkS = []
+            for myItuFile in sorted(theFileCountMap.keys()):
+                if myItuFile != PpLexer.UNNAMED_FILE_NAME:
+                    myFileLinkS.append(
+                        (
+                            myItuFile,
+                            # Value is a tripple (href, basename, file_data)
+                            # Where file_data was, initially, the count of
+                            # inclusions of that file. Later versions had (count
+                            # of inclusions, SLOC count, byte count)
+                            (
+                                HtmlUtils.retHtmlFileName(myItuFile),
+                                os.path.basename(myItuFile),
+                                theFileCountMap[myItuFile]
+                            ),
+                        )
                     )
-                for p in myItuFileS if p != PpLexer.UNNAMED_FILE_NAME
-            ]
-            HtmlUtils.writeFilePathsAsTable(None, myS, myFileLinkS, 'filetable', _tdCallback)
+            HtmlUtils.writeFilePathsAsTable(
+                None,
+                myS,
+                myFileLinkS,
+                'filetable',
+                _tdCallback,
+                _trThCallback,
+            )
             with XmlWrite.Element(myS, 'br'):
                 pass
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters(
+                    'Total number of unique files: %d' % len(theFileCountMap)
+                )
+            for f, l, b in theFileCountMap.values():
+                total_files += f
+                total_lines += f * l
+                total_bytes += f * b
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters(
+                    'Total number of files processed: {:,d}'.format(total_files)
+                )
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters(
+                    'Total number of lines processed: {:,d}'.format(total_lines)
+                )
+            with XmlWrite.Element(myS, 'p'):
+                myS.characters(
+                    'Total number of bytes processed: {:,d}'.format(total_bytes)
+                )
             _writeIndexHtmlTrailer(myS, time_start=None)
             # Back link
             with XmlWrite.Element(myS, 'p'):
@@ -519,26 +600,66 @@ pre-processing of this file.""")
                         }
                     ):
                     myS.characters('Index Page')
+    return total_files, total_lines, total_bytes
 
-def _tdCallback(theS, attrs, k, v):
+def _trThCallback(theS, theDepth):
+    """Create the table header:
+      <tr>
+        <th class="filetable" colspan="9">File Path&nbsp;</th>
+        <th class="filetable">Include Count</th>
+        <th class="filetable">Lines</th>
+        <th class="filetable">Bytes</th>
+        <th class="filetable">Total Lines</th>
+        <th class="filetable">Total Bytes</th>
+      </tr>
+    """
+    with XmlWrite.Element(theS, 'tr', {}):
+        with XmlWrite.Element(theS, 'th', {
+                    'colspan' : '%d' % theDepth,
+                    'class' : 'filetable',
+                }
+            ):
+            theS.characters('File Path')
+        with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+            theS.characters('Include Count')
+        with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+            theS.characters('Lines')
+        with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+            theS.characters('Bytes')
+        with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+            theS.characters('Total Lines')
+        with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+            theS.characters('TotalBytes')
+
+def _tdCallback(theS, attrs, _k, href_nav_text_file_data):
     """Callback function for the file count table."""
     attrs['class'] = 'filetable'
-    href, navText, count = v
+    href, navText, file_data = href_nav_text_file_data
     with XmlWrite.Element(theS, 'td', attrs):
         with XmlWrite.Element(theS, 'a', {'href' : href}):
             # Write the nav text
             theS.characters(navText)
-    with XmlWrite.Element(
-                    theS,
-                    'td',
-                    {
-                        'width' : "36px",
-                        'class' : 'filetable',
-                        'align' : "right",
-                    }
-                ):
-        # Write the nav text
-        theS.characters('%d' % count)
+    td_attrs = {
+        'width' : "36px",
+        'class' : 'filetable',
+        'align' : "right",
+    }
+    count_inc, count_lines, count_bytes = file_data
+    with XmlWrite.Element(theS, 'td', td_attrs):
+        # Write the file count of inclusions
+        theS.characters('%d' % count_inc)
+    with XmlWrite.Element(theS, 'td', td_attrs):
+        # Write the file count of lines
+        theS.characters('{:,d}'.format(count_lines))
+    with XmlWrite.Element(theS, 'td', td_attrs):
+        # Write the file count of bytes
+        theS.characters('{:,d}'.format(count_bytes))
+    with XmlWrite.Element(theS, 'td', td_attrs):
+        # Write the file count of lines * inclusions
+        theS.characters('{:,d}'.format(count_lines * count_inc))
+    with XmlWrite.Element(theS, 'td', td_attrs):
+        # Write the file count of bytes * inclusions
+        theS.characters('{:,d}'.format(count_bytes * count_inc))
 
 def _writeIndexHtmlTrailer(theS, time_start):
     """Write a trailer to the index.html page with the start/finish time and
@@ -568,10 +689,12 @@ def _writeIndexHtmlTrailer(theS, time_start):
             theS.characters(' CPIP version: {:s}'.format(__version__))
     else:
         with XmlWrite.Element(theS, 'p'):
-            theS.characters(' Time: {:s}'.format(dt_finish.strftime('%c')))
+            theS.characters(' Completion time: {:s}'.format(dt_finish.strftime('%c')))
             theS.characters(' CPIP version: {:s}'.format(__version__))
 
-def writeIndexHtml(theItuS, theOutDir, theJobSpec, time_start):
+def writeIndexHtml(theItuS, theOutDir, theJobSpec,
+                   time_start,
+                   total_files, total_lines, total_bytes):
     """Writes the top level index.html page for a pre-processed file.
     
     theOutDir - The output directory.
@@ -617,6 +740,20 @@ def writeIndexHtml(theItuS, theOutDir, theJobSpec, time_start):
                                     ):
                                 myS.characters(anItu)
             _writeCommandLineInvocationToHTML(myS, theJobSpec)
+        # TODO: Files/Lines/Bytes
+        
+        with XmlWrite.Element(myS, 'p'):
+            myS.characters(
+                'Total number of files processed: {:,d}'.format(total_files)
+            )
+        with XmlWrite.Element(myS, 'p'):
+            myS.characters(
+                'Total number of lines processed: {:,d}'.format(total_lines)
+            )
+        with XmlWrite.Element(myS, 'p'):
+            myS.characters(
+                'Total number of bytes processed: {:,d}'.format(total_bytes)
+            )
         _writeIndexHtmlTrailer(myS, time_start)
     return indexPath
 
@@ -723,6 +860,11 @@ def preProcessFilesMP(dIn, dOut, jobSpec, glob, recursive, jobs):
 # End: Multiprocessing code.
 ################################
 def _removeCommonPrefixFromResults(titlePathTupleS):
+    """Given a list of:
+    ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath),
+                      total_files, total_lines, total_bytes)``
+    This prunes the commmon prefix from the ituPath.
+    """
     l = CommonPrefix.lenCommonPrefix([r.ituPath for r in titlePathTupleS])
     prefixOut = ''
     if l > 0:
@@ -732,13 +874,19 @@ def _removeCommonPrefixFromResults(titlePathTupleS):
             if tpt[1] is not None:
                 prefixOut = tpt[1][:l]
                 break
-    return prefixOut, sorted([PpProcessResult(t[l:], p, i) for t, p, i in titlePathTupleS])
+    return prefixOut, sorted(
+        [
+            PpProcessResult(fields[0][l:], *fields[1:]) for fields in titlePathTupleS
+        ]
+    )
 
 def _writeDirectoryIndexHTML(theInDir, theOutDir,
                              titlePathTupleS, theJobSpec, time_start):
     """Writes a super index.html when a directory has been processed.
     titlePathTuples is a list of:
-        PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath))."""
+    ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath),
+                      total_files, total_lines, total_bytes)``
+    """
     indexPath = os.path.join(theOutDir, 'index.html')
     TokenCss.writeCssToDir(theOutDir)
     _prefixOut, titlePathTupleS = _removeCommonPrefixFromResults(titlePathTupleS)
@@ -787,28 +935,51 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
                             else:
                                 myS.characters('%s [FAILED]' % title)
             _writeCommandLineInvocationToHTML(myS, theJobSpec)
+        # Write total files/lines/bytes.
+        total_files, total_lines, total_bytes = 0
+        for result in titlePathTupleS:
+            # Result is a PpProcessResult
+            total_files += result.total_files
+            total_lines += result.total_lines
+            total_bytes += result.total_bytes
+        with XmlWrite.Element(myS, 'p'):
+            myS.characters(
+                'Total number of files processed: {:,d}'.format(total_files)
+            )
+        with XmlWrite.Element(myS, 'p'):
+            myS.characters(
+                'Total number of lines processed: {:,d}'.format(total_lines)
+            )
+        with XmlWrite.Element(myS, 'p'):
+            myS.characters(
+                'Total number of bytes processed: {:,d}'.format(total_bytes)
+            )
         _writeIndexHtmlTrailer(myS, time_start)
 
 def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs):
     """Pre-process all the files in a directory. Returns a count of the TUs.
-    This uses multiprocessing where possible."""
+    This uses multiprocessing where possible.
+    Any Exception (such as a KeyboardInterupt) will terminate this function but
+    write out an index of what has been achieved so far."""
     assert os.path.isdir(inDir)
     time_start = time.time()
-    if numJobs != 1:
-        results = preProcessFilesMP(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
-    else:
-        results = []
-        for t in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False):
-            if jobSpec.keepGoing:
-                fn = preprocessFileToOutputNoExcept
-            else:
-                fn = preprocessFileToOutput
-            results.append(
-                fn(t.filePathIn, t.filePathOut, jobSpec)
-            )
-    # Write the linking HTML from the title and file paths.
-#     print('results', results)
-    _writeDirectoryIndexHTML(inDir, outDir, results, jobSpec, time_start)
+    try:
+        if numJobs != 1:
+            results = preProcessFilesMP(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
+        else:
+            results = []
+            for t in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False):
+                if jobSpec.keepGoing:
+                    fn = preprocessFileToOutputNoExcept
+                else:
+                    fn = preprocessFileToOutput
+                results.append(
+                    fn(t.filePathIn, t.filePathOut, jobSpec)
+                )
+        # Write the linking HTML from the title and file paths.
+#         print('results', results)
+    finally:
+        _writeDirectoryIndexHTML(inDir, outDir, results, jobSpec, time_start)
 
 def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
     """Preprocess a single file and catch all ExceptionCpip
@@ -817,11 +988,14 @@ def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
         return preprocessFileToOutput(ituPath, *args, **kwargs)
     except ExceptionCpip as err:
         logging.critical('preprocessFileToOutputNoExcept(): "%s" %s' % (err, ituPath))
-    return PpProcessResult(ituPath, None, None)
+    return PpProcessResult(ituPath, None, None, 0, 0, 0)
 
 def preprocessFileToOutput(ituPath, outDir, jobSpec):
     """Preprocess a single file. May raise ExceptionCpip (or worse!).
-    Returns a PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath))."""
+    Returns a:
+    ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath),
+                      total_files, total_lines, total_bytes)``
+    """
     assert os.path.isfile(ituPath)
     time_start = time.time()
     logging.info('preprocessFileToOutput(): %s' % ituPath)
@@ -918,8 +1092,10 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
             tuIndexFileName(ituPath),
         )
     # This is an index for the TU
-    writeTuIndexHtml(outDir, ituPath, myLexer, myFileCountMap, myTokCntr,
-                     hasIncGraphDot, macroHistoryIndexName)
+    total_files, total_lines, total_bytes = writeTuIndexHtml(
+        outDir, ituPath, myLexer, myFileCountMap, myTokCntr,
+        hasIncGraphDot, macroHistoryIndexName
+    )
     logging.info('Done: %s', ituPath)
     # Write ITU HTML i.e. HTMLise the original files
     # Create a CppCondGraphVisitorConditionalLines
@@ -940,11 +1116,16 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                 )
         except ItuToHtml.ExceptionItuToHTML as err:
             logging.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
-    indexPath = writeIndexHtml([ituPath, ], outDir, jobSpec, time_start)
+    indexPath = writeIndexHtml(
+        [ituPath, ], outDir, jobSpec,
+        time_start, total_files, total_lines, total_bytes)
     logging.info('preprocessFileToOutput(): %s DONE' % ituPath)
     # Return the path to the ITU and to the index.html path for consolidation
     # by the caller - to be used in multiprocessing.
-    return PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath))
+    return PpProcessResult(
+        ituPath, indexPath, tuIndexFileName(ituPath),
+        total_files, total_lines, total_bytes
+    )
 
 def main():
     """Processes command line to preprocess a file or a directory."""
@@ -953,9 +1134,10 @@ def main():
     program_license = """%s
   Created by Paul Ross on %s.
   Copyright 2008-2017. All rights reserved.
+  Version: %s
   Licensed under GPL 2.0
 USAGE
-""" % (program_shortdesc, str(__date__))
+""" % (program_shortdesc, program_version, str(__date__))
     parser = argparse.ArgumentParser(description=program_license,
                             formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-c", action="store_true", dest="plot_conditional", default=False,
@@ -1076,8 +1258,9 @@ on it to create a SVG file. [default: %(default)s]""")
     )
     if os.path.isfile(inPath):
         time_start = time.time()
-        preprocessFileToOutput(inPath, args.output, jobSpec)
-        writeIndexHtml([inPath], args.output, jobSpec, time_start)
+        result = preprocessFileToOutput(inPath, args.output, jobSpec)
+        # TODO: Fix this *result[-3:] hack.
+        writeIndexHtml([inPath], args.output, jobSpec, time_start, *result[-3:])
     elif os.path.isdir(inPath):
         preprocessDirToOutput(
             inPath,

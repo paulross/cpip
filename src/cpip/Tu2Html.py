@@ -106,7 +106,8 @@ def linkToIndex(theS, theIdxPath):
         with XmlWrite.Element(theS, 'a', {'href' : theIdxPath}):
             theS.characters('Index')
             
-def processTuToHtml(theLex, theHtmlPath, theTitle, theCondLevel, theIdxPath, incItuAnchors=True):
+def processTuToHtml(theLex, theHtmlPath, theTitle,
+                    theCondLevel, theIdxPath, incItuAnchors=True):
     """Processes the PpLexer and writes the tokens to the HTML file.
     
     *theHtmlPath*

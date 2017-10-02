@@ -215,7 +215,7 @@ def writeDictTreeAsTable(theS, theDt, tableAttrs, includeKeyTail):
                         theS.characters(k[-1])
     # Write: </table>
     
-def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
+def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd, fnTrTh=None):
     """Writes file paths as a table, for example as a directory structure.
     
     *valueType*
@@ -241,12 +241,26 @@ def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
                 
             *v*
                 The value given by the caller.
+    *fnTrTh*
+        Callback function for the header that will be called with the following
+        arguments:
+        
+            *theS*
+                The HTML stream.
+                
+            *pathDepth*
+                Maximum depth of the largest path, this can be used for
+                <th colspan="...">File path</th>.
     """
     myDict = DictTree.DictTreeHtmlTable(valueType)
     for k, v in theKvS:
         myDict.add(pathSplit(k), v)
     # Propagate table class attribute
     with XmlWrite.Element(theS, 'table', {'class' : tableStyle}):
+        if fnTrTh is not None:
+            # Here we will write the first row <th colspan="...">&nbsp</th>
+            # or <th colspan="...">File path</th>
+            fnTrTh(theS, myDict.depth())
         for anEvent in myDict.genColRowEvents():
             if anEvent == myDict.ROW_OPEN:
                 # Write out the '<tr>' element
@@ -269,4 +283,4 @@ def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd):
                     with XmlWrite.Element(theS, 'td', myTdAttrs):
                         # Write out part of the file name
                         theS.characters(k[-1])
-    # Write: </table>
+    # Implicitly write: </table>

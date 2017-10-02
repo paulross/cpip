@@ -614,12 +614,20 @@ class FigVisitorFileSet(FigVisitorBase):
     include graph and a count of how often they are seen."""
     def __init__(self):
         super(FigVisitorFileSet, self).__init__()
+        # {file_name : count_of_incusions, ...}
         self._fileNameMap = collections.defaultdict(int)
         
     def visitGraph(self, theFigNode, theDepth, theLine): 
-        """Hierarchical visitor pattern. This is given a :py:class:`FileIncludeGraph` as a
-        graph node. theDepth is the current depth in the graph as an integer,
-        theLine the line that is a non-monotonic sibling node ordinal."""
+        """Hierarchical visitor pattern.
+        
+        *theFigNode*
+            A :py:class:`FileIncludeGraph` as a graph node.
+            
+        *theDepth*
+            The current depth in the graph as an integer.
+            
+        *theLine*
+            The line that is a non-monotonic sibling node ordinal."""
         self._fileNameMap[theFigNode.fileName] += 1
         
     @property
