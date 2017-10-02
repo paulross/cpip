@@ -884,8 +884,7 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
                              titlePathTupleS, theJobSpec, time_start):
     """Writes a super index.html when a directory has been processed.
     titlePathTuples is a list of:
-    ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath),
-                      total_files, total_lines, total_bytes)``
+    ``PpProcessResult(ituPath, indexPath, tuIndexFileName, total_files, total_lines, total_bytes)``
     """
     indexPath = os.path.join(theOutDir, 'index.html')
     TokenCss.writeCssToDir(theOutDir)
@@ -905,6 +904,7 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
                 pass
             with XmlWrite.Element(myS, 'title'):
                 myS.characters('CPIP Processing')
+        total_files = total_lines = total_bytes = 0
         with XmlWrite.Element(myS, 'body'):
             with XmlWrite.Element(myS, 'h1'):
                 myS.characters('CPIP Directory Processing in output location: %s' \
@@ -917,31 +917,34 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
                 with XmlWrite.Element(myS, 'tt'):
                     myS.characters(theInDir)
             with XmlWrite.Element(myS, 'ul'):
-                for title, indexHTMLPath, fileIndexHTMLPath in titlePathTupleS:
-                    if indexHTMLPath is not None \
-                    and fileIndexHTMLPath is not None:
-                        indexHTMLPath = os.path.relpath(indexHTMLPath,
+                for titlePathTuple in titlePathTupleS:
+                    # titlePathTuple is a PpProcessResult
+                    if titlePathTuple.indexPath is not None \
+                    and titlePathTuple.tuIndexFileName is not None:
+                        indexHTMLPath = os.path.relpath(titlePathTuple.indexPath,
                                                         theOutDir,
                                                         )
                         # Redirect to page that describes actual file
-                        indexHTMLPath = os.path.join(os.path.dirname(indexHTMLPath), fileIndexHTMLPath)
+                        indexHTMLPath = os.path.join(
+                            os.path.dirname(titlePathTuple.indexPath),
+                            titlePathTuple.tuIndexFileName,
+                        )
+                    else:
+                        indexHTMLPath = None
                     with XmlWrite.Element(myS, 'li'):
                         with XmlWrite.Element(myS, 'tt'):
                             if indexHTMLPath is not None:
                                 with XmlWrite.Element(myS,
                                                       'a',
                                                       {'href' : indexHTMLPath}):
-                                    myS.characters(title)
+                                    myS.characters(titlePathTuple.ituPath)
                             else:
-                                myS.characters('%s [FAILED]' % title)
+                                myS.characters('%s [FAILED]' % titlePathTuple.ituPath)
+                    total_files += titlePathTuple.total_files
+                    total_lines += titlePathTuple.total_lines
+                    total_bytes += titlePathTuple.total_bytes
             _writeCommandLineInvocationToHTML(myS, theJobSpec)
         # Write total files/lines/bytes.
-        total_files, total_lines, total_bytes = 0
-        for result in titlePathTupleS:
-            # Result is a PpProcessResult
-            total_files += result.total_files
-            total_lines += result.total_lines
-            total_bytes += result.total_bytes
         with XmlWrite.Element(myS, 'p'):
             myS.characters(
                 'Total number of files processed: {:,d}'.format(total_files)
