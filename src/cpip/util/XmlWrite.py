@@ -135,11 +135,11 @@ class XmlStream(object):
     """Creates and maintains an XML output stream."""
     INDENT_STR = u'  '
     ENTITY_MAP = {
-                  '<'   : u'&lt;',
-                  '>'   : u'&gt;',
-                  '&'   : u'&amp;',
-                  "'"   : u'&apos;', 
-                  '"'   : u'&quot;',
+                  ord('<')  : u'&lt;',
+                  ord('>')  : u'&gt;',
+                  ord('&')  : u'&amp;',
+                  ord("'")  : u'&apos;', 
+                  ord('"')  : u'&quot;',
                   }
     def __init__(self, theFout, theEnc='utf-8', theDtdLocal=None, theId=0, mustIndent=True):
         """Initialise with a writable file like object or a file path.
@@ -211,7 +211,6 @@ class XmlStream(object):
     def characters(self, theString):
         """Encodes the string and writes it to the output."""
         self._closeElemIfOpen()
-#         print('WTF', repr(self._encode(theString)))
         encStr = self._encode(theString)
         self._file.write(encStr)
         # mixed content - don't indent
@@ -328,21 +327,8 @@ class XmlStream(object):
             self._inElem = False
 
     def _encode(self, theStr):
-        # TODO: This code does not seem to handle theStr bytes objects with
-        # '\x00' in them for example
-        retL = []
-        for c in theStr:
-#             print(repr(c))
-            try:
-                retL.append(self.ENTITY_MAP[c])
-            except KeyError:
-                # Python 2.x code
-                #u = unichr(ord(c))
-                #retL.append(u.encode('ascii', 'xmlcharrefreplace'))
-                # Python 3.x code
-                retL.append(c)
-#         print(retL)
-        return u''.join(retL)#.encode(self._enc, 'xmlcharrefreplace')
+        """"Apply the XML encoding such as '<' to '&lt;'"""
+        return theStr.translate(self.ENTITY_MAP)
     
     def __enter__(self):
         """Context manager support."""

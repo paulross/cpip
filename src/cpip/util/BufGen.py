@@ -56,24 +56,26 @@ class BufGen(object):
     def __getitem__(self, key):
         """Implements indexing and slicing. Negative indexes will raise an
         IndexError."""
+#         if isinstance(key, slice):
+#             self._extendBuffer(key.stop - 1)
+#             return self._buf[key]
+#         elif isinstance(key, int):
+#             self._extendBuffer(key)
+#             if len(self._buf) > key:
+#                 return self._buf[key]
+#             raise IndexError('BufGen index out of range')
+        idx = key
         if isinstance(key, slice):
-            self._extendBuffer(key.stop - 1)
-            return self._buf[key]
-        elif isinstance(key, int):
-            self._extendBuffer(key)
-            if len(self._buf) > key:
-                return self._buf[key]
+            idx = key.stop - 1
+        if idx < 0:
+            raise IndexError('BufGen can not handle negative indexes.')
+        # Extend the buffer if necessary
+        try:
+            while len(self._buf) <= idx:
+                self._buf.append(next(self._gen))
+        except StopIteration:
             raise IndexError('BufGen index out of range')
-#        if key < 0:
-#            raise IndexError('BufGen index out of range')
-#        try:
-#            while len(self._buf) <= key:
-#                self._buf.append(next(self._gen))
-#        except StopIteration:
-#            raise IndexError('BufGen index out of range')
-#        if len(self._buf) > key:
-#            return self._buf[key]
-#        raise IndexError('BufGen index out of range')
+        return self._buf[key]
             
     @property
     def lenBuf(self):

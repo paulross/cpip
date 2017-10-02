@@ -177,7 +177,7 @@ class SVGText(XmlWrite.Element):
     def __init__(self, theXmlStream, thePoint, theFont, theSize, attrs=None):
         _attrs = {}
         if theFont is not None:
-            _attrs['font-family'] = theFont,
+            _attrs['font-family'] = theFont
         if theSize is not None:
             _attrs['font-size'] = '%s' % theSize
         if thePoint is not None:
