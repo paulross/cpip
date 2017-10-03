@@ -1083,11 +1083,13 @@ class PpLexer(object):
             myCe = ConstantExpression.ConstantExpression(myTokS)
             myBool = myCe.evaluate()
         except ConstantExpression.ExceptionConstantExpression as err:
-            myBool = None
-            self._diagnostic.undefined(
-                    'Can not evaluate constant expression "%s", error: %s' \
-                        % (myTokStr, str(err)),
-                    self._fis.fileLineCol)
+            try:
+                self._diagnostic.undefined(
+                        'Can not evaluate constant expression "%s", error: %s' \
+                            % (myTokStr, str(err)),
+                        self._fis.fileLineCol)
+            except CppDiagnostic.ExceptionCppDiagnostic as diag_err:
+                logging.error('Trapping diagnostic exception: %s' % str(diag_err))
             # We need to raise here as we can not know the state of the conditional stack.
             # Say we have and if/else then within the else that is another if/else and _that_ if fails, for example
             # if 1 && FOO when FOO is defined but not ascribed a value the eval() will fail since eval('1 and ') will

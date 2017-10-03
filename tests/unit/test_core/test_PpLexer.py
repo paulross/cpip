@@ -2658,12 +2658,13 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                  )
         try:
             result = u''.join([t.t for t in myLexer.ppTokens()])
-            self.fail('ExceptionCppDiagnosticUndefined not raised')
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined:
+            self.fail('PpLexer.ExceptionConditionalExpression not raised')
+        except PpLexer.ExceptionConditionalExpression:
             self.assertTrue(True)
             
     def test_00_00(self):
-        """TestPpLexerConditionalProblems.test_00_00(): No raise on #if defned NOT_DEFINED with PreprocessDiagnosticKeepGoing()"""
+        """TestPpLexerConditionalProblems.test_00_00(): Will still raise on
+        #if defned NOT_DEFINED with PreprocessDiagnosticKeepGoing()"""
         #print
         myLexer = PpLexer.PpLexer(
                  'mt.h',
@@ -2677,11 +2678,11 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = u''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = u"""\n"""
-        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-        self.assertEqual(result, expectedResult)
-        myLexer.finalise()
+        try:
+            result = u''.join([t.t for t in myLexer.ppTokens()])
+            self.fail('PpLexer.ExceptionConditionalExpression not raised')
+        except PpLexer.ExceptionConditionalExpression:
+            self.assertTrue(True)
             
     def test_01(self):
         """TestPpLexerConditionalProblems.test_01(): Raises on #if 1 2"""
@@ -2700,11 +2701,12 @@ class TestPpLexerConditionalProblems(TestPpLexer):
         try:
             result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined:
+        except PpLexer.ExceptionConditionalExpression:
             self.assertTrue(True)
             
     def test_01_00(self):
-        """TestPpLexerConditionalProblems.test_01_00(): Raises on #if 1 2 with PreprocessDiagnosticKeepGoing()"""
+        """TestPpLexerConditionalProblems.test_01_00(): Will still raise on
+        #if 1 2 with PreprocessDiagnosticKeepGoing()"""
         #print
         myLexer = PpLexer.PpLexer(
                  'mt.h',
@@ -2718,16 +2720,11 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = u''.join([t.t for t in myLexer.ppTokens()])
-        expectedResult = u"""\n"""
-        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
-        self.assertEqual(result, expectedResult)
-        myLexer.finalise()
-#        try:
-#            result = u''.join([t.t for t in myLexer.ppTokens()])
-#            self.fail('CppCond.ExceptionCppCond not raised')
-#        except CppCond.ExceptionCppCond:
-#            self.assertTrue(True)
+        try:
+            result = u''.join([t.t for t in myLexer.ppTokens()])
+            self.fail('ExceptionCppDiagnosticUndefined not raised')
+        except PpLexer.ExceptionConditionalExpression:
+            self.assertTrue(True)
                         
     def test_02(self):
         """TestPpLexerConditionalProblems.test_02(): Raises on #elif defned NOT_DEFINED"""
@@ -2747,11 +2744,12 @@ class TestPpLexerConditionalProblems(TestPpLexer):
         try:
             result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined:
+        except PpLexer.ExceptionConditionalExpression:
             self.assertTrue(True)
             
     def test_02_00(self):
-        """TestPpLexerConditionalProblems.test_02_00(): Raises on #elif defned NOT_DEFINED with PreprocessDiagnosticKeepGoing()"""
+        """TestPpLexerConditionalProblems.test_02_00(): Will still raise on
+        #elif defned NOT_DEFINED with PreprocessDiagnosticKeepGoing()"""
         myLexer = PpLexer.PpLexer(
                  'mt.h',
                  CppIncludeStringIO(
@@ -2765,11 +2763,11 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = u''.join([t.t for t in myLexer.ppTokens()])
-        #print
-        #print 'Result:'
-        #print result
-        self.assertEquals('\n', result)
+        try:
+            result = u''.join([t.t for t in myLexer.ppTokens()])
+            self.fail('ExceptionCppDiagnosticUndefined not raised')
+        except PpLexer.ExceptionConditionalExpression:
+            self.assertTrue(True)
             
     def test_03(self):
         """TestPpLexerConditionalProblems.test_03(): Raises on #elif 1 2"""
@@ -2788,11 +2786,12 @@ class TestPpLexerConditionalProblems(TestPpLexer):
         try:
             result = u''.join([t.t for t in myLexer.ppTokens()])
             self.fail('ExceptionCppDiagnosticUndefined not raised')
-        except CppDiagnostic.ExceptionCppDiagnosticUndefined:
+        except PpLexer.ExceptionConditionalExpression:
             self.assertTrue(True)
             
     def test_03_00(self):
-        """TestPpLexerConditionalProblems.test_03_00(): Raises on #elif 1 2 with PreprocessDiagnosticKeepGoing()"""
+        """TestPpLexerConditionalProblems.test_03_00(): Will still raise on
+        #elif 1 2 with PreprocessDiagnosticKeepGoing()"""
         #print
         myLexer = PpLexer.PpLexer(
                  'mt.h',
@@ -2807,8 +2806,11 @@ class TestPpLexerConditionalProblems(TestPpLexer):
                     ),
                  diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
                  )
-        result = u''.join([t.t for t in myLexer.ppTokens()])
-        self.assertEquals('\n', result)
+        try:
+            result = u''.join([t.t for t in myLexer.ppTokens()])
+            self.fail('ExceptionCppDiagnosticUndefined not raised')
+        except PpLexer.ExceptionConditionalExpression:
+            self.assertTrue(True)
                         
 class TestPpLexerConditionalWithState(TestPpLexer):
     """Tests PpLexer with conditional source code."""

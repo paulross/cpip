@@ -328,7 +328,18 @@ class XmlStream(object):
 
     def _encode(self, theStr):
         """"Apply the XML encoding such as '<' to '&lt;'"""
-        return theStr.translate(self.ENTITY_MAP)
+        if sys.version_info.major == 2:
+            # Python 2 clunkiness
+            result = []
+            for c in theStr:
+                try:
+                    result.append(self.ENTITY_MAP[ord(c)])
+                except KeyError:
+                    result.append(c)
+            return u''.join(result)
+        else:
+            assert sys.version_info.major == 3
+            return theStr.translate(self.ENTITY_MAP)
     
     def __enter__(self):
         """Context manager support."""
