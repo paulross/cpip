@@ -1,0 +1,194 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>CPIP Processing</title>
+  </head>
+  <body>
+    <h1>CPIP Processing in output location: /Users/paulross/tmp/python/Python-3.6.2_10/Objects/dictobject.c</h1>
+    <h2>Files Processed as Translation Units:</h2>
+    <ul>
+      <li>
+        <tt>
+          <a href="index_dictobject.c_a3f5bfec1ed531371fb1a2bcdcb2e9c2.html">/Users/paulross/dev/Python-3.6.2/Objects/dictobject.c</a>
+        </tt>
+      </li>
+    </ul>
+    <h2>CPIP Command line:</h2>
+    <pre>/Users/paulross/pyenvs/CPIP36/bin/cpipmain -l20 -o /Users/paulross/tmp/python/Python-3.6.2_10 -k -j2 -r -p -l40 -g *.c -J /usr/include/ -J /usr/include/c++/4.2.1/ -J /usr/include/c++/4.2.1/tr1/ -J /usr/include/ffi/ -J /Users/paulross/dev/Python-3.6.2/Include/ -J /Users/paulross/dev/Python-3.6.2/ -D __has_feature(x)=0 -D __has_extension(x)=0 -D __has_attribute(x)=0 -D __has_include(x)=0 -D __GNUC__=4 -D __x86_64__=1 -D LONG_BIT=(8 * SIZEOF_LONG) -D __LITTLE_ENDIAN__ -D MACOSX -D STRINGLIB_IS_UNICODE=1 /Users/paulross/dev/Python-3.6.2/</pre>
+    <table border="1">
+      <tr>
+        <th style="padding: 2px 6px 2px 6px">Option</th>
+        <th style="padding: 2px 6px 2px 6px">Value</th>
+        <th style="padding: 2px 6px 2px 6px">Description</th>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>--heap</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>False</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Profile memory usage.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-C/--CPP</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>False</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Sys call &apos;cpp -dM&apos; to extract and use platform<br />specific macros. These are inserted after -S option and<br />before the -D option.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-D/--define</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>__has_feature(x)=0,<br />__has_extension(x)=0,<br />__has_attribute(x)=0,<br />__has_include(x)=0,<br />__GNUC__=4,<br />__x86_64__=1,<br />LONG_BIT=(8 * SIZEOF_LONG),<br />__LITTLE_ENDIAN__,<br />MACOSX,<br />STRINGLIB_IS_UNICODE=1</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Add macro definitions of the form name&lt;=definition&gt;.<br />These are introduced into the environment before<br />any pre-include.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-G</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>False</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Support GCC extensions. Currently only #include_next.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-I/--usr</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>&nbsp;</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Add user include search path.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-J/--sys</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>/usr/include/,<br />/usr/include/c++/4.2.1/,<br />/usr/include/c++/4.2.1/tr1/,<br />/usr/include/ffi/,<br />/Users/paulross/dev/Python-3.6.2/Include/,<br />/Users/paulross/dev/Python-3.6.2/</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Add system include search path.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-P/--pre</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>&nbsp;</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Add pre-include file path, this file precedes the<br />initial translation unit.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-S/--predefine</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>&nbsp;</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Add standard predefined macro definitions of the<br />form name&lt;=definition&gt;. They are introduced into the<br />environment before anything else. They can not be<br />redefined. __DATE__ and __TIME__ will be automatically<br />allocated in here. __FILE__ and __LINE__ are defined dynamically.<br />See ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-c</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>False</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Add conditionally included files to the plots.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-d/--dump</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>&nbsp;</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Dump output, additive. Can be:<br />C - Conditional compilation graph.<br />F - File names encountered and their count.<br />I - Include graph.<br />M - Macro environment.<br />T - Token count.<br />R - Macro dependencies as an input to DOT.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-g/--glob</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>*.c</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Pattern match to use when processing directories.  i.e. every file.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-j/--jobs</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>2</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Max simultaneous processes when pre-processing<br />directories. Zero uses number of native CPUs [4].<br />1 means no multiprocessing.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-k/--keep-going</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>True</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Keep going.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-l/--loglevel</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>40</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Log Level (debug=10, info=20, warning=30, error=40, critical=50)</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-o/--output</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>/Users/paulross/tmp/python/Python-3.6.2_10</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Output directory.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-p</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>True</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Ignore pragma statements.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-r/--recursive</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>True</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Recursively process directories.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>-t/--dot</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>False</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Write an DOT include dependency table and execute DOT<br />on it to create a SVG file.</td>
+      </tr>
+    </table>
+  </body>
+  <p>Total number of files processed: 374</p>
+  <p>Total number of lines processed: 92,223</p>
+  <p>Total number of bytes processed: 4,497,485</p>
+  <p>Time start: Tue Oct  3 00:51:42 2017 Time finish: Tue Oct  3 00:53:24 2017 Duration: 1 minutes, 41.935 seconds. CPIP version: 0.9.5</p>
+</html>

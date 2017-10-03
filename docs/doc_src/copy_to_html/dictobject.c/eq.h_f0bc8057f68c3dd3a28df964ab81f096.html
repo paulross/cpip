@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/Python-3.6.2/Objects/stringlib/eq.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/Python-3.6.2/Objects/stringlib/eq.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/* Fast unicode equal function optimized for dictobject.c and setobject.c */</span>
+<a name="2" /><span class="True">       2:</span> 
+<a name="3" /><span class="True">       3:</span> <span class="k">/* Return 1 if two unicode objects are equal, 0 if not.</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> * unicode_eq() is called when the hash of two unicode objects is equal.</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> */</span>
+<a name="6" /><span class="True">       6:</span> <a href="macros_ref.html#_UHlfTE9DQUxfSU5MSU5FXzA_"><span class="b">Py_LOCAL_INLINE</span></a><span class="f">(</span><span class="m">int</span><span class="f">)</span>
+<a name="7" /><span class="True">       7:</span> <span class="b">unicode_eq</span><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="b">aa</span><span class="f">,</span> <span class="b">PyObject</span> <span class="f">*</span><span class="b">bb</span><span class="f">)</span>
+<a name="8" /><span class="True">       8:</span> <span class="f">{</span>
+<a name="9" /><span class="True">       9:</span>     <span class="b">PyUnicodeObject</span> <span class="f">*</span><span class="b">a</span> <span class="f">=</span> <span class="f">(</span><span class="b">PyUnicodeObject</span> <span class="f">*</span><span class="f">)</span><span class="b">aa</span><span class="f">;</span>
+<a name="10" /><span class="True">      10:</span>     <span class="b">PyUnicodeObject</span> <span class="f">*</span><span class="b">b</span> <span class="f">=</span> <span class="f">(</span><span class="b">PyUnicodeObject</span> <span class="f">*</span><span class="f">)</span><span class="b">bb</span><span class="f">;</span>
+<a name="11" /><span class="True">      11:</span> 
+<a name="12" /><span class="True">      12:</span>     <span class="m">if</span> <span class="f">(</span><a href="macros_ref.html#_UHlVbmljb2RlX1JFQURZXzA_"><span class="b">PyUnicode_READY</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">==</span> <span class="f">-</span><span class="c">1</span> <span class="f">||</span> <a href="macros_ref.html#_UHlVbmljb2RlX1JFQURZXzA_"><span class="b">PyUnicode_READY</span></a><span class="f">(</span><span class="b">b</span><span class="f">)</span> <span class="f">==</span> <span class="f">-</span><span class="c">1</span><span class="f">)</span> <span class="f">{</span>
+<a name="13" /><span class="True">      13:</span>         <a href="macros_ref.html#_YXNzZXJ0XzA_"><span class="b">assert</span></a><span class="f">(</span><span class="c">0</span> <span class="f">&amp;&amp;</span> <span class="e">&quot;unicode_eq ready fail&quot;</span><span class="f">)</span><span class="f">;</span>
+<a name="14" /><span class="True">      14:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="15" /><span class="True">      15:</span>     <span class="f">}</span>
+<a name="16" /><span class="True">      16:</span> 
+<a name="17" /><span class="True">      17:</span>     <span class="m">if</span> <span class="f">(</span><a href="macros_ref.html#_UHlVbmljb2RlX0dFVF9MRU5HVEhfMA__"><span class="b">PyUnicode_GET_LENGTH</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">!=</span> <a href="macros_ref.html#_UHlVbmljb2RlX0dFVF9MRU5HVEhfMA__"><span class="b">PyUnicode_GET_LENGTH</span></a><span class="f">(</span><span class="b">b</span><span class="f">)</span><span class="f">)</span>
+<a name="18" /><span class="True">      18:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="19" /><span class="True">      19:</span>     <span class="m">if</span> <span class="f">(</span><a href="macros_ref.html#_UHlVbmljb2RlX0dFVF9MRU5HVEhfMA__"><span class="b">PyUnicode_GET_LENGTH</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">==</span> <span class="c">0</span><span class="f">)</span>
+<a name="20" /><span class="True">      20:</span>         <span class="m">return</span> <span class="c">1</span><span class="f">;</span>
+<a name="21" /><span class="True">      21:</span>     <span class="m">if</span> <span class="f">(</span><a href="macros_ref.html#_UHlVbmljb2RlX0tJTkRfMA__"><span class="b">PyUnicode_KIND</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">!=</span> <a href="macros_ref.html#_UHlVbmljb2RlX0tJTkRfMA__"><span class="b">PyUnicode_KIND</span></a><span class="f">(</span><span class="b">b</span><span class="f">)</span><span class="f">)</span>
+<a name="22" /><span class="True">      22:</span>         <span class="m">return</span> <span class="c">0</span><span class="f">;</span>
+<a name="23" /><span class="True">      23:</span>     <span class="m">return</span> <span class="b">memcmp</span><span class="f">(</span><a href="macros_ref.html#_UHlVbmljb2RlXzFCWVRFX0RBVEFfMA__"><span class="b">PyUnicode_1BYTE_DATA</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span><span class="f">,</span> <a href="macros_ref.html#_UHlVbmljb2RlXzFCWVRFX0RBVEFfMA__"><span class="b">PyUnicode_1BYTE_DATA</span></a><span class="f">(</span><span class="b">b</span><span class="f">)</span><span class="f">,</span>
+<a name="24" /><span class="True">      24:</span>                   <a href="macros_ref.html#_UHlVbmljb2RlX0dFVF9MRU5HVEhfMA__"><span class="b">PyUnicode_GET_LENGTH</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span> <span class="f">*</span> <a href="macros_ref.html#_UHlVbmljb2RlX0tJTkRfMA__"><span class="b">PyUnicode_KIND</span></a><span class="f">(</span><span class="b">a</span><span class="f">)</span><span class="f">)</span> <span class="f">==</span> <span class="c">0</span><span class="f">;</span>
+<a name="25" /><span class="True">      25:</span> <span class="f">}</span>
+<a name="26" /><span class="True">      26:</span> </pre>
+  </body>
+</html>

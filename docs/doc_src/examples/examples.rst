@@ -231,11 +231,16 @@ Some Real Examples
 CPIPMain is a command line tool that you can invoke very much like your favorite pre-processor. CPIPMain produces a number of HTML pages and SVG files that make it easier to understand what is happening during preprocessing. This section shows some examples of the kind of thing that CPIP can do.
 
 =======================================
-The Linux Kernel
+From the Linux Kernel
 =======================================
 
-Here is :file:`CPIPMain.py` pre-processing the `cpu.c <../_static/index.html>`_ file from the Linux Kernel.
+Here is :file:`CPIPMain.py` pre-processing the `cpu.c <../_static/cpu/index.html>`_ file from the Linux Kernel.
 
+=======================================
+From the CPython Interpreter
+=======================================
+
+Here is :file:`CPIPMain.py` pre-processing the `dictobject.c <../_static/dictobject.c/index.html>`_ file which implements the Python 3.6.2 dictionary.
 
 .. rubric:: Footnotes
 

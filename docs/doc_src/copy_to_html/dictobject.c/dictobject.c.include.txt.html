@@ -1,0 +1,760 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>Included graph for /Users/paulross/dev/Python-3.6.2/Objects/dictobject.c</title>
+  </head>
+  <body>
+    <h1>File include graph for: /Users/paulross/dev/Python-3.6.2/Objects/dictobject.c</h1>
+    <p>A text dump of the include graph.</p>
+    <p>Return to <a href="index_dictobject.c_a3f5bfec1ed531371fb1a2bcdcb2e9c2.html">Index</a></p>
+    <pre>Unnamed Pre-include [84, 54]:  True &quot;&quot; &quot;&quot;
+/Users/paulross/dev/Python-3.6.2/Objects/dictobject.c [26206, 16462]:  True &quot;&quot; &quot;&quot;
+000112: #include /Users/paulross/dev/Python-3.6.2/Include/Python.h
+  /Users/paulross/dev/Python-3.6.2/Include/Python.h [20, 6]:  True &quot;&quot; &quot;[&apos;&quot;Python.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/Users/paulross/dev/Python-3.6.2/Include/&apos;]&quot;
+  000007: #include /Users/paulross/dev/Python-3.6.2/Include/patchlevel.h
+    /Users/paulross/dev/Python-3.6.2/Include/patchlevel.h [146, 74]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;patchlevel.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000008: #include /Users/paulross/dev/Python-3.6.2/pyconfig.h
+    /Users/paulross/dev/Python-3.6.2/pyconfig.h [3504, 1255]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyconfig.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/Users/paulross/dev/Python-3.6.2/&apos;]&quot;
+  000010: #include /Users/paulross/dev/Python-3.6.2/Include/pymacconfig.h
+    /Users/paulross/dev/Python-3.6.2/Include/pymacconfig.h [13, 3]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pymacconfig.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000012: #include /usr/include/limits.h
+    /usr/include/limits.h [462, 255]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&lt;limits.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000063: #include /usr/include/sys/cdefs.h
+      /usr/include/sys/cdefs.h [1030, 655]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000534: #include /usr/include/sys/_symbol_aliasing.h
+        /usr/include/sys/_symbol_aliasing.h [338, 252]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_ &amp;&amp; !def _CDEFS_H_&quot; &quot;[&apos;&lt;sys/_symbol_aliasing.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000600: #include /usr/include/sys/_posix_availability.h
+        /usr/include/sys/_posix_availability.h [37, 21]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_ &amp;&amp; !def _CDEFS_H_&quot; &quot;[&apos;&lt;sys/_posix_availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000064: #include /usr/include/machine/limits.h
+      /usr/include/machine/limits.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_&quot; &quot;[&apos;&lt;machine/limits.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000006: #include /usr/include/i386/limits.h
+        /usr/include/i386/limits.h [259, 131]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__)&quot; &quot;[&apos;&lt;i386/limits.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000039: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386_LIMITS_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000041: #include /usr/include/i386/_limits.h
+          /usr/include/i386/_limits.h [16, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386_LIMITS_H_&quot; &quot;[&apos;&lt;i386/_limits.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000066: #include /usr/include/sys/syslimits.h
+      /usr/include/sys/syslimits.h [234, 99]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_&quot; &quot;[&apos;&lt;sys/syslimits.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000069: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _LIMITS_H_ &amp;&amp; !def _SYS_SYSLIMITS_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000025: #include /usr/include/stdio.h
+    /usr/include/stdio.h [2799, 1628]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&lt;stdio.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000064: #include /usr/include/sys/cdefs.h
+      /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000066: #include /usr/include/Availability.h
+      /usr/include/Availability.h [582, 354]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000173: #include /usr/include/AvailabilityInternal.h
+        /usr/include/AvailabilityInternal.h [141, 45]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def __AVAILABILITY__&quot; &quot;[&apos;&lt;AvailabilityInternal.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000068: #include /usr/include/_types.h
+      /usr/include/_types.h [133, 83]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000028: #include /usr/include/sys/_types.h
+        /usr/include/sys/_types.h [239, 116]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def __TYPES_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000032: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def __TYPES_H_ &amp;&amp; !def _SYS__TYPES_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000034: #include /usr/include/machine/_types.h
+          /usr/include/machine/_types.h [7, 3]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def __TYPES_H_ &amp;&amp; !def _SYS__TYPES_H_&quot; &quot;[&apos;&lt;machine/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000032: #include /usr/include/i386/_types.h
+            /usr/include/i386/_types.h [302, 117]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def __TYPES_H_ &amp;&amp; !def _SYS__TYPES_H_ &amp;&amp; !def _BSD_MACHINE__TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__)&quot; &quot;[&apos;&quot;i386/_types.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000081: #include /usr/include/sys/_pthread/_pthread_types.h
+          /usr/include/sys/_pthread/_pthread_types.h [409, 245]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def __TYPES_H_ &amp;&amp; !def _SYS__TYPES_H_&quot; &quot;[&apos;&lt;sys/_pthread/_pthread_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000033: #include /usr/include/sys/cdefs.h
+            /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def __TYPES_H_ &amp;&amp; !def _SYS__TYPES_H_ &amp;&amp; !def _SYS__PTHREAD_TYPES_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000071: #include /usr/include/sys/_types/_va_list.h
+      /usr/include/sys/_types/_va_list.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_&quot; &quot;[&apos;&lt;sys/_types/_va_list.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000072: #include /usr/include/sys/_types/_size_t.h
+      /usr/include/sys/_types/_size_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000074: #include /usr/include/sys/_types/_null.h
+      /usr/include/sys/_types/_null.h [9, 4]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_&quot; &quot;[&apos;&lt;sys/_types/_null.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000076: #include /usr/include/sys/stdio.h
+      /usr/include/sys/stdio.h [38, 22]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_&quot; &quot;[&apos;&lt;sys/stdio.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000033: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def _SYS_STDIO_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000036: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; !def _SYS_STDIO_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000412: #include /usr/include/sys/_types/_off_t.h
+      /usr/include/sys/_types/_off_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200112L&quot; &quot;[&apos;&lt;sys/_types/_off_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000437: #include /usr/include/sys/_types/_ssize_t.h
+      /usr/include/sys/_types/_ssize_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;sys/_types/_ssize_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000492: #include /usr/include/secure/_stdio.h
+      /usr/include/secure/_stdio.h [307, 199]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; defined (__GNUC__) &amp;&amp; _FORTIFY_SOURCE &gt; 0 &amp;&amp; !defined (__cplusplus)&quot; &quot;[&apos;&lt;secure/_stdio.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000032: #include /usr/include/secure/_common.h
+        /usr/include/secure/_common.h [65, 40]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDIO_H_ &amp;&amp; defined (__GNUC__) &amp;&amp; _FORTIFY_SOURCE &gt; 0 &amp;&amp; !defined (__cplusplus) &amp;&amp; !def _SECURE__STDIO_H_&quot; &quot;[&apos;&lt;secure/_common.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000030: #include /usr/include/string.h
+    /usr/include/string.h [878, 560]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&lt;string.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000061: #include /usr/include/_types.h
+      /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000062: #include /usr/include/sys/cdefs.h
+      /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000063: #include /usr/include/Availability.h
+      /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000064: #include /usr/include/sys/_types/_size_t.h
+      /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000066: #include /usr/include/sys/_types/_null.h
+      /usr/include/sys/_types/_null.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_&quot; &quot;[&apos;&lt;sys/_types/_null.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000141: #include /usr/include/sys/_types/_rsize_t.h
+      /usr/include/sys/_types/_rsize_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; defined(__STDC_WANT_LIB_EXT1__) &amp;&amp; __STDC_WANT_LIB_EXT1__ &gt;= 1&quot; &quot;[&apos;&lt;sys/_types/_rsize_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000143: #include /usr/include/sys/_types/_errno_t.h
+      /usr/include/sys/_types/_errno_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; defined(__STDC_WANT_LIB_EXT1__) &amp;&amp; __STDC_WANT_LIB_EXT1__ &gt;= 1&quot; &quot;[&apos;&lt;sys/_types/_errno_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000153: #include /usr/include/sys/_types/_ssize_t.h
+      /usr/include/sys/_types/_ssize_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;sys/_types/_ssize_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000176: #include /usr/include/strings.h
+      /usr/include/strings.h [221, 139]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&quot;strings.h&quot;&apos;, &apos;CP=/usr/include&apos;]&quot;
+      000062: #include /usr/include/_types.h
+        /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STRINGS_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000063: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STRINGS_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000064: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STRINGS_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000066: #include /usr/include/sys/_types/_size_t.h
+        /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STRINGS_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000092: #include /usr/include/string.h
+        /usr/include/string.h [924, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STRINGS_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;string.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000186: #include /usr/include/secure/_string.h
+      /usr/include/secure/_string.h [309, 206]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; defined (__GNUC__) &amp;&amp; _FORTIFY_SOURCE &gt; 0 &amp;&amp; !defined (__cplusplus)&quot; &quot;[&apos;&lt;secure/_string.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000031: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; defined (__GNUC__) &amp;&amp; _FORTIFY_SOURCE &gt; 0 &amp;&amp; !defined (__cplusplus) &amp;&amp; !def _SECURE__STRING_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000032: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; defined (__GNUC__) &amp;&amp; _FORTIFY_SOURCE &gt; 0 &amp;&amp; !defined (__cplusplus) &amp;&amp; !def _SECURE__STRING_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000034: #include /usr/include/secure/_common.h
+        /usr/include/secure/_common.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STRING_H_ &amp;&amp; defined (__GNUC__) &amp;&amp; _FORTIFY_SOURCE &gt; 0 &amp;&amp; !defined (__cplusplus) &amp;&amp; !def _SECURE__STRING_H_&quot; &quot;[&apos;&lt;secure/_common.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000032: #include /usr/include/errno.h
+    /usr/include/errno.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_ERRNO_H&quot; &quot;[&apos;&lt;errno.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000024: #include /usr/include/sys/errno.h
+      /usr/include/sys/errno.h [1037, 454]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_ERRNO_H&quot; &quot;[&apos;&lt;sys/errno.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000074: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_ERRNO_H &amp;&amp; !def _SYS_ERRNO_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000076: #include /usr/include/sys/_types/_errno_t.h
+        /usr/include/sys/_types/_errno_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_ERRNO_H &amp;&amp; !def _SYS_ERRNO_H_ &amp;&amp; defined(__STDC_WANT_LIB_EXT1__) &amp;&amp; __STDC_WANT_LIB_EXT1__ &gt;= 1&quot; &quot;[&apos;&lt;sys/_types/_errno_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000034: #include /usr/include/stdlib.h
+    /usr/include/stdlib.h [2228, 1246]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&lt;stdlib.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000062: #include /usr/include/Availability.h
+      /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000063: #include /usr/include/_types.h
+      /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000065: #include /usr/include/sys/wait.h
+      /usr/include/sys/wait.h [728, 401]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE)&quot; &quot;[&apos;&lt;sys/wait.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000067: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000069: #include /usr/include/sys/_types.h
+        /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000089: #include /usr/include/sys/_types/_pid_t.h
+        /usr/include/sys/_types/_pid_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_&quot; &quot;[&apos;&lt;sys/_types/_pid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000091: #include /usr/include/sys/_types/_id_t.h
+        /usr/include/sys/_types/_id_t.h [16, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_&quot; &quot;[&apos;&lt;sys/_types/_id_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000109: #include /usr/include/sys/signal.h
+        /usr/include/sys/signal.h [1550, 757]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_&quot; &quot;[&apos;&lt;sys/signal.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000072: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000073: #include /usr/include/sys/appleapiopts.h
+          /usr/include/sys/appleapiopts.h [37, 21]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_&quot; &quot;[&apos;&lt;sys/appleapiopts.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000075: #include /usr/include/Availability.h
+          /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000083: #include /usr/include/machine/signal.h
+          /usr/include/machine/signal.h [7, 3]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_&quot; &quot;[&apos;&lt;machine/signal.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000032: #include /usr/include/i386/signal.h
+            /usr/include/i386/signal.h [18, 8]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _BSD_MACHINE_SIGNAL_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__)&quot; &quot;[&apos;&quot;i386/signal.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/usr/include/&apos;]&quot;
+            000037: #include /usr/include/sys/cdefs.h
+              /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _BSD_MACHINE_SIGNAL_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386_SIGNAL_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000145: #include /usr/include/sys/_types.h
+          /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000147: #include /usr/include/machine/_mcontext.h
+          /usr/include/machine/_mcontext.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;machine/_mcontext.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000029: #include /usr/include/i386/_mcontext.h
+            /usr/include/i386/_mcontext.h [247, 87]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE &amp;&amp; defined (__i386__) || defined (__x86_64__)&quot; &quot;[&apos;&quot;i386/_mcontext.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/usr/include/&apos;]&quot;
+            000032: #include /usr/include/sys/appleapiopts.h
+              /usr/include/sys/appleapiopts.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE &amp;&amp; defined (__i386__) || defined (__x86_64__) &amp;&amp; !def __I386_MCONTEXT_H_&quot; &quot;[&apos;&lt;sys/appleapiopts.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+            000034: #include /usr/include/mach/i386/_structs.h
+              /usr/include/mach/i386/_structs.h [3925, 1043]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE &amp;&amp; defined (__i386__) || defined (__x86_64__) &amp;&amp; !def __I386_MCONTEXT_H_&quot; &quot;[&apos;&lt;mach/i386/_structs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000149: #include /usr/include/sys/_pthread/_pthread_attr_t.h
+          /usr/include/sys/_pthread/_pthread_attr_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_pthread/_pthread_attr_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000150: #include /usr/include/sys/_types/_sigaltstack.h
+          /usr/include/sys/_types/_sigaltstack.h [51, 23]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_types/_sigaltstack.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000152: #include /usr/include/sys/_types/_ucontext.h
+          /usr/include/sys/_types/_ucontext.h [76, 33]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_types/_ucontext.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000153: #include /usr/include/sys/_types/_pid_t.h
+          /usr/include/sys/_types/_pid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_types/_pid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000154: #include /usr/include/sys/_types/_sigset_t.h
+          /usr/include/sys/_types/_sigset_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_types/_sigset_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000155: #include /usr/include/sys/_types/_size_t.h
+          /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000157: #include /usr/include/sys/_types/_uid_t.h
+          /usr/include/sys/_types/_uid_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_SIGNAL_H_ &amp;&amp; !def _ANSI_SOURCE&quot; &quot;[&apos;&lt;sys/_types/_uid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000111: #include /usr/include/sys/resource.h
+        /usr/include/sys/resource.h [1243, 653]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_&quot; &quot;[&apos;&lt;sys/resource.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000067: #include /usr/include/sys/appleapiopts.h
+          /usr/include/sys/appleapiopts.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_&quot; &quot;[&apos;&lt;sys/appleapiopts.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000068: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000070: #include /usr/include/sys/_types.h
+          /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000072: #include /usr/include/stdint.h
+          /usr/include/stdint.h [693, 404]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;stdint.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000018: #include /usr/include/sys/_types/_int8_t.h
+            /usr/include/sys/_types/_int8_t.h [16, 8]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;sys/_types/_int8_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000019: #include /usr/include/sys/_types/_int16_t.h
+            /usr/include/sys/_types/_int16_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;sys/_types/_int16_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000020: #include /usr/include/sys/_types/_int32_t.h
+            /usr/include/sys/_types/_int32_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;sys/_types/_int32_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000022: #include /usr/include/sys/_types/_int64_t.h
+            /usr/include/sys/_types/_int64_t.h [16, 8]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;sys/_types/_int64_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000023: #include /usr/include/_types/_uint8_t.h
+            /usr/include/_types/_uint8_t.h [16, 8]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;_types/_uint8_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000024: #include /usr/include/_types/_uint16_t.h
+            /usr/include/_types/_uint16_t.h [16, 8]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;_types/_uint16_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000025: #include /usr/include/_types/_uint32_t.h
+            /usr/include/_types/_uint32_t.h [16, 8]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;_types/_uint32_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000027: #include /usr/include/_types/_uint64_t.h
+            /usr/include/_types/_uint64_t.h [18, 9]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;_types/_uint64_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000052: #include /usr/include/sys/_types.h
+            /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000053: #include /usr/include/sys/_types/_intptr_t.h
+            /usr/include/sys/_types/_intptr_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;sys/_types/_intptr_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000056: #include /usr/include/sys/_types/_uintptr_t.h
+            /usr/include/sys/_types/_uintptr_t.h [16, 8]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;sys/_types/_uintptr_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000058: #include /usr/include/_types/_intmax_t.h
+            /usr/include/_types/_intmax_t.h [34, 9]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;_types/_intmax_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000060: #include /usr/include/_types/_uintmax_t.h
+            /usr/include/_types/_uintmax_t.h [38, 10]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _STDINT_H_&quot; &quot;[&apos;&lt;_types/_uintmax_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000076: #include /usr/include/Availability.h
+          /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000081: #include /usr/include/sys/_types/_timeval.h
+          /usr/include/sys/_types/_timeval.h [32, 15]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_&quot; &quot;[&apos;&lt;sys/_types/_timeval.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000085: #include /usr/include/sys/_types/_id_t.h
+          /usr/include/sys/_types/_id_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; !def _SYS_RESOURCE_H_&quot; &quot;[&apos;&lt;sys/_types/_id_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000187: #include /usr/include/machine/endian.h
+        /usr/include/machine/endian.h [9, 3]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;machine/endian.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000035: #include /usr/include/i386/endian.h
+          /usr/include/i386/endian.h [95, 43]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_ENDIAN_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__)&quot; &quot;[&apos;&quot;i386/endian.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000069: #include /usr/include/sys/cdefs.h
+            /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_ENDIAN_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386__ENDIAN_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000100: #include /usr/include/sys/_endian.h
+            /usr/include/sys/_endian.h [259, 165]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_ENDIAN_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386__ENDIAN_H_ &amp;&amp; defined(KERNEL) || (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;sys/_endian.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+            000094: #include /usr/include/sys/cdefs.h
+              /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_ENDIAN_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386__ENDIAN_H_ &amp;&amp; defined(KERNEL) || (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _SYS__ENDIAN_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+            000131: #include /usr/include/libkern/_OSByteOrder.h
+              /usr/include/libkern/_OSByteOrder.h [511, 320]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_ENDIAN_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386__ENDIAN_H_ &amp;&amp; defined(KERNEL) || (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _SYS__ENDIAN_H_ &amp;&amp; (!(defined(lint)) &amp;&amp; !(__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN))&quot; &quot;[&apos;&lt;libkern/_OSByteOrder.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+              000041: #include /usr/include/sys/_types.h
+                /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_ENDIAN_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386__ENDIAN_H_ &amp;&amp; defined(KERNEL) || (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _SYS__ENDIAN_H_ &amp;&amp; (!(defined(lint)) &amp;&amp; !(__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN)) &amp;&amp; !def _OS__OSBYTEORDER_H&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+              000066: #include /usr/include/libkern/i386/_OSByteOrder.h
+                /usr/include/libkern/i386/_OSByteOrder.h [211, 81]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; !def _SYS_WAIT_H_ &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_ENDIAN_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _I386__ENDIAN_H_ &amp;&amp; defined(KERNEL) || (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _SYS__ENDIAN_H_ &amp;&amp; (!(defined(lint)) &amp;&amp; !(__DARWIN_BYTE_ORDER == __DARWIN_BIG_ENDIAN)) &amp;&amp; !def _OS__OSBYTEORDER_H &amp;&amp; defined(__GNUC__) &amp;&amp; defined(__i386__) || defined(__x86_64__)&quot; &quot;[&apos;&lt;libkern/i386/_OSByteOrder.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000067: #include /usr/include/alloca.h
+      /usr/include/alloca.h [60, 38]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;alloca.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000027: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _ALLOCA_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000028: #include /usr/include/_types.h
+        /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _ALLOCA_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000030: #include /usr/include/sys/_types/_size_t.h
+        /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _ALLOCA_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000074: #include /usr/include/sys/_types/_size_t.h
+      /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000076: #include /usr/include/sys/_types/_ct_rune_t.h
+      /usr/include/sys/_types/_ct_rune_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;sys/_types/_ct_rune_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000077: #include /usr/include/sys/_types/_rune_t.h
+      /usr/include/sys/_types/_rune_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;sys/_types/_rune_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000081: #include /usr/include/sys/_types/_wchar_t.h
+      /usr/include/sys/_types/_wchar_t.h [16, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_&quot; &quot;[&apos;&lt;sys/_types/_wchar_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000100: #include /usr/include/sys/_types/_null.h
+      /usr/include/sys/_types/_null.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_&quot; &quot;[&apos;&lt;sys/_types/_null.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000239: #include /usr/include/machine/types.h
+      /usr/include/machine/types.h [9, 3]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;machine/types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000035: #include /usr/include/i386/types.h
+        /usr/include/i386/types.h [160, 88]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__)&quot; &quot;[&apos;&quot;i386/types.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000070: #include /usr/include/i386/_types.h
+          /usr/include/i386/_types.h [297, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;i386/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000071: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000076: #include /usr/include/sys/_types/_int8_t.h
+          /usr/include/sys/_types/_int8_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;sys/_types/_int8_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000077: #include /usr/include/sys/_types/_int16_t.h
+          /usr/include/sys/_types/_int16_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;sys/_types/_int16_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000078: #include /usr/include/sys/_types/_int32_t.h
+          /usr/include/sys/_types/_int32_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;sys/_types/_int32_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000080: #include /usr/include/sys/_types/_int64_t.h
+          /usr/include/sys/_types/_int64_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;sys/_types/_int64_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000092: #include /usr/include/sys/_types/_intptr_t.h
+          /usr/include/sys/_types/_intptr_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;sys/_types/_intptr_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000094: #include /usr/include/sys/_types/_uintptr_t.h
+          /usr/include/sys/_types/_uintptr_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)) &amp;&amp; !def _BSD_MACHINE_TYPES_H_ &amp;&amp; defined (__i386__) || defined(__x86_64__) &amp;&amp; !def _MACHTYPES_H_ &amp;&amp; !def __ASSEMBLER__&quot; &quot;[&apos;&lt;sys/_types/_uintptr_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000240: #include /usr/include/sys/_types/_dev_t.h
+      /usr/include/sys/_types/_dev_t.h [16, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;sys/_types/_dev_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000242: #include /usr/include/sys/_types/_mode_t.h
+      /usr/include/sys/_types/_mode_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def _STDLIB_H_ &amp;&amp; !defined(_ANSI_SOURCE) &amp;&amp; (!defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE))&quot; &quot;[&apos;&lt;sys/_types/_mode_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000036: #include /usr/include/unistd.h
+    /usr/include/unistd.h [4806, 2798]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H&quot; &quot;[&apos;&lt;unistd.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000071: #include /usr/include/_types.h
+      /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000072: #include /usr/include/sys/unistd.h
+      /usr/include/sys/unistd.h [824, 465]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/unistd.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000068: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000085: #include /usr/include/sys/_types/_posix_vdisable.h
+        /usr/include/sys/_types/_posix_vdisable.h [16, 10]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_posix_vdisable.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000123: #include /usr/include/sys/_types/_seek_set.h
+        /usr/include/sys/_types/_seek_set.h [4, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_seek_set.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000178: #include /usr/include/machine/_types.h
+        /usr/include/machine/_types.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;machine/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000179: #include /usr/include/sys/_types/_size_t.h
+        /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000180: #include /usr/include/_types/_uint64_t.h
+        /usr/include/_types/_uint64_t.h [13, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;_types/_uint64_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000182: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000193: #include /usr/include/machine/_types.h
+        /usr/include/machine/_types.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;machine/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000194: #include /usr/include/sys/_types/_size_t.h
+        /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000195: #include /usr/include/sys/_types/_ssize_t.h
+        /usr/include/sys/_types/_ssize_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;sys/_types/_ssize_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000196: #include /usr/include/sys/_types.h
+        /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000197: #include /usr/include/sys/_types/_uid_t.h
+        /usr/include/sys/_types/_uid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;sys/_types/_uid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000198: #include /usr/include/sys/_types/_gid_t.h
+        /usr/include/sys/_types/_gid_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;sys/_types/_gid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000200: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; !def _SYS_UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= 200809L&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000073: #include /usr/include/Availability.h
+      /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000074: #include /usr/include/sys/_types/_gid_t.h
+      /usr/include/sys/_types/_gid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_gid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000075: #include /usr/include/sys/_types/_intptr_t.h
+      /usr/include/sys/_types/_intptr_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_intptr_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000076: #include /usr/include/sys/_types/_off_t.h
+      /usr/include/sys/_types/_off_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_off_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000077: #include /usr/include/sys/_types/_pid_t.h
+      /usr/include/sys/_types/_pid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_pid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000080: #include /usr/include/sys/_types/_size_t.h
+      /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000081: #include /usr/include/sys/_types/_ssize_t.h
+      /usr/include/sys/_types/_ssize_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_ssize_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000082: #include /usr/include/sys/_types/_uid_t.h
+      /usr/include/sys/_types/_uid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_uid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000083: #include /usr/include/sys/_types/_useconds_t.h
+      /usr/include/sys/_types/_useconds_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_useconds_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000085: #include /usr/include/sys/_types/_null.h
+      /usr/include/sys/_types/_null.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_&quot; &quot;[&apos;&lt;sys/_types/_null.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000639: #include /usr/include/sys/select.h
+      /usr/include/sys/select.h [83, 35]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;sys/select.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000066: #include /usr/include/sys/appleapiopts.h
+        /usr/include/sys/appleapiopts.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/appleapiopts.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000067: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000069: #include /usr/include/sys/_types.h
+        /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000075: #include /usr/include/sys/_types/_fd_def.h
+        /usr/include/sys/_types/_fd_def.h [435, 310]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_def.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000076: #include /usr/include/sys/_types/_timespec.h
+        /usr/include/sys/_types/_timespec.h [28, 15]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_timespec.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000078: #include /usr/include/sys/_types/_timeval.h
+        /usr/include/sys/_types/_timeval.h [23, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_timeval.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000084: #include /usr/include/sys/_types/_time_t.h
+        /usr/include/sys/_types/_time_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_time_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000085: #include /usr/include/sys/_types/_suseconds_t.h
+        /usr/include/sys/_types/_suseconds_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_suseconds_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000087: #include /usr/include/sys/_types/_sigset_t.h
+        /usr/include/sys/_types/_sigset_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_sigset_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000100: #include /usr/include/sys/_types/_fd_setsize.h
+        /usr/include/sys/_types/_fd_setsize.h [9, 4]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_setsize.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000101: #include /usr/include/sys/_types/_fd_set.h
+        /usr/include/sys/_types/_fd_set.h [21, 14]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_set.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000102: #include /usr/include/sys/_types/_fd_clr.h
+        /usr/include/sys/_types/_fd_clr.h [21, 14]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_clr.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000103: #include /usr/include/sys/_types/_fd_isset.h
+        /usr/include/sys/_types/_fd_isset.h [21, 14]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_isset.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000105: #include /usr/include/sys/_types/_fd_zero.h
+        /usr/include/sys/_types/_fd_zero.h [15, 10]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_zero.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000107: #include /usr/include/sys/_types/_fd_copy.h
+        /usr/include/sys/_types/_fd_copy.h [21, 14]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_fd_copy.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000130: #include /usr/include/sys/_select.h
+        /usr/include/sys/_select.h [60, 27]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; !def _SYS_SELECT_H_&quot; &quot;[&apos;&lt;sys/_select.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000640: #include /usr/include/sys/_types/_dev_t.h
+      /usr/include/sys/_types/_dev_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;sys/_types/_dev_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000641: #include /usr/include/sys/_types/_mode_t.h
+      /usr/include/sys/_types/_mode_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;sys/_types/_mode_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000643: #include /usr/include/sys/_types/_uuid_t.h
+      /usr/include/sys/_types/_uuid_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL&quot; &quot;[&apos;&lt;sys/_types/_uuid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000658: #include /usr/include/gethostuuid.h
+      /usr/include/gethostuuid.h [60, 15]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; defined(__has_include) &amp;&amp; !(__has_include)&quot; &quot;[&apos;&lt;gethostuuid.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000032: #include /usr/include/sys/_types/_timespec.h
+        /usr/include/sys/_types/_timespec.h [19, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; defined(__has_include) &amp;&amp; !(__has_include) &amp;&amp; !def __GETHOSTUUID_H&quot; &quot;[&apos;&lt;sys/_types/_timespec.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000033: #include /usr/include/sys/_types/_uuid_t.h
+        /usr/include/sys/_types/_uuid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; defined(__has_include) &amp;&amp; !(__has_include) &amp;&amp; !def __GETHOSTUUID_H&quot; &quot;[&apos;&lt;sys/_types/_uuid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000035: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; def HAVE_UNISTD_H &amp;&amp; !def _UNISTD_H_ &amp;&amp; __DARWIN_C_LEVEL &gt;= __DARWIN_C_FULL &amp;&amp; defined(__has_include) &amp;&amp; !(__has_include) &amp;&amp; !def __GETHOSTUUID_H&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000049: #include /usr/include/assert.h
+    /usr/include/assert.h [200, 90]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&lt;assert.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000042: #include /usr/include/sys/cdefs.h
+      /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000050: #include /Users/paulross/dev/Python-3.6.2/Include/pyport.h
+    /Users/paulross/dev/Python-3.6.2/Include/pyport.h [1070, 569]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyport.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000005: #include /Users/paulross/dev/Python-3.6.2/pyconfig.h
+      /Users/paulross/dev/Python-3.6.2/pyconfig.h [1308, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H&quot; &quot;[&apos;&quot;pyconfig.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/Users/paulross/dev/Python-3.6.2/&apos;]&quot;
+    000007: #include /usr/include/inttypes.h
+      /usr/include/inttypes.h [1400, 791]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H&quot; &quot;[&apos;&lt;inttypes.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000223: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; !defined(_INTTYPES_H_)&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000225: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; !defined(_INTTYPES_H_)&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000226: #include /usr/include/_types.h
+        /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; !defined(_INTTYPES_H_)&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000228: #include /usr/include/sys/_types/_wchar_t.h
+        /usr/include/sys/_types/_wchar_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; !defined(_INTTYPES_H_)&quot; &quot;[&apos;&lt;sys/_types/_wchar_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000230: #include /usr/include/stdint.h
+        /usr/include/stdint.h [146, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; !defined(_INTTYPES_H_)&quot; &quot;[&apos;&lt;stdint.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000189: #include /usr/include/stdlib.h
+      /usr/include/stdlib.h [2279, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H&quot; &quot;[&apos;&lt;stdlib.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000195: #include /usr/include/math.h
+      /usr/include/math.h [5263, 3215]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H&quot; &quot;[&apos;&lt;math.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000030: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; !def __MATH_H__&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000032: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; !def __MATH_H__&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000201: #include /usr/include/sys/time.h
+      /usr/include/sys/time.h [835, 535]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME&quot; &quot;[&apos;&lt;sys/time.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000067: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000068: #include /usr/include/sys/_types.h
+        /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000070: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000075: #include /usr/include/sys/_types/_fd_def.h
+        /usr/include/sys/_types/_fd_def.h [109, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_def.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000076: #include /usr/include/sys/_types/_timespec.h
+        /usr/include/sys/_types/_timespec.h [19, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_timespec.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000078: #include /usr/include/sys/_types/_timeval.h
+        /usr/include/sys/_types/_timeval.h [23, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_timeval.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000080: #include /usr/include/sys/_types/_timeval64.h
+        /usr/include/sys/_types/_timeval64.h [30, 14]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_timeval64.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000084: #include /usr/include/sys/_types/_time_t.h
+        /usr/include/sys/_types/_time_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_time_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000086: #include /usr/include/sys/_types/_suseconds_t.h
+        /usr/include/sys/_types/_suseconds_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_suseconds_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000110: #include /usr/include/sys/_types/_fd_setsize.h
+        /usr/include/sys/_types/_fd_setsize.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_setsize.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000111: #include /usr/include/sys/_types/_fd_set.h
+        /usr/include/sys/_types/_fd_set.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_set.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000112: #include /usr/include/sys/_types/_fd_clr.h
+        /usr/include/sys/_types/_fd_clr.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_clr.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000113: #include /usr/include/sys/_types/_fd_isset.h
+        /usr/include/sys/_types/_fd_isset.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_isset.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000115: #include /usr/include/sys/_types/_fd_zero.h
+        /usr/include/sys/_types/_fd_zero.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_fd_zero.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000119: #include /usr/include/sys/_types/_fd_copy.h
+        /usr/include/sys/_types/_fd_copy.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_fd_copy.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000183: #include /usr/include/time.h
+        /usr/include/time.h [523, 315]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;time.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000066: #include /usr/include/_types.h
+          /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _TIME_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000067: #include /usr/include/sys/_types/_clock_t.h
+          /usr/include/sys/_types/_clock_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_clock_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000068: #include /usr/include/sys/_types/_null.h
+          /usr/include/sys/_types/_null.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_null.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000069: #include /usr/include/sys/_types/_size_t.h
+          /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000070: #include /usr/include/sys/_types/_time_t.h
+          /usr/include/sys/_types/_time_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_time_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000072: #include /usr/include/sys/_types/_timespec.h
+          /usr/include/sys/_types/_timespec.h [19, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _TIME_H_&quot; &quot;[&apos;&lt;sys/_types/_timespec.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000199: #include /usr/include/sys/_select.h
+        /usr/include/sys/_select.h [58, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME &amp;&amp; !def _SYS_TIME_H_&quot; &quot;[&apos;&lt;sys/_select.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000202: #include /usr/include/time.h
+      /usr/include/time.h [527, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def TIME_WITH_SYS_TIME&quot; &quot;[&apos;&lt;time.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000219: #include /usr/include/sys/select.h
+      /usr/include/sys/select.h [81, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_SELECT_H&quot; &quot;[&apos;&lt;sys/select.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000227: #include /usr/include/sys/stat.h
+      /usr/include/sys/stat.h [1618, 703]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H&quot; &quot;[&apos;&lt;sys/stat.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000073: #include /usr/include/sys/_types.h
+        /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000074: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000076: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000079: #include /usr/include/sys/_types/_timespec.h
+        /usr/include/sys/_types/_timespec.h [19, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_timespec.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000085: #include /usr/include/sys/_types/_blkcnt_t.h
+        /usr/include/sys/_types/_blkcnt_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_blkcnt_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000086: #include /usr/include/sys/_types/_blksize_t.h
+        /usr/include/sys/_types/_blksize_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_blksize_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000087: #include /usr/include/sys/_types/_dev_t.h
+        /usr/include/sys/_types/_dev_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_dev_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000089: #include /usr/include/sys/_types/_ino_t.h
+        /usr/include/sys/_types/_ino_t.h [16, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_ino_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000091: #include /usr/include/sys/_types/_ino64_t.h
+        /usr/include/sys/_types/_ino64_t.h [16, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_ino64_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000094: #include /usr/include/sys/_types/_mode_t.h
+        /usr/include/sys/_types/_mode_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_mode_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000095: #include /usr/include/sys/_types/_nlink_t.h
+        /usr/include/sys/_types/_nlink_t.h [16, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_nlink_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000096: #include /usr/include/sys/_types/_uid_t.h
+        /usr/include/sys/_types/_uid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_uid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000097: #include /usr/include/sys/_types/_gid_t.h
+        /usr/include/sys/_types/_gid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_gid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000098: #include /usr/include/sys/_types/_off_t.h
+        /usr/include/sys/_types/_off_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_off_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000100: #include /usr/include/sys/_types/_time_t.h
+        /usr/include/sys/_types/_time_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_time_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000242: #include /usr/include/sys/_types/_s_ifmt.h
+        /usr/include/sys/_types/_s_ifmt.h [266, 112]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_&quot; &quot;[&apos;&lt;sys/_types/_s_ifmt.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000371: #include /usr/include/sys/_types/_filesec_t.h
+        /usr/include/sys/_types/_filesec_t.h [22, 12]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; def HAVE_SYS_STAT_H &amp;&amp; !def _SYS_STAT_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_filesec_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000530: #include /usr/include/termios.h
+      /usr/include/termios.h [19, 11]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H)&quot; &quot;[&apos;&lt;termios.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000026: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000027: #include /usr/include/sys/termios.h
+        /usr/include/sys/termios.h [1477, 740]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__&quot; &quot;[&apos;&lt;sys/termios.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000068: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__ &amp;&amp; !def _SYS_TERMIOS_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000111: #include /usr/include/sys/_types/_posix_vdisable.h
+          /usr/include/sys/_types/_posix_vdisable.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__ &amp;&amp; !def _SYS_TERMIOS_H_&quot; &quot;[&apos;&lt;sys/_types/_posix_vdisable.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000329: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__ &amp;&amp; !def _SYS_TERMIOS_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000356: #include /usr/include/sys/ttycom.h
+          /usr/include/sys/ttycom.h [1153, 650]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__ &amp;&amp; !def _SYS_TERMIOS_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/ttycom.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+          000073: #include /usr/include/sys/ioccom.h
+            /usr/include/sys/ioccom.h [352, 243]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__ &amp;&amp; !def _SYS_TERMIOS_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _SYS_TTYCOM_H_&quot; &quot;[&apos;&lt;sys/ioccom.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+            000068: #include /usr/include/sys/_types.h
+              /usr/include/sys/_types.h [201, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__ &amp;&amp; !def _SYS_TERMIOS_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE) &amp;&amp; !def _SYS_TTYCOM_H_ &amp;&amp; !def _SYS_IOCCOM_H_&quot; &quot;[&apos;&lt;sys/_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000365: #include /usr/include/sys/ttydefaults.h
+          /usr/include/sys/ttydefaults.h [392, 190]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/ttydefaults.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000028: #include /usr/include/_types.h
+        /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000030: #include /usr/include/sys/_types/_pid_t.h
+        /usr/include/sys/_types/_pid_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYPORT_H &amp;&amp; defined(HAVE_OPENPTY) || defined(HAVE_FORKPTY) &amp;&amp; !defined(HAVE_PTY_H) &amp;&amp; !defined(HAVE_LIBUTIL_H) &amp;&amp; !def __TERMIOS_H__&quot; &quot;[&apos;&lt;sys/_types/_pid_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000052: #include /Users/paulross/dev/Python-3.6.2/Include/pymacro.h
+    /Users/paulross/dev/Python-3.6.2/Include/pymacro.h [628, 456]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pymacro.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000054: #include /Users/paulross/dev/Python-3.6.2/Include/pyatomic.h
+    /Users/paulross/dev/Python-3.6.2/Include/pyatomic.h [451, 3]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyatomic.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000064: #include /Users/paulross/dev/Python-3.6.2/Include/pymath.h
+    /Users/paulross/dev/Python-3.6.2/Include/pymath.h [405, 166]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pymath.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000005: #include /Users/paulross/dev/Python-3.6.2/pyconfig.h
+      /Users/paulross/dev/Python-3.6.2/pyconfig.h [1308, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYMATH_H&quot; &quot;[&apos;&quot;pyconfig.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/Users/paulross/dev/Python-3.6.2/&apos;]&quot;
+  000065: #include /Users/paulross/dev/Python-3.6.2/Include/pytime.h
+    /Users/paulross/dev/Python-3.6.2/Include/pytime.h [586, 342]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pytime.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000005: #include /Users/paulross/dev/Python-3.6.2/pyconfig.h
+      /Users/paulross/dev/Python-3.6.2/pyconfig.h [1308, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_LIMITED_API &amp;&amp; !def Py_PYTIME_H&quot; &quot;[&apos;&quot;pyconfig.h&quot;&apos;, &apos;CP=None&apos;, &apos;usr=None&apos;, &apos;sys=/Users/paulross/dev/Python-3.6.2/&apos;]&quot;
+    000007: #include /Users/paulross/dev/Python-3.6.2/Include/object.h
+      /Users/paulross/dev/Python-3.6.2/Include/object.h [4471, 2789]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_LIMITED_API &amp;&amp; !def Py_PYTIME_H&quot; &quot;[&apos;&quot;object.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000067: #include /Users/paulross/dev/Python-3.6.2/Include/pymem.h
+    /Users/paulross/dev/Python-3.6.2/Include/pymem.h [788, 500]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pymem.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000009: #include /Users/paulross/dev/Python-3.6.2/Include/pyport.h
+      /Users/paulross/dev/Python-3.6.2/Include/pyport.h [310, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_PYMEM_H&quot; &quot;[&apos;&quot;pyport.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000068: #include /Users/paulross/dev/Python-3.6.2/Include/object.h
+    /Users/paulross/dev/Python-3.6.2/Include/object.h [3172, 0]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;object.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000069: #include /Users/paulross/dev/Python-3.6.2/Include/objimpl.h
+    /Users/paulross/dev/Python-3.6.2/Include/objimpl.h [1704, 1178]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;objimpl.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000009: #include /Users/paulross/dev/Python-3.6.2/Include/pymem.h
+      /Users/paulross/dev/Python-3.6.2/Include/pymem.h [515, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_OBJIMPL_H&quot; &quot;[&apos;&quot;pymem.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000070: #include /Users/paulross/dev/Python-3.6.2/Include/typeslots.h
+    /Users/paulross/dev/Python-3.6.2/Include/typeslots.h [562, 318]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;typeslots.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000072: #include /Users/paulross/dev/Python-3.6.2/Include/pyhash.h
+    /Users/paulross/dev/Python-3.6.2/Include/pyhash.h [338, 191]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyhash.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000074: #include /Users/paulross/dev/Python-3.6.2/Include/pydebug.h
+    /Users/paulross/dev/Python-3.6.2/Include/pydebug.h [130, 67]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pydebug.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000075: #include /Users/paulross/dev/Python-3.6.2/Include/bytearrayobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/bytearrayobject.h [266, 167]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;bytearrayobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000010: #include /usr/include/c++/4.2.1/tr1/stdarg.h
+      /usr/include/c++/4.2.1/tr1/stdarg.h [57, 4]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H&quot; &quot;[&apos;&lt;stdarg.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/tr1/&apos;]&quot;
+      000038: #include /usr/include/c++/4.2.1/tr1/cstdarg
+        /usr/include/c++/4.2.1/tr1/cstdarg [57, 4]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H&quot; &quot;[&apos;&lt;tr1/cstdarg&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/&apos;]&quot;
+        000038: #include /usr/include/c++/4.2.1/cstdarg
+          /usr/include/c++/4.2.1/cstdarg [91, 20]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H &amp;&amp; !def _TR1_CSTDARG&quot; &quot;[&apos;&lt;cstdarg&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/&apos;]&quot;
+          000050: #include /usr/include/c++/4.2.1/bits/c++config.h
+            /usr/include/c++/4.2.1/bits/c++config.h [2243, 703]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H &amp;&amp; !def _TR1_CSTDARG &amp;&amp; !def _GLIBCXX_CSTDARG&quot; &quot;[&apos;&lt;bits/c++config.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/&apos;]&quot;
+            000042: #include /usr/include/c++/4.2.1/bits/os_defines.h
+              /usr/include/c++/4.2.1/bits/os_defines.h [605, 154]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H &amp;&amp; !def _TR1_CSTDARG &amp;&amp; !def _GLIBCXX_CSTDARG &amp;&amp; !def _CXXCONFIG&quot; &quot;[&apos;&lt;bits/os_defines.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/&apos;]&quot;
+              000061: #include /usr/include/unistd.h
+                /usr/include/unistd.h [2840, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H &amp;&amp; !def _TR1_CSTDARG &amp;&amp; !def _GLIBCXX_CSTDARG &amp;&amp; !def _CXXCONFIG &amp;&amp; !def _GLIBCXX_OS_DEFINES &amp;&amp; !def _DTRACE_CXA_RUNTIME_H&quot; &quot;[&apos;&lt;unistd.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+              000063: #include /usr/include/Availability.h
+                /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H &amp;&amp; !def _TR1_CSTDARG &amp;&amp; !def _GLIBCXX_CSTDARG &amp;&amp; !def _CXXCONFIG &amp;&amp; !def _GLIBCXX_OS_DEFINES &amp;&amp; !def _DTRACE_CXA_RUNTIME_H&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+            000045: #include /usr/include/c++/4.2.1/bits/cpu_defines.h
+              /usr/include/c++/4.2.1/bits/cpu_defines.h [59, 4]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H &amp;&amp; !def _TR1_CSTDARG &amp;&amp; !def _GLIBCXX_CSTDARG &amp;&amp; !def _CXXCONFIG&quot; &quot;[&apos;&lt;bits/cpu_defines.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/&apos;]&quot;
+          000052: #include /usr/include/c++/4.2.1/tr1/stdarg.h
+            /usr/include/c++/4.2.1/tr1/stdarg.h [50, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTEARRAYOBJECT_H &amp;&amp; !def _TR1_STDARG_H &amp;&amp; !def _TR1_CSTDARG &amp;&amp; !def _GLIBCXX_CSTDARG&quot; &quot;[&apos;&lt;stdarg.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/tr1/&apos;]&quot;
+  000076: #include /Users/paulross/dev/Python-3.6.2/Include/bytesobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/bytesobject.h [826, 522]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;bytesobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000011: #include /usr/include/c++/4.2.1/tr1/stdarg.h
+      /usr/include/c++/4.2.1/tr1/stdarg.h [50, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_BYTESOBJECT_H&quot; &quot;[&apos;&lt;stdarg.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/tr1/&apos;]&quot;
+  000077: #include /Users/paulross/dev/Python-3.6.2/Include/unicodeobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/unicodeobject.h [7276, 4146]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;unicodeobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000005: #include /usr/include/c++/4.2.1/tr1/stdarg.h
+      /usr/include/c++/4.2.1/tr1/stdarg.h [50, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H&quot; &quot;[&apos;&lt;stdarg.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/tr1/&apos;]&quot;
+    000059: #include /usr/include/ctype.h
+      /usr/include/ctype.h [1528, 749]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H&quot; &quot;[&apos;&lt;ctype.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000069: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000071: #include /usr/include/runetype.h
+        /usr/include/runetype.h [318, 182]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_&quot; &quot;[&apos;&lt;runetype.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000043: #include /usr/include/_types.h
+          /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_ &amp;&amp; !def _RUNETYPE_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000046: #include /usr/include/sys/_types/_size_t.h
+          /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_ &amp;&amp; !def _RUNETYPE_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000047: #include /usr/include/sys/_types/_ct_rune_t.h
+          /usr/include/sys/_types/_ct_rune_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_ &amp;&amp; !def _RUNETYPE_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_ct_rune_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000048: #include /usr/include/sys/_types/_rune_t.h
+          /usr/include/sys/_types/_rune_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_ &amp;&amp; !def _RUNETYPE_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_rune_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000049: #include /usr/include/sys/_types/_wchar_t.h
+          /usr/include/sys/_types/_wchar_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_ &amp;&amp; !def _RUNETYPE_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_wchar_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000051: #include /usr/include/sys/_types/_wint_t.h
+          /usr/include/sys/_types/_wint_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; !def _CTYPE_H_ &amp;&amp; !def _RUNETYPE_H_ &amp;&amp; !defined(_POSIX_C_SOURCE) || defined(_DARWIN_C_SOURCE)&quot; &quot;[&apos;&lt;sys/_types/_wint_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+    000111: #include /usr/include/wchar.h
+      /usr/include/wchar.h [1543, 977]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H&quot; &quot;[&apos;&lt;wchar.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000070: #include /usr/include/_types.h
+        /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000071: #include /usr/include/sys/cdefs.h
+        /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000073: #include /usr/include/Availability.h
+        /usr/include/Availability.h [18, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;Availability.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000074: #include /usr/include/sys/_types/_null.h
+        /usr/include/sys/_types/_null.h [2, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;sys/_types/_null.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000075: #include /usr/include/sys/_types/_size_t.h
+        /usr/include/sys/_types/_size_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;sys/_types/_size_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000076: #include /usr/include/sys/_types/_mbstate_t.h
+        /usr/include/sys/_types/_mbstate_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;sys/_types/_mbstate_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000077: #include /usr/include/sys/_types/_ct_rune_t.h
+        /usr/include/sys/_types/_ct_rune_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;sys/_types/_ct_rune_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000078: #include /usr/include/sys/_types/_rune_t.h
+        /usr/include/sys/_types/_rune_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;sys/_types/_rune_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000080: #include /usr/include/sys/_types/_wchar_t.h
+        /usr/include/sys/_types/_wchar_t.h [11, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;sys/_types/_wchar_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000089: #include /usr/include/c++/4.2.1/tr1/stdarg.h
+        /usr/include/c++/4.2.1/tr1/stdarg.h [50, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;stdarg.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/tr1/&apos;]&quot;
+      000090: #include /usr/include/stdio.h
+        /usr/include/stdio.h [2239, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;stdio.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000091: #include /usr/include/time.h
+        /usr/include/time.h [527, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;time.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+      000094: #include /usr/include/_wctype.h
+        /usr/include/_wctype.h [553, 288]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_&quot; &quot;[&apos;&lt;_wctype.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000042: #include /usr/include/sys/cdefs.h
+          /usr/include/sys/cdefs.h [92, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_ &amp;&amp; !def __WCTYPE_H_&quot; &quot;[&apos;&lt;sys/cdefs.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000044: #include /usr/include/_types.h
+          /usr/include/_types.h [32, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_ &amp;&amp; !def __WCTYPE_H_&quot; &quot;[&apos;&lt;_types.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000045: #include /usr/include/sys/_types/_wint_t.h
+          /usr/include/sys/_types/_wint_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_ &amp;&amp; !def __WCTYPE_H_&quot; &quot;[&apos;&lt;sys/_types/_wint_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000046: #include /usr/include/sys/_types/_wint_t.h
+          /usr/include/sys/_types/_wint_t.h [9, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_ &amp;&amp; !def __WCTYPE_H_&quot; &quot;[&apos;&lt;sys/_types/_wint_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000048: #include /usr/include/_types/_wctype_t.h
+          /usr/include/_types/_wctype_t.h [14, 7]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_ &amp;&amp; !def __WCTYPE_H_&quot; &quot;[&apos;&lt;_types/_wctype_t.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+        000058: #include /usr/include/ctype.h
+          /usr/include/ctype.h [1303, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_UNICODEOBJECT_H &amp;&amp; def HAVE_WCHAR_H &amp;&amp; !def _WCHAR_H_ &amp;&amp; !def __WCTYPE_H_&quot; &quot;[&apos;&lt;ctype.h&gt;&apos;, &apos;sys=/usr/include/&apos;]&quot;
+  000078: #include /Users/paulross/dev/Python-3.6.2/Include/longobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/longobject.h [743, 478]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;longobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000079: #include /Users/paulross/dev/Python-3.6.2/Include/longintrepr.h
+    /Users/paulross/dev/Python-3.6.2/Include/longintrepr.h [191, 86]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;longintrepr.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000080: #include /Users/paulross/dev/Python-3.6.2/Include/boolobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/boolobject.h [128, 74]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;boolobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000081: #include /Users/paulross/dev/Python-3.6.2/Include/floatobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/floatobject.h [475, 304]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;floatobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000082: #include /Users/paulross/dev/Python-3.6.2/Include/complexobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/complexobject.h [265, 170]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;complexobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000083: #include /Users/paulross/dev/Python-3.6.2/Include/rangeobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/rangeobject.h [53, 27]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;rangeobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000084: #include /Users/paulross/dev/Python-3.6.2/Include/memoryobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/memoryobject.h [328, 186]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;memoryobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000085: #include /Users/paulross/dev/Python-3.6.2/Include/tupleobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/tupleobject.h [294, 200]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;tupleobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000086: #include /Users/paulross/dev/Python-3.6.2/Include/listobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/listobject.h [396, 270]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;listobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000087: #include /Users/paulross/dev/Python-3.6.2/Include/dictobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/dictobject.h [1123, 758]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;dictobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000088: #include /Users/paulross/dev/Python-3.6.2/Include/odictobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/odictobject.h [269, 186]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;odictobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000089: #include /Users/paulross/dev/Python-3.6.2/Include/enumobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/enumobject.h [25, 9]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;enumobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000090: #include /Users/paulross/dev/Python-3.6.2/Include/setobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/setobject.h [504, 335]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;setobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000091: #include /Users/paulross/dev/Python-3.6.2/Include/methodobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/methodobject.h [595, 372]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;methodobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000092: #include /Users/paulross/dev/Python-3.6.2/Include/moduleobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/moduleobject.h [379, 235]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;moduleobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000093: #include /Users/paulross/dev/Python-3.6.2/Include/funcobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/funcobject.h [574, 367]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;funcobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000094: #include /Users/paulross/dev/Python-3.6.2/Include/classobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/classobject.h [261, 166]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;classobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000095: #include /Users/paulross/dev/Python-3.6.2/Include/fileobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/fileobject.h [217, 132]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;fileobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000096: #include /Users/paulross/dev/Python-3.6.2/Include/pycapsule.h
+    /Users/paulross/dev/Python-3.6.2/Include/pycapsule.h [242, 158]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pycapsule.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000097: #include /Users/paulross/dev/Python-3.6.2/Include/traceback.h
+    /Users/paulross/dev/Python-3.6.2/Include/traceback.h [266, 156]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;traceback.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000009: #include /Users/paulross/dev/Python-3.6.2/Include/pystate.h
+      /Users/paulross/dev/Python-3.6.2/Include/pystate.h [956, 571]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_TRACEBACK_H&quot; &quot;[&apos;&quot;pystate.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000098: #include /Users/paulross/dev/Python-3.6.2/Include/sliceobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/sliceobject.h [301, 192]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;sliceobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000099: #include /Users/paulross/dev/Python-3.6.2/Include/cellobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/cellobject.h [149, 98]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;cellobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000100: #include /Users/paulross/dev/Python-3.6.2/Include/iterobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/iterobject.h [95, 59]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;iterobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000101: #include /Users/paulross/dev/Python-3.6.2/Include/genobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/genobject.h [476, 301]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;genobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000102: #include /Users/paulross/dev/Python-3.6.2/Include/descrobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/descrobject.h [584, 372]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;descrobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000103: #include /Users/paulross/dev/Python-3.6.2/Include/warnings.h
+    /Users/paulross/dev/Python-3.6.2/Include/warnings.h [277, 166]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;warnings.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000104: #include /Users/paulross/dev/Python-3.6.2/Include/weakrefobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/weakrefobject.h [302, 200]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;weakrefobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000105: #include /Users/paulross/dev/Python-3.6.2/Include/structseq.h
+    /Users/paulross/dev/Python-3.6.2/Include/structseq.h [224, 143]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;structseq.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000107: #include /Users/paulross/dev/Python-3.6.2/Include/namespaceobject.h
+    /Users/paulross/dev/Python-3.6.2/Include/namespaceobject.h [32, 14]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;namespaceobject.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000108: #include /Users/paulross/dev/Python-3.6.2/Include/codecs.h
+    /Users/paulross/dev/Python-3.6.2/Include/codecs.h [537, 305]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;codecs.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000110: #include /Users/paulross/dev/Python-3.6.2/Include/pyerrors.h
+    /Users/paulross/dev/Python-3.6.2/Include/pyerrors.h [2378, 1322]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyerrors.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000496: #include /usr/include/c++/4.2.1/tr1/stdarg.h
+      /usr/include/c++/4.2.1/tr1/stdarg.h [50, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_ERRORS_H&quot; &quot;[&apos;&lt;stdarg.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/tr1/&apos;]&quot;
+  000112: #include /Users/paulross/dev/Python-3.6.2/Include/pystate.h
+    /Users/paulross/dev/Python-3.6.2/Include/pystate.h [1012, 0]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pystate.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000113: #include /Users/paulross/dev/Python-3.6.2/Include/pyarena.h
+    /Users/paulross/dev/Python-3.6.2/Include/pyarena.h [78, 41]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyarena.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000114: #include /Users/paulross/dev/Python-3.6.2/Include/modsupport.h
+    /Users/paulross/dev/Python-3.6.2/Include/modsupport.h [754, 473]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;modsupport.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000011: #include /usr/include/c++/4.2.1/tr1/stdarg.h
+      /usr/include/c++/4.2.1/tr1/stdarg.h [50, 0]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_MODSUPPORT_H&quot; &quot;[&apos;&lt;stdarg.h&gt;&apos;, &apos;sys=/usr/include/c++/4.2.1/tr1/&apos;]&quot;
+  000115: #include /Users/paulross/dev/Python-3.6.2/Include/pythonrun.h
+    /Users/paulross/dev/Python-3.6.2/Include/pythonrun.h [1412, 889]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pythonrun.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000116: #include /Users/paulross/dev/Python-3.6.2/Include/pylifecycle.h
+    /Users/paulross/dev/Python-3.6.2/Include/pylifecycle.h [648, 448]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pylifecycle.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000117: #include /Users/paulross/dev/Python-3.6.2/Include/ceval.h
+    /Users/paulross/dev/Python-3.6.2/Include/ceval.h [884, 604]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;ceval.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000118: #include /Users/paulross/dev/Python-3.6.2/Include/sysmodule.h
+    /Users/paulross/dev/Python-3.6.2/Include/sysmodule.h [251, 165]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;sysmodule.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000119: #include /Users/paulross/dev/Python-3.6.2/Include/osmodule.h
+    /Users/paulross/dev/Python-3.6.2/Include/osmodule.h [27, 11]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;osmodule.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000120: #include /Users/paulross/dev/Python-3.6.2/Include/intrcheck.h
+    /Users/paulross/dev/Python-3.6.2/Include/intrcheck.h [60, 27]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;intrcheck.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000122: #include /Users/paulross/dev/Python-3.6.2/Include/import.h
+    /Users/paulross/dev/Python-3.6.2/Include/import.h [653, 399]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;import.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000123: #include /Users/paulross/dev/Python-3.6.2/Include/abstract.h
+    /Users/paulross/dev/Python-3.6.2/Include/abstract.h [2950, 1882]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;abstract.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000125: #include /Users/paulross/dev/Python-3.6.2/Include/bltinmodule.h
+    /Users/paulross/dev/Python-3.6.2/Include/bltinmodule.h [28, 12]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;bltinmodule.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000126: #include /Users/paulross/dev/Python-3.6.2/Include/compile.h
+    /Users/paulross/dev/Python-3.6.2/Include/compile.h [363, 208]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;compile.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+    000006: #include /Users/paulross/dev/Python-3.6.2/Include/code.h
+      /Users/paulross/dev/Python-3.6.2/Include/code.h [673, 380]:  True &quot;!def Py_PYTHON_H &amp;&amp; !def Py_COMPILE_H &amp;&amp; !def Py_LIMITED_API&quot; &quot;[&apos;&quot;code.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000128: #include /Users/paulross/dev/Python-3.6.2/Include/eval.h
+    /Users/paulross/dev/Python-3.6.2/Include/eval.h [124, 76]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;eval.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000129: #include /Users/paulross/dev/Python-3.6.2/Include/pyctype.h
+    /Users/paulross/dev/Python-3.6.2/Include/pyctype.h [278, 206]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyctype.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000130: #include /Users/paulross/dev/Python-3.6.2/Include/pystrtod.h
+    /Users/paulross/dev/Python-3.6.2/Include/pystrtod.h [207, 121]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pystrtod.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000131: #include /Users/paulross/dev/Python-3.6.2/Include/pystrcmp.h
+    /Users/paulross/dev/Python-3.6.2/Include/pystrcmp.h [68, 37]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pystrcmp.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000132: #include /Users/paulross/dev/Python-3.6.2/Include/dtoa.h
+    /Users/paulross/dev/Python-3.6.2/Include/dtoa.h [98, 62]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;dtoa.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000133: #include /Users/paulross/dev/Python-3.6.2/Include/fileutils.h
+    /Users/paulross/dev/Python-3.6.2/Include/fileutils.h [523, 273]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;fileutils.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+  000135: #include /Users/paulross/dev/Python-3.6.2/Include/pyfpe.h
+    /Users/paulross/dev/Python-3.6.2/Include/pyfpe.h [64, 17]:  True &quot;!def Py_PYTHON_H&quot; &quot;[&apos;&quot;pyfpe.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Include&apos;]&quot;
+000113: #include /Users/paulross/dev/Python-3.6.2/Objects/dict-common.h
+  /Users/paulross/dev/Python-3.6.2/Objects/dict-common.h [202, 119]:  True &quot;&quot; &quot;[&apos;&quot;dict-common.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Objects&apos;]&quot;
+000115: #include /Users/paulross/dev/Python-3.6.2/Objects/stringlib/eq.h
+  /Users/paulross/dev/Python-3.6.2/Objects/stringlib/eq.h [153, 93]:  True &quot;&quot; &quot;[&apos;&quot;stringlib/eq.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Objects&apos;]&quot;
+000257: #include /Users/paulross/dev/Python-3.6.2/Objects/clinic/dictobject.c.h
+  /Users/paulross/dev/Python-3.6.2/Objects/clinic/dictobject.c.h [195, 130]:  True &quot;&quot; &quot;[&apos;&quot;clinic/dictobject.c.h&quot;&apos;, &apos;CP=/Users/paulross/dev/Python-3.6.2/Objects&apos;]&quot;</pre>
+    <p>Return to <a href="index_dictobject.c_a3f5bfec1ed531371fb1a2bcdcb2e9c2.html">Index</a></p>
+  </body>
+</html>

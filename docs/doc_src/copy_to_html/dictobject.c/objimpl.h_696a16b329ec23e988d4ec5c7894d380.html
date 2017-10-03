@@ -1,0 +1,386 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /Users/paulross/dev/Python-3.6.2/Include/objimpl.h</title>
+  </head>
+  <body>
+    <h1>File: /Users/paulross/dev/Python-3.6.2/Include/objimpl.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/* The PyObject_ memory family:  high-level object memory interfaces.</span>
+<a name="2" /><span class="True">       2:</span> <span class="k">   See pymem.h for the low-level PyMem_ family.</span>
+<a name="3" /><span class="True">       3:</span> <span class="k">*/</span>
+<a name="4" /><span class="True">       4:</span> 
+<a name="5" /><span class="True">       5:</span> <span class="f">#</span><span class="n">ifndef</span> <a href="macros_noref.html#_UHlfT0JKSU1QTF9IXzA_"><span class="b">Py_OBJIMPL_H</span></a>
+<a name="6" /><span class="True">       6:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlfT0JKSU1QTF9IXzA_"><span class="b">Py_OBJIMPL_H</span></a>
+<a name="7" /><span class="True">       7:</span> 
+<a name="8" /><span class="True">       8:</span> <span class="f">#</span><span class="n">include</span> <span class="e">&quot;pymem.h&quot;</span>
+<a name="9" /><span class="True">       9:</span> 
+<a name="10" /><span class="False">      10:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">__cplusplus</span>
+<a name="11" /><span class="False">      11:</span> <span class="m">extern</span> <span class="e">&quot;C&quot;</span> <span class="f">{</span>
+<a name="12" /><span class="True">      12:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="13" /><span class="True">      13:</span> 
+<a name="14" /><span class="True">      14:</span> <span class="k">/* BEWARE:</span>
+<a name="15" /><span class="True">      15:</span> <span class="k"></span>
+<a name="16" /><span class="True">      16:</span> <span class="k">   Each interface exports both functions and macros.  Extension modules should</span>
+<a name="17" /><span class="True">      17:</span> <span class="k">   use the functions, to ensure binary compatibility across Python versions.</span>
+<a name="18" /><span class="True">      18:</span> <span class="k">   Because the Python implementation is free to change internal details, and</span>
+<a name="19" /><span class="True">      19:</span> <span class="k">   the macros may (or may not) expose details for speed, if you do use the</span>
+<a name="20" /><span class="True">      20:</span> <span class="k">   macros you must recompile your extensions with each Python release.</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"></span>
+<a name="22" /><span class="True">      22:</span> <span class="k">   Never mix calls to PyObject_ memory functions with calls to the platform</span>
+<a name="23" /><span class="True">      23:</span> <span class="k">   malloc/realloc/ calloc/free, or with calls to PyMem_.</span>
+<a name="24" /><span class="True">      24:</span> <span class="k">*/</span>
+<a name="25" /><span class="True">      25:</span> 
+<a name="26" /><span class="True">      26:</span> <span class="k">/*</span>
+<a name="27" /><span class="True">      27:</span> <span class="k">Functions and macros for modules that implement new object types.</span>
+<a name="28" /><span class="True">      28:</span> <span class="k"></span>
+<a name="29" /><span class="True">      29:</span> <span class="k"> - PyObject_New(type, typeobj) allocates memory for a new object of the given</span>
+<a name="30" /><span class="True">      30:</span> <span class="k">   type, and initializes part of it.  &apos;type&apos; must be the C structure type used</span>
+<a name="31" /><span class="True">      31:</span> <span class="k">   to represent the object, and &apos;typeobj&apos; the address of the corresponding</span>
+<a name="32" /><span class="True">      32:</span> <span class="k">   type object.  Reference count and type pointer are filled in; the rest of</span>
+<a name="33" /><span class="True">      33:</span> <span class="k">   the bytes of the object are *undefined*!  The resulting expression type is</span>
+<a name="34" /><span class="True">      34:</span> <span class="k">   &apos;type *&apos;.  The size of the object is determined by the tp_basicsize field</span>
+<a name="35" /><span class="True">      35:</span> <span class="k">   of the type object.</span>
+<a name="36" /><span class="True">      36:</span> <span class="k"></span>
+<a name="37" /><span class="True">      37:</span> <span class="k"> - PyObject_NewVar(type, typeobj, n) is similar but allocates a variable-size</span>
+<a name="38" /><span class="True">      38:</span> <span class="k">   object with room for n items.  In addition to the refcount and type pointer</span>
+<a name="39" /><span class="True">      39:</span> <span class="k">   fields, this also fills in the ob_size field.</span>
+<a name="40" /><span class="True">      40:</span> <span class="k"></span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> - PyObject_Del(op) releases the memory allocated for an object.  It does not</span>
+<a name="42" /><span class="True">      42:</span> <span class="k">   run a destructor -- it only frees the memory.  PyObject_Free is identical.</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"></span>
+<a name="44" /><span class="True">      44:</span> <span class="k"> - PyObject_Init(op, typeobj) and PyObject_InitVar(op, typeobj, n) don&apos;t</span>
+<a name="45" /><span class="True">      45:</span> <span class="k">   allocate memory.  Instead of a &apos;type&apos; parameter, they take a pointer to a</span>
+<a name="46" /><span class="True">      46:</span> <span class="k">   new object (allocated by an arbitrary allocator), and initialize its object</span>
+<a name="47" /><span class="True">      47:</span> <span class="k">   header fields.</span>
+<a name="48" /><span class="True">      48:</span> <span class="k"></span>
+<a name="49" /><span class="True">      49:</span> <span class="k">Note that objects created with PyObject_{New, NewVar} are allocated using the</span>
+<a name="50" /><span class="True">      50:</span> <span class="k">specialized Python allocator (implemented in obmalloc.c), if WITH_PYMALLOC is</span>
+<a name="51" /><span class="True">      51:</span> <span class="k">enabled.  In addition, a special debugging allocator is used if PYMALLOC_DEBUG</span>
+<a name="52" /><span class="True">      52:</span> <span class="k">is also #defined.</span>
+<a name="53" /><span class="True">      53:</span> <span class="k"></span>
+<a name="54" /><span class="True">      54:</span> <span class="k">In case a specific form of memory management is needed (for example, if you</span>
+<a name="55" /><span class="True">      55:</span> <span class="k">must use the platform malloc heap(s), or shared memory, or C++ local storage or</span>
+<a name="56" /><span class="True">      56:</span> <span class="k">operator new), you must first allocate the object with your custom allocator,</span>
+<a name="57" /><span class="True">      57:</span> <span class="k">then pass its pointer to PyObject_{Init, InitVar} for filling in its Python-</span>
+<a name="58" /><span class="True">      58:</span> <span class="k">specific fields:  reference count, type pointer, possibly others.  You should</span>
+<a name="59" /><span class="True">      59:</span> <span class="k">be aware that Python no control over these objects because they don&apos;t</span>
+<a name="60" /><span class="True">      60:</span> <span class="k">cooperate with the Python memory manager.  Such objects may not be eligible</span>
+<a name="61" /><span class="True">      61:</span> <span class="k">for automatic garbage collection and you have to make sure that they are</span>
+<a name="62" /><span class="True">      62:</span> <span class="k">released accordingly whenever their destructor gets called (cf. the specific</span>
+<a name="63" /><span class="True">      63:</span> <span class="k">form of memory management you&apos;re using).</span>
+<a name="64" /><span class="True">      64:</span> <span class="k"></span>
+<a name="65" /><span class="True">      65:</span> <span class="k">Unless you have specific memory management requirements, use</span>
+<a name="66" /><span class="True">      66:</span> <span class="k">PyObject_{New, NewVar, Del}.</span>
+<a name="67" /><span class="True">      67:</span> <span class="k">*/</span>
+<a name="68" /><span class="True">      68:</span> 
+<a name="69" /><span class="True">      69:</span> <span class="k">/*</span>
+<a name="70" /><span class="True">      70:</span> <span class="k"> * Raw object memory interface</span>
+<a name="71" /><span class="True">      71:</span> <span class="k"> * ===========================</span>
+<a name="72" /><span class="True">      72:</span> <span class="k"> */</span>
+<a name="73" /><span class="True">      73:</span> 
+<a name="74" /><span class="True">      74:</span> <span class="k">/* Functions to call the same malloc/realloc/free as used by Python&apos;s</span>
+<a name="75" /><span class="True">      75:</span> <span class="k">   object allocator.  If WITH_PYMALLOC is enabled, these may differ from</span>
+<a name="76" /><span class="True">      76:</span> <span class="k">   the platform malloc/realloc/free.  The Python object allocator is</span>
+<a name="77" /><span class="True">      77:</span> <span class="k">   designed for fast, cache-conscious allocation of many &quot;small&quot; objects,</span>
+<a name="78" /><span class="True">      78:</span> <span class="k">   and with low hidden memory overhead.</span>
+<a name="79" /><span class="True">      79:</span> <span class="k"></span>
+<a name="80" /><span class="True">      80:</span> <span class="k">   PyObject_Malloc(0) returns a unique non-NULL pointer if possible.</span>
+<a name="81" /><span class="True">      81:</span> <span class="k"></span>
+<a name="82" /><span class="True">      82:</span> <span class="k">   PyObject_Realloc(NULL, n) acts like PyObject_Malloc(n).</span>
+<a name="83" /><span class="True">      83:</span> <span class="k">   PyObject_Realloc(p != NULL, 0) does not return  NULL, or free the memory</span>
+<a name="84" /><span class="True">      84:</span> <span class="k">   at p.</span>
+<a name="85" /><span class="True">      85:</span> <span class="k"></span>
+<a name="86" /><span class="True">      86:</span> <span class="k">   Returned pointers must be checked for NULL explicitly; no action is</span>
+<a name="87" /><span class="True">      87:</span> <span class="k">   performed on failure other than to return NULL (no warning it printed, no</span>
+<a name="88" /><span class="True">      88:</span> <span class="k">   exception is set, etc).</span>
+<a name="89" /><span class="True">      89:</span> <span class="k"></span>
+<a name="90" /><span class="True">      90:</span> <span class="k">   For allocating objects, use PyObject_{New, NewVar} instead whenever</span>
+<a name="91" /><span class="True">      91:</span> <span class="k">   possible.  The PyObject_{Malloc, Realloc, Free} family is exposed</span>
+<a name="92" /><span class="True">      92:</span> <span class="k">   so that you can exploit Python&apos;s small-block allocator for non-object</span>
+<a name="93" /><span class="True">      93:</span> <span class="k">   uses.  If you must use these routines to allocate object memory, make sure</span>
+<a name="94" /><span class="True">      94:</span> <span class="k">   the object gets initialized via PyObject_{Init, InitVar} after obtaining</span>
+<a name="95" /><span class="True">      95:</span> <span class="k">   the raw memory.</span>
+<a name="96" /><span class="True">      96:</span> <span class="k">*/</span>
+<a name="97" /><span class="True">      97:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span> <span class="b">PyObject_Malloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="98" /><span class="True">      98:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">Py_LIMITED_API</span><span class="f">)</span> <span class="f">||</span> <span class="b">Py_LIMITED_API</span><span class="f">+</span><span class="c">0</span> <span class="f">&gt;=</span> <span class="c">0x03050000</span>
+<a name="99" /><span class="True">      99:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span> <span class="b">PyObject_Calloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">nelem</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">elsize</span><span class="f">)</span><span class="f">;</span>
+<a name="100" /><span class="True">     100:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="101" /><span class="True">     101:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span> <span class="b">PyObject_Realloc</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="b">ptr</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">new_size</span><span class="f">)</span><span class="f">;</span>
+<a name="102" /><span class="True">     102:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="b">PyObject_Free</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="b">ptr</span><span class="f">)</span><span class="f">;</span>
+<a name="103" /><span class="True">     103:</span> 
+<a name="104" /><span class="True">     104:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">Py_LIMITED_API</span>
+<a name="105" /><span class="True">     105:</span> <span class="k">/* This function returns the number of allocated memory blocks, regardless of size */</span>
+<a name="106" /><span class="True">     106:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">Py_ssize_t</span><span class="f">)</span> <span class="b">_Py_GetAllocatedBlocks</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="107" /><span class="True">     107:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* !Py_LIMITED_API */</span>
+<a name="108" /><span class="True">     108:</span> 
+<a name="109" /><span class="True">     109:</span> <span class="k">/* Macros */</span>
+<a name="110" /><span class="True">     110:</span> <span class="f">#</span><span class="n">ifdef</span> <a href="macros_ref.html#_V0lUSF9QWU1BTExPQ18w"><span class="b">WITH_PYMALLOC</span></a>
+<a name="111" /><span class="True">     111:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">Py_LIMITED_API</span>
+<a name="112" /><span class="True">     112:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="b">_PyObject_DebugMallocStats</span><span class="f">(</span><span class="b">FILE</span> <span class="f">*</span><span class="b">out</span><span class="f">)</span><span class="f">;</span>
+<a name="113" /><span class="True">     113:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* #ifndef Py_LIMITED_API */</span>
+<a name="114" /><span class="True">     114:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="115" /><span class="True">     115:</span> 
+<a name="116" /><span class="True">     116:</span> <span class="k">/* Macros */</span>
+<a name="117" /><span class="True">     117:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_UHlPYmplY3RfTUFMTE9DXzA_"><span class="b">PyObject_MALLOC</span></a>         <span class="b">PyObject_Malloc</span>
+<a name="118" /><span class="True">     118:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfUkVBTExPQ18w"><span class="b">PyObject_REALLOC</span></a>        <span class="b">PyObject_Realloc</span>
+<a name="119" /><span class="True">     119:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_UHlPYmplY3RfRlJFRV8w"><span class="b">PyObject_FREE</span></a>           <span class="b">PyObject_Free</span>
+<a name="120" /><span class="True">     120:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfRGVsXzA_"><span class="b">PyObject_Del</span></a>            <span class="b">PyObject_Free</span>
+<a name="121" /><span class="True">     121:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfREVMXzA_"><span class="b">PyObject_DEL</span></a>            <span class="b">PyObject_Free</span>
+<a name="122" /><span class="True">     122:</span> 
+<a name="123" /><span class="True">     123:</span> 
+<a name="124" /><span class="True">     124:</span> <span class="k">/*</span>
+<a name="125" /><span class="True">     125:</span> <span class="k"> * Generic object allocator interface</span>
+<a name="126" /><span class="True">     126:</span> <span class="k"> * ==================================</span>
+<a name="127" /><span class="True">     127:</span> <span class="k"> */</span>
+<a name="128" /><span class="True">     128:</span> 
+<a name="129" /><span class="True">     129:</span> <span class="k">/* Functions */</span>
+<a name="130" /><span class="True">     130:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">PyObject_Init</span><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">,</span> <span class="b">PyTypeObject</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="131" /><span class="True">     131:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">PyObject_InitVar</span><span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">,</span>
+<a name="132" /><span class="True">     132:</span>                                                  <span class="b">PyTypeObject</span> <span class="f">*</span><span class="f">,</span> <span class="b">Py_ssize_t</span><span class="f">)</span><span class="f">;</span>
+<a name="133" /><span class="True">     133:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_New</span><span class="f">(</span><span class="b">PyTypeObject</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="134" /><span class="True">     134:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_NewVar</span><span class="f">(</span><span class="b">PyTypeObject</span> <span class="f">*</span><span class="f">,</span> <span class="b">Py_ssize_t</span><span class="f">)</span><span class="f">;</span>
+<a name="135" /><span class="True">     135:</span> 
+<a name="136" /><span class="True">     136:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfTmV3XzA_"><span class="b">PyObject_New</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">)</span> \
+<a name="137" /><span class="True">     137:</span>                 <span class="f">(</span> <span class="f">(</span><span class="b">type</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_New</span><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span> <span class="f">)</span>
+<a name="138" /><span class="True">     138:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfTmV3VmFyXzA_"><span class="b">PyObject_NewVar</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">,</span> <span class="b">n</span><span class="f">)</span> \
+<a name="139" /><span class="True">     139:</span>                 <span class="f">(</span> <span class="f">(</span><span class="b">type</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_NewVar</span><span class="f">(</span><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span> <span class="f">)</span>
+<a name="140" /><span class="True">     140:</span> 
+<a name="141" /><span class="True">     141:</span> <span class="k">/* Macros trading binary compatibility for speed. See also pymem.h.</span>
+<a name="142" /><span class="True">     142:</span> <span class="k">   Note that these macros expect non-NULL object pointers.*/</span>
+<a name="143" /><span class="True">     143:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfSU5JVF8w"><span class="b">PyObject_INIT</span></a><span class="f">(</span><span class="b">op</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">)</span> \
+<a name="144" /><span class="True">     144:</span>     <span class="f">(</span> <a href="macros_ref.html#_UHlfVFlQRV8w"><span class="b">Py_TYPE</span></a><span class="f">(</span><span class="b">op</span><span class="f">)</span> <span class="f">=</span> <span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">,</span> <span class="b">_Py_NewReference</span><span class="f">(</span><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">op</span><span class="f">)</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">op</span><span class="f">)</span> <span class="f">)</span>
+<a name="145" /><span class="True">     145:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfSU5JVF9WQVJfMA__"><span class="b">PyObject_INIT_VAR</span></a><span class="f">(</span><span class="b">op</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">,</span> <span class="b">size</span><span class="f">)</span> \
+<a name="146" /><span class="True">     146:</span>     <span class="f">(</span> <a href="macros_ref.html#_UHlfU0laRV8w"><span class="b">Py_SIZE</span></a><span class="f">(</span><span class="b">op</span><span class="f">)</span> <span class="f">=</span> <span class="f">(</span><span class="b">size</span><span class="f">)</span><span class="f">,</span> <a href="macros_noref.html#_UHlPYmplY3RfSU5JVF8w"><span class="b">PyObject_INIT</span></a><span class="f">(</span><span class="f">(</span><span class="b">op</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">)</span> <span class="f">)</span>
+<a name="147" /><span class="True">     147:</span> 
+<a name="148" /><span class="True">     148:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5T2JqZWN0X1NJWkVfMA__"><span class="b">_PyObject_SIZE</span></a><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span> <span class="f">(</span> <span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">tp_basicsize</span> <span class="f">)</span>
+<a name="149" /><span class="True">     149:</span> 
+<a name="150" /><span class="True">     150:</span> <span class="k">/* _PyObject_VAR_SIZE returns the number of bytes (as size_t) allocated for a</span>
+<a name="151" /><span class="True">     151:</span> <span class="k">   vrbl-size object with nitems items, exclusive of gc overhead (if any).  The</span>
+<a name="152" /><span class="True">     152:</span> <span class="k">   value is rounded up to the closest multiple of sizeof(void *), in order to</span>
+<a name="153" /><span class="True">     153:</span> <span class="k">   ensure that pointer fields at the end of the object are correctly aligned</span>
+<a name="154" /><span class="True">     154:</span> <span class="k">   for the platform (this is of special importance for subclasses of, e.g.,</span>
+<a name="155" /><span class="True">     155:</span> <span class="k">   str or int, so that pointers can be stored after the embedded data).</span>
+<a name="156" /><span class="True">     156:</span> <span class="k"></span>
+<a name="157" /><span class="True">     157:</span> <span class="k">   Note that there&apos;s no memory wastage in doing this, as malloc has to</span>
+<a name="158" /><span class="True">     158:</span> <span class="k">   return (at worst) pointer-aligned memory anyway.</span>
+<a name="159" /><span class="True">     159:</span> <span class="k">*/</span>
+<a name="160" /><span class="False">     160:</span> <span class="f">#</span><span class="n">if</span> <span class="f">(</span><span class="f">(</span><a href="macros_ref.html#_U0laRU9GX1ZPSURfUF8w"><span class="b">SIZEOF_VOID_P</span></a> <span class="f">-</span> <span class="c">1</span><span class="f">)</span> <span class="f">&amp;</span> <a href="macros_ref.html#_U0laRU9GX1ZPSURfUF8w"><span class="b">SIZEOF_VOID_P</span></a><span class="f">)</span> <span class="f">!=</span> <span class="c">0</span>
+<a name="161" /><span class="False">     161:</span> <span class="f">#</span>   <span class="n">error</span> <span class="e">&quot;_PyObject_VAR_SIZE requires SIZEOF_VOID_P be a power of 2&quot;</span>
+<a name="162" /><span class="True">     162:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="163" /><span class="True">     163:</span> 
+<a name="164" /><span class="True">     164:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5T2JqZWN0X1ZBUl9TSVpFXzA_"><span class="b">_PyObject_VAR_SIZE</span></a><span class="f">(</span><span class="b">typeobj</span><span class="f">,</span> <span class="b">nitems</span><span class="f">)</span>     \
+<a name="165" /><span class="True">     165:</span>     <a href="macros_noref.html#_X1B5X1NJWkVfUk9VTkRfVVBfMA__"><span class="b">_Py_SIZE_ROUND_UP</span></a><span class="f">(</span><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">tp_basicsize</span> <span class="f">+</span> \
+<a name="166" /><span class="True">     166:</span>         <span class="f">(</span><span class="b">nitems</span><span class="f">)</span><span class="f">*</span><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">tp_itemsize</span><span class="f">,</span>        \
+<a name="167" /><span class="True">     167:</span>         <a href="macros_ref.html#_U0laRU9GX1ZPSURfUF8w"><span class="b">SIZEOF_VOID_P</span></a><span class="f">)</span>
+<a name="168" /><span class="True">     168:</span> 
+<a name="169" /><span class="True">     169:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfTkVXXzA_"><span class="b">PyObject_NEW</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">)</span> \
+<a name="170" /><span class="True">     170:</span> <span class="f">(</span> <span class="f">(</span><span class="b">type</span> <span class="f">*</span><span class="f">)</span> <span class="b">PyObject_Init</span><span class="f">(</span> \
+<a name="171" /><span class="True">     171:</span>     <span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span> <a href="macros_ref.html#_UHlPYmplY3RfTUFMTE9DXzA_"><span class="b">PyObject_MALLOC</span></a><span class="f">(</span> <a href="macros_ref.html#_X1B5T2JqZWN0X1NJWkVfMA__"><span class="b">_PyObject_SIZE</span></a><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span> <span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">)</span> <span class="f">)</span>
+<a name="172" /><span class="True">     172:</span> 
+<a name="173" /><span class="True">     173:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfTkVXX1ZBUl8w"><span class="b">PyObject_NEW_VAR</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">,</span> <span class="b">n</span><span class="f">)</span> \
+<a name="174" /><span class="True">     174:</span> <span class="f">(</span> <span class="f">(</span><span class="b">type</span> <span class="f">*</span><span class="f">)</span> <span class="b">PyObject_InitVar</span><span class="f">(</span> \
+<a name="175" /><span class="True">     175:</span>       <span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">)</span> <a href="macros_ref.html#_UHlPYmplY3RfTUFMTE9DXzA_"><span class="b">PyObject_MALLOC</span></a><span class="f">(</span><a href="macros_noref.html#_X1B5T2JqZWN0X1ZBUl9TSVpFXzA_"><span class="b">_PyObject_VAR_SIZE</span></a><span class="f">(</span><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">,</span><span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span> <span class="f">)</span><span class="f">,\
+</span>      <span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span> <span class="f">)</span>
+<a name="177" /><span class="True">     177:</span> 
+<a name="178" /><span class="True">     178:</span> <span class="k">/* This example code implements an object constructor with a custom</span>
+<a name="179" /><span class="True">     179:</span> <span class="k">   allocator, where PyObject_New is inlined, and shows the important</span>
+<a name="180" /><span class="True">     180:</span> <span class="k">   distinction between two steps (at least):</span>
+<a name="181" /><span class="True">     181:</span> <span class="k">       1) the actual allocation of the object storage;</span>
+<a name="182" /><span class="True">     182:</span> <span class="k">       2) the initialization of the Python specific fields</span>
+<a name="183" /><span class="True">     183:</span> <span class="k">      in this storage with PyObject_{Init, InitVar}.</span>
+<a name="184" /><span class="True">     184:</span> <span class="k"></span>
+<a name="185" /><span class="True">     185:</span> <span class="k">   PyObject *</span>
+<a name="186" /><span class="True">     186:</span> <span class="k">   YourObject_New(...)</span>
+<a name="187" /><span class="True">     187:</span> <span class="k">   {</span>
+<a name="188" /><span class="True">     188:</span> <span class="k">       PyObject *op;</span>
+<a name="189" /><span class="True">     189:</span> <span class="k"></span>
+<a name="190" /><span class="True">     190:</span> <span class="k">       op = (PyObject *) Your_Allocator(_PyObject_SIZE(YourTypeStruct));</span>
+<a name="191" /><span class="True">     191:</span> <span class="k">       if (op == NULL)</span>
+<a name="192" /><span class="True">     192:</span> <span class="k">       return PyErr_NoMemory();</span>
+<a name="193" /><span class="True">     193:</span> <span class="k"></span>
+<a name="194" /><span class="True">     194:</span> <span class="k">       PyObject_Init(op, &amp;YourTypeStruct);</span>
+<a name="195" /><span class="True">     195:</span> <span class="k"></span>
+<a name="196" /><span class="True">     196:</span> <span class="k">       op-&gt;ob_field = value;</span>
+<a name="197" /><span class="True">     197:</span> <span class="k">       ...</span>
+<a name="198" /><span class="True">     198:</span> <span class="k">       return op;</span>
+<a name="199" /><span class="True">     199:</span> <span class="k">   }</span>
+<a name="200" /><span class="True">     200:</span> <span class="k"></span>
+<a name="201" /><span class="True">     201:</span> <span class="k">   Note that in C++, the use of the new operator usually implies that</span>
+<a name="202" /><span class="True">     202:</span> <span class="k">   the 1st step is performed automatically for you, so in a C++ class</span>
+<a name="203" /><span class="True">     203:</span> <span class="k">   constructor you would start directly with PyObject_Init/InitVar</span>
+<a name="204" /><span class="True">     204:</span> <span class="k">*/</span>
+<a name="205" /><span class="True">     205:</span> 
+<a name="206" /><span class="True">     206:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">Py_LIMITED_API</span>
+<a name="207" /><span class="True">     207:</span> <span class="m">typedef</span> <span class="m">struct</span> <span class="f">{</span>
+<a name="208" /><span class="True">     208:</span>     <span class="k">/* user context passed as the first argument to the 2 functions */</span>
+<a name="209" /><span class="True">     209:</span>     <span class="m">void</span> <span class="f">*</span><span class="b">ctx</span><span class="f">;</span>
+<a name="210" /><span class="True">     210:</span> 
+<a name="211" /><span class="True">     211:</span>     <span class="k">/* allocate an arena of size bytes */</span>
+<a name="212" /><span class="True">     212:</span>     <span class="m">void</span><span class="f">*</span> <span class="f">(</span><span class="f">*</span><span class="b">alloc</span><span class="f">)</span> <span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="b">ctx</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="213" /><span class="True">     213:</span> 
+<a name="214" /><span class="True">     214:</span>     <span class="k">/* free an arena */</span>
+<a name="215" /><span class="True">     215:</span>     <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">free</span><span class="f">)</span> <span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="b">ctx</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="b">ptr</span><span class="f">,</span> <span class="b">size_t</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="216" /><span class="True">     216:</span> <span class="f">}</span> <span class="b">PyObjectArenaAllocator</span><span class="f">;</span>
+<a name="217" /><span class="True">     217:</span> 
+<a name="218" /><span class="True">     218:</span> <span class="k">/* Get the arena allocator. */</span>
+<a name="219" /><span class="True">     219:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="b">PyObject_GetArenaAllocator</span><span class="f">(</span><span class="b">PyObjectArenaAllocator</span> <span class="f">*</span><span class="b">allocator</span><span class="f">)</span><span class="f">;</span>
+<a name="220" /><span class="True">     220:</span> 
+<a name="221" /><span class="True">     221:</span> <span class="k">/* Set the arena allocator. */</span>
+<a name="222" /><span class="True">     222:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="b">PyObject_SetArenaAllocator</span><span class="f">(</span><span class="b">PyObjectArenaAllocator</span> <span class="f">*</span><span class="b">allocator</span><span class="f">)</span><span class="f">;</span>
+<a name="223" /><span class="True">     223:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="224" /><span class="True">     224:</span> 
+<a name="225" /><span class="True">     225:</span> 
+<a name="226" /><span class="True">     226:</span> <span class="k">/*</span>
+<a name="227" /><span class="True">     227:</span> <span class="k"> * Garbage Collection Support</span>
+<a name="228" /><span class="True">     228:</span> <span class="k"> * ==========================</span>
+<a name="229" /><span class="True">     229:</span> <span class="k"> */</span>
+<a name="230" /><span class="True">     230:</span> 
+<a name="231" /><span class="True">     231:</span> <span class="k">/* C equivalent of gc.collect() which ignores the state of gc.enabled. */</span>
+<a name="232" /><span class="True">     232:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">Py_ssize_t</span><span class="f">)</span> <span class="b">PyGC_Collect</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="233" /><span class="True">     233:</span> 
+<a name="234" /><span class="True">     234:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">Py_LIMITED_API</span>
+<a name="235" /><span class="True">     235:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">Py_ssize_t</span><span class="f">)</span> <span class="b">_PyGC_CollectNoFail</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="236" /><span class="True">     236:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">Py_ssize_t</span><span class="f">)</span> <span class="b">_PyGC_CollectIfEnabled</span><span class="f">(</span><span class="m">void</span><span class="f">)</span><span class="f">;</span>
+<a name="237" /><span class="True">     237:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="238" /><span class="True">     238:</span> 
+<a name="239" /><span class="True">     239:</span> <span class="k">/* Test if a type has a GC head */</span>
+<a name="240" /><span class="True">     240:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_UHlUeXBlX0lTX0dDXzA_"><span class="b">PyType_IS_GC</span></a><span class="f">(</span><span class="b">t</span><span class="f">)</span> <a href="macros_ref.html#_UHlUeXBlX0hhc0ZlYXR1cmVfMA__"><span class="b">PyType_HasFeature</span></a><span class="f">(</span><span class="f">(</span><span class="b">t</span><span class="f">)</span><span class="f">,</span> <a href="macros_ref.html#_UHlfVFBGTEFHU19IQVZFX0dDXzA_"><span class="b">Py_TPFLAGS_HAVE_GC</span></a><span class="f">)</span>
+<a name="241" /><span class="True">     241:</span> 
+<a name="242" /><span class="True">     242:</span> <span class="k">/* Test if an object has a GC head */</span>
+<a name="243" /><span class="True">     243:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_UHlPYmplY3RfSVNfR0NfMA__"><span class="b">PyObject_IS_GC</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> <span class="f">(</span><a href="macros_ref.html#_UHlUeXBlX0lTX0dDXzA_"><span class="b">PyType_IS_GC</span></a><span class="f">(</span><a href="macros_ref.html#_UHlfVFlQRV8w"><span class="b">Py_TYPE</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">)</span> <span class="f">&amp;&amp;</span> \
+<a name="244" /><span class="True">     244:</span>     <span class="f">(</span><a href="macros_ref.html#_UHlfVFlQRV8w"><span class="b">Py_TYPE</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">tp_is_gc</span> <span class="f">==</span> <a href="macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a> <span class="f">||</span> <a href="macros_ref.html#_UHlfVFlQRV8w"><span class="b">Py_TYPE</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">tp_is_gc</span><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="245" /><span class="True">     245:</span> 
+<a name="246" /><span class="True">     246:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_Resize</span><span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">,</span> <span class="b">Py_ssize_t</span><span class="f">)</span><span class="f">;</span>
+<a name="247" /><span class="True">     247:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfR0NfUmVzaXplXzA_"><span class="b">PyObject_GC_Resize</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span> <span class="b">op</span><span class="f">,</span> <span class="b">n</span><span class="f">)</span> \
+<a name="248" /><span class="True">     248:</span>                 <span class="f">(</span> <span class="f">(</span><span class="b">type</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_Resize</span><span class="f">(</span><span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">op</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span> <span class="f">)</span>
+<a name="249" /><span class="True">     249:</span> 
+<a name="250" /><span class="True">     250:</span> <span class="k">/* GC information is stored BEFORE the object structure. */</span>
+<a name="251" /><span class="True">     251:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">Py_LIMITED_API</span>
+<a name="252" /><span class="True">     252:</span> <span class="m">typedef</span> <span class="m">union</span> <span class="b">_gc_head</span> <span class="f">{</span>
+<a name="253" /><span class="True">     253:</span>     <span class="m">struct</span> <span class="f">{</span>
+<a name="254" /><span class="True">     254:</span>         <span class="m">union</span> <span class="b">_gc_head</span> <span class="f">*</span><span class="b">gc_next</span><span class="f">;</span>
+<a name="255" /><span class="True">     255:</span>         <span class="m">union</span> <span class="b">_gc_head</span> <span class="f">*</span><span class="b">gc_prev</span><span class="f">;</span>
+<a name="256" /><span class="True">     256:</span>         <span class="b">Py_ssize_t</span> <span class="b">gc_refs</span><span class="f">;</span>
+<a name="257" /><span class="True">     257:</span>     <span class="f">}</span> <span class="b">gc</span><span class="f">;</span>
+<a name="258" /><span class="True">     258:</span>     <span class="m">double</span> <span class="b">dummy</span><span class="f">;</span>  <span class="k">/* force worst-case alignment */</span>
+<a name="259" /><span class="True">     259:</span> <span class="f">}</span> <span class="b">PyGC_Head</span><span class="f">;</span>
+<a name="260" /><span class="True">     260:</span> 
+<a name="261" /><span class="True">     261:</span> <span class="m">extern</span> <span class="b">PyGC_Head</span> <span class="f">*</span><span class="b">_PyGC_generation0</span><span class="f">;</span>
+<a name="262" /><span class="True">     262:</span> 
+<a name="263" /><span class="True">     263:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5X0FTX0dDXzA_"><span class="b">_Py_AS_GC</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="b">PyGC_Head</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">-</span><span class="c">1</span><span class="f">)</span>
+<a name="264" /><span class="True">     264:</span> 
+<a name="265" /><span class="True">     265:</span> <span class="k">/* Bit 0 is set when tp_finalize is called */</span>
+<a name="266" /><span class="True">     266:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5R0NfUkVGU19NQVNLX0ZJTkFMSVpFRF8w"><span class="b">_PyGC_REFS_MASK_FINALIZED</span></a>  <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="c">0</span><span class="f">)</span>
+<a name="267" /><span class="True">     267:</span> <span class="k">/* The (N-1) most significant bits contain the gc state / refcount */</span>
+<a name="268" /><span class="True">     268:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19TSElGVF8w"><span class="b">_PyGC_REFS_SHIFT</span></a>           <span class="f">(</span><span class="c">1</span><span class="f">)</span>
+<a name="269" /><span class="True">     269:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19NQVNLXzA_"><span class="b">_PyGC_REFS_MASK</span></a>            <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="b">size_t</span><span class="f">)</span> <span class="f">-</span><span class="c">1</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19TSElGVF8w"><span class="b">_PyGC_REFS_SHIFT</span></a><span class="f">)</span>
+<a name="270" /><span class="True">     270:</span> 
+<a name="271" /><span class="True">     271:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5R0NIZWFkX1JFRlNfMA__"><span class="b">_PyGCHead_REFS</span></a><span class="f">(</span><span class="b">g</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="b">g</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_refs</span> <span class="f">&gt;&gt;</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19TSElGVF8w"><span class="b">_PyGC_REFS_SHIFT</span></a><span class="f">)</span>
+<a name="272" /><span class="True">     272:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5R0NIZWFkX1NFVF9SRUZTXzA_"><span class="b">_PyGCHead_SET_REFS</span></a><span class="f">(</span><span class="b">g</span><span class="f">,</span> <span class="b">v</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span> \
+<a name="273" /><span class="True">     273:</span>     <span class="f">(</span><span class="b">g</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_refs</span> <span class="f">=</span> <span class="f">(</span><span class="f">(</span><span class="b">g</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_refs</span> <span class="f">&amp;</span> <span class="f">~</span><a href="macros_ref.html#_X1B5R0NfUkVGU19NQVNLXzA_"><span class="b">_PyGC_REFS_MASK</span></a><span class="f">)</span> \
+<a name="274" /><span class="True">     274:</span>         <span class="f">|</span> <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="b">size_t</span><span class="f">)</span><span class="f">(</span><span class="b">v</span><span class="f">)</span><span class="f">)</span> <span class="f">&lt;&lt;</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19TSElGVF8w"><span class="b">_PyGC_REFS_SHIFT</span></a><span class="f">)</span><span class="f">;</span>             \
+<a name="275" /><span class="True">     275:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="276" /><span class="True">     276:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5R0NIZWFkX0RFQ1JFRl8w"><span class="b">_PyGCHead_DECREF</span></a><span class="f">(</span><span class="b">g</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="b">g</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_refs</span> <span class="f">-=</span> <span class="c">1</span> <span class="f">&lt;&lt;</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19TSElGVF8w"><span class="b">_PyGC_REFS_SHIFT</span></a><span class="f">)</span>
+<a name="277" /><span class="True">     277:</span> 
+<a name="278" /><span class="True">     278:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5R0NIZWFkX0ZJTkFMSVpFRF8w"><span class="b">_PyGCHead_FINALIZED</span></a><span class="f">(</span><span class="b">g</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="b">g</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_refs</span> <span class="f">&amp;</span> <a href="macros_noref.html#_X1B5R0NfUkVGU19NQVNLX0ZJTkFMSVpFRF8w"><span class="b">_PyGC_REFS_MASK_FINALIZED</span></a><span class="f">)</span> <span class="f">!=</span> <span class="c">0</span><span class="f">)</span>
+<a name="279" /><span class="True">     279:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5R0NIZWFkX1NFVF9GSU5BTElaRURfMA__"><span class="b">_PyGCHead_SET_FINALIZED</span></a><span class="f">(</span><span class="b">g</span><span class="f">,</span> <span class="b">v</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span>  \
+<a name="280" /><span class="True">     280:</span>     <span class="f">(</span><span class="b">g</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_refs</span> <span class="f">=</span> <span class="f">(</span><span class="f">(</span><span class="b">g</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_refs</span> <span class="f">&amp;</span> <span class="f">~</span><a href="macros_noref.html#_X1B5R0NfUkVGU19NQVNLX0ZJTkFMSVpFRF8w"><span class="b">_PyGC_REFS_MASK_FINALIZED</span></a><span class="f">)</span> \
+<a name="281" /><span class="True">     281:</span>         <span class="f">|</span> <span class="f">(</span><span class="b">v</span> <span class="f">!=</span> <span class="c">0</span><span class="f">)</span><span class="f">;</span> \
+<a name="282" /><span class="True">     282:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="283" /><span class="True">     283:</span> 
+<a name="284" /><span class="True">     284:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5R0NfRklOQUxJWkVEXzA_"><span class="b">_PyGC_FINALIZED</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> <a href="macros_noref.html#_X1B5R0NIZWFkX0ZJTkFMSVpFRF8w"><span class="b">_PyGCHead_FINALIZED</span></a><span class="f">(</span><a href="macros_ref.html#_X1B5X0FTX0dDXzA_"><span class="b">_Py_AS_GC</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">)</span>
+<a name="285" /><span class="True">     285:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5R0NfU0VUX0ZJTkFMSVpFRF8w"><span class="b">_PyGC_SET_FINALIZED</span></a><span class="f">(</span><span class="b">o</span><span class="f">,</span> <span class="b">v</span><span class="f">)</span> <a href="macros_noref.html#_X1B5R0NIZWFkX1NFVF9GSU5BTElaRURfMA__"><span class="b">_PyGCHead_SET_FINALIZED</span></a><span class="f">(</span><a href="macros_ref.html#_X1B5X0FTX0dDXzA_"><span class="b">_Py_AS_GC</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">,</span> <span class="b">v</span><span class="f">)</span>
+<a name="286" /><span class="True">     286:</span> 
+<a name="287" /><span class="True">     287:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5R0NfUkVGU18w"><span class="b">_PyGC_REFS</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> <a href="macros_ref.html#_X1B5R0NIZWFkX1JFRlNfMA__"><span class="b">_PyGCHead_REFS</span></a><span class="f">(</span><a href="macros_ref.html#_X1B5X0FTX0dDXzA_"><span class="b">_Py_AS_GC</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">)</span>
+<a name="288" /><span class="True">     288:</span> 
+<a name="289" /><span class="True">     289:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19VTlRSQUNLRURfMA__"><span class="b">_PyGC_REFS_UNTRACKED</span></a>                    <span class="f">(</span><span class="f">-</span><span class="c">2</span><span class="f">)</span>
+<a name="290" /><span class="True">     290:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19SRUFDSEFCTEVfMA__"><span class="b">_PyGC_REFS_REACHABLE</span></a>                    <span class="f">(</span><span class="f">-</span><span class="c">3</span><span class="f">)</span>
+<a name="291" /><span class="True">     291:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X1B5R0NfUkVGU19URU5UQVRJVkVMWV9VTlJFQUNIQUJMRV8w"><span class="b">_PyGC_REFS_TENTATIVELY_UNREACHABLE</span></a>      <span class="f">(</span><span class="f">-</span><span class="c">4</span><span class="f">)</span>
+<a name="292" /><span class="True">     292:</span> 
+<a name="293" /><span class="True">     293:</span> <span class="k">/* Tell the GC to track this object.  NB: While the object is tracked the</span>
+<a name="294" /><span class="True">     294:</span> <span class="k"> * collector it must be safe to call the ob_traverse method. */</span>
+<a name="295" /><span class="True">     295:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5T2JqZWN0X0dDX1RSQUNLXzA_"><span class="b">_PyObject_GC_TRACK</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span> \
+<a name="296" /><span class="True">     296:</span>     <span class="b">PyGC_Head</span> <span class="f">*</span><span class="b">g</span> <span class="f">=</span> <a href="macros_ref.html#_X1B5X0FTX0dDXzA_"><span class="b">_Py_AS_GC</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">;</span> \
+<a name="297" /><span class="True">     297:</span>     <span class="m">if</span> <span class="f">(</span><a href="macros_ref.html#_X1B5R0NIZWFkX1JFRlNfMA__"><span class="b">_PyGCHead_REFS</span></a><span class="f">(</span><span class="b">g</span><span class="f">)</span> <span class="f">!=</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19VTlRSQUNLRURfMA__"><span class="b">_PyGC_REFS_UNTRACKED</span></a><span class="f">)</span> \
+<a name="298" /><span class="True">     298:</span>         <span class="b">Py_FatalError</span><span class="f">(</span><span class="e">&quot;GC object already tracked&quot;</span><span class="f">)</span><span class="f">;</span> \
+<a name="299" /><span class="True">     299:</span>     <a href="macros_ref.html#_X1B5R0NIZWFkX1NFVF9SRUZTXzA_"><span class="b">_PyGCHead_SET_REFS</span></a><span class="f">(</span><span class="b">g</span><span class="f">,</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19SRUFDSEFCTEVfMA__"><span class="b">_PyGC_REFS_REACHABLE</span></a><span class="f">)</span><span class="f">;</span> \
+<a name="300" /><span class="True">     300:</span>     <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_next</span> <span class="f">=</span> <span class="b">_PyGC_generation0</span><span class="f">;</span> \
+<a name="301" /><span class="True">     301:</span>     <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_prev</span> <span class="f">=</span> <span class="b">_PyGC_generation0</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_prev</span><span class="f">;</span> \
+<a name="302" /><span class="True">     302:</span>     <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_prev</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_next</span> <span class="f">=</span> <span class="b">g</span><span class="f">;</span> \
+<a name="303" /><span class="True">     303:</span>     <span class="b">_PyGC_generation0</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_prev</span> <span class="f">=</span> <span class="b">g</span><span class="f">;</span> \
+<a name="304" /><span class="True">     304:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span><span class="f">;</span>
+<a name="305" /><span class="True">     305:</span> 
+<a name="306" /><span class="True">     306:</span> <span class="k">/* Tell the GC to stop tracking this object.</span>
+<a name="307" /><span class="True">     307:</span> <span class="k"> * gc_next doesn&apos;t need to be set to NULL, but doing so is a good</span>
+<a name="308" /><span class="True">     308:</span> <span class="k"> * way to provoke memory errors if calling code is confused.</span>
+<a name="309" /><span class="True">     309:</span> <span class="k"> */</span>
+<a name="310" /><span class="True">     310:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5T2JqZWN0X0dDX1VOVFJBQ0tfMA__"><span class="b">_PyObject_GC_UNTRACK</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> <span class="m">do</span> <span class="f">{</span> \
+<a name="311" /><span class="True">     311:</span>     <span class="b">PyGC_Head</span> <span class="f">*</span><span class="b">g</span> <span class="f">=</span> <a href="macros_ref.html#_X1B5X0FTX0dDXzA_"><span class="b">_Py_AS_GC</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">;</span> \
+<a name="312" /><span class="True">     312:</span>     <a href="macros_ref.html#_YXNzZXJ0XzA_"><span class="b">assert</span></a><span class="f">(</span><a href="macros_ref.html#_X1B5R0NIZWFkX1JFRlNfMA__"><span class="b">_PyGCHead_REFS</span></a><span class="f">(</span><span class="b">g</span><span class="f">)</span> <span class="f">!=</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19VTlRSQUNLRURfMA__"><span class="b">_PyGC_REFS_UNTRACKED</span></a><span class="f">)</span><span class="f">;</span> \
+<a name="313" /><span class="True">     313:</span>     <a href="macros_ref.html#_X1B5R0NIZWFkX1NFVF9SRUZTXzA_"><span class="b">_PyGCHead_SET_REFS</span></a><span class="f">(</span><span class="b">g</span><span class="f">,</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19VTlRSQUNLRURfMA__"><span class="b">_PyGC_REFS_UNTRACKED</span></a><span class="f">)</span><span class="f">;</span> \
+<a name="314" /><span class="True">     314:</span>     <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_prev</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_next</span> <span class="f">=</span> <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_next</span><span class="f">;</span> \
+<a name="315" /><span class="True">     315:</span>     <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_next</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_prev</span> <span class="f">=</span> <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_prev</span><span class="f">;</span> \
+<a name="316" /><span class="True">     316:</span>     <span class="b">g</span><span class="f">-&gt;</span><span class="b">gc</span><span class="f">.</span><span class="b">gc_next</span> <span class="f">=</span> <a href="macros_ref.html#_TlVMTF8w"><span class="b">NULL</span></a><span class="f">;</span> \
+<a name="317" /><span class="True">     317:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span><span class="f">;</span>
+<a name="318" /><span class="True">     318:</span> 
+<a name="319" /><span class="True">     319:</span> <span class="k">/* True if the object is currently tracked by the GC. */</span>
+<a name="320" /><span class="True">     320:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5T2JqZWN0X0dDX0lTX1RSQUNLRURfMA__"><span class="b">_PyObject_GC_IS_TRACKED</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> \
+<a name="321" /><span class="True">     321:</span>     <span class="f">(</span><a href="macros_ref.html#_X1B5R0NfUkVGU18w"><span class="b">_PyGC_REFS</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> <span class="f">!=</span> <a href="macros_ref.html#_X1B5R0NfUkVGU19VTlRSQUNLRURfMA__"><span class="b">_PyGC_REFS_UNTRACKED</span></a><span class="f">)</span>
+<a name="322" /><span class="True">     322:</span> 
+<a name="323" /><span class="True">     323:</span> <span class="k">/* True if the object may be tracked by the GC in the future, or already is.</span>
+<a name="324" /><span class="True">     324:</span> <span class="k">   This can be useful to implement some optimizations. */</span>
+<a name="325" /><span class="True">     325:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_X1B5T2JqZWN0X0dDX01BWV9CRV9UUkFDS0VEXzA_"><span class="b">_PyObject_GC_MAY_BE_TRACKED</span></a><span class="f">(</span><span class="b">obj</span><span class="f">)</span> \
+<a name="326" /><span class="True">     326:</span>     <span class="f">(</span><a href="macros_ref.html#_UHlPYmplY3RfSVNfR0NfMA__"><span class="b">PyObject_IS_GC</span></a><span class="f">(</span><span class="b">obj</span><span class="f">)</span> <span class="f">&amp;&amp;</span> \
+<a name="327" /><span class="True">     327:</span>         <span class="f">(</span><span class="f">!</span><a href="macros_ref.html#_UHlUdXBsZV9DaGVja0V4YWN0XzA_"><span class="b">PyTuple_CheckExact</span></a><span class="f">(</span><span class="b">obj</span><span class="f">)</span> <span class="f">||</span> <a href="macros_ref.html#_X1B5T2JqZWN0X0dDX0lTX1RSQUNLRURfMA__"><span class="b">_PyObject_GC_IS_TRACKED</span></a><span class="f">(</span><span class="b">obj</span><span class="f">)</span><span class="f">)</span><span class="f">)</span>
+<a name="328" /><span class="True">     328:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* Py_LIMITED_API */</span>
+<a name="329" /><span class="True">     329:</span> 
+<a name="330" /><span class="True">     330:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">Py_LIMITED_API</span>
+<a name="331" /><span class="True">     331:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_Malloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="332" /><span class="True">     332:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_Calloc</span><span class="f">(</span><span class="b">size_t</span> <span class="b">size</span><span class="f">)</span><span class="f">;</span>
+<a name="333" /><span class="True">     333:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* !Py_LIMITED_API */</span>
+<a name="334" /><span class="True">     334:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_New</span><span class="f">(</span><span class="b">PyTypeObject</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="335" /><span class="True">     335:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="b">PyVarObject</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_NewVar</span><span class="f">(</span><span class="b">PyTypeObject</span> <span class="f">*</span><span class="f">,</span> <span class="b">Py_ssize_t</span><span class="f">)</span><span class="f">;</span>
+<a name="336" /><span class="True">     336:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="b">PyObject_GC_Track</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="337" /><span class="True">     337:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="b">PyObject_GC_UnTrack</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="338" /><span class="True">     338:</span> <a href="macros_ref.html#_UHlBUElfRlVOQ18w"><span class="b">PyAPI_FUNC</span></a><span class="f">(</span><span class="m">void</span><span class="f">)</span> <span class="b">PyObject_GC_Del</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="339" /><span class="True">     339:</span> 
+<a name="340" /><span class="True">     340:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_UHlPYmplY3RfR0NfTmV3XzA_"><span class="b">PyObject_GC_New</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">)</span> \
+<a name="341" /><span class="True">     341:</span>                 <span class="f">(</span> <span class="f">(</span><span class="b">type</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_New</span><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span> <span class="f">)</span>
+<a name="342" /><span class="True">     342:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfR0NfTmV3VmFyXzA_"><span class="b">PyObject_GC_NewVar</span></a><span class="f">(</span><span class="b">type</span><span class="f">,</span> <span class="b">typeobj</span><span class="f">,</span> <span class="b">n</span><span class="f">)</span> \
+<a name="343" /><span class="True">     343:</span>                 <span class="f">(</span> <span class="f">(</span><span class="b">type</span> <span class="f">*</span><span class="f">)</span> <span class="b">_PyObject_GC_NewVar</span><span class="f">(</span><span class="f">(</span><span class="b">typeobj</span><span class="f">)</span><span class="f">,</span> <span class="f">(</span><span class="b">n</span><span class="f">)</span><span class="f">)</span> <span class="f">)</span>
+<a name="344" /><span class="True">     344:</span> 
+<a name="345" /><span class="True">     345:</span> 
+<a name="346" /><span class="True">     346:</span> <span class="k">/* Utility macro to help write tp_traverse functions.</span>
+<a name="347" /><span class="True">     347:</span> <span class="k"> * To use this macro, the tp_traverse function must name its arguments</span>
+<a name="348" /><span class="True">     348:</span> <span class="k"> * &quot;visit&quot; and &quot;arg&quot;.  This is intended to keep tp_traverse functions</span>
+<a name="349" /><span class="True">     349:</span> <span class="k"> * looking as much alike as possible.</span>
+<a name="350" /><span class="True">     350:</span> <span class="k"> */</span>
+<a name="351" /><span class="True">     351:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_ref.html#_UHlfVklTSVRfMA__"><span class="b">Py_VISIT</span></a><span class="f">(</span><span class="b">op</span><span class="f">)</span>                                                    \
+<a name="352" /><span class="True">     352:</span>     <span class="m">do</span> <span class="f">{</span>                                                                \
+<a name="353" /><span class="True">     353:</span>         <span class="m">if</span> <span class="f">(</span><span class="b">op</span><span class="f">)</span> <span class="f">{</span>                                                       \
+<a name="354" /><span class="True">     354:</span>             <span class="m">int</span> <span class="b">vret</span> <span class="f">=</span> <span class="b">visit</span><span class="f">(</span><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="b">op</span><span class="f">)</span><span class="f">,</span> <span class="b">arg</span><span class="f">)</span><span class="f">;</span>                    \
+<a name="355" /><span class="True">     355:</span>             <span class="m">if</span> <span class="f">(</span><span class="b">vret</span><span class="f">)</span>                                                   \
+<a name="356" /><span class="True">     356:</span>                 <span class="m">return</span> <span class="b">vret</span><span class="f">;</span>                                            \
+<a name="357" /><span class="True">     357:</span>         <span class="f">}</span>                                                               \
+<a name="358" /><span class="True">     358:</span>     <span class="f">}</span> <span class="m">while</span> <span class="f">(</span><span class="c">0</span><span class="f">)</span>
+<a name="359" /><span class="True">     359:</span> 
+<a name="360" /><span class="True">     360:</span> 
+<a name="361" /><span class="True">     361:</span> <span class="k">/* Test if a type supports weak references */</span>
+<a name="362" /><span class="True">     362:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlUeXBlX1NVUFBPUlRTX1dFQUtSRUZTXzA_"><span class="b">PyType_SUPPORTS_WEAKREFS</span></a><span class="f">(</span><span class="b">t</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="b">t</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">tp_weaklistoffset</span> <span class="f">&gt;</span> <span class="c">0</span><span class="f">)</span>
+<a name="363" /><span class="True">     363:</span> 
+<a name="364" /><span class="True">     364:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_UHlPYmplY3RfR0VUX1dFQUtSRUZTX0xJU1RQVFJfMA__"><span class="b">PyObject_GET_WEAKREFS_LISTPTR</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span> \
+<a name="365" /><span class="True">     365:</span>     <span class="f">(</span><span class="f">(</span><span class="b">PyObject</span> <span class="f">*</span><span class="f">*</span><span class="f">)</span> <span class="f">(</span><span class="f">(</span><span class="f">(</span><span class="m">char</span> <span class="f">*</span><span class="f">)</span> <span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">)</span> <span class="f">+</span> <a href="macros_ref.html#_UHlfVFlQRV8w"><span class="b">Py_TYPE</span></a><span class="f">(</span><span class="b">o</span><span class="f">)</span><span class="f">-&gt;</span><span class="b">tp_weaklistoffset</span><span class="f">)</span><span class="f">)</span>
+<a name="366" /><span class="True">     366:</span> 
+<a name="367" /><span class="False">     367:</span> <span class="f">#</span><span class="n">ifdef</span> <span class="b">__cplusplus</span>
+<a name="368" /><span class="False">     368:</span> <span class="f">}</span>
+<a name="369" /><span class="True">     369:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="370" /><span class="True">     370:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* !Py_OBJIMPL_H */</span>
+<a name="371" /><span class="True">     371:</span> </pre>
+  </body>
+</html>

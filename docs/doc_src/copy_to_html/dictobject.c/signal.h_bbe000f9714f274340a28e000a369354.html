@@ -1,0 +1,408 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>File: /usr/include/sys/signal.h</title>
+  </head>
+  <body>
+    <h1>File: /usr/include/sys/signal.h</h1>
+    <p>Green shading in the line number column
+means the source is part of the translation unit, red means it is conditionally excluded.
+Highlighted line numbers link to the translation unit page. Highlighted macros link to
+the macro page.</p>
+    <pre><a name="1" /><span class="True">       1:</span> <span class="k">/*</span>
+<a name="2" /><span class="True">       2:</span> <span class="k"> * Copyright (c) 2000-2006 Apple Computer, Inc. All rights reserved.</span>
+<a name="3" /><span class="True">       3:</span> <span class="k"> *</span>
+<a name="4" /><span class="True">       4:</span> <span class="k"> * @APPLE_OSREFERENCE_LICENSE_HEADER_START@</span>
+<a name="5" /><span class="True">       5:</span> <span class="k"> * </span>
+<a name="6" /><span class="True">       6:</span> <span class="k"> * This file contains Original Code and/or Modifications of Original Code</span>
+<a name="7" /><span class="True">       7:</span> <span class="k"> * as defined in and that are subject to the Apple Public Source License</span>
+<a name="8" /><span class="True">       8:</span> <span class="k"> * Version 2.0 (the &apos;License&apos;). You may not use this file except in</span>
+<a name="9" /><span class="True">       9:</span> <span class="k"> * compliance with the License. The rights granted to you under the License</span>
+<a name="10" /><span class="True">      10:</span> <span class="k"> * may not be used to create, or enable the creation or redistribution of,</span>
+<a name="11" /><span class="True">      11:</span> <span class="k"> * unlawful or unlicensed copies of an Apple operating system, or to</span>
+<a name="12" /><span class="True">      12:</span> <span class="k"> * circumvent, violate, or enable the circumvention or violation of, any</span>
+<a name="13" /><span class="True">      13:</span> <span class="k"> * terms of an Apple operating system software license agreement.</span>
+<a name="14" /><span class="True">      14:</span> <span class="k"> * </span>
+<a name="15" /><span class="True">      15:</span> <span class="k"> * Please obtain a copy of the License at</span>
+<a name="16" /><span class="True">      16:</span> <span class="k"> * http://www.opensource.apple.com/apsl/ and read it before using this file.</span>
+<a name="17" /><span class="True">      17:</span> <span class="k"> * </span>
+<a name="18" /><span class="True">      18:</span> <span class="k"> * The Original Code and all software distributed under the License are</span>
+<a name="19" /><span class="True">      19:</span> <span class="k"> * distributed on an &apos;AS IS&apos; basis, WITHOUT WARRANTY OF ANY KIND, EITHER</span>
+<a name="20" /><span class="True">      20:</span> <span class="k"> * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,</span>
+<a name="21" /><span class="True">      21:</span> <span class="k"> * INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF MERCHANTABILITY,</span>
+<a name="22" /><span class="True">      22:</span> <span class="k"> * FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR NON-INFRINGEMENT.</span>
+<a name="23" /><span class="True">      23:</span> <span class="k"> * Please see the License for the specific language governing rights and</span>
+<a name="24" /><span class="True">      24:</span> <span class="k"> * limitations under the License.</span>
+<a name="25" /><span class="True">      25:</span> <span class="k"> * </span>
+<a name="26" /><span class="True">      26:</span> <span class="k"> * @APPLE_OSREFERENCE_LICENSE_HEADER_END@</span>
+<a name="27" /><span class="True">      27:</span> <span class="k"> */</span>
+<a name="28" /><span class="True">      28:</span> <span class="k">/* Copyright (c) 1995 NeXT Computer, Inc. All Rights Reserved */</span>
+<a name="29" /><span class="True">      29:</span> <span class="k">/*</span>
+<a name="30" /><span class="True">      30:</span> <span class="k"> * Copyright (c) 1982, 1986, 1989, 1991, 1993</span>
+<a name="31" /><span class="True">      31:</span> <span class="k"> *    The Regents of the University of California.  All rights reserved.</span>
+<a name="32" /><span class="True">      32:</span> <span class="k"> * (c) UNIX System Laboratories, Inc.</span>
+<a name="33" /><span class="True">      33:</span> <span class="k"> * All or some portions of this file are derived from material licensed</span>
+<a name="34" /><span class="True">      34:</span> <span class="k"> * to the University of California by American Telephone and Telegraph</span>
+<a name="35" /><span class="True">      35:</span> <span class="k"> * Co. or Unix System Laboratories, Inc. and are reproduced herein with</span>
+<a name="36" /><span class="True">      36:</span> <span class="k"> * the permission of UNIX System Laboratories, Inc.</span>
+<a name="37" /><span class="True">      37:</span> <span class="k"> *</span>
+<a name="38" /><span class="True">      38:</span> <span class="k"> * Redistribution and use in source and binary forms, with or without</span>
+<a name="39" /><span class="True">      39:</span> <span class="k"> * modification, are permitted provided that the following conditions</span>
+<a name="40" /><span class="True">      40:</span> <span class="k"> * are met:</span>
+<a name="41" /><span class="True">      41:</span> <span class="k"> * 1. Redistributions of source code must retain the above copyright</span>
+<a name="42" /><span class="True">      42:</span> <span class="k"> *    notice, this list of conditions and the following disclaimer.</span>
+<a name="43" /><span class="True">      43:</span> <span class="k"> * 2. Redistributions in binary form must reproduce the above copyright</span>
+<a name="44" /><span class="True">      44:</span> <span class="k"> *    notice, this list of conditions and the following disclaimer in the</span>
+<a name="45" /><span class="True">      45:</span> <span class="k"> *    documentation and/or other materials provided with the distribution.</span>
+<a name="46" /><span class="True">      46:</span> <span class="k"> * 3. All advertising materials mentioning features or use of this software</span>
+<a name="47" /><span class="True">      47:</span> <span class="k"> *    must display the following acknowledgement:</span>
+<a name="48" /><span class="True">      48:</span> <span class="k"> *    This product includes software developed by the University of</span>
+<a name="49" /><span class="True">      49:</span> <span class="k"> *    California, Berkeley and its contributors.</span>
+<a name="50" /><span class="True">      50:</span> <span class="k"> * 4. Neither the name of the University nor the names of its contributors</span>
+<a name="51" /><span class="True">      51:</span> <span class="k"> *    may be used to endorse or promote products derived from this software</span>
+<a name="52" /><span class="True">      52:</span> <span class="k"> *    without specific prior written permission.</span>
+<a name="53" /><span class="True">      53:</span> <span class="k"> *</span>
+<a name="54" /><span class="True">      54:</span> <span class="k"> * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&apos;&apos; AND</span>
+<a name="55" /><span class="True">      55:</span> <span class="k"> * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</span>
+<a name="56" /><span class="True">      56:</span> <span class="k"> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</span>
+<a name="57" /><span class="True">      57:</span> <span class="k"> * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE</span>
+<a name="58" /><span class="True">      58:</span> <span class="k"> * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL</span>
+<a name="59" /><span class="True">      59:</span> <span class="k"> * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS</span>
+<a name="60" /><span class="True">      60:</span> <span class="k"> * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)</span>
+<a name="61" /><span class="True">      61:</span> <span class="k"> * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT</span>
+<a name="62" /><span class="True">      62:</span> <span class="k"> * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY</span>
+<a name="63" /><span class="True">      63:</span> <span class="k"> * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF</span>
+<a name="64" /><span class="True">      64:</span> <span class="k"> * SUCH DAMAGE.</span>
+<a name="65" /><span class="True">      65:</span> <span class="k"> *</span>
+<a name="66" /><span class="True">      66:</span> <span class="k"> *    @(#)signal.h    8.2 (Berkeley) 1/21/94</span>
+<a name="67" /><span class="True">      67:</span> <span class="k"> */</span>
+<a name="68" /><span class="True">      68:</span> 
+<a name="69" /><span class="True">      69:</span> <span class="f">#</span><span class="n">ifndef</span>    <a href="macros_noref.html#_X1NZU19TSUdOQUxfSF9fMA__"><span class="b">_SYS_SIGNAL_H_</span></a>
+<a name="70" /><span class="True">      70:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_X1NZU19TSUdOQUxfSF9fMA__"><span class="b">_SYS_SIGNAL_H_</span></a>
+<a name="71" /><span class="True">      71:</span> 
+<a name="72" /><span class="True">      72:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">cdefs</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="73" /><span class="True">      73:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">appleapiopts</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="74" /><span class="True">      74:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">Availability</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="75" /><span class="True">      75:</span> 
+<a name="76" /><span class="True">      76:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_X19EQVJXSU5fTlNJR18w"><span class="b">__DARWIN_NSIG</span></a>    <span class="c">32</span>    <span class="k">/* counting 0; could be 33 (mask is 1-32) */</span>
+<a name="77" /><span class="True">      77:</span> 
+<a name="78" /><span class="True">      78:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_ANSI_SOURCE</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="f">(</span><span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span><span class="f">)</span>
+<a name="79" /><span class="True">      79:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_TlNJR18w"><span class="b">NSIG</span></a>    <a href="macros_noref.html#_X19EQVJXSU5fTlNJR18w"><span class="b">__DARWIN_NSIG</span></a>
+<a name="80" /><span class="True">      80:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="81" /><span class="True">      81:</span> 
+<a name="82" /><span class="True">      82:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">machine</span><span class="f">/</span><span class="b">signal</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>    <span class="k">/* sigcontext; codes for SIGILL, SIGFPE */</span>
+<a name="83" /><span class="True">      83:</span> 
+<a name="84" /><span class="True">      84:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHSFVQXzA_"><span class="b">SIGHUP</span></a>    <span class="c">1</span>    <span class="k">/* hangup */</span>
+<a name="85" /><span class="True">      85:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHSU5UXzA_"><span class="b">SIGINT</span></a>    <span class="c">2</span>    <span class="k">/* interrupt */</span>
+<a name="86" /><span class="True">      86:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHUVVJVF8w"><span class="b">SIGQUIT</span></a>    <span class="c">3</span>    <span class="k">/* quit */</span>
+<a name="87" /><span class="True">      87:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHSUxMXzA_"><span class="b">SIGILL</span></a>    <span class="c">4</span>    <span class="k">/* illegal instruction (not reset when caught) */</span>
+<a name="88" /><span class="True">      88:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHVFJBUF8w"><span class="b">SIGTRAP</span></a>    <span class="c">5</span>    <span class="k">/* trace trap (not reset when caught) */</span>
+<a name="89" /><span class="True">      89:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHQUJSVF8w"><span class="b">SIGABRT</span></a>    <span class="c">6</span>    <span class="k">/* abort() */</span>
+<a name="90" /><span class="False">      90:</span> <span class="f">#</span><span class="n">if</span>  <span class="f">(</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">&amp;&amp;</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span><span class="f">)</span>
+<a name="91" /><span class="False">      91:</span> <span class="f">#</span><span class="n">define</span>    <span class="b">SIGPOLL</span>    <span class="c">7</span>    <span class="k">/* pollable event ([XSR] generated, not supported) */</span>
+<a name="92" /><span class="True">      92:</span> <span class="f">#</span><span class="n">else</span>    <span class="k">/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */</span>
+<a name="93" /><span class="True">      93:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHSU9UXzA_"><span class="b">SIGIOT</span></a>    <a href="macros_noref.html#_U0lHQUJSVF8w"><span class="b">SIGABRT</span></a>    <span class="k">/* compatibility */</span>
+<a name="94" /><span class="True">      94:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHRU1UXzA_"><span class="b">SIGEMT</span></a>    <span class="c">7</span>    <span class="k">/* EMT instruction */</span>
+<a name="95" /><span class="True">      95:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */</span>
+<a name="96" /><span class="True">      96:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHRlBFXzA_"><span class="b">SIGFPE</span></a>    <span class="c">8</span>    <span class="k">/* floating point exception */</span>
+<a name="97" /><span class="True">      97:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHS0lMTF8w"><span class="b">SIGKILL</span></a>    <span class="c">9</span>    <span class="k">/* kill (cannot be caught or ignored) */</span>
+<a name="98" /><span class="True">      98:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHQlVTXzA_"><span class="b">SIGBUS</span></a>    <span class="c">10</span>    <span class="k">/* bus error */</span>
+<a name="99" /><span class="True">      99:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHU0VHVl8w"><span class="b">SIGSEGV</span></a>    <span class="c">11</span>    <span class="k">/* segmentation violation */</span>
+<a name="100" /><span class="True">     100:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHU1lTXzA_"><span class="b">SIGSYS</span></a>    <span class="c">12</span>    <span class="k">/* bad argument to system call */</span>
+<a name="101" /><span class="True">     101:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHUElQRV8w"><span class="b">SIGPIPE</span></a>    <span class="c">13</span>    <span class="k">/* write on a pipe with no one to read it */</span>
+<a name="102" /><span class="True">     102:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHQUxSTV8w"><span class="b">SIGALRM</span></a>    <span class="c">14</span>    <span class="k">/* alarm clock */</span>
+<a name="103" /><span class="True">     103:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHVEVSTV8w"><span class="b">SIGTERM</span></a>    <span class="c">15</span>    <span class="k">/* software termination signal from kill */</span>
+<a name="104" /><span class="True">     104:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHVVJHXzA_"><span class="b">SIGURG</span></a>    <span class="c">16</span>    <span class="k">/* urgent condition on IO channel */</span>
+<a name="105" /><span class="True">     105:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHU1RPUF8w"><span class="b">SIGSTOP</span></a>    <span class="c">17</span>    <span class="k">/* sendable stop signal not from tty */</span>
+<a name="106" /><span class="True">     106:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHVFNUUF8w"><span class="b">SIGTSTP</span></a>    <span class="c">18</span>    <span class="k">/* stop signal from tty */</span>
+<a name="107" /><span class="True">     107:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHQ09OVF8w"><span class="b">SIGCONT</span></a>    <span class="c">19</span>    <span class="k">/* continue a stopped process */</span>
+<a name="108" /><span class="True">     108:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHQ0hMRF8w"><span class="b">SIGCHLD</span></a>    <span class="c">20</span>    <span class="k">/* to parent on child stop or exit */</span>
+<a name="109" /><span class="True">     109:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHVFRJTl8w"><span class="b">SIGTTIN</span></a>    <span class="c">21</span>    <span class="k">/* to readers pgrp upon background tty read */</span>
+<a name="110" /><span class="True">     110:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHVFRPVV8w"><span class="b">SIGTTOU</span></a>    <span class="c">22</span>    <span class="k">/* like TTIN for output if (tp-&gt;t_local&amp;LTOSTOP) */</span>
+<a name="111" /><span class="True">     111:</span> <span class="f">#</span><span class="n">if</span>  <span class="f">(</span><span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span><span class="f">)</span>
+<a name="112" /><span class="True">     112:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHSU9fMA__"><span class="b">SIGIO</span></a>    <span class="c">23</span>    <span class="k">/* input/output possible signal */</span>
+<a name="113" /><span class="True">     113:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="114" /><span class="True">     114:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHWENQVV8w"><span class="b">SIGXCPU</span></a>    <span class="c">24</span>    <span class="k">/* exceeded CPU time limit */</span>
+<a name="115" /><span class="True">     115:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHWEZTWl8w"><span class="b">SIGXFSZ</span></a>    <span class="c">25</span>    <span class="k">/* exceeded file size limit */</span>
+<a name="116" /><span class="True">     116:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHVlRBTFJNXzA_"><span class="b">SIGVTALRM</span></a> <span class="c">26</span>    <span class="k">/* virtual time alarm */</span>
+<a name="117" /><span class="True">     117:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHUFJPRl8w"><span class="b">SIGPROF</span></a>    <span class="c">27</span>    <span class="k">/* profiling time alarm */</span>
+<a name="118" /><span class="True">     118:</span> <span class="f">#</span><span class="n">if</span>  <span class="f">(</span><span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span><span class="f">)</span>
+<a name="119" /><span class="True">     119:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lHV0lOQ0hfMA__"><span class="b">SIGWINCH</span></a> <span class="c">28</span>    <span class="k">/* window size changes */</span>
+<a name="120" /><span class="True">     120:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lHSU5GT18w"><span class="b">SIGINFO</span></a>    <span class="c">29</span>    <span class="k">/* information request */</span>
+<a name="121" /><span class="True">     121:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="122" /><span class="True">     122:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lHVVNSMV8w"><span class="b">SIGUSR1</span></a> <span class="c">30</span>    <span class="k">/* user defined signal 1 */</span>
+<a name="123" /><span class="True">     123:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lHVVNSMl8w"><span class="b">SIGUSR2</span></a> <span class="c">31</span>    <span class="k">/* user defined signal 2 */</span>
+<a name="124" /><span class="True">     124:</span> 
+<a name="125" /><span class="True">     125:</span> <span class="f">#</span><span class="n">if</span> <span class="b">defined</span><span class="f">(</span><span class="b">_ANSI_SOURCE</span><span class="f">)</span> <span class="f">||</span> <a href="macros_ref.html#_X19EQVJXSU5fVU5JWDAzXzA_"><span class="b">__DARWIN_UNIX03</span></a> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><span class="b">__cplusplus</span><span class="f">)</span>
+<a name="126" /><span class="True">     126:</span> <span class="k">/*</span>
+<a name="127" /><span class="True">     127:</span> <span class="k"> * Language spec sez we must list exactly one parameter, even though we</span>
+<a name="128" /><span class="True">     128:</span> <span class="k"> * actually supply three.  Ugh!</span>
+<a name="129" /><span class="True">     129:</span> <span class="k"> * SIG_HOLD is chosen to avoid KERN_SIG_* values in &lt;sys/signalvar.h&gt;</span>
+<a name="130" /><span class="True">     130:</span> <span class="k"> */</span>
+<a name="131" /><span class="True">     131:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0RGTF8w"><span class="b">SIG_DFL</span></a>        <span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">)</span><span class="c">0</span>
+<a name="132" /><span class="True">     132:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0lHTl8w"><span class="b">SIG_IGN</span></a>        <span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">)</span><span class="c">1</span>
+<a name="133" /><span class="True">     133:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0hPTERfMA__"><span class="b">SIG_HOLD</span></a>    <span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">)</span><span class="c">5</span>
+<a name="134" /><span class="True">     134:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0VSUl8w"><span class="b">SIG_ERR</span></a>        <span class="f">(</span><span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">)</span><span class="f">-</span><span class="c">1</span><span class="f">)</span>
+<a name="135" /><span class="False">     135:</span> <span class="f">#</span><span class="n">else</span>
+<a name="136" /><span class="False">     136:</span> <span class="k">/* DO NOT REMOVE THE COMMENTED OUT int: fixincludes needs to see them */</span>
+<a name="137" /><span class="False">     137:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0RGTF8w"><span class="b">SIG_DFL</span></a>        <span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="k">/*int*/</span><span class="f">)</span><span class="f">)</span><span class="c">0</span>
+<a name="138" /><span class="False">     138:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0lHTl8w"><span class="b">SIG_IGN</span></a>        <span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="k">/*int*/</span><span class="f">)</span><span class="f">)</span><span class="c">1</span>
+<a name="139" /><span class="False">     139:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0hPTERfMA__"><span class="b">SIG_HOLD</span></a>    <span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="k">/*int*/</span><span class="f">)</span><span class="f">)</span><span class="c">5</span>
+<a name="140" /><span class="False">     140:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0VSUl8w"><span class="b">SIG_ERR</span></a>        <span class="f">(</span><span class="f">(</span><span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="k">/*int*/</span><span class="f">)</span><span class="f">)</span><span class="f">-</span><span class="c">1</span><span class="f">)</span>
+<a name="141" /><span class="True">     141:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="142" /><span class="True">     142:</span> 
+<a name="143" /><span class="True">     143:</span> <span class="f">#</span><span class="n">ifndef</span> <span class="b">_ANSI_SOURCE</span>
+<a name="144" /><span class="True">     144:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_types</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="145" /><span class="True">     145:</span> 
+<a name="146" /><span class="True">     146:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">machine</span><span class="f">/</span><span class="b">_mcontext</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="147" /><span class="True">     147:</span> 
+<a name="148" /><span class="True">     148:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_pthread</span><span class="f">/</span><span class="b">_pthread_attr_t</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="149" /><span class="True">     149:</span> 
+<a name="150" /><span class="True">     150:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_types</span><span class="f">/</span><span class="b">_sigaltstack</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="151" /><span class="True">     151:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_types</span><span class="f">/</span><span class="b">_ucontext</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="152" /><span class="True">     152:</span> 
+<a name="153" /><span class="True">     153:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_types</span><span class="f">/</span><span class="b">_pid_t</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="154" /><span class="True">     154:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_types</span><span class="f">/</span><span class="b">_sigset_t</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="155" /><span class="True">     155:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_types</span><span class="f">/</span><span class="b">_size_t</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="156" /><span class="True">     156:</span> <span class="f">#</span><span class="n">include</span> <span class="f">&lt;</span><span class="b">sys</span><span class="f">/</span><span class="b">_types</span><span class="f">/</span><span class="b">_uid_t</span><span class="f">.</span><span class="b">h</span><span class="f">&gt;</span>
+<a name="157" /><span class="True">     157:</span> 
+<a name="158" /><span class="True">     158:</span> <span class="m">union</span> <span class="b">sigval</span> <span class="f">{</span>
+<a name="159" /><span class="True">     159:</span>     <span class="k">/* Members as suggested by Annex C of POSIX 1003.1b. */</span>
+<a name="160" /><span class="True">     160:</span>     <span class="m">int</span>    <span class="b">sival_int</span><span class="f">;</span>
+<a name="161" /><span class="True">     161:</span>     <span class="m">void</span>    <span class="f">*</span><span class="b">sival_ptr</span><span class="f">;</span>
+<a name="162" /><span class="True">     162:</span> <span class="f">}</span><span class="f">;</span>
+<a name="163" /><span class="True">     163:</span> 
+<a name="164" /><span class="True">     164:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHRVZfTk9ORV8w"><span class="b">SIGEV_NONE</span></a>    <span class="c">0</span>    <span class="k">/* No async notification */</span>
+<a name="165" /><span class="True">     165:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHRVZfU0lHTkFMXzA_"><span class="b">SIGEV_SIGNAL</span></a>    <span class="c">1</span>    <span class="k">/* aio - completion notification */</span>
+<a name="166" /><span class="True">     166:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHRVZfVEhSRUFEXzA_"><span class="b">SIGEV_THREAD</span></a>    <span class="c">3</span>    <span class="k">/* [NOTIMP] [RTS] call notification function */</span>
+<a name="167" /><span class="True">     167:</span> 
+<a name="168" /><span class="True">     168:</span> <span class="m">struct</span> <span class="b">sigevent</span> <span class="f">{</span>
+<a name="169" /><span class="True">     169:</span>     <span class="m">int</span>                <span class="b">sigev_notify</span><span class="f">;</span>                <span class="k">/* Notification type */</span>
+<a name="170" /><span class="True">     170:</span>     <span class="m">int</span>                <span class="b">sigev_signo</span><span class="f">;</span>                <span class="k">/* Signal number */</span>
+<a name="171" /><span class="True">     171:</span>     <span class="m">union</span> <span class="b">sigval</span>    <span class="b">sigev_value</span><span class="f">;</span>                <span class="k">/* Signal value */</span>
+<a name="172" /><span class="True">     172:</span>     <span class="m">void</span>            <span class="f">(</span><span class="f">*</span><span class="b">sigev_notify_function</span><span class="f">)</span><span class="f">(</span><span class="m">union</span> <span class="b">sigval</span><span class="f">)</span><span class="f">;</span>      <span class="k">/* Notification function */</span>
+<a name="173" /><span class="True">     173:</span>     <span class="b">pthread_attr_t</span>    <span class="f">*</span><span class="b">sigev_notify_attributes</span><span class="f">;</span>    <span class="k">/* Notification attributes */</span>
+<a name="174" /><span class="True">     174:</span> <span class="f">}</span><span class="f">;</span>
+<a name="175" /><span class="True">     175:</span> 
+<a name="176" /><span class="True">     176:</span> 
+<a name="177" /><span class="True">     177:</span> <span class="m">typedef</span> <span class="m">struct</span> <span class="b">__siginfo</span> <span class="f">{</span>
+<a name="178" /><span class="True">     178:</span>     <span class="m">int</span>    <span class="b">si_signo</span><span class="f">;</span>        <span class="k">/* signal number */</span>
+<a name="179" /><span class="True">     179:</span>     <span class="m">int</span>    <span class="b">si_errno</span><span class="f">;</span>        <span class="k">/* errno association */</span>
+<a name="180" /><span class="True">     180:</span>     <span class="m">int</span>    <span class="b">si_code</span><span class="f">;</span>        <span class="k">/* signal code */</span>
+<a name="181" /><span class="True">     181:</span>     <span class="b">pid_t</span>    <span class="b">si_pid</span><span class="f">;</span>            <span class="k">/* sending process */</span>
+<a name="182" /><span class="True">     182:</span>     <span class="b">uid_t</span>    <span class="b">si_uid</span><span class="f">;</span>            <span class="k">/* sender&apos;s ruid */</span>
+<a name="183" /><span class="True">     183:</span>     <span class="m">int</span>    <span class="b">si_status</span><span class="f">;</span>        <span class="k">/* exit value */</span>
+<a name="184" /><span class="True">     184:</span>     <span class="m">void</span>    <span class="f">*</span><span class="b">si_addr</span><span class="f">;</span>        <span class="k">/* faulting instruction */</span>
+<a name="185" /><span class="True">     185:</span>     <span class="m">union</span> <span class="b">sigval</span> <span class="b">si_value</span><span class="f">;</span>        <span class="k">/* signal value */</span>
+<a name="186" /><span class="True">     186:</span>     <span class="m">long</span>    <span class="b">si_band</span><span class="f">;</span>        <span class="k">/* band event for SIGPOLL */</span>
+<a name="187" /><span class="True">     187:</span>     <span class="m">unsigned</span> <span class="m">long</span>    <span class="b">__pad</span><span class="f">[</span><span class="c">7</span><span class="f">]</span><span class="f">;</span>    <span class="k">/* Reserved for Future Use */</span>
+<a name="188" /><span class="True">     188:</span> <span class="f">}</span> <span class="b">siginfo_t</span><span class="f">;</span>
+<a name="189" /><span class="True">     189:</span> 
+<a name="190" /><span class="True">     190:</span> 
+<a name="191" /><span class="True">     191:</span> <span class="k">/* </span>
+<a name="192" /><span class="True">     192:</span> <span class="k"> * When the signal is SIGILL or SIGFPE, si_addr contains the address of </span>
+<a name="193" /><span class="True">     193:</span> <span class="k"> * the faulting instruction.</span>
+<a name="194" /><span class="True">     194:</span> <span class="k"> * When the signal is SIGSEGV or SIGBUS, si_addr contains the address of </span>
+<a name="195" /><span class="True">     195:</span> <span class="k"> * the faulting memory reference. Although for x86 there are cases of SIGSEGV</span>
+<a name="196" /><span class="True">     196:</span> <span class="k"> * for which si_addr cannot be determined and is NULL. </span>
+<a name="197" /><span class="True">     197:</span> <span class="k"> * If the signal is SIGCHLD, the si_pid field will contain the child process ID,</span>
+<a name="198" /><span class="True">     198:</span> <span class="k"> *  si_status contains the exit value or signal and</span>
+<a name="199" /><span class="True">     199:</span> <span class="k"> *  si_uid contains the real user ID of the process that sent the signal.</span>
+<a name="200" /><span class="True">     200:</span> <span class="k"> */</span>
+<a name="201" /><span class="True">     201:</span> 
+<a name="202" /><span class="True">     202:</span> <span class="k">/* Values for si_code */</span>
+<a name="203" /><span class="True">     203:</span> 
+<a name="204" /><span class="True">     204:</span> <span class="k">/* Codes for SIGILL */</span>
+<a name="205" /><span class="True">     205:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="206" /><span class="True">     206:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX05PT1BfMA__"><span class="b">ILL_NOOP</span></a>    <span class="c">0</span>    <span class="k">/* if only I knew... */</span>
+<a name="207" /><span class="True">     207:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="208" /><span class="True">     208:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX0lMTE9QQ18w"><span class="b">ILL_ILLOPC</span></a>    <span class="c">1</span>    <span class="k">/* [XSI] illegal opcode */</span>
+<a name="209" /><span class="True">     209:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX0lMTFRSUF8w"><span class="b">ILL_ILLTRP</span></a>    <span class="c">2</span>    <span class="k">/* [XSI] illegal trap */</span>
+<a name="210" /><span class="True">     210:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX1BSVk9QQ18w"><span class="b">ILL_PRVOPC</span></a>    <span class="c">3</span>    <span class="k">/* [XSI] privileged opcode */</span>
+<a name="211" /><span class="True">     211:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX0lMTE9QTl8w"><span class="b">ILL_ILLOPN</span></a>    <span class="c">4</span>    <span class="k">/* [XSI] illegal operand -NOTIMP */</span>
+<a name="212" /><span class="True">     212:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX0lMTEFEUl8w"><span class="b">ILL_ILLADR</span></a>    <span class="c">5</span>    <span class="k">/* [XSI] illegal addressing mode -NOTIMP */</span>
+<a name="213" /><span class="True">     213:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX1BSVlJFR18w"><span class="b">ILL_PRVREG</span></a>    <span class="c">6</span>    <span class="k">/* [XSI] privileged register -NOTIMP */</span>
+<a name="214" /><span class="True">     214:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX0NPUFJPQ18w"><span class="b">ILL_COPROC</span></a>    <span class="c">7</span>    <span class="k">/* [XSI] coprocessor error -NOTIMP */</span>
+<a name="215" /><span class="True">     215:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_SUxMX0JBRFNUS18w"><span class="b">ILL_BADSTK</span></a>    <span class="c">8</span>    <span class="k">/* [XSI] internal stack error -NOTIMP */</span>
+<a name="216" /><span class="True">     216:</span> 
+<a name="217" /><span class="True">     217:</span> <span class="k">/* Codes for SIGFPE */</span>
+<a name="218" /><span class="True">     218:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="219" /><span class="True">     219:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_RlBFX05PT1BfMA__"><span class="b">FPE_NOOP</span></a>    <span class="c">0</span>    <span class="k">/* if only I knew... */</span>
+<a name="220" /><span class="True">     220:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="221" /><span class="True">     221:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_RlBFX0ZMVERJVl8w"><span class="b">FPE_FLTDIV</span></a>    <span class="c">1</span>    <span class="k">/* [XSI] floating point divide by zero */</span>
+<a name="222" /><span class="True">     222:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_RlBFX0ZMVE9WRl8w"><span class="b">FPE_FLTOVF</span></a>    <span class="c">2</span>    <span class="k">/* [XSI] floating point overflow */</span>
+<a name="223" /><span class="True">     223:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_RlBFX0ZMVFVORF8w"><span class="b">FPE_FLTUND</span></a>    <span class="c">3</span>    <span class="k">/* [XSI] floating point underflow */</span>
+<a name="224" /><span class="True">     224:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_RlBFX0ZMVFJFU18w"><span class="b">FPE_FLTRES</span></a>    <span class="c">4</span>    <span class="k">/* [XSI] floating point inexact result */</span>
+<a name="225" /><span class="True">     225:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_RlBFX0ZMVElOVl8w"><span class="b">FPE_FLTINV</span></a>    <span class="c">5</span>    <span class="k">/* [XSI] invalid floating point operation */</span>
+<a name="226" /><span class="True">     226:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_RlBFX0ZMVFNVQl8w"><span class="b">FPE_FLTSUB</span></a>    <span class="c">6</span>    <span class="k">/* [XSI] subscript out of range -NOTIMP */</span>
+<a name="227" /><span class="True">     227:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_RlBFX0lOVERJVl8w"><span class="b">FPE_INTDIV</span></a>    <span class="c">7</span>    <span class="k">/* [XSI] integer divide by zero */</span>
+<a name="228" /><span class="True">     228:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_RlBFX0lOVE9WRl8w"><span class="b">FPE_INTOVF</span></a>    <span class="c">8</span>    <span class="k">/* [XSI] integer overflow */</span>
+<a name="229" /><span class="True">     229:</span> 
+<a name="230" /><span class="True">     230:</span> <span class="k">/* Codes for SIGSEGV */</span>
+<a name="231" /><span class="True">     231:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="232" /><span class="True">     232:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0VHVl9OT09QXzA_"><span class="b">SEGV_NOOP</span></a>    <span class="c">0</span>    <span class="k">/* if only I knew... */</span>
+<a name="233" /><span class="True">     233:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="234" /><span class="True">     234:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0VHVl9NQVBFUlJfMA__"><span class="b">SEGV_MAPERR</span></a>    <span class="c">1</span>    <span class="k">/* [XSI] address not mapped to object */</span>
+<a name="235" /><span class="True">     235:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0VHVl9BQ0NFUlJfMA__"><span class="b">SEGV_ACCERR</span></a>    <span class="c">2</span>    <span class="k">/* [XSI] invalid permission for mapped object */</span>
+<a name="236" /><span class="True">     236:</span> 
+<a name="237" /><span class="True">     237:</span> <span class="k">/* Codes for SIGBUS */</span>
+<a name="238" /><span class="True">     238:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="239" /><span class="True">     239:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_QlVTX05PT1BfMA__"><span class="b">BUS_NOOP</span></a>    <span class="c">0</span>    <span class="k">/* if only I knew... */</span>
+<a name="240" /><span class="True">     240:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="241" /><span class="True">     241:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_QlVTX0FEUkFMTl8w"><span class="b">BUS_ADRALN</span></a>    <span class="c">1</span>    <span class="k">/* [XSI] Invalid address alignment */</span>
+<a name="242" /><span class="True">     242:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_QlVTX0FEUkVSUl8w"><span class="b">BUS_ADRERR</span></a>    <span class="c">2</span>    <span class="k">/* [XSI] Nonexistent physical address -NOTIMP */</span>
+<a name="243" /><span class="True">     243:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_QlVTX09CSkVSUl8w"><span class="b">BUS_OBJERR</span></a>    <span class="c">3</span>    <span class="k">/* [XSI] Object-specific HW error - NOTIMP */</span>
+<a name="244" /><span class="True">     244:</span> 
+<a name="245" /><span class="True">     245:</span> <span class="k">/* Codes for SIGTRAP */</span>
+<a name="246" /><span class="True">     246:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_VFJBUF9CUktQVF8w"><span class="b">TRAP_BRKPT</span></a>    <span class="c">1</span>    <span class="k">/* [XSI] Process breakpoint -NOTIMP */</span>
+<a name="247" /><span class="True">     247:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_VFJBUF9UUkFDRV8w"><span class="b">TRAP_TRACE</span></a>    <span class="c">2</span>    <span class="k">/* [XSI] Process trace trap -NOTIMP */</span>
+<a name="248" /><span class="True">     248:</span> 
+<a name="249" /><span class="True">     249:</span> <span class="k">/* Codes for SIGCHLD */</span>
+<a name="250" /><span class="True">     250:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="251" /><span class="True">     251:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_Q0xEX05PT1BfMA__"><span class="b">CLD_NOOP</span></a>    <span class="c">0</span>    <span class="k">/* if only I knew... */</span>
+<a name="252" /><span class="True">     252:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="253" /><span class="True">     253:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_Q0xEX0VYSVRFRF8w"><span class="b">CLD_EXITED</span></a>    <span class="c">1</span>    <span class="k">/* [XSI] child has exited */</span>
+<a name="254" /><span class="True">     254:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_Q0xEX0tJTExFRF8w"><span class="b">CLD_KILLED</span></a>    <span class="c">2</span>    <span class="k">/* [XSI] terminated abnormally, no core file */</span>
+<a name="255" /><span class="True">     255:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_Q0xEX0RVTVBFRF8w"><span class="b">CLD_DUMPED</span></a>    <span class="c">3</span>    <span class="k">/* [XSI] terminated abnormally, core file */</span>
+<a name="256" /><span class="True">     256:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_Q0xEX1RSQVBQRURfMA__"><span class="b">CLD_TRAPPED</span></a>    <span class="c">4</span>    <span class="k">/* [XSI] traced child has trapped */</span>
+<a name="257" /><span class="True">     257:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_Q0xEX1NUT1BQRURfMA__"><span class="b">CLD_STOPPED</span></a>    <span class="c">5</span>    <span class="k">/* [XSI] child has stopped */</span>
+<a name="258" /><span class="True">     258:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_Q0xEX0NPTlRJTlVFRF8w"><span class="b">CLD_CONTINUED</span></a>    <span class="c">6</span>    <span class="k">/* [XSI] stopped child has continued */</span>
+<a name="259" /><span class="True">     259:</span> 
+<a name="260" /><span class="True">     260:</span> <span class="k">/* Codes for SIGPOLL */</span>
+<a name="261" /><span class="True">     261:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_UE9MTF9JTl8w"><span class="b">POLL_IN</span></a>        <span class="c">1</span>    <span class="k">/* [XSR] Data input available */</span>
+<a name="262" /><span class="True">     262:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_UE9MTF9PVVRfMA__"><span class="b">POLL_OUT</span></a>    <span class="c">2</span>    <span class="k">/* [XSR] Output buffers available */</span>
+<a name="263" /><span class="True">     263:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_UE9MTF9NU0dfMA__"><span class="b">POLL_MSG</span></a>    <span class="c">3</span>    <span class="k">/* [XSR] Input message available */</span>
+<a name="264" /><span class="True">     264:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_UE9MTF9FUlJfMA__"><span class="b">POLL_ERR</span></a>    <span class="c">4</span>    <span class="k">/* [XSR] I/O error */</span>
+<a name="265" /><span class="True">     265:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_UE9MTF9QUklfMA__"><span class="b">POLL_PRI</span></a>    <span class="c">5</span>    <span class="k">/* [XSR] High priority input available */</span>
+<a name="266" /><span class="True">     266:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_UE9MTF9IVVBfMA__"><span class="b">POLL_HUP</span></a>    <span class="c">6</span>    <span class="k">/* [XSR] Device disconnected */</span>
+<a name="267" /><span class="True">     267:</span> 
+<a name="268" /><span class="True">     268:</span> <span class="k">/* union for signal handlers */</span>
+<a name="269" /><span class="True">     269:</span> <span class="m">union</span> <span class="b">__sigaction_u</span> <span class="f">{</span>
+<a name="270" /><span class="True">     270:</span>     <span class="m">void</span>    <span class="f">(</span><span class="f">*</span><span class="b">__sa_handler</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="271" /><span class="True">     271:</span>     <span class="m">void</span>    <span class="f">(</span><span class="f">*</span><span class="b">__sa_sigaction</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">,</span> <span class="m">struct</span> <span class="b">__siginfo</span> <span class="f">*</span><span class="f">,</span>
+<a name="272" /><span class="True">     272:</span>                <span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="273" /><span class="True">     273:</span> <span class="f">}</span><span class="f">;</span>
+<a name="274" /><span class="True">     274:</span> 
+<a name="275" /><span class="True">     275:</span> <span class="k">/* Signal vector template for Kernel user boundary */</span>
+<a name="276" /><span class="True">     276:</span> <span class="m">struct</span>    <span class="b">__sigaction</span> <span class="f">{</span>
+<a name="277" /><span class="True">     277:</span>     <span class="m">union</span> <span class="b">__sigaction_u</span> <span class="b">__sigaction_u</span><span class="f">;</span>  <span class="k">/* signal handler */</span>
+<a name="278" /><span class="True">     278:</span>     <span class="m">void</span>    <span class="f">(</span><span class="f">*</span><span class="b">sa_tramp</span><span class="f">)</span><span class="f">(</span><span class="m">void</span> <span class="f">*</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="m">int</span><span class="f">,</span> <span class="b">siginfo_t</span> <span class="f">*</span><span class="f">,</span> <span class="m">void</span> <span class="f">*</span><span class="f">)</span><span class="f">;</span>
+<a name="279" /><span class="True">     279:</span>     <span class="b">sigset_t</span> <span class="b">sa_mask</span><span class="f">;</span>        <span class="k">/* signal mask to apply */</span>
+<a name="280" /><span class="True">     280:</span>     <span class="m">int</span>    <span class="b">sa_flags</span><span class="f">;</span>        <span class="k">/* see signal options below */</span>
+<a name="281" /><span class="True">     281:</span> <span class="f">}</span><span class="f">;</span>
+<a name="282" /><span class="True">     282:</span> 
+<a name="283" /><span class="True">     283:</span> <span class="k">/*</span>
+<a name="284" /><span class="True">     284:</span> <span class="k"> * Signal vector &quot;template&quot; used in sigaction call.</span>
+<a name="285" /><span class="True">     285:</span> <span class="k"> */</span>
+<a name="286" /><span class="True">     286:</span> <span class="m">struct</span>    <span class="b">sigaction</span> <span class="f">{</span>
+<a name="287" /><span class="True">     287:</span>     <span class="m">union</span> <span class="b">__sigaction_u</span> <span class="b">__sigaction_u</span><span class="f">;</span>  <span class="k">/* signal handler */</span>
+<a name="288" /><span class="True">     288:</span>     <span class="b">sigset_t</span> <span class="b">sa_mask</span><span class="f">;</span>        <span class="k">/* signal mask to apply */</span>
+<a name="289" /><span class="True">     289:</span>     <span class="m">int</span>    <span class="b">sa_flags</span><span class="f">;</span>        <span class="k">/* see signal options below */</span>
+<a name="290" /><span class="True">     290:</span> <span class="f">}</span><span class="f">;</span>
+<a name="291" /><span class="True">     291:</span> 
+<a name="292" /><span class="True">     292:</span> 
+<a name="293" /><span class="True">     293:</span> 
+<a name="294" /><span class="True">     294:</span> <span class="k">/* if SA_SIGINFO is set, sa_sigaction is to be used instead of sa_handler. */</span>
+<a name="295" /><span class="True">     295:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_c2FfaGFuZGxlcl8w"><span class="b">sa_handler</span></a>    <span class="b">__sigaction_u</span><span class="f">.</span><span class="b">__sa_handler</span>
+<a name="296" /><span class="True">     296:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_c2Ffc2lnYWN0aW9uXzA_"><span class="b">sa_sigaction</span></a>    <span class="b">__sigaction_u</span><span class="f">.</span><span class="b">__sa_sigaction</span>
+<a name="297" /><span class="True">     297:</span> 
+<a name="298" /><span class="True">     298:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0FfT05TVEFDS18w"><span class="b">SA_ONSTACK</span></a>    <span class="c">0x0001</span>    <span class="k">/* take signal on signal stack */</span>
+<a name="299" /><span class="True">     299:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0FfUkVTVEFSVF8w"><span class="b">SA_RESTART</span></a>    <span class="c">0x0002</span>    <span class="k">/* restart system on signal return */</span>
+<a name="300" /><span class="True">     300:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0FfUkVTRVRIQU5EXzA_"><span class="b">SA_RESETHAND</span></a>    <span class="c">0x0004</span>    <span class="k">/* reset to SIG_DFL when taking signal */</span>
+<a name="301" /><span class="True">     301:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0FfTk9DTERTVE9QXzA_"><span class="b">SA_NOCLDSTOP</span></a>    <span class="c">0x0008</span>    <span class="k">/* do not generate SIGCHLD on child stop */</span>
+<a name="302" /><span class="True">     302:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0FfTk9ERUZFUl8w"><span class="b">SA_NODEFER</span></a>    <span class="c">0x0010</span>    <span class="k">/* don&apos;t mask the signal we&apos;re delivering */</span>
+<a name="303" /><span class="True">     303:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0FfTk9DTERXQUlUXzA_"><span class="b">SA_NOCLDWAIT</span></a>    <span class="c">0x0020</span>    <span class="k">/* don&apos;t keep zombies around */</span>
+<a name="304" /><span class="True">     304:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0FfU0lHSU5GT18w"><span class="b">SA_SIGINFO</span></a>    <span class="c">0x0040</span>    <span class="k">/* signal handler with SA_SIGINFO args */</span>
+<a name="305" /><span class="True">     305:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="306" /><span class="True">     306:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0FfVVNFUlRSQU1QXzA_"><span class="b">SA_USERTRAMP</span></a>    <span class="c">0x0100</span>    <span class="k">/* do not bounce off kernel&apos;s sigtramp */</span>
+<a name="307" /><span class="True">     307:</span> <span class="k">/* This will provide 64bit register set in a 32bit user address space */</span>
+<a name="308" /><span class="True">     308:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0FfNjRSRUdTRVRfMA__"><span class="b">SA_64REGSET</span></a>    <span class="c">0x0200</span>    <span class="k">/* signal handler with SA_SIGINFO args with 64bit regs information */</span>
+<a name="309" /><span class="True">     309:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */</span>
+<a name="310" /><span class="True">     310:</span> 
+<a name="311" /><span class="True">     311:</span> <span class="k">/* the following are the only bits we support from user space, the </span>
+<a name="312" /><span class="True">     312:</span> <span class="k"> * rest are for kernel use only.</span>
+<a name="313" /><span class="True">     313:</span> <span class="k"> */</span>
+<a name="314" /><span class="True">     314:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0FfVVNFUlNQQUNFX01BU0tfMA__"><span class="b">SA_USERSPACE_MASK</span></a> <span class="f">(</span><a href="macros_noref.html#_U0FfT05TVEFDS18w"><span class="b">SA_ONSTACK</span></a> <span class="f">|</span> <a href="macros_noref.html#_U0FfUkVTVEFSVF8w"><span class="b">SA_RESTART</span></a> <span class="f">|</span> <a href="macros_noref.html#_U0FfUkVTRVRIQU5EXzA_"><span class="b">SA_RESETHAND</span></a> <span class="f">|</span> <a href="macros_noref.html#_U0FfTk9DTERTVE9QXzA_"><span class="b">SA_NOCLDSTOP</span></a> <span class="f">|</span> <a href="macros_noref.html#_U0FfTk9ERUZFUl8w"><span class="b">SA_NODEFER</span></a> <span class="f">|</span> <a href="macros_noref.html#_U0FfTk9DTERXQUlUXzA_"><span class="b">SA_NOCLDWAIT</span></a> <span class="f">|</span> <a href="macros_noref.html#_U0FfU0lHSU5GT18w"><span class="b">SA_SIGINFO</span></a><span class="f">)</span>
+<a name="315" /><span class="True">     315:</span> 
+<a name="316" /><span class="True">     316:</span> <span class="k">/*</span>
+<a name="317" /><span class="True">     317:</span> <span class="k"> * Flags for sigprocmask:</span>
+<a name="318" /><span class="True">     318:</span> <span class="k"> */</span>
+<a name="319" /><span class="True">     319:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX0JMT0NLXzA_"><span class="b">SIG_BLOCK</span></a>    <span class="c">1</span>    <span class="k">/* block specified signal set */</span>
+<a name="320" /><span class="True">     320:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX1VOQkxPQ0tfMA__"><span class="b">SIG_UNBLOCK</span></a>    <span class="c">2</span>    <span class="k">/* unblock specified signal set */</span>
+<a name="321" /><span class="True">     321:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHX1NFVE1BU0tfMA__"><span class="b">SIG_SETMASK</span></a>    <span class="c">3</span>    <span class="k">/* set specified signal set */</span>
+<a name="322" /><span class="True">     322:</span> 
+<a name="323" /><span class="True">     323:</span> <span class="k">/* POSIX 1003.1b required values. */</span>
+<a name="324" /><span class="True">     324:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lfVVNFUl8w"><span class="b">SI_USER</span></a>        <span class="c">0x10001</span>    <span class="k">/* [CX] signal from kill() */</span>
+<a name="325" /><span class="True">     325:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lfUVVFVUVfMA__"><span class="b">SI_QUEUE</span></a>    <span class="c">0x10002</span>    <span class="k">/* [CX] signal from sigqueue() */</span>
+<a name="326" /><span class="True">     326:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lfVElNRVJfMA__"><span class="b">SI_TIMER</span></a>    <span class="c">0x10003</span>    <span class="k">/* [CX] timer expiration */</span>
+<a name="327" /><span class="True">     327:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lfQVNZTkNJT18w"><span class="b">SI_ASYNCIO</span></a>    <span class="c">0x10004</span>    <span class="k">/* [CX] aio request completion */</span>
+<a name="328" /><span class="True">     328:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U0lfTUVTR1FfMA__"><span class="b">SI_MESGQ</span></a>    <span class="c">0x10005</span>    <span class="k">/* [CX]    from message arrival on empty queue */</span>
+<a name="329" /><span class="True">     329:</span> 
+<a name="330" /><span class="True">     330:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="331" /><span class="True">     331:</span> <span class="m">typedef</span>    <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="b">sig_t</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* type of signal function */</span>
+<a name="332" /><span class="True">     332:</span> <span class="f">#</span><span class="n">endif</span>
+<a name="333" /><span class="True">     333:</span> 
+<a name="334" /><span class="True">     334:</span> <span class="k">/*</span>
+<a name="335" /><span class="True">     335:</span> <span class="k"> * Structure used in sigaltstack call.</span>
+<a name="336" /><span class="True">     336:</span> <span class="k"> */</span>
+<a name="337" /><span class="True">     337:</span> 
+<a name="338" /><span class="True">     338:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U1NfT05TVEFDS18w"><span class="b">SS_ONSTACK</span></a>    <span class="c">0x0001</span>    <span class="k">/* take signal on signal stack */</span>
+<a name="339" /><span class="True">     339:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U1NfRElTQUJMRV8w"><span class="b">SS_DISABLE</span></a>    <span class="c">0x0004</span>    <span class="k">/* disable taking signals on alternate stack */</span>
+<a name="340" /><span class="True">     340:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_TUlOU0lHU1RLU1pfMA__"><span class="b">MINSIGSTKSZ</span></a>    <span class="c">32768</span>    <span class="k">/* (32K)minimum allowable stack */</span>
+<a name="341" /><span class="True">     341:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_U0lHU1RLU1pfMA__"><span class="b">SIGSTKSZ</span></a>    <span class="c">131072</span>    <span class="k">/* (128K)recommended stack size */</span>
+<a name="342" /><span class="True">     342:</span> 
+<a name="343" /><span class="True">     343:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="344" /><span class="True">     344:</span> <span class="k">/*</span>
+<a name="345" /><span class="True">     345:</span> <span class="k"> * 4.3 compatibility:</span>
+<a name="346" /><span class="True">     346:</span> <span class="k"> * Signal vector &quot;template&quot; used in sigvec call.</span>
+<a name="347" /><span class="True">     347:</span> <span class="k"> */</span>
+<a name="348" /><span class="True">     348:</span> <span class="m">struct</span>    <span class="b">sigvec</span> <span class="f">{</span>
+<a name="349" /><span class="True">     349:</span>     <span class="m">void</span>    <span class="f">(</span><span class="f">*</span><span class="b">sv_handler</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">;</span>    <span class="k">/* signal handler */</span>
+<a name="350" /><span class="True">     350:</span>     <span class="m">int</span>    <span class="b">sv_mask</span><span class="f">;</span>        <span class="k">/* signal mask to apply */</span>
+<a name="351" /><span class="True">     351:</span>     <span class="m">int</span>    <span class="b">sv_flags</span><span class="f">;</span>        <span class="k">/* see signal options below */</span>
+<a name="352" /><span class="True">     352:</span> <span class="f">}</span><span class="f">;</span>
+<a name="353" /><span class="True">     353:</span> 
+<a name="354" /><span class="True">     354:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U1ZfT05TVEFDS18w"><span class="b">SV_ONSTACK</span></a>    <a href="macros_noref.html#_U0FfT05TVEFDS18w"><span class="b">SA_ONSTACK</span></a>
+<a name="355" /><span class="True">     355:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U1ZfSU5URVJSVVBUXzA_"><span class="b">SV_INTERRUPT</span></a>    <a href="macros_noref.html#_U0FfUkVTVEFSVF8w"><span class="b">SA_RESTART</span></a>    <span class="k">/* same bit, opposite sense */</span>
+<a name="356" /><span class="True">     356:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U1ZfUkVTRVRIQU5EXzA_"><span class="b">SV_RESETHAND</span></a>    <a href="macros_noref.html#_U0FfUkVTRVRIQU5EXzA_"><span class="b">SA_RESETHAND</span></a>
+<a name="357" /><span class="True">     357:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U1ZfTk9ERUZFUl8w"><span class="b">SV_NODEFER</span></a>    <a href="macros_noref.html#_U0FfTk9ERUZFUl8w"><span class="b">SA_NODEFER</span></a>
+<a name="358" /><span class="True">     358:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U1ZfTk9DTERTVE9QXzA_"><span class="b">SV_NOCLDSTOP</span></a>    <a href="macros_noref.html#_U0FfTk9DTERTVE9QXzA_"><span class="b">SA_NOCLDSTOP</span></a>
+<a name="359" /><span class="True">     359:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_U1ZfU0lHSU5GT18w"><span class="b">SV_SIGINFO</span></a>    <a href="macros_noref.html#_U0FfU0lHSU5GT18w"><span class="b">SA_SIGINFO</span></a>
+<a name="360" /><span class="True">     360:</span> 
+<a name="361" /><span class="True">     361:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_c3Zfb25zdGFja18w"><span class="b">sv_onstack</span></a> <span class="b">sv_flags</span>    <span class="k">/* isn&apos;t compatibility wonderful! */</span>
+<a name="362" /><span class="True">     362:</span> <span class="f">#</span><span class="n">endif</span> <span class="k">/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */</span>
+<a name="363" /><span class="True">     363:</span> 
+<a name="364" /><span class="True">     364:</span> <span class="k">/*</span>
+<a name="365" /><span class="True">     365:</span> <span class="k"> * Structure used in sigstack call.</span>
+<a name="366" /><span class="True">     366:</span> <span class="k"> */</span>
+<a name="367" /><span class="True">     367:</span> <span class="m">struct</span>    <span class="b">sigstack</span> <span class="f">{</span>
+<a name="368" /><span class="True">     368:</span>     <span class="m">char</span>    <span class="f">*</span><span class="b">ss_sp</span><span class="f">;</span>            <span class="k">/* signal stack pointer */</span>
+<a name="369" /><span class="True">     369:</span>     <span class="m">int</span>    <span class="b">ss_onstack</span><span class="f">;</span>        <span class="k">/* current status */</span>
+<a name="370" /><span class="True">     370:</span> <span class="f">}</span><span class="f">;</span>
+<a name="371" /><span class="True">     371:</span> 
+<a name="372" /><span class="True">     372:</span> <span class="f">#</span><span class="n">if</span> <span class="f">!</span><span class="b">defined</span><span class="f">(</span><span class="b">_POSIX_C_SOURCE</span><span class="f">)</span> <span class="f">||</span> <span class="b">defined</span><span class="f">(</span><a href="macros_ref.html#_X0RBUldJTl9DX1NPVVJDRV8w"><span class="b">_DARWIN_C_SOURCE</span></a><span class="f">)</span>
+<a name="373" /><span class="True">     373:</span> <span class="k">/*</span>
+<a name="374" /><span class="True">     374:</span> <span class="k"> * Macro for converting signal number to a mask suitable for</span>
+<a name="375" /><span class="True">     375:</span> <span class="k"> * sigblock().</span>
+<a name="376" /><span class="True">     376:</span> <span class="k"> */</span>
+<a name="377" /><span class="True">     377:</span> <span class="f">#</span><span class="n">define</span> <a href="macros_noref.html#_c2lnbWFza18w"><span class="b">sigmask</span></a><span class="f">(</span><span class="b">m</span><span class="f">)</span>    <span class="f">(</span><span class="c">1</span> <span class="f">&lt;&lt;</span> <span class="f">(</span><span class="f">(</span><span class="b">m</span><span class="f">)</span><span class="f">-</span><span class="c">1</span><span class="f">)</span><span class="f">)</span>
+<a name="378" /><span class="True">     378:</span> 
+<a name="379" /><span class="True">     379:</span> 
+<a name="380" /><span class="True">     380:</span> <span class="f">#</span><span class="n">define</span>    <a href="macros_noref.html#_QkFEU0lHXzA_"><span class="b">BADSIG</span></a>        <a href="macros_noref.html#_U0lHX0VSUl8w"><span class="b">SIG_ERR</span></a>
+<a name="381" /><span class="True">     381:</span> 
+<a name="382" /><span class="True">     382:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* (!_POSIX_C_SOURCE || _DARWIN_C_SOURCE) */</span>
+<a name="383" /><span class="True">     383:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* !_ANSI_SOURCE */</span>
+<a name="384" /><span class="True">     384:</span> 
+<a name="385" /><span class="True">     385:</span> <span class="k">/*</span>
+<a name="386" /><span class="True">     386:</span> <span class="k"> * For historical reasons; programs expect signal&apos;s return value to be</span>
+<a name="387" /><span class="True">     387:</span> <span class="k"> * defined by &lt;sys/signal.h&gt;.</span>
+<a name="388" /><span class="True">     388:</span> <span class="k"> */</span>
+<a name="389" /><span class="True">     389:</span> <a href="macros_ref.html#_X19CRUdJTl9ERUNMU18w"><span class="b">__BEGIN_DECLS</span></a>
+<a name="390" /><span class="True">     390:</span> <span class="m">void</span>    <span class="f">(</span><span class="f">*</span><span class="b">signal</span><span class="f">(</span><span class="m">int</span><span class="f">,</span> <span class="m">void</span> <span class="f">(</span><span class="f">*</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">)</span><span class="f">)</span><span class="f">(</span><span class="m">int</span><span class="f">)</span><span class="f">;</span>
+<a name="391" /><span class="True">     391:</span> <a href="macros_ref.html#_X19FTkRfREVDTFNfMA__"><span class="b">__END_DECLS</span></a>
+<a name="392" /><span class="True">     392:</span> <span class="f">#</span><span class="n">endif</span>    <span class="k">/* !_SYS_SIGNAL_H_ */</span>
+<a name="393" /><span class="True">     393:</span> </pre>
+  </body>
+</html>
