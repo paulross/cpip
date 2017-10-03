@@ -2,7 +2,7 @@
 History
 =======
 
-0.9.5 Beta Release (2017-09-08)
+0.9.5 Beta Release (2017-10-03)
 --------------------------------
 
 * Migrate from sourceforge to GitHub.
