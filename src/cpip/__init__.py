@@ -20,6 +20,7 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2014-03-03'
+__version__ = '0.9.7'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
 __all__ = ['core', 'util', 'plot']
@@ -27,11 +28,13 @@ __all__ = ['core', 'util', 'plot']
 """CPIP: 'C' Preprocessor in Python.
 """
 
-CPIP_VERSION = (0, 9, 5)
+CPIP_VERSION = (0, 9, 7)
 
 RELEASE_NOTES = [
     """Release Notes (latest at top).
 ==============================
+2017-10-04: Version 0.9.7. Tested on Python 2.7 and 3.6.
+
 2017-10-03: Version 0.9.5, migrate to GitHub. Tested on Python 2.7 and 3.6.
 
 2014-09-03: Version 0.9.1, various minor fixes. Tested on Python 2.7 and 3.3.

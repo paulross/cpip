@@ -2,6 +2,14 @@
 History
 =======
 
+0.9.7 Beta Release (2017-10-04)
+--------------------------------
+
+* Minor fixes.
+* Performance optimisations.
+* Builds the CPython source tree in 5 hours with 2 CPUs.
+* DOcumentation improvements.
+
 0.9.5 Beta Release (2017-10-03)
 --------------------------------
 
