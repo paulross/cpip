@@ -108,7 +108,9 @@ Before you submit a pull request, check that it meets these guidelines:
 Tips
 ----
 
-To run a subset of tests::
+To run a subset of tests, for example to test ``PpLexer.py``:
 
-$ py.test tests.test_cpip
+.. code-block:: console
+
+    $ py.test -vs tests/unit/test_core/test_PpLexer.py
 
