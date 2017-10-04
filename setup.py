@@ -27,7 +27,7 @@ test_requirements = [
 
 setup(
     name='cpip',
-    version='0.9.7',
+    version='0.9.8rc0',
     description="CPIP is a C/C++ Preprocessor implemented in Python.",
     long_description=readme + '\n\n' + history,
     author="Paul Ross",

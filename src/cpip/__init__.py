@@ -20,7 +20,7 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2014-03-03'
-__version__ = '0.9.7'
+__version__ = '0.9.8rc0'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
 __all__ = ['core', 'util', 'plot']
@@ -28,7 +28,7 @@ __all__ = ['core', 'util', 'plot']
 """CPIP: 'C' Preprocessor in Python.
 """
 
-CPIP_VERSION = (0, 9, 7)
+CPIP_VERSION = (0, 9, 8, 'rc0')
 
 RELEASE_NOTES = [
     """Release Notes (latest at top).
