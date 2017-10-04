@@ -12,13 +12,13 @@ Few developers really understand pre-processing, to many it is an obscure bit of
 
 CPIP is not designed to be a replacement for ``cpp`` (or any other established pre-processor), instead CPIP regards clarity and understanding as more important than speed of processing.
 
-CPIP takes its standard as C99 or, more formally, ISO/IEC 9899:1999 (E) [#]_.
+CPIP takes its standard as C99 or, more formally, ISO/IEC 9899:1999 (E) [#]_. Other standards are considered, particularly C11, C++, C++11, C++14 and so on [#]_.
 
 ************************
 Pre-processing C and C++
 ************************
 
-The basic task of any preprocessor is to produce a *Translation Unit* for a compiler to work with. To do this the pre-processor has to do three inter-related tasks [#]_:
+The basic task of any preprocessor is to produce a *Translation Unit* for a compiler to work with. The main job the pre-processor has to do involves three inter-related tasks [#]_:
 
 * File inclusion i.e. responding to ``#include`` commands.
 * Conditional Compilation ``#if``, ``#ifdef`` etc.
@@ -111,6 +111,15 @@ An extremely useful feature of CPIP is that the ``PpLexer`` maintains all these 
 
 .. [#] Other standards are of interest: "C++98" [ISO/IEC 14882:1998(E)] describes more limited pre-processing (no variadic macros for example). "C++11" [ISO/IEC JTC 1/SC 22 N 4411 in draft] and C++14 does not substantially change this. In any case CPIP attempts to emulate common custom and practice (yes, including variadic macros).
 
-.. [#] Of course the preprocessor has to do many other minor tasks such as replacing trigraphs and removing comments.
+.. [#] Relevant `C standards <http://www.open-std.org/JTC1/SC22/WG14/>`_ [www.open-std.org] (draft, open access). Relevant `C++ standards <http://www.open-std.org/JTC1/SC22/WG21/>`_ [www.open-std.org] (draft, open access).
 
-.. [#] Rationale for International Standard - Programming Languages - C Revision 5.10 April-2003 Sect. 6.10.3.4
+.. [#] Specifically the pre-processor has to do the first 6 (out of 8 or 9) *phases of translation* (for example see ISO/IEC 9899:1999 (E) ©ISO/IEC Sect. 5.1.1.2 Translation phases). Simplified they are:
+
+    #. Map physical source file multibyte characters to the source character set. Trigraph sequences are replaced by single-character representations.
+    #. Line continuation characters ``\`` are deleted splicing physical source lines to form logical source lines.
+    #. The source file is decomposed into preprocessing tokens and white-space (including comments). Each comment is removed and replaced by one space character. 
+    #. Preprocessing directives are executed and macro invocations are expanded. A ``#include`` preprocessing directive causes the named file to be processed from phase 1 to 4, recursively. All preprocessing directives are then deleted.
+    #. Each source character, escape sequence and string literal is converted to the execution character set.
+    #. Adjacent string literal tokens are concatenated.
+
+.. [#] Rationale for International Standard - Programming Languages - C `Revision 5.10 April-2003  <http://www.open-std.org/JTC1/SC22/WG14/www/C99RationaleV5.10.pdf>`_ Sect. 6.10.3.4
