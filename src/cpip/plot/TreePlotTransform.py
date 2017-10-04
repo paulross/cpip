@@ -97,7 +97,6 @@ right     down   up
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
 from cpip import ExceptionCpip

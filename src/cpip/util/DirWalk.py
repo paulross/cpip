@@ -24,7 +24,6 @@ Created on Jun 9, 2011
 
 __author__  = 'Paul Ross'
 __date__    = '2011-06-09'
-__version__ = '0.9.5'
 __rights__  = 'Copyright (c) Paul Ross'
 
 import os

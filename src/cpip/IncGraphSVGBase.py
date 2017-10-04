@@ -32,7 +32,6 @@ an element between 0 and 1. See :py:meth:`IncGraphSVG.writeAltTextAndMouseOverRe
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
-__version__ = '0.9.5'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
 import sys

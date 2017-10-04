@@ -38,7 +38,6 @@ from cpip import TokenCss
 
 __author__ = 'Paul Ross'
 __date__ = '2017-09-26'
-__version__ = '0.9.5'
 __rights__ = 'Copyright (c) 2017 Paul Ross'
 
 SUB_DIR_FOR_COMMON_FILES = '_common_html'

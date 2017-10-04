@@ -21,7 +21,6 @@
 
 __author__  = 'Paul Ross'
 __date__    = '2009-09-15'
-__version__ = '0.9.5'
 __rights__  = 'Copyright (c) Paul Ross'
 
 import logging
