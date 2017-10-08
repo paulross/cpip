@@ -1,0 +1,18 @@
+Incremental Build
+=================
+
+In the output directory we need to store:
+
+* History. This can be a simple text file with one line per record (git show --format=oneline <SHA> does not work, it dumps complete diff):
+	* Git SHA this was built from.
+	* Git timestamp (convert to UTC).
+	* CPIP start build time.
+	
+git show HEAD gives the following first three lines:
+
+commit 4d3f084c035ad3dfd9f8479886c41b1b1823ace2
+Author: Serhiy Storchaka <storchaka@gmail.com>
+Date:   Sun Oct 8 12:53:34 2017 +0300
+
+
+git diff <SHA> <SHA or 'HEAD'> --name-only gives list of files
