@@ -79,6 +79,20 @@ class TestStrTree(unittest.TestCase):
         self.assertEquals(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
+    def test_str(self):
+        myV = set(('#', '###',))
+        mySt = StrTree.StrTree(myV)
+        # print()
+        # print(str(mySt))
+        exp = """False 0
+"#"
+ True 1
+ "#"
+  False 2
+  "#"
+   True 3"""
+        self.assertEqual(exp, str(mySt))
+
     def test_10(self):
         """StrTree: test_10(): preprocessing operators."""
         myV = set((

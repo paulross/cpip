@@ -547,6 +547,68 @@ char c[2][6] = { str(hello), str() };
         )
         self.assertEqual(378, myMps.idxChar)
 
+    def test_20(self):
+        """TestItuToHtmlPhase3.test_20(): Line continuation."""
+        myStr = u"""First line \
+Second line
+"""
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
+        myIth.translatePhases123()
+        myMps = myIth.multiPassString
+        wordS = [w for w in myMps.genWords()]
+        # print()
+        # print(wordS)
+        self.assertEqual(
+            wordS,
+            [
+                ('First', 'identifier'),
+                (' ', 'whitespace'),
+                ('line', 'identifier'),
+                (' ', 'whitespace'),
+                ('Second', 'identifier'),
+                (' ', 'whitespace'),
+                ('line', 'identifier'),
+                ('\n', 'whitespace')
+            ]
+        )
+
+    def test_new_identifier(self):
+        """TestItuToHtmlPhase3.test_20(): new identifier, see TestItuToHtmlTokenGen for the keyword version."""
+        myStr = u"""new
+"""
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
+        myIth.translatePhases123()
+        myMps = myIth.multiPassString
+        wordS = [w for w in myMps.genWords()]
+        # print()
+        # print(wordS)
+        self.assertEqual(
+            wordS,
+            [
+                ('new', 'identifier'),
+                ('\n', 'whitespace')
+            ]
+        )
+
+    def test_delete_identifier(self):
+        """TestItuToHtmlPhase3.test_20(): delete identifier, see TestItuToHtmlTokenGen for the keyword version."""
+        myStr = u"""delete
+"""
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
+        myIth.translatePhases123()
+        myMps = myIth.multiPassString
+        wordS = [w for w in myMps.genWords()]
+        # print()
+        # print(wordS)
+        self.assertEqual(
+            wordS,
+            [
+                ('delete', 'identifier'),
+                ('\n', 'whitespace')
+            ]
+        )
+
+
 class TestItuToHtmlTokenGen(unittest.TestCase):
     """Test the ItuToHtml token genreator."""
     def setUp(self):
@@ -702,6 +764,30 @@ const char* s = "Hello world";
             (' ', 'whitespace'),
             ('"Hello world"', 'string-literal'),
             (';', 'preprocessing-op-or-punc'),
+            ('\n', 'whitespace')
+        ]
+        self.assertEqual(expTokS, myTokS)
+
+    def test_new_keyword(self):
+        """TestItuToHtmlTokenGen: new as a keyword."""
+        myStr = u"""new
+"""
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
+        myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
+        expTokS = [
+            ('new', 'keyword'),
+            ('\n', 'whitespace')
+        ]
+        self.assertEqual(expTokS, myTokS)
+
+    def test_delete_keyword(self):
+        """TestItuToHtmlTokenGen: delete as a keyword."""
+        myStr = u"""delete
+"""
+        myIth = ItuToTokens.ItuToTokens(io.StringIO(myStr))
+        myTokS = [aTok for aTok in myIth.genTokensKeywordPpDirective()]
+        expTokS = [
+            ('delete', 'keyword'),
             ('\n', 'whitespace')
         ]
         self.assertEqual(expTokS, myTokS)

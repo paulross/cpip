@@ -43,26 +43,9 @@ class BufGen(object):
     def __str__(self):
         return 'BufGen: %s' % self._buf
 
-    def _extendBuffer(self, idx):
-        if idx < 0:
-            raise IndexError('BufGen index out of range')
-        try:
-            while len(self._buf) <= idx:
-                self._buf.append(next(self._gen))
-        except StopIteration:
-            raise IndexError('BufGen index out of range')
-     
     def __getitem__(self, key):
         """Implements indexing and slicing. Negative indexes will raise an
         IndexError."""
-#         if isinstance(key, slice):
-#             self._extendBuffer(key.stop - 1)
-#             return self._buf[key]
-#         elif isinstance(key, int):
-#             self._extendBuffer(key)
-#             if len(self._buf) > key:
-#                 return self._buf[key]
-#             raise IndexError('BufGen index out of range')
         idx = key
         if isinstance(key, slice):
             idx = key.stop - 1

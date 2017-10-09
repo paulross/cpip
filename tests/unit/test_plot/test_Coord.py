@@ -318,6 +318,21 @@ class TestCoordPoint(unittest.TestCase):
         self.assertEqual(myPt_0, myPt_1)
         self.assertTrue(myPt_0 == myPt_1)
         
+    def test_scale(self):
+        """Pt() scale() [01]."""
+        myPt = Coord.Pt(
+            Coord.Dim(8, 'mm'),
+            Coord.Dim(4, 'mm'),
+        )
+        expected = Coord.Pt(
+            Coord.Dim(4, 'mm'),
+            Coord.Dim(2, 'mm'),
+        )
+        myPt_scaled = myPt.scale(0.5)
+        #print myPt_1
+        self.assertEqual(myPt_scaled, expected)
+        self.assertTrue(myPt_scaled == expected)
+
 #===============================================================================
 #        myObj = Coord.Dim(72, 'px')
 #        myObj = myObj.convert('px')
@@ -328,6 +343,35 @@ class TestCoordPoint(unittest.TestCase):
 #        self.assertEqual(myObj.units, 'in')
 #===============================================================================
 
+class TestMisc(unittest.TestCase):
+
+    def test_zeroBaseUnitsPad(self):
+        myPad = Coord.zeroBaseUnitsPad()
+        # print()
+        # print(myPad)
+        self.assertEqual(
+            myPad,
+            Coord.Pad(
+                prev=Coord.Dim(0.0, 'px'),
+                next=Coord.Dim(0.0, 'px'),
+                parent=Coord.Dim(0.0, 'px'),
+                child=Coord.Dim(0.0, 'px')
+            )
+        )
+
+    def test_convertPt(self):
+        myPt = Coord.Pt(
+            Coord.Dim(72, 'px'),
+            Coord.Dim(36, 'px'),
+        )
+        myResult = Coord.convertPt(myPt, 'in')
+        expected = Coord.Pt(
+            Coord.Dim(1, 'in'),
+            Coord.Dim(0.5, 'in'),
+        )
+        # print()
+        # print(myResult)
+        self.assertEqual(myResult, expected)
 
 
 def unitTest(theVerbosity=2):

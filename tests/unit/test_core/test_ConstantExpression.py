@@ -302,11 +302,24 @@ class TestConstantExpressionConditionalExpression(unittest.TestCase):
         self.assertEqual(1, myObj.evaluate())
 
     def testConditionalExpression_50(self):
-        """ConstantExpression - Conditional expression evaluation: raises on ((1U)==(2L)) ? (1) : (2)\\n"""
+        """ConstantExpression - Conditional expression evaluation: ((1U)==(2L)) ? (1) : (2)\\n"""
         myCpp = PpTokeniser.PpTokeniser()
         myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs('((1U)==(2L)) ? (1) : (2)\n')]
         myObj = ConstantExpression.ConstantExpression(myToksTypes)
         self.assertEqual(2, myObj.evaluate())
+
+    def testConditionalExpression_51(self):
+        """ConstantExpression - Conditional expression evaluation: raises on ((&&)==(||)) ? (1) : (2)\\n"""
+        myCpp = PpTokeniser.PpTokeniser()
+        expression = '((&&)==(||)) ? (1) : (2)\n'
+        myCe = ConstantExpression.ConstantExpression([])
+        m = myCe.RE_CONDITIONAL_EXPRESSION.match(expression)
+        self.assertNotEqual(None, m)
+        myToksTypes = [t for t in myCpp.genLexPptokenAndSeqWs(expression)]
+        # print()
+        # print(myToksTypes)
+        myObj = ConstantExpression.ConstantExpression(myToksTypes)
+        self.assertRaises(ConstantExpression.ExceptionConditionalExpression, myObj.evaluate)
 
 class TestConstantExpressionLinux(unittest.TestCase):
     """Tests various issues discovered in building the Linux kernel."""

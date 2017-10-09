@@ -117,10 +117,26 @@ class TestDirWalk(unittest.TestCase):
     def test_10(self):
         """TestDirWalk.test_10(): Fails if input does not exist."""
         try:
-            for v in DirWalk.dirWalk('no_existent'):
+            for v in DirWalk.dirWalk('non_existent'):
                 print(v)
             self.fail('DirWalk.ExceptionDirWalk not raised.')
         except DirWalk.ExceptionDirWalk:
+            pass
+
+    def test_11(self):
+        """TestDirWalk.test_11(): Input only, [*.py], recursion and biggest first."""
+        print()
+        for v in DirWalk.dirWalk('.', theOut=None, theFnMatch=['*.py'], recursive=True, bigFirst=True):
+            print('{:8d}: {:s}'.format(os.path.getsize(v), v))
+
+    def test_12(self):
+        """TestDirWalk.test_12(): raises."""
+        # self.assertRaises(ValueError, DirWalk.dirWalk, '.', None, 1)
+        try:
+            for v in DirWalk.dirWalk('.', None, 94):
+                print(v)
+            self.fail('ValueError not raised.')
+        except ValueError:
             pass
 
 class TestSpecial(unittest.TestCase):

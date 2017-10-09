@@ -749,6 +749,78 @@ class TestTreePlotTransformTDC(unittest.TestCase):
             ),
         )
 
+    def test_bdcL_bdcP_top(self):
+        """TreePlotTransform.bdcL()/.bdcP(): top."""
+        myObj = TreePlotTransform.TreePlotTransform(self._canvas, rootPos='top')
+        self.assertEqual(
+            myObj.bdcL(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(57, None),
+                Coord.Dim(49, None),
+            ),
+        )
+        self.assertEqual(
+            myObj.bdcP(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(57, None),
+                Coord.Dim(49, None),
+            ),
+        )
+
+    def test_bdcL_bdcP_left(self):
+        """TreePlotTransform.bdcL()/.bdcP(): left."""
+        myObj = TreePlotTransform.TreePlotTransform(self._canvas, rootPos='left')
+        self.assertEqual(
+            myObj.bdcL(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(17, None),
+                Coord.Dim(39, None),
+            ),
+        )
+        self.assertEqual(
+            myObj.bdcP(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(39, None),
+                Coord.Dim(283, None),
+            ),
+        )
+
+    def test_bdcL_bdcP_bottom(self):
+        """TreePlotTransform.bdcL()/.bdcP(): bottom."""
+        myObj = TreePlotTransform.TreePlotTransform(self._canvas, rootPos='bottom')
+        self.assertEqual(
+            myObj.bdcL(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(57, None),
+                Coord.Dim(29, None),
+            ),
+        )
+        self.assertEqual(
+            myObj.bdcP(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(243, None),
+                Coord.Dim(471, None),
+            ),
+        )
+
+    def test_bdcL_bdcP_right(self):
+        """TreePlotTransform.bdcL()/.bdcP(): right."""
+        myObj = TreePlotTransform.TreePlotTransform(self._canvas, rootPos='right')
+        self.assertEqual(
+            myObj.bdcL(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(97, None),
+                Coord.Dim(39, None),
+            ),
+        )
+        self.assertEqual(
+            myObj.bdcP(self._pt, self._box),
+            Coord.Pt(
+                Coord.Dim(461, None),
+                Coord.Dim(97, None),
+            ),
+        )
+
 def unitTest(theVerbosity=2):
     suite = unittest.TestLoader().loadTestsFromTestCase(TestTreePlotTransformSimple)
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(TestTreePlotTransformCanvas))

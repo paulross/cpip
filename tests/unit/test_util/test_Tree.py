@@ -129,6 +129,17 @@ class TestTreeBranches(unittest.TestCase):
     ABA
       [None]""", dt.indentedStr())
 
+    def test_str(self):
+        t = Tree.Tree('A')
+        t.addChild('AA')
+        t.youngestChild.addChild('AAA')
+        t.addChild('AB')
+        t.youngestChild.addChild('ABA')
+        # print()
+        # print(str(t))
+        exp = "[['A'], ['A', 'AA'], ['A', 'AA', 'AAA'], ['A', 'AB'], ['A', 'AB', 'ABA']]"
+        self.assertEquals(exp,str(t))
+
 class TestDuplexAdjacencyList(unittest.TestCase):
     """Tests DuplexAdjacencyList."""
             
@@ -295,6 +306,55 @@ class TestDuplexAdjacencyList(unittest.TestCase):
 # AB -> ['ABA', 'ABB']""",
 #             str(t),
 #         )
+
+    def test_str(self):
+        t = Tree.DuplexAdjacencyList()
+        t.add('parent', 'child_00')
+        t.add('parent', 'child_01')
+        exp = """Parent -> Children:
+parent -> ['child_00', 'child_01']"""
+        # print()
+        # print(str(t))
+        self.assertEqual(exp, str(t))
+
+    def test_treeParentChild_raises(self):
+        """TestDuplexAdjacencyList: Tree with no cycles."""
+        t = Tree.DuplexAdjacencyList()
+        t.add('A', 'AA')
+        t.add('A', 'AB')
+        t.add('AA', 'AAA')
+        t.add('AA', 'AAB')
+        t.add('AB', 'ABA')
+        t.add('AB', 'ABB')
+#         pprint.pprint(t.treeParentChild('A').branches())
+        self.assertRaises(ValueError, t.treeParentChild, 'B')
+
+    def test_treeChildParent(self):
+        """TestDuplexAdjacencyList: Tree with a cycle."""
+        t = Tree.DuplexAdjacencyList()
+        t.add('a', 'b')
+        t.add('b', 'c')
+        t.add('c', 'a')
+        exp = {
+            'a' : [['a'], ['a', 'c'], ['a', 'c', 'b']],
+            'b' : [['b'], ['b', 'a'], ['b', 'a', 'c']],
+            'c' : [['c'], ['c', 'b'], ['c', 'b', 'a']],
+        }
+        # print()
+        # pprint.pprint(t.treeChildParent('a').branches())
+        # pprint.pprint(t.treeChildParent('b').branches())
+        # pprint.pprint(t.treeChildParent('c').branches())
+        for k in exp:
+            self.assertEqual(exp[k], t.treeChildParent(k).branches())
+        # self.assertRaises(ValueError, t.treeChildParent, 'B')
+
+    def test_treeChildParent_raises(self):
+        """TestDuplexAdjacencyList: Tree with a cycle raises."""
+        t = Tree.DuplexAdjacencyList()
+        t.add('a', 'b')
+        t.add('b', 'c')
+        t.add('c', 'a')
+        self.assertRaises(ValueError, t.treeChildParent, 'B')
 
 class NullClass(unittest.TestCase):
     pass

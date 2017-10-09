@@ -471,8 +471,8 @@ class Test_writeFileListTrippleAsTable(unittest.TestCase):
         myF = io.StringIO()
         with XmlWrite.XhtmlStream(myF) as myS:
             HtmlUtils.writeFileListTrippleAsTable(myS, myFileLinkS, {}, False)
-        print()
-        print(myF.getvalue())
+        # print()
+        # print(myF.getvalue())
         self.maxDiff = None
         self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -495,6 +495,251 @@ class Test_writeFileListTrippleAsTable(unittest.TestCase):
   </table>
 </html>
 """)
+
+class Test_writeFilePathsAsTable(unittest.TestCase):
+    """Tests writeFilePathsAsTable()."""
+    def setUp(self):
+        """Set up."""
+        pass
+
+    def tearDown(self):
+        """Tear down."""
+        pass
+
+    def test_00(self):
+        """Test_writeFilePathsAsTable.test_00(): Tests setUp() and tearDown()."""
+        pass
+
+    def test_01(self):
+        """Test_writeFilePathsAsTable.test_01(): writeFilePathsAsTable() - """
+        myF = io.StringIO()
+        myFileNameValueS = [
+            # filename, (href, navText, file_data) where file data is count_inc, count_lines, count_bytes
+            ('spam/chips.lis', ('chips.html', 'Chips', (1, 2, 3))),
+            ('spam/eggs.lis', ('eggs.html', 'Eggs', (10, 11, 12))),
+            ('spam/fishfingers/beans.lis', ('fishfingers/beans.html', 'Beans', (100, 101, 102))),
+            ('spam/fishfingers/peas.lis', ('fishfingers/peas.html', 'Peas', (1000, 1001, 1002))),
+        ]
+        def _tdCallback(theS, attrs, _k, href_nav_text_file_data):
+            """Callback function for the file count table. This comes from CPIPMain.py"""
+            attrs['class'] = 'filetable'
+            href, navText, file_data = href_nav_text_file_data
+            with XmlWrite.Element(theS, 'td', attrs):
+                with XmlWrite.Element(theS, 'a', {'href' : href}):
+                    # Write the nav text
+                    theS.characters(navText)
+            td_attrs = {
+                'width' : "36px",
+                'class' : 'filetable',
+                'align' : "right",
+            }
+            count_inc, count_lines, count_bytes = file_data
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of inclusions
+                theS.characters('%d' % count_inc)
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of lines
+                theS.characters('{:,d}'.format(count_lines))
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of bytes
+                theS.characters('{:,d}'.format(count_bytes))
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of lines * inclusions
+                theS.characters('{:,d}'.format(count_lines * count_inc))
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of bytes * inclusions
+                theS.characters('{:,d}'.format(count_bytes * count_inc))
+
+        with XmlWrite.XhtmlStream(myF) as myS:
+            HtmlUtils.writeFilePathsAsTable(None, myS, myFileNameValueS, 'table_style', fnTd=_tdCallback, fnTrTh=None)
+        # print()
+        # print(myF.getvalue())
+        # self.maxDiff = None
+        # print(myFileLinkS)
+        self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <table class="table_style">
+    <tr>
+      <td class="table_style" rowspan="4">spam/</td>
+      <td class="filetable" colspan="2">
+        <a href="chips.html">Chips</a>
+      </td>
+      <td align="right" class="filetable" width="36px">1</td>
+      <td align="right" class="filetable" width="36px">2</td>
+      <td align="right" class="filetable" width="36px">3</td>
+      <td align="right" class="filetable" width="36px">2</td>
+      <td align="right" class="filetable" width="36px">3</td>
+    </tr>
+    <tr>
+      <td class="filetable" colspan="2">
+        <a href="eggs.html">Eggs</a>
+      </td>
+      <td align="right" class="filetable" width="36px">10</td>
+      <td align="right" class="filetable" width="36px">11</td>
+      <td align="right" class="filetable" width="36px">12</td>
+      <td align="right" class="filetable" width="36px">110</td>
+      <td align="right" class="filetable" width="36px">120</td>
+    </tr>
+    <tr>
+      <td class="table_style" rowspan="2">fishfingers/</td>
+      <td class="filetable">
+        <a href="fishfingers/beans.html">Beans</a>
+      </td>
+      <td align="right" class="filetable" width="36px">100</td>
+      <td align="right" class="filetable" width="36px">101</td>
+      <td align="right" class="filetable" width="36px">102</td>
+      <td align="right" class="filetable" width="36px">10,100</td>
+      <td align="right" class="filetable" width="36px">10,200</td>
+    </tr>
+    <tr>
+      <td class="filetable">
+        <a href="fishfingers/peas.html">Peas</a>
+      </td>
+      <td align="right" class="filetable" width="36px">1000</td>
+      <td align="right" class="filetable" width="36px">1,001</td>
+      <td align="right" class="filetable" width="36px">1,002</td>
+      <td align="right" class="filetable" width="36px">1,001,000</td>
+      <td align="right" class="filetable" width="36px">1,002,000</td>
+    </tr>
+  </table>
+</html>
+""")
+
+
+    def test_02(self):
+        """Test_writeFilePathsAsTable.test_01(): writeFilePathsAsTable() - With header"""
+        myF = io.StringIO()
+        myFileNameValueS = [
+            # filename, (href, navText, file_data) where file data is count_inc, count_lines, count_bytes
+            ('spam/chips.lis', ('chips.html', 'Chips', (1, 2, 3))),
+            ('spam/eggs.lis', ('eggs.html', 'Eggs', (10, 11, 12))),
+            ('spam/fishfingers/beans.lis', ('fishfingers/beans.html', 'Beans', (100, 101, 102))),
+            ('spam/fishfingers/peas.lis', ('fishfingers/peas.html', 'Peas', (1000, 1001, 1002))),
+        ]
+        def _tdCallback(theS, attrs, _k, href_nav_text_file_data):
+            """Callback function for the file count table. This comes from CPIPMain.py"""
+            attrs['class'] = 'filetable'
+            href, navText, file_data = href_nav_text_file_data
+            with XmlWrite.Element(theS, 'td', attrs):
+                with XmlWrite.Element(theS, 'a', {'href' : href}):
+                    # Write the nav text
+                    theS.characters(navText)
+            td_attrs = {
+                'width' : "36px",
+                'class' : 'filetable',
+                'align' : "right",
+            }
+            count_inc, count_lines, count_bytes = file_data
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of inclusions
+                theS.characters('%d' % count_inc)
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of lines
+                theS.characters('{:,d}'.format(count_lines))
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of bytes
+                theS.characters('{:,d}'.format(count_bytes))
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of lines * inclusions
+                theS.characters('{:,d}'.format(count_lines * count_inc))
+            with XmlWrite.Element(theS, 'td', td_attrs):
+                # Write the file count of bytes * inclusions
+                theS.characters('{:,d}'.format(count_bytes * count_inc))
+
+        def _trThCallback(theS, theDepth):
+            """This comes from CPIPMain.py. Create the table header:
+              <tr>
+                <th class="filetable" colspan="9">File Path&nbsp;</th>
+                <th class="filetable">Include Count</th>
+                <th class="filetable">Lines</th>
+                <th class="filetable">Bytes</th>
+                <th class="filetable">Total Lines</th>
+                <th class="filetable">Total Bytes</th>
+              </tr>
+            """
+            with XmlWrite.Element(theS, 'tr', {}):
+                with XmlWrite.Element(theS, 'th', {
+                            'colspan' : '%d' % theDepth,
+                            'class' : 'filetable',
+                        }
+                    ):
+                    theS.characters('File Path')
+                with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+                    theS.characters('Include Count')
+                with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+                    theS.characters('Lines')
+                with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+                    theS.characters('Bytes')
+                with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+                    theS.characters('Total Lines')
+                with XmlWrite.Element(theS, 'th', {'class' : 'filetable'}):
+                    theS.characters('Total Bytes')
+
+        with XmlWrite.XhtmlStream(myF) as myS:
+            HtmlUtils.writeFilePathsAsTable(None, myS, myFileNameValueS, 'table_style', fnTd=_tdCallback, fnTrTh=_trThCallback)
+        # print()
+        # print(myF.getvalue())
+        # self.maxDiff = None
+        # print(myFileLinkS)
+        self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <table class="table_style">
+    <tr>
+      <th class="filetable" colspan="3">File Path</th>
+      <th class="filetable">Include Count</th>
+      <th class="filetable">Lines</th>
+      <th class="filetable">Bytes</th>
+      <th class="filetable">Total Lines</th>
+      <th class="filetable">Total Bytes</th>
+    </tr>
+    <tr>
+      <td class="table_style" rowspan="4">spam/</td>
+      <td class="filetable" colspan="2">
+        <a href="chips.html">Chips</a>
+      </td>
+      <td align="right" class="filetable" width="36px">1</td>
+      <td align="right" class="filetable" width="36px">2</td>
+      <td align="right" class="filetable" width="36px">3</td>
+      <td align="right" class="filetable" width="36px">2</td>
+      <td align="right" class="filetable" width="36px">3</td>
+    </tr>
+    <tr>
+      <td class="filetable" colspan="2">
+        <a href="eggs.html">Eggs</a>
+      </td>
+      <td align="right" class="filetable" width="36px">10</td>
+      <td align="right" class="filetable" width="36px">11</td>
+      <td align="right" class="filetable" width="36px">12</td>
+      <td align="right" class="filetable" width="36px">110</td>
+      <td align="right" class="filetable" width="36px">120</td>
+    </tr>
+    <tr>
+      <td class="table_style" rowspan="2">fishfingers/</td>
+      <td class="filetable">
+        <a href="fishfingers/beans.html">Beans</a>
+      </td>
+      <td align="right" class="filetable" width="36px">100</td>
+      <td align="right" class="filetable" width="36px">101</td>
+      <td align="right" class="filetable" width="36px">102</td>
+      <td align="right" class="filetable" width="36px">10,100</td>
+      <td align="right" class="filetable" width="36px">10,200</td>
+    </tr>
+    <tr>
+      <td class="filetable">
+        <a href="fishfingers/peas.html">Peas</a>
+      </td>
+      <td align="right" class="filetable" width="36px">1000</td>
+      <td align="right" class="filetable" width="36px">1,001</td>
+      <td align="right" class="filetable" width="36px">1,002</td>
+      <td align="right" class="filetable" width="36px">1,001,000</td>
+      <td align="right" class="filetable" width="36px">1,002,000</td>
+    </tr>
+  </table>
+</html>
+""")
+
 
 class TestSpecial(unittest.TestCase):
     """Special tests."""

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# Part of TotalDepth: Petrophysical data processing and presentation
-# Copyright (C) 1999-2014 Paul Ross
+# CPIP is a C/C++ Preprocessor implemented in Python.
+# Copyright (C) 2008-2017 Paul Ross
 # 
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,6 +35,27 @@ from cpip.util import XmlWrite
 # Section: Unit tests.
 ######################
 import unittest
+
+class TestXmlWrite_encode_decode(unittest.TestCase):
+    """Tests XmlWrite encode and decode string."""
+    def test_encodeString(self):
+        self.assertEqual(XmlWrite.encodeString('foo'), '_Zm9v')
+        self.assertEqual(XmlWrite.encodeString('foo', '_'), '_Zm9v')
+        self.assertEqual(XmlWrite.encodeString('foo', '+'), '+Zm9v')
+        self.assertEqual(XmlWrite.encodeString('http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata'),
+                         '_aHR0cDovL3d3dy53My5vcmcvVFIvMTk5OS9SRUMtaHRtbDQwMS0xOTk5MTIyNC90eXBlcy5odG1sI3R5cGUtY2RhdGE_')
+
+    def test_encodeString_bad_prefix_raises(self):
+        self.assertTrue(XmlWrite.RAISE_ON_ERROR)
+        self.assertRaises(XmlWrite.ExceptionXml, XmlWrite.encodeString, 'foo', 'bar')
+
+    def test_decodeString(self):
+        self.assertEqual(XmlWrite.decodeString('_Zm9v'), b'foo')
+
+    def test_nameFromString(self):
+        self.assertEqual(XmlWrite.nameFromString('foo'), 'ZZm9v')
+        self.assertEqual(XmlWrite.nameFromString('http://www.w3.org/TR/1999/REC-html401-19991224/types.html#type-cdata'),
+                         'ZaHR0cDovL3d3dy53My5vcmcvVFIvMTk5OS9SRUMtaHRtbDQwMS0xOTk5MTIyNC90eXBlcy5odG1sI3R5cGUtY2RhdGE_')
 
 class TestXmlWrite(unittest.TestCase):
     """Tests XmlWrite."""
@@ -180,6 +201,18 @@ class TestXmlWrite(unittest.TestCase):
 </Root>
 """)
                        
+    def test_09(self):
+        """TestXmlWrite.test_09(): literal."""
+        myF = io.StringIO()
+        with XmlWrite.XmlStream(myF) as xS:
+            with XmlWrite.Element(xS, 'Root', {'version' : '12.0'}):
+                xS.literal(u'literal&nbsp;text')
+        # print()
+        # print(myF.getvalue())
+        self.assertEqual(myF.getvalue(), """<?xml version='1.0' encoding="utf-8"?>
+<Root version="12.0">literal&nbsp;text</Root>
+""")
+
 
 
 class TestXhtmlWrite(unittest.TestCase):
