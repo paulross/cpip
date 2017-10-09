@@ -85,9 +85,3 @@ rsync to remote target.
 Set up a cron for all of this.
 
 Report to a mailing list?
-
-
-
-
-
-
