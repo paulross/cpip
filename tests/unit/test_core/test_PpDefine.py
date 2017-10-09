@@ -6101,6 +6101,36 @@ al, aq
             myReplaceToks,
             )
 
+class TestPpDefineMisc(TestPpDefine):
+    """Miscellaneous tests."""
+
+    def test_form_feed_after_macro_definition(self):
+        # From: /usr/include/tk.h#885
+        src = u"""#define TK_WM_MANAGEABLE        0x80000\n\x0c\n
+"""
+        src = u""" TK_WM_MANAGEABLE        0x80000\n\x0c\n
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(src)
+            )
+        myGen = myCpp.next()
+        myCppDef = PpDefine.PpDefine(myGen, '/usr/include/tk.h', 885)
+        self.assertEqual(True, myCppDef.isObjectTypeMacro)
+        self.assertEqual('TK_WM_MANAGEABLE', myCppDef.identifier)
+        self.assertEqual(['0x80000',], myCppDef.replacements)
+
+
+    def test_form_feed_within_macro_definition(self):
+        # From: /usr/include/tk.h#885
+        src = u"""#define TK_WM_MANAGEABLE        0x80000\n\x0c\n
+"""
+        src = u""" TK_WM_MANAGEABLE        0x80000 \x0c \n\x0c\n
+"""
+        myCpp = PpTokeniser.PpTokeniser(
+            theFileObj=io.StringIO(src)
+            )
+        myGen = myCpp.next()
+        self.assertRaises(PpDefine.ExceptionCpipDefineBadWs, PpDefine.PpDefine, myGen, '/usr/include/tk.h', 885)
 
 class TestFromCppInternalsTokenspacing(TestPpDefine):
     """Misc. tests on token spacing from CPP internals documentation."""

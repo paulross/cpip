@@ -524,23 +524,31 @@ class PpDefine(object):
         retTok = next(theGen)
         # Note: True is always used as this is always unconditionally compiled
         self._tokenCount.inc(retTok, True)
-        # Check for bad whitespace
-        if retTok.isWs() \
-        and not self._wsHandler.isAllMacroWhitespace(retTok.t):
-            # ISO/IEC 14882:1998(E) 16-2 only ' ' and '\t' as ws
-            if self._wsHandler.isBreakingWhitespace(retTok.t):
-                # '\n' consumed so straightforward raise
-                raise ExceptionCpipDefineBadWs(
-                    'Invalid macro whitespace in "%s"' % retTok.t
-                )
-            else:
-                # Consume to '\n'  and raise
-                self._consumeAndRaise(
-                    theGen,
-                    ExceptionCpipDefineBadWs(
+        # Check for bad whitespace, we only search for whitespace up to and including th '\n' as whitespace after
+        # that is not part of the macro. For example from: /usr/include/tk.h#885
+        # #define TK_WM_MANAGEABLE        0x80000\n\x0c\n
+        # The form feed character is not a cause to raise an exception
+        if retTok.isWs():
+            slice_len = 1
+            for c in retTok.t:
+                if c == '\n':
+                    break
+                slice_len += 1
+            if not self._wsHandler.isAllMacroWhitespace(retTok.t[:slice_len]):
+                # ISO/IEC 14882:1998(E) 16-2 only ' ' and '\t' as ws
+                if self._wsHandler.isBreakingWhitespace(retTok.t):
+                    # '\n' consumed so straightforward raise
+                    raise ExceptionCpipDefineBadWs(
                         'Invalid macro whitespace in "%s"' % retTok.t
-                        )
-                )
+                    )
+                else:
+                    # Consume to '\n'  and raise
+                    self._consumeAndRaise(
+                        theGen,
+                        ExceptionCpipDefineBadWs(
+                            'Invalid macro whitespace in "%s"' % retTok.t
+                            )
+                    )
         return retTok
 
     def _nextNonWsOrNewline(self, theGen):

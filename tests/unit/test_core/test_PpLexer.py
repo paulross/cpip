@@ -2810,7 +2810,28 @@ class TestPpLexerConditionalProblems(TestPpLexer):
             self.fail('ExceptionCppDiagnosticUndefined not raised')
         except PpLexer.ExceptionConditionalExpression:
             self.assertTrue(True)
-                        
+
+    def test_10(self):
+        """TestPpLexerConditionalProblems.test_10(): Conditional statment with continuation"""
+        myLexer = PpLexer.PpLexer(
+                 'mt.h',
+                 CppIncludeStringIO(
+                    [],
+                    [],
+                    u"""#if TK_HEX_VERSION >= 0x08050208 && TK_HEX_VERSION < 0x08060000 || \
+    TK_HEX_VERSION >= 0x08060200
+#define HAVE_LIBTOMMAMTH
+#endif
+""",
+                    {}
+                    ),
+                 diagnostic=CppDiagnostic.PreprocessDiagnosticKeepGoing()
+                 )
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        print()
+        print(result)
+        myLexer.finalise()
+
 class TestPpLexerConditionalWithState(TestPpLexer):
     """Tests PpLexer with conditional source code."""
     def test_00(self):

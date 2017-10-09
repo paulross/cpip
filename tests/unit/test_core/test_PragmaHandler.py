@@ -29,6 +29,30 @@ from cpip.core import PpToken, PragmaHandler
 
 import unittest
 
+class TestPragmaHandlerABC(unittest.TestCase):
+
+    def test_replaceTokens_raises(self):
+        myH = PragmaHandler.PragmaHandlerABC()
+        try:
+            myH.replaceTokens
+            self.fail('NotImplementedError not raised')
+        except NotImplementedError:
+            pass
+
+    def test_pragma_raises(self):
+        myH = PragmaHandler.PragmaHandlerABC()
+        self.assertRaises(NotImplementedError, myH.pragma, [])
+
+class TestPragmaHandlerNull(unittest.TestCase):
+
+    def test_replaceTokens_raises(self):
+        myH = PragmaHandler.PragmaHandlerNull()
+        self.assertFalse(myH.replaceTokens)
+
+    def test_pragma_raises(self):
+        myH = PragmaHandler.PragmaHandlerNull()
+        self.assertEqual('', myH.pragma([]))
+
 class TestPragmaHandlerSTDC(unittest.TestCase):
     def setUp(self):
         pass

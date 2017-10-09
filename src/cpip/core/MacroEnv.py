@@ -261,7 +261,7 @@ class MacroEnv(object):
         try:
             myDef = PpDefine.PpDefine(theGen, theFile, theLine)
         except PpDefine.ExceptionCpipDefineInit as err:
-            raise ExceptionMacroReplacementInit(str(err))
+            raise ExceptionMacroReplacementInit('{!r:s} File: {:s} line: {:d}'.format(str(err), theFile, theLine))
         # Test if attempting to redefine a predefined or undefineable identifier
         if myDef.identifier in self._noDefineIdentifiers:
             raise ExceptionMacroReplacementPredefinedRedefintion(

@@ -268,7 +268,7 @@ class CppCond(object):
     def close(self):
         """Finalisation, may raise :py:class:`ExceptionCppCond` is stack non-empty."""
         if len(self._stateStack) > 0:
-            raise ExceptionCppCond('CppCond.close() on stack %s' % str(self))#str(self._stateStack))
+            raise ExceptionCppCond('CppCond.close() on stack [%d]: %s' % (len(self._stateStack), str(self)))#str(self._stateStack))
 
     def __str__(self):
         """Returns a string representation of the stack.
@@ -650,6 +650,9 @@ class CppCondGraphNode(object):
                             )
         # List of CppCondGraphIfSection child objects as if-sections
         self._childIfSectS = []
+
+    def __str__(self):
+        return '{!r:s} @ {!r:s}'.format([str(v) for v in self._childIfSectS], self._cppDirLoc)
 
     def visit(self, theVisitor, theDepth):
         """Take a visitor object make the pre/post calls."""
