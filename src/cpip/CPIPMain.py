@@ -252,10 +252,17 @@ def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
     return result
 
 def retFileCountMap(theLexer):
-    """Visits the Lexers file include graph and returns a dict of:
-    {file_name : (inclusion_count, line_count, bytes_count).
+    """Visits the Lexers file include graph and returns a dict of::
     
-    The line_count, bytes_count are obtained by reading the file.
+        {file_name : (inclusion_count, line_count, bytes_count).
+    
+    The ``line_count``, ``bytes_count`` are obtained by (re)reading the file.
+
+    :param theLexer: The Lexer
+    :type theLexer: :py:class:`cpip.core.PpLexer.PpLexer`
+    
+    :returns: ``dict({str : tuple([int, int, int])})`` --
+        The file count map.
     """
     myFigr = theLexer.fileIncludeGraphRoot
     myFileNameVis = FileIncludeGraph.FigVisitorFileSet()
@@ -333,31 +340,103 @@ def _dumpMacroEnvDot(theLexer):
     print()
 
 def tuIndexFileName(theTu):
+    """Returns the path to the index output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+    
+    :returns: ``str`` -- path.
+    """
     return 'index_' + HtmlUtils.retHtmlFileName(theTu)
 
 def tuFileName(theTu):
+    """Returns the path to the translation unit output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+    
+    :returns: ``str`` -- path.
+    """
     return os.path.basename(theTu) + '.html'
 
 # def macroHistoryFileName(theItu):
 #     return os.path.basename(theItu)+'_macros'+'.html'
 
 def includeGraphFileNameSVG(theItu):
+    """Returns the path to the SVG output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+    
+    :returns: ``str`` -- path.
+    """
     return os.path.basename(theItu) + '.include.svg'
 
 def includeGraphFileNameCcg(theItu):
+    """Returns the path to the CCG output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+    
+    :returns: ``str`` -- path.
+    """
     return os.path.basename(theItu) + '.ccg.html'
 
 def includeGraphFileNameText(theItu):
+    """Returns the path to the include graph output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+    
+    :returns: ``str`` -- path.
+    """
     return os.path.basename(theItu) + '.include.txt.html'
 
 def includeGraphFileNameDotTxt(theItu):
+    """Returns the path to the DOT output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+    
+    :returns: ``str`` -- path.
+    """
     return os.path.basename(theItu) + '.include.dot'
 
 def includeGraphFileNameDotSVG(theItu):
+    """Returns the path to the SVG DOT output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+    
+    :returns: ``str`` -- path.
+    """
     return os.path.basename(theItu) + '.include.dot.svg'
 
 def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
+    """Writes out the include graph as plain text.
+    
+    :param theOutDir: Output directory.
+    :type theOutDir: ``str``
+    
+    :param theItu: Path to ITU.
+    :type theItu: ``str``
+    
+    :param theLexer: The lexer.
+    :type theLexer: :py:class:`cpip.core.PpLexer.PpLexer`
+    
+    :returns: ``NoneType``
+    """
     def _linkToIndex(theS, theItu):
+        """Writes a link to the index page.
+        
+        :param theS: HTML stream.
+        :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+        
+        :param theItu: ITU file path.
+        :type theItu: ``str``
+        
+        :returns: ``NoneType``
+        """
         with XmlWrite.Element(theS, 'p'):
             theS.characters('Return to ')
             with XmlWrite.Element(theS, 'a', {'href' : tuIndexFileName(theItu)}):
@@ -388,6 +467,16 @@ def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
             _linkToIndex(myS, theItu)
 
 def _writeParagraphWithBreaks(theS, theParas):
+    """Writes the paragraphs with page breaks.
+    
+    :param theS: HTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+    
+    :param theParas: Paragraphs.
+    :type theParas: ``list([str])``
+    
+    :returns: ``NoneType``
+    """
     for i, p in enumerate(theParas):
 #         if i > 0:
 #             with XmlWrite.Element(theS, 'br'):
@@ -398,31 +487,33 @@ def _writeParagraphWithBreaks(theS, theParas):
 def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap,
                      theTokenCntr, hasIncDot, macroHistoryIndexName):
     """Write the index.html for a single TU.
+
+    :param theOutDir: The output directory to write to.
+    :type theOutDir: ``str``
     
-    *theOutDir*
-        The output directory to write to.
+    :param theTuPath: The path to the original ITU.
+    :type theTuPath: ``str``
     
-    *theTuPath*
-        The path to the original ITU.
+    :param theLexer: The pre-processing Lexer that has pre-processed the ITU/TU.
+    :type theLexer: :py:class:`cpip.core.PpLexer.PpLexer`
     
-    *theLexer*
-        The pre-processing Lexer that has pre-processed the ITU/TU. 
-    
-    *theFileCountMap*
-        dict of {file_path : data, ...} where data is things like inclusion
+    :param theFileCountMap: dict of ``{file_path : data, ...}`` where data is things like inclusion
         count, lines, bytes and so on.
+    :type theFileCountMap: ``dict({str : [tuple([<class 'int'>, int, int]), tuple([int, int, <class 'int'>])]})``
     
-    *theTokenCntr*
-        :py:class:`cpip.core.PpTokenCount.PpTokenCount` containing the token
+    :param theTokenCntr: :py:class:`cpip.core.PpTokenCount.PpTokenCount` containing the token
         counts.
+    :type theTokenCntr: :py:class:`cpip.core.PpTokenCount.PpTokenCount`
     
-    *hasIncDot*
-        bool to emit graphviz .dot files.
+    :param hasIncDot: bool to emit graphviz .dot files.
+    :type hasIncDot: ``bool``
     
-    *macroHistoryIndexName*
-        String of the filename of the macro history.
-        
-    Returns: (total_files, total_lines, total_bytes) as integers.
+    :param macroHistoryIndexName: String of the filename of the macro history.
+    :type macroHistoryIndexName: ``str``
+    
+    :returns: ``tuple([int, int, int])`` -- (total_files, total_lines, total_bytes) as integers.
+    
+    :raises: ``StopIteration``
     """
     # Return values
     total_files = total_lines = total_bytes = 0
@@ -603,15 +694,24 @@ pre-processing of this file.""")
     return total_files, total_lines, total_bytes
 
 def _trThCallback(theS, theDepth):
-    """Create the table header:
-      <tr>
-        <th class="filetable" colspan="9">File Path&nbsp;</th>
-        <th class="filetable">Include Count</th>
-        <th class="filetable">Lines</th>
-        <th class="filetable">Bytes</th>
-        <th class="filetable">Total Lines</th>
-        <th class="filetable">Total Bytes</th>
-      </tr>
+    """Create the table header::
+    
+          <tr>
+            <th class="filetable" colspan="9">File Path&nbsp;</th>
+            <th class="filetable">Include Count</th>
+            <th class="filetable">Lines</th>
+            <th class="filetable">Bytes</th>
+            <th class="filetable">Total Lines</th>
+            <th class="filetable">Total Bytes</th>
+          </tr>
+    
+    :param theS: HTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+    
+    :param theDepth: <insert documentation for argument>
+    :type theDepth: ``int``
+    
+    :returns: ``NoneType``
     """
     with XmlWrite.Element(theS, 'tr', {}):
         with XmlWrite.Element(theS, 'th', {
@@ -632,7 +732,22 @@ def _trThCallback(theS, theDepth):
             theS.characters('Total Bytes')
 
 def _tdCallback(theS, attrs, _k, href_nav_text_file_data):
-    """Callback function for the file count table."""
+    """Callback function for the file count table.
+    
+    :param theS: HTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+    
+    :param attrs: Attributes.
+    :type attrs: ``dict({str : [str]})``
+    
+    :param _k: <insert documentation for argument>
+    :type _k: ``list([str])``
+    
+    :param href_nav_text_file_data: <insert documentation for argument>
+    :type href_nav_text_file_data: ``tuple([str, str, tuple([int, int, int])])``
+    
+    :returns: ``NoneType``
+    """
     attrs['class'] = 'filetable'
     href, navText, file_data = href_nav_text_file_data
     with XmlWrite.Element(theS, 'td', attrs):
@@ -663,7 +778,16 @@ def _tdCallback(theS, attrs, _k, href_nav_text_file_data):
 
 def _writeIndexHtmlTrailer(theS, time_start):
     """Write a trailer to the index.html page with the start/finish time and
-    version. If time_start is None then only the current time is written."""
+    version. If time_start is None then only the current time is written.
+    
+    :param theS: HTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+    
+    :param time_start: Start time.
+    :type time_start: ``NoneType, float``
+    
+    :returns: ``NoneType``
+    """
     dt_finish = datetime.datetime.fromtimestamp(time.time())
     time_bits = []
     if time_start is not None:
@@ -697,15 +821,28 @@ def writeIndexHtml(theItuS, theOutDir, theJobSpec,
                    total_files, total_lines, total_bytes):
     """Writes the top level index.html page for a pre-processed file.
     
-    theOutDir - The output directory.
+    :param theItuS: The list of translation units processed.
+    :type theItuS: ``list([str])``
     
-    theTuS - The list of translation units processed.
+    :param theOutDir: The output directory.
+    :type theOutDir: ``str``
     
-    theCmdLine - The command line as a string.
+    :param theJobSpec: The job specification.
+    :type theJobSpec: ``tuple([cpip.core.IncludeHandler.CppIncludeStdOs, dict({str : [str]}), list([_io.StringIO]), NoneType, <class 'NoneType'>, bool, int, list([]), dict({str : [tuple([<class 'bool'>, str]), tuple([<class 'list'>, str]), tuple([int, str]), tuple([list([]), str]), tuple([list([str]), str]), tuple([str, str])]}), <class 'bool'>, str, <class 'bool'>])``
+
+    :param time_start: Time that the process started.
+    :type time_start: ``float``
+
+    :param total_files: Total number of files processed.
+    :type total_files: ``int``
     
-    theOptMap is a map of {opt_name : (value, help), ...} from the
-    command line options.
-    TODO: This is fine but has too many levels of indent.
+    :param total_lines: Total number of lines processed.
+    :type total_lines: ``int``
+    
+    :param total_bytes: Total number of bytes processed.
+    :type total_bytes: ``int``
+    
+    :returns: ``str`` -- The path to the index.html file that has been written.
     """
     indexPath = os.path.join(theOutDir, 'index.html')
     assert len(theItuS) == 1, 'Can only process one TU to an output directory.'
@@ -758,6 +895,16 @@ def writeIndexHtml(theItuS, theOutDir, theJobSpec,
     return indexPath
 
 def _writeCommandLineInvocationToHTML(theS, theJobSpec):
+    """Writes the command line to the index page.
+    
+    :param theS: HTML stream to write to.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+    
+    :param theJobSpec: Job specification.
+    :type theJobSpec: ``__main__.MainJobSpec([cpip.core.IncludeHandler.CppIncludeStdOs, dict({str : [str]}), list([_io.StringIO]), NoneType, <class 'NoneType'>, bool, int, list([]), dict({str : [tuple([<class 'bool'>, str]), tuple([<class 'list'>, str]), tuple([int, str]), tuple([list([]), str]), tuple([list([str]), str]), tuple([str, str])]}), <class 'bool'>, str, <class 'bool'>])``
+    
+    :returns: ``NoneType``
+    """
     # Command line
     with XmlWrite.Element(theS, 'h2'):
         theS.characters('CPIP Command line:')
@@ -807,7 +954,19 @@ def _writeCommandLineInvocationToHTML(theS, theJobSpec):
                         theS.characters(aLine)
 
 def retOptionMap(theOptParser, theOpts):
-    """Returns map of {opt_name : (value, help), ...} from the current options."""
+    """Returns map of {opt_name : (value, help), ...} from the current options.
+
+    :param theOptParser: The option parser.
+    :type theOptParser: ``argparse.ArgumentParser``
+    
+    :param theOpts: Parsed options.
+    :type theOpts: ``argparse.Namespace``
+    
+    :returns: ``dict({str : [tuple([<class 'bool'>, str]), tuple([bool, str]), tuple([int, str]), tuple([list([]), str]), tuple([list([str]), str]), tuple([str, str])]})`` --
+        Option name to value and help text.
+    
+    :raises: ``KeyError``
+    """
     varsOpts = vars(theOpts)
     retMap = {}
     for k in sorted(theOptParser._option_string_actions.keys()):
@@ -997,6 +1156,17 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
     """Preprocess a single file. May raise ExceptionCpip (or worse!).
     Returns a: ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath)
     total_files, total_lines, total_bytes)``
+
+    :param ituPath: Path to the initial translation unit (ITU).
+    :type ituPath: ``str``
+    
+    :param outDir: Output directory.
+    :type outDir: ``str``
+    
+    :param jobSpec: Job specification.
+    :type jobSpec: ``__main__.MainJobSpec([cpip.core.IncludeHandler.CppIncludeStdOs, dict({}), list([_io.StringIO]), NoneType, <class 'NoneType'>, bool, int, list([]), dict({str : [tuple([<class 'bool'>, str]), tuple([<class 'list'>, str]), tuple([int, str]), tuple([list([]), str]), tuple([list([str]), str]), tuple([str, str])]}), <class 'bool'>, str, <class 'bool'>])``
+    
+    :returns: ``__main__.PpProcessResult([str, str, str, int, int, int])`` -- Details of the result.
     """
     assert os.path.isfile(ituPath)
     time_start = time.time()
@@ -1130,7 +1300,10 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
     )
 
 def main():
-    """Processes command line to preprocess a file or a directory."""
+    """Processes command line to preprocess a file or a directory.
+    
+    :returns: ``int`` -- status, 0 is success.
+    """
     program_version = "v%s" % __version__
     program_shortdesc = 'CPIPMain.py - Preprocess the file or the files in a directory.'
     program_license = """%s
