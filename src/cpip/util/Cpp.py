@@ -1,6 +1,6 @@
 """Provides various utilities for interfacing with the platform installaion of cpp.
 This includes using cpp as a sub-process to extract macros.
-This also provides some standard cpp like options used by both cpp.py and CPIPMain.py
+This also provides some standard cpp like options used by both ``cpp.py`` and ``CPIPMain.py``
 
 Created on 24 Jan 2015
 
@@ -12,10 +12,10 @@ import subprocess
 import sys
 
 def invokeCppForPlatformMacros(*args):
-    """Invoke the pre-processor as a sub-process with *args and return a list of macro
+    """Invoke the pre-processor as a sub-process with \*args and return a list of macro
     definition strings.
     
-    By default the preprocessor is 'cpp' but this is overridden if $CPP is set in
+    By default the preprocessor is ``cpp`` but this is overridden if ``$CPP`` is set in
     the environment.
     
     May raise subprocess.CalledProcessError on failure."""
@@ -35,7 +35,13 @@ def invokeCppForPlatformMacros(*args):
     
 
 def addStandardArguments(parser):
-    """This adds standard command line arguments to an argparse argument parser."""
+    """This adds standard command line arguments to an argparse argument parser.
+
+    :param parser: <insert documentation for argument>
+    :type parser: ``argparse.ArgumentParser``
+
+    :returns: ``NoneType``
+    """
     # Macros
     parser.add_argument("-S", "--predefine", action="append", dest="predefines", default=[],
                       help="""Add standard predefined macro definitions of the
@@ -77,10 +83,16 @@ def macroDefinitionDict(cmdLineArgS):
     return retMacros
 
 def macroDefinitionString(cmdLineArgS):
-    """Given a list of command line arguments of the form n<=d> where n is the
-    macro name and d the optional definition this returns a same ordered multi-line
-    string where each line is of the form '#define n d' or '#define n' if d is
-    not present."""
+    """Given a list of command line arguments of the form ``n<=d>`` where ``n`` is the
+    macro name and ``d`` the optional definition this returns a same ordered multi-line
+    string where each line is of the form ``#define n d`` or ``#define n`` if d is
+    not present.
+
+    :param cmdLineArgS: Comman line arguments as strings.
+    :type cmdLineArgS: ``list([])``
+
+    :returns: ``str`` -- Multi line string of macro definitions.
+    """
     retMacros = []
     for d in cmdLineArgS:
         _tup = d.split('=')
@@ -101,9 +113,15 @@ def stdPredefinedMacros(args):
 def predefinedFileObjects(args):
     """Returns a list of file like objects to be pre-processed before the ITU.
     This does in this order:
-    1 Platform specific macros
-    2 Any command line defines
-    3 Any pre-included files
+
+    1. Platform specific macros
+    2. Any command line defines
+    3. Any pre-included files
+
+    :param args: Parsed arguments.
+    :type args: ``argparse.Namespace``
+
+    :returns: ``list([_io.StringIO])`` -- List of file like objects.
     """
     retVal = []
     # First platform specific macros

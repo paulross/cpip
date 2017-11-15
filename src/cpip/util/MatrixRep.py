@@ -33,16 +33,21 @@ class ExceptionMatrixRep(cpip.ExceptionCpip):
 class MatrixRep(object):
     """Makes replacements in a list of lines."""
     def __init__(self):
-        """Constructor."""
+        """Constructor.
+
+        :returns: ``NoneType``"""
         self._ir = {}
 
     def addLineColRep(self, l, c, was, now):
         """Adds to the IR. No test is made to see if there is an existing
         or pre-existing conflicting entry or if a sequence of entries makes
         sense.
+
         It is expected that callers call this in line/column order of the
         original matrix. If not the results of a subsequent call to
-        sideEffect() are undefined. 
+        :py:meth:`sideEffect()` are undefined.
+
+        :returns: ``NoneType``
         """
         try:
             self._ir[l][c] = (len(was), now)
@@ -52,8 +57,14 @@ class MatrixRep(object):
     
     def sideEffect(self, theMat):
         """Makes the replacement, if line/col is out of range and
-        ExceptionMatrixRep will be raised and the state of theMat argument
-        is undefined."""
+        :py:class:`ExceptionMatrixRep` will be raised and the state of ``theMat`` argument
+        is undefined.
+
+        :param theMat: The matrix.
+        :type theMat: ``list([]), list([str])``
+
+        :returns: ``NoneType``
+        """
         #lineS = self._ir.keys()
         #lineS.sort()
         for l in self._ir:

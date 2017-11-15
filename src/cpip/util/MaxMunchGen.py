@@ -33,6 +33,7 @@ class ExceptionMaxMunchGen(ExceptionCpip):
 
 def anyToken(theGen):
     """A function that always reads one token.
+
     This can be used as the last registered function to ensure that the token
     stream is read to completion. The kind returned is None."""
     try:
@@ -46,30 +47,36 @@ class MaxMunchGen(object):
     def __init__(self, theGen, theFnS, isExclusive=False, yieldReplacement=False):
         """Constructor that takes a generator and a list of Maximal munch
         functions.
+
         Each function is required to take a generator as an object and return a
-        triple (count, kind, replace) where:
+        triple ``(count, kind, replace)`` where:
+
         count   - is a integer
         kind    - is arbitrary.
         replace - is None or an iterable.
-        Typically the functions should be written thus:
-        def f(theGen):
-            i = 0
-            for aVal in theGen:
-                if not <some condition of aVal>:
-                    break
-                i +=1
-            return i, <kind>, <replace>
-        Or (note the catching of StopIteration):
-        def f(theGen):
-            i = 0
-            try:
-                while theGen.next() <some condition>:
-                    i += 1
-            except StopIteration:
-                pass
-            return i, <kind>, <replace>
+
+        Typically the functions should be written thus::
+
+            def f(theGen):
+                i = 0
+                for aVal in theGen:
+                    if not <some condition of aVal>:
+                        break
+                    i +=1
+                return i, <kind>, <replace>
+
+        Or (note the catching of StopIteration)::
+
+            def f(theGen):
+                i = 0
+                try:
+                    while theGen.next() <some condition>:
+                        i += 1
+                except StopIteration:
+                    pass
+                return i, <kind>, <replace>
         
-        If isExclusive is True then the first function that returns a non-zero
+        If ``isExclusive`` is ``True`` then the first function that returns a non-zero
         integer will be used and the others will not be exercised for that token.
         """
         self._bufGen = BufGen.BufGen(theGen)
@@ -83,13 +90,15 @@ class MaxMunchGen(object):
     
     def gen(self):
         """Yields a maximal munch.
-        If yieldReplacement is False these will be pairs of (iterable, kind)
+
+        If ``yieldReplacement`` is ``False`` these will be pairs of ``(iterable, kind)``
         where kind is from the function, any replacement will be done on the fly.
-        If yieldReplacement is True these will be triples of
-        (iterable, kind, repl) where kind and repl are from the function with
-        repl being None if no replacement. No replacement will have been done.
+
+        If ``yieldReplacement`` is ``True`` these will be triples of
+        ``(iterable, kind, repl)`` where ``kind`` and ``repl`` are from the function with
+        ``repl`` being ``None`` if no replacement. No replacement will have been done.
         
-        TODO: Reconsider this design. Really yieldReplacement decides if the
+        TODO: Reconsider this design. Really ``yieldReplacement`` decides if the
         underlying generator buffer contains the replacement rather than whether
         self yields the replacement.
         """

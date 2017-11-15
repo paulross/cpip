@@ -27,7 +27,13 @@ Created on 6 Mar 2014
 class Tree(object):
     """Represents a simple tree of objects."""
     def __init__(self, obj):
-        """Constructor, takes any object."""
+        """Constructor, takes any object.
+
+        :param obj: Any object, usually a string.
+        :type obj: ``object``
+
+        :returns: ``NoneType``
+        """
         self._obj = obj
         self._children = []
     
@@ -41,7 +47,9 @@ class Tree(object):
     
     @property
     def youngestChild(self):
-        """The latest child to be added, may raise IndexError if no children."""
+        """The latest child to be added, may raise IndexError if no children.
+
+        :returns: :py:class:`cpip.util.Tree.Tree` -- The youngest child."""
         return self._children[-1]
     
     def __len__(self):
@@ -51,14 +59,30 @@ class Tree(object):
         return str(self.branches())
     
     def addChild(self, obj):
+        """Add a child.
+
+        :param obj: Child.
+        :type obj: ``str``
+
+        :returns: ``NoneType``"""
         self._children.append(Tree(obj))
     
     def branches(self):
         """Returns all the possible branches through the tree as a list of lists
-        of self._obj."""
+        of self._obj.
+
+        :returns: ``list([list([str])])`` -- List of branches."""
         return self._branches(None)
     
     def _branches(self, thisBranch):
+        """
+        <insert documentation for function>
+
+        :param thisBranch: Current branch, None initially.
+        :type thisBranch: ``NoneType, list([str])``
+
+        :returns: ``list([list([str])])`` -- List of branches.
+        """
         if thisBranch is None:
             thisBranch = []
         thisBranch.append(self._obj)
@@ -72,6 +96,7 @@ class DuplexAdjacencyList(object):
     """Represents a set of parent/child relationships (and their inverse) as
     Adjacency Lists."""
     def __init__(self):
+        """Constructor."""
         # Will be map of {parent : [child, ...], ...}
         self._mapPc = {}
         # Will be map of {child : [parent, ...], ...}
@@ -84,10 +109,32 @@ class DuplexAdjacencyList(object):
         return '\n'.join(rList)
         
     def add(self, parent, child):
+        """Adds the parent/child to both internal maps.
+
+        :param parent: Parent.
+        :type parent: ``str``
+
+        :param child: Child.
+        :type child: ``str``
+
+        :returns: ``NoneType``
+        """
         self._add(self._mapPc, parent, child)
         self._add(self._mapCp, child, parent)
     
     def _add(self, theMap, k, v):
+        """Adds the key/value to the existing map.
+
+        :param theMap: Existing map.
+        :type theMap: ``dict({})``
+
+        :param k: Key.
+        :type k: ``str``
+
+        :param v: Value.
+        :type v: ``str``
+
+        :returns: ``NoneType``"""
         try:
             theMap[k].append(v)
         except KeyError:
@@ -108,7 +155,13 @@ class DuplexAdjacencyList(object):
         return parent in self._mapPc
     
     def hasChild(self, child):
-        """Returns True if the given child has any parents."""
+        """Returns True if the given child has any parents.
+
+        :param child: The child
+        :type child: ``str``
+
+        :returns: ``bool`` -- True if the argument is a child is in the map.
+        """
         return child in self._mapCp
     
     def children(self, parent):
@@ -122,11 +175,17 @@ class DuplexAdjacencyList(object):
     def treeParentChild(self, theObj):
         """Returns a Tree() object where the links are the relationships
         between parent and child.
-        Cycles are not reproduced i.e. if a -> b and b -> c and c-> a then
-        treeParentChild('a') returns ['a', 'b', 'c',]
-        treeParentChild('b') returns ['b', 'c', 'a',]
-        treeParentChild('c') returns ['c', 'a', 'c',]
-        """
+
+        Cycles are not reproduced i.e. if ``a -> b`` and ``b -> c`` and ``c -> a`` then::
+
+            treeChildParent('a') # returns ['a', 'c', 'b',]
+            treeChildParent('b') # returns ['b', 'a', 'c',]
+            treeChildParent('c') # returns ['c', 'b', 'a',]
+
+        :param theObj: The object to create a tree from.
+        :type theObj: ``str``
+
+        :returns: :py:class:`cpip.util.Tree.Tree` -- The final tree."""
         if theObj not in self._mapPc:
             raise ValueError('"%s" not in Parent/Child map' % theObj)
         return self._treeFromEither(theObj, self._mapPc)
@@ -136,16 +195,32 @@ class DuplexAdjacencyList(object):
     def treeChildParent(self, theObj):
         """Returns a Tree() object where the links are the relationships
         between child and parent.
-        Cycles are not reproduced i.e. if a -> b and b -> c and c-> a then
-        treeChildParent('a') returns ['a', 'c', 'b',]
-        treeChildParent('b') returns ['b', 'a', 'c',]
-        treeChildParent('c') returns ['c', 'b', 'a',]
-        """
+
+        Cycles are not reproduced i.e. if ``a -> b`` and ``b -> c`` and ``c -> a`` then::
+
+            treeChildParent('a') # returns ['a', 'c', 'b',]
+            treeChildParent('b') # returns ['b', 'a', 'c',]
+            treeChildParent('c') # returns ['c', 'b', 'a',]
+
+        :param theObj: The object to create a tree from.
+        :type theObj: ``str``
+
+        :returns: :py:class:`cpip.util.Tree.Tree` -- The final tree."""
         if theObj not in self._mapCp:
             raise ValueError('"%s" not in Child/Parent map' % theObj)
         return self._treeFromEither(theObj, self._mapCp)
         
     def _treeFromEither(self, theObj, theMap):
+        """Creates a tree from the object.
+
+        :param theObj: The object to create a tree from.
+        :type theObj: ``str``
+
+        :param theMap: The map of str/str.
+        :type theMap: ``dict({str : [list([str])]})``
+
+        :returns: :py:class:`cpip.util.Tree.Tree` -- The final tree.
+        """
         assert theObj in theMap
         retTree = Tree(theObj)
         myStack = [theObj,]
@@ -154,6 +229,19 @@ class DuplexAdjacencyList(object):
         return retTree
         
     def _treeFromMap(self, theMap, theStack, theTree):
+        """Creates a ``Tree`` from a dict of list of strings.
+
+        :param theMap: The dictionary.
+        :type theMap: ``dict({str : [list([str])]})``
+
+        :param theStack: The stack of strings.
+        :type theStack: ``list([str])``
+
+        :param theTree: An existing Tree.
+        :type theTree: :py:class:`cpip.util.Tree.Tree`
+
+        :returns: ``NoneType``
+        """
         if theStack[-1] in theMap:
             for val in theMap[theStack[-1]]:
                 if val not in theStack:

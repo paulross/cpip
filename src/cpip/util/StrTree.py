@@ -29,9 +29,14 @@ __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 #import logging
 
 class StrTree(object):
-    """Initialise the class with a optional list of strings."""
+    """A string tree or Trie."""
     def __init__(self, theIterable=None):
-        """Initialise the class with a optional list of strings."""
+        """Initialise the class with a optional sequence of strings.
+
+        :param theIterable: A sequence of strings.
+        :type theIterable: ``NoneType, set([str])``
+
+        :returns: ``NoneType``"""
         self._ir = {}
         self._b = False
         if theIterable is not None:
@@ -51,7 +56,12 @@ class StrTree(object):
         return sL
 
     def add(self, s):
-        """Add a string."""
+        """Add a string.
+
+        :param s: The string to add.
+        :type s: ``str``
+
+        :returns: ``NoneType``"""
         if s:
             if s[0] not in self._ir:
                 self._ir[s[0]] = StrTree()
@@ -61,8 +71,19 @@ class StrTree(object):
             
     def has(self, s, i=0):
         """Returns the index of the end of s that match a complete word
-        in the tree. i.e. [i:return_value] is in the dictionary.
-        Note IndexError and KeyError are trapped here.""" 
+        in the tree. i.e. ``[i:return_value]`` is in the dictionary.
+
+
+        :param s: value
+        :type s: :py:class:`cpip.util.BufGen.BufGen`, ``str``
+
+        :param i: index
+        :type i: ``int``
+
+        :returns: ``int`` -- index.
+
+        :raises: ``IndexError, KeyError`` NOTE: IndexError and KeyError are trapped here.
+        """
         assert(i >= 0)
         try:
             myI = self._ir[s[i]].has(s, i+1)

@@ -40,20 +40,28 @@ Word = collections.namedtuple(
 
 class MultiPassString(object):
     """Reads a file, the file can be translated any number of times and marked
-    with word types. The latter can then be generated using BufGen for example:
-    myBg = BufGen.BufGen(self._mps.genChars())
-    try:
-        i = 0
-        while 1:
-            print myBg[i]
-            i += 1
-    except IndexError:
-        pass
+    with word types. The latter can then be generated using BufGen for example::
+
+        myBg = BufGen.BufGen(self._mps.genChars())
+        try:
+            i = 0
+            while 1:
+                print myBg[i]
+                i += 1
+        except IndexError:
+            pass
     """
     UNKNOWN_TOKEN_TYPE = 'Unknown'
     EMPTY_TOKEN = ''
     MARKER_CLEAR = -1
     def __init__(self, theFileObj):
+        """Constructor.
+
+        :param theFileObj: File like object.
+        :type theFileObj: ``_io.TextIOWrapper``
+
+        :returns: ``NoneType``
+        """
         # This is a map {int : class Word, ...}
         # Where int is the index, len the word length and type the word type
         self._idxTypeMap = {}
@@ -70,7 +78,9 @@ class MultiPassString(object):
         self._prevChar = ''
 
     def _retZeroIndex(self):
-        """Returns the index to the first non-empty token in the current list."""
+        """Returns the index to the first non-empty token in the current list.
+
+        :returns: ``int`` -- The index."""
         i = 0
         while i < len(self._current):
             # if len(self._current[i]) > 0: might be a bit faster but
@@ -113,17 +123,23 @@ class MultiPassString(object):
     # Section: Markers and setting at marker.
     #========================================
     def setMarker(self):
-        """Sets a mark at this point in the input."""
+        """Sets a mark at this point in the input.
+
+        :returns: ``NoneType``"""
         logging.debug('MultiPassString.setMarker() at %d', self._idxGenChar)
         self._idxMarker = self._idxGenChar
 
     def clearMarker(self):
-        """The mark at this point in the input."""
+        """The mark at this point in the input.
+
+        :returns: ``NoneType``"""
         self._idxMarker = self.MARKER_CLEAR
 
     @property
     def wordLength(self):
-        """The length of the current word."""
+        """The length of the current word.
+
+        :returns: ``int`` -- The length."""
         if self._idxMarker == self.MARKER_CLEAR:
             return 0
         return self._idxGenChar - self._idxMarker
@@ -136,7 +152,16 @@ class MultiPassString(object):
     def setWordType(self, theType, isTerm):
         """Marks a word in the input as a word of type theType starting from the
         marker up to the current place.
-        See removeMarkedWord() for an explanation of isTerm."""
+
+        See :py:meth:`removeMarkedWord()` for an explanation of ``isTerm``.
+
+        :param theType: The type.
+        :type theType: ``str``
+
+        :param isTerm: Is a terminal character.
+        :type isTerm: ``bool``
+
+        :returns: ``NoneType``"""
         logging.debug('MultiPassString.setWordType() "%s", isTerm=%s', theType, isTerm)
         if self._idxMarker == self.MARKER_CLEAR:
             raise ExceptionMultiPass('setWordType(): when no marker present.')
@@ -154,13 +179,19 @@ class MultiPassString(object):
     def removeMarkedWord(self, isTerm):
         """Remove the current marked word. isTerm is a boolean that is True
         if the current position is a terminal character.
+
         For example if you want to split a string into lines then \\n is a
-        terminal character and you would call this with isTerm=True.
+        terminal character and you would call this with ``isTerm=True``.
+
         However if you were splitting a string into words and whitespace then
         a whitespace following a word is not the terminal character so at the
         pint of receiving the whitespace character you would call this with
-        isTerm=False
-        """
+        ``isTerm=False``
+
+        :param isTerm: True if a terminal character.
+        :type isTerm: ``bool``
+
+        :returns: ``NoneType``"""
         if self._idxMarker == self.MARKER_CLEAR:
             raise ExceptionMultiPass('removeMarkedWord(): when no marker present.')
         # NOTE: Do not manipulate self._idxMarker here as a typical use case
@@ -180,12 +211,30 @@ class MultiPassString(object):
             self.__set(self._idxMarker+l, self.EMPTY_TOKEN)
     
     def setAtMarker(self, theRepl):
-        """Sets the token at the current marker to be theRepl."""
+        """Sets the token at the current marker to be theRepl.
+
+        :param theRepl: The repl.
+        :type theRepl: ``str``
+
+        :returns: ``NoneType``
+
+        :raises: ``ExceptionMultiPass`` no marker present."""
         if self._idxMarker == self.MARKER_CLEAR:
             raise ExceptionMultiPass('setAtMarker(): when no marker present.')
         self._current[self._idxMarker] = theRepl
         
     def __set(self, idx, repl):
+        """Sets a marker.
+
+        :param idx: Index of marker.
+        :type idx: ``int``
+
+        :param repl: The marker.
+        :type repl: ``str``
+
+        :returns: ``NoneType``
+
+        :raises: ``ExceptionMultiPass`` in index error."""
         assert(len(self._origStr) == len(self._current))
         if idx > self._idxGenChar:
             raise ExceptionMultiPass(
@@ -196,12 +245,22 @@ class MultiPassString(object):
     
     def removeSetReplaceClear(self, isTerm, theType, theRepl):
         """This provides a helper combination function for a common operation of:
+
         - Removing the marked word from the output.
         - Setting the word type in the input.
         - Replacing the marked word with a replacement string.
         - Clearing the current marker.
-        See removeMarkedWord() for an explanation of isTerm and theType.
-        See setAtMarker() for an explanation of theRepl."""
+
+        :param isTerm: See :py:meth:`removeMarkedWord()` for an explanation of this.
+        :type isTerm: ``bool``
+
+        :param theType: See :py:meth:`removeMarkedWord()` for an explanation of this.
+        :type theType: ``str``
+
+        :param theRepl: See :py:meth:`setAtMarker()` for an explanation of this.
+        :type theRepl: ``str``
+
+        :returns: ``NoneType``"""
         self.removeMarkedWord(isTerm=isTerm)
         self.setWordType(theType, isTerm=isTerm)
         self.setAtMarker(theRepl)
@@ -216,7 +275,8 @@ class MultiPassString(object):
     def genChars(self):
         """Generates the current set of characters.
         This can be used as the generator for the BufGen and that BufGen can
-        be passed to the PpTokeniser _slice... Functions."""
+        be passed to the ``PpTokeniser _slice...`` Functions.
+        """
         assert(len(self._origStr) == len(self._current))
         self._prevChar = ''
         self._idxGenChar = self._retZeroIndex()
@@ -227,8 +287,11 @@ class MultiPassString(object):
             self._idxGenChar += 1
 
     def genWords(self):
-        """Generates pairs (word, type) from the original string.
-        TODO: Solve the overlap problem."""
+        """Generates pairs ``(word, type)`` from the original string.
+
+        TODO: Solve the overlap problem.
+
+        :returns: ``NoneType``, ``tuple([str, str])`` -- a pair of ``(word, type)``"""
         idx = 0
         k = 0
         for k in sorted(self._idxTypeMap.keys()):

@@ -6,8 +6,10 @@ CommonPrefix
 ***********************************
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
 .. automodule:: cpip.util.CommonPrefix
-   :members:
+    :members:
+    :special-members:
+    :private-members:
    

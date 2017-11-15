@@ -6,5 +6,10 @@
 IncGraphSVGBase
 ======================
 
+.. toctree::
+    :maxdepth: 2
+
 .. automodule:: cpip.IncGraphSVGBase
-   :members:
+    :members:
+    :special-members:
+    :private-members:

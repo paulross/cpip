@@ -31,8 +31,11 @@ import base64
 from cpip import ExceptionCpip
 
 #: Global flag that sets the error behaviour
-#: If True then this module may raise an ExceptionXml and that might mask other
-#: exceptions. If False no ExceptionXml will be raised but a logging.error(...)
+#:
+#: If ``True`` then this module may raise an ``ExceptionXml`` and that might mask other
+#: exceptions.
+#:
+#: If ``False`` no ExceptionXml will be raised but a ``logging.error(...)``
 #: will be written. These will not mask other Exceptions. 
 RAISE_ON_ERROR = True
 
@@ -49,9 +52,10 @@ class ExceptionXmlEndElement(ExceptionXml):
 #####################################
 def encodeString(theS, theCharPrefix='_'):
     """Returns a string that is the argument encoded.
-    RFC3548:
+
+    From RFC3548:
     
-    .. code-block:
+    .. code-block:: text
 
                            Table 1: The Base 64 Alphabet
         Value Encoding  Value Encoding  Value Encoding  Value Encoding
@@ -74,6 +78,14 @@ def encodeString(theS, theCharPrefix='_'):
            16 Q            33 h            50 y
 
     See section 3 of : http://www.faqs.org/rfcs/rfc3548.html
+
+    :param theS: The string to be encoded.
+    :type theS: ``str``
+
+    :param theCharPrefix: A character to prefix the string.
+    :type theCharPrefix: ``str``
+
+    :returns: ``str`` -- Encoded string.
     """
     if len(theCharPrefix) != 1:
         errMsg = 'Prefix for encoding string must be a single character, not "%s"' % theCharPrefix
@@ -121,7 +133,12 @@ def nameFromString(theStr):
     followed by any number of letters, digits ([0-9]), hyphens ("-"),
     underscores ("_"), colons (":"), and periods (".").
     
-    This also works for in namespaces as ':' is not used in the encoding."""
+    This also works for in namespaces as ':' is not used in the encoding.
+
+    :param theStr: The string to be encoded.
+    :type theStr: ``str``
+
+    :returns: ``str`` -- Encoded string."""
     return encodeString(theStr, 'Z')
 #################################
 # End: Encoding/decoding methods.
@@ -143,14 +160,24 @@ class XmlStream(object):
     def __init__(self, theFout, theEnc='utf-8', theDtdLocal=None, theId=0, mustIndent=True):
         """Initialise with a writable file like object or a file path.
         
-        theFout - The file-like object or a path as a string. If the latter it
-        will be closed on __exit__.
-        
-        theEnc - The encoding to be used.
-        
-        theDtdLocal - Any local DTD as a string.
-        
-        id - An integer value to use as an ID string."""
+        :param theFout: The file-like object or a path as a string. If the latter it
+            will be closed on __exit__.
+        :type theFout: ``_io.TextIOWrapper, str``
+
+        :param theEnc: The encoding to be used.
+        :type theEnc: ``str``
+
+        :param theDtdLocal: Any local DTD as a string.
+        :type theDtdLocal: ``NoneType``, ``str``
+
+        :param theId: An integer value to use as an ID string.
+        :type theId: ``int``
+
+        :param mustIndent: Flag, if True the elements will be indented (pretty printed).
+        :type mustIndent: ``bool``
+
+        :returns: ``NoneType``
+        """
         if isinstance(theFout, str):
             self._file = open(theFout, 'w')
             self._fileClose = True
@@ -169,25 +196,38 @@ class XmlStream(object):
     
     @property
     def id(self):
-        """A unique ID in this stream. The ID is incremented on each call."""
+        """A unique ID in this stream. The ID is incremented on each call.
+
+        :returns: ``str`` -- The ID."""
         self._intId += 1
         return '%d' % (self._intId-1)
     
     @property
     def _canIndent(self):
-        """Returns True if indentation is possible (no mixed content etc.)"""
+        """Returns True if indentation is possible (no mixed content etc.).
+
+        :returns: ``bool`` -- True if the element can be indented."""
         for b in self._canIndentStk:
             if not b:
                 return False
         return True
     
     def _flipIndent(self, theBool):
+        """Set the value at the tip of the indent stack to the given value.
+
+        :param theBool: Flag for indenting.
+        :type theBool: ``bool``
+
+        :returns: ``NoneType``
+        """
         assert(len(self._canIndentStk) > 0)
         self._canIndentStk.pop()
         self._canIndentStk.append(theBool)
         
     def xmlSpacePreserve(self):
-        """Suspends indentation for this element and its descendants."""
+        """Suspends indentation for this element and its descendants.
+
+        :returns: ``NoneType``"""
         if len(self._canIndentStk) == 0:
             errMsg = 'xmlSpacePreserve() on empty stack.'
             if RAISE_ON_ERROR:
@@ -196,7 +236,15 @@ class XmlStream(object):
         self._flipIndent(False)
     
     def startElement(self, name, attrs):
-        """Opens a named element with attributes."""
+        """Opens a named element with attributes.
+
+        :param name: Element name.
+        :type name: ``str``
+
+        :param attrs: Element attributes.
+        :type attrs: ``dict({str : [str]}), dict({})``
+
+        :returns: ``NoneType``"""
         self._closeElemIfOpen()
         self._indent()
         self._file.write(u'<%s' % name)
@@ -208,7 +256,13 @@ class XmlStream(object):
         self._elemStk.append(name)
 
     def characters(self, theString):
-        """Encodes the string and writes it to the output."""
+        """Encodes the string and writes it to the output.
+
+        :param theString: The content.
+        :type theString: ``str``
+
+        :returns: ``NoneType``
+        """
         self._closeElemIfOpen()
         encStr = self._encode(theString)
         self._file.write(encStr)
@@ -216,14 +270,29 @@ class XmlStream(object):
         self._flipIndent(False)
 
     def literal(self, theString):
-        """Writes theString to the output without encoding."""
+        """Writes theString to the output without encoding.
+
+        :param theString: The content.
+        :type theString: ``str``
+
+        :returns: ``NoneType``
+        """
         self._closeElemIfOpen()
         self._file.write(theString)
         # mixed content - don't indent
         self._flipIndent(False)
 
     def comment(self, theS, newLine=False):
-        """Writes a comment to the output stream."""
+        """Writes a comment to the output stream.
+
+        :param theS: The comment.
+        :type theS: ``str``
+
+        :param newLine: If True the comment is written on a new line, if False it is written inline.
+        :type newLine: ``bool``
+
+        :returns: ``NoneType``
+        """
         self._closeElemIfOpen()
         if newLine:
             self._indent()
@@ -238,7 +307,13 @@ class XmlStream(object):
         self._flipIndent(False)
 
     def endElement(self, name):
-        """Ends an element."""
+        """Ends an element.
+
+        :param name: Element name.
+        :type name: ``str``
+
+        :returns: ``NoneType``
+        """
         if len(self._elemStk) == 0:
             errMsg = 'endElement() on empty stack'
             if RAISE_ON_ERROR:
@@ -264,13 +339,18 @@ class XmlStream(object):
         
         Example:
         
-        .. code-block: c
+        .. code-block:: html
 
             <script type="text/ecmascript">
             //<![CDATA[
             ...
             // ]]>
             </script>
+
+        :param theData: The ECMA script content.
+        :type theData: ``str``
+
+        :returns: ``NoneType``
         """
         self.startElement('script', {'type' : "text/ecmascript"})
         self.writeCDATA(theScript)
@@ -281,11 +361,16 @@ class XmlStream(object):
         
         Example:
         
-        .. code-block: c
+        .. code-block:: html
 
             <![CDATA[
             ...
             ]]>
+
+        :param theData: The CDATA content.
+        :type theData: ``str``
+
+        :returns: ``NoneType``
         """
         self._closeElemIfOpen()
         self.xmlSpacePreserve()
@@ -299,11 +384,16 @@ class XmlStream(object):
         
         Example:
         
-        .. code-block: c
+        .. code-block:: html
 
             <style type="text/css"><![CDATA[
                 ...
             ]]></style>
+
+        :param theCSSMap: Map of CSS elements.
+        :type theCSSMap: ``dict({str : [dict({str : [str]}), dict({str : [str]})]})``
+
+        :returns: ``NoneType``
         """
         self.startElement('style', {'type' : "text/css"})
         theLines = []
@@ -316,17 +406,34 @@ class XmlStream(object):
         self.endElement('style')
     
     def _indent(self, offset=0):
+        """Write out the indent string.
+
+        :param offset: The offset.
+        :type offset: ``int``
+
+        :returns: ``NoneType``
+        """
         if self._canIndent:
             self._file.write(u'\n')
             self._file.write(self.INDENT_STR*(len(self._elemStk)-offset))
         
     def _closeElemIfOpen(self):
+        """Close the element if open.
+
+        :returns: ``NoneType``
+        """
         if self._inElem:
             self._file.write(u'>')
             self._inElem = False
 
     def _encode(self, theStr):
-        """"Apply the XML encoding such as '<' to '&lt;'"""
+        """"Apply the XML encoding such as ``'<'`` to ``'&lt;'``
+
+        :param theStr: String to encode.
+        :type theStr: ``str``
+
+        :returns: ``str`` -- Encoded string.
+        """
         if sys.version_info.major == 2:
             # Python 2 clunkiness
             result = []
@@ -341,13 +448,27 @@ class XmlStream(object):
             return theStr.translate(self.ENTITY_MAP)
     
     def __enter__(self):
-        """Context manager support."""
+        """Context manager support.
+
+        :returns: ``cpip.plot.SVGWriter.SVGWriter,cpip.util.XmlWrite.XhtmlStream`` -- self"""
         self._file.write(u"<?xml version='1.0' encoding=\"%s\"?>" % self._enc)
         # Write local DTD?
         return self
     
     def __exit__(self, exc_type, exc_value, traceback):
-        """Context manager support."""
+        """Context manager support.
+
+        :param excType: Exception type, if raised.
+        :type excType: ``NoneType``
+
+        :param excValue: Exception, if raised.
+        :type excValue: ``NoneType``
+
+        :param tb: Traceback, if raised.
+        :type tb: ``NoneType``
+
+        :returns: ``NoneType``
+        """
         while len(self._elemStk):
             self.endElement(self._elemStk[-1])
         self._file.write(u'\n')
@@ -362,8 +483,12 @@ class XmlStream(object):
 # Section: XHTML Stream writer.
 ###############################
 class XhtmlStream(XmlStream):
+    """Specialisation of an XmlStream to handle XHTML."""
     def __enter__(self):
-        """Context manager support."""
+        """Context manager support.
+
+        :returns: ``cpip.util.XmlWrite.XhtmlStream`` -- self
+        """
         super(XhtmlStream, self).__enter__()
         self._file.write(u"""\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">""")
         self.startElement(
@@ -377,7 +502,13 @@ class XhtmlStream(XmlStream):
         return self
 
     def charactersWithBr(self, sIn):
-        """Writes the string replacing any \\n characters with <br/> elements."""
+        """Writes the string replacing any ``\\n`` characters with ``<br/>`` elements.
+
+        :param sIn: The string to write.
+        :type sIn: ``str``
+
+        :returns: ``NoneType``
+        """
         while len(sIn) > 0:
             i = sIn.find('\n')
             if i != -1:
@@ -398,19 +529,47 @@ class XhtmlStream(XmlStream):
 class Element(object):
     """Represents an element in a markup stream."""
     def __init__(self, theXmlStream, theElemName, theAttrs=None):
+        """Constructor.
+
+        :param theXmlStream: The XML stream.
+        :type theXmlStream: ``cpip.plot.SVGWriter.SVGWriter, cpip.util.XmlWrite.XhtmlStream``
+
+        :param theElemName: Element name.
+        :type theElemName: ``str``
+
+        :param theAttrs: Element attributes
+        :type theAttrs: ``NoneType, dict({str : [str]}), dict({})``
+
+        :returns: ``NoneType``
+        """
         self._stream = theXmlStream
         self._name = theElemName
         self._attrs = theAttrs or {}
 
     def __enter__(self):
-        """Context manager support."""
+        """Context manager support.
+
+        :returns: ``cpip.plot.SVGWriter.SVGGroup,cpip.plot.SVGWriter.SVGLine,cpip.plot.SVGWriter.SVGRect,cpip.plot.SVGWriter.SVGText,cpip.util.XmlWrite.Element`` -- self
+        """
         # Write element and attributes to the stream
         self._stream.startElement(self._name, self._attrs)
         return self
     
     def __exit__(self, excType, excValue, tb):
         """Context manager support.
-        TODO: Should respect RAISE_ON_ERROR here if excType is not None."""
+        TODO: Should respect RAISE_ON_ERROR here if excType is not None.
+
+        :param excType: Exception type, if raised.
+        :type excType: ``NoneType``
+
+        :param excValue: Exception, if raised.
+        :type excValue: ``NoneType``
+
+        :param tb: Traceback, if raised.
+        :type tb: ``NoneType``
+
+        :returns: ``NoneType``
+        """
 #        if excType is not None:
 #            print('excType=  ', excType)
 #            print('excValue= ', excValue)

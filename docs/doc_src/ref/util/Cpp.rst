@@ -2,13 +2,13 @@
 .. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
 ***********************************
-DirWalk
+Cpp
 ***********************************
 
 .. toctree::
     :maxdepth: 2
 
-.. automodule:: cpip.util.DirWalk
+.. automodule:: cpip.util.Cpp
     :members:
     :special-members:
     :private-members:

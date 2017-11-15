@@ -77,6 +77,8 @@ def processIncGraphToSvg(theLex, theFilePath, theClass, tptPos, tptSweep):
     myIgs.plotToFilePath(theFilePath, myTpt)
 
 class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
+    """Sub-class of :py:class:`cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase` for writing out
+    the include graphs as an SVG file."""
     COMMON_UNITS            = 'mm'
     # User units for viewBox and ploygon
     UNNAMED_UNITS           = 'px'
@@ -114,6 +116,16 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     SCALE_MAX_Y = Coord.Dim(1000, 'mm')
 #    POPUP_COORD_Y_OFFSET = Coord.Dim(20, 'pt')
     def __init__(self, theFig, theLineNum):
+        """Constructor.
+
+        :param theFig: The file include graph.
+        :type theFig: ``NoneType, cpip.core.FileIncludeGraph.FileIncludeGraph``
+
+        :param theLineNum: The line number of the parent file that included me.
+        :type theLineNum: ``int``
+
+        :returns: ``NoneType``
+        """
         super(SVGTreeNodeBase, self).__init__(theLineNum)
         self._isRoot = theFig is None
         if theFig is None:
@@ -191,13 +203,13 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     
     @property
     def bb(self):
-        """Returns a PlotNode.PlotNodeBboxBoxy() object for this node."""
+        """Returns a :py:class:`cpip.plot.PlotNode.PlotNodeBboxBoxy` object for this node."""
         assert(self._bb is not None)
         return self._bb
     
     @property
     def plotCanvas(self):
-        """The logical size of the plot canvas as a Coord.Box()."""
+        """The logical size of the plot canvas as a :py:class:`cpip.plot.Coord.Box`."""
         return self.bb.bbSigma
     #========================================
     # End: Accessor methods used by ancestors
@@ -214,13 +226,34 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
                 
     def plotToFilePath(self, theFileName, theTpt):
         """Root level call to plot to a SVG file, theTpt is an
-        TreePlotTransform object and is used to transform the internal logical
-        coordinates to physical plot positions."""
+        :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform` object
+        and is used to transform the internal logical
+        coordinates to physical plot positions.
+
+        :param theFileName: File path for output.
+        :type theFileName: ``str``
+
+        :param theTpt: The transformer used to transform the internal logical
+            coordinates to physical plot positions.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         self.plotToFileObj(open(theFileName, 'w'), theTpt)
         
     def plotToFileObj(self, theFileObj, theTpt):
         """Root level call to plot to a file object. The SVG stream is
-        created here."""
+        created here.
+
+        :param theFileObj: The output file object.
+        :type theFileObj: ``_io.TextIOWrapper``
+
+        :param theTpt: The transformer used to transform the internal logical
+            coordinates to physical plot positions.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         if self._numPassesToPlotSelf < 1:
             raise ValueError('No self._numPassesToPlotSelf set!')
         # Make viewBox user coordinates * self.VIEWBOX_SCALE
@@ -305,7 +338,26 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
 
     def plotToSVGStream(self, theSvg, theDatumL, theTpt, passNum, idStack):
         """Plot me to a stream and my children at the logical datum point,
-        this is a recursive call."""
+        this is a recursive call.
+
+        :param theSvg: The SVG stream.
+        :type theSvg: :py:class`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: The Datum.
+        :type theDatumL: :py:class:`cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`
+
+        :param theTpt: The transformer used to transform the internal logical
+            coordinates to physical plot positions.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :param passNum: The pass number.
+        :type passNum: ``int``
+
+        :param idStack: Stack of id's.
+        :type idStack: ``list([]), list([int, str]), list([str])``
+
+        :returns: ``NoneType``
+        """
         self.commentFunctionBegin(theSvg, File=self._fileName, Pass=passNum)
         if not self.isRoot:
             if self.lineNum != -1:
@@ -355,7 +407,16 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
         raise NotImplementedError('_plotSelfToChildren() not implemented')
     
     def _enumerateChildren(self, theDatumL, theTpt):
-        """Generates a tuple of (index, logical_datum_point) for my children."""
+        """Generates a tuple of (index, logical_datum_point) for my children.
+
+        :param theDatumL: The coordinate.
+        :type theDatumL: :py:class:`cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`
+
+        :param theTpt: The transformer.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType,tuple([int, cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])])`` -- The children
+        """
         assert(len(self._children) > 0)
         datumChildL = theTpt.startChildrenLogicalPos(
                             self._bb.childBboxDatum(theDatumL),
@@ -370,7 +431,13 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     # Section: Writing SVG code to do pop-up text.
     #=============================================
     def _writeECMAScript(self, theSvg):
-        """Writes the ECMA script for pop-up text switching."""
+        """Writes the ECMA script for pop-up text switching.
+
+        :param theSvg: The SVG stream.
+        :type theSvg: :py:class`cpip.plot.SVGWriter.SVGWriter`
+
+        :returns: ``NoneType``
+        """
         myScriptS = []
         myScriptS.append("""
 function swapOpacity(idFrom, idTo) {
@@ -480,16 +547,27 @@ function scaleGraphic(scale, theId) {
 
     def _writeStringListToTspan(self, theSvg, thePointX, theList):
         """Converts a multi-line string to tspan elements in monospaced format.
-        theSvg is the SVG stream.
-        theAttrs is the attributes of the enclosing <text> element.
-        theStr is the string to write.
-        
+
         This writes the tspan elements within an existing text element, thus:
-        <text id="original.alt" font-family="Courier" font-size="12" text-anchor="middle" x="250" y="250">
-            <tspan xml:space="preserve"> One</tspan>
-            <tspan x="250" dy="1em" xml:space="preserve"> Two</tspan>
-            <tspan x="250" dy="1em" xml:space="preserve">Three</tspan>
-        </text>
+
+        .. code-block:: html
+
+            <text id="original.alt" font-family="Courier" font-size="12" text-anchor="middle" x="250" y="250">
+                <tspan xml:space="preserve"> One</tspan>
+                <tspan x="250" dy="1em" xml:space="preserve"> Two</tspan>
+                <tspan x="250" dy="1em" xml:space="preserve">Three</tspan>
+            </text>
+
+        :param theSvg: The SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param thePointX: Coordinate.
+        :type thePointX: :py:class:`cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`
+
+        :param theList: List of strings to write.
+        :type theList: ``list([str])``
+
+        :returns: ``NoneType``
         """
         #theSvg.xmlSpacePreserve()
         for i, aLine in enumerate(theList):

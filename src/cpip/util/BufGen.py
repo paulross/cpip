@@ -36,7 +36,13 @@ class ExceptionBufGen(ExceptionCpip):
 class BufGen(object):
     """A generator class with a buffer."""
     def __init__(self, theGen):
-        """Constructor with a generator as and argument."""
+        """Constructor with a generator as an argument.
+
+        :param theGen: The generator to use.
+        :type theGen: ``generator``
+
+        :returns: ``NoneType``
+        """
         self._gen = theGen
         self._buf = []
     
@@ -45,7 +51,15 @@ class BufGen(object):
 
     def __getitem__(self, key):
         """Implements indexing and slicing. Negative indexes will raise an
-        IndexError."""
+        IndexError.
+
+        :param key: The index.
+        :type key: ``int``
+
+        :returns: ``str`` -- The buffer corresponding to the key.
+
+        :raises: ``IndexError, StopIteration``
+        """
         idx = key
         if isinstance(key, slice):
             idx = key.stop - 1

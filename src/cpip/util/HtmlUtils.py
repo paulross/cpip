@@ -34,7 +34,13 @@ from cpip.util import DictTree
     
 def retHtmlFileName(thePath):
     """Creates a unique, short, human readable file name base on the input
-    file path."""
+    file path. This is the file name plus a hash of the path.
+
+    :param thePath: The file path.
+    :type thePath: ``str``
+
+    :returns: ``str`` -- The name.
+    """
     # Use normpath rather than abspath as the latter makes tests fragile
     if sys.version_info[0] == 2:
         myBy = bytes(os.path.normpath(thePath))
@@ -48,26 +54,35 @@ def retHtmlFileName(thePath):
 def retHtmlFileLink(theSrcPath, theLineNum):
     """Returns a string that is a link to a HTML file.
     
-    *theSrcPath : str*
-        The path of the original source, whis will be encoded with retHtmlFileName().
-    *theLineNum : int*
-        An integer line number in the target.
+    :param theSrcPath: The path of the original source, whis will be encoded with :py:func:`retHtmlFileName()`.
+    :type theSrcPath: ``str``
+
+    :param theLineNum: An integer line number in the target.
+    :type theLineNum: ``int``
+
+    :returns: ``str`` -- The link text.
     """
     return "%s#%d" % (retHtmlFileName(theSrcPath), theLineNum)
 
 def writeHtmlFileLink(theS, theSrcPath, theLineNum, theText='', theClass=None):
     """Writes a link to another HTML file that represents source code.
     
-    *theS*
-        The XHTML stream.
-    *theSrcPath : str*
-        The path of the original source, this will be encoded with retHtmlFileName().
-    *theLineNum : int*
-        An integer line number in the target.
-    *theText : str, optional*
-        Navigation text.
-    *theClass : obj, optional*
-        CSS class for the navigation text.
+    :param theS: The XHTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+
+    :param theSrcPath: The path of the original source, whis will be encoded with :py:func:`retHtmlFileName()`.
+    :type theSrcPath: ``str``
+
+    :param theLineNum: An integer line number in the target.
+    :type theLineNum: ``int``
+
+    :param theText: Navigation text.
+    :type theText: ``str``
+
+    :param theClass: Optional CSS class for the navigation text.
+    :type theClass: ``NoneType, str``
+
+    :returns: ``NoneType``
     """
     with XmlWrite.Element(
             theS,
@@ -87,12 +102,16 @@ def writeCharsAndSpan(theS, theText, theSpan):
     """Write theText to the stream theS. If theSpan is not None the text is
     enclosed in a ``<span class=theSpan>`` element.
 
-    *theS*
-        The XHTML stream.
-    *theText : str*
-        The text to write, must be non-empty.
-    *theClass : str, optional*
-        CSS class for the text.
+    :param theS: The XHTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+
+    :param theText: The text to write, must be non-empty.
+    :type theText: ``str``
+
+    :param theSpan: CSS class for the text.
+    :type theSpan: ``str``
+
+    :returns: ``NoneType``
     """
     assert theText
     if theSpan is None:
@@ -104,16 +123,22 @@ def writeCharsAndSpan(theS, theText, theSpan):
 def writeHtmlFileAnchor(theS, theLineNum, theText='', theClass=None, theHref=None):
     """Writes an anchor.
     
-    *theS*
-        The XHTML stream.
-    *theLineNum : int*
-        An integer line number in the target.
-    *theText : str, optional*
-        Navigation text.
-    *theClass : str, optional*
-        CSS class for the navigation text.
-    *theHref : str, optional*
-        The href=.
+    :param theS: The XHTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+
+    :param theLineNum: An integer line number in the target.
+    :type theLineNum: ``int``
+
+    :param theText: Navigation text.
+    :type theText: ``str``
+
+    :param theClass: CSS class for the navigation text.
+    :type theClass: ``str``
+
+    :param theHref: The HREF.
+    :type theHref: ``NoneType, str``
+
+    :returns: ``NoneType``
     """
     with XmlWrite.Element(theS, 'a', {'name' : "%d" % theLineNum}):
         pass
@@ -125,7 +150,13 @@ def writeHtmlFileAnchor(theS, theLineNum, theText='', theClass=None, theHref=Non
                 writeCharsAndSpan(theS, theText, theClass)
 
 def pathSplit(p):
-    """Split a path into its components."""
+    """Split a path into its components.
+
+    :param p: The path.
+    :type p: ``str``
+
+    :returns: ``list([str])`` -- The split path.
+    """
     #print 'TRACE: pathSplit(%s):' % p
     #p = os.path.splitdrive(p)[1]
     p = os.path.normpath(p)
@@ -161,12 +192,29 @@ def writeFileListTrippleAsTable(theS, theFileLinkS, tableAttrs, includeKeyTail):
     writeDictTreeAsTable(theS, myDict, tableAttrs, includeKeyTail)
 
 def writeDictTreeAsTable(theS, theDt, tableAttrs, includeKeyTail):
-    """Writes a DictTreeHtmlTable object as a table, for example as a directory
-    structure.
+    """Writes a :py:class:`cpip.util.DictTree.DictTreeHtmlTable` object as a table,
+    for example as a directory structure.
     
     The key list in the DictTreeHtmlTable object is the path to the file
     i.e. ``os.path.abspath(p).split(os.sep)`` and the value is expected to be a
-    pair of ``(link, nav_text)`` or ``None``."""
+    pair of ``(link, nav_text)`` or ``None``.
+
+    :param theS: HTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+
+    :param theDt: The table.
+    :type theDt: :py:class:`cpip.util.DictTree.DictTreeHtmlTable`
+
+    :param tableAttrs: Table element attributes.
+    :type tableAttrs: ``dict({str : [str]})``
+
+    :param includeKeyTail: Include keys in the tail.
+    :type includeKeyTail: ``bool``
+
+    :returns: ``NoneType``
+
+    :raises: ``StopIteration``
+    """
     # Write: <table border="2" width="100%">
     # Propogate table class attribute
     myAttrs = {}
@@ -216,40 +264,51 @@ def writeDictTreeAsTable(theS, theDt, tableAttrs, includeKeyTail):
     
 def writeFilePathsAsTable(valueType, theS, theKvS, tableStyle, fnTd, fnTrTh=None):
     """Writes file paths as a table, for example as a directory structure.
-    
-    *valueType*
-        The type of the value: ``None, |'list' | 'set'``
-    *theS*
-        The HTML stream.
-    *theKvS: list*
-        A list of pairs ``(file_path, value)``.
-    *tableStyle: str*
-        The style used for the table.
-    *fnTd*
+
+    :param valueType: The type of the value: ``None, |'list' | 'set'``
+    :type valueType: ``NoneType, str``
+
+    :param theS: The HTML stream.
+    :type theS: ``cpip.util.XmlWrite.XhtmlStream``
+
+    :param theKvS: A list of pairs ``(file_path, value)``.
+    :type theKvS: ``list([tuple([str, tuple([str, str, tuple([<class 'int'>, int, int])])]), tuple([str, tuple([str, str, tuple([int, int, int])])])]), list([tuple([str, tuple([str, str])])])``
+
+    :param tableStyle: The CSS style used for the table.
+    :type tableStyle: ``str``
+
+    :param fnTd:
         A callback function that is executed for a ``<td>`` element when
         there is a non-None value. This is called with the following arguments:
-        
+
             *theS*
                 The HTML stream.
-                
+
             *attrs : dict*
                 A map of attrs that include the rowspan/colspan for the <td>
-                
+
             *k : list*
                 The key as a list of path components.
-                
+
             *v*
                 The value given by the caller.
-    *fnTrTh*
-        Callback function for the header that will be called with the following
+    :type fnTd: ``function``
+
+    :param fnTrTh:
+        Optional callback function for the header that will be called with the following
         arguments:
-        
+
             *theS*
                 The HTML stream.
-                
+
             *pathDepth*
                 Maximum depth of the largest path, this can be used for
-                <th colspan="...">File path</th>.
+                ``<th colspan="...">File path</th>``.
+    :type fnTrTh: ``NoneType, function``
+
+    :returns: ``NoneType``
+
+    :raises: ``StopIteration``
     """
     myDict = DictTree.DictTreeHtmlTable(valueType)
     for k, v in theKvS:

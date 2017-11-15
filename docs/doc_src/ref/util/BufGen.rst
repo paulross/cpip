@@ -6,8 +6,10 @@ BufGen
 ***********************************
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
 .. automodule:: cpip.util.BufGen
-   :members:
+    :members:
+    :special-members:
+    :private-members:
    

@@ -6,8 +6,10 @@ DictTree
 ***********************************
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
 .. automodule:: cpip.util.DictTree
-   :members:
+    :members:
+    :special-members:
+    :private-members:
    

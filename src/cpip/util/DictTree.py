@@ -293,24 +293,49 @@ class DictTreeHtmlTable(DictTree):
         self._colSpan = self._rowSpan = 1
 
     def retNewInstance(self):
+        """A new instance of a :py:class:`cpip.util.DictTree.DictTreeHtmlTable`.
+
+        :returns: :py:class:`cpip.util.DictTree.DictTreeHtmlTable` -- A new instance.
+        """
         return DictTreeHtmlTable(self._vI)
 
     @property
     def colSpan(self):
+        """The column span.
+
+        :returns: ``int`` -- The span.
+        """
         return self._colSpan
 
     @property
     def rowSpan(self):
+        """The row span.
+
+        :returns: ``int`` -- The span.
+        """
         return self._rowSpan
 
     def setColRowSpan(self):
-        """Top level call that sets colspan and rowspan attributes."""
+        """Top level call that sets colspan and rowspan attributes.
+
+        :returns: ``NoneType``"""
         self._setRowSpan()
         maxDepth = self.depth()
         self._setColSpan(maxDepth, -1)
 
     def _setColSpan(self, mD, d):
-        """"""
+        """Sets the column span.
+
+        This is an internal recursive call.
+
+        :param mD: ???
+        :type mD: ``int``
+
+        :param d: Depth
+        :type d: ``int``
+
+        :returns: ``NoneType``
+        """
         if self._ir is None:
             # Leaf node
             self._colSpan = mD- d
@@ -321,7 +346,9 @@ class DictTreeHtmlTable(DictTree):
                 aTree._setColSpan(mD, d+1)
     
     def _setRowSpan(self):
-        """Sets self._rowSpan recursively."""
+        """Sets self._rowSpan recursively.
+
+        :returns: ``int`` -- The row span."""
         retVal = 1
         if self._ir is None:
             self._rowSpan = 1
@@ -333,12 +360,17 @@ class DictTreeHtmlTable(DictTree):
         return self._rowSpan
 
     def genColRowEvents(self):
-        """Returns a set of events that are quadruples.
-        (key_branch, value, rowspan_int, colspan_int)
-        The branch is a list of keys the from the branch of the tree.
-        The rowspan and colspan are both integers.
-        At the start of the a <tr> there will be a ROW_OPEN
-        and at row end (</tr> a ROW_CLOSE will be yielded
+        """Returns a set of events that are a tuple of quadruples
+        ``(key_branch, value, rowspan_integer, colspan_integer)``
+
+        For example: ``(['a', 'b'], 'c', 3, 7)``
+
+        At the start of the a <tr> there will be a ``ROW_OPEN`` yielded
+        and at row end (``</tr>``) a ``ROW_CLOSE`` will be yielded.
+
+        :returns: ``NoneType,tuple([NoneType, int, <class 'int'>]),tuple([list([str]), NoneType, int, <class 'int'>]),tuple([list([str]), NoneType, int, int]),tuple([list([str]), list([tuple([str, <class 'str'>])]), int, <class 'int'>]),tuple([list([str]), list([tuple([str, str])]), int, <class 'int'>]),tuple([list([str]), tuple([str, str, tuple([int, int, int])]), <class 'int'>, <class 'int'>])`` -- <insert documentation for return values>
+
+        :raises: ``StopIteration``
         """
         self.setColRowSpan()
         hasYielded = False
@@ -351,11 +383,22 @@ class DictTreeHtmlTable(DictTree):
             yield self.ROW_CLOSE
     
     def _genColRowEvents(self, keyBranch):
-        """Returns a set of events that are a tuple of quadruples.
-        (key_branch, value, rowspan_integer, colspan_integer)
-        For example: (['a', 'b'], 'c', 3, 7)
-        At the start of the a <tr> there will be a ROW_OPEN
-        and at row end (</tr> a ROW_CLOSE will be yielded
+        """Returns a set of events that are a tuple of quadruples
+        ``(key_branch, value, rowspan_integer, colspan_integer)``
+
+        This is an internal recursive call.
+
+        For example: ``(['a', 'b'], 'c', 3, 7)``
+
+        At the start of the a <tr> there will be a ``ROW_OPEN`` yielded
+        and at row end (``</tr>``) a ``ROW_CLOSE`` will be yielded.
+
+        :param keyBranch: Branch
+        :type keyBranch: ``list([]), list([str])``
+
+        :returns: ``NoneType,tuple([NoneType, int, <class 'int'>]),tuple([list([str]), NoneType, int, <class 'int'>]),tuple([list([str]), NoneType, int, int]),tuple([list([str]), list([tuple([str, <class 'str'>])]), int, <class 'int'>]),tuple([list([str]), list([tuple([str, str])]), int, <class 'int'>]),tuple([list([str]), tuple([str, str, tuple([int, int, int])]), <class 'int'>, <class 'int'>])`` -- <insert documentation for return values>
+
+        :raises: ``StopIteration``
         """
         if self._ir is not None:
             # Non-leaf
@@ -386,6 +429,3 @@ class DictTreeHtmlTable(DictTree):
                 retVal += '%s%s r=%d, c=%d\n' % ('  '*d, k, self._ir[k].rowSpan, self._ir[k].colSpan)
                 retVal += self._ir[k]._walkColRowSpan(d+1, dMax)
         return retVal
-                
-
-        

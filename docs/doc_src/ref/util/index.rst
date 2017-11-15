@@ -10,12 +10,14 @@ cpip.util
 
 	BufGen
 	CommonPrefix
+	Cpp
 	DictTree
 	DirWalk
 	HtmlUtils
 	ListGen
 	MatrixRep
 	MaxMunchGen
+	MultiPassString
 	OaS
 	StrTree
 	Tree

@@ -2,14 +2,14 @@
 .. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
 ***********************************
-DirWalk
+MultiPassString
 ***********************************
 
 .. toctree::
     :maxdepth: 2
 
-.. automodule:: cpip.util.DirWalk
+.. automodule:: cpip.util.MultiPassString
     :members:
     :special-members:
     :private-members:
-   
+    
