@@ -154,6 +154,7 @@ class ExceptionPlotNode(ExceptionCpip):
 class PlotNodeBbox(object):
     """This is a class that can hold the width and depth of an object and
     the bounding box of self and the children.
+
     This can then compute various dimensions of self and children.""" 
     def __init__(self):
         """Constructor."""
@@ -163,12 +164,12 @@ class PlotNodeBbox(object):
         self._depth = None
         # Additional space between me and my children that is equal to how
         # all other sibling parents behave.
-        # This will be set to a Coord.Dim()
+        # This will be set to a :py:class:`cpip.plot.Coord.Dim`
         self._bbSpaceChildren = None
-        # Padding around me. This will be a Coord.Pad()
+        # Padding around me. This will be a :py:class:`cpip.plot.Coord.Pad`
         self._bbSelfPadding = None
         # The cumulative Bounding Box of the children.
-        # This will be a Coord.Box()
+        # This will be a :py:class:`cpip.plot.Coord.Box`
         self._bbChildren = None
         self._numChildren = 0
 
@@ -189,7 +190,13 @@ class PlotNodeBbox(object):
 
     def _raiseOnChildIndexOutOfRange(self, childIndex):
         """Will raise a ExceptionPlotNode is the childIndex is out of range or
-        I have no children."""
+        I have no children.
+
+        :param childIndex: The Index.
+        :type childIndex: ``int``
+
+        :returns: ``NoneType``
+        """
         if self._numChildren <= 0:
             raise ExceptionPlotNode('PlotNodeBboxBoxy.pcRoll() when no children %d' % self._numChildren)
         if childIndex < 0:
@@ -200,7 +207,13 @@ class PlotNodeBbox(object):
             
     def extendChildBbox(self, theChildBbox):
         """Extends the child bounding box by the amount theChildBbox which
-        should be a Coord.Box(). This extends the .... line."""
+        should be a :py:class:`cpip.plot.Coord.Box`. This extends the ``....`` line above.
+
+        :param theChildBbox: The additional bounding box.
+        :type theChildBbox: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``NoneType``
+        """
         if self._bbChildren is None:
             newWidth=theChildBbox.width
             newDepth=theChildBbox.depth
@@ -213,12 +226,22 @@ class PlotNodeBbox(object):
     # Properties that are set/get
     @property
     def numChildren(self):
+        """The number of children.
+
+        :returns: ``int`` -- The number of children.
+        """
         return self._numChildren
     
     @property
     def width(self):
-        """The immediate width of the node, if None then no BB width is
-        allocated. i.e. the width of box ####"""
+        """The immediate width of the node, if None then no BB depth or
+        bbSpaceChildrend is allocated. i.e. the depth of box ``####``
+
+        :param value: The depth.
+        :type value: ``cpip.plot.Coord.Dim([float, str])``
+
+        :returns: ``NoneType,cpip.plot.Coord.Dim([float, str])`` -- The depth.
+        """
         return self._width
 
     @width.setter
@@ -228,7 +251,13 @@ class PlotNodeBbox(object):
     @property
     def depth(self):
         """The immediate depth of the node, if None then no BB depth or
-        bbSpaceChildrend is allocated. i.e. the depth of box ####"""
+        bbSpaceChildrend is allocated. i.e. the depth of box ``####``
+
+        :param value: The depth.
+        :type value: ``cpip.plot.Coord.Dim([float, str])``
+
+        :returns: ``NoneType,cpip.plot.Coord.Dim([float, str])`` -- The depth.
+        """
         return self._depth
 
     @depth.setter
@@ -237,7 +266,10 @@ class PlotNodeBbox(object):
         
     @property
     def box(self):
-        """The Coord.Box() of ####."""
+        """The :py:class:`cpip.plot.Coord.Box` of ``####``.
+
+        :returns: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- The box
+        """
         return Coord.Box(self._width, self._depth)
          
     @property
@@ -248,7 +280,13 @@ class PlotNodeBbox(object):
     @property
     def bbSpaceChildren(self):
         """The additional distance to give to the children as a
-        Coord.Dim()."""
+        :py:class:`cpip.plot.Coord.Dim`.
+
+        :param value: Spacing between children.
+        :type value: ``cpip.plot.Coord.Dim([float, str])``
+
+        :returns: ``NoneType,cpip.plot.Coord.Dim([float, str])`` -- Spacing between children.
+        """
         if self._bbSpaceChildren is None:
             return Coord.zeroBaseUnitsDim()
         return self._bbSpaceChildren
@@ -259,7 +297,10 @@ class PlotNodeBbox(object):
 
     @property
     def bbSelfPadding(self):
-        """The immediate padding around self as a Coord.Pad()."""
+        """The immediate padding around self as a :py:class:`cpip.plot.Coord.Pad`.
+
+        :returns: ``NoneType,cpip.plot.Coord.Pad([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>]), cpip.plot.Coord.Dim([float, <class 'str'>]), cpip.plot.Coord.Dim([<class 'float'>, <class 'str'>])])`` -- Padding
+        """
         if self._bbSelfPadding is None:
             return Coord.zeroBaseUnitsPad()
         return self._bbSelfPadding
@@ -270,8 +311,10 @@ class PlotNodeBbox(object):
 
     @property
     def bbChildren(self):
-        """The bounding box of children as a Coord.Box() or None.
-        i.e. the box ...."""
+        """The bounding box of children as a :py:class:`cpip.plot.Coord.Box` or None.
+        i.e. the box ``....``
+
+        :returns: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Bounding box."""
         return self._bbChildren
 
     @bbChildren.setter
@@ -280,23 +323,29 @@ class PlotNodeBbox(object):
 
     @property
     def bbChildrenWidth(self):
-        """The bounding box width of children as a Coord.Dim() or None.
-        i.e. the width of box ...."""
+        """The bounding box width of children as a :py:class:`cpip.plot.Coord.Dim` or None.
+        i.e. the width of box ``....``
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Width"""
         if self._bbChildren is not None:
             return self._bbChildren.width
 
     @property
     def bbChildrenDepth(self):
-        """The bounding box depth of children as a Coord.Dim() or None.
-        i.e. the depth of box ...."""
+        """The bounding box depth of children as a :py:class:`cpip.plot.Coord.Dim` or None.
+        i.e. the depth of box ``....``
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Depth"""
         if self._bbChildren is not None:
             return self._bbChildren.depth
 
     # Computed properties
     @property
     def bbSelfWidth(self):
-        """The width of self plus padding as a Coord.Dim() or None.
-        i.e. the width of box ~~~~"""
+        """The width of self plus padding as a :py:class:`cpip.plot.Coord.Dim` or None.
+        i.e. the width of box ``~~~~``
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Width"""
         if self.width is None:
             return Coord.Dim(0, None)
         myPad = self.bbSelfPadding
@@ -304,8 +353,10 @@ class PlotNodeBbox(object):
 
     @property
     def bbSelfDepth(self):
-        """The depth of self plus padding as a Coord.Dim().
-        i.e. the depth of box ~~~~"""
+        """The depth of self plus padding as a :py:class:`cpip.plot.Coord.Dim`.
+        i.e. the depth of box ``~~~~``
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Depth"""
         if self.depth is None:
             return Coord.Dim(0, None)
         myPad = self.bbSelfPadding
@@ -313,9 +364,11 @@ class PlotNodeBbox(object):
 
     @property
     def bbSigmaWidth(self):
-        """The depth of self+children as a Coord.Dim() or None in the case that
+        """The depth of self+children as a :py:class:`cpip.plot.Coord.Dim` or None in the case that
         I don't exist and I have no children.
-        i.e. the width of box ``****``"""
+        i.e. the width of box ``****``
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Width"""
         if self.width is None:
             # Don't leave space to plot me...
             return self.bbChildrenWidth
@@ -325,9 +378,11 @@ class PlotNodeBbox(object):
 
     @property
     def bbSigmaDepth(self):
-        """The depth of self+children as a Coord.Dim() or None in the case that
+        """The depth of self+children as a :py:class:`cpip.plot.Coord.Dim` or None in the case that
         I don't exist and I have no children.
-        i.e. the depth of box ``****``"""
+        i.e. the depth of box ``****``
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Depth"""
         if self.depth is None:
             # Don't leave space to plot me...
             return self.bbChildrenDepth
@@ -340,15 +395,18 @@ class PlotNodeBbox(object):
 
     @property
     def bbSigma(self):
-        """Bounding box of self and my children as a Coord.Box()."""
+        """Bounding box of self and my children as a :py:class:`cpip.plot.Coord.Box`."""
         return Coord.Box(width=self.bbSigmaWidth, depth=self.bbSigmaDepth)
     
     # Computed points
     # Given X each instance of this class knows:
     # S, Pl, Pt, P[0] to P[N-1], x[0] (only).
     def _incXToSelfDatum(self):
-        """The amount to increment X to get from the logical datum point, D, to
-        the logical point S."""
+        """The amount to increment ``X`` to get from the logical datum point, ``D``, to
+        the logical point ``S``.
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Increment.
+        """
         assert(
                (self.numChildren == 0 and self.bbChildrenWidth is None)
                or (self.numChildren >= 0 and self.bbChildrenWidth is not None)
@@ -365,8 +423,11 @@ class PlotNodeBbox(object):
         return incX
     
     def _incYToSelfDatum(self):
-        """The amount to increment Y to get from the logical datum point, D, to
-        the logical point S."""
+        """The amount to increment ``Y`` to get from the logical datum point, ``D``, to
+        the logical point ``S``.
+
+        :returns: ``cpip.plot.Coord.Dim([float, str])`` -- Increment.
+        """
         assert(
                (self.numChildren == 0 and self.bbChildrenWidth is None)
                or (self.numChildren >= 0 and self.bbChildrenWidth is not None)
@@ -379,7 +440,13 @@ class PlotNodeBbox(object):
         return incY
     
     def plotPointSelf(self, theDatum):
-        """The point S as a Coord.Pt() given theDatum as Coord.Pt()."""
+        """The point ``S`` as a :py:class:`cpip.plot.Coord.Pt` given theDatum as :py:class:`cpip.plot.Coord.Pt`.
+
+        :param theDatum: Datum
+        :type theDatum: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Point ``S``
+        """
         return Coord.newPt(theDatum, self._incXToSelfDatum(), self._incYToSelfDatum())
 
     def plotPointCentre(self, theLd):
@@ -393,8 +460,14 @@ class PlotNodeBbox(object):
         return Coord.newPt(theLd, incX, incY)
 
     def childBboxDatum(self, theDatum):
-        """The point x[0] as a Coord.Pt() given theDatum as Coord.Pt() or None
-        if no children."""
+        """The point ``x[0]`` above as a :py:class:`cpip.plot.Coord.Pt` given theDatum as :py:class:`cpip.plot.Coord.Pt` or None
+        if no children.
+
+        :param theDatum: Datum
+        :type theDatum: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Point ``x[0]``
+        """
         assert(
                (self.numChildren == 0 and self.bbChildrenWidth is None)
                or (self.numChildren >= 0 and self.bbChildrenWidth is not None)
@@ -416,7 +489,7 @@ class PlotNodeBbox(object):
     
 class PlotNodeBboxBoxy(PlotNodeBbox):
     """Sub-class parent child edges that contact the corners of the
-    box shown as #### above."""
+    box shown as ``####`` above."""
 
     def _pcXForChild(self, childIndex):
         self._raiseOnChildIndexOutOfRange(childIndex)
@@ -430,8 +503,17 @@ class PlotNodeBboxBoxy(PlotNodeBbox):
 
     def pcRoll(self, theDatum, childIndex):
         """The me-as-parent-to-child logical start point given the logical datum
-        as a Coord.Pt and the child ordinal. This gives equispaced points along
-        the lower edge."""
+        as a :py:class:`cpip.plot.Coord.Pt` and the child ordinal. This gives equispaced points along
+        the lower edge.
+
+        :param theDatum: Logical datum.
+        :type theDatum: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param childIndex: Index
+        :type childIndex: ``int``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Start point.
+        """
         incX = self._pcXForChild(childIndex)
         if self.depth is None:
             # Don't leave space to plot me...
@@ -443,8 +525,17 @@ class PlotNodeBboxBoxy(PlotNodeBbox):
         
     def pcTo(self, theDatum, childIndex):
         """The me-as-parent-to-child logical take off point given the logical
-        datum as a Coord.Pt ind the child ordinal. This gives equispaced points
-        along the lower edge."""
+        datum as a :py:class:`cpip.plot.Coord.Pt` ind the child ordinal. This gives equispaced points
+        along the lower edge.
+
+        :param theDatum: Logical datum.
+        :type theDatum: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param childIndex: Index
+        :type childIndex: ``int``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Take off point.
+        """
         incX = self._pcXForChild(childIndex)
         if self.depth is None:
             # Don't leave space to plot me...
@@ -455,28 +546,70 @@ class PlotNodeBboxBoxy(PlotNodeBbox):
         return Coord.newPt(theDatum, incX, incY)
         
     def pcLand(self, theLd):
-        """The parent-to-me-as-child landing point given the logical datum as a Coord.Pt."""
+        """The parent-to-me-as-child landing point given the logical datum as a :py:class:`cpip.plot.Coord.Pt`.
+
+        :param theLd: Logical datum.
+        :type theLd: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Landing point.
+        """
         return Coord.newPt(theLd, self._incXToSelfDatum(), Coord.zeroBaseUnitsDim())
         
     def pcStop(self, theLd):
-        """The parent-to-me-as-child stop point given the logical datum as a Coord.Pt."""
+        """The parent-to-me-as-child stop point given the logical datum as a :py:class:`cpip.plot.Coord.Pt`.
+
+        :param theLd: Logical datum.
+        :type theLd: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Stop point.
+        """
         return Coord.newPt(theLd, self._incXToSelfDatum(), self._incYToSelfDatum())
 
     def cpRoll(self, theLd):
-        """The me-as-child-to-parent start point given the logical datum as a Coord.Pt."""
+        """The me-as-child-to-parent start point given the logical datum as a :py:class:`cpip.plot.Coord.Pt`.
+
+        :param theLd: Logical datum.
+        :type theLd: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Start point.
+        """
         if self.width is not None:
             return Coord.newPt(theLd, self._incXToSelfDatum()+self.width, self._incYToSelfDatum())
         
     def cpTo(self, theLd):
-        """The me-as-child-to-parent take off point given the logical datum as a Coord.Pt."""
+        """The me-as-child-to-parent take off point given the logical datum as a :py:class:`cpip.plot.Coord.Pt`.
+
+        :param theLd: Logical datum.
+        :type theLd: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Take off point.
+        """
         return Coord.newPt(theLd, self._incXToSelfDatum()+self.width, Coord.zeroBaseUnitsDim())
 
     def cpLand(self, theLd, childIndex):
-        """The me-as-parent-from-child landing point given the logical datum as a Coord.Pt."""
+        """The me-as-parent-from-child landing point given the logical datum as a :py:class:`cpip.plot.Coord.Pt`.
+
+        :param theLd: Logical datum.
+        :type theLd: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param childIndex: Index
+        :type childIndex: ``int``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Landing point.
+        """
         return self.pcTo(theLd, childIndex)
         
     def cpStop(self, theLd, childIndex):
-        """The me-as-parent-from-child stop point given the logical datum as a Coord.Pt."""
+        """The me-as-parent-from-child stop point given the logical datum as a :py:class:`cpip.plot.Coord.Pt`.
+
+        :param theLd: Logical datum.
+        :type theLd: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param childIndex: Index
+        :type childIndex: ``int``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Stop point.
+        """
         return self.pcRoll(theLd, childIndex)
 
 class PlotNodeBboxRoundy(PlotNodeBbox):
@@ -485,41 +618,47 @@ class PlotNodeBboxRoundy(PlotNodeBbox):
     
     def pcRoll(self, theDatumL, childIndex):
         """The me-as-parent-to-child logical start point given the logical datum
-        as a Coord.Pt ind the child ordinal. This gives equispaced points along
+        as a :py:class:`cpip.plot.Coord.Pt` ind the child ordinal. This gives equispaced points along
         the lower edge."""
         self._raiseOnChildIndexOutOfRange(childIndex)
         return self.plotPointCentre(theDatumL)
         
     def pcTo(self, theDatumL, childIndex):
         """The me-as-parent-to-child logical take off point given the logical
-        datum as a Coord.Pt ind the child ordinal. This gives equispaced points
+        datum as a :py:class:`cpip.plot.Coord.Pt` ind the child ordinal. This gives equispaced points
         along the lower edge."""
         self._raiseOnChildIndexOutOfRange(childIndex)
         return Coord.newPt(self.plotPointCentre(theDatumL), incX=None, incY=self.depth.scale(0.5))
         #return self.plotPointCentre(theDatumL)
 
     def pcLand(self, theDatumL):
-        """The parent-to-me-as-child landing point given the logical datum as a Coord.Pt."""
+        """The parent-to-me-as-child landing point given the logical datum as a :py:class:`cpip.plot.Coord.Pt`."""
         return Coord.newPt(self.plotPointCentre(theDatumL), incX=None, incY=self.depth.scale(-0.5))
         #return theDatumL#self.plotPointCentre(theDatumL)
         
     def pcStop(self, theDatumL):
-        """The parent-to-me-as-child stop point given the logical datum as a Coord.Pt."""
+        """The parent-to-me-as-child stop point given the logical datum as a
+        :py:class:`cpip.plot.Coord.Pt`."""
         return self.plotPointCentre(theDatumL)
 
     def cpRoll(self, theDatumL):
-        """The me-as-child-to-parent start point given the logical datum as a Coord.Pt."""
+        """The me-as-child-to-parent start point given the logical datum as a
+        :py:class:`cpip.plot.Coord.Pt`."""
         return self.pcStop(theDatumL)#theDatumL#self.plotPointCentre(theDatumL)
         
     def cpTo(self, theDatumL):
-        """The me-as-child-to-parent take off point given the logical datum as a Coord.Pt."""
+        """The me-as-child-to-parent take off point given the logical datum as a
+        :py:class:`cpip.plot.Coord.Pt`."""
         return self.pcLand(theDatumL)#theDatumL#self.plotPointCentre(theDatumL)
 
     def cpLand(self, theDatumL, childIndex):
-        """The me-as-parent-from-child landing point given the logical datum as a Coord.Pt."""
+        """The me-as-parent-from-child landing point given the logical datum as a
+         :py:class:`cpip.plot.Coord.Pt`."""
         return self.pcTo(theDatumL, childIndex)#theDatumL#self.plotPointCentre(theDatumL)
         
     def cpStop(self, theDatumL, childIndex):
-        """The me-as-parent-from-child stop point given the logical datum as a Coord.Pt."""
+        """The me-as-parent-from-child stop point given the logical datum as a
+        :py:class:`cpip.plot.Coord.Pt`.
+        """
         return self.pcRoll(theDatumL, childIndex)#theDatumL#self.plotPointCentre(theDatumL)
 

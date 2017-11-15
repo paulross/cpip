@@ -1,9 +1,14 @@
-************************
-SVGWriter
-************************
+.. moduleauthor:: Paul Ross <apaulross@gmail.com>
+.. sectionauthor:: Paul Ross <apaulross@gmail.com>
+
+******************************
+TreePlotTransform
+******************************
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
 .. automodule:: cpip.plot.SVGWriter
-   :members: 
+    :members:
+    :special-members:
+    :private-members:

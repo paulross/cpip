@@ -128,7 +128,19 @@ class TreePlotTransform(object):
     RANGE_SWEEPDIR = ['-', '+']
     RANGE_SWEEPDIR_INT = range(len(RANGE_SWEEPDIR))
     def __init__(self, theLogicalCanvas, rootPos='top', sweepDir='-'):
-        """Constructor, takes a 'logical' Canvas as a Coord.Box and the orientation."""
+        """Constructor, takes a 'logical' Canvas as a Coord.Box and the orientation.
+
+        :param theLogicalCanvas: Teh logical canvas to draw on.
+        :type theLogicalCanvas: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([int, str]), cpip.plot.Coord.Dim([int, <class 'str'>])])``
+
+        :param rootPos: Root position, one of ``('top', 'right', bottom', 'left')``.
+        :type rootPos: ``str``
+
+        :param sweepDir: Sweep direction, one of ``('-', '+')``.
+        :type sweepDir: ``str``
+
+        :returns: ``NoneType``
+        """
         # canvas is stored as we need it for internal manipulations
         # Clw
         self._clw = theLogicalCanvas.width
@@ -182,7 +194,10 @@ class TreePlotTransform(object):
 ##'right':
     
     def canvasP(self):
-        """Returns a Coord.Box that describes the physical canvass."""
+        """Returns a Coord.Box that describes the physical canvass.
+
+        :returns: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- The canvas.
+        """
         #Origin     Cpw    Cpd
         #------     ---    ---
         #top        Clw    Cld
@@ -200,7 +215,13 @@ class TreePlotTransform(object):
         return Coord.Box(self._cld, self._clw)
 
     def boxP(self, theBl):
-        """Given a logical box this returns a Coord.Box that describes the physical box."""
+        """Given a logical box this returns a :py:class:`cpip.plot.Coord.Box` that describes the physical box.
+
+        :param theBl: Logical box.
+        :type theBl: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Physical box.
+        """
         #Origin    Wp    Dp
         #top       Wl    Dl
         #left      Dl    Wl
@@ -218,7 +239,16 @@ class TreePlotTransform(object):
 
     def boxDatumP(self, theBlxy, theBl):
         """Given a logical point and logical box this returns a physical
-        point that is the box datum ("upper left")."""
+        point that is the box datum ("upper left").
+
+        :param theBlxy: Logical point.
+        :type theBlxy: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theBl: The box.
+        :type theBl: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Box datum.
+        """
         #Origin Bpx            Bpy
         #------ ---            ---
         #top    Blx            Bly
@@ -243,7 +273,16 @@ class TreePlotTransform(object):
 
     def tdcL(self, theBlxy, theBl):
         """Given a logical datum (logical top left) and a logical box this
-        returns logical top dead centre of a box."""
+        returns logical top dead centre of a box.
+
+        :param theBlxy: Datum
+        :type theBlxy: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theBl: The box.
+        :type theBl: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Top dead centre of the box.
+        """
         assert(self._rootPos in self.RANGE_ROOTPOS_INT)
         if self._rootPos == 0: #'top' so return logical top
             return Coord.Pt(theBlxy.x+theBl.width.scale(0.5), theBlxy.y)
@@ -269,7 +308,16 @@ class TreePlotTransform(object):
     
     def prevdcL(self, theBlxy, theBl):
         """Given a logical datum (logical top left) and a logical box this
-        returns logical 'previous' dead centre of a box."""
+        returns logical 'previous' dead centre of a box.
+
+        :param theBlxy: Datum
+        :type theBlxy: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theBl: The box.
+        :type theBl: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Previous dead centre of the box.
+        """
         assert(self._sweepDir in self.RANGE_SWEEPDIR_INT)
         if self._sweepDir == 0: # '-' so left dead centre
             return Coord.Pt(theBlxy.x, theBlxy.y+theBl.depth.scale(0.5))
@@ -278,7 +326,16 @@ class TreePlotTransform(object):
     
     def nextdcL(self, theBlxy, theBl):
         """Given a logical datum (logical top left) and a logical box this
-        returns logical 'next' dead centre of a box."""
+        returns logical 'next' dead centre of a box.
+
+        :param theBlxy: Datum
+        :type theBlxy: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theBl: The box.
+        :type theBl: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Next dead centre of the box.
+        """
         assert(self._sweepDir in self.RANGE_SWEEPDIR_INT)
         if self._sweepDir == 0: # '-' so right dead centre
             return Coord.Pt(theBlxy.x+theBl.width, theBlxy.y+theBl.depth.scale(0.5))
@@ -300,7 +357,17 @@ class TreePlotTransform(object):
     def pt(self, thePt, units=None):
         """Given an arbitrary logical point as a Coord.Pt(), this returns the
         physical point as a Coord.Pt().
-        If units is supplied then the return value will be in those units."""
+        If units is supplied then the return value will be in those units.
+
+        :param thePt: Logical point.
+        :type thePt: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param units: Optional unit conversion.
+        :type units: ``NoneType``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- Physical Point.
+
+        """
         #Origin Ppx        Ppy
         #------ ---        ---
         #top    Plx        Ply
@@ -323,8 +390,17 @@ class TreePlotTransform(object):
     def startChildrenLogicalPos(self, thePt, theBox):
         """Returns the starting child logical datum point ('top-left') given
         the children logical datum point and the children.bbSigma.
-        Returns a Coord.Pt().
-        This takes into account the sweep direction."""
+        Returns a :py:class:`cpip.plot.Coord.Pt`.
+        This takes into account the sweep direction.
+
+        :param thePt: The logical point.
+        :type thePt: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theBox: The canvas.
+        :type theBox: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- The 'physical' point.
+        """
         assert(self._sweepDir in self.RANGE_SWEEPDIR_INT)
         if self._sweepDir == 0: # '-' so right
             return thePt
@@ -332,10 +408,19 @@ class TreePlotTransform(object):
         return Coord.Pt(thePt.x+theBox.width, thePt.y)
 
     def preIncChildLogicalPos(self, thePt, theBox):
-        """Pre-incrempents the child logical datum point ('top-left') given
+        """Pre-increments the child logical datum point ('top-left') given
         the child logical datum point and the child.bbSigma.
-        Returns a Coord.Pt().
-        This takes into account the sweep direction."""
+        Returns a :py:class:`cpip.plot.Coord.Pt`.
+        This takes into account the sweep direction.
+
+        :param thePt: The logical point.
+        :type thePt: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theBox: The canvas.
+        :type theBox: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- The 'physical' point.
+        """
         assert(self._sweepDir in self.RANGE_SWEEPDIR_INT)
         if self._sweepDir == 0: # '-' so right
             return thePt
@@ -343,10 +428,19 @@ class TreePlotTransform(object):
         return Coord.Pt(thePt.x-theBox.width, thePt.y)
         
     def postIncChildLogicalPos(self, thePt, theBox):
-        """Post-incrempents the child logical datum point ('top-left') given
+        """Post-increments the child logical datum point ('top-left') given
         the child logical datum point and the child.bbSigma.
-        Returns a Coord.Pt().
-        This takes into account the sweep direction."""
+        Returns a :py:class:`cpip.plot.Coord.Pt`.
+        This takes into account the sweep direction.
+
+        :param thePt: The logical point.
+        :type thePt: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theBox: The canvas.
+        :type theBox: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])`` -- The 'physical' point.
+        """
         assert(self._sweepDir in self.RANGE_SWEEPDIR_INT)
         if self._sweepDir == 0: # '-' so right
             return Coord.Pt(thePt.x+theBox.width, thePt.y)

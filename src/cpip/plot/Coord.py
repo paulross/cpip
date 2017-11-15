@@ -36,8 +36,10 @@ class ExceptionCoordUnitConvert(ExceptionCoord):
     """Exception raised when converting units."""
     pass
 
+#: Base units
 BASE_UNITS = 'px'
 
+#: Map of conversion factors, base unit is pixels.
 UNIT_MAP = {
     None        : 1.0,  # Implied base units i.e. default
     'px'        : 1.0,
@@ -48,8 +50,8 @@ UNIT_MAP = {
     'mm'        : 72.0/25.4,
 }
 
-# Formatting strings for writing attributes.
-# We are trying not to write 3.999999999mm here!
+#: Formatting strings for writing attributes.
+#: We are trying not to write 3.999999999mm here!
 UNIT_MAP_DEFAULT_FORMAT = {
     None        : '%d',  # Implied base units i.e. default
     'px'        : '%d',
@@ -60,7 +62,7 @@ UNIT_MAP_DEFAULT_FORMAT = {
     'mm'        : '%.1f',
 }
 
-# Formatting string for value and units e.g. to create '0.67in' from (2.0 / 3.0, 'in')
+#: Map of formatting strings for value and units e.g. to create '0.667in' from (2.0 / 3.0, 'in')
 UNIT_MAP_DEFAULT_FORMAT_WITH_UNITS = {__k : UNIT_MAP_DEFAULT_FORMAT[__k] + '%s' for __k in UNIT_MAP_DEFAULT_FORMAT}
 
 def units():
@@ -68,7 +70,19 @@ def units():
     return UNIT_MAP.keys()
 
 def convert(val, unitFrom, unitTo):
-    """Convert a value from one set of units to another."""
+    """Convert a value from one set of units to another.
+
+    :param val: The value
+    :type val: ``float, int``
+
+    :param unitFrom: The initial units.
+    :type unitFrom: ``NoneType, str``
+
+    :param unitTo: The new units.
+    :type unitTo: ``str``
+
+    :returns: ``float,int`` -- The value in the new units.
+    """
     if unitFrom == unitTo:
         return val
     try:
@@ -202,11 +216,20 @@ class Pt(collections.namedtuple('Pt', 'x y',)):
 # Section: Helper functions for object creation
 ###############################################
 def baseUnitsDim(theLen):
-    """Returns a Coord.Dim() of length and units BASE_UNITS."""
+    """Returns a Coord.Dim() of length and units BASE_UNITS.
+
+    :param theLen: Length.
+    :type theLen: ``float, int``
+
+    :returns: :py:class:`cpip.plot.Coord.Dim([float, str])` -- A new dimension of theLen in base units.
+    """
     return Dim(theLen, BASE_UNITS)
 
 def zeroBaseUnitsDim():
-    """Returns a Coord.Dim() of zero length and units BASE_UNITS."""
+    """Returns a Coord.Dim() of zero length and units BASE_UNITS.
+
+    :returns: :py:class:`cpip.plot.Coord.Dim([float, str])` -- A new dimension of zero.
+    """
     return baseUnitsDim(0.0)
 
 def zeroBaseUnitsBox():
@@ -226,12 +249,27 @@ def zeroBaseUnitsPad():
         )
 
 def zeroBaseUnitsPt():
-    """Returns a Coord.Dim() of zero length and units BASE_UNITS."""
+    """Returns a Coord.Dim() of zero length and units BASE_UNITS.
+
+    :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, str])])`` -- A new  point with the values [0, 0].
+    """
     return Pt(zeroBaseUnitsDim(), zeroBaseUnitsDim())
 
 def newPt(theP, incX=None, incY=None):
     """Returns a new Pt object by incrementing existing point incX, incY
-    that are both Dim() objects or None."""
+    that are both Dim() objects or ``None``.
+
+    :param theP: The initial point.
+    :type theP: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str])])``
+
+    :param incX: Distance to move in the x axis.
+    :type incX: ``NoneType, cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([int, str])``
+
+    :param incY: Distance to move in the y axis.
+    :type incY: ``NoneType, cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([int, str])``
+
+    :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, str])])`` -- The new point.
+    """
     newX = theP.x
     if incX is not None:
         newX += incX
@@ -241,7 +279,10 @@ def newPt(theP, incX=None, incY=None):
     return Pt(x=newX, y=newY)
 
 def convertPt(theP, theUnits):
-    """Returns a new point with the dimensions of theP converted to theUnits."""
+    """Returns a new point with the dimensions of theP converted to theUnits.
+
+    TODO: Deprecate this.
+    """
     return Pt(
         x=Dim(convert(theP.x.value, theP.x.units, theUnits), theUnits),
         y=Dim(convert(theP.y.value, theP.y.units, theUnits), theUnits),
