@@ -3,7 +3,7 @@
 Release Checklist
 ------------------------
 
-In the following the example the version we are moving to, ``M.m.p``, is ``0.9.7``.
+In the following example the version we are moving to, in  ``Major.Minor.Patch`` format, is ``0.9.7``.
 
 Current version should be something like ``M.m.(p)rcX``, for example ``0.9.7rc4``.
 

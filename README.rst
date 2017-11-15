@@ -16,35 +16,25 @@ Features
 Installation
 ------------
 
-You can either clone the public repository:
+Install cpip from PyPi:
 
 .. code-block:: console
 
-    $ git clone git://github.com/paulross/cpip
+    (CPIP) $ pip install cpip
 
-Or download the tarball:
-
-.. code-block:: console
-
-    $ curl -OL https://github.com/paulross/cpip/tarball/master
-
-Once you have a copy of the source, you can install it with:
+This will give you access to the command line entry point ``cpipmain``, to check this:
 
 .. code-block:: console
 
-    $ python setup.py install
+    (CPIP) $ cpipmain --help
+    ...
 
-To run the tests:
-
-.. code-block:: console
-
-    $ python setup.py test
-
+There are `other installation methods <https://github.com/paulross/cpip/blob/master/docs/doc_src/installation.rst>`_ including directly from source.
 
 Visualising Preprocessing
 =============================
 
-The top level script ``CPIPMain.py`` acts like a preprocessor that generates HTML and SVG output for a source code file or directory. This output makes it easy to understand what the preprocessor is doing to your source.
+The top level entry point ``cpipmain`` (the script ``CPIPMain.py``) acts like a preprocessor that generates HTML and SVG output for a source code file or directory. This output makes it easy to understand what the preprocessor is doing to your source.
 
 Here is some of that output when preprocessing a single Linux kernel file ``cpu.c`` (`complete output <https://cpip.readthedocs.io/en/latest/_static/index.html>`_). The ``index.html`` page shows how ``CPIPMain.py`` was invoked [#f1]_, this has a link to to preprocessing pages for that file:
 
