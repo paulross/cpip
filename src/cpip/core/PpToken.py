@@ -74,9 +74,9 @@ class ExceptionCpipTokenIllegalMerge(
 #:     #define str(s) # s
 #:     #include str(foo.h)
 #:
-#: The stringise operator creates a string-literal token but the #include
+#: The stringise operator creates a string-literal token but the ``#include``
 #: directive expects a header-name.
-#: So in certain contexts (macro stringising followed by #include instruction)
+#: So in certain contexts (macro stringising followed by ``#include`` instruction)
 #: we need to 'downcast' a string-literal to a header-name.
 #:
 #: See :py:class:`cpip.core.PpLexer.PpLexer` for how this is done
@@ -112,7 +112,10 @@ LEX_PPTOKEN_TYPE_ENUM_RANGE = range(len(LEX_PPTOKEN_TYPES))
 # Initialise maps without polluting the global namespace
 # with variables.
 def __initPptokenMaps():
-    """Initialise the reverse map on module load."""
+    """Initialise the reverse map on module load.
+
+    :returns: ``NoneType``
+    """
     for i in LEX_PPTOKEN_TYPE_ENUM_RANGE:
         NAME_ENUM[LEX_PPTOKEN_TYPES[i]] = i
         ENUM_NAME[i] = LEX_PPTOKEN_TYPES[i]
@@ -126,9 +129,16 @@ __initPptokenMaps()
 ############################################
 def tokensStr(theTokens, shortForm=True):
     """Given a list of tokens this returns them as a string.
-    If shortForm is True then the lexical string is returned.
-    If False then the :py:class:`PpToken` representations separated by ' | ' is returned.
-    e.g. ``PpToken(t="f", tt=identifier, line=True, prev=False, ?=False) | ...``
+
+    :param theTokens: List of tokens.
+    :type theTokens: ``list([cpip.core.PpToken.PpToken])``
+
+    :param shortForm: If ``shortForm`` is ``True`` then the lexical string is returned.
+        If ``False`` then the :py:class:`PpToken` representations separated by ' | ' is returned.
+        e.g. ``PpToken(t="f", tt=identifier, line=True, prev=False, ?=False) | ...``
+    :type shortForm: ``bool``
+
+    :returns: ``str`` -- Tokens as a string.
     """
     assert(theTokens is not None)
     if shortForm:
@@ -163,10 +173,29 @@ class PpToken(object):
     # See: ISO/IEC 14882 / N3242 :2011(E) 2.14.2 Character literals [lex.ccon], ISO/IEC 9899:2011 6.4.4.4 etc.
     CHARACTER_LITERAL_PREFIXES = {'L', 'u', 'U'}
     def __init__(self, t, tt, lineNum=0, colNum=0, isReplacement=False):
-        """T is the token (a string) and tt is either an enumerated integer or
+        """Constructor.
+        ``t`` is the token (a string) and tt is either an enumerated integer or
         a string. Internally tt is stored as an enumerated integer.
         If the token is an identifier then it is eligible for replacement
-        unless marked otherwise."""
+        unless marked otherwise.
+
+        :param t: The token.
+        :type t: ``str``
+
+        :param tt: The token type.
+        :type tt: ``str``
+
+        :param lineNum: Line number.
+        :type lineNum: ``int``
+
+        :param colNum: Column number.
+        :type colNum: ``int``
+
+        :param isReplacement: Is a token from macro replacement.
+        :type isReplacement: ``bool``
+
+        :returns: ``NoneType``
+        """
         self._t = t
         # self._tt is an enumerated integer
         if tt in ENUM_NAME:
@@ -254,11 +283,11 @@ class PpToken(object):
         #return str(self)
 
     def isIdentifier(self):
-        """Returns True if the token type is 'identifier'."""
+        """:returns: ``bool`` -- ``True`` if the token type is 'identifier'."""
         return self._tt == NAME_ENUM['identifier']
 
     def isWs(self):
-        """Returns True if the token type is 'whitespace'."""
+        """:returns: ``bool`` -- ``True`` if the token type is 'whitespace'."""
         return self._tt == NAME_ENUM['whitespace']
 
     def replaceNewLine(self):
@@ -267,8 +296,11 @@ class PpToken(object):
         See:
         :title-reference:`ISO/IEC 9899:1999(E) 6.10-3 and C++ ISO/IEC 14882:1998(E) 16.3-9`
         
-        This will raise a :py:class:`ExceptionCpipTokenIllegalOperation` if I am not
-        a whitespace token."""
+        :returns: ``NoneType``
+
+        :raises: :py:class:`ExceptionCpipTokenIllegalOperation` if I am not
+            a whitespace token.
+        """
         if self.isWs():
             self._t = self._t.replace('\n', self.SINGLE_SPACE)
         else:
@@ -279,8 +311,11 @@ class PpToken(object):
     def shrinkWs(self):
         """Replace all whitespace with a single ' '
         
-        This will raise a :py:class:`ExceptionCpipTokenIllegalOperation` if I am not
-        a whitespace token."""
+        :returns: ``NoneType``
+
+        :raises: :py:class:`ExceptionCpipTokenIllegalOperation` if I am not
+            a whitespace token.
+        """
         if self.isWs():
             self._t = self.SINGLE_SPACE
         else:
@@ -288,9 +323,15 @@ class PpToken(object):
     
     def _isOctalInteger(self, value):
         """Returns True is value is an octal digit according to:
-        ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - octal-literal.
+        :title-reference:`ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - octal-literal`.
+
         Value must have been shorn of integer-suffix
-        """ 
+
+        :param value: The string to inspect.
+        :type value: ``str``
+
+        :returns: ``bool`` -- True if octal.
+        """
         if len(value) < 2:
             return False
         if value[0] != '0':
@@ -305,8 +346,13 @@ class PpToken(object):
     
     def _convertOctalInteger(self, value):
         """If value is an octal integer then this converts it to a string
-        suitable for eval().
-        If not the value is returned unchanged.""" 
+        suitable for eval(). If not the value is returned unchanged.
+
+        :param value: String to convert.
+        :type value: ``str``
+
+        :returns: ``str`` -- String for ``eval()``.
+        """
         assert self._tt == NAME_ENUM['pp-number'] or self._tt == NAME_ENUM['concat']
         assert '.' not in self._t, 'Floating point can not be octal.'
         # Handle octal with Python 3
@@ -316,17 +362,22 @@ class PpToken(object):
     
     def evalConstExpr(self):
         """Returns an string value suitable for eval'ing in a constant expression.
-        For numbers this removes such tiresome trivia as 'u', 'L' etc. For others
-        it replaces '&&' with 'and' and so on.
+        For numbers this removes such tiresome trivia as ``'u'``, ``'L'`` etc. For others
+        it replaces ``'&&'`` with ``'and'`` and so on.
         
         See
         :title-reference:`ISO/IEC ISO/IEC 14882:1998(E) 16.1 Conditional inclusion sub-section 4`
         i.e. section 16.1-4
         
-        and:
+        And:
         :title-reference:`ISO/IEC 9899:1999 (E) 6.10.1 Conditional
         inclusion sub-section 3`
-        i.e. section 6.10.1-3"""
+        i.e. section 6.10.1-3
+
+        :returns: ``str`` -- String for ``eval()``.
+
+        :raises: ``KeyError``
+        """
         # TODO: This test of 'concat' is a flakey and to get round a Linux problem
         # Need to review the whole 'concat' thing. Probably re-classify it.
         if self._tt == NAME_ENUM['pp-number'] or self._tt == NAME_ENUM['concat']:
@@ -403,12 +454,18 @@ class PpToken(object):
     # Read only methods
     @property
     def t(self):
-        """Returns the token as a string."""
+        """Returns the token as a string.
+
+        :returns: ``str`` -- Token.
+        """
         return self._t
 
     @property
     def tt(self):
-        """Returns the token type as a string."""
+        """Returns the token type as a string.
+
+        :returns: ``str`` -- Token type.
+        """
         return ENUM_NAME[self._tt]
 
     @property
@@ -432,7 +489,10 @@ class PpToken(object):
         return self._colNum
 
     def getReplace(self):
-        """Gets the flag that controls whether this can be replaced."""
+        """Gets the flag that controls whether this can be replaced.
+
+        :returns: ``bool`` -- Flag.
+        """
         return self._canReplace
 
     # Read/write methods
@@ -478,7 +538,13 @@ class PpToken(object):
         return self._isReplacement
 
     def setIsReplacement(self, val):
-        """Sets the flag that records that this token is the result of macro replacement."""
+        """Sets the flag that records that this token is the result of macro replacement.
+
+        :param val: Flag.
+        :type val: ``bool``
+
+        :returns: ``NoneType``
+        """
         self._isReplacement = val
 
     isReplacement = property(
@@ -492,16 +558,25 @@ class PpToken(object):
     def isCond(self):
         """Flag that if True indicates that the token appeared within a
         section that was conditionally compiled. This is False on construction
-        and can only be set True by setIsCond()"""
+        and can only be set True by setIsCond()
+
+        :returns: ``bool`` -- Flag.
+        """
         return self._isCond
 
     @property
     def isUnCond(self):
         """Flag that if True indicates that the token appeared within a
         section that was un-conditionally compiled. This is the negation of
-        isCond."""
+        isCond.
+
+        :returns: ``bool`` -- Flag.
+        """
         return not self._isCond
 
     def setIsCond(self):
-        """Sets self._isCond to be True."""
+        """Sets self._isCond to be True.
+
+        :returns: ``NoneType``
+        """
         self._isCond = True

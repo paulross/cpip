@@ -6,5 +6,10 @@
 MacroEnv
 =======================
 
+.. toctree::
+    :maxdepth: 2
+
 .. automodule:: cpip.core.MacroEnv
-   :members:
+    :members:
+    :special-members:
+    :private-members:

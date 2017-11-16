@@ -49,17 +49,38 @@ ITU_TOKEN_TYPES = PpToken.LEX_PPTOKEN_TYPES + [
 class ItuToTokens(PpTokeniser.PpTokeniser):
     """Tokensises a file like object."""
     def __init__(self, theFileObj=None, theFileId=None, theDiagnostic=None):
+        """Constructor.
+
+        :param theFileObj: File object.
+        :type theFileObj: ``_io.TextIOWrapper``
+
+        :param theFileId: File ID such as the path.
+        :type theFileId: ``str``
+
+        :param theDiagnostic: A diagnostic for processing messages.
+        :type theDiagnostic: ``NoneType``
+
+        :returns: ``NoneType``
+        """
         super(ItuToTokens, self).__init__(theFileObj, theFileId, theDiagnostic)
         self._mps = MultiPassString.MultiPassString(theFileObj)
         
     @property
     def multiPassString(self):
+        """
+        :returns: :py:class:`cpip.util.MultiPassString.MultiPassString` -- The multi-pass string object.
+        """
         return self._mps
         
     def genTokensKeywordPpDirective(self):
         """Process the file and generate tokens.
         This changes the type to a keyword or preprocessing-directive if it can
-        do so."""
+        do so.
+
+        :returns: ``tuple([str, str])`` -- Token value, token type.
+
+        :raises: ``StopIteration``
+        """
         self.translatePhases123()
         self._fileLocator.startNewPhase()
         # Token text and token type
@@ -87,6 +108,10 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
             self._fileLocator.update(t)
 
     def translatePhases123(self):
+        """Translate phase 1, 2, 3.
+
+        :returns: ``NoneType``
+                """
         self._translatePhase_1()
         self._translatePhase_2()
         self._translatePhase_3()    
@@ -94,7 +119,12 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
     def _translatePhase_1(self):
         """Performs translation phase one.
         Note: We do not (yet) support universal-character-name conversion
-        so this only does trigraphs."""
+        so this only does trigraphs.
+
+        :returns: ``NoneType``
+
+        :raises: ``IndexError``
+        """
         logging.debug('ItuToTokens._translatePhase_1(): start.')
         # Construct a buffer generator
         myBg = BufGen.BufGen(self._mps.genChars())
@@ -129,7 +159,12 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
 
     def _translatePhase_2(self):
         """Performs translation phase two. This does line continuation markers
-        Note: We do not (yet) test for accidental UCN creation."""
+        Note: We do not (yet) test for accidental UCN creation.
+
+        :returns: ``NoneType``
+
+        :raises: ``IndexError``
+        """
         logging.debug('ItuToTokens._translatePhase_2(): start.')
         # Construct a buffer generator
         myBg = BufGen.BufGen(self._mps.genChars())
@@ -159,7 +194,12 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
 
     def _translatePhase_3(self):
         """Performs translation phase three. Replaces comments and decomposes
-        stream into preprocessing tokens."""
+        stream into preprocessing tokens.
+
+        :returns: ``NoneType``
+
+        :raises: ``IndexError``
+        """
         logging.debug('ItuToTokens._translatePhase_3(): start.')
         # Note this is similar to the code in self.genLexPptokenAndSeqWs()
         ofsIdx = 0

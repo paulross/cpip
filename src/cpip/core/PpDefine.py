@@ -168,15 +168,14 @@ class PpDefine(object):
         from the first non-whitespace token onwards i.e. this __init__ will,
         itself, consume leading whitespace.
         
-        theFileId is a string that represents the file ID.
-        
-        theLine is a positive integer that represents the line in theFile that
-        the #define statement occurred. This must be >= 1.
-        
+
         Definition example, object-like macros:
-        [identifier, [replacement-list (opt)], new-line, ...]
-        Or function-like macros: ::
-        
+        ``[identifier, [replacement-list (opt)], new-line, ...]``
+
+        Or function-like macros:
+
+        .. code-block:: console
+
             [
                 identifier,
                 lparen,
@@ -195,6 +194,18 @@ class PpDefine(object):
         preprocessor tokens. The identifier-list is stored as a list of names.
         Leading and trailing whitespace in the replacement
         list is removed to facilitate redefinition comparison.
+
+        :param theTokGen: Token generator.
+        :type theTokGen: ``generator``
+
+        :param theFileId: File ID such as the path.
+        :type theFileId: ``str``
+
+        :param theLine: theLine is a positive integer that represents the line
+            in theFile that the ``#define`` statement occurred. This must be >= 1
+        :type theLine: ``int``
+
+        :returns: ``NoneType``
         """
         if theLine < FileLocation.START_LINE:
             raise ExceptionCpipDefineInitBadLine(
@@ -287,7 +298,8 @@ class PpDefine(object):
     
     def _ctorFunctionMacro(self, theGenTok):
         """Construct function type macros.
-        [[identifier-list,] ,')', replacement-list, new-line, ...]
+        ``[[identifier-list,] ,')', replacement-list, new-line, ...]``
+
         The identifier-list is not specified in the specification but there
         seems to be some disparity between the standards and cpp.exe.
         The relevant bits of the standards [C: ISO/IEC 9899:1999(E) 6.10.3-10
@@ -301,10 +313,15 @@ class PpDefine(object):
         See unit tests testInitFunction_70(), 71 and 72.
         cpp.exe also is not so strict when it comes the the above sections. For
         example in this:
-        #define FOO(a,b,c) a+b+c
-        FOO (1,(2),3)
+
+        ..code_block: c
+
+            #define FOO(a,b,c) a+b+c
+            FOO (1,(2),3)
+
         The whitespace between FOO and LPAREN is ignored and the replacement
-        occurs."""
+        occurs.
+        """
         assert(self.isCurrentlyDefined)
         self._paramS = []
         # This will be set to False if stringize or token pasting is used
@@ -349,7 +366,14 @@ class PpDefine(object):
     def _appendToReplacementList(self, theGenTok):
         """Takes a token sequence up to a newline and assign it
         to the replacement-list. Leading and trailing whitespace is ignored.
-        TODO: Set setPrevWs flag where necessary."""
+
+        TODO: Set setPrevWs flag where necessary.
+
+        :param theGenTok: Token generator.
+        :type theGenTok: ``generator``
+
+        :returns: ``NoneType``
+        """
         assert(self.isCurrentlyDefined)
         # Whitespace is lazily evaluated so that trailing
         # whitespace is only added when necessary.
@@ -425,7 +449,13 @@ class PpDefine(object):
 
     def __addTokenAndTypeToReplacementList(self, theTtt):
         """Adds a token and a token type to the replacement list. Runs of
-        whitespace tokens are concatenated."""
+        whitespace tokens are concatenated.
+
+        :param theTtt: Token.
+        :type theTtt: :py:class:`cpip.core.PpToken.PpToken`
+
+        :returns: ``NoneType``
+        """
         assert(self.isCurrentlyDefined)
         if len(self._replaceTokTypesS) > 0 \
         and theTtt.isWs() and self._replaceTokTypesS[-1].isWs():
@@ -448,7 +478,10 @@ class PpDefine(object):
     
     def strIdentPlusParam(self):
         """Returns the identifier name and parameters if a function-like macro
-        as a string."""
+        as a string.
+
+        :returns: ``str`` -- Macro declaration..
+        """
         retList = [self.identifier, ]
         if not self.isObjectTypeMacro:
             # Function type macros
@@ -465,7 +498,10 @@ class PpDefine(object):
         return ''.join(retList)
 
     def strReplacements(self):
-        """Returns the replacements tokens with minimised whitespace as a string."""
+        """Returns the replacements tokens with minimised whitespace as a string.
+
+        :returns: ``str`` -- The replacements tokens with minimised whitespace as a string.
+        """
         retList = []
         if len(self._replaceTokTypesS) > 0:
             for aTok in self._replaceTokTypesS:
@@ -519,7 +555,13 @@ class PpDefine(object):
         return ''.join(retList)
 
     def _retToken(self, theGen):
-        """Returns the next token object and increments the IR."""
+        """Returns the next token object and increments the IR.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- The next token.
+        """
         assert(self.isCurrentlyDefined)
         retTok = next(theGen)
         # Note: True is always used as this is always unconditionally compiled
@@ -553,7 +595,14 @@ class PpDefine(object):
 
     def _nextNonWsOrNewline(self, theGen):
         """Returns the next non-whitespace token or whitespace that contains a
-        newline."""
+        newline.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- The next non-whitespace token or
+            whitespace that contains a newline.
+        """
         assert(self.isCurrentlyDefined)
         while 1:
             myTtt = self._retToken(theGen)
@@ -584,7 +633,12 @@ class PpDefine(object):
         actually replaceable. This will raise an assertion failure if
         not. It is really an integrity tests to see if an external entity
         has grabbed a reference to the replacement list and set a token
-        to be not replaceable."""
+        to be not replaceable.
+
+        :returns: ``NoneType``
+
+        :raises: ``AssertionError``
+        """
         assert(self.isCurrentlyDefined)
         for aTtt in self._replaceTokTypesS:
             assert(not aTtt.isIdentifier() or aTtt.canReplace), \
@@ -600,18 +654,21 @@ class PpDefine(object):
         """Increment the reference count. Typically callers do this when
         replacement is certain of in the event of definition testing
         
-        *theFileLineCol*
-            A FileLocation.FileLineCol object.
-        
         For example:
+
+        .. code-block:: c
         
-        ``#ifdef SPAM or defined(SPAM)`` etc.
+            #ifdef SPAM or defined(SPAM) // etc.
         
         Or if the macro is expanded e.g. ``#define SPAM_N_EGGS spam and eggs``
         
         The menu is SPAM_N_EGGS.
         
-        """ 
+        :param theFileLineCol: File location.
+        :type theFileLineCol: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType``
+        """
         if not self.isCurrentlyDefined:
             raise ExceptionCpipDefine(
                 "incRefCount() on already #undef'd macro instance of self"
@@ -973,72 +1030,101 @@ class PpDefine(object):
 
     def _retReplacementMap(self, theArgs):
         """Given a list of lists of (token, type) this returns a map of:
-        {identifier : [replacement_token and token types, ...], ...}
+        ``{identifier : [replacement_token and token types, ...], ...}``
+
         For example for:
-        #define FOO(c,b,a) a+b+c
-        FOO(1+7,2,3)
+
+        .. code-block:: c
+
+            #define FOO(c,b,a) a+b+c
+            FOO(1+7,2,3)
+
         i.e theArgs is (types are shown as text for clarity, in practice they
-        would be enumerated):
-        [
+        would be enumerated)::
+
             [
-                PpToken.PpToken('1', 'pp-number'),
-                PpToken.PpToken('+', 'preprocessing-op-or-punc'),
-                PpToken.PpToken('7', 'pp-number')
-            ],
-            [
-                PpToken.PpToken('2', 'pp-number'),
-            ],
-            [
-                PpToken.PpToken('3', 'pp-number'),
-            ],
-        ]
-        Map would be:
-        {
-            'a' : [
-                    PpToken.PpToken('3', 'pp-number'),
-                ],
-            'b' : [
-                    PpToken.PpToken('2', 'pp-number'),
-                ],
-            'c' : [
+                [
                     PpToken.PpToken('1', 'pp-number'),
                     PpToken.PpToken('+', 'preprocessing-op-or-punc'),
                     PpToken.PpToken('7', 'pp-number')
                 ],
-        }
-        Note that values that are placemarker tokens are
-        PpDefine.PLACEMARKER. For example:
-        #define FOO(a,b,c) a+b+c
-        FOO(,2,)
-        Generates:
-        {
-            'a' : PpDefine.PLACEMARKER,
-            'b' : [
-                    ('2', 'pp-number'),
-                ]
-            'c' : PpDefine.PLACEMARKER,
-        }
+                [
+                    PpToken.PpToken('2', 'pp-number'),
+                ],
+                [
+                    PpToken.PpToken('3', 'pp-number'),
+                ],
+            ]
+
+        Map would be::
+
+            {
+                'a' : [
+                        PpToken.PpToken('3', 'pp-number'),
+                    ],
+                'b' : [
+                        PpToken.PpToken('2', 'pp-number'),
+                    ],
+                'c' : [
+                        PpToken.PpToken('1', 'pp-number'),
+                        PpToken.PpToken('+', 'preprocessing-op-or-punc'),
+                        PpToken.PpToken('7', 'pp-number')
+                    ],
+            }
+
+        Note that values that are placemarker tokens are PpDefine.PLACEMARKER.
+
+        For example:
+
+        .. code-block:: c
+
+            #define FOO(a,b,c) a+b+c
+            FOO(,2,)
+
+        Generates::
+
+            {
+                'a' : PpDefine.PLACEMARKER,
+                'b' : [
+                        ('2', 'pp-number'),
+                    ]
+                'c' : PpDefine.PLACEMARKER,
+            }
+
         PERF: See TODO below.
+
         TODO: Return a map of identifiers to indexes in the supplied argument as
         this will save making a copy of the argument tokens?
+
         So:
-        #define FOO(c,b,a) a+b+c
-        FOO(1+7,2,3)
-        Would return a map of:
-        {
-            'a' : 2,
-            'b' : 1,
-            'c' : 0,
-        }
+
+        .. code-block:: c
+
+            #define FOO(c,b,a) a+b+c
+            FOO(1+7,2,3)
+
+        Would return a map of::
+
+            {
+                'a' : 2,
+                'b' : 1,
+                'c' : 0,
+            }
+
         And use index -1 for a placemarker token???:
-        #define FOO(a,b,c) a+b+c
-        FOO(,2,)
-        Generates:
-        {
-            'a' : -1,
-            'b' : 1
-            'c' : -1,
-        }
+
+        .. code-block:: c
+
+            #define FOO(a,b,c) a+b+c
+            FOO(,2,)
+
+        Generates::
+
+            {
+                'a' : -1,
+                'b' : 1
+                'c' : -1,
+            }
         """
         assert(self.isCurrentlyDefined)
         assert(not self.isObjectTypeMacro), \
@@ -1114,9 +1200,11 @@ class PpDefine(object):
         """Returns the replacement list where if a token is encountered that
         is a key in the map then the value in the map is inserted into the
         replacement list.
-        theArgMap is of the form returned by _retReplacementMap().
-        This also handles the '#' token i.e. [cpp.stringize]
-        and '##' token i.e. [cpp.concat].
+
+        ``theArgMap`` is of the form returned by _retReplacementMap().
+        This also handles the ``'#'`` token i.e. [cpp.stringize]
+        and ``'##'`` token i.e. [cpp.concat].
+
         Returns a list of pairs i.e. [(token, token_type), ...]
         
         TODO: Accidental token pasting
@@ -1284,19 +1372,27 @@ class PpDefine(object):
     #============================
     @property
     def isObjectTypeMacro(self):
-        """True if this is an object type macro and
-        False if it is a function type macro."""
+        """
+        :returns: ``bool`` -- True if this is an object type macro and
+            False if it is a function type macro.
+        """
         return self._paramS is None
 
     @property
     def identifier(self):
-        """The macro identifier i.e. the name as a string."""
+        """The macro identifier i.e. the name as a string.
+
+        :returns: ``str`` -- Macro name.
+        """
         return self._identifier.t
 
     @property
     def tokenCounter(self):
         """The PpTokenCount object that counts tokens that have been consumed
-        from the input."""
+        from the input.
+
+        :returns: :py:class:`cpip.core.PpTokenCount.PpTokenCount` -- Token count.
+        """
         return self._tokenCount
     
     @property
@@ -1313,7 +1409,8 @@ class PpDefine(object):
     def replacementTokens(self):
         """The list of zero or more replacement token as a list of
         :py:class:`.PpToken.PpToken`
-        """
+
+        :returns: ``list([]),list([cpip.core.PpToken.PpToken])`` -- Tokens."""
         return self._replaceTokTypesS
 
     @property
@@ -1332,18 +1429,25 @@ class PpDefine(object):
     
     @property
     def fileId(self):
-        """The file ID given as an argument in the constructor."""
+        """The file ID given as an argument in the constructor.
+
+        :returns: ``str`` -- File ID, path for example."""
         return self._fileLine.fileId
 
     @property
     def line(self):
-        """The line number given as an argument in the constructor."""
+        """The line number given as an argument in the constructor.
+
+        :returns: ``int`` -- Line number.
+        """
         return self._fileLine.lineNum
     
     @property
     def refCount(self):
         """Returns the current reference count as an integer less its initial
-        value on construction."""
+        value on construction.
+
+        :returns: ``int`` -- Reference count."""
         return self._refCount - self.INITIAL_REF_COUNT
 
     @property
@@ -1355,7 +1459,10 @@ class PpDefine(object):
     @property
     def isCurrentlyDefined(self):
         """Returns True if the current instance is a valid definition
-        i.e. it has not been #undef'd."""
+        i.e. it has not been ``#undef``'d.
+
+        :returns: ``bool`` -- Has valid definition.
+        """
         return self._undefFileLine is None
 
     @property
@@ -1372,7 +1479,11 @@ class PpDefine(object):
         
     @property
     def refFileLineColS(self):
-        """Returns the list of FileLineCol objects where this macro was referenced."""
+        """Returns the list of FileLineCol objects where this macro was referenced.
+
+        :returns: ``list([]),list([cpip.core.FileLocation.FileLineCol([str, int, int])])``
+            -- Places the macro was referenced.
+        """
         return self._refFileLineColS
     #============================
     # End: Read only methods.
@@ -1406,8 +1517,10 @@ class PpDefine(object):
 
     def isValidRefefinition(self, other):
         """Returns True if this is a valid redefinition of *other*, False otherwise.
+
         Will raise an :py:class:`ExceptionCpipDefineInvalidCmp` if the identifiers are
         different.
+
         Will raise an :py:class:`ExceptionCpipDefine` if either is not currently defined.
         
         From: **ISO/IEC 9899:1999 (E) 6.10.3:**
@@ -1415,19 +1528,20 @@ class PpDefine(object):
         #. Two replacement lists are identical if and only if the preprocessing
             tokens in both have the same number, ordering, spelling, and white-space
             separation, where all white-space separations are considered identical.
-        #. An identifier currently defined as a macro without use of lparen
-            (an object-like macro) may be redefined by another #define preprocessing
+        #. An identifier currently defined as a macro without use of ``lparen``
+            (an object-like macro) may be redefined by another ``#define`` preprocessing
             directive provided that the second definition is an object-like macro
             definition and the two replacement lists are identical, otherwise the
             program is ill-formed.
-        #. An identifier currently defined as a macro using lparen (a
-            function-like macro) may be redefined by another #define preprocessing
+        #. An identifier currently defined as a macro using ``lparen`` (a
+            function-like macro) may be redefined by another ``#define`` preprocessing
             directive provided that the second definition is a function-like macro
             definition that has the same number and spelling of parameters, and the
             two replacement lists are identical, otherwise the program is
             ill-formed.
 
-        See also: **ISO/IEC 14882:1998(E) 16.3 Macro replacement [cpp.replace]**"""
+        See also: **ISO/IEC 14882:1998(E) 16.3 Macro replacement [cpp.replace]**
+        """
         if not self.isCurrentlyDefined:
             raise ExceptionCpipDefine(
                 "isValidRefefinition() on already #undef'd macro instance of self."

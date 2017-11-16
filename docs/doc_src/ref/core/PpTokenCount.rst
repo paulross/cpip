@@ -9,3 +9,5 @@ PpTokenCount
 .. automodule:: cpip.core.PpTokenCount
     :members:
     :special-members:
+    :private-members:
+    

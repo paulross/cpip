@@ -6,5 +6,10 @@
 PpTokeniser
 ===================
 
+.. toctree::
+    :maxdepth: 2
+
 .. automodule:: cpip.core.PpTokeniser
-   :members:
+    :members:
+    :special-members:
+    :private-members:

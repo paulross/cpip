@@ -4,7 +4,12 @@
 .. _cpip.ref.PpLexer:
 
 PpLexer
-=======================
+===================
+
+.. toctree::
+    :maxdepth: 2
 
 .. automodule:: cpip.core.PpLexer
-   :members:
+    :members:
+    :special-members:
+    :private-members:

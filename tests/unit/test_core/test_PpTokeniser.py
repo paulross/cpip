@@ -31,6 +31,8 @@ import sys
 import time
 import unittest
 
+import pytest
+
 from cpip.core import PpTokeniser, FileLocation, CppDiagnostic, PpToken  
 try:
     from tests.unit.test_core import TestBase
@@ -103,6 +105,14 @@ class TestWordsFoundIn(TestPpTokeniserBase):
                                                 ('', 'earth', 'worldly')))
         self.assertEqual(-1, myObj._wordsFoundInUpTo('Hello world', 11,
                                                 set(('', 'earth', 'worldly'))))
+
+    @pytest.mark.xfail(reason='Bug in search logic.')
+    def testWordFoundIn_Overlap(self):
+        myObj = PpTokeniser.PpTokeniser()
+        # Found
+        buffer = 'abc abd'
+        word = 'abd'
+        self.assertEqual(4, myObj._wordFoundInUpTo(buffer, len(buffer), word))
 
 class TestWordsFoundInUpTo(TestPpTokeniserBase):
     """Tests PpTokeniser._wordFoundInUpTo().

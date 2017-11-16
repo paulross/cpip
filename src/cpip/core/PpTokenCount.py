@@ -47,7 +47,13 @@ class PpTokenCount(object):
         self._cntrTokUncon = {}
         
     def __iadd__(self, other):
-        """In-place add of the contents of another PpTokenCount object."""
+        """In-place add of the contents of another PpTokenCount object.
+
+        :param other: Other object.
+        :type other: :py:class:`cpip.core.PpTokenCount.PpTokenCount`
+
+        :returns: ``cpip.core.PpTokenCount.PpTokenCount`` -- Self.
+        """
         for tt in other._cntrTokAll:
             try:
                 self._cntrTokAll[tt] += other._cntrTokAll[tt]
@@ -63,13 +69,37 @@ class PpTokenCount(object):
     def inc(self, tok, isUnCond, num=1):
         """Increment the count. tok is a PpToken, isUnCond is a boolean that is
         True if this is not conditionally compiled. num is the number of tokens
-        to increment."""
+        to increment.
+
+        :param tok: The token.
+        :type tok: :py:class:`cpip.core.PpToken.PpToken`
+
+        :param isUnCond: True if this is not conditionally compiled.
+        :type isUnCond: ``bool``
+
+        :param num: Number of tokens. Default 1.
+        :type num: ``int``
+
+        :returns: ``NoneType``
+        """
         self._inc(tok.tt, isUnCond, num)
             
     def _inc(self, tokStr, isUnCond, num):
         """Increment the count. tok is a string, isUnCond is a boolean that is
         True if this is not conditionally compiled. num is the number of tokens
-        to increment."""
+        to increment.
+
+        :param tokStr: The token type.
+        :type tokStr: ``str``
+
+        :param isUnCond: True if this is not conditionally compiled.
+        :type isUnCond: ``bool``
+
+        :param num: Number of tokens.
+        :type num: ``int``
+
+        :returns: ``NoneType``
+        """
         try:
             self._cntrTokAll[tokStr] += num
         except KeyError:
@@ -82,23 +112,37 @@ class PpTokenCount(object):
             
     @property
     def totalAll(self):
-        """The total token count."""
+        """The total token count.
+
+        :returns: ``int`` -- The count.
+        """
         return sum(self._cntrTokAll.values())
     
     @property
     def totalAllUnconditional(self):
-        """The token count of unconditional tokens."""
+        """The token count of unconditional tokens.
+
+        :returns: ``int`` -- The count.
+        """
         return sum(self._cntrTokUncon.values())
     
     @property
     def totalAllConditional(self):
-        """The token count of conditional tokens."""
+        """The token count of conditional tokens.
+
+        :returns: ``int`` -- The count.
+        """
         return sum(self._cntrTokAll.values()) - sum(self._cntrTokUncon.values())
     
     def tokenCount(self, theType, isAll):
-        """Returns the token count of a particular type. If isAll is true then
-        the count of all tokens is returned, if False the count of
-        unconditional tokens is returned."""
+        """Returns the token count including whitespace tokens.
+
+        :param isAll: If ``isAll`` is ``True`` then the count of all tokens is
+            returned, if ``False`` the count of unconditional tokens is returned.
+        :type isAll: ``bool``
+
+        :returns: ``int`` -- Count of tokens.
+        """
         try:
             if isAll:
                 return self._cntrTokAll[theType]
@@ -109,9 +153,14 @@ class PpTokenCount(object):
         return 0
     
     def tokenCountNonWs(self, isAll):
-        """Returns the token count of a particular type. If isAll is true then
-        the count of all tokens is returned, if False the count of
-        unconditional tokens is returned."""
+        """Returns the token count excluding whitespace tokens.
+
+        :param isAll: If ``isAll`` is ``True`` then the count of all tokens is
+            returned, if ``False`` the count of unconditional tokens is returned.
+        :type isAll: ``bool``
+
+        :returns: ``int`` -- Count of tokens.
+        """
         try:
             if isAll:
                 return self.totalAll - self._cntrTokAll['whitespace']
@@ -129,12 +178,17 @@ class PpTokenCount(object):
         ``PpToken.LEX_PPTOKEN_TYPES`` order where type is a string and count an
         integer.
         
-        If *isAll* is true then the count of all tokens is returned, if False the
-        count of unconditional tokens is returned.
-        
-        If *allPossibleTypes* is True the counts of all token types are yielded
-        even if zero, if False then only token types encountered will be
-        yielded i.e. all counts will be non-zero."""
+        :param isAll: If ``isAll`` is ``True`` then the count of all tokens is returned.
+            If ``False`` the count of unconditional tokens is returned.
+        :type isAll: ``bool``
+
+        :param allPossibleTypes: If ``allPossibleTypes`` is ``True`` the counts of all
+            token types are yielded even if zero, if ``False`` then only token types
+            encountered will be yielded i.e. all counts will be non-zero.
+        :type allPossibleTypes: ``bool``
+
+        :returns: ``NoneType,tuple([str, int])`` -- Yields ``(type, count)``.
+        """
         for aType in PpToken.LEX_PPTOKEN_TYPES:
             if allPossibleTypes:
                 yield aType, self.tokenCount(aType, isAll)

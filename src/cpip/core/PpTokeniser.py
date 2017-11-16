@@ -68,7 +68,7 @@ __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
-# 'C' keywords
+#: 'C' keywords
 #: :title-reference:`ISO/IEC 9899:1999 (E) 6.4.1 Keywords`
 C_KEYWORDS = tuple("""auto
 break
@@ -161,7 +161,40 @@ TRIGRAPH_TABLE = {
 TRIGRAPH_PREFIX = '?'
 #: Well it is a Trigraph
 TRIGRAPH_SIZE = 3
-# Preprocess character sets
+#: Preprocess character sets:
+#:
+#: The ``'source character set'`` should be 96 characters
+#: i.e. 91 plus whitespace (5)
+#: See assertions below that check length, if not content.
+#: Note: Before jumping to conclusions about how slow this might be
+#: go and look at TestPpTokeniserIsInCharSet
+#
+#: NOTE: whitespace is now handled by the PpWhitespace class
+#: and this entry is dynamically added to CHAR_SET_MAP on import:
+#: ``'whitespace'            : set('\t\v\f\n '),```
+#:
+#: Set of ordinal characters not treated as Universal Character
+#: names i.e. treated literally.
+#: NOTE: ISO/IEC 9899:1999 (E) 6.4.3-2 "A universal character name shall
+#: not specify a character whose short identifier is less than 00A0 other
+#: than 0024 ($), 0040 (@), or 0060 (back tick), nor one in the range D800 through
+#: DFFF inclusive.61)
+#:
+#: [``'lex.header'``][``'undefined_h_words'``] are from:
+#:  ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3 i.e. 6.4.7-3
+#:
+#: ``'lex.key'``:
+#: From: ISO/IEC 14882:1998(E) 2.11 Keywords [lex.key]
+#: Note these are of no particular interest to the pre-processor as
+#: they do not occur in phases 1 to 4. For example 'new' is an operator
+#: but is re-interpreted after phase 4 (probably in phase 7) as a keyword.
+#:
+#: ``'lex.op'``
+#: From: ISO/IEC 14882:1998(E) 2.12 Operators and punctuators [lex.operators]
+#: These contain Digraphs and "Alternative Tokens" e.g. 'and' so that 'and'
+#: will be seen as an operator and an identifier. Similarly 'new' appears as
+#: an operator but is re-interpreted after phase 4 (probably in phase 7) as
+#: a keyword.
 CHAR_SET_MAP = {
     'lex.charset'   : {
         # The source character set should be 96 characters
@@ -318,7 +351,7 @@ for k in DIGRAPH_TABLE.keys():
     assert(k in CHAR_SET_MAP['lex.op']['operators']), \
         "Digraph %s not in CHAR_SET_MAP['lex.op']['operators']" % k 
 
-# Create StrTree objects for fast look up for words
+#: Create StrTree objects for fast look up for words
 CHAR_SET_STR_TREE_MAP = {
     'lex.key'   : {
         'keywords' : StrTree.StrTree(CHAR_SET_MAP['lex.key']['keywords']),
@@ -365,9 +398,11 @@ class ExceptionCpipTokeniserUcnConstraint(ExceptionCpipTokeniser):
 # End: Module exceptions
 ########################
 
-# Comment types used in comment tokens
+#: C comment
 COMMENT_TYPE_C = 'C comment'
+#: C++ comment
 COMMENT_TYPE_CXX = 'C++ comment'
+#: All comments
 COMMENT_TYPES = (COMMENT_TYPE_C, COMMENT_TYPE_CXX)
 
 ####################
@@ -433,7 +468,19 @@ class PpTokeniser(object):
     def __init__(self, theFileObj=None, theFileId=None, theDiagnostic=None):
         """Constructor. Takes an optional file like object.
         If theFileObj has a 'name' attribute then that will be use as the name
-        otherwise theFileId will be used as the file name."""
+        otherwise theFileId will be used as the file name.
+
+        :param theFileObj: The file object.
+        :type theFileObj: ``NoneType, _io.StringIO, _io.TextIOWrapper``
+
+        :param theFileId: File ID.
+        :type theFileId: ``NoneType, str``
+
+        :param theDiagnostic: An optional diagnostic.
+        :type theDiagnostic: :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticStd`
+
+        :returns: ``NoneType``
+        """
         # Set up whitespace handler
         self._whitespaceHandler = PpWhitespace.PpWhitespace()
         self._file = theFileObj
@@ -457,7 +504,10 @@ class PpTokeniser(object):
 
     @property
     def pLineCol(self):
-        """Returns the current physical (line, column) as integers."""
+        """Returns the current physical ``(line, column)`` as integers.
+
+        :returns: ``tuple([int, int])`` -- Physical position.
+        """
         return self._fileLocator.pLineCol
 
     @property
@@ -472,7 +522,11 @@ class PpTokeniser(object):
 
     @property
     def fileLineCol(self):
-        """Return an instance of FileLineCol from the current physical line column."""
+        """Return an instance of :py:class:`cpip.core.FileLocation.FileLineCol`
+        from the current physical line column.
+
+        :returns: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])` -- The FileLineCol object
+        """
         return self._fileLocator.fileLineCol()
 
     @property
@@ -491,7 +545,10 @@ class PpTokeniser(object):
         self._cppTokType = None
     
     def _rewindFile(self):
-        """Sets the file to position zero and resets the FileLocator."""
+        """Sets the file to position zero and resets the FileLocator.
+
+        :returns: ``NoneType``
+        """
         if self._file is not None:
             self._file.seek(0)
         self._fileLocator.startNewPhase()
@@ -502,8 +559,12 @@ class PpTokeniser(object):
     def lexPhases_0(self):
         """An non-standard phase that just reads the file and returns its
         contents as a list of lines (including EOL characters).
+
         May raise an ExceptionCpipTokeniser if self has been created with None
-        or the file is unreadable"""
+        or the file is unreadable
+
+        :returns: ``list([]),list([str])`` -- List of source code lines.
+        """
         try:
             self._rewindFile()
             return self._file.readlines()
@@ -513,6 +574,7 @@ class PpTokeniser(object):
     def _convertToLexCharset(self, theLineS):
         """Converts a list of lines expanding non-lex.charset characters to
         universal-character-name and returns a set of lines so encoded.
+
         :title-reference:`ISO/IEC 9899:1999 (E) 6.4.3`
         
         .. note::
@@ -521,6 +583,15 @@ class PpTokeniser(object):
             not specify a character whose short identifier is less than 00A0 other
             than 0024 ($), 0040 (@), or 0060 (back tick), nor one in the range D800 through
             DFFF inclusive.61).
+
+        .. note::
+
+            This side-effects the supplied lines and returns None.
+
+        :param theLineS: The source code.
+        :type theLineS: ``list([]), list([str])``
+
+        :returns: ``NoneType``
         """
         myCharSet = CHAR_SET_MAP['lex.charset']['source character set']
         # myUcnOrdinals is not 0024 ($), 0040 (@), or 0060 (back tick)
@@ -559,8 +630,15 @@ class PpTokeniser(object):
 
     def lexPhases_1(self, theLineS):
         """:title-reference:`ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase one`
-        Takes a list of lines (including EOL characters), replaces trigraphs
-        and returns the new list of lines."""
+        Takes a list of lines (including EOL characters)and replaces trigraphs.
+
+        NOTE: This side-effects the supplied lines and returns None.
+
+        :param theLineS: The source code.
+        :type theLineS: ``list([]), list([str])``
+
+        :returns: ``NoneType``
+        """
         self._convertToLexCharset(theLineS)
         self._translateTrigraphs(theLineS)
         #return myConvertedLineS
@@ -601,8 +679,16 @@ class PpTokeniser(object):
 
     def lexPhases_2(self, theLineS):
         """:title-reference:`ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase two`
-        This joins physical to logical lines. NOTE: This side-effects the
-        supplied lines and returns None."""        
+
+        This joins physical to logical lines.
+
+        NOTE: This side-effects the supplied lines and returns None.
+
+        :param theLineS: The source code.
+        :type theLineS: ``list([]), list([str])``
+
+        :returns: ``NoneType``
+        """
         #print '\nlexPhases_2() was [%d]:' % len(theLineS), theLineS
         # Reset the file locator
         self._fileLocator.startNewPhase()
@@ -632,7 +718,10 @@ class PpTokeniser(object):
 #===============================================================================
 
     def initLexPhase12(self):
-        """Process phases one and two and returns the result as a string."""
+        """Process phases one and two and returns the result as a string.
+
+        :returns: ``str`` -- <insert documentation for return values>
+        """
         # Represents the contents of a source file after translation phases 1, 2
         # Always do Phase 0, a psuedo phase
         myLines = self.lexPhases_0()
@@ -649,9 +738,16 @@ class PpTokeniser(object):
     ##################################
     def _translateTrigraphs(self, theLineS):
         """:title-reference:`ISO/IEC 14882:1998(E) 2.3 Trigraph sequences [lex.trigraphs]`
-        This returns a new set of lines with the trigraphs replaced and
+
+        This replaces the trigraphs in-place and
         updates the FileLocator so that the physical lines and columns
-        can be recovered."""
+        can be recovered.
+
+        :param theLineS: Source code lines.
+        :type theLineS: ``list([]), list([str])``
+
+        :returns: ``NoneType``
+        """
         self._fileLocator.startNewPhase()
         myMr = MatrixRep.MatrixRep()
         # Trigraph replacement
@@ -680,7 +776,9 @@ class PpTokeniser(object):
     def substAltToken(self, tok):
         """If a PpToken is a Digraph this alters its value to its alternative.
         If not the supplied token is returned unchanged.
-        There are no side effects on self."""
+
+        There are no side effects on self.
+        """
         if tok.tt in ('identifier', 'preprocessing-op-or-punc') \
         and tok.t in DIGRAPH_TABLE:
             tok.subst(DIGRAPH_TABLE[tok.t], 'preprocessing-op-or-punc')
@@ -733,11 +831,19 @@ class PpTokeniser(object):
         """The token generator. On being called this performs translations phases
         1, 2 and 3 (unless already done) and then generates pairs of:
         (preprocessing token, token type)
+
         Token type is an enumerated integer from LEX_PPTOKEN_TYPES.
+
         Proprocessing tokens include sequences of whitespace characters and
         these are not necessarily concatenated i.e. this generator can produce
         more than one whitespace token in sequence.
-        TODO: Rename this to ppTokens() or something"""
+
+        TODO: Rename this to ppTokens() or something.
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- Sequence ot tokens.
+
+        :raises: ``GeneratorExit, StopIteration``
+        """
         for aTokTypeObj in self.genLexPptokenAndSeqWs(self.initLexPhase12()):
             r = yield aTokTypeObj
             if r is not None:
@@ -774,6 +880,14 @@ class PpTokeniser(object):
         :title-reference:`ISO/IEC 9899:1999 (E) 6.4.7 Header names Para 3` says that:
         *"A header name preprocessing token is recognised only within a #include
         preprocessing directive."*.
+
+
+        :param theCharS: The source code.
+        :type theCharS: ``str``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- Sequence of tokens.
+
+        :raises: ``GeneratorExit, IndexError``
         """
         #print 'TRACE: genLexPptokenAndSeqWs():'
         self._fileLocator.startNewPhase()
@@ -838,14 +952,32 @@ class PpTokeniser(object):
     #================================
     def _sliceLongestMatchOfs(self, theBuf, theOfs, theFnS, isExcl=False):
         """Returns the length of the longest slice of theBuf from theOfs using
-        the functions theFnS, or 0.
+        the functions ``theFnS``, or 0 if nothing matches.
+
         This preserves self._cppTokType to be the one that gives the longest match.
-        Functions that raise an IndexError will be ignored.
-        If isExcl is False (the default) then all functions are tested.
-        If isExcl is True then functions after one returning a non-zero value
-        are not tested.
+        Functions that raise an ``IndexError`` will be ignored.
+
+        If ``isExcl`` is ``False`` (the default) then all functions are tested, longest
+        match is returned.
+
+        If ``isExcl`` is ``True`` then first function returning a non-zero value is used.
+
         TODO (maybe): Have slice functions return (size, type) and get rid of
         self._changeOfTokenTypeIsOk and self._cppTokType
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: Offset.
+        :type theOfs: ``int``
+
+        :param theFnS: Functions.
+        :type theFnS: ``tuple([method, method, method, method, method]), tuple([method, method, method]), tuple([method, method])``
+
+        :param isExcl: Exclusivity flag.
+        :type isExcl: ``bool``
+
+        :returns: ``int`` -- The length of the longest match.
         """
         m = 0
         fMax = None
@@ -877,7 +1009,19 @@ class PpTokeniser(object):
 
     def _sliceAccumulateOfs(self, theBuf, theOfs, theFn):
         """Repeats the function as many times as possible on theBuf from theOfs.
-        An IndexError raised by the function will be caught and not propagated."""
+        An IndexError raised by the function will be caught and not propagated.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: Offset.
+        :type theOfs: ``int``
+
+        :param theFn: Function.
+        :type theFn: ``method``
+
+        :returns: ``int`` -- The index of the find or -1 if none found.
+        """
         i = 0
         try:
             while 1:
@@ -891,7 +1035,19 @@ class PpTokeniser(object):
 
     def _wordsFoundInUpTo(self, theBuf, theLen, theWordS):
         """Searches theCharS for any complete instance of any word in theWordS.
-        Returns the index of the find or -1 if none found."""
+        Returns the index of the find or -1 if none found.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``str``
+
+        :param theLen: Buffer length.
+        :type theLen: ``int``
+
+        :param theWordS: Set of words, any of these can be found.
+        :type theWordS: ``set([str])``
+
+        :returns: ``int`` -- The index of the find or -1 if none found.
+        """
         if theLen > 0:
             for aWord in theWordS:
                 i = self._wordFoundInUpTo(theBuf, theLen, aWord)
@@ -901,7 +1057,21 @@ class PpTokeniser(object):
 
     def _wordFoundInUpTo(self, theBuf, theLen, theWord):
         """Searches theBuf for any complete instance of a word in theBuf.
-        Returns the index of the find or -1 if none found."""
+        Returns the index of the find or -1 if none found.
+
+        TODO: This looks wrong, buffer = '  abc abd', word = 'abd' will return -1
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``str``
+
+        :param theLen: Buffer length.
+        :type theLen: ``int``
+
+        :param theWord: Word to find.
+        :type theWord: ``str``
+
+        :returns: ``int`` -- The index of the find or -1 if none found.
+        """
         if len(theWord) > 0:
             i = 0
             # Find first letter
@@ -944,26 +1114,41 @@ class PpTokeniser(object):
     NOTE: Functions starting with __slice... do not trap the IndexError, the
     caller must do that.
     """
-    
+
     def _sliceLexPptoken(self, theBuf, theOfs):
         """:title-reference:`ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken].`
+
         :title-reference:`ISO/IEC 9899:1999 (E) 6.4 Lexical elements`
+
         NOTE: Does not identify header-name tokens. See NOTE on
         genLexPptokenAndSeqWs()
-        Note: _sliceLexPptokenGeneral is an exclusive search as 'bitand' can
+
+        NOTE: _sliceLexPptokenGeneral is an exclusive search as 'bitand' can
         appear to be both an operator (correct) and an identifier (incorrect).
         The order of applying functions is therefore highly significant
         _sliceLexPpnumber must be before _sliceLexOperators as the leading '.'
         on a number can be seen as an operator.
         _sliceCharacterLiteral and _sliceStringLiteral must be before
         _sliceLexName as the leading 'L' on char/string can be seen as a name.
-        
-        self._sliceLexOperators has to be after self._sliceLexName as otherwise
-        #define complex gets seen as:
-        # - operator
-        define - identifier
-        compl - operator because of alternative tokens
-        ex - identifier
+
+        self._sliceLexOperators has to be after self._sliceLexName as otherwise::
+
+            #define complex
+
+        gets seen as::
+
+            # -> operator
+            define -> identifier
+            compl -> operator because of alternative tokens
+            ex -> identifier
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
         """
         retVal = self._sliceLexPptokenGeneral(
                                 theBuf,
@@ -993,10 +1178,19 @@ class PpTokeniser(object):
 
     def _sliceLexPptokenWithHeaderName(self, theBuf, theOfs):
         """:title-reference:`ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken].`
-        
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+
         .. note::
-        
-            This does identify header-name tokens where possible."""
+
+            This does identify header-name tokens where possible.
+        """
         retVal = self._sliceLexPptokenGeneral(
                                 theBuf,
                                 theOfs,
@@ -1021,7 +1215,19 @@ class PpTokeniser(object):
         return retVal
 
     def _sliceLexPptokenGeneral(self, theBuf, theOfs, theFuncS):
-        """Applies theFuncS to theCharS and returns the longest match."""
+        """Applies theFuncS to theCharS and returns the longest match.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: Integer offset.
+        :type theOfs: ``int``
+
+        :param theFuncS: Sequence of functions.
+        :type theFuncS: ``tuple([method, method, method, method, method])``
+
+        :returns: ``int`` -- Length of the longest match.
+        """
         #self._cppTokType = None
         return self._sliceLongestMatchOfs(theBuf, theOfs, theFuncS, isExcl=True)
 
@@ -1030,6 +1236,16 @@ class PpTokeniser(object):
     # These take a buffer and try and do a single specific match.
     #============================================================    
     def _sliceWhitespace(self, theBuf, theOfs=0):
+        """Returns whitespace length.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = self._whitespaceHandler.sliceWhitespace(theBuf, theOfs)
         if i > 0:
             assert(self._changeOfTokenTypeIsOk or self._cppTokType is None), '_cppTokType was %s now %s' \
@@ -1040,7 +1256,16 @@ class PpTokeniser(object):
     def _sliceNonWhitespaceSingleChar(self, theBuf, theOfs=0):
         """Returns 1 if the first character is non-whitespace, 0 otherwise.
         :title-reference:`ISO/IEC 9899:1999 (E) 6.4-3 and ISO/IEC 14882:1998(E) 2.4.2`
-         States that if the character is ' or " the behaviour is undefined."""
+        States that if the character is ``'`` or ``"`` the behaviour is undefined.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+         """
         i = theOfs
         try:
             # Only access theBuf with [i] so that __getitem__() is called
@@ -1060,7 +1285,16 @@ class PpTokeniser(object):
     # Section: lex.charset
     #=========================
     def _sliceHexQuad(self, theBuf, theOfs=0):
-        """:title-reference:`ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - hex-quad.`"""
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - hex-quad.`
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         retLen = 4
         try:
             for i in range(retLen):
@@ -1072,7 +1306,16 @@ class PpTokeniser(object):
         return 0
     
     def __sliceUniversalCharacterName(self, theBuf, theOfs=0):
-        """:title-reference:`ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - universal-character-name.`"""
+        """:title-reference:`ISO/IEC 14882:1998(E) 2.2 Character sets [lex.charset] - universal-character-name.`
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         # \u hex-quad
         # \U hex-quad hex-quad
         if theBuf[theOfs] == '\\':
@@ -1093,7 +1336,16 @@ class PpTokeniser(object):
     # Section: lex.comment
     #=========================
     def _sliceLexComment(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.7 Comments [lex.comment]."""
+        """ISO/IEC 14882:1998(E) 2.7 Comments [lex.comment].
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         cmtStyle = None
         try:
@@ -1151,7 +1403,13 @@ class PpTokeniser(object):
         that might have a header-name token type in them.
         May raise an ExceptionCpipTokeniser if tokens are not all consumed.
         This is used at lexer level for re-interpreting PpTokens in the
-        context of a #include directive."""
+        context of a #include directive.
+
+        :param theToks: The tokens.
+        :type theToks: ``list([cpip.core.PpToken.PpToken])``
+
+        :returns: ``list([cpip.core.PpToken.PpToken])`` -- List of 'header-name' tokens.
+        """
         # Store token type as this function may be called whilst another
         # generator is active
         myTt = self._cppTokType
@@ -1187,7 +1445,13 @@ class PpTokeniser(object):
     def filterHeaderNames(self, theToks):
         """Returns a list of 'header-name' tokens from the supplied stream.
         May raise ExceptionCpipTokeniser if un-parsable or theToks has
-        non-(whitespace, header-name)."""
+        non-(whitespace, header-name).
+
+        :param theToks: The tokens.
+        :type theToks: ``list([cpip.core.PpToken.PpToken])``
+
+        :returns: ``list([cpip.core.PpToken.PpToken])`` -- List of 'header-name' tokens.
+        """
         ret = []
         for t in self.reduceToksToHeaderName(theToks):
             if t.tt != 'whitespace':
@@ -1203,7 +1467,16 @@ class PpTokeniser(object):
 
     def _sliceLexHeader(self, theBuf, theOfs=0):
         """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header].
-        Might raise a ExceptionCpipUndefinedLocal."""
+        Might raise a ExceptionCpipUndefinedLocal.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         try:
             if theBuf[i] == '<':
@@ -1235,7 +1508,16 @@ class PpTokeniser(object):
 
     def _sliceLexHeaderHcharSequence(self, theBuf, theOfs):
         """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header] - h-char-sequence.
-        Might raise a ExceptionCpipUndefinedLocal."""
+        Might raise a ExceptionCpipUndefinedLocal.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         retVal = self._sliceAccumulateOfs(theBuf, theOfs, self._sliceLexHeaderHchar)
         # undefined_h_words
         if retVal > 0:
@@ -1254,7 +1536,16 @@ class PpTokeniser(object):
         return retVal
 
     def _sliceLexHeaderHchar(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header] - h-char character."""
+        """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header] - h-char character.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         try:
             if theBuf[theOfs] in CHAR_SET_MAP['lex.header']['h-char']:
                 return 1
@@ -1264,7 +1555,16 @@ class PpTokeniser(object):
 
     def _sliceLexHeaderQcharSequence(self, theBuf, theOfs):
         """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header] - q-char-sequence.
-        Might raise a ExceptionCpipUndefinedLocal."""
+        Might raise a ExceptionCpipUndefinedLocal.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         retVal = self._sliceAccumulateOfs(theBuf, theOfs, self._sliceLexHeaderQchar)
         # undefined_q_words
         if retVal > 0:
@@ -1284,7 +1584,16 @@ class PpTokeniser(object):
         return retVal
 
     def _sliceLexHeaderQchar(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header] - q-char."""
+        """ISO/IEC 14882:1998(E) 2.8 Header names [lex.header] - q-char.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         try:
             if theBuf[theOfs] in CHAR_SET_MAP['lex.header']['q-char']:
                 return 1
@@ -1299,20 +1608,32 @@ class PpTokeniser(object):
     # Section: lex.ppnumber
     #=========================
     def _sliceLexPpnumber(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.9 Preprocessing numbers [lex.ppnumber].
-        TODO: Spec says "Preprocessing number tokens lexically include all integral literal tokens (2.13.1) and all floating literal tokens (2.13.3)."
-        But the pp-number list does not specify that.
+        """ISO/IEC 14882:1998(E) 2.9 Preprocessing numbers [lex.ppnumber]::
+
+            pp-number:
+                digit
+                . digit
+                pp-number digit
+                pp-number nondigit
+                pp-number e sign
+                pp-number E sign
+                pp-number .
+
+        TODO: Spec says "Preprocessing number tokens lexically include all integral literal tokens (2.13.1) and all
+        floating literal tokens (2.13.3)." But the pp-number list does not specify that.
+
         NOTE: ISO/IEC 9899:1999 Programming languages - C allows 'p' and 'P' suffixes.
+
         NOTE: The standard appears to allow '.1.2.3.4.'
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
         """
-        #pp-number:
-        #digit
-        #. digit
-        #pp-number digit
-        #pp-number nondigit
-        #pp-number e sign
-        #pp-number E sign
-        #pp-number .
         i = theOfs
         try:
             # Check prefix
@@ -1354,14 +1675,32 @@ class PpTokeniser(object):
         return i - theOfs
         
     def __sliceLexPpnumberDigit(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.9 Preprocessing numbers [lex.ppnumber] - digit."""
+        """ISO/IEC 14882:1998(E) 2.9 Preprocessing numbers [lex.ppnumber] - digit.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         if theBuf[theOfs] in CHAR_SET_MAP['lex.ppnumber']['digit']:
             return 1
         return 0
 
     def __sliceLexPpnumberExpSign(self, theBuf, theOfs=0):
         """ISO/IEC 14882:1998(E) 2.9 Preprocessing numbers [lex.ppnumber] - exponent and sign.
-        Returns 2 if theCharS is 'e' or 'E' followed by a sign."""
+        Returns 2 if theCharS is 'e' or 'E' followed by a sign.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         if theBuf[theOfs] in CHAR_SET_MAP['lex.fcon']['exponent_prefix'] \
         and theBuf[theOfs+1] in CHAR_SET_MAP['lex.fcon']['sign']:
             return 2
@@ -1374,12 +1713,21 @@ class PpTokeniser(object):
     # Section: lex.name
     #=========================
     def _sliceLexName(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.10 Identifiers [lex.name]."""
-        #2.10 Identifiers
-        #identifier:
-        #nondigit
-        #identifier nondigit
-        #identifier digit
+        """ISO/IEC 14882:1998(E) 2.10 Identifiers [lex.name]::
+
+            identifier:
+                nondigit
+                identifier nondigit
+                identifier digit
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         try:
             i = self.__sliceNondigit(theBuf, theOfs)
             if i == 0:
@@ -1412,13 +1760,23 @@ class PpTokeniser(object):
         return i - theOfs
 
     def __sliceNondigit(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.10 Identifiers [lex.name] - nondigit."""
-        #nondigit: one of
-        #universal-character-name
-        #_ a b c d e f g h i j k l m
-        #n o p q r s t u v w x y z
-        #A B C D E F G H I J K L M
-        #N O P Q R S T U V W X Y Z
+        """ISO/IEC 14882:1998(E) 2.10 Identifiers [lex.name] - nondigit::
+
+            nondigit: one of
+            universal-character-name
+            _ a b c d e f g h i j k l m
+            n o p q r s t u v w x y z
+            A B C D E F G H I J K L M
+            N O P Q R S T U V W X Y Z
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = self.__sliceUniversalCharacterName(theBuf, theOfs)
         if i == 0:
             # Try alternates
@@ -1433,7 +1791,16 @@ class PpTokeniser(object):
     # Section: lex.key
     #=========================
     def _sliceLexKey(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.11 Keywords [lex.key]."""
+        """ISO/IEC 14882:1998(E) 2.11 Keywords [lex.key].
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         try:
             return self.__sliceLexKey(theBuf, theOfs)
         except KeyError:
@@ -1452,7 +1819,16 @@ class PpTokeniser(object):
     #=========================
     def _sliceLexOperators(self, theBuf, theOfs=0):
         """ISO/IEC 14882:1998(E) 2.12 Operators and punctuators [lex.operators].
-        i.e. preprocessing-op-or-punc"""
+        i.e. preprocessing-op-or-punc
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         # Note: StrTree.has() traps IndexError so we don't have to
         i = CHAR_SET_STR_TREE_MAP['lex.op']['operators'].has(theBuf, theOfs) - theOfs
         if i > 0:
@@ -1469,7 +1845,16 @@ class PpTokeniser(object):
     #==================
     def _sliceLiteral(self, theBuf, theOfs=0):
         """Returns the length of a slice of theCharS that matches the longest integer literal or 0.
-        ISO/IEC 14882:1998(E) 2.13 Literals [lex.literal]."""
+        ISO/IEC 14882:1998(E) 2.13 Literals [lex.literal].
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         return self._sliceLongestMatchOfs(
                                 theBuf,
                                 theOfs,
@@ -1486,7 +1871,16 @@ class PpTokeniser(object):
     #==================
     def _sliceIntegerLiteral(self, theBuf, theOfs=0):
         """Returns the length of a slice of theCharS that matches the longest integer literal or 0.
-        ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon]."""
+        ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon].
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = self._sliceLongestMatchOfs(
                                 theBuf,
                                 theOfs,
@@ -1501,7 +1895,16 @@ class PpTokeniser(object):
         return i
 
     def _sliceDecimalLiteral(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - decimal-literal."""
+        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - decimal-literal.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         try:
             if theBuf[i] in CHAR_SET_MAP['lex.ppnumber']['nonzero-digit']:
@@ -1513,7 +1916,16 @@ class PpTokeniser(object):
         return i - theOfs
 
     def _sliceOctalLiteral(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - octal-literal."""
+        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - octal-literal.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         try:
             if theBuf[i] == '0':
@@ -1529,7 +1941,16 @@ class PpTokeniser(object):
         return i - theOfs
 
     def _sliceHexadecimalLiteral(self, theBuf, theOfs=0):
-        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - hexadecimal-literal."""
+        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - hexadecimal-literal.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         try:
             if theBuf[i] == '0' \
@@ -1547,10 +1968,20 @@ class PpTokeniser(object):
         return 0
 
     def _sliceIntegerSuffix(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - integer-suffix.
-        integer-suffix:
-            unsigned-suffix long-suffix opt
-            long-suffix unsigned-suffix opt"""
+        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - integer-suffix::
+
+            integer-suffix:
+                unsigned-suffix long-suffix opt
+                long-suffix unsigned-suffix opt
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = 0
         try:
             i = self.__sliceUnsignedSuffix(theBuf, theOfs)
@@ -1565,13 +1996,31 @@ class PpTokeniser(object):
         return i
 
     def __sliceUnsignedSuffix(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - unsigned-suffix."""
+        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - unsigned-suffix.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         if theBuf[theOfs] in CHAR_SET_MAP['lex.icon']['unsigned-suffix']:
             return 1
         return 0
 
     def __sliceLongSuffix(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - long-suffix."""
+        """ISO/IEC 14882:1998(E) 2.13.1 Integer literals [lex.icon] - long-suffix.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         if theBuf[theOfs] in CHAR_SET_MAP['lex.icon']['long-suffix']:
             return 1
         return 0
@@ -1583,7 +2032,16 @@ class PpTokeniser(object):
     # Character literals.
     #====================
     def _sliceCharacterLiteral(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon]."""
+        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon].
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         #character-literal:
         #'c-char-sequence'
         #L'c-char-sequence'
@@ -1613,11 +2071,29 @@ class PpTokeniser(object):
         return i - theOfs
     
     def _sliceCCharSequence(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - c-char-sequence."""
+        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - c-char-sequence.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         return self._sliceAccumulateOfs(theBuf, theOfs, self._sliceCChar)
 
     def _sliceCChar(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - c-char."""
+        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - c-char.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         return self._sliceLongestMatchOfs(
                                 theBuf,
                                 theOfs,
@@ -1629,14 +2105,32 @@ class PpTokeniser(object):
                             )
 
     def __sliceCCharCharacter(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - c-char character."""
+        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - c-char character.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         if theBuf[theOfs] in CHAR_SET_MAP['lex.ccon']['c-char']: 
             return 1
         return 0
 
     def _sliceEscapeSequence(self, theBuf, theOfs):
         """Returns the length of a slice of theCharS that matches the longest integer literal or 0.
-        ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - escape-sequence."""
+        ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - escape-sequence.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         return self._sliceLongestMatchOfs(
                                     theBuf,
                                     theOfs,
@@ -1648,18 +2142,37 @@ class PpTokeniser(object):
                                 )
 
     def __sliceSimpleEscapeSequence(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - simple-escape-sequence."""
+        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - simple-escape-sequence.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         if theBuf[theOfs] == '\\' \
         and theBuf[theOfs+1] in CHAR_SET_MAP['lex.ccon']['simple-escape-sequence']:
             return 2
         return 0
 
     def _sliceOctalEscapeSequence(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - octal-escape-sequence.
-        octal-escape-sequence:
-            \\ octal-digit
-            \\ octal-digit octal-digit
-            \\ octal-digit octal-digit octal-digit """
+        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - octal-escape-sequence::
+
+            octal-escape-sequence:
+                \\ octal-digit
+                \\ octal-digit octal-digit
+                \\ octal-digit octal-digit octal-digit
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         s = CHAR_SET_MAP['lex.ppnumber']['octal-digit']
         try:
@@ -1674,10 +2187,19 @@ class PpTokeniser(object):
         return i - theOfs
 
     def _sliceHexadecimalEscapeSequence(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - hexadecimal-escape-sequence.
-        hexadecimal-escape-sequence:
-            \\x hexadecimal-digit
-            hexadecimal-escape-sequence hexadecimal-digit
+        """ISO/IEC 14882:1998(E) 2.13.2 Character literals [lex.ccon] - hexadecimal-escape-sequence::
+
+            hexadecimal-escape-sequence:
+                \\x hexadecimal-digit
+                hexadecimal-escape-sequence hexadecimal-digit
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
         """
         i = theOfs
         s = CHAR_SET_MAP['lex.ppnumber']['hexadecimal-digit']
@@ -1698,10 +2220,19 @@ class PpTokeniser(object):
     # Floating literals.
     #====================
     def _sliceFloatingLiteral(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon].
-        floating-literal:
-           fractional-constant exponent-part opt floating-suffix opt
-           digit-sequence exponent-part floating-suffix opt
+        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon]::
+
+            floating-literal:
+               fractional-constant exponent-part opt floating-suffix opt
+               digit-sequence exponent-part floating-suffix opt
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
         """
         i = self._sliceFloatingLiteralFractionalConstant(theBuf, theOfs)
         if i > 0:
@@ -1722,14 +2253,24 @@ class PpTokeniser(object):
         return i
 
     def _sliceFloatingLiteralFractionalConstant(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - fractional-constant.
-        fractional-constant:
-           digit-sequence opt . digit-sequence
-           digit-sequence .
+        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - fractional-constant::
+
+            fractional-constant:
+               digit-sequence opt . digit-sequence
+               digit-sequence .
+
         i.e there are three posibilities:
         a: . digit-sequence
         b: digit-sequence .
         c: digit-sequence . digit-sequence
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
         """
         i = theOfs
         # Fractions
@@ -1753,7 +2294,16 @@ class PpTokeniser(object):
         return i - theOfs
     
     def _sliceFloatingLiteralExponentPart(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - exponent-part."""
+        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - exponent-part.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         try:
             if theBuf[i] in CHAR_SET_MAP['lex.fcon']['exponent_prefix']:
@@ -1771,7 +2321,16 @@ class PpTokeniser(object):
         return i + j - theOfs
 
     def _sliceFloatingLiteralSign(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - floating-suffix."""
+        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - floating-suffix.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         try:
             if theBuf[theOfs] in CHAR_SET_MAP['lex.fcon']['sign']:
                 return 1
@@ -1780,7 +2339,16 @@ class PpTokeniser(object):
         return 0
 
     def _sliceFloatingLiteralDigitSequence(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - digit-sequence."""
+        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - digit-sequence.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         i = theOfs
         try:
             while theBuf[i] in CHAR_SET_MAP['lex.ppnumber']['digit']:
@@ -1790,7 +2358,16 @@ class PpTokeniser(object):
         return i - theOfs
 
     def _sliceFloatingLiteralFloatingSuffix(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - floating-suffix."""
+        """ISO/IEC 14882:1998(E) 2.13.3 Floating literals [lex.fcon] - floating-suffix.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         try:
             if theBuf[theOfs] in CHAR_SET_MAP['lex.fcon']['floating-suffix']:
                 return 1
@@ -1806,7 +2383,16 @@ class PpTokeniser(object):
     # String literals.
     #====================
     def _sliceStringLiteral(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string]."""
+        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string].
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         #string-literal:
         #"s-char-sequence opt "
         #L"s-char-sequence opt "
@@ -1842,11 +2428,29 @@ class PpTokeniser(object):
         return i - theOfs
 
     def _sliceSCharSequence(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string] - s-char-sequence."""
+        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string] - s-char-sequence.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         return self._sliceAccumulateOfs(theBuf, theOfs, self._sliceSChar)
 
     def _sliceSChar(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string] - s-char."""
+        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string] - s-char.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         return self._sliceLongestMatchOfs(
                         theBuf,
                         theOfs,
@@ -1858,7 +2462,16 @@ class PpTokeniser(object):
                     )
 
     def _sliceSCharCharacter(self, theBuf, theOfs):
-        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string] - s-char character."""
+        """ISO/IEC 14882:1998(E) 2.13.4 String literals [lex.string] - s-char character.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: The starting offset.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Length of matching characters found.
+        """
         if theBuf[theOfs] in CHAR_SET_MAP['lex.string']['s-char']:
             return 1
         return 0

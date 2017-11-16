@@ -138,75 +138,24 @@ class PpLexer(object):
     """Create a translation unit tokeniser that applies
     :title-reference:`ISO/IEC 9899:1999(E) Section 6`
     and/or :title-reference:`ISO/IEC 14882:1998(E) section 16`.
-    
-    *tuFileId*
-        A file ID that will be given to the include handler to find the
-        translation unit. Typically this will be the file path (as a string)
-        to the file that is the Initial Translation Unit (ITU)
-        i.e. the file being preprocessed.
-        
-    *includeHandler*
-        A handler to file ``#includ``'d files typically a
-        :py:class:`.IncludeHandler.IncludeHandlerStd`.
-        This might have user and system include path information and a means
-        of resolving file references.
 
-    *preIncFiles*
-        An ordered list of file like objects that are pre-include files.
-        These are processed in order before the ITU is processed.
-        Macro redefinition rules apply.
-
-    *diagnostic*
-        A diagnostic object, defaults to a
-        :py:class:`.CppDiagnostic.PreprocessDiagnosticStd`.
-        
-    *pragmaHandler*
-        A handler for ``#pragma`` statements.
-        
-        This must have the attribute ``replaceTokens``
-        is to be implemented, if True then the tokens stream will be be
-        macro replaced before being passed to the pragma handler.
-        
-        This must have a function ``pragma()`` defined that takes a non-zero
-        length list of :py:class:`.PpToken.PpToken` the last of which will be a
-        newline token. The tokens returned will be yielded.
-        
-    *stdPredefMacros*
-        A dictionary of Standard pre-defined macros. See for example:
-        :title-reference:`ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names`
-        :title-reference:`ISO/IEC 14882:1998 (E) 16.8 Predefined macro names`
-        :title-reference:`N2800=08-0310 16.8 Predefined macro names`
-                        
-        The macros ``__DATE__`` and ``__TIME__`` will be automatically
-        updated to current locale date/time (see autoDefineDateTime).
-        
-    *autoDefineDateTime*
-        If True then the macros ``__DATE__`` and ``__TIME__`` will be
-        automatically updated to current locale date/time. Mostly this is
-        used for testing.
-    
-    *gccExtensions*
-        Support GCC extensions. Currently just ``#include_next`` is supported.
-
-    *annotateLineFile* - if True then PpToken will output line number and file as cpp.
-        For example::
-        
-            # 22 "/usr/include/stdio.h" 3 4
-            # 59 "/usr/include/stdio.h" 3 4
-            # 1 "/usr/include/sys/cdefs.h" 1 3 4
-    
     TODO: Set flags here rather than supplying them to a generator?
     This would make the API simply the ctor and ppTokens/next().
     Flags would be:
+
     incWs - Include whitespace tokens.
     condLevel - (0, 1, 2) thus:
+
+    .. code-block:: console
     
         0: No conditionally compiled tokens. The fileIncludeGraphRoot will
             not have any information about conditionally included files.
-        1: Conditionally compiled tokens are generated but not from 
+
+        1: Conditionally compiled tokens are generated but not from
             conditionally included files. The fileIncludeGraphRoot will have
             a reference to a conditionally included file but not that
             included file's includes.
+
         2: Conditionally compiled tokens including tokens from conditionally
             included files. The fileIncludeGraphRoot will have all the
             information about conditionally included files recursively.
@@ -242,6 +191,69 @@ class PpLexer(object):
                  gccExtensions=False,
                  annotateLineFile=False,
                  ):
+        """Constructor.
+
+        :param tuFileId: A file ID that will be given to the include handler to find the
+            translation unit. Typically this will be the file path (as a string)
+            to the file that is the Initial Translation Unit (ITU)
+            i.e. the file being preprocessed.
+        :type tuFileId: ``str``
+
+        :param includeHandler: A handler to file ``#includ``'d files typically a
+            :py:class:`.IncludeHandler.IncludeHandlerStd`.
+            This might have user and system include path information and a means
+            of resolving file references.
+        :type includeHandler: ``cpip.core.IncludeHandler.CppIncludeStdOs``
+
+        :param preIncFiles: An ordered list of file like objects that are pre-include files.
+            These are processed in order before the ITU is processed.
+            Macro redefinition rules apply.
+        :type preIncFiles: ``list([_io.StringIO])``
+
+        :param diagnostic: A diagnostic object, defaults to a
+            :py:class:`.CppDiagnostic.PreprocessDiagnosticStd`.
+        :type diagnostic: ``NoneType``
+
+        :param pragmaHandler: A handler for ``#pragma`` statements.
+
+            This must have the attribute ``replaceTokens``
+            is to be implemented, if True then the tokens stream will be be
+            macro replaced before being passed to the pragma handler.
+
+            This must have a function ``pragma()`` defined that takes a non-zero
+            length list of :py:class:`.PpToken.PpToken` the last of which will be a
+            newline token. The tokens returned will be yielded.
+        :type pragmaHandler: ``NoneType``
+
+        :param stdPredefMacros: A dictionary of Standard pre-defined macros. See for example:
+            :title-reference:`ISO/IEC 9899:1999 (E) 6.10.8 Predefined macro names`
+            :title-reference:`ISO/IEC 14882:1998 (E) 16.8 Predefined macro names`
+            :title-reference:`N2800=08-0310 16.8 Predefined macro names`
+
+            The macros ``__DATE__`` and ``__TIME__`` will be automatically
+            updated to current locale date/time (see autoDefineDateTime).
+        :type stdPredefMacros: ``dict({})``
+
+        :param autoDefineDateTime: If True then the macros ``__DATE__`` and ``__TIME__``
+            will be automatically updated to current locale date/time. Mostly this is
+            used for testing.
+        :type autoDefineDateTime: ``bool``
+
+        :param gccExtensions: Support GCC extensions. Currently just ``#include_next`` is supported.
+        :type gccExtensions: ``bool``
+
+        :param annotateLineFile: If True then PpToken will output line number and file as cpp.
+            For example:
+
+            .. code-block:: console
+
+                # 22 "/usr/include/stdio.h" 3 4
+                # 59 "/usr/include/stdio.h" 3 4
+                # 1 "/usr/include/sys/cdefs.h" 1 3 4
+        :type annotateLineFile: ``bool``
+
+        :returns: ``NoneType``
+        """
         # Capture constructor arguments
         self._tuFileId = tuFileId
         self._includeHandler = includeHandler
@@ -325,7 +337,12 @@ class PpLexer(object):
         self._isGenerating = False
 
     def _genPreIncludeTokens(self):
-        """Reads all the pre-include files and loads the macro environment."""
+        """Reads all the pre-include files and loads the macro environment.
+
+        :returns: ``NoneType``
+
+        :raises: ``AttributeError, StopIteration``
+        """
         for i, aFileObj in enumerate(self._preIncFiles):
             logging.debug('PpLexer._initialisePreIncludes() [%d] %s', i, aFileObj) 
             aFileObj.seek(0)
@@ -395,7 +412,11 @@ class PpLexer(object):
             logging.debug('PpLexer._initialisePreIncludes() [%d] - Done', i) 
             
     def finalise(self):
-        """Finalisation, may raise any Exception."""
+        """Finalisation, may raise any Exception.
+
+        :returns: ``NoneType``
+
+        :raises: ``Exception`` - Any exception."""
         self._includeHandler.finalise()
         self._condStack.close()
         # Note: We don't do any closure/finalisation on self._condCompGraph
@@ -413,29 +434,37 @@ class PpLexer(object):
     def ppTokens(self, incWs=True, minWs=False, condLevel=0):
         """A generator for providing a sequence of :py:class:`.PpToken.PpToken`
         in accordance with section 16 of :title-reference:`ISO/IEC 14882:1998(E)`.
-        
-        *incWs* - if True than whitespace tokens are included (i.e. tok.isWs() == True).
-        
-        *minWs* - if True then whitespace runs will be minimised to a single
-        space or, if  newline is in the whitespace run, a single newline
-        
-        *condLevel* - if !=0 then conditionally compiled tokens will be yielded
-        and they will have have tok.isCond == True. The fileIncludeGraphRoot
-        will be marked up with the appropriate conditionality. Levels are::
 
-            0: No conditionally compiled tokens. The fileIncludeGraphRoot will
-            not have any information about conditionally included files.
-    
-            1: Conditionally compiled tokens are generated but not from 
-            conditionally included files. The fileIncludeGraphRoot will have
-            a reference to a conditionally included file but not that
-            included file's includes.
-    
-            2: Conditionally compiled tokens including tokens from conditionally
-            included files. The fileIncludeGraphRoot will have all the
-            information about conditionally included files recursively.
+        :param incWs: If ``True`` then also include all whitespace tokens.
+        :type incWs: ``bool``
 
-        (see _cppInclude where we check if self._condStack.isTrue():)."""
+        :param minWs: If ``True`` then whitespace runs will be minimised to a single
+            space or, if  newline is in the whitespace run, a single newline.
+        :type minWs: ``bool``
+
+        :param condLevel: If != 0 then conditionally compiled tokens will be yielded
+            and they will have have ``tok.isCond == True``. The fileIncludeGraphRoot
+            will be marked up with the appropriate conditionality. Levels are::
+
+                0: No conditionally compiled tokens. The fileIncludeGraphRoot will
+                not have any information about conditionally included files.
+
+                1: Conditionally compiled tokens are generated but not from
+                conditionally included files. The fileIncludeGraphRoot will have
+                a reference to a conditionally included file but not that
+                included file's includes.
+
+                2: Conditionally compiled tokens including tokens from conditionally
+                included files. The fileIncludeGraphRoot will have all the
+                information about conditionally included files recursively.
+
+            (see _cppInclude where we check if self._condStack.isTrue():).
+        :type condLevel: ``int``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- Yields tokens.
+
+        :raises: ``StopIteration``
+        """
         if self._isGenerating:
             raise ExceptionPpLexerAlreadyGenerating()
         # Mark internal state as having a generator
@@ -526,9 +555,19 @@ class PpLexer(object):
         self.finalise()
 
     def _genPpTokensRecursive(self, theGen):
-        """Given a token generator this applies the lexical rules.
+        """Given a token generator this applies the lexical rules and
+        generates tokens.
         This means handling preprocessor directives and macro replacement.
-        With #included files this become recursive."""
+
+        With ``#include``'d files this become recursive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- Yields tokens.
+
+        :raises: ``StopIteration``
+        """
         # TODO: Insert a whitespace token when the previous token was non-ws
         # and the tokens are the result of macro replacement. Example
         ##define PLUS +
@@ -635,9 +674,17 @@ class PpLexer(object):
     # Section: PpTokeniser generator handling.
     #=========================================
     def _pptPush(self, theFpo):
-        """This takes a IncludeHandler.FilePathOrigin object and pushes it onto
-        the FileIncludeStack which creates a PpTokneiser object on the stack.
-        This returns that PpTokeniser generator function."""
+        """This takes a :py:class:`cpip.core.IncludeHandler.FilePathOrigin`
+        object and pushes it onto the FileIncludeStack which creates a
+        PpTokneiser object on the stack.
+
+        This returns that PpTokeniser generator function.
+
+        :param theFpo: FilePathOrigin.
+        :type theFpo: ``cpip.core.IncludeHandler.FilePathOrigin([_io.StringIO, str, NoneType, str]), cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
+
+        :returns: ``generator`` -- The `cpip.core.PpTokeniser.PpTokeniser` object.
+        """
         #print '_pptPush(): %s' % theFpo.filePath
         # Used to determine a bounded way of setting sys.setrecursionlimit(n)
         # (actually the call stack depth, not the recursion depth) so that
@@ -662,13 +709,18 @@ class PpLexer(object):
         return self._fis.ppt.next()
 
     def _pptPop(self):
-        """End a #included file."""
+        """End a #included file.
+
+        :returns: ``NoneType``
+        """
         self._fis.includeFinish()
 
     #------------- Handling line number and file output ------------------------
     def _pptPostPush(self):
         """Called immediately after _pptPush() this, optionally, returns a list
-        of PpToken's that can be yielded."""
+        of PpToken's that can be yielded.
+
+        :returns: ``list([])`` -- Tokens to yield."""
         if self._annotateLineFile:
             flags = ['1',]
             if self._fis.currentFileIsSystemFile:
@@ -678,7 +730,9 @@ class PpLexer(object):
 
     def _pptPostPop(self):
         """Called immediately after _pptPop() this, optionally, returns a list
-        of PpToken's that can be yielded."""
+        of PpToken's that can be yielded.
+
+        :returns: ``list([])`` -- Tokens to yield."""
         if self._annotateLineFile:
             if self._fis.depth:
                 flags = ['2',]
@@ -689,19 +743,26 @@ class PpLexer(object):
 
     def _lineFileAnnotation(self, flags):
         """Returns a list of PpTokens that represent the line number and file
-        name. For example::
+        name. For example:
+
+        .. code-block:: console
 
             # 22 "/usr/include/stdio.h" 3 4
             # 59 "/usr/include/stdio.h" 3 4
             # 1 "/usr/include/sys/cdefs.h" 1 3 4
         
         Trailing numbers are described here: https://gcc.gnu.org/onlinedocs/cpp/Preprocessor-Output.html
-        '1' - This indicates the start of a new file. 
-        '2' - This indicates returning to a file (after having included another file). 
-        '3' - This indicates that the following text comes from a system header
-                file, so certain warnings should be suppressed. 
-        '4' - This indicates that the following text should be treated as being
-                wrapped in an implicit extern "C" block.
+
+        ``'1'`` - This indicates the start of a new file.
+
+        ``'2'`` - This indicates returning to a file (after having included another file).
+
+        ``'3'`` - This indicates that the following text comes from a system header
+        file, so certain warnings should be suppressed.
+
+        ``'4'`` - This indicates that the following text should be treated as being
+        wrapped in an implicit ``extern "C"`` block.
+
         We don't support '4'
         """
         # Get the file name from self.currentFile
@@ -733,7 +794,10 @@ class PpLexer(object):
     ################################    
     @property
     def fileStack(self):
-        """Returns the file stack."""
+        """Returns the file stack.
+
+        :returns: ``list([str])`` -- The file stack.
+        """
         return self._fis.fileStack
     
     @property
@@ -748,7 +812,10 @@ class PpLexer(object):
     
     @property
     def fileIncludeGraphRoot(self):
-        """Returns the :py:class:`.FileIncludeGraph.FileIncludeGraphRoot` object."""
+        """Returns the :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraphRoot` object.
+
+        :returns: :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraphRoot` -- The file include graph root.
+        """
         return self._fis.fileIncludeGraphRoot
     
     @property
@@ -758,7 +825,10 @@ class PpLexer(object):
     
     @property
     def condCompGraph(self):
-        """The conditional compilation graph as a :py:class:`.CppCond.CppCondGraph` object."""
+        """The conditional compilation graph as a :py:class:`cpip.core.CppCond.CppCondGraph` object.
+
+        :returns: :py:class:`cpip.core.CppCond.CppCondGraph` -- The conditional compilation graph.
+        """
         return self._condCompGraph
     
     @property
@@ -768,16 +838,22 @@ class PpLexer(object):
 
     @property
     def macroEnvironment(self):
-        """The current Macro environment as a :py:class:`.MacroEnv.MacroEnv` object.
+        """The current Macro environment as a :py:class:`cpip.core.MacroEnv.MacroEnv` object.
         
         .. caution::
             Write to this at your own risk. Your write might be ignored or
-            cause undefined behaviour."""
+            cause undefined behaviour.
+
+        :returns: :py:class:`cpip.core.MacroEnv.MacroEnv` -- The macro environment.
+        """
         return self._macroEnv
     
     @property
     def fileLineCol(self):
-        """Returns a FileLineCol object or None"""
+        """Returns a FileLineCol object or None.
+
+        :returns: :py:class:`cpip.core.FileLocation.FileLineCol` -- File location as ``(str, int, int)``.
+        """
         if self._fis.depth > 0:
             return self._fis.fileLineCol
         
@@ -786,17 +862,26 @@ class PpLexer(object):
     #=============================================
     @property
     def tuFileId(self):
-        """Returns the user supplied ID of the translation unit."""
+        """Returns the user supplied ID of the translation unit.
+
+        :returns: ``str`` -- Translation unit ID.
+        """
         return self._tuFileId
     
     @property
     def fileName(self):
-        """Returns the current file name during processing."""
+        """Returns the current file name during processing.
+
+        :returns: ``str`` -- File name.
+        """
         return self._fis.currentFile
 
     @property
     def lineNum(self):
-        """Returns the current line number as an integer during processing or None."""
+        """Returns the current line number as an integer during processing or None.
+
+        :returns: ``NoneType,int`` -- Line number.
+        """
         if self._fis.depth > 0:
             #import traceback
             #print 'lineNum', self._fis.ppt.pLineCol[0]
@@ -822,13 +907,30 @@ class PpLexer(object):
     # Section: Helper functions.
     ############################
     def _diagnosticDebugMessage(self, theM):
+        """Sends a message to the diagnostic object.
+
+        :param theM: The message
+        :type theM: ``str``
+
+        :returns: ``NoneType``
+        """
         assert(self._diagnostic is not None)
         self._diagnostic.debug(theM, self.fileLineCol)
 
     def _nextNonWsOrNewline(self, theGen, theDiscardList=None):
         """Returns the next non-whitespace token or whitespace that contains a
-        newline. If theDiscardList is non-None intermediate tokens will be
-        appended to it."""
+        newline.XXX
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theDiscardList: If theDiscardList is non-None intermediate tokens will be
+            appended to it.
+        :type theDiscardList: ``list([cpip.core.PpToken.PpToken])``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken`
+            -- Next non-whitespace token or whitespace that contains a newline.
+        """
         while 1:
             myTtt = next(theGen)
             if not myTtt.isWs() \
@@ -840,8 +942,16 @@ class PpLexer(object):
     def _tokensToEol(self, theGen, macroReplace):
         """Returns a list of PpToken objects from a generator up to and
         including the first token that has a newline.
-        If macroReplace is True then macros are replaced with the current
-        environment."""
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param macroReplace: If ``macroReplace`` is ``True`` then macros are replaced with the current
+            environment.
+        :type macroReplace: ``bool``
+
+        :returns: ``list([cpip.core.PpToken.PpToken])`` -- List of consumed tokens.
+        """
         retList = []
         while 1:
             # Take the position just before we read the token to give it
@@ -874,7 +984,13 @@ class PpLexer(object):
         return retList
     
     def _countNonWsTokens(self, theTokS):
-        """Returns the integer count of non-whitespace tokens in the given list."""
+        """Returns the integer count of non-whitespace tokens in the given list.
+
+        :param theTokS: List of tokens.
+        :type theTokS: ``list([cpip.core.PpToken.PpToken])``
+
+        :returns: ``int`` -- Count of non-whitespace tokens.
+        """
         retCount = 0
         for aTok in theTokS:
             if not aTok.isWs():
@@ -911,9 +1027,19 @@ class PpLexer(object):
     # Section: Processing preprocessor directives.
     ##############################################
     def _processCppDirective(self, theTtt, theGen):
-        """:title-reference:`ISO/IEC ISO/IEC 14882:1998(E) 16 Preprocessing directives [cpp]`
+        """Processes a token as a CPP directive.
+        :title-reference:`ISO/IEC ISO/IEC 14882:1998(E) 16 Preprocessing directives [cpp]`
         This consumes tokens and generates others.
-        Returns True of all tokens consumed OK, False otherwise.
+
+        :param theTtt: Current token.
+        :type theTtt: ``cpip.core.PpToken.PpToken``
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- Yields resulting tokens.
+
+        :raises: ``StopIteration``
         """
         assert(theTtt.t == self.PP_DIRECTIVE_PREFIX)
         assert(theTtt.tt == 'preprocessing-op-or-punc')
@@ -967,7 +1093,18 @@ class PpLexer(object):
     # Section: Helpers for conditional processing.
     #=============================================
     def _appendTokenMergingWhitespace(self, theList, theToken):
-        """Adds a token to the list merging whitespace if possible."""
+        """Adds a token to the list merging whitespace if possible.
+
+        :param theList: List of tokens.
+        :type theList: ``list([]), list([cpip.core.PpToken.PpToken])``
+
+        :param theToken: The token to append, if whitespace and the last
+            token on the list is also whitespace then this token will
+            be merged into the last token on the list.
+        :type theToken: ``cpip.core.PpToken.PpToken``
+
+        :returns: ``NoneType``
+        """
         if len(theList) and theList[-1].isWs() and theToken.isWs():
             # Make sure we have a copy on the list tail otherwise the merge
             # will be seen by any other list that has that token
@@ -977,31 +1114,47 @@ class PpLexer(object):
             theList.append(theToken)
     
     def _retDefinedSubstitution(self, theGen):
-        """Returns a list of tokens from the supplied argument with defined...
-        and !defined... handled appropriately and other tokens expanded where
+        """Returns a list of tokens from the supplied argument with ``defined...``
+        and ``!defined...`` handled appropriately and other tokens expanded where
         appropriate.
-        This is used by #if, #elif.
-        Reporting conditional state:
-        For example:
-        #define F(a) a % 2
-        #define X 5
 
-        What to say?     This?        Or?           Or?              Or?
-        #if F(X) == 1    F(X) == 1    F(5) == 1    (5 % 2) == 1      1 == 1
-        ...
-        #else            !F(X) == 1   !F(5) == 1   !(5 % 2) == 1     !(1 == 1)
-        ...
-        #endif
-        The current implementation takes the first as most useful: "F(X) == 1".
+        This is used by ``#if``, ``#elif``.
+
+        Reporting conditional state, for example:
+
+        .. code-block:: console
+
+            #define F(a) a % 2
+            #define X 5
+
+            What to say?     This?        Or?           Or?              Or?
+            #if F(X) == 1    F(X) == 1    F(5) == 1    (5 % 2) == 1      1 == 1
+            ...
+            #else            !F(X) == 1   !F(5) == 1   !(5 % 2) == 1     !(1 == 1)
+            ...
+            #endif
+
+        The current implementation takes the first as most useful: ``"F(X) == 1"``.
         This means capturing the original token stream as well
         as the (possibly replaced) evaluated token stream.
         
         TODO: There is an issue here is  with poorly specified #if/#elif statements
         For example:
-        #if deeeefined SPAM
-        cpp.exe: <stdin>:1:7: missing binary operator before token "SPAM"
-        #if 1 SPAM
-        cpp.exe: <stdin>:1:7: missing binary operator before token "SPAM"        
+
+        .. code-block:: console
+
+            #if deeeefined SPAM
+            cpp.exe: <stdin>:1:7: missing binary operator before token "SPAM"
+
+            #if 1 SPAM
+            cpp.exe: <stdin>:1:7: missing binary operator before token "SPAM"
+
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: ``tuple([list([cpip.core.PpToken.PpToken]), list([cpip.core.PpToken.PpToken])])``
+            -- (Replacment tokens, raw tokens).
         """
         # Note: cpp.exe
         # Fails:
@@ -1069,12 +1222,18 @@ class PpLexer(object):
         return repTokS, rawTokS
 
     def _retIfEvalAndTokens(self, theGen):
-        """Returns (bool | None, tokenStr) from processing a #if or #elif
+        """Returns ``(bool | None, tokenStr)`` from processing a #if or #elif
         conditional statement. This also handles defined... and !defined...
+
         bool - True/False based on the evaluation of the constant expression.
                This will be None on evaluation failure.
         tokenStr - A string of raw (original) PpTokens that made up the constant
                  expression.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: ``tuple([int, str])`` -- (bool, literal tokens)
         """
         myTokS, myRawTokS = self._retDefinedSubstitution(theGen)
         myTokStr = ''.join([t.t for t in myRawTokS]).strip()
@@ -1098,7 +1257,13 @@ class PpLexer(object):
         return myBool, myTokStr
 
     def _retDefineAndTokens(self, theGen):
-        """Returns 1 or 0 if a macro is defined."""
+        """Returns 1 or 0 if a macro is defined and the literal tokens as as string..
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: ``tuple([int, str])`` -- (bool, literal tokens)
+        """
         # Literal tokens as a list of strings
         myLiteralTokS = []
         # Tokens to be evaluated as a list of PpToken objects
@@ -1142,7 +1307,16 @@ class PpLexer(object):
     # Section: Handling conditional processing.
     #==========================================
     def _cppIf(self, theGen, theFlc):
-        """Handles a if directive."""
+        """Handles a if directive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType,cpip.core.PpToken.PpToken`` -- The replacement token, a single whitespace.
+        """
         # Note: This use of LPAREN/RPAREN is not specified in the
         # standard but commonly appears
         ##define SPAM
@@ -1161,7 +1335,16 @@ class PpLexer(object):
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppElif(self, theGen, theFlc):
-        """Handles a elif directive."""
+        """Handles a elif directive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType,cpip.core.PpToken.PpToken`` -- The replacement token, a single whitespace.
+        """
         # If we have already seen the self._condStack as being True then we do
         # not tempt fate with self._retIfEvalAndTokens(theGen) as
         # the eval is irrelevant and macros may have syntax errors that are
@@ -1187,7 +1370,16 @@ class PpLexer(object):
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppIfdef(self, theGen, theFlc):
-        """Handles a Ifdef directive."""
+        """Handles a Ifdef directive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType,cpip.core.PpToken.PpToken`` -- The replacement token, a single whitespace.
+        """
         myBool, myStr = self._retDefineAndTokens(theGen)
         #print '_cppIfdef(): myStr: "%s"' % myStr
         #print '_cppIfdef(): self._condStack was:', self._condStack
@@ -1201,7 +1393,16 @@ class PpLexer(object):
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppIfndef(self, theGen, theFlc):
-        """Handles a ifndef directive."""
+        """Handles a ifndef directive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType,cpip.core.PpToken.PpToken`` -- The replacement token, a single whitespace.
+        """
         myBool, myStr = self._retDefineAndTokens(theGen)
         #print '_cppIfndef(): myStr: "%s"' % myStr
         #print '_cppIfndef(): self._condStack was: %s, %s' % self.condState
@@ -1216,7 +1417,16 @@ class PpLexer(object):
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppElse(self, theGen, theFlc):
-        """Handles a else directive."""
+        """Handles a else directive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType,cpip.core.PpToken.PpToken`` -- The replacement token, a single whitespace.
+        """
         # Consume tokens to new line
         # cpp.exe: <stdin>:3:7: warning: extra tokens at end of #else directive
         myTokS = self._tokensToEol(theGen, macroReplace=False)
@@ -1230,7 +1440,16 @@ class PpLexer(object):
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppEndif(self, theGen, theFlc):
-        """Handles a endif directive."""
+        """Handles a endif directive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType,cpip.core.PpToken.PpToken`` -- The replacement token, a single whitespace.
+        """
         # This is wrapped in a try/finally block so that if there is an error
         # in the _tokensToEol() the _condStack is always popped. This can happen
         # when the last line of a file is something like:
@@ -1267,18 +1486,29 @@ class PpLexer(object):
     # Section: Handling file inclusion.
     #==================================
     def _cppInclude(self, theGen, theFlc):
-        """Handles an #include directive. This handles:
-        # include <h-char-sequence> new-line
-        # include "q-char-sequence" new-line
+        """Handles an #include directive. This handles::
+
+            # include <h-char-sequence> new-line
+            # include "q-char-sequence" new-line
+
         This gathers a list of PpTokens up to, and including, a newline with
-        macro replacement. Then we reinterpret the list using:
-        PpTokeniser.reduceToksToHeaderName() to cast tokens to possible
-        #include <header-name> token.
+        macro replacement. Then it reinterprets the list using
+        :py:meth:`cpip.core.PpTokeniser.PpTokeniser.reduceToksToHeaderName`
+        to cast tokens to possible ``#include <header-name>`` token.
+
         Finally we try and resolve that to a 'file' that can be included.
         
-        FWIW cpp.exe does not explore #include statements when they are
+        FWIW cpp.exe does not explore ``#include`` statements when they are
         conditional so will not error on unreachable files if they
-        are conditionally included. 
+        are conditionally included.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``generator`` -- <insert documentation for return values>
         """
         return self._cppIncludeGeneric(theGen, theFlc,
                                        self._includeHandler.includeHeaderName)
@@ -1297,6 +1527,19 @@ class PpLexer(object):
         """Handles the target of an #include or #include_next directive.
         theFileIncludeFunction is the function to call to resolve the target to
         an actual file.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File, line, column.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :param theFileIncludeFunction: Function to process include directive.
+        :type theFileIncludeFunction: ``method``
+
+        :returns: ``NoneType,cpip.core.PpToken.PpToken`` -- Yields tokens.
+
+        :raises: ``StopIteration``
         """
         # NOTE: Error on #include\n
         # <stdin>:1:13: #include expects "FILENAME" or <FILENAME>
@@ -1371,13 +1614,20 @@ class PpLexer(object):
 
     def _retHeaderName(self, theGen):
         """This returns the first PpToken of type header-name it finds up
-        to a newline token or None if none found. It handles:
-        # include <h-char-sequence> new-line
-        # include "q-char-sequence" new-line
+        to a newline token or None if none found. It handles::
+
+            # include <h-char-sequence> new-line
+            # include "q-char-sequence" new-line
+
         This gathers a list of PpTokens up to, and including, a newline with
         macro replacement. Then it reinterprets the list using
-        PpTokeniser.reduceToksToHeaderName() to cast tokens to possible
-        #include header-name token.
+        :py:meth:`cpip.core.PpTokeniser.PpTokeniser.reduceToksToHeaderName`
+        to cast tokens to possible ``#include`` header-name token.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- First token of header name.
         """
         #print '_retHeaderName(): self._macroEnv', str(self._macroEnv)
         # TODO: This is wrongly expanding on Linux build
@@ -1409,7 +1659,16 @@ class PpLexer(object):
     # unlike other preprocess directives.
     #====================================
     def _cppDefine(self, theGen, theFlc):
-        """Handles a define directive."""
+        """Handles a define directive.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFlc: File line and column numbers.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- Yields resulting tokens.
+        """
         ppTokenPrefix = [
                          PpToken.PpToken('#',       'preprocessing-op-or-punc'),
                          PpToken.PpToken('define',  'identifier'),

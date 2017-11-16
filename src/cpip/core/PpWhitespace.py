@@ -40,7 +40,18 @@ class PpWhitespace(object):
     ISO/IEC 9899:1999(E) Section 6 and ISO/IEC 14882:1998(E)."""
     def sliceWhitespace(self, theBuf, theOfs=0):
         """Returns the length of whitespace characters that are in theBuf from
-        position theOfs."""
+        position theOfs.
+
+        :param theBuf: Buffer or string.
+        :type theBuf: ``cpip.util.BufGen.BufGen, str``
+
+        :param theOfs: Offset into the buffer.
+        :type theOfs: ``int``
+
+        :returns: ``int`` -- Number of whitespace characters.
+
+        :raises: ``IndexError``
+        """
         i = theOfs
         try:
             # Only access theBuf with [i] so that __getitem__() is called
@@ -76,7 +87,13 @@ class PpWhitespace(object):
 
     def isBreakingWhitespace(self, theCharS):
         """Returns True if whitespace leads theChars and that whitespace
-        contains a newline."""
+        contains a newline.
+
+        :param theCharS: The character string.
+        :type theCharS: ``str``
+
+        :returns: ``bool`` -- True if there is a ``LEX_NEWLINE`` in the string.
+        """
         i = 0
         #traceChars = [ord(x) for x in theCharS]
         while i < len(theCharS) \
@@ -90,7 +107,13 @@ class PpWhitespace(object):
         """"Return True if theCharS is zero length or only has allowable
         whitespace for preprocesing macros.
         
-        ISO/IEC 14882:1998(E) 16-2 only ' ' and '\t' as whitespace."""
+        ISO/IEC 14882:1998(E) 16-2 only ' ' and '\t' as whitespace.
+
+        :param theCharS: The character string.
+        :type theCharS: ``str``
+
+        :returns: ``bool`` -- True if empty or all ``DEFINE_WHITESPACE``
+        """
         for c in theCharS:
             if c not in DEFINE_WHITESPACE:
                 return False
@@ -98,5 +121,11 @@ class PpWhitespace(object):
 
     def preceedsNewline(self, theCharS):
         """Returns True if theChars ends with a newline. i.e. this immediately
-        precedes a new line."""
+        precedes a new line.
+
+        :param theCharS: String of characters.
+        :type theCharS: ``str``
+
+        :returns: ``bool`` -- True if ends with a ``LEX_NEWLINE``
+        """
         return theCharS.endswith(LEX_NEWLINE)

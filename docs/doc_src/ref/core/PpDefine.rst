@@ -6,5 +6,10 @@
 PpDefine
 =======================
 
+.. toctree::
+    :maxdepth: 2
+
 .. automodule:: cpip.core.PpDefine
-   :members:
+    :members:
+    :special-members:
+    :private-members:

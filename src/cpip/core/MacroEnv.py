@@ -125,20 +125,30 @@ class MacroEnv(object):
         ) | NAMES_NO_REDEFINITION 
     def __init__(self, enableTrace=False, stdPredefMacros=None):
         """Constructor.
-        enableTrace allows calls to _debugTokenStream() that may or may not
-        produce log output (depending on logging level).
-        stdPredefMacros, if present should be a dictionary of:
-        {identifier : replacement_string_\n_terminated, ...}
-        These identifiers are not permitted to be redefined.
-        This also increments the count is the number of times that the
-        identifier has been referenced in the lifetime of me.
+
         A 'reference' is defined as: replacement or if defined.
         So:
-        - Count set to zero on self.define()
-        - Increment on:
-            self.isDefined()
-            self.defined()
-            self._expand()
+
+        * Count set to zero on :py:meth:`define()`
+        * Increment on:
+            * :py:meth:`isDefined()`
+            * :py:meth:`defined()`
+            * :py:meth:`_expand()`
+
+        :param enableTrace: If True allows calls to :py:meth:`_debugTokenStream()`
+            that may or may not produce log output (depending on logging level).
+        :type enableTrace: ``bool``
+
+        :param stdPredefMacros: If present should be a dictionary of:
+            ``{identifier : replacement_string_\\n_terminated, ...}``
+
+            These identifiers are not permitted to be redefined.
+
+            This also increments the count is the number of times that the
+            identifier has been referenced in the lifetime of me.
+        :type stdPredefMacros: ``dict({str : [str]})``
+
+        :returns: ``NoneType``
         """
         # If True makes calls to _debugTokenStream() that may or may not
         # produce log output (depending on logging level).
@@ -152,7 +162,10 @@ class MacroEnv(object):
         self._reset()
         
     def _reset(self):
-        """Initialises the dynamic values."""
+        """Initialises the dynamic values.
+
+        :returns: ``NoneType``
+        """
         # A map of predefined macros and those discovered in the translation
         # unit. This is a map of:
         # {identifier : class PpDefine, ...}
@@ -212,7 +225,10 @@ class MacroEnv(object):
     def _assertDefineMapIntegrity(self):
         """Returns True if dynamic tests on self._defineMap and
         self._expandedSet pass. i.e. every entry in self._expandedSet
-        must be in self._defineMap.keys()."""
+        must be in self._defineMap.keys().
+
+        :returns: ``bool`` -- False on failure.
+        """
         return self._expandedSet.issubset(set(self._defineMap.keys()))
 
     def _debugTokenStream(self, thePrefix, theArg=''):
@@ -252,12 +268,25 @@ class MacroEnv(object):
         newline.
         
         Will raise a :py:class:`ExceptionMacroEnvInvalidRedefinition` if the redefinition
-        is not valid. May raise a :py:class:`.PpDefine.ExceptionCpipDefineInit` (or sub class) on failure.
+        is not valid. May raise a :py:class:`.PpDefine.ExceptionCpipDefineInit`
+        (or sub class) on failure.
         
         On success it returns the identifier of the macro as a string..
         The insertion is stable i.e. a valid re-definition does not replace
         the existing definition so that the existing state of the macro
-        definition (file, line, reference count etc. are preserved."""
+        definition (file, line, reference count etc. are preserved.
+
+        :param theGen: Token generator.
+        :type theGen: ``generator``
+
+        :param theFile: File identifier such as the path.
+        :type theFile: ``str``
+
+        :param theLine: Line number.
+        :type theLine: ``int``
+
+        :returns: ``str`` -- Macro name.
+        """
         try:
             myDef = PpDefine.PpDefine(theGen, theFile, theLine)
         except PpDefine.ExceptionCpipDefineInit as err:
@@ -271,13 +300,22 @@ class MacroEnv(object):
         return self.__define(myDef)
 
     def __define(self, ppD):
-        """Takes a PpDefine.PpDefine object and adds it to
-        the map of objects. Does NOT check if it is a redefinition of
-        a predefined macro. Does check if it is a valid redefinition.
+        """Takes a :py:class:`cpip.core.PpDefine.PpDefine` object
+        and adds it to the map of objects.
+        Does **not** check if it is a redefinition of a predefined macro.
+        Does check if it is a valid redefinition.
+
         On success it returns the identifier of the macro.
+
         The insertion is stable i.e. a valid re-definition does not replace
         the existing definition so that the definition file, line and reference
-        count are preserved."""
+        count are preserved.
+
+        :param ppD: Macro definition.
+        :type ppD: :py:class:`cpip.core.PpDefine.PpDefine`
+
+        :returns: ``str`` -- Macro identifier.
+        """
         # Test for redefinition
         if ppD.identifier in self._defineMap:
             if not ppD.isValidRefefinition(self._defineMap[ppD.identifier]):
@@ -315,8 +353,14 @@ class MacroEnv(object):
         self.__setString('__FILE__ %s\n' % theStr)
 
     def __setString(self, theStr):
-        """Takes a string 'identifier replacement\n' and sets the macro map.
-        This uses __defien(...) so only a redefinition exception is raised."""
+        """Takes a string ``'identifier replacement\\n'`` and sets the macro map.
+        This uses :py:class:`__define()` so only a redefinition exception is raised.
+
+        :param theStr: Replacement string.
+        :type theStr: ``str``
+
+        :returns: ``NoneType``
+        """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(theStr)
             )
@@ -361,6 +405,19 @@ class MacroEnv(object):
             Is a :py:class:`.FileLocation.FileLineCol object`.
         
         See: :title-reference:`ISO/IEC 9899:1999 (E) 6.10.1.`
+
+        :param theTtt: The token.
+        :type theTtt: :py:class:`cpip.core.PpToken.PpToken`
+
+        :param flagInvert: Invert the test.
+        :type flagInvert: ``bool``
+
+        :param theFileLineCol: File location.
+        :type theFileLineCol: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: :py:class:`cpip.core.PpToken.PpToken` -- A token that is either 0 or 1.
+
+        :raises: ``KeyError``
         """
         # If myTtt is newline then raise as this is #if defined\n
         if not theTtt.isIdentifier():
@@ -390,17 +447,27 @@ class MacroEnv(object):
     ########################################################
     def mightReplace(self, theTtt):
         """Returns True if theTok might be able to be expanded.
-        'Might' is not 'can' or 'will' because of this: ::
+        'Might' is not 'can' or 'will' because of this:
+
+        .. code-block:: c
         
             #define FUNC(a,b) a-b
             FUNC FUNC(45,3)
         
-        Becomes: ::
+        Becomes:
             
+        .. code-block:: c
+
             FUNC 45 -3
         
         Thus ``mightReplace('FUNC', ...)`` is True in both cases but actual
-        replacement only occurs once for the second ``FUNC``."""
+        replacement only occurs once for the second ``FUNC``.
+
+        :param theTtt: The token.
+        :type theTtt: :py:class:`cpip.core.PpToken.PpToken`
+
+        :returns: ``bool`` -- True if this might be replaceable.
+        """
         assert(self._assertDefineMapIntegrity())
         return theTtt.canReplace and theTtt.t in self._defineMap
 
@@ -543,7 +610,13 @@ class MacroEnv(object):
         """Generates PpDefine objects encountered during my existence but then
         undefined in the order of un-definition.
         
-        If theIdent is not None then only that named macros will be yielded."""
+        If theIdent is not None then only that named macros will be yielded.
+
+        :param theIdent: Optionally the macro name.
+        :type theIdent: ``NoneType``
+
+        :returns: :py:class:`cpip.core.PpDefine.PpDefine` -- Yields macro definitions.
+        """
         # First the #undef'd one(s)
         for aM in self._undefS:
             if theIdent is None \
@@ -554,7 +627,13 @@ class MacroEnv(object):
         """Generates PpDefine objects encountered during my existence and still
         in scope i.e. not yet un-defined.
         
-        If theIdent is not None then only that named macros will be yielded."""
+        If theIdent is not None then only that named macros will be yielded.
+
+        :param theIdent: Optionally the macro name.
+        :type theIdent: ``NoneType``
+
+        :returns: :py:class:`cpip.core.PpDefine.PpDefine` -- Yields macro definitions.
+        """
         # Now the existent one(s)
         if theIdent is None:
             # yield all of them
@@ -584,18 +663,36 @@ class MacroEnv(object):
     def hasMacro(self, theIdentifier):
         """Returns True if the environment has the macro.
         
-        NOTE: This does _not_ increment the reference count so should not be
-        used when processing #ifdef ..., #if defined ... or #if !defined ...
-        for those use isDefined() and defined() instead."""
+        .. note::
+
+            This does **not** increment the reference count so should not be
+            used when processing ``#ifdef`` ..., ``#if defined`` ...
+            or ``#if !defined`` ... for those use :py:meth:`isDefined`
+            and :py:meth:`defined()` instead.
+
+        :param theIdentifier: Macro name.
+        :type theIdentifier: ``str``
+
+        :returns: ``bool`` -- True if the macro is currently defined.
+        """
         return theIdentifier in self._defineMap
         
     def macros(self):
-        """Returns and unsorted list of strings of current macro identifiers."""
+        """Returns and unsorted list of strings of current macro identifiers.
+
+        :returns: ``list([str])`` -- Macro names.
+        """
         return list(self._defineMap.keys())
         
     def macro(self, theIdentifier):
         """Returns the macro identified by the identifier.
-        Will raise a :py:class:`ExceptionMacroEnvNoMacroDefined` is undefined."""
+        Will raise a :py:class:`ExceptionMacroEnvNoMacroDefined` is undefined.
+
+        :param theIdentifier: Macro name.
+        :type theIdentifier: ``str``
+
+        :returns: :py:class:`cpip.core.PpDefine.PpDefine` -- The macro.
+        """
         try:
             return self._defineMap[theIdentifier]
         except KeyError:
@@ -613,7 +710,10 @@ class MacroEnv(object):
         
         A :py:class:`cpip.util.Tree.DuplexAdjacencyList` can be converted to a
         :py:class:`cpip.util.Tree.Tree` and that can be converted to a
-        :py:class:`cpip.util.DictTree.DictTree`"""
+        :py:class:`cpip.util.DictTree.DictTree`
+
+        :returns: :py:class:`cpip.util.Tree.DuplexAdjacencyList` -- The dependencies.
+        """
         ret = DuplexAdjacencyList()
         for macroIdentifier in self.macros():
             for depMacro in self._staticMacroDependencies(macroIdentifier):
@@ -622,7 +722,13 @@ class MacroEnv(object):
 
     def _staticMacroDependencies(self, theIdentifier):
         """Returns the immediate dependencies as a list of strings for a macro
-        identified by the string."""
+        identified by the string.
+
+        :param theIdentifier: Macro name.
+        :type theIdentifier: ``str``
+
+        :returns: ``list([]),list([str])`` -- List of macro names.
+        """
         ret = []
         macro = self.macro(theIdentifier)
         for tok in macro.replacementTokens:
@@ -749,14 +855,24 @@ class MacroEnv(object):
         """Returns an unsorted list of identifies
         where there has been an ``#ifdef`` and nothing is defined.
         Thus these macros, if present, could alter the outcome
-        i.e. it is dependency on them NOT being defined."""
+        i.e. it is dependency on them NOT being defined.
+
+        :returns: ``list([str])`` -- List of macro names.
+        """
         return list(self._ifDefAbsentMacros.keys())
 
     def macroNotDefinedDependencyReferences(self, theIdentifier):
-        """Returns an ordered list of class FileLineColumn for an identifier
+        """Returns an ordered list of
+        :py:class:`cpip.core.FileLocation.FileLineCol`for an identifier
         where there has been an ``#ifdef`` and nothing is defined.
         Thus these macros, if present, could alter the outcome
-        i.e. it is dependency on them NOT being defined."""
+        i.e. it is dependency on them NOT being defined.
+
+        :param theIdentifier: Macro name.
+        :type theIdentifier: ``str``
+
+        :returns: ``list([cpip.core.FileLocation.FileLineCol([str, int, int])])`` -- List of locations.
+        """
         try:
             return self._ifDefAbsentMacros[theIdentifier][:]
         except KeyError:
