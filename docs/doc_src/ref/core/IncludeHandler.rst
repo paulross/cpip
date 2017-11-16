@@ -7,5 +7,7 @@ IncludeHandler
 =======================
 
 .. automodule:: cpip.core.IncludeHandler
-   :members:
+    :members:
+    :special-members:
+    :private-members:
 

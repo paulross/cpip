@@ -7,4 +7,6 @@ ConstantExpression
 ======================
 
 .. automodule:: cpip.core.ConstantExpression
-   :members:
+    :members:
+    :special-members:
+    :private-members:

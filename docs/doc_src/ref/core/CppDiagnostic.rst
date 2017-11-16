@@ -7,5 +7,6 @@ CppDiagnostic
 ===================
 
 .. automodule:: cpip.core.CppDiagnostic
-   :members:
-
+    :members:
+    :special-members:
+    :private-members:

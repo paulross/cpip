@@ -71,15 +71,18 @@ class PreprocessDiagnosticStd(object):
     def _prepareMsg(self, event, msg, theLoc):
         """Prepares a message.
         
-        *event*
-            The event e.g. 'error', if None it is not accumulated
-        
-        *msg*
-            The main message, a string.
-        
-        *theLoc*
-            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
-            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
+        :param event: The event e.g. 'error', if None it is not accumulated.
+        :type event: ``NoneType``
+
+        :param msg: The main message, a string.
+        :type msg: ``str``
+
+        :param theLoc: The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes.
+        :type theLoc: ``cpip.core.FileLocation.FileLineCol([str, int, <class 'int'>]), cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``str`` -- <insert documentation for return values>
+        """
         if theLoc is None:
             myMsg = msg
         else:
@@ -220,13 +223,16 @@ class PreprocessDiagnosticStd(object):
 
     def debug(self, msg, theLoc=None):
         """Reports a debug message.
-        
-        *msg*
-            The main message, a string.
-        
-        *theLoc*
-            The file locator e.g. :py:class:`FileLocation.FileLineCol`.
-            If present it must have: ``(fileId, lineNum colNum)`` attributes."""
+
+        :param msg: The main message, a string.
+        :type msg: ``str``
+
+        :param theLoc: The file locator e.g. :py:class:`FileLocation.FileLineCol`.
+            If present it must have: ``(fileId, lineNum colNum)`` attributes.
+        :type theLoc: ``cpip.core.FileLocation.FileLineCol([str, int, <class 'int'>]), cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :returns: ``NoneType``
+        """
         logging.debug(self._prepareMsg(None, msg, theLoc))
 
 class PreprocessDiagnosticKeepGoing(PreprocessDiagnosticStd):

@@ -71,10 +71,9 @@ class CppIncludeStd(object):
 
     ISO/IEC 9899:1999 (E) 6.10.2-3 means that a failure of q-char must be
     retried as if it was a h-char. i.e. A failure of a q-char-sequence thus: ``#include "..."``
-    
     Is to be retried as if it was written as a h-char-sequence thus: ``#include <...>``
     
-    See: _includeQcharseq()
+    See: :py:meth:`_includeQcharseq()`
     """
     #: Codes for the results of a search for an include
     INCLUDE_ORIGIN_CODES = {
@@ -86,6 +85,16 @@ class CppIncludeStd(object):
         'TU'    : 'Translation unit',
     }
     def __init__(self, theUsrDirs, theSysDirs):
+        """Constructor.
+
+        :param theUsrDirs: List of search directories for user includes.
+        :type theUsrDirs: ``list([str])``
+
+        :param theSysDirs: List of search directories for system includes.
+        :type theSysDirs: ``list([str])``
+
+        :returns: ``NoneType``
+        """
         self._usr = theUsrDirs[:]
         self._sys = theSysDirs[:]
         # This is the stack of current places for the recursive include files.
@@ -112,7 +121,13 @@ class CppIncludeStd(object):
     def cpStackPush(self, theFpo):
         """Appends the CP from the FilePathOrigin to the current place stack.
         This is public so that the PpLexer can use it when processing
-        pre-include files that might themselves include other files."""
+        pre-include files that might themselves include other files.
+
+        :param theFpo: The FilePathOrigin  to push onto the include stack.
+        :type theFpo: ``cpip.core.IncludeHandler.FilePathOrigin([_io.StringIO, str, NoneType, str]), cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
+
+        :returns: ``NoneType``
+        """
         if theFpo is None:
             self._cpStack.append(None)
         else:
@@ -121,12 +136,18 @@ class CppIncludeStd(object):
     def cpStackPop(self):
         """Pops and returns the CP string off the current place stack.
         This is public so that the PpLexer can use it when processing
-        pre-include files that might themselves include other files."""
+        pre-include files that might themselves include other files.
+
+        :returns: ``NoneType``
+        """
         return self.endInclude()
         
     def validateCpStack(self):
         """Tests the coherence of the CP stack. A None can not be followed by
-        a non-None."""
+        a non-None.
+
+        :returns: ``bool`` -- False on failure.
+        """
         for i in range(len(self._cpStack)):
             if self._cpStack[i] is None \
             and i != (len(self._cpStack)-1):
@@ -134,7 +155,10 @@ class CppIncludeStd(object):
         return True
 
     def canInclude(self):
-        """Returns True if the last include succeeded."""
+        """Returns True if the last include succeeded.
+
+        :returns: ``bool`` -- True if the last include succeeded.
+        """
         if not self.validateCpStack():
             return False
         if len(self._cpStack) == 0:
@@ -159,7 +183,10 @@ class CppIncludeStd(object):
 
     @property
     def cpStackSize(self):
-        """Returns the size of the current stack of current places."""
+        """Returns the size of the current stack of current places.
+
+        :returns: ``int`` -- Stack size.
+        """
         return len(self._cpStack)
 
     @property
@@ -169,15 +196,14 @@ class CppIncludeStd(object):
         
         ``['<foo.h>', 'CP=None', 'sys=None', 'usr=include/foo.h']``
         
-        Each string after [0] is of the form: ``key=value`` Where:        
+        Item [0] is the invocation.
+        Each string after [0] is of the form: ``key=value`` Where:
         
         #. key is a key in ``self.INCLUDE_ORIGIN_CODES``
         
         #. = is the ``'='`` character.
         
-        #. value is the result, or 'None' if not found.
-        
-        #. Item [0] is the invocation
+        #. value is the result, or ``None`` if not found.
         
         #. Item [-1] is the final resolution.
         
@@ -186,7 +212,7 @@ class CppIncludeStd(object):
         
         ``['<foo.h>', 'CP=None', 'sys=None', 'usr=include/foo.h']``
         
-        Wwould mean:
+        Would mean:
         
         * [0]: ``'<foo.h>'`` the include directive was: ``#include <foo.h>``
         
@@ -194,14 +220,27 @@ class CppIncludeStd(object):
         
         * [2]: ``'sys=None'`` the system include(s) were searched and nothing found.
         
-        * [3]: ``'usr=include/foo.h'`` the user include(s) were searched and include/foo.h was found.
+        * [3]: ``'usr=include/foo.h'`` the user include(s) were searched and *include/foo.h* was found.
+
+        :returns: ``list([]),list([str])`` -- How the file was found.
         """
         return self._findLogic[:]
     
     def _includeHcharseq(self, theHstr, include_next=False):
-        """Return the file location of a #include <...> as a FilePathOrigin
-        object or None on failure.
-        If not None this also records the CP for the file."""
+        """Return the file location of a ``#include <...>`` as a FilePathOrigin
+        object or ``None`` on failure.
+
+        If not None this also records the CP for the file.
+
+        :param theHstr: The include string.
+        :type theHstr: ``str``
+
+        :param include_next: Use GGC extension ``#include-next``.
+        :type include_next: ``bool``
+
+        :returns: ``cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
+            -- File path of the included file.
+        """
         if not self.canInclude():
             raise ExceptionCppInclude('_includeHcharseq() with CP stack: %s' % self._cpStack)
         foundFile = None
@@ -221,9 +260,21 @@ class CppIncludeStd(object):
         return foundFile
 
     def _includeQcharseq(self, theQstr, include_next=False):
-        """Return the file location of a #include "..." as a FilePathOrigin
-        object or None on failure.
-        If not None this also records the CP for the file."""
+        """Return the file location of a ``#include "..."`` as a FilePathOrigin
+        object or ``None`` on failure.
+
+        If not None return value this also records the 'current place' (CP)
+        for the file.
+
+        :param theQstr: The include string.
+        :type theQstr: ``str``
+
+        :param include_next: Use GGC extension ``#include-next``.
+        :type include_next: ``bool``
+
+        :returns: ``cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
+            -- File path of the included file.
+        """
         if not self.canInclude():
             raise ExceptionCppInclude('_includeQcharseq() with CP stack: %s' % self._cpStack)
         if include_next:
@@ -254,10 +305,20 @@ class CppIncludeStd(object):
         return foundFile
 
     def includeHeaderName(self, theStr):
-        """Return the file location of a #include header-name where the
-        header-name is a pp-token either a <h-char-sequence> or a
-        "q-char-sequence" (including delimiters).
-        If not None return value this also records the CP for the file."""
+        """Return the file location of a ``#include header-name`` where the
+        ``header-name`` is a ``pp-token`` (a :py:class:`cpip.core.PpToken.PpToken`)
+        with the contents either a ``<h-char-sequence>`` or a
+        ``"q-char-sequence"`` (including delimiters).
+
+        If not None return value this also records the 'current place' (CP)
+        for the file.
+
+        :param theStr: Header name with delimiters.
+        :type theStr: ``str``
+
+        :returns: ``cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
+            -- File path of the included file.
+        """
         self._findLogic = [theStr,]
         if theStr.startswith('<') and theStr.endswith('>'):
             return self._includeHcharseq(theStr[1:-1])
@@ -285,25 +346,43 @@ class CppIncludeStd(object):
                                       % ( theStr, self._cpStack))
 
     def endInclude(self):
-        """Notify end of #include'd file. This pops the CP stack."""
+        """Notify end of #include'd file. This pops the CP stack.
+
+        :returns: ``NoneType``
+        """
         if len(self._cpStack) == 0:
             raise ExceptionCppInclude('endInclude() on empty stack.')
         self._cpStack.pop()
 
     def finalise(self):
         """Finalise at the end of the translation unit.
-        Might raise a ExceptionCppInclude."""
+        Might raise a ExceptionCppInclude.
+
+        :returns: ``NoneType``
+        """
         if len(self._cpStack) != 0:
             raise ExceptionCppInclude('finalise() with CP stack: %s' % self._cpStack)
 
     def _currentPlaceFromFile(self, theFilePath):
         """Helper method that returns the enclosing directory of the file as
-        the current place."""
+        the current place.
+
+        :param theFilePath: File path.
+        :type theFilePath: ``str``
+
+        :returns: ``str`` -- Directory path.
+        """
         return os.path.dirname(theFilePath)
 
     def _fixDirsep(self, theCharSeq):
         """Returns a character sequence with the allowable directory seperator
-        repalced by that the OS will recognise."""
+        replaced by that the OS will recognise.
+
+        :param theCharSeq: The character sequence.
+        :type theCharSeq: ``str``
+
+        :returns: ``str`` -- OS compatible character sequence.
+        """
         return theCharSeq.replace('/', os.sep)
 
     #####################################################
@@ -333,7 +412,18 @@ class CppIncludeStdOs(CppIncludeStd):
     def _searchFile(self, theCharSeq, theSearchPath):
         """Given an HcharSeq/Qcharseq and a searchpath this tries the
         file system for the file and returns a FilePathOrigin object or None
-        on failure."""
+        on failure.
+
+        :param theCharSeq: Character sequence.
+        :type theCharSeq: ``str``
+
+        :param theSearchPath: Search path.
+        :type theSearchPath: ``str``
+
+        :returns: ``NoneType,cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, NoneType])`` -- File found or ``None``.
+
+        :raises: ``FileNotFoundError``
+        """
         myPath = os.path.join(theSearchPath, self._fixDirsep(theCharSeq))
         try:
             return FilePathOrigin(
@@ -348,7 +438,13 @@ class CppIncludeStdOs(CppIncludeStd):
 
     def initialTu(self, theTuPath):
         """Given an path as a string this returns the
-        class FilePathOrigin or None for the initial translation unit"""
+        class FilePathOrigin or None for the initial translation unit.
+
+        :param theTuPath: File path.
+        :type theTuPath: ``str``
+
+        :returns: ``cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])`` -- The file path origin.
+        """
         if len(self._cpStack) != 0:
             raise ExceptionCppInclude('setTu() with CP stack: %s' % self._cpStack)
         retVal = None

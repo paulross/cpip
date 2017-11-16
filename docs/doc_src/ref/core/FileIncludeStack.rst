@@ -7,4 +7,6 @@ FileIncludeStack
 ======================
 
 .. automodule:: cpip.core.FileIncludeStack
-   :members:
+    :members:
+    :special-members:
+    :private-members:

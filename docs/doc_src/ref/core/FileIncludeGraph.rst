@@ -7,4 +7,6 @@ FileIncludeGraph
 ======================
 
 .. automodule:: cpip.core.FileIncludeGraph
-   :members:
+    :members:
+    :special-members:
+    :private-members:

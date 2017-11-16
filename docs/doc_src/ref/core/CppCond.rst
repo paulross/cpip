@@ -7,4 +7,6 @@ CppCond
 ======================
 
 .. automodule:: cpip.core.CppCond
-   :members:
+    :members:
+    :special-members:
+    :private-members:

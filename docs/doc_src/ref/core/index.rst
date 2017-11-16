@@ -15,6 +15,7 @@ CPIP Core contains the core code for pre-processing. The architecture is describ
     CppDiagnostic
     FileIncludeGraph
     FileIncludeStack
+    FileLocation
     IncludeHandler
     ItuToTokens
     MacroEnv

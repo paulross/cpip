@@ -38,14 +38,18 @@ class ExceptionFileIncludeStack(ExceptionCpip):
 
 class FileInclude(object):
     """Represents a single TU fragment with a PpTokeniser and a token counter.
-    
-    *theFpo*
-        A FilePathOrigin object that identifies the file.
-        
-    *theDiag*
-        A CppDiagnostic object to give to the PpTokeniser.
     """
     def __init__(self, theFpo, theDiag):
+        """Constructor.
+
+        :param theFpo: A FilePathOrigin object that identifies the file.
+        :type theFpo: ``cpip.core.IncludeHandler.FilePathOrigin([_io.StringIO, str, NoneType, str]), cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
+
+        :param theDiag: A CppDiagnostic object to give to the PpTokeniser.
+        :type theDiag: ``cpip.core.CppDiagnostic.PreprocessDiagnosticStd``
+
+        :returns: ``NoneType``
+        """
         self.fileName = theFpo.filePath
         # Create a new PpTokeniser
         self.ppt = PpTokeniser.PpTokeniser(
@@ -57,11 +61,29 @@ class FileInclude(object):
     
     def tokenCounterAdd(self, theC):
         """Add a token counter to my token counter (used when a macro is
-        declared)."""
+        declared).
+
+        :param theC: Token counter.
+        :type theC: :py:class:`cpip.core.PpTokenCount.PpTokenCount`
+
+        :returns: ``NoneType``
+        """
         self.tokenCounter += theC
 
     def tokenCountInc(self, tok, isUnCond, num=1):
-        """Increment the token counter."""
+        """Increment the token counter.
+
+        :param tok: Token.
+        :type tok: :py:class:`cpip.core.PpToken.PpToken`
+
+        :param isUnCond: Unconditional flag.
+        :type isUnCond: ``bool``
+
+        :param num: Increment, default 1.
+        :type num: ``int``
+
+        :returns: ``NoneType``
+        """
         self.tokenCounter.inc(tok, isUnCond, num)
 
 class FileIncludeStack(object):
@@ -81,7 +103,13 @@ class FileIncludeStack(object):
         A :py:class:`.PpTokenCount.PpTokenCountStack` object for counting tokens.
     """
     def __init__(self, theDiagnostic):
-        """Constructor, takes a CppDiagnostic object to give to the PpTokeniser."""
+        """Constructor, takes a CppDiagnostic object to give to the PpTokeniser.
+
+        :param theDiagnostic: The diagnostic for emitting messages.
+        :type theDiagnostic: :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticStd`
+
+        :returns: ``NoneType``
+        """
         self._diagnostic = theDiagnostic
         # Stack of FileInclude objects
         self._fincS = []
@@ -90,40 +118,60 @@ class FileIncludeStack(object):
             
     @property
     def depth(self):
-        """Returns the current include depth as an integer."""
+        """Returns the current include depth as an integer.
+
+        :returns: ``int`` -- Depth.
+        """
         return len(self._fincS)
     
     @property
     def currentFile(self):
-        """Returns the file ID from the top of the stack."""
+        """Returns the file ID from the top of the stack.
+
+        :returns: ``str`` -- File ID.
+        """
         if self.depth < 1:
             raise ExceptionFileIncludeStack('FileIncludeStack.currentFile on zero length stack.')
         return self._fincS[-1].fileName
     
     @property
     def fileStack(self):
-        """Returns a copy of the stack of file IDs."""
+        """Returns a copy of the stack of file IDs.
+
+        :returns: ``list([str])`` -- File IDs.
+        """
         return [fi.fileName for fi in self._fincS]
     
     @property
     def ppt(self):
-        """Returns the PpTokeniser from the top of the stack."""
+        """Returns the PpTokeniser from the top of the stack.
+
+        :returns: ``cpip.core.PpTokeniser.PpTokeniser`` -- The tokeniser.
+        """
         if self.depth < 1:
             raise ExceptionFileIncludeStack('FileIncludeStack.ppt on zero length stack.')
         return self._fincS[-1].ppt
     
     @property
     def fileIncludeGraphRoot(self):
-        """The :py:class:`.FileIncludeGraph.FileIncludeGraphRoot` object."""
+        """The :py:class:`.FileIncludeGraph.FileIncludeGraphRoot` object.
+
+        :returns: ``cpip.core.FileIncludeGraph.FileIncludeGraphRoot`` -- The include graph root."""
         return self._figr
     
     @property
     def fileLineCol(self):
-        """Return an instance of FileLineCol from the current physical line column."""
+        """Return an instance of FileLineCol from the current physical line column.
+
+        :returns: :py:class:`cpip.core.FileLocation.FileLineCol` -- File location.
+        """
         return self.ppt.fileLineCol
 
     def finalise(self):
-        """Finalisation, may raise an ExceptionFileIncludeStack."""
+        """Finalisation, may raise an ExceptionFileIncludeStack.
+
+        :returns: ``NoneType``
+        """
         if self.depth != 0:
             raise ExceptionFileIncludeStack(
                 'FileIncludeStack.finalise(): Non-zero length stack: %s' \
@@ -137,20 +185,22 @@ class FileIncludeStack(object):
     def includeStart(self, theFpo, theLineNum, isUncond, condStr, incLogic):
         """Start an ``#include`` file.
         
-        *theFpo*
-            A :py:class:`.FileLocation.FilePathOrigin` object that identifies the file.
-            
-        *theLineNum*
-            The integer line number of the file that includes (None if Root).
-        
-        *isUncond*
-            A boolean that is the conditional compilation state.
-            
-        *condStr*
-            A string of the conditional compilation stack.
-            
-        *incLogic*
-            A string that describes the find include logic.
+        :param theFpo: A :py:class:`.FileLocation.FilePathOrigin` object that identifies the file.
+        :type theFpo: ``cpip.core.IncludeHandler.FilePathOrigin([_io.StringIO, str, NoneType, str]), cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
+
+        :param theLineNum: The integer line number of the file that includes (None if Root).
+        :type theLineNum: ``NoneType, int``
+
+        :param isUncond: A boolean that is the conditional compilation state.
+        :type isUncond: ``bool``
+
+        :param condStr: A string of the conditional compilation stack.
+        :type condStr: ``str``
+
+        :param incLogic: A string that describes the find include logic.
+        :type incLogic: ``list([]), list([str])``
+
+        :returns: ``NoneType``
         """
         logging.debug('FileIncludeStack.includeStart(): %s line=%d', theFpo.filePath, theLineNum)
 #        print 'FileIncludeStack.includeStart(): new file %s included from line=%s' % (theFpo.filePath, str(theLineNum))
@@ -197,7 +247,10 @@ class FileIncludeStack(object):
                         ) 
         
     def includeFinish(self):
-        """End an ``#include`` file, returns the file ID that has been finished."""
+        """End an ``#include`` file, returns the file ID that has been finished.
+
+        :returns: ``str`` -- File ID such as a path.
+        """
         if self.depth < 1:
             raise ExceptionFileIncludeStack('FileIncludeStack.includeFinish() on zero length stack.')
 #        print('includeFinish(): myFileStack:', [os.path.basename(p)for p in self.fileStack])
@@ -234,13 +287,31 @@ class FileIncludeStack(object):
     
     def tokenCounterAdd(self, theC):
         """Add a token counter to my token counter (used when a macro is
-        declared)."""
+        declared).
+
+        :param theC: The token counter.
+        :type theC: ``cpip.core.PpTokenCount.PpTokenCount``
+
+        :returns: ``NoneType``
+        """
         if self.depth < 1:
             raise ExceptionFileIncludeStack('FileIncludeStack.tokenCounterAdd() on zero length stack.')
         self._fincS[-1].tokenCounterAdd(theC)
     
     def tokenCountInc(self, tok, isUnCond, num=1):
-        """Increment the token counter."""
+        """Increment the token counter.
+
+        :param tok: The token.
+        :type tok: :py:class:`cpip.core.PpToken.PpToken`
+
+        :param isUnCond: Is unconditionally compiled.
+        :type isUnCond: ``bool``
+
+        :param num: Increment, default 1.
+        :type num: ``int``
+
+        :returns: ``NoneType``
+        """
         self._fincS[-1].tokenCountInc(tok, isUnCond, num)
     #===========================
     # End: Token counter access.

@@ -41,11 +41,11 @@ class ExceptionConditionalExpressionInit(ExceptionConstantExpression):
     pass
 
 class ExceptionConditionalExpression(ExceptionConstantExpression):
-    """Exception when conditional expression e.g. ... ? ... : ... fails to evaluate."""
+    """Exception when conditional expression e.g. ``... ? ... : ...`` fails to evaluate."""
     pass
 
 class ExceptionEvaluateExpression(ExceptionConstantExpression):
-    """Exception when conditional expression e.g. 1 < 2 fails to evaluate."""
+    """Exception when conditional expression e.g. ``1 < 2`` fails to evaluate."""
     pass
 
 class ConstantExpression(object):
@@ -58,7 +58,13 @@ class ConstantExpression(object):
     # Replacement string uses groups 1, 2, 3
     REPLACE_CONDITIONAL_EXPRESSION = 'if %s:\n  result = %s\nelse:\n  result = %s'
     def __init__(self, theTokTypeS):
-        """Constructor takes a list pf PpToken."""
+        """Constructor takes a list pf PpToken.
+
+        :param theTokTypeS: List of tokens.
+        :type theTokTypeS: ``list([cpip.core.PpToken.PpToken])``
+
+        :returns: ``NoneType``
+        """
         self._tokTypeS = theTokTypeS[:]
 
     def __str__(self):
@@ -71,11 +77,19 @@ class ConstantExpression(object):
         i.e. 16.1-4
         
         All remaining identifiers and keywords 137) , except for true and
-        false, are replaced with the pp-number 0"""
+        false, are replaced with the pp-number 0
+
+        :returns: ``str`` -- Result.
+        """
         return ''.join([aTok.evalConstExpr() for aTok in self._tokTypeS])
 
     def evaluate(self):
-        """Evaluates the constant expression and returns 0 or 1."""
+        """Evaluates the constant expression and returns 0 or 1.
+
+        :returns: ``int`` -- Result of ``eval()``, 0 is success.
+
+        :raises: ``ExceptionEvaluateExpression`` on failure.
+        """
         s = self.translateTokensToString()
         m = self.RE_CONDITIONAL_EXPRESSION.match(s)
         if m is not None:
@@ -84,7 +98,8 @@ class ConstantExpression(object):
 
     def _evaluateConditionalExpression(self, theMatch):
         """Evaluates a conditional expression e.g. expr ? t : f
-        Which we convert with a regular expression to: ::
+        Which we convert with a regular expression to::
+
             if exp:
                 t
             else:
@@ -103,7 +118,15 @@ class ConstantExpression(object):
             raise ExceptionConditionalExpression(str(err))
 
     def _evaluateExpression(self, theStr):
-        """Evaluates a conditional expression e.g. 1 < 2 """
+        """Evaluates a conditional expression e.g. 1 < 2
+
+        :param theStr: The string to evaluate in the Pythoin environment.
+        :type theStr: ``str``
+
+        :returns: ``int`` -- Result of ``eval()``, 0 is success.
+
+        :raises: ``ExceptionEvaluateExpression`` on failure.
+        """
         assert(self.RE_CONDITIONAL_EXPRESSION.match(self.translateTokensToString()) is None)
         try:
             return eval(theStr)

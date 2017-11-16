@@ -70,26 +70,44 @@ class FileIncludeGraphRoot(object):
         return '\n'.join([str(fig) for fig in self._incGraphS])
         
     def addGraph(self, theGraph):
-        """Add a :py:class:`FileIncludeGraph` object."""
+        """Add a :py:class:`FileIncludeGraph` object.
+
+        :param theGraph: The graph.
+        :type theGraph: :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraph`
+
+        :returns: ``NoneType``
+        """
         self._incGraphS.append(theGraph)
         
     @property
     def graph(self):
         """The latest :py:class:`FileIncludeGraph` object I have.
-        Will raise a :py:class:`ExceptionFileIncludeGraphRoot` if nothing there."""
+        Will raise a :py:class:`ExceptionFileIncludeGraphRoot` if nothing there.
+
+        :returns: :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraph` -- The graph.
+        """
         if len(self._incGraphS) < 1:
             raise ExceptionFileIncludeGraphRoot('graph on zero length list.')
         return self._incGraphS[-1]
 
     def numTrees(self):
-        """Returns the number of :py:class:`FileIncludeGraph` objects."""
+        """Returns the number of :py:class:`FileIncludeGraph` objects.
+
+        :returns: ``int`` -- Number of trees.
+        """
         return len(self._incGraphS)
 
     def acceptVisitor(self, visitor):
         """Hierarchical visitor pattern. This accepts a visitor object and calls
         visitor.visitGraph(self, depth, line) on that object where depth is the
         current depth in the graph as an integer and line the line that is a
-        non-monotonic sibling node ordinal."""
+        non-monotonic sibling node ordinal.
+
+        :param visitor: The visitor
+        :type visitor: ``cpip.core.FileIncludeGraph.FigVisitorFileSet, cpip.core.FileIncludeGraph.FigVisitorTree``
+
+        :returns: ``NoneType``
+        """
         for aGraph in self._incGraphS:
             aGraph.acceptVisitor(visitor, 1, -1)
 
@@ -107,34 +125,6 @@ class FileIncludeGraph(object):
     experienced by a translation unit processor.
     ``addBranch()`` is the way to add to the data structure.
     
-    theFile - a file ID (e.g. a path)
-
-    theState - a boolean conditional compilation state.
-
-    theCondition - a conditional compilation condition string e.g. "a >= b+2".
-
-    thelogic - a string explanation of how that the file was found.
-
-    If theLogic is taken from an IncludeHandler as a list of items.
-    e.g. ['<foo.h>, CP=None, sys=None, usr=include/foo.h']
-    Each string after item[0] is of the form: key=value
-    Where:
-
-    key is a key in self.INCLUDE_ORIGIN_CODES
-    = is the '=' character.
-    value is the result, or 'None' if not found.
-
-    [0] is the invocation
-    [-1] is the final resolution.
-
-    The intermediate ones are various tries in order.
-    So ['<foo.h>', 'CP=None', 'sys=None', 'usr=include/foo.h'] would mean:
-
-    0. '<foo.h>' the include directive was: ``#include <foo.h>``
-    1. 'CP=None' the Current place was searched and nothing found.
-    2. 'sys=None' the system include(s) were searched and nothing found.
-    3. 'usr=include/foo.h' the user include(s) were searched and include/foo.h was found.
-    
     This class does not distinguish between conditional compilation states
     that are True or False. Nor does this class evaluate theCondition in
     any way, it is merely stored for representation.
@@ -142,30 +132,47 @@ class FileIncludeGraph(object):
     LINE_SEPERATOR = '#'
     RE_SPLIT_LINENUM = re.compile(r'^(.+?)%s([-+]?\d+)$' % LINE_SEPERATOR)
     def __init__(self, theFile, theState, theCondition, theLogic):
-        """Constructor that takes:
-        theFile - a file ID (e.g. a path)
-        theState - a boolean conditional compilation state.
-        theCondition - a conditional compilation condition string e.g. "a >= b+2".
-        thelogic - a string explanation of how that the file was found.
-        If theLogic is taken from an IncludeHandler as a list of items.
-        e.g. ['<foo.h>, CP=None, sys=None, usr=include/foo.h']
-        Each string after item[0] is of the form: key=value
-        Where:
-        key is a key in self.INCLUDE_ORIGIN_CODES
-        = is the '=' character.
-        value is the result, or 'None' if not found.
-        [0] is the invocation
-        [-1] is the final resolution.
-        The intermediate ones are various tries in order.
-        So ['<foo.h>', 'CP=None', 'sys=None', 'usr=include/foo.h'] would mean:
-        [0]: '<foo.h>' the include directive was: #include <foo.h>
-        [1]: 'CP=None' the Current place was searched and nothing found.
-        [2]: 'sys=None' the system include(s) were searched and nothing found.
-        [3]: 'usr=include/foo.h' the user include(s) were searched and include/foo.h was found.
-        
+        """Constructor.
+
         This class does not distinguish between conditional compilation states
         that are True or False. Nor does this class evaluate theCondition in
-        any way, it is merely stored for representation."""
+        any way, it is merely stored for representation.
+
+        :param theFile: A file ID (e.g. a path)
+        :type theFile: ``str``
+
+        :param theState: A boolean conditional compilation state.
+        :type theState: ``bool``
+
+        :param theCondition: A conditional compilation condition string e.g. ``"a >= b+2"``.
+        :type theCondition: ``str``
+
+        :param theLogic: If theLogic is taken from an IncludeHandler as a list of items.
+            e.g. ``['<foo.h>, CP=None, sys=None, usr=include/foo.h']``
+
+            Each string after item[0] is of the form: key=value
+
+            Where:
+
+            key is a key in self.INCLUDE_ORIGIN_CODES
+            = is the '=' character.
+
+            value is the result, or 'None' if not found.
+
+            [0] is the invocation
+            [-1] is the final resolution.
+
+            The intermediate ones are various tries in order.
+            So ``['<foo.h>', 'CP=None', 'sys=None', 'usr=include/foo.h']`` would mean:
+
+            0. '<foo.h>' the include directive was: ``#include <foo.h>``
+            1. 'CP=None' the Current place was searched and nothing found.
+            2. 'sys=None' the system include(s) were searched and nothing found.
+            3. 'usr=include/foo.h' the user include(s) were searched and include/foo.h was found.
+        :type theLogic: ``list([str]), str``
+
+        :returns: ``NoneType``
+        """
         self._fileName = theFile
         self._condCompState = theState
         self._condComp = theCondition
@@ -194,7 +201,10 @@ class FileIncludeGraph(object):
         """The total number of tokens seen by the PpLexer.
         Returns None if not initialised.
         Note: This is the number of tokens for this file only, it does not
-        include the tokens that this file might include."""
+        include the tokens that this file might include.
+
+        :returns: ``int`` -- Count of tokens.
+        """
         if self._tokCntr is not None:
             return self._tokCntr.totalAll
 
@@ -208,6 +218,8 @@ class FileIncludeGraph(object):
             
             This is the number of tokens for this file only, it does not
             include the tokens that this file might include.
+
+        :returns: ``int`` -- Count of tokens.
         """
         if self._tokCntr is not None:
             return self._tokCntr.tokenCountNonWs(False)
@@ -219,7 +231,10 @@ class FileIncludeGraph(object):
         
         May raise :py:class:`ExceptionFileIncludeGraphTokenCounter` is the token counters
         have been loaded inconsistently (i.e. the children have not been
-        loaded)."""
+        loaded).
+
+        :returns: ``int`` -- Count of tokens.
+        """
         if self._tokCntr is not None:
             retToks = self.numTokens
             for aG in self._graph.values():
@@ -241,7 +256,10 @@ class FileIncludeGraph(object):
         
         May raise :py:class:`ExceptionFileIncludeGraphTokenCounter` is the token counters
         have been loaded inconsistently (i.e. the children have not been
-        loaded)."""
+        loaded).
+
+        :returns: ``int`` -- Count of tokens.
+        """
         if self._tokCntr is not None:
             retToks = self.numTokensSig
             for aG in self._graph.values():
@@ -256,34 +274,55 @@ class FileIncludeGraph(object):
         
     @property
     def fileName(self):
-        """Returns the current file name."""
+        """Returns the current file name.
+
+        :returns: ``str`` -- The file name.
+        """
         return self._fileName
 
     @property
     def condCompState(self):
-        """Returns the recorded conditional compilation state as a boolean."""
+        """Returns the recorded conditional compilation state as a boolean.
+
+        :returns: ``bool`` -- The state.
+        """
         return self._condCompState
 
     @property
     def condComp(self):
         """Returns the condition, as a string, under which this file was
-        included e.g. ``"(a > b) && (1 > 0)"``."""
+        included e.g. ``"(a > b) && (1 > 0)"``.
+
+        :returns: ``str`` -- The evaluated conditional compilation string."""
         return self._condComp
     
     @property
     def findLogic(self):
-        """Returns the findLogic string passed in in the constructor."""
+        """Returns the findLogic string passed in in the constructor.
+
+        :returns: ``list([str]),str`` -- The logic string.
+        """
         return self._findLogic
     
     @property
     def tokenCounter(self):
-        """Gets the token counter for this node, a PpTokenCount object."""
+        """Gets the token counter for this node, a PpTokenCount object.
+
+        :returns: :py:class:`cpip.core.PpTokenCount.PpTokenCount`
+            -- The counter object.
+        """
         return self._tokCntr
 
     def setTokenCounter(self, theTokCounter):
         """Sets the token counter for this node which is a PpTokenCount object.
         The PpLexer sets this as the token count for this file only. This
-        files #includes are a separate token counter."""
+        files ``#include``'s are a separate token counter.
+
+        :param theTokCounter: Token counter.
+        :type theTokCounter: :py:class:`cpip.core.PpTokenCount.PpTokenCount`
+
+        :returns: ``NoneType``
+        """
         if self._tokCntr is not None:
             raise ExceptionFileIncludeGraph(
                 'Calling setTokenCounter() when token counter already set.'
@@ -311,29 +350,34 @@ class FileIncludeGraph(object):
     def addBranch(self, theFileS, theLine, theIncFile, theState, theCondition, theLogic):
         """Adds a branch to the graph.
         
-        theFileS is a list of files that form the branch.
-        
-        theLine is an integer value of the line number of the #include
-        statement of the last named file in theFileS.
-        
-        theIncFile is the file that is included.
-        
-        theState is a boolean that describes the conditional compilation state.
+        :param theFileS: A list of files that form the branch.
+        :type theFileS: ``list([str])``
 
-        theCondition is the conditional compilation test e.g. '1>0'
+        :param theLine: An integer value of the line number of the #include
+            statement of the last named file in theFileS.
+        :type theLine: ``int``
 
-        theLogic is a string representing how the branch was obtained.
-        
-        May raise :py:class:`ExceptionFileIncludeGraph` if:
+        :param theIncFile: The file that is included.
+        :type theIncFile: ``str``
 
-        0. The branch is zero length.
-        
-        1. The branch does not match the existing graph (this function just immediately
-           checks the first item on the branch but the others are done recursively).
-        
-        2. theLine is a duplicate of an existing line.
-        
-        3. The branch has missing nodes.
+        :param theState: A boolean that describes the conditional compilation state.
+        :type theState: ``bool``
+
+        :param theCondition: The conditional compilation test e.g. ``'1>0'``
+        :type theCondition: ``str``
+
+        :param theLogic: A string representing how the branch was obtained.
+        :type theLogic: ``list([str])``
+
+        :returns: ``NoneType``
+
+        :raises: :py:class:`ExceptionFileIncludeGraph` if:
+
+            * The branch is zero length.
+            * The branch does not match the existing graph (this function just immediately
+                checks the first item on the branch but the others are done recursively).
+            * theLine is a duplicate of an existing line.
+            * The branch has missing nodes.
         """
         if len(theFileS) == 0:
             # Case 0. above.
@@ -412,7 +456,14 @@ class FileIncludeGraph(object):
         on the supplied branch.
         
         This is generally used during dynamic construction by a caller
-        that understands the state of the file include branch."""
+        that understands the state of the file include branch.
+
+        :param theBranch: Branch.
+        :type theBranch: ``list([str])``
+
+        :returns: :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraph`
+            -- The include graph.
+        """
         if len(theBranch) == 0:
             raise ExceptionFileIncludeGraph('retLatestNode() on empty branch.')
         if theBranch[0] != self.fileName:
@@ -467,7 +518,13 @@ class FileIncludeGraph(object):
         return self._retString(theIndent=0)
         
     def _retString(self, theIndent):
-        """Returns an indented string recursively."""
+        """Returns an indented string recursively.
+
+        :param theIndent: Size of indent.
+        :type theIndent: ``int``
+
+        :returns: ``str`` -- Indented string.
+        """
         retList = []
         retList.append('%s%s [%s, %s]: %5s "%s" "%s"' \
                        % (
@@ -509,9 +566,21 @@ class FileIncludeGraph(object):
 
     def acceptVisitor(self, visitor, depth, line):
         """Hierarchical visitor pattern. This accepts a visitor object and calls
-        visitor.visitGraph(self, depth, line) on that object where depth is the
+        ``visitor.visitGraph(self, depth, line)`` on that object where depth is the
         current depth in the graph as an integer and line the line that is a
-        non-monotonic sibling node ordinal."""
+        non-monotonic sibling node ordinal.
+
+        :param visitor: The visitor.
+        :type visitor: ``cpip.core.FileIncludeGraph.FigVisitorFileSet, cpip.core.FileIncludeGraph.FigVisitorTree``
+
+        :param depth: Visitor depth.
+        :type depth: ``int``
+
+        :param line: File line.
+        :type line: ``int``
+
+        :returns: ``NoneType``
+        """
         visitor.visitGraph(self, depth, line)
         for l in sorted(self._graph.keys()):
             self._graph[l].acceptVisitor(visitor, depth+1, l)
@@ -532,16 +601,32 @@ class FigVisitorTreeNodeBase(object):
     """Base class for nodes created by a tree visitor. See :py:class:`FigVisitorBase` for
     the base class for non-tree visitors."""
     def __init__(self, theLineNum):
+        """Constructor.
+
+        :param theLineNum: The line number.
+        :type theLineNum: ``int``
+
+        :returns: ``NoneType``
+        """
         self._lineNum = theLineNum
         self._children = []
     
     @property
     def lineNum(self):
-        """The line number of the parent file that included me."""
+        """The line number of the parent file that included me.
+
+        :returns: ``int`` -- Line number.
+        """
         return self._lineNum
         
     def addChild(self, theObj):
-        """Add the object as a child."""
+        """Add the object as a child node.
+
+        :param theObj: The node.
+        :type theObj: :py:class:`cpip.IncGraphSVG.SVGTreeNodeMain`
+
+        :returns: ``NoneType``
+        """
         self._children.append(theObj)
         
     def finalise(self):
@@ -555,23 +640,39 @@ class FigVisitorTreeNodeBase(object):
     
 class FigVisitorTree(object):
     """This visitor can visit a graph of :py:class:`FileIncludeGraphRoot` and
-    :py:class:`FileIncludeGraph` that recreates a tree of Node(s) the type of which are
-    supplied by the user. Each node instance will be constructed with either an
-    instance of a :py:class:`FileIncludeGraphRoot` or :py:class:`FileIncludeGraph` or, in the case of a
+    :py:class:`FileIncludeGraph` that recreates a tree of Node(s) the type of
+    which are supplied by the user.
+
+    Each node instance will be constructed with either an
+    instance of a :py:class:`FileIncludeGraphRoot` or
+    :py:class:`FileIncludeGraph` or, in the case of a
     pseudo root node then None."""
     def __init__(self, theNodeClass):
+        """Constructor.
+
+        :param theNodeClass: The class of the visitor.
+        :type theNodeClass: ``type``
+
+        :returns: ``NoneType``
+        """
         self._nodeClass = theNodeClass
         self._stk = [self._nodeClass(None, -1)]
         
     @property
     def depth(self):
         """Returns the current depth in this graph representation. Changes to
-        this determine if the node is a child, sibling or ancestor."""
+        this determine if the node is a child, sibling or ancestor.
+
+        :returns: ``int`` -- The depth.
+        """
         return len(self._stk) - 1
     
     def tree(self):
         """Returns the top level node object as the only copy.
-        This also finalises the tree."""
+        This also finalises the tree.
+
+        :returns: :py:class:`cpip.IncGraphSVG.SVGTreeNodeMain` -- Top level node.
+        """
         while len(self._stk) > 1:
             self._addAncestor()
         assert(self.depth == 0), 'self.depth = %d' % self.depth 
@@ -582,13 +683,37 @@ class FigVisitorTree(object):
         return retVal
     
     def _addChild(self, theNode, theLine):
+        """Add a child node.
+
+        :param theNode: The node.
+        :type theNode: ``cpip.core.FileIncludeGraph.FileIncludeGraph``
+
+        :param theLine: Line number.
+        :type theLine: ``int``
+
+        :returns: ``NoneType``
+        """
         self._stk.append(self._nodeClass(theNode, theLine))
         
     def _addAncestor(self):
+        """Add an ancestor node.
+
+        :returns: ``NoneType``
+        """
         c = self._stk.pop()
         self._stk[-1].addChild(c)
     
     def _addSibling(self, theNode, theLine):
+        """Add a sibling.
+
+        :param theNode: The sibling node.
+        :type theNode: :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraph`
+
+        :param theLine: The line number.
+        :type theLine: ``int``
+
+        :returns: ``NoneType``
+        """
         if len(self._stk) > 1:
             self._addAncestor()
             self._addChild(theNode, theLine)
@@ -596,7 +721,19 @@ class FigVisitorTree(object):
             self._stk[-1].addChild(self._nodeClass(theNode, theLine))
     
     def visitGraph(self, theFigNode, depth, line):
-        """Visit the give node."""
+        """Visit the given node.
+
+        :param theFigNode: The node.
+        :type theFigNode: :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraph`
+
+        :param depth: Node depth.
+        :type depth: ``int``
+
+        :param line: Line number.
+        :type line: ``int``
+
+        :returns: ``NoneType``
+        """
         if self.depth < depth:
             assert((depth - self.depth) == 1)
             self._addChild(theFigNode, line)
@@ -619,14 +756,17 @@ class FigVisitorFileSet(FigVisitorBase):
     def visitGraph(self, theFigNode, theDepth, theLine): 
         """Hierarchical visitor pattern.
         
-        *theFigNode*
-            A :py:class:`FileIncludeGraph` as a graph node.
-            
-        *theDepth*
-            The current depth in the graph as an integer.
-            
-        *theLine*
-            The line that is a non-monotonic sibling node ordinal."""
+        :param theFigNode: A :py:class:`FileIncludeGraph` as a graph node.
+        :type theFigNode: :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraph`
+
+        :param theDepth: The current depth in the graph as an integer.
+        :type theDepth: ``int``
+
+        :param theLine: The line that is a non-monotonic sibling node ordinal.
+        :type theLine: ``int``
+
+        :returns: ``NoneType``
+        """
         self._fileNameMap[theFigNode.fileName] += 1
         
     @property
@@ -636,7 +776,10 @@ class FigVisitorFileSet(FigVisitorBase):
     
     @property
     def fileNameMap(self):
-        """Dictionary of number of times each file is seen: {file : count, ...}."""
+        """Dictionary of number of times each file is seen: ``{file : count, ...}``.
+
+        :returns: ``dict({str : [int]})`` -- File count map.
+        """
         return self._fileNameMap
 
 #######################

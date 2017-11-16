@@ -23,24 +23,24 @@ location in a set of files.
 
 This consists of three related classes:
 
-LogicalPhysicalLineMap
-----------------------
+:py:class:`LogicalPhysicalLineMap`:
+
 This low-level class maintains and internal theoretical relationship between
 the logical position in a string and the physical position. These differ when
 physical characters are replaced by logical ones.
 
 This is not usually used directly by other modules.
 
-FileLocation
-------------
+:py:class:`FileLocation`:
+
 This consists of a stack of one or more LogicalPhysicalLineMap objects each
 of which represents a phase of translation. This understands what it means to
 replace a trigraph or encounter a line continuation phrase.
 
-Typically this is used by a PpTokeniser.
+Typically this is used by a :py:class:`cpip.core.PpTokensiser.PpTokeniser`.
 
-CppFileLocation
----------------
+:py:class:`CppFileLocation`:
+
 This consists of a stack of one or more FileLocation objects each
 of which represents an ITU or included file. Conceptually this is a table of
 columns (each a FileLocation object) and cells (each a LogicalPhysicalLineMap).
@@ -49,67 +49,79 @@ right one in the table. The public API allows pushing (adding a column when a
 file is #include'd) and popping (removing the last column at the end of
 #include processing).
 
-Typically this is used by a PpLexer.
+Typically this is used by a :py:class:`cpip.core.PpLexer.PpLexer`.
 
 
-Using line continuation in LogicalPhysicalLineMap
-=================================================
+Using line continuation in :py:class:`LogicalPhysicalLineMap`:
+
+
 class FileLocation needs to poke the underlying LogicalPhysicalLineMap
 in the right way...
 
 This is accomplished by calling from class FileLocation the underlying
-LogicalPhysicalLineMap._addToIr()
+:py:meth:`LogicalPhysicalLineMap._addToIr()`
+
 This makes calls occur in N pairs.
-N = The number of '\\\n' phrases.
-L(n) is the length of the physical line n (0 <= n < N) not including the '\\\n'
+
+N = The number of '\\n' phrases.
+
+L(n) is the length of the physical line n (0 <= n < N) not including the '\\n'
+
 Make N calls to _addIr(...)
-NOTE: The use of 1+ and -1* here
-_addToIr(theLogicalLine=a, theLogicalCol=1+b, dLine=c, dColumn=-1*d)
-Where:
-a(n) = The current logical line number (starting at 1), constant for the group
-b(n) = Sigma[L(n) for 0...n)]
-c(n) = 1
-d(n) = L(n)
 
-Examples:
-myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
-N = 3
-L(n) -> (3, 0, 1)
-a = 1, c = 1
-(b, d)
-(3, 3)
-(3, 0)
-(4, 1)
+NOTE: The use of 1+ and -1* here ``_addToIr(theLogicalLine=a, theLogicalCol=1+b, dLine=c, dColumn=-1*d)``
 
-myPstrS = ['abc\\\n', 'd\\\n', '\\\n', 'ef\n',]
-N = 3
-L(n) -> (3, 1, 0)
-a = 1, c = 1
-(b, d)
-(3, 3)
-(4, 1)
-(4, 0)
+Where::
 
-myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]
-N = 3
-L(n) -> (2, 1, 1)
-a = 1, c = 1
-(b, d)
-(2, 2)
-(3, 1)
-(4, 1)
+    a(n) = The current logical line number (starting at 1), constant for the group
+    b(n) = Sigma[L(n) for 0...n)]
+    c(n) = 1
+    d(n) = L(n)
+
+Examples::
+
+    myPstrS = ['abc\\n', '\\n', 'd\\n', 'ef\\n',]
+    N = 3
+    L(n) -> (3, 0, 1)
+    a = 1, c = 1
+    (b, d)
+    (3, 3)
+    (3, 0)
+    (4, 1)
+
+    myPstrS = ['abc\\n', 'd\\n', '\\n', 'ef\\n',]
+    N = 3
+    L(n) -> (3, 1, 0)
+    a = 1, c = 1
+    (b, d)
+    (3, 3)
+    (4, 1)
+    (4, 0)
+
+    myPstrS = ['ab\\n', 'c\\n', 'd\\n', 'ef\\n',]
+    N = 3
+    L(n) -> (2, 1, 1)
+    a = 1, c = 1
+    (b, d)
+    (2, 2)
+    (3, 1)
+    (4, 1)
 
 The second call of the pair is as follows, this needs to know N so has
-to be done after all first-of-pair calls:
-_addToIr(theLogicalLine=d, theLogicalCol=1, dLine=e, dColumn=f)
-Where:
-d = n+2 where n is the number of the '\\\n' in the group starting at 0
-e = N-n-1 where N is the total number of '\\\n' in the group.
-f = Length of the last physical line spliced, not including the '\n'
+to be done after all first-of-pair calls::
 
-Programatically:
-for n in range(N):
-    myLplm._addToIr(theLogicalLine=n+2, theLogicalCol=1, dLine=N-n-1, dColumn=f)
+    _addToIr(theLogicalLine=d, theLogicalCol=1, dLine=e, dColumn=f)
+
+Where::
+
+    d = n+2 where n is the number of the '\\n' in the group starting at 0
+    e = N-n-1 where N is the total number of '\\n' in the group.
+    f = Length of the last physical line spliced, not including the '\\n'
+
+Programatically::
+
+    for n in range(N):
+        myLplm._addToIr(theLogicalLine=n+2, theLogicalCol=1, dLine=N-n-1, dColumn=f)
 
 In all the examples above f = 2
 """
@@ -126,13 +138,13 @@ class ExceptionFileLocation(ExceptionCpip):
     """Simple specialisation of an exception class for the FileLocation classes."""
     pass
 
-# See ISO/IEC 14882:1998(E) 16.4 Line control [cpp.line] note 2
-# Means that lines start at 1.
-# We also take the first column to be number 1.
+#: See ISO/IEC 14882:1998(E) 16.4 Line control [cpp.line] note 2
+#: Means that lines start at 1.
+#: We also take the first column to be number 1.
 START_LINE   = 1
 START_COLUMN = 1
 
-# Simple PODs for file location for anyone that wants to use them
+#: Simple PODs for file location for anyone that wants to use them
 FileLine = collections.namedtuple(
     'FileLine',
     'fileId lineNum',
@@ -206,7 +218,16 @@ class LogicalPhysicalLineMap(object):
 
     def pLineCol(self, lLine, lCol):
         """Returns the (physical line number, physical column number) from
-        a logical line and logical column."""
+        a logical line and logical column.
+
+        :param theLline: Logical line number.
+        :type theLline: ``int``
+
+        :param theLcol: Logical column number.
+        :type theLcol: ``int``
+
+        :returns: ``tuple([int, int])`` -- Physical line and column.
+        """
         pLine = lLine
         pCol = lCol
         if lLine in self._ir:
@@ -234,8 +255,15 @@ class FileLocation(object):
     This also handles various passes of the same file for the PpTokeniser."""
     def __init__(self, theFileName):
         """Initialise with a file name (actually an ID)
+
         NOTE: We do not check for it's existence as we are not allied to the
-        file system (we could get the files from a database instead."""
+        file system (we could get the files from a database instead.
+
+        :param theFileName: File ID for example the file path.
+        :type theFileName: ``NoneType, str``
+
+        :returns: ``NoneType``
+        """
         self._fileName = theFileName
         self._lineNum = START_LINE
         self._colNum = START_COLUMN
@@ -257,7 +285,10 @@ class FileLocation(object):
 
     def startNewPhase(self):
         """Starts a new processing phase e.g. a translation phase.
-        This adds a new LogicalPhysicalLineMap() to the stack."""
+        This adds a new LogicalPhysicalLineMap() to the stack.
+
+        :returns: ``NoneType``
+        """
         assert(len(self._logicalPhysMapStack) > 0)
         self._lineNum = START_LINE
         self._colNum = START_COLUMN
@@ -275,7 +306,16 @@ class FileLocation(object):
 
     def logicalToPhysical(self, theLline, theLcol):
         """Returns the physical line and column number for a
-        logical line and column."""
+        logical line and column.
+
+        :param theLline: Logical line number.
+        :type theLline: ``int``
+
+        :param theLcol: Logical column number.
+        :type theLcol: ``int``
+
+        :returns: ``tuple([int, int])`` -- Physical line and column.
+        """
         assert(len(self._logicalPhysMapStack) > 0)
         retL = theLline
         retC = theLcol
@@ -287,6 +327,9 @@ class FileLocation(object):
     # Section: Getters and setters.
     ###############################
     def retLineNum(self):
+        """
+        :returns: ``int`` -- Line number.
+        """
         return self._lineNum
 
     def setLineNum(self, theNum):
@@ -295,6 +338,9 @@ class FileLocation(object):
     lineNum = property(retLineNum, setLineNum)
 
     def retColNum(self):
+        """
+        :returns: ``int`` -- Column number.
+        """
         return self._colNum
 
     def setColNum(self, theNum):
@@ -304,11 +350,17 @@ class FileLocation(object):
 
     @property
     def fileName(self):
+        """
+        :returns: ``str`` -- <insert documentation for return values>
+        """
         return self._fileName
 
     @property
     def pLineCol(self):
-        """Returns the current physical line and column number."""
+        """Returns the current physical line and column number.
+
+        :returns: ``tuple([int, int])`` -- Location.
+        """
         assert(len(self._logicalPhysMapStack) > 0)
         return self.logicalToPhysical(self._lineNum, self._colNum)
 
@@ -324,7 +376,11 @@ class FileLocation(object):
         return self._lineSpliceCount
     
     def fileLineCol(self):
-        """Return an instance of FileLineCol from the current settings."""
+        """Return an instance of FileLineCol from the current settings.
+
+        :returns: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+            -- File location.
+        """
         pLine, pCol = self.pLineCol
         return FileLineCol(self.fileName, pLine, pCol)
     ###############################
@@ -338,17 +394,35 @@ class FileLocation(object):
     # and column the processing is in.
     ########################################################################
     def incCol(self, num=1):
-        """Increment the column by num. There is no range check on num."""
+        """Increment the column by num. There is no range check on num.
+
+        :param num: Amount to increment, default 1.
+        :type num: ``int``
+
+        :returns: ``NoneType``
+        """
         self._colNum += num
 
     def incLine(self, num=1):
-        """Increment the line by num. There is no range check on num."""
+        """Increment the line by num. There is no range check on num.
+
+        :param num: Amount to increment, default 1.
+        :type num: ``int``
+
+        :returns: ``NoneType``
+        """
         self._lineNum += num
         if num:
             self._colNum = START_COLUMN
 
     def update(self, theString):
-        """Increment line and column counters from a string."""
+        """Increment line and column counters from a string.
+
+        :param theString: Source code.
+        :type theString: ``str``
+
+        :returns: ``NoneType``
+        """
         self.incLine(theString.count('\n'))
         self.incCol(len(theString) - theString.rfind('\n') - 1)
 

@@ -114,16 +114,26 @@ import bisect
 from cpip import ExceptionCpip
 from cpip.core.FileLocation import START_LINE
 
+#: Conditional directives.
 CPP_COND_DIRECTIVES = ('if', 'ifdef', 'ifndef', 'elif', 'else', 'endif')
+#: Conditional 'if' directives.
 CPP_COND_IF_DIRECTIVES = ('if', 'ifdef', 'ifndef')
+#: Conditional alternative directives.
 CPP_COND_ALT_DIRECTIVES = ('else', 'elif')
+#: Conditional end directive.
 CPP_COND_END_DIRECTIVE = 'endif'
-            
+
+#: Invert test.
 TOKEN_NEGATION  = '!'
+#: AND
 TOKEN_AND       = '&&'
+#: OR
 TOKEN_OR        = '||'
+#: Pad character
 TOKEN_PAD       = ' '
+#: AND with seperators.
 TOKEN_JOIN_AND  = '%s%s%s' % (TOKEN_PAD, TOKEN_AND, TOKEN_PAD)
+#: OR with seperators.
 TOKEN_JOIN_OR   = '%s%s%s' % (TOKEN_PAD, TOKEN_OR, TOKEN_PAD)
 
 class ExceptionCppCond(ExceptionCpip):
@@ -155,11 +165,21 @@ class ConditionalState(object):
     def __init__(self, theState, theIdOrCondExpr):
         """theState is a boolean and theIdOrCondExpr is a string representing
         a constant-expression or identifier.
+
         The boolean state of this has restrictions appropriate to
         ``#if/#elif/#else`` processing in that the can not transition
         ``True->False->True`` i.e. can only have one True state.
         
-        Of course ``False->True->False`` is permitted."""
+        Of course ``False->True->False`` is permitted.
+
+        :param theState: State.
+        :type theState: ``bool, int``
+
+        :param theIdOrCondExpr: Constant expression.
+        :type theIdOrCondExpr: ``str``
+
+        :returns: ``NoneType``
+        """
         # The current boolean state
         self._state = theState
         # Persistent flag to record whether state has ever been True
@@ -171,23 +191,38 @@ class ConditionalState(object):
 
     def _add(self, theConstExpr):
         """Add a string to the list of constant expressions. Newline is replaced
-        with a single space."""
+        with a single space.
+
+        :param theConstExpr: Constant expression.
+        :type theConstExpr: ``str``
+
+        :returns: ``NoneType``
+        """
         self._condList.append(theConstExpr.replace('\n', ' '))
 
     @property
     def state(self):
-        """Returns boolean state of self."""
+        """Returns boolean state of self.
+
+        :returns: ``bool,int`` -- State.
+        """
         assert(len(self._condList) > 0)
         return self._state
     
     @property
     def hasBeenTrue(self):
         """Return True if the state has been True at any time in the lifetime
-        of this object."""
+        of this object.
+
+        :returns: ``int`` -- State.
+        """
         return self._hasBeenTrue
 
     def flip(self):
-        """Inverts the boolean such as for #else directive."""
+        """Inverts the boolean such as for #else directive.
+
+        :returns: ``NoneType``
+        """
         assert(len(self._condList) > 0)
         #print 'flip() state was: %s' % self._state
         if not self._hasBeenTrue or self._state:
@@ -202,7 +237,16 @@ class ConditionalState(object):
         """This handles an #elif command on this item in the stack.
         This flips the state (if theBool is True) and negates the last
         expression on the condition list then appends theConstExpr
-        onto the condition list."""
+        onto the condition list.
+
+        :param theBool: Negate the state.
+        :type theBool: ``bool``
+
+        :param theConstExpr: Constant expression.
+        :type theConstExpr: ``str``
+
+        :returns: ``NoneType``
+        """
         assert(len(self._condList) > 0)
         #print 'flipAndAdd() state was: %s' % self._state
         if (not self._hasBeenTrue or self._state):
@@ -228,7 +272,13 @@ class ConditionalState(object):
         self._condList.append('%s%s' % (TOKEN_NEGATION, myStr))
 
     def constExprStr(self, invert=False):
-        """Returns self as a string which is the concatenation of constant-expressions."""
+        """Returns self as a string which is the concatenation of constant-expressions.
+
+        :param invert: Negate the test.
+        :type invert: ``bool``
+
+        :returns: ``str`` -- Constant expression.
+        """
         assert(len(self._condList) > 0)
         # If multiple states then parenthesise as these strings might be and'ed.
         if invert:
@@ -266,7 +316,10 @@ class CppCond(object):
         self._stateStack = []
 
     def close(self):
-        """Finalisation, may raise :py:class:`ExceptionCppCond` is stack non-empty."""
+        """Finalisation, may raise :py:class:`ExceptionCppCond` is stack non-empty.
+
+        :returns: ``NoneType``
+        """
         if len(self._stateStack) > 0:
             raise ExceptionCppCond('CppCond.close() on stack [%d]: %s' % (len(self._stateStack), str(self)))#str(self._stateStack))
 
@@ -290,18 +343,33 @@ class CppCond(object):
     # Section: Local methods.
     #========================
     def _push(self, theBool, theIce):
-        """Pushes a new :py:class:`ConditionalState` object onto the stack."""
+        """Pushes a new :py:class:`ConditionalState` object onto the stack.
+
+        :param theBool: State.
+        :type theBool: ``bool, int``
+
+        :param theIce: ???
+        :type theIce: ``str``
+
+        :returns: ``NoneType``
+        """
         self._stateStack.append(ConditionalState(theBool, theIce))
 
     def _pop(self):
         """Removes a :py:class:`ConditionalState` object from the stack.
-        The removed object is returned."""
+        The removed object is returned.
+
+        :returns: ``cpip.core.CppCond.ConditionalState`` -- Pop'd value.
+        """
         if len(self._stateStack) == 0:
             raise ExceptionCppCond('CppCond._pop() on empty stack.')
         return self._stateStack.pop()
 
     def _flip(self):
-        """Changes the state of the top :py:class:`ConditionalState` object on the stack."""
+        """Changes the state of the top :py:class:`ConditionalState` object on the stack.
+
+        :returns: ``NoneType``
+        """
         if len(self._stateStack) == 0:
             raise ExceptionCppCond('CppCond._flip() on empty stack.')
         self._stateStack[-1].flip()
@@ -318,48 +386,54 @@ class CppCond(object):
     def oIf(self, theBool, theConstExpr):
         """Deal with the result of a ``#if``.
         
-        *theBool*
-            Is a boolean that is the result of the callers evaluation of a
+        :param theBool: Is a boolean that is the result of the callers evaluation of a
             constant-expression.
-        
-        *theConstExpr*
-            A string that represents the identifier or
+        :type theBool: ``bool``
+
+        :param theConstExpr: A string that represents the identifier or
             constant-expression in a way that the caller sees fit (i.e. this is not
             evaluated locally in any way).
             Combinations of such strings _are_ merged by use of boolean
             logic ('!') and ``LPAREN`` and ``RPAREN``.
+        :type theConstExpr: ``str``
+
+        :returns: ``NoneType``
         """
         self._push(theBool, theConstExpr)
 
     def oIfdef(self, theBool, theConstExpr):
         """Deal with the result of a ``#ifdef``.
         
-        *theBool*
-            Is a boolean that is the result of the callers evaluation of a
+        :param theBool: Is a boolean that is the result of the callers evaluation of a
             constant-expression.
-        
-        *theConstExpr*
-            A string that represents the identifier or
+        :type theBool: ``bool``
+
+        :param theConstExpr: A string that represents the identifier or
             constant-expression in a way that the caller sees fit (i.e. this is not
             evaluated locally in any way).
             Combinations of such strings _are_ merged by use of boolean
             logic ('!') and ``LPAREN`` and ``RPAREN``.
+        :type theConstExpr: ``str``
+
+        :returns: ``NoneType``
         """
         self._push(theBool, theConstExpr)
 
     def oIfndef(self, theBool, theConstExpr):
         """Deal with the result of a ``#ifndef``.
         
-        *theBool*
-            Is a boolean that is the result of the callers evaluation of a
+        :param theBool: Is a boolean that is the result of the callers evaluation of a
             constant-expression.
-        
-        *theConstExpr*
-            A string that represents the identifier or
+        :type theBool: ``bool``
+
+        :param theConstExpr: A string that represents the identifier or
             constant-expression in a way that the caller sees fit (i.e. this is not
             evaluated locally in any way).
             Combinations of such strings _are_ merged by use of boolean
             logic ('!') and ``LPAREN`` and ``RPAREN``.
+        :type theConstExpr: ``str``
+
+        :returns: ``NoneType``
         """
         # NOTE: Could be push and flip
         self._push(not theBool, theConstExpr)
@@ -367,27 +441,35 @@ class CppCond(object):
     def oElif(self, theBool, theConstExpr):
         """Deal with the result of a ``#elif``.
         
-        *theBool*
-            Is a boolean that is the result of the callers evaluation of a
+        :param theBool: Is a boolean that is the result of the callers evaluation of a
             constant-expression.
-        
-        *theConstExpr*
-            A string that represents the identifier or
+        :type theBool: ``bool``
+
+        :param theConstExpr: A string that represents the identifier or
             constant-expression in a way that the caller sees fit (i.e. this is not
             evaluated locally in any way).
             Combinations of such strings _are_ merged by use of boolean
             logic ('!') and ``LPAREN`` and ``RPAREN``.
+        :type theConstExpr: ``str``
+
+        :returns: ``NoneType``
         """
         if len(self._stateStack) == 0:
             raise ExceptionCppCond('CppCond.oElif() on empty stack.')
         self._stateStack[-1].flipAndAdd(theBool, theConstExpr)
 
     def oElse(self):
-        """Deal with the result of a ``#else``."""
+        """Deal with the result of a ``#else``.
+
+        :returns: ``NoneType``
+        """
         self._flip()
 
     def oEndif(self):
-        """Deal with the result of a ``#endif``."""
+        """Deal with the result of a ``#endif``.
+
+        :returns: ``NoneType``
+        """
         if len(self._stateStack) == 0:
             raise ExceptionCppCond('CppCond.oEndif() on empty stack.')
         self._pop()
@@ -403,7 +485,10 @@ class CppCond(object):
         return self.isTrue()
 
     def isTrue(self):
-        """Returns True if all of the states in the stack are True, False otherwise."""
+        """Returns True if all of the states in the stack are True, False otherwise.
+
+        :returns: ``bool`` -- State of the stack.
+        """
         if len(self._stateStack) == 0:
             # An empty stack is always True
             return True
@@ -413,11 +498,14 @@ class CppCond(object):
         return True
     
     def hasBeenTrueAtCurrentDepth(self):
-        """Return True if the :py:class:`ConditionalState` at the current depth has ever been
+        """Return ``True`` if the :py:class:`ConditionalState` at the current depth has ever been
         ``True``. This is used to decide whether to evaluate ``#elif`` expressions. They
         don't need to be if the :py:class:`ConditionalState` has already been True, and in
         fact, the C Rationale (6.10) says that bogus ``#elif`` expressions should
-        **not** be evaluated in this case - i.e. ignore syntax errors.""" 
+        **not** be evaluated in this case - i.e. ignore syntax errors.
+
+        :returns: ``int`` -- State.
+        """
         if len(self._stateStack) == 0:
             # An empty stack is always True
             return True
@@ -471,7 +559,13 @@ class CppCondGraph(object):
 
     def visit(self, theVisitor):
         """Take a visitor object and pass it around giving it each
-        :py:class:`CppCondGraphNode` object."""
+        :py:class:`CppCondGraphNode` object.
+
+        :param theVisitor: The visitor.
+        :type theVisitor: ``cpip.CppCondGraphToHtml.CcgVisitorToHtml, cpip.core.CppCond.CppCondGraphVisitorConditionalLines``
+
+        :returns: ``NoneType``
+        """
         for anIfSect in self._ifSectS:
             anIfSect.visit(theVisitor, 0)
         
@@ -483,19 +577,50 @@ class CppCondGraph(object):
         
     @property
     def isComplete(self):
-        """True if the last if-section, if present is completed with an ``#endif``."""
+        """True if the last if-section, if present is completed with an ``#endif``.
+
+        :returns: ``bool`` -- True if complete.
+        """
         logging.debug('CppCondGraph.isComplete(): %s', str(self._ifSectS))
         return len(self._ifSectS) == 0 or self._ifSectS[-1].isSectionComplete 
 
     def _raiseIfComplete(self, theCppD):
         """Raise an exception if I can not accept this directive, does not
-        apply to #if statements so should not be called for them."""
+        apply to #if statements so should not be called for them.
+
+        :param theCppD: The preprocessor directive.
+        :type theCppD: ``str``
+
+        :returns: ``NoneType``
+
+        :raises: ``ExceptionCppCondGraph``
+        """
         assert(theCppD in CPP_COND_ALT_DIRECTIVES
                or theCppD == CPP_COND_END_DIRECTIVE)
         if self.isComplete:
             raise ExceptionCppCondGraph('Graph can not handle #%s when complete' % theCppD)
         
     def _oIfIfDefIfndef(self, theCppD, theFlc, theTuIdx, theBool, theCe):
+        """Generic preprocessor directive handler.
+
+        :param theCppD: The preprocessor directive.
+        :type theCppD: ``str``
+
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
+
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
+
+        :param theCe: The constant expression as a string (not evaluated).
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         assert(theCppD in CPP_COND_IF_DIRECTIVES)
         if self.isComplete:
             # Append a new sibling if section
@@ -516,18 +641,20 @@ class CppCondGraph(object):
     def oIf(self, theFlc, theTuIdx, theBool, theCe):
         """Deal with the result of a ``#if``.
 
-        *theFlc*
-            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
             identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
 
-        *theTuIndex*
-            An integer that represents the position in the translation unit.
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
 
-        *theBool*
-            The current state of the conditional stack.
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
 
-        *theCe*
-            The constant expression as a string (not evaluated).
+        :param theCe: The constant expression as a string (not evaluated).
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
         """
         logging.debug('CppCondGraph.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('if', theFlc, theTuIdx, theBool, theCe)
@@ -535,18 +662,20 @@ class CppCondGraph(object):
     def oIfdef(self, theFlc, theTuIdx, theBool, theCe):
         """Deal with the result of a ``#ifdef``.
 
-        *theFlc*
-            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
             identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
 
-        *theTuIndex*
-            An integer that represents the position in the translation unit.
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
 
-        *theBool*
-            The current state of the conditional stack.
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
 
-        *theCe*
-            The constant expression as a string (not evaluated).
+        :param theCe: The constant expression as a string (not evaluated).
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
         """
         logging.debug('CppCondGraph.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifdef', theFlc, theTuIdx, theBool, theCe)
@@ -554,18 +683,20 @@ class CppCondGraph(object):
     def oIfndef(self, theFlc, theTuIdx, theBool, theCe):
         """Deal with the result of a ``#ifndef``.
 
-        *theFlc*
-            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
             identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
 
-        *theTuIndex*
-            An integer that represents the position in the translation unit.
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
 
-        *theBool*
-            The current state of the conditional stack.
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
 
-        *theCe*
-            The constant expression as a string (not evaluated).
+        :param theCe: The constant expression as a string (not evaluated).
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
         """
         logging.debug('CppCondGraph.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifndef', theFlc, theTuIdx, theBool, theCe)
@@ -573,18 +704,20 @@ class CppCondGraph(object):
     def oElif(self, theFlc, theTuIdx, theBool, theCe):
         """Deal with the result of a ``#elif``.
 
-        *theFlc*
-            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
             identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
 
-        *theTuIndex*
-            An integer that represents the position in the translation unit.
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
 
-        *theBool*
-            The current state of the conditional stack.
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
 
-        *theCe*
-            The constant expression as a string (not evaluated).
+        :param theCe: The constant expression as a string (not evaluated).
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
         """
         logging.debug('CppCondGraph.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._raiseIfComplete('elif')
@@ -594,15 +727,17 @@ class CppCondGraph(object):
     def oElse(self, theFlc, theTuIdx, theBool):
         """Deal with the result of a ``#else``.
 
-        *theFlc*
-            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
             identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
 
-        *theTuIndex*
-            An integer that represents the position in the translation unit.
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
 
-        *theBool*
-            The current state of the conditional stack.
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
+
+        :returns: ``NoneType``
         """
         logging.debug('CppCondGraph.oElse():   %s %s', theFlc, theTuIdx)
         self._raiseIfComplete('else')
@@ -612,15 +747,17 @@ class CppCondGraph(object):
     def oEndif(self, theFlc, theTuIdx, theBool):
         """Deal with the result of a ``#endif``.
 
-        *theFlc*
-            A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
             identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
 
-        *theTuIndex*
-            An integer that represents the position in the translation unit.
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
 
-        *theBool*
-            The current state of the conditional stack.
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
+
+        :returns: ``NoneType``
         """
         logging.debug('CppCondGraph.oEndif():  %s %s', theFlc, theTuIdx)
         self._raiseIfComplete('endif')
@@ -632,6 +769,25 @@ class CppCondGraphNode(object):
     # Number of spaces to pad out the text dump
     DUMP_PAD_SPACES = 4
     def __init__(self, theCppDirective, theFileLineCol, theTuIdx, theBool, theConstExpr=None):
+        """Constructor.
+
+        :param theCppDirective: Preprocessor directive.
+        :type theCppDirective: ``str``
+
+        :param theFileLineCol: File location.
+        :type theFileLineCol: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: ???
+        :type theBool: ``bool``
+
+        :param theConstExpr: The constant expression.
+        :type theConstExpr: ``NoneType, str``
+
+        :returns: ``NoneType``
+        """
         super(CppCondGraphNode, self).__init__()
         assert theCppDirective in CPP_COND_DIRECTIVES, 'Unknown directive: %s' % theCppDirective
         self._cppDir = theCppDirective
@@ -655,7 +811,16 @@ class CppCondGraphNode(object):
         return '{!r:s} @ {!r:s}'.format([str(v) for v in self._childIfSectS], self._cppDirLoc)
 
     def visit(self, theVisitor, theDepth):
-        """Take a visitor object make the pre/post calls."""
+        """Take a visitor object make the pre/post calls.
+
+        :param theVisitor: The visitor.
+        :type theVisitor: ``cpip.CppCondGraphToHtml.CcgVisitorToHtml, cpip.core.CppCond.CppCondGraphVisitorConditionalLines``
+
+        :param theDepth: Tree depth.
+        :type theDepth: ``int``
+
+        :returns: ``NoneType``
+        """
         theVisitor.visitPre(self, theDepth)
         for aChild in self._childIfSectS:
             aChild.visit(theVisitor, theDepth+1)
@@ -714,7 +879,13 @@ class CppCondGraphNode(object):
                self._cppDirLoc.tuIndex)
         
     def canAccept(self, theCppD):
-        """True if I can accept a Preprocessing Directive; theCppD."""
+        """True if I can accept a Preprocessing Directive; theCppD.
+
+        :param theCppD: Preprocessor directive.
+        :type theCppD: ``str``
+
+        :returns: ``bool`` -- I can accept it.
+        """
         assert(theCppD in CPP_COND_DIRECTIVES)
         # If I am an #endif then I can not accept descendants
         if self.cppDirective == CPP_COND_END_DIRECTIVE:
@@ -732,12 +903,39 @@ class CppCondGraphNode(object):
         return not self._childIfSectS[-1].isSectionComplete
     
     def _raiseIfCanNotAccept(self, theCppD):
-        """Raise an exception if I can not accept this directive."""
+        """Raise an exception if I can not accept this directive.
+
+        :param theCppD: Preprocessor directive.
+        :type theCppD: ``str``
+
+        :returns: ``NoneType``
+
+        :raises: ``ExceptionCppCondGraphNode`` If the section is complete.
+        """
         assert(theCppD in CPP_COND_DIRECTIVES)
         if not self.canAccept(theCppD):
             raise ExceptionCppCondGraphNode('Can not handle #%s when complete' % theCppD)
         
     def _oIfIfDefIfndef(self, theCppD, theFlc, theTuIdx, theBool, theCe):
+        """Generic if function.
+
+        :param theCppD: Preprocessor directive.
+        :type theCppD: ``str``
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         assert(theCppD in CPP_COND_IF_DIRECTIVES)
         self._raiseIfCanNotAccept(theCppD)
         # Decide to pass this down or create new if-section
@@ -756,22 +954,82 @@ class CppCondGraphNode(object):
                 self._childIfSectS[-1].oIfndef(theFlc, theTuIdx, theBool, theCe)
 
     def oIf(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#if``."""
+        """Deal with the result of a ``#if``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphNode.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('if', theFlc, theTuIdx, theBool, theCe)
 
     def oIfdef(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#ifdef``."""
+        """Deal with the result of a ``#ifdef``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphNode.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifdef', theFlc, theTuIdx, theBool, theCe)
 
     def oIfndef(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#ifndef``."""
+        """Deal with the result of a ``#ifndef``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphNode.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifndef', theFlc, theTuIdx, theBool, theCe)
 
     def oElif(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#elif``."""
+        """Deal with the result of a ``#elif``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphNode.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._raiseIfCanNotAccept('elif')
         # Pass to child in list
@@ -779,7 +1037,19 @@ class CppCondGraphNode(object):
         self._childIfSectS[-1].oElif(theFlc, theTuIdx, theBool, theCe)
 
     def oElse(self, theFlc, theTuIdx, theBool):
-        """Deal with the result of a ``#else``."""
+        """Deal with the result of a ``#else``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphNode.oElse():   %s %s', theFlc, theTuIdx)
         self._raiseIfCanNotAccept('else')
         # Pass to child in list
@@ -787,7 +1057,19 @@ class CppCondGraphNode(object):
         self._childIfSectS[-1].oElse(theFlc, theTuIdx, theBool)
 
     def oEndif(self, theFlc, theTuIdx, theBool):
-        """Deal with the result of a ``#endif``."""
+        """Deal with the result of a ``#endif``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphNode.oEndif():  %s %s', theFlc, theTuIdx)
         self._raiseIfCanNotAccept('endif')
         # Pass to child in list
@@ -797,24 +1079,28 @@ class CppCondGraphNode(object):
 class CppCondGraphIfSection(object):
     """Class that represents a conditionally compiled section starting with
     #if... and ending with ``#endif``.
-    
-    *theIfCppD*
-        A string, one of '#if', '#ifdef', '#ifndef'.
-        
-    *theFlc*
-        A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
-        identifies the position in the file.
-        
-    *theTuIndex*
-        An integer that represents the position in the translation unit.
-        
-    *theBool*
-        The current state of the conditional stack.
-        
-    *theCe*
-        The constant expression as a string (not evaluated).
-    """ 
+    """
     def __init__(self, theIfCppD, theFlc, theTuIdx, theBool, theCe):
+        """Constructor.
+
+        :param theIfCppD: A string, one of '#if', '#ifdef', '#ifndef'.
+        :type theIfCppD: ``str``
+
+        :param theFlc: A :py:class:`cpip.core.FileLocation.FileLineColumn` object that
+            identifies the position in the file.
+        :type theFlc: ``cpip.core.FileLocation.FileLineCol([str, int, int])``
+
+        :param theTuIdx: An integer that represents the position in the translation unit.
+        :type theTuIdx: ``int``
+
+        :param theBool: The current state of the conditional stack.
+        :type theBool: ``bool``
+
+        :param theCe: The constant expression as a string (not evaluated).
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         super(CppCondGraphIfSection, self).__init__()
         assert(theIfCppD in CPP_COND_IF_DIRECTIVES)
         # A list of sibling CppCondGraphNode objects representing
@@ -829,7 +1115,16 @@ class CppCondGraphIfSection(object):
         return '\n'.join(self.retStrList(0))
     
     def visit(self, theVisitor, theDepth):
-        """Take a visitor object make the pre/post calls."""
+        """Take a visitor object make the pre/post calls.
+
+        :param theVisitor: Visitor.
+        :type theVisitor: ``cpip.CppCondGraphToHtml.CcgVisitorToHtml, cpip.core.CppCond.CppCondGraphVisitorConditionalLines``
+
+        :param theDepth: Graph depth.
+        :type theDepth: ``int``
+
+        :returns: ``NoneType``
+        """
         for aSibling in self._siblingNodeS:
             aSibling.visit(theVisitor, theDepth)
         
@@ -841,6 +1136,9 @@ class CppCondGraphIfSection(object):
             
     @property
     def isSectionComplete(self):
+        """
+        :returns: ``bool`` -- Section complete.
+        """
         assert(len(self._siblingNodeS) > 0)
         retVal = self._siblingNodeS[-1].cppDirective == 'endif'
         logging.debug(
@@ -851,12 +1149,39 @@ class CppCondGraphIfSection(object):
         return retVal
     
     def _raiseIfSectionComplete(self, theCppD):
+        """
+        :param theCppD: Preprocessor directive.
+        :type theCppD: ``str``
+
+        :returns: ``NoneType``
+
+        :raises: ``ExceptionCppCondGraphIfSection`` If the section is complete.
+        """
         if self.isSectionComplete:
             raise ExceptionCppCondGraphIfSection(
                 'CppCondGraphIfSection: #%s in if-section that is complete.' \
                                     % theCppD)
     
     def _oIfIfDefIfndef(self, theCppD, theFlc, theTuIdx, theBool, theCe):
+        """Generic if function.
+
+        :param theCppD: Preprocessor directive.
+        :type theCppD: ``str``
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         assert(theCppD in CPP_COND_IF_DIRECTIVES)
         assert(len(self._siblingNodeS) > 0)
         self._raiseIfSectionComplete(theCppD)
@@ -869,22 +1194,82 @@ class CppCondGraphIfSection(object):
             self._siblingNodeS[-1].oIfndef(theFlc, theTuIdx, theBool, theCe)
 
     def oIf(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#if``."""
+        """Deal with the result of a ``#if``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphIfSection.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('if', theFlc, theTuIdx, theBool, theCe)
 
     def oIfdef(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#ifdef``."""
+        """Deal with the result of a ``#ifdef``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphIfSection.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifdef', theFlc, theTuIdx, theBool, theCe)
 
     def oIfndef(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#ifndef``."""
+        """Deal with the result of a ``#ifndef``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphIfSection.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifndef', theFlc, theTuIdx, theBool, theCe)
 
     def oElif(self, theFlc, theTuIdx, theBool, theCe):
-        """Deal with the result of a ``#elif``."""
+        """Deal with the result of a ``#elif``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :param theCe: The preprocessor directive.
+        :type theCe: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphIfSection.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         assert(len(self._siblingNodeS) > 0)
         self._raiseIfSectionComplete('elif')
@@ -902,7 +1287,19 @@ class CppCondGraphIfSection(object):
                 self._siblingNodeS.append(CppCondGraphNode('elif', theFlc, theTuIdx, theBool, theCe))
 
     def oElse(self, theFlc, theTuIdx, theBool):
-        """Deal with the result of a ``#else``."""
+        """Deal with the result of a ``#else``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphIfSection.oElse():   %s %s', theFlc, theTuIdx)
         assert(len(self._siblingNodeS) > 0)
         self._raiseIfSectionComplete('else')
@@ -920,7 +1317,19 @@ class CppCondGraphIfSection(object):
                 self._siblingNodeS.append(CppCondGraphNode('else', theFlc, theTuIdx, theBool))
 
     def oEndif(self, theFlc, theTuIdx, theBool):
-        """Deal with the result of a ``#endif``."""
+        """Deal with the result of a ``#endif``.
+
+        :param theFlc: File location.
+        :type theFlc: :py:class:`cpip.core.FileLocation.FileLineCol([str, int, int])`
+
+        :param theTuIdx: Translation unit index.
+        :type theTuIdx: ``int``
+
+        :param theBool: Conditional compilation state.
+        :type theBool: ``bool``
+
+        :returns: ``NoneType``
+        """
         logging.debug('CppCondGraphIfSection.oEndif():  %s %s', theFlc, theTuIdx)
         assert(len(self._siblingNodeS) > 0)
         self._raiseIfSectionComplete('endif')
@@ -946,6 +1355,13 @@ class LineConditionalInterpretation(object):
     that point is ambiguous.
     """
     def __init__(self, theList):
+        """Constructor.
+
+        :param theList: List of line numbers and compilation state.
+        :type theList: ``list([tuple([int, bool])])``
+
+        :returns: ``NoneType``
+        """
         self._lines = []
         self._bools = []
         # Only keep unique values then sort, this means we might have:
@@ -964,11 +1380,17 @@ class LineConditionalInterpretation(object):
 
         This requires a search for the previously mentioned line state.
 
-        Will raise a ValueError if no prior state can be found, for example if there
-        are no conditional compilation directives in the file. In this case it is up
-        to the caller to handle this. ``CppCondGraphVisitorConditionalLines`` does
-        this during ``visitPre()`` by artificially inserting line 1.
-        See ``CppCondGraphVisitorConditionalLines.isCompiled()``"""
+        :param lineNum: Line number.
+        :type lineNum: ``int``
+
+        :returns: ``int`` -- 1 if this line is compiled, 0 if not or -1 if it is ambiguous.
+
+        :raises: ``ValueError`` If no prior state can be found, for example if there
+            are no conditional compilation directives in the file. In this case it is up
+            to the caller to handle this. ``CppCondGraphVisitorConditionalLines`` does
+            this during ``visitPre()`` by artificially inserting line 1.
+            See ``CppCondGraphVisitorConditionalLines.isCompiled()``
+        """
         idx = bisect.bisect_right(self._lines, lineNum)
         if idx == 0:
             raise ValueError('LineConditionInterpretation.isCompiled(): Can not find %s in %s' % (lineNum, self._lines))
@@ -1009,7 +1431,16 @@ class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
     # Visitor methods
     #---------------------
     def visitPre(self, theCcgNode, theDepth):
-        """Capture the fileID, line number and state."""
+        """Capture the fileID, line number and state.
+
+        :param theCcgNode: The node.
+        :type theCcgNode: :py:class:`cpip.core.CppCond.CppCondGraphNode`
+
+        :param theDepth: Graph depth.
+        :type theDepth: ``int``
+
+        :returns: ``NoneType``
+        """
         # Carry over state from previous file
         if self._prevFile != theCcgNode.fileId:
             # Pre populate with start line of 1 as state as previous file
@@ -1020,12 +1451,35 @@ class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
         self._addFileLineState(theCcgNode.fileId, theCcgNode.lineNum, theCcgNode.state)
         
     def _addFileLineState(self, file, line, state):
+        """Adds the state of the file at the line number
+
+        :param fileId: File ID such as its path.
+        :type file: ``str``
+
+        :param line: Line number.
+        :type line: ``int``
+
+        :param state: Conditional compilation state.
+        :type state: ``bool``
+
+        :returns: ``NoneType``
+        """
         try:
             self._fileMap[file].append((line, state))
         except KeyError:
             self._fileMap[file] = [(line, state),]
             
     def visitPost(self, theCcgNode, theDepth):
+        """Post visit.
+
+        :param theCcgNode: The graph node.
+        :type theCcgNode: :py:class:`cpip.core.CppCond.CppCondGraphNode`
+
+        :param theDepth: The graph depth.
+        :type theDepth: ``int``
+
+        :returns: ``NoneType``
+        """
         pass
     #---------------------
     # END: Visitor methods
@@ -1041,6 +1495,10 @@ class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
     
     @property
     def fileLineCondition(self):
+        """The condition of the file.
+
+        :returns: ``dict({str : [cpip.core.CppCond.LineConditionalInterpretation]})`` -- File/line condition.
+        """
         if self._fileLineCondition is None:
             self._fileLineCondition = dict(((k, LineConditionalInterpretation(v)) for k, v in self._fileMap.items()))
         return self._fileLineCondition
@@ -1052,7 +1510,16 @@ class CppCondGraphVisitorConditionalLines(CppCondGraphVisitorBase):
     
     def isCompiled(self, fileId, lineNum):
         """Returns 1 if this line is compiled, 0 if not or -1 if it is ambiguous
-        i.e. sometimes it is and somtimes not when multiple inclusions."""
+        i.e. sometimes it is and sometimes not when multiple inclusions.
+
+        :param fileId: File ID such as its path.
+        :type fileId: ``str``
+
+        :param lineNum: Line number.
+        :type lineNum: ``int``
+
+        :returns: ``int`` -- 1 if compiled, 0 otherwise.
+        """
         # If there is no record of the fileId in the self.fileLineCondition it is because there is no record
         # of any conditional compilation directives in the file. Therefore the whole file is compiled.
         if fileId not in self.fileLineCondition:
