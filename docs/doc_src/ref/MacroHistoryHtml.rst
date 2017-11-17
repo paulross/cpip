@@ -7,4 +7,6 @@ MacroHistoryHtml
 ======================
 
 .. automodule:: cpip.MacroHistoryHtml
-   :members:
+    :members:
+    :special-members:
+    :private-members:

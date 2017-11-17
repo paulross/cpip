@@ -3,8 +3,10 @@
 
 .. _cpip.ref.IncList:
 
-IncList
-======================
+IncList - List all ``#include``'d files.
+============================================
 
 .. automodule:: cpip.IncList
-   :members:
+    :members:
+    :special-members:
+    :private-members:

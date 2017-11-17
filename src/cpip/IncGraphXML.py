@@ -47,7 +47,13 @@ def processIncGraphToXml(theLex, theFilePath):
     myIgs.writeToFilePath(theFilePath)
 
 class IncGraphXML(FileIncludeGraph.FigVisitorTreeNodeBase):
+    """Class that creates an include graph in XML."""
     def __init__(self, theFig, theLineNum):
+        """Constructor.
+
+        :param theFig: The file include graph.
+        :param theLineNum: The line number.
+        """
         super(IncGraphXML, self).__init__(theLineNum)
         self._isRoot = theFig is None
         self._tokenCounterChildren = PpTokenCount.PpTokenCount()

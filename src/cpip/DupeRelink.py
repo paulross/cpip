@@ -23,6 +23,36 @@ file into a common area and deletes all the others. Then re-links all the
 remaining HTML files that linked to the original files to link to the file
 in the common area. This is a space saving optimisation after CPIPMain.py
 has processed a directory of source files.
+
+.. code-block:: console
+
+    (CPIP36) $ python src/cpip/DupeRelink.py --help
+    usage: DupeRelink.py [-h] [-s SUBDIR] [-n] [-v] [-l LOGLEVEL] path
+
+    DupeRelink.py - Delete duplicate HTML files and relink them to save space. WARNING: This deletes in-place.
+      Created by Paul Ross on 2017-09-26.
+      Copyright 2017. All rights reserved.
+      Licensed under GPL 2.0
+    USAGE
+
+    positional arguments:
+      path                  Path to source directory. WARNING: This will be
+                            rewritten in-place.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -s SUBDIR, --subdir SUBDIR
+                            Sub-directory for writing the common files. [default:
+                            _common_html]
+      -n, --nervous         Nervous mode, don't do anything but report what would
+                            be done. Use -l20 to see detailed result. [default:
+                            False]
+      -v, --verbose         Verbose, lists duplicate files and sizes. [default:
+                            False]
+      -l LOGLEVEL, --loglevel LOGLEVEL
+                            Log Level (debug=10, info=20, warning=30, error=40,
+                            critical=50) [default: 30]
+
 """
 import argparse
 import collections
@@ -265,17 +295,15 @@ def process(root_dir, sub_dir_for_common_files=SUB_DIR_FOR_COMMON_FILES,
 
 def main():
     """Delete and relink common files."""
-    program_version = "v%s" % __version__
     program_shortdesc = \
         'DupeRelink.py - Delete duplicate HTML files and relink them to save space.'\
         ' WARNING: This deletes in-place.'
     program_license = """%s
-  Version: %s
   Created by Paul Ross on %s.
   Copyright 2017. All rights reserved.
   Licensed under GPL 2.0
 USAGE
-""" % (program_shortdesc, program_version, str(__date__))
+""" % (program_shortdesc, str(__date__))
     parser = argparse.ArgumentParser(
         description=program_license,
         formatter_class=argparse.RawDescriptionHelpFormatter,

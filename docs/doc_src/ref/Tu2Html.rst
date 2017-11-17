@@ -7,4 +7,6 @@ Tu2Html
 ======================
 
 .. automodule:: cpip.Tu2Html
-   :members:
+    :members:
+    :special-members:
+    :private-members:

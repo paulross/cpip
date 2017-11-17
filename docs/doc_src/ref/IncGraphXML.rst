@@ -7,4 +7,6 @@ IncGraphXML
 ======================
 
 .. automodule:: cpip.IncGraphXML
-   :members:
+    :members:
+    :special-members:
+    :private-members:

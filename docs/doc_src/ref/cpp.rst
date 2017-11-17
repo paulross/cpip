@@ -1,12 +1,16 @@
 .. moduleauthor:: Paul Ross <apaulross@gmail.com>
 .. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
-.. _cpip.ref.ItuToHtml:
+.. _cpip.ref.cpp:
 
-ItuToHtml
-======================
+cpp - Mimic a preprocessor
+================================
 
-.. automodule:: cpip.ItuToHtml
+.. toctree::
+    :maxdepth: 2
+
+.. automodule:: cpip.cpp
     :members:
     :special-members:
     :private-members:
+   

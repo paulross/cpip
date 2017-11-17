@@ -2,16 +2,31 @@
 CPIP Reference
 *****************
 
+=====================
+Command Line Tools
+=====================
+
 .. toctree::
     :maxdepth: 2
 
     CPIPMain
-    CppCondGraphToHtml
+    DupeRelink
     FileStatus
+    IncList
+    cpp
+
+=====================
+Library
+=====================
+
+
+.. toctree::
+    :maxdepth: 2
+
+    CppCondGraphToHtml
     IncGraphSVG
     IncGraphSVGBase
     IncGraphXML
-    IncList
     ItuToHtml
     MacroHistoryHtml
     TokenCss

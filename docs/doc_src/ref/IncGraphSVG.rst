@@ -7,4 +7,6 @@ IncGraphSVG
 ======================
 
 .. automodule:: cpip.IncGraphSVG
-   :members:
+    :members:
+    :special-members:
+    :private-members:

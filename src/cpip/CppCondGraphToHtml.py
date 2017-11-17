@@ -33,6 +33,16 @@ from cpip.util import HtmlUtils
 from cpip import TokenCss
 
 def linkToIndex(theS, theIdxPath):
+    """Write a back link to the index page.
+
+    :param theS: The HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theIdxPath: <insert documentation for argument>
+    :type theIdxPath: ``str``
+
+    :returns: ``NoneType``
+    """
     with XmlWrite.Element(theS, 'p'):
         theS.characters('Return to ')
         with XmlWrite.Element(theS, 'a', {'href' : theIdxPath}):
@@ -42,14 +52,28 @@ class CcgVisitorToHtml(CppCond.CppCondGraphVisitorBase):
     """Writing CppCondGraph visitor object."""
     PAD_STR = '  '
     def __init__(self, theHtmlStream):
-        """Constructor with an output XmlWrite.XhtmlStream and
-        a a TuIndexer.TuIndexer object."""
+        """Constructor with an output XmlWrite.XhtmlStream.
+
+        :param theHtmlStream: The HTML stream.
+        :type theHtmlStream: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+        :returns: ``NoneType``
+        """
         super(CcgVisitorToHtml, self).__init__()
         self._hs = theHtmlStream
         
     def visitPre(self, theCcgNode, theDepth):
         """Pre-traversal call with a CppCondGraphNode and the integer depth in
-        the tree."""
+        the tree.
+
+        :param theCcgNode: Graph node.
+        :type theCcgNode: :py:class:`cpip.core.CppCond.CppCondGraphNode`
+
+        :param theDepth: Node depth.
+        :type theDepth: ``int``
+
+        :returns: ``NoneType``
+        """
         self._hs.characters(self.PAD_STR * theDepth)
         if theCcgNode.state:
             myCssClass = 'CcgNodeTrue'
@@ -76,7 +100,16 @@ class CcgVisitorToHtml(CppCond.CppCondGraphVisitorBase):
         
     def visitPost(self, theCcgNode, theDepth):
         """Post-traversal call with a CppCondGraphNode and the integer depth in
-        the tree."""
+        the tree.
+
+        :param theCcgNode: Graph node.
+        :type theCcgNode: :py:class:`cpip.core.CppCond.CppCondGraphNode`
+
+        :param theDepth: Node depth.
+        :type theDepth: ``int``
+
+        :returns: ``NoneType``
+        """
         pass
 
 def processCppCondGrphToHtml(theLex,
@@ -84,11 +117,21 @@ def processCppCondGrphToHtml(theLex,
                              theTitle,
                              theIdxPath):
     """Given the PpLexer write out the Cpp Cond Graph to the HTML file.
-    theLex is a PpLexer.
-    theHtmlPath is the file path of the output.
-    theTitle is the page title.
-    theIdxPath is the file name of the index page.
-    theTuIndexer is a TuIndexer.TuIndexer object."""
+
+    :param theLex: The lexer.
+    :type theLex: :py:class:`cpip.core.PpLexer.PpLexer`
+
+    :param theHtmlPath: Path to output HTML file.
+    :type theHtmlPath: ``str``
+
+    :param theTitle: Title.
+    :type theTitle: ``str``
+
+    :param theIdxPath: Path to index page for back links.
+    :type theIdxPath: ``str``
+
+    :returns: ``NoneType``
+    """
     if not os.path.exists(os.path.dirname(theHtmlPath)):
         os.makedirs(os.path.dirname(theHtmlPath))
     # Note: Callers responsibility to write the CSS file

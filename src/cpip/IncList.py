@@ -17,7 +17,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # 
 # Paul Ross: apaulross@gmail.com
-
+"""Command line tool to list included file paths
+"""
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
@@ -41,12 +42,14 @@ from cpip.core import FileIncludeGraph
 from cpip.core import PragmaHandler
 
 def retIncludedFileSet(theLexer):
+    """Returns a set of included file paths from a lexer."""
     myFigr = theLexer.fileIncludeGraphRoot
     myFileNameVis = FileIncludeGraph.FigVisitorFileSet()
     myFigr.acceptVisitor(myFileNameVis)
     return myFileNameVis.fileNameSet
 
 def preProcessForIncludes(theItu, incUsr, incSys, theDefineS, preIncS, keepGoing, ignorePragma):
+    """Pre-process a file for included files."""
     myIncH = IncludeHandler.CppIncludeStdOs(
         theUsrDirs=incUsr or [],
         theSysDirs=incSys or [],
@@ -85,10 +88,38 @@ def preProcessForIncludes(theItu, incUsr, incSys, theDefineS, preIncS, keepGoing
 
 
 def main():
+    """Main command line entry point. Help:
+
+    .. code-block:: none
+
+        Usage: IncList.py [options] files...
+        Preprocess the files and lists included files.
+
+        Options:
+          --version             show program's version number and exit
+          -h, --help            show this help message and exit
+          -k                    Keep going. [default: False]
+          -l LOGLEVEL, --loglevel=LOGLEVEL
+                                Log Level (debug=10, info=20, warning=30, error=40,
+                                critical=50) [default: 30]
+          -n                    Nervous mode (do no harm). [default: False]
+          -p                    Ignore pragma statements. [default: False]
+          -I INCUSR, --usr=INCUSR
+                                Add user include search path. [default: []]
+          -J INCSYS, --sys=INCSYS
+                                Add system include search path. [default: []]
+          -P PREINC, --pre=PREINC
+                                Add pre-include file path. [default: []]
+          -D DEFINES, --define=DEFINES
+                                Add macro defintions of the form name<=defintion>.
+                                These are introduced into the environment before any
+                                pre-include. [default: []]
+
+    """
     usage = """usage: %prog [options] files...
 Preprocess the files and lists included files."""
     #print 'Cmd: %s' % ' '.join(sys.argv)
-    optParser = OptionParser(usage, version='%prog ' + __version__)
+    optParser = OptionParser(usage, version='%prog ')
 #    optParser.add_option(
 #            "-j", "--jobs",
 #            type="int",

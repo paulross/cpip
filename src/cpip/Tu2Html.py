@@ -40,11 +40,29 @@ from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip import TokenCss
 
+#: State changes
 FILE_SHIFT_ACTIONS = ('Starting', 'Holding', 'Back in', 'Ending')
 FILE_SHIFT_ACTION_WIDTH = max([len(a) for a in FILE_SHIFT_ACTIONS])
 
 def _adjustFileStack(theS, lexStack, theFileStack, theIntId):
-    """Adjust the file stacks and write to the stream."""
+    """Adjust the file stacks and write to the stream.
+
+    <insert documentation for function>
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param lexStack: ???
+    :type lexStack: ``list([str])``
+
+    :param theFileStack: ???
+    :type theFileStack: ``list([]), list([str])``
+
+    :param theIntId: ???
+    :type theIntId: ``int``
+
+    :returns: ``int`` -- ``theIntId``
+    """
     # We add <a name="n"> and <a href="#n+1">...</a>
     # for each starting/holding/back in FILE output when len(theFileStack) == 1 
     # This gives a sort-of forward references for the ITU 
@@ -76,6 +94,28 @@ def _adjustFileStack(theS, lexStack, theFileStack, theIntId):
     return theIntId
 
 def _writeFileName(theS, lenIndent, theFileStack, theAction, theFile, theIntId):
+    """
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param lenIndent: Size of indent.
+    :type lenIndent: ``int``
+
+    :param theFileStack: File stack.
+    :type theFileStack: ``list([str])``
+
+    :param theAction: One of ``('Starting', 'Holding', 'Back in', 'Ending')``
+    :type theAction: ``str``
+
+    :param theFile: File ID such as a path.
+    :type theFile: ``str``
+
+    :param theIntId: ???
+    :type theIntId: ``int``
+
+    :returns: ``int`` -- ``theIntId``
+    """
     assert(theAction in FILE_SHIFT_ACTIONS)
     if lenIndent > 0:
         theS.characters('\n%s' % ('.' * lenIndent))
@@ -100,6 +140,16 @@ def _writeFileName(theS, lenIndent, theFileStack, theAction, theFile, theIntId):
     return theIntId
 
 def linkToIndex(theS, theIdxPath):
+    """Write a link to the index.
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theIdxPath: Path to the index.
+    :type theIdxPath: ``str``
+
+    :returns: ``NoneType``
+    """
     with XmlWrite.Element(theS, 'p'):
         theS.characters('Return to ')
         with XmlWrite.Element(theS, 'a', {'href' : theIdxPath}):
@@ -109,27 +159,34 @@ def processTuToHtml(theLex, theHtmlPath, theTitle,
                     theCondLevel, theIdxPath, incItuAnchors=True):
     """Processes the PpLexer and writes the tokens to the HTML file.
     
-    *theHtmlPath*
-        The path to the HTML file to write.
-    
-    *theTitle*
-        A string to go into the <title> element.
-    
-    *theCondLevel*
-        The Conditional level to pass to theLex.ppTokens()
-        
-    *theIdxPath*
-        Path to link back to the index page.
-        
-    *incItuAnchors*
-        boolean, if True will write anchors for lines in the ITU
+    :param theLex: The lexer.
+    :type theLex: :py:class:`cpip.core.PpLexer.PpLexer`
+
+    :param theHtmlPath: The path to the HTML file to write.
+    :type theHtmlPath: ``str``
+
+    :param theTitle: A string to go into the ``<title>`` element.
+    :type theTitle: ``str``
+
+    :param theCondLevel: The Conditional level to pass to ``theLex.ppTokens()``
+    :type theCondLevel: ``int``
+
+    :param theIdxPath: Path to link back to the index page.
+    :type theIdxPath: ``str``
+
+    :param incItuAnchors: If True will write anchors for lines in the ITU
         that are in this TU. If True then setItuLineNumbers returned is likely
         to be non-empty.
-    
-    Returns a pair of (PpTokenCount.PpTokenCount(), set(int))
-    The latter is a set of integer line numbers in the ITU that are in the TU,
-    these line numbers with have anchors in this HTML file of the form:
-    <a name="%d" />."""
+    :type incItuAnchors: ``bool``
+
+    :returns: ``tuple([cpip.core.PpTokenCount.PpTokenCount, set([int])])``
+        -- Returns a pair of ``(PpTokenCount.PpTokenCount(), set(int))``
+        The latter is a set of integer line numbers in the ITU that are in the TU,
+        these line numbers with have anchors in this HTML file of the form:
+        ``<a name="%d" />``.
+
+    :raises: ``StopIteration``
+    """
     if not os.path.exists(os.path.dirname(theHtmlPath)):
         os.makedirs(os.path.dirname(theHtmlPath))
     LINE_FIELD_WIDTH = 8

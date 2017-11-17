@@ -1,17 +1,81 @@
-#!/usr/local/bin/python2.7
+#!/usr/bin/env/python
 # encoding: utf-8
+# CPIP is a C/C++ Preprocessor implemented in Python.
+# Copyright (C) 2008-2017 Paul Ross
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Paul Ross: apaulross@gmail.com
 """
 cpip.cpp -- Pretends to be like cpp, Will take options and a file (or stdin)
 and process it.
 
 @author:     Paul Ross
 
-@copyright:  2015 Paul Ross. All rights reserved.
+@copyright:  2015-2017 Paul Ross. All rights reserved.
 
-@license:    license
+.. code-block:: console
 
-@contact:    user_email
-@deffield    updated: Updated
+    (CPIP36) $ python src/cpip/cpp.py --help
+    usage: cpp.py [-h] [-v] [-t] [-V] [-d MACROOPTIONS] -E [-S PREDEFINES] [-C]
+                  [-D DEFINES] [-P PREINC] [-I INCUSR] [-J INCSYS]
+                  [path]
+
+    cpip.cpp -- Pretends to be like cpp, Will take options and a file (or stdin)
+
+      Created by Paul Ross on 2015-01-16.
+      Copyright 2015. All rights reserved.
+
+      Licensed under the GPL License 2.0
+
+    USAGE
+
+    positional arguments:
+      path                  Paths to source file. If absent then stdin is
+                            processed. [default: None]
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -v, --verbose         set verbosity level [default: 0]
+      -t, --tokens          Show actual preprocessing tokens.
+      -V, --version         show program's version number and exit
+      -d MACROOPTIONS       Pre-processor options M, D and N. [default: []]
+      -E                    Pre-process, required.
+      -S PREDEFINES, --predefine PREDEFINES
+                            Add standard predefined macro definitions of the form
+                            name<=definition>. They are introduced into the
+                            environment before anything else. They can not be
+                            redefined. __DATE__ and __TIME__ will be automatically
+                            allocated in here. __FILE__ and __LINE__ are defined
+                            dynamically. See ISO/IEC 9899:1999 (E) 6.10.8
+                            Predefined macro names. [default: []]
+      -C, --CPP             Sys call 'cpp -dM' to extract and use platform
+                            specific macros. These are inserted after -S option
+                            and before the -D option. [default: False]
+      -D DEFINES, --define DEFINES
+                            Add macro definitions of the form name<=definition>.
+                            These are introduced into the environment before any
+                            pre-include. [default: []]
+      -P PREINC, --pre PREINC
+                            Add pre-include file path, this file precedes the
+                            initial translation unit. [default: []]
+      -I INCUSR, --usr INCUSR
+                            Add user include search path. [default: []]
+      -J INCSYS, --sys INCSYS
+                            Add system include search path. [default: []]
+
 """
 from __future__ import print_function
 
@@ -34,6 +98,7 @@ def _processFile(ituName,
                  preIncFiles,
                  showTokens,
                  dOptions):
+    """Process the file."""
     myLexer = PpLexer.PpLexer(
                               ituName,
                               incHandler,

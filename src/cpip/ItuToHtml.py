@@ -18,7 +18,7 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
-"""Converts an ITU to HTML."""
+"""Converts an Initial Translation Unit (ITU) i.e. a file, to HTML."""
 
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
@@ -51,12 +51,29 @@ class ItuToHtml(object):
     def __init__(self, theItu, theHtmlDir, keepGoing=False,
                  macroRefMap=None, cppCondMap=None, ituToTuLineSet=None):
         """Takes an input source file and an output directory.
-        theItu - The original source file path (or file like object for the input).
-        theHtmlDir - The output directory for the HTML or a file-like object for the output
-        keepGoing - Bool, if True raise on error.
-        macroRefMap - Map of {identifier : href_text, ...) to link to macro definitions.
-        ituToTuLineSet - Set of integer line numbers which are lines that can be linked
-        to the translation unit representation."""
+
+        :param theItu: The original source file path (or file like object for the input).
+        :type theItu: ``str``
+
+        :param theHtmlDir: The output directory for the HTML or a file-like object
+            for the output.
+        :type theHtmlDir: ``str``
+
+        :param keepGoing: If ``True`` keep going as far as possible.
+        :type keepGoing: ``bool``
+
+        :param macroRefMap: Map of ``{identifier : href_text, ...)`` to link to macro definitions.
+        :type macroRefMap: ``dict({str : [list([tuple([<class 'str'>, <class 'int'>, str])]), list([tuple([<class 'str'>, int, str])]), list([tuple([str, int, str])])]})``
+
+        :param cppCondMap: Conditional compilation map.
+        :type cppCondMap: :py:class:`cpip.core.CppCond.CppCondGraphVisitorConditionalLines`
+
+        :param ituToTuLineSet: Set of integer line numbers which are lines that
+            can be linked to the translation unit representation.
+        :type ituToTuLineSet: ``NoneType, set([int])``
+
+        :returns: ``NoneType``
+        """
         try:
             # Assume string or unicode first
             self._fpIn = theItu
@@ -80,7 +97,12 @@ class ItuToHtml(object):
         self._convert()
     
     def _convert(self):
-        """Convert ITU to HTML."""
+        """Convert ITU to HTML.
+
+        :returns: ``NoneType``
+
+        :raises: ``ExceptionItuToHTML`` on failure.
+        """
         # Create reader
         myItt = self._initReader()
         # Create writer and iterate
@@ -124,6 +146,19 @@ the macro page.""")
                     )
                     
     def _handleToken(self, theS, t, tt):
+        """Handle a token.
+
+        :param theS: The HTML stream.
+        :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+        :param t: The token text.
+        :type t: ``str``
+
+        :param tt: The token type.
+        :type tt: ``str``
+
+        :returns: ``NoneType``
+        """
         logging.debug('_handleToken(): "%s", %s', t, tt)
         if tt == 'whitespace':
             self._writeTextWithNewlines(theS, t, None)
@@ -147,7 +182,19 @@ the macro page.""")
                     theS.characters(t)
     
     def _writeTextWithNewlines(self, theS, theText, spanClass):
-        """Splits text by newlines and writes it out."""
+        """Splits text by newlines and writes it out.
+
+        :param theS: The HTML stream.
+        :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+        :param theText: The text to write.
+        :type theText: ``str``
+
+        :param spanClass: CSS class.
+        :type spanClass: ``NoneType, str``
+
+        :returns: ``NoneType``
+        """
         # Whitespace, line breaks
         myL = theText.split('\n')
         if len(myL) > 1:
@@ -168,6 +215,13 @@ the macro page.""")
             theS.characters(myL[-1].replace('\t', '    '))
     
     def _incAndWriteLine(self, theS):
+        """Write a line.
+
+        :param theS: The HTML stream.
+        :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+        :returns: ``NoneType``
+        """
         self._lineNum += 1
         classAttr = 'line'
         if self._cppCondMap is not None:
@@ -193,7 +247,11 @@ the macro page.""")
         theS.characters(' ')
         
     def _initReader(self):
-        """Create and return a reader, initialise internals."""
+        """Create and return a reader, initialise internals.
+
+        :returns: :py:class:`cpip.core.ItuToTokens.ItuToTokens`
+            -- The file tokeniser.
+        """
         if self._keepGoing:
             myDiagnostic = CppDiagnostic.PreprocessDiagnosticKeepGoing()
         else:

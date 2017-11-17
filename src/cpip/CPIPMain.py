@@ -19,6 +19,76 @@
 # Paul Ross: apaulross@gmail.com
 """
 CPIPMain.py -- Preprocess the file or the files in a directory.
+
+.. code-block:: console
+
+    (CPIP36) $ python src/cpip/CPIPMain.py --help
+    usage: CPIPMain.py [-h] [-c] [-d DUMP] [-g GLOB] [--heap] [-j JOBS] [-k]
+                       [-l LOGLEVEL] [-o OUTPUT] [-p] [-r] [-t] [-G]
+                       [-S PREDEFINES] [-C] [-D DEFINES] [-P PREINC] [-I INCUSR]
+                       [-J INCSYS]
+                       path
+
+    CPIPMain.py - Preprocess the file or the files in a directory.
+      Created by Paul Ross on 2011-07-10.
+      Copyright 2008-2017. All rights reserved.
+      Version: v0.9.8rc0
+      Licensed under GPL 2.0
+    USAGE
+
+    positional arguments:
+      path                  Path to source file or directory.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c                    Add conditionally included files to the plots.
+                            [default: False]
+      -d DUMP, --dump DUMP  Dump output, additive. Can be: C - Conditional
+                            compilation graph. F - File names encountered and
+                            their count. I - Include graph. M - Macro environment.
+                            T - Token count. R - Macro dependencies as an input to
+                            DOT. [default: []]
+      -g GLOB, --glob GLOB  Pattern match to use when processing directories.
+                            [default: []] i.e. every file.
+      --heap                Profile memory usage. [default: False]
+      -j JOBS, --jobs JOBS  Max simultaneous processes when pre-processing
+                            directories. Zero uses number of native CPUs [4]. 1
+                            means no multiprocessing. [default: 0]
+      -k, --keep-going      Keep going. [default: False]
+      -l LOGLEVEL, --loglevel LOGLEVEL
+                            Log Level (debug=10, info=20, warning=30, error=40,
+                            critical=50) [default: 30]
+      -o OUTPUT, --output OUTPUT
+                            Output directory. [default: out]
+      -p                    Ignore pragma statements. [default: False]
+      -r, --recursive       Recursively process directories. [default: False]
+      -t, --dot             Write an DOT include dependency table and execute DOT
+                            on it to create a SVG file. [default: False]
+      -G                    Support GCC extensions. Currently only #include_next.
+                            [default: False]
+      -S PREDEFINES, --predefine PREDEFINES
+                            Add standard predefined macro definitions of the form
+                            name<=definition>. They are introduced into the
+                            environment before anything else. They can not be
+                            redefined. __DATE__ and __TIME__ will be automatically
+                            allocated in here. __FILE__ and __LINE__ are defined
+                            dynamically. See ISO/IEC 9899:1999 (E) 6.10.8
+                            Predefined macro names. [default: []]
+      -C, --CPP             Sys call 'cpp -dM' to extract and use platform
+                            specific macros. These are inserted after -S option
+                            and before the -D option. [default: False]
+      -D DEFINES, --define DEFINES
+                            Add macro definitions of the form name<=definition>.
+                            These are introduced into the environment before any
+                            pre-include. [default: []]
+      -P PREINC, --pre PREINC
+                            Add pre-include file path, this file precedes the
+                            initial translation unit. [default: []]
+      -I INCUSR, --usr INCUSR
+                            Add user include search path. [default: []]
+      -J INCSYS, --sys INCSYS
+                            Add system include search path. [default: []]
+
 """
 __author__ = 'Paul Ross'
 __date__ = '2011-07-10'
@@ -1020,8 +1090,7 @@ def preProcessFilesMP(dIn, dOut, jobSpec, glob, recursive, jobs):
 ################################
 def _removeCommonPrefixFromResults(titlePathTupleS):
     """Given a list of:
-    ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath),
-                      total_files, total_lines, total_bytes)``
+    ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath), total_files, total_lines, total_bytes)``
     This prunes the commmon prefix from the ituPath.
     """
     l = CommonPrefix.lenCommonPrefix([r.ituPath for r in titlePathTupleS])
@@ -1312,7 +1381,7 @@ def main():
   Version: %s
   Licensed under GPL 2.0
 USAGE
-""" % (program_shortdesc, program_version, str(__date__))
+""" % (program_shortdesc, str(__date__), program_version)
     parser = argparse.ArgumentParser(description=program_license,
                             formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("-c", action="store_true", dest="plot_conditional", default=False,

@@ -3,8 +3,10 @@
 
 .. _cpip.ref.CPIPMain:
 
-CPIPMain
-======================
+CPIPMain - The main command line tool for preprocessing.
+===========================================================
 
 .. automodule:: cpip.CPIPMain
-   :members:
+    :members:
+    :special-members:
+    :private-members:

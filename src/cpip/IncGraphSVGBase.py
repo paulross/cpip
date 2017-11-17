@@ -47,6 +47,7 @@ from cpip.plot import Coord
 from cpip.plot import SVGWriter
 from cpip.plot import TreePlotTransform
 
+#: Canvas padding.
 CANVAS_PADDING = Coord.Pad(
           Coord.Dim(4.0, 'mm'), # prev i.e. left
           Coord.Dim(4.0, 'mm'), # next i.e. right
@@ -55,7 +56,25 @@ CANVAS_PADDING = Coord.Pad(
     )
 
 def processIncGraphToSvg(theLex, theFilePath, theClass, tptPos, tptSweep):
-    """Convert a Include graph from a PpLexer to SVG in theFilePath."""
+    """Convert a Include graph from a PpLexer to SVG in theFilePath.
+
+    :param theLex: The lexer.
+    :type theLex: :py:class:`cpip.core.PpLexer.PpLexer`
+
+    :param theFilePath: Where to write the SVG file.
+    :type theFilePath: ``str``
+
+    :param theClass: CSS class.
+    :type theClass: ``type``
+
+    :param tptPos: Transform position.
+    :type tptPos: ``str``
+
+    :param tptSweep: Sweep direction.
+    :type tptSweep: ``str``
+
+    :returns: ``NoneType``
+    """
     myVis = FileIncludeGraph.FigVisitorTree(theClass)
     theLex.fileIncludeGraphRoot.acceptVisitor(myVis)
     # Tree is now a graph of: theClass
@@ -79,9 +98,11 @@ def processIncGraphToSvg(theLex, theFilePath, theClass, tptPos, tptSweep):
 class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     """Sub-class of :py:class:`cpip.core.FileIncludeGraph.FigVisitorTreeNodeBase` for writing out
     the include graphs as an SVG file."""
+    #: Units.
     COMMON_UNITS            = 'mm'
-    # User units for viewBox and ploygon
+    #: User units for viewBox and ploygon
     UNNAMED_UNITS           = 'px'
+    #: Viewbox scale.
     VIEWBOX_SCALE           = 8.0
 #===============================================================================
 #    CANVAS_PADDING          = Coord.Pad(
@@ -91,10 +112,13 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
 #              Coord.Dim(4.0, COMMON_UNITS), # child i.e. bottom
 #        )
 #===============================================================================
-    # Attributes for alternate text
+    #: Attributes for alternate text.
     ALT_RECT_FILL = 'khaki'#'yellow'
+    #: Alternate text ID.
     ALT_ID_SUFFIX = '.alt'
+    #: Alternate text font.
     ALT_FONT_FAMILY = 'monospace'
+    #: Alternate text font properties.
     ALT_FONT_PROPERTIES = {
         'Courier' : {
                         'size'          : 10,
@@ -107,12 +131,13 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
                         'heightFactor'  : 1.2,
             },
         }
+    #: Namespace link.
     NAMESPACE_XLINK = 'http://www.w3.org/1999/xlink'
-    # Used to rescale SVG rather than zooming in the browser as the latter is
-    # slow with Chrome and Safari (both WebKit) and pretty much everything else.
-    # Initial, presentational, scale is chose depending on the size of the diagram. 
+    #: Used to rescale SVG rather than zooming in the browser as the latter is
+    #: slow with Chrome and Safari (both WebKit) and pretty much everything else.
+    #: Initial, presentational, scale is chose depending on the size of the diagram.
     SCALE_FACTORS = (0.05, 0.1, 0.25, 0.5, 1.0, 1.5, 2.0,)
-    # Used to decide initial scale
+    #: Used to decide initial scale
     SCALE_MAX_Y = Coord.Dim(1000, 'mm')
 #    POPUP_COORD_Y_OFFSET = Coord.Dim(20, 'pt')
     def __init__(self, theFig, theLineNum):
@@ -158,7 +183,14 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
     
     def commentFunctionBegin(self, theSvg, **kwargs):
         """Injects a comment into the SVG with the start of the
-        executing function name."""
+        executing function name.
+        ``self.TRACE`` must be ``True`` to enable this.
+
+        :param theSvg: The SVG stream.
+        :type theSvg: :py:class`cpip.plot.SVGWriter.SVGWriter`
+
+        :returns: ``NoneType``
+        """
         if self.TRACE:
             theSvg.comment(' %s(): %s %s'
                            % (inspect.stack()[1][3], 'BEGIN',
@@ -166,7 +198,14 @@ class SVGTreeNodeBase(FileIncludeGraph.FigVisitorTreeNodeBase):
           
     def commentFunctionEnd(self, theSvg, **kwargs):
         """Injects a comment into the SVG with the completion of the
-        executing function name."""
+        executing function name.
+        ``self.TRACE`` must be ``True`` to enable this.
+
+        :param theSvg: The SVG stream.
+        :type theSvg: :py:class`cpip.plot.SVGWriter.SVGWriter`
+
+        :returns: ``NoneType``
+        """
         if self.TRACE:
             theSvg.comment(' %s(): %s %s'
                            % (inspect.stack()[1][3], 'END',

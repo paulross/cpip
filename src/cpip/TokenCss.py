@@ -35,9 +35,9 @@ import string
 class ExceptionTokenCss(ExceptionCpip):
     pass
 
-# Map of {token_type : enum_int, ...}
+#: Map of {token_type : enum_int, ...}
 TT_ENUM_MAP = {}
-# Reverse map of {enum_int : token_type, ...}
+#: Reverse map of {enum_int : token_type, ...}
 ENUM_TT_MAP = {}
 for __i, __tt in enumerate(ItuToTokens.ITU_TOKEN_TYPES):
     __enum = string.ascii_lowercase[__i]
@@ -289,7 +289,13 @@ TT_CSS_FILE = 'cpip.css'
 TT_CSS_STRING = '\n'.join(ITU_CSS_LIST)
 
 def writeCssToDir(theDir):
-    """Writes the CSS file into to the directory."""
+    """Writes the CSS file into to the directory.
+
+    :param theDir: Directory.
+    :type theDir: ``str``
+
+    :returns: ``NoneType``
+    """
     try:
         if not os.path.exists(theDir):
             os.makedirs(theDir)
@@ -302,6 +308,14 @@ def writeCssForFile(theFile):
     return writeCssToDir(os.path.dirname(theFile))
     
 def retClass(theTt):
+    """
+    :param theTt: Token type
+    :type theTt: ``str``
+
+    :returns: ``str`` -- CSS class.
+
+    :raises: ``ExceptionTokenCss`` For unknown token type.
+    """
     try:
         return TT_ENUM_MAP[theTt]
     except KeyError:

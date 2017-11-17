@@ -7,4 +7,6 @@ CppCondGraphToHtml
 ======================
 
 .. automodule:: cpip.CppCondGraphToHtml
-   :members:
+    :members:
+    :special-members:
+    :private-members:

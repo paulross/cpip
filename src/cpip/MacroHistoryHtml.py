@@ -20,11 +20,14 @@
 """Writes out a macro history in HTML.
 
 Macros can be:
-Active - In scope at the end of processing a translation unit (one per identifier). 
-Inactive - Not in scope at the end of processing a translation unit (>=0 per identifier). 
+
+* Active - In scope at the end of processing a translation unit (one per identifier).
+* Inactive - Not in scope at the end of processing a translation unit (>=0 per identifier).
+
 And:
-Referenced - Have had some influence over the processing of the translation unit.
-Not Referenced - No influence over the processing of the translation unit.
+
+* Referenced - Have had some influence over the processing of the translation unit.
+* Not Referenced - No influence over the processing of the translation unit.
 
 Example test:
 
@@ -42,16 +45,18 @@ Example test:
     #define BAR    /*     Y        0    BAR_0 */
 
 Macros with reference counts of zero are not that interesting so they are
-relegated to a page (<file>_macros_noref.html) that just describes their
+relegated to a page (``<file>_macros_noref.html``) that just describes their
 definition and where they where defined.
 
-Macros _with_ reference counts are presented on a page (<file>_macros_ref.html)
+Macros _with_ reference counts are presented on a page (``<file>_macros_ref.html``)
 with one section per macro. The section has:
-definition, where defined,
-[This macro depends on the following macros:],
-[Macros that depend on this macro:], 
 
-These two HTML pages are joined by a <file>_macros.html this lists (and links to)
+* Definition
+* Where defined
+* *Optionally: This macro depends on the following macros:*
+* *Optionally: Macros that depend on this macro:*
+
+These two HTML pages are joined by a ``<file>_macros.html`` this lists (and links to)
 the identifiers in this order:
 
 * Active, ref count >0
@@ -61,21 +66,21 @@ the identifiers in this order:
 
 Macro HTML IDs
 --------------
-This is identifier + '_' + n
-For any active macro the value of n is the number of previously defined macros.
-Current code is like this::
+This is ``identifier + '_' + n``.
+For any active macro the value of n is the number of previously defined macros
+with the same name. Current code is like this::
 
     myUndefIdxS, isDefined = myMacroMap[aMacroName]
     # Write the undefined ones
     for anIndex in myUndefIdxS:
         myMacro = theEnv.getUndefMacro(anIndex)
         startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
-                                   anIndex, startLetter, retVal) 
+                                    anIndex, startLetter, retVal)
     # Now the defined one
     if isDefined:
         myMacro = theEnv.macro(aMacroName)
         startLetter = _writeTrMacro(theS, theHtmlPath, myMacro,
-                                   len(myUndefIdxS), startLetter, retVal) 
+                                    len(myUndefIdxS), startLetter, retVal)
 """
 
 __author__  = 'Paul Ross'
@@ -100,21 +105,25 @@ ANCHOR_MACRO_ALPHA = 'a'
 #ANCHOR_MACRO_TABLE = 'macro_table'
 #ANCHOR_MACRO_HISTORY_SECTION = 'macro_history_section'
 
+#: Visible links to macros.
 TITLE_ANCHOR_LINKTEXT_MACROS_TABLE = (
         'Macro Environment (all macros, alphabetical):',
         'macro_table',
         'Environment'
     )
+#: Visible links to macro history.
 TITLE_ANCHOR_LINKTEXT_MACROS_HISTORY = (
         'Macro Usage (referenced macros only)',
         'history',
         'usage'
     )
+#: Visible links to macros in scope.
 TITLE_ANCHOR_LINKTEXT_MACROS_IN_SCOPE = (
         'Macros In Scope',
         'Macros_In_Scope',
         'usage'
     )
+#: Visible links to macros tested when not defined.
 TITLE_ANCHOR_LINKTEXT_MACROS_TESTED_WHEN_NOT_DEFINED = (
         'Macros Tested When Not Defined',
         'Macros_Never_Def',
@@ -132,6 +141,15 @@ def _writeTh(theStream, theStr):
         theStream.characters(theStr)
             
 def _retMacroId(theMacro, theIndex=None):
+    """
+    :param theMacro: The macro.
+    :type theMacro: :py:class:`cpip.core.PpDefine.PpDefine`
+
+    :param theIndex: The index.
+    :type theIndex: ``int``
+
+    :returns: ``str`` -- Encoded XML string.
+    """
     macroStr = theMacro.identifier#theMacro.strIdentPlusParam()
     if theIndex is not None:
         macroStr += '_%d' % theIndex
@@ -220,6 +238,17 @@ def _writeMacroDefinitionAndAnchor(theS, theDef, theIntOccurence):
     """Writes a definition of the macro with an anchor that can be linked to.
     This also writes an anchor based on the first character of the macro name so
     that alphabetic links can reference it.
+
+    :param theS: The HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theDef: The macro.
+    :type theDef: :py:class:`cpip.core.PpDefine.PpDefine`
+
+    :param theIntOccurence: The occurence of the macro.
+    :type theIntOccurence: ``int``
+
+    :returns: ``str`` -- Anchor name.
     """
     macroAnchorName = _retMacroId(theDef, theIntOccurence)
     if len(theDef.strReplacements()):
@@ -270,7 +299,19 @@ def _writeTdRefCount(theS, theMacro):
 
 def splitLineToList(sIn, splitLen=60, splitLenHard=80):
     """Splits a long string into a list of lines. This tries to do it nicely at
-    whitespaces but will force a split if necessary."""
+    whitespaces but will force a split if necessary.
+
+    :param sIn: Line to split.
+    :type sIn: ``str``
+
+    :param splitLen: Soft split length.
+    :type splitLen: ``int``
+
+    :param splitLenHard: Hard split length.
+    :type splitLenHard: ``int``
+
+    :returns: ``list([str])`` -- List of lines.
+    """
 #     splitLen = 60
 #     # This forces a split here, if zero or negative then do not split.
 #     splitLenHard = 80
@@ -317,18 +358,46 @@ def splitLineToList(sIn, splitLen=60, splitLenHard=80):
 
 def splitLine(theStr, splitLen=60, splitLenHard=80):
     """Splits a long string into string that is a set of lines with continuation
-    characters."""
+    characters.
+
+    :param theStr: Long line.
+    :type theStr: ``str``
+
+    :param splitLen: Soft split length.
+    :type splitLen: ``int``
+
+    :param splitLenHard: Hard split length.
+    :type splitLenHard: ``int``
+
+    :returns: ``str`` -- Line with continuation character and newlines.
+    """
     return '\n    '.join(splitLineToList(theStr, splitLen, splitLenHard))
 
 def _macroId(theMacro):
     return '%s_%s#%d' % (theMacro.identifier, theMacro.fileId, theMacro.line)
 
 def _macroIdTestedWhenNotDefined(theMacroId):
+    """
+    :param theMacroId: The macro ID.
+    :type theMacroId: ``str``
+
+    :returns: ``str`` -- Link ID.
+    """
     return '%s_testnotdef' % theMacroId
 
 def _getMacroDependencyTrees(theMacroAdjList, theMacro):
     """Returns the dependency trees (parent/child, child/parent) for the macro.
-    Can be None."""
+    Either can be None.
+
+    :param theMacroAdjList: The adjacency list.
+    :type theMacroAdjList: :py:class`cpip.util.Tree.DuplexAdjacencyList`
+
+    :param theMacro: The macro.
+    :type theMacro: :py:class:`cpip.core.PpDefine.PpDefine`
+
+    :returns: ``tuple([NoneType, NoneType]),tuple([NoneType, cpip.util.Tree.Tree]),tuple([cpip.util.Tree.Tree, NoneType])``
+        -- A pair of parent -> child tree and child -> parent tree.
+    """
     if theMacroAdjList.hasParent(theMacro.identifier):
         pcTree = theMacroAdjList.treeParentChild(theMacro.identifier)
     else:
@@ -342,8 +411,29 @@ def _getMacroDependencyTrees(theMacroAdjList, theMacro):
 def _writeSectionOnMacroHistory(theS, theEnv, theOmitFiles, theHtmlPath, theItu, isReferenced):
     """Write the section that says where macros were used with links to the
     file/line/column.
-    theEnv - A MacroEnv() object.
-    theOmitFiles - a list of pseudo files not to link to e.g. ['Unnamed Pre-include',].
+
+    :param theS: The HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theEnv: The macro environment.
+    :type theEnv: :py:class:`cpip.core.MacroEnv.MacroEnv`
+
+    :param theOmitFiles: A list of pseudo files not to link to
+        e.g. ['Unnamed Pre-include',].
+    :type theOmitFiles: ``list([str])``
+
+    :param theHtmlPath: The path to the HTML file.
+    :type theHtmlPath: ``str``
+
+    :param theItu: Initial Translation Unit (ITU).
+    :type theItu: ``str``
+
+    :param isReferenced: ``True`` if macro was referenced (used).
+    :type isReferenced: ``bool``
+
+    :returns: ``dict({str : [str]})`` -- Map of ``{macro_identifier : file_id_link, ...}```
+
+    :raises: ``StopIteration``
     """
     retMap = {}
     # Create macro dependency map of {identifier : util.Tree(), ...}
@@ -413,6 +503,22 @@ def _writeMacroHistory(theS, theMacro, theOmitFiles, theIntOccurence):
     """Writes out the macro history from a PpDefine object.
     theMacro - a PpDefine() object.
     theOmitFiles - a list of pseudo files not to link to e.g. ['Unnamed Pre-include',].
+
+    :param theS: The HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theMacro: The macro.
+    :type theMacro: :py:class:`cpip.core.PpDefine.PpDefine`
+
+    :param theOmitFiles: A list of pseudo files not to link to
+        e.g. ['Unnamed Pre-include',].
+    :type theOmitFiles: ``list([str])``
+
+    :param theIntOccurence: The occurence of the macro which will be added to the
+        link ID.
+    :type theIntOccurence: ``int``
+
+    :returns: ``NoneType``
     """
     anchorName = _retMacroId(theMacro, theIntOccurence)
     # Write out the macro title
@@ -457,7 +563,19 @@ def _writeMacroHistory(theS, theMacro, theOmitFiles, theIntOccurence):
                 )
 
 def _writeMacrosTestedButNotDefined(theS, theMacroId, theEnv):
-    """Writes out the macro history for macros tested but not defined."""
+    """Writes out the macro history for macros tested but not defined.
+
+    :param theS: The HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theMacroId: Macro name.
+    :type theMacroId: ``str``
+
+    :param theEnv: Macro environment.
+    :type theEnv: :py:class:`cpip.core.MacroEnv.MacroEnv`
+
+    :returns: ``NoneType``
+    """
     anchorName = XmlWrite.nameFromString(_macroIdTestedWhenNotDefined(theMacroId))
     # This is a list of [class FileLineColumn, ...]
     myRefS = theEnv.macroNotDefinedDependencyReferences(theMacroId)
@@ -476,9 +594,19 @@ def _writeMacroReferencesTable(theS, theFlcS):
     """Writes all the references to a file/line/col in a rowspan/colspan HTML
     table with links to the position in the HTML representation of the file
     that references something.
+
     This uses a particular design pattern that uses a  DictTree to sort out the
     rows and columns. In this case the DictTree values are lists of pairs
-    (href, nav_text) where nav_text is the line-col of the referencing file."""
+    (href, nav_text) where nav_text is the line-col of the referencing file.
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theFlcS: File location.
+    :type theFlcS: ``list([]), list([cpip.core.FileLocation.FileLineCol([str, int, int])])``
+
+    :returns: ``NoneType``
+    """
     myFileLineColS = []
     # This removes duplicates, it is a list of (fileId, lineNum, colNum).
     # If an include file is included N times there will be N-1 duplicate entries
@@ -502,6 +630,25 @@ def _writeMacroReferencesTable(theS, theFlcS):
         HtmlUtils.writeFilePathsAsTable('list', theS, myFileLineColS, 'filetable', _tdFilePathCallback)
 
 def _writeMacroDependencies(theS, theEnv, theMacro, theMacroAdjList, theItu):
+    """Writes out the macro dependencies.
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theEnv: The macro environment.
+    :type theEnv: :py:class:`cpip.core.MacroEnv.MacroEnv`
+
+    :param theMacro: The macro definition.
+    :type theMacro: :py:class:`cpip.core.PpDefine.PpDefine`
+
+    :param theMacroAdjList: Dependency adjacency list.
+    :type theMacroAdjList: ``cpip.util.Tree.DuplexAdjacencyList``
+
+    :param theItu: The Initial Translation Unit (ITU).
+    :type theItu: ``str``
+
+    :returns: ``NoneType``
+    """
     pcTree, cpTree = _getMacroDependencyTrees(theMacroAdjList, theMacro)
     if pcTree is not None:
         with XmlWrite.Element(theS, 'p', {}):
@@ -515,10 +662,27 @@ def _writeMacroDependencies(theS, theEnv, theMacro, theMacroAdjList, theItu):
 def _writeMacroDependenciesTable(theS, theEnv, theAdjList, theItu):
     """Writes all the macro dependencies to a rowspan/colspan HTML
     that references something.
+
     table with links to the position in the HTML representation of the file
+
     This uses a particular design pattern that uses a DictTree to sort out the
     rows and columns. In this case the DictTree values are lists of pairs
-    (href, nav_text) where nav_text is the line_col of the referencing file."""
+    ``(href, nav_text)`` where ``nav_text`` is the line_col of the referencing file.
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theEnv: The macro environment.
+    :type theEnv: :py:class:`cpip.core.MacroEnv.MacroEnv`
+
+    :param theAdjList: Dependency adjacency list.
+    :type theAdjList: :py:class:`cpip.util.Tree.Tree`
+
+    :param theItu: The Initial Translation Unit (ITU).
+    :type theItu: ``str``
+
+    :returns: ``NoneType``
+    """
     myDt = DictTree.DictTreeHtmlTable('list')
     for branch in theAdjList.branches():
         # I might depend on a macro (that is referenced) but I am not referenced.
@@ -539,7 +703,22 @@ def _writeMacroDependenciesTable(theS, theEnv, theAdjList, theItu):
         HtmlUtils.writeDictTreeAsTable(theS, myDt, tableAttrs={'class' :"filetable"}, includeKeyTail=False)
 
 def _tdFilePathCallback(theS, attrs, k, v):
-    """Callback function for the file reference table."""
+    """Callback function for the file reference table.
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param attrs: Element attributes.
+    :type attrs: ``dict({str : [str]})``
+
+    :param k: Keys.
+    :type k: ``list([str])``
+
+    :param v: Values.
+    :type v: ``list([tuple([str, str])])``
+
+    :returns: ``NoneType``
+    """
     attrs['class'] = 'filetable'
     with XmlWrite.Element(theS, 'td', attrs):
         theS.characters('%s:' % k[-1])
@@ -575,12 +754,24 @@ def _retListMacroNamesInScope(theEnv):
     return [m.identifier for m in theEnv.genMacrosInScope(None)]
 
 def _retSetMacros(theEnv, isReferenced, isActive):
-    """Returns a set of {(Identifier, href_name), ...} of macros identifiers
+    """Returns a set of ``{(Identifier, href_name), ...}`` of macros identifiers
     and their references. Multiple identifier that have been def'd/undef'd
     have unique, lexagraphically sequential hrefs (with a trailing integer).
-    isReferenced - If True only macros that are referenced are included.
-    isActive - Only currently active macros are included, undef'd ones are
-    excluded."""  
+
+    :param theEnv: The macro environment.
+    :type theEnv: :py:class:`cpip.core.MacroEnv.MacroEnv`
+
+    :param isReferenced: If True only macros that are referenced are included.
+    :type isReferenced: ``bool``
+
+    :param isActive: Only currently active macros are included, undef'd ones are
+        excluded.
+    :type isActive: ``bool``
+
+    :returns: ``set([]),set([tuple([str, str])])`` -- <insert documentation for return values>
+
+    :raises: ``StopIteration``
+    """
     nameRefsS = set()
     declareCount = collections.defaultdict(int)
     for aMacro in theEnv.genMacrosOutOfScope(None):
@@ -614,6 +805,20 @@ def _writeTocMacros(theS, theEnv, isReferenced, filePrefix):
     isReferenced controls whether these are referenced macros (interesting) or
     non referenced macros (a larger, less interesting set).
     filePrefix - If not None this is the HTML file to link to.
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theEnv: The macro environment.
+    :type theEnv: :py:class:`cpip.core.MacroEnv.MacroEnv`
+
+    :param isReferenced: Write out only referenced macros.
+    :type isReferenced: ``bool``
+
+    :param filePrefix: File prefix for the ``href``'s.
+    :type filePrefix: ``NoneType, str``
+
+    :returns: ``NoneType``
     """
     with XmlWrite.Element(theS, 'h2'):
         if isReferenced:
@@ -649,8 +854,17 @@ def _writeTocMacros(theS, theEnv, isReferenced, filePrefix):
 def _retMacroIdHrefNames(theEnv, theItu):
     """Returns a dict of {identifier : [(fileId, lineNum, href_name), ...], ...}
     for annotating HTML.
+
     The order in the list is the translation unit order in which macros are
     defined/undef'd.
+
+    :param theEnv: The macro environment.
+    :type theEnv: :py:class:`cpip.core.MacroEnv.MacroEnv`
+
+    :param theItu: Path to the Initial Translation Unit (ITU).
+    :type theItu: ``str``
+
+    :returns: ``dict({str : list([tuple([str, int, str])])]})`` -- Identifier dictionary.
     """
     # dict of {identifier : [(fileId, lineNum, href_name), ...], ...}
     retVal = {}
@@ -674,15 +888,43 @@ def _retMacroIdHrefNames(theEnv, theItu):
     return retVal
 
 def _macroHistoryIndexName(theItu):
+    """
+    :param theItu: Ignored.
+    :type theItu: ``str``
+
+    :returns: ``str`` -- The HTML file name of the macro history.
+    """
     return 'macros.html'
 
 def _macroHistoryRefName(theItu):
+    """
+    :param theItu: Ignored.
+    :type theItu: ``str``
+
+    :returns: ``str`` -- The HTML file name of the macro history with references.
+    """
     return 'macros_ref.html'
 
 def _macroHistoryNorefName(theItu):
+    """
+    :param theItu: Ignored.
+    :type theItu: ``str``
+
+    :returns: ``str`` -- The HTML file name of the macro history with no references.
+    """
     return 'macros_noref.html'
 
 def _linkToIndex(theS, theIdx):
+    """Write a link to 'Return to' the index page.
+
+    :param theS: HTML stream.
+    :type theS: :py:class:`cpip.util.XmlWrite.XhtmlStream`
+
+    :param theIdx: The index link.
+    :type theIdx: ``str``
+
+    :returns: ``NoneType``
+    """
     with XmlWrite.Element(theS, 'p'):
         theS.characters('Return to ')
         with XmlWrite.Element(theS, 'a', {'href' : theIdx}):
@@ -691,8 +933,24 @@ def _linkToIndex(theS, theIdx):
 def processMacroHistoryToHtml(theLex, theHtmlPath, theItu, theIndexPath):
     """Write out the macro history from the PpLexer as HTML.
     Returns a map of:
-    {identifier : [(fileId, lineNum, href_name), ...], ...}
-    which can be used by src->html generator for providing links to macro pages."""
+    ``{identifier : [(fileId, lineNum, href_name), ...], ...}``
+    which can be used by src->html generator for providing links to macro pages.
+
+    :param theLex: The lexer.
+    :type theLex: :py:class:`cpip.core.PpLexer.PpLexer`
+
+    :param theHtmlPath: File path to write to.
+    :type theHtmlPath: ``str``
+
+    :param theItu: Path to the initial translation unit (ITU).
+    :type theItu: ``str``
+
+    :param theIndexPath: Path to the index.
+    :type theIndexPath: ``str``
+
+    :returns: ``tuple([dict({str : [list([tuple([<class 'str'>, <class 'int'>, str])]), list([tuple([<class 'str'>, int, str])]), list([tuple([str, int, str])])]}), str])``
+        -- Map that links macro names ot file positions.
+    """
     TokenCss.writeCssToDir(os.path.dirname(theHtmlPath))
     # Grab the environment
     myEnv = theLex.macroEnvironment

@@ -47,75 +47,88 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     
     Finally :py:meth:`plotFinalise` is called - this overlays the DHTML text. This is
     a little tricky as our way of DHTML is to switch opacity on underlying
-    objects the switching boundary being the overlying object (e.g. '?').
-    So _all_ the underlying objects need to be written first so that the
-    overlying objects are always 'visible' to trigger onmouseover/onmouseout on
+    objects the switching boundary being the overlying object (e.g. ``' ? '``).
+
+    So *all* the underlying objects need to be written first so that the
+    overlying objects are always 'visible' to trigger ``onmouseover`` / ``onmouseout`` on
     the underlying object."""
+    #: Common units.
     COMMON_UNITS            = 'mm'
+    #: Token width
     WIDTH_PER_TOKEN         = Coord.Dim(1.0/1000.0,     COMMON_UNITS)
+    #: Minimum width
     WIDTH_MINIMUM           = Coord.Dim(5,              COMMON_UNITS)
+    #: File box depth.
     FILE_DEPTH              = Coord.Dim(32.0,           COMMON_UNITS)
+    #: Space between parent and child.
     SPACE_PARENT_CHILD      = Coord.Dim(16.0,           COMMON_UNITS)
+    #: Padding round file box..
     FILE_PADDING            = Coord.Pad(
                                   Coord.Dim(4.0, COMMON_UNITS), # prev
                                   Coord.Dim(2.0, COMMON_UNITS), # next
                                   Coord.Dim(16.0, COMMON_UNITS), # parent
                                   Coord.Dim(16.0, COMMON_UNITS), # child
                                 )
-    # Lines joining root level children
+    #: Lines joining root level children
     ATTRS_LINE_ROOT_CHILDREN_JOIN = {
         'stroke-width'   : "8",
         'stroke'         : "lightgrey",
     }
-    # Node attributes (e.e. for rectangles)
-    # Normal nodes
+    #: Node attributes (e.e. for rectangles)
+    #: Normal nodes
     ATTRS_NODE_NORMAL = {
         'fill'         : "mistyrose",
         'stroke'       : "black",
         'stroke-width' : "1",
     }
-    # Nodes that are empty
+    #: Nodes that are empty
     ATTRS_NODE_MT = {
         'fill'         : "aqua",
         'stroke'       : "black",
         'stroke-width' : "1",
     }
-    # Conditionally compiled stuff
+    #: Conditionally compiled stuff
     ATTRS_NODE_CONDITIONAL = {
         'fill'                  : "salmon",#"orangered",
         'stroke'                : "black",
         #'stroke-dasharray'      : "4,4",
         'stroke-width'          : "1",
     }
+    #: Attributes, normal line to.
     ATTRS_LINE_NORMAL_TO = {
         'stroke-width'   : "2",
         'stroke'         : "black",
     }
+    #: Attributes, normal line from.
     ATTRS_LINE_NORMAL_FROM = {
         'stroke-width'   : "0.5",
         'stroke'         : "black",
     }
+    #: Attributes, empty line to.
     ATTRS_LINE_MT_TO = {
         'stroke-width'      : "2",
         'stroke'            : "aqua",
         'stroke-dasharray'  : "8,8",
     }
+    #: Attributes, empty line from.
     ATTRS_LINE_MT_FROM = {
         'stroke-width'      : "0.5",
         'stroke'            : "aqua",
         'stroke-dasharray'  : "8,8",
     }
+    #: Attributes, conditional line to.
     ATTRS_LINE_CONDITIONAL_TO = {
         'stroke-width'      : "0.5",
         'stroke'            : "black",
         'stroke-dasharray'  : "8,2,2,2",
     }
+    #: Attributes, conditional line from.
     ATTRS_LINE_CONDITIONAL_FROM = {
         'stroke-width'      : "0.25",
         'stroke'            : "black",
         'stroke-dasharray'  : "8,2,2,2",
     }
-    # CSS entries
+    #: CSS entries
     STYLE_VERDANA_12 = 'text.V12'
     CLASS_VERDANA_12 = 'V12'
     ATTRS_VERDANA_12 = {
@@ -125,7 +138,7 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
       'text-anchor'         : 'middle',
       'text-decoration'     : 'underline',
     }
-    # Used for histogram
+    #: CSS used for histogram
     STYLE_VERDANA_9 = 'text.V9'
     CLASS_VERDANA_9 = 'V9'
     ATTRS_VERDANA_9 = {
@@ -136,6 +149,7 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
 #       'text-anchor'         : 'middle',
 #       'text-decoration'     : 'underline',
     }
+    #: CSS used for scale
     STYLE_TEXT_SCALE = 'text.scale'
     CLASS_TEXT_SCALE = 'scale'
     ATTRS_TEXT_SCALE = {
@@ -144,7 +158,7 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
       'font-size'           : '12',
       'text-anchor'         : 'left',
     }
-    # font-family="Courier" font-size="10" font-weight="normal"
+    #: CSS for monospaced text ``font-family="Courier" font-size="10" font-weight="normal"``
     STYLE_COURIER_10 = 'text.C10'
     CLASS_COURIER_10 = 'C10'
     ATTRS_COURIER_10 = {
@@ -152,7 +166,7 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
       'font-size'           : '10',
       'font-weight'         : '10',
     }
-    # Invisible rectangle
+    #: CSS for invisible rectangle
     STYLE_RECT_INVIS = 'rect.invis'
     CLASS_RECT_INVIS = 'invis'
     ATTRS_RECT_INVIS = {
@@ -162,14 +176,14 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
       'stroke-width'        : '1',
     }
     #
-    # Chevron attributes
+    #: CSS for chevron attributes
     CHEVRON_COLOUR_FILL         = "palegreen"#"cornflowerblue"
     CHEVRON_COLOUR_STROKE       = "black"
     CHEVRON_STROKE_WIDTH        = ".5"
-    # Histogram plotting
+    #: Histogram depth.
     HIST_DEPTH                  = Coord.Dim(4.0, COMMON_UNITS)
-    # This controls plot order as well as colour
-    # Note: Unusually they are in sweep='-' i.e logical left-to-right order
+    #: This controls plot order as well as colour
+    #: Note: Unusually they are in sweep='-' i.e logical left-to-right order
     HIST_PP_TOKEN_TYPES_COLOURS = (
         ('header-name',                 'orange',), # Not used as 'derived' token
         ('identifier',                  'blue',), # Top 3!
@@ -181,12 +195,25 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         ('concat',                      'yellow',),
         ('whitespace',                  'white',), # Top 3!
     )
+    #: Histogram rectangle colour.
     HIST_RECT_COLOUR_STROKE = "black"
+    #: Histogram rectangle width.
     HIST_RECT_STROKE_WIDTH = ".5"
+    #: Histogram rectangle ID.
     HIST_LEGEND_ID = "HistogramLegend"
-    # The placeholder text for JavaScript rollover
+    #: The placeholder text for JavaScript rollover
     POPUP_TEXT = ' ? '
     def __init__(self, theFig, theLineNum):
+        """Constructor.
+
+        :param theFig: File include graph.
+        :type theFig: ``NoneType, cpip.core.FileIncludeGraph.FileIncludeGraph``
+
+        :param theLineNum: Line number.
+        :type theLineNum: ``int``
+
+        :returns: ``NoneType``
+        """
         super(SVGTreeNodeMain, self).__init__(theFig, theLineNum)
         # PpTokenCount object for my children only, set on finalise
         self._tokenCounterChildren = PpTokenCount.PpTokenCount()
@@ -218,20 +245,29 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     #============================================    
     @property
     def tokenCounter(self):
-        """This is the PpTokenCount.PpTokenCount() for me only."""
+        """This is the PpTokenCount.PpTokenCount() for me only.
+
+        :returns: :py:class:`cpip.core.PpTokenCount.PpTokenCount` -- Token count.
+        """
         if self.isRoot:
             return PpTokenCount.PpTokenCount()
         return self._dataMap['tokenCntr']
     
     @property
     def tokenCounterChildren(self):
-        """This is the computed PpTokenCount.PpTokenCount() for all my descendents."""
+        """This is the computed PpTokenCount.PpTokenCount() for all my descendents.
+
+        :returns: :py:class:`cpip.core.PpTokenCount.PpTokenCount` -- Token count.
+        """
         ##"""This is the PpTokenCount.PpTokenCount() for my children."""
         return self._tokenCounterChildren
     
     @property
     def tokenCounterTotal(self):
-        """This is the computed PpTokenCount.PpTokenCount() me plus my descendents."""
+        """This is the computed PpTokenCount.PpTokenCount() me plus my descendents.
+
+        :returns: :py:class:`cpip.core.PpTokenCount.PpTokenCount` -- Token count.
+        """
         retVal = PpTokenCount.PpTokenCount()
         retVal += self.tokenCounter
         retVal += self.tokenCounterChildren
@@ -239,13 +275,19 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     
     @property
     def condComp(self):
-        """A string of conditional tests."""
+        """A string of conditional tests.
+
+        :returns: ``str`` -- Conditional compilation string.
+        """
         assert(not self.isRoot)
         return self._dataMap['condComp']
     
     @property
     def findLogic(self):
-        """The find logic as a string."""
+        """The find logic as a string.
+
+        :returns: ``list([str])`` -- The find logic.
+        """
         assert(not self.isRoot)
         return self._dataMap['findLogic']
     #========================================
@@ -256,7 +298,10 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     # Section: Finalisation and plotting
     #===================================
     def finalise(self):
-        """Finalisation this sets up all the bounding boxes of me and my children."""
+        """Finalisation this sets up all the bounding boxes of me and my children.
+
+        :returns: ``NoneType``
+        """
         for aChild in self._children:
             aChild.finalise()
         # Now accumulate my children's bounding boxes and token counts
@@ -283,7 +328,13 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
             
     def writePreamble(self, theS):
         """Write any preamble such as CSS or JavaScript.
-        To be implemented by child classes."""
+        To be implemented by child classes.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :returns: ``NoneType``
+        """
         cssDict = {
             'tspan' : {'white-space' : 'pre'},
             self.STYLE_VERDANA_12 : self.ATTRS_VERDANA_12,
@@ -298,7 +349,13 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         self._writeScaleControls(theS)
     
     def _writeScaleControls(self, theSvg):
-        """Write the text elements that control re-scaling."""
+        """Write the text elements that control re-scaling.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :returns: ``NoneType``
+        """
         myAttrs = {
             'class'             : self.CLASS_TEXT_SCALE,
         }
@@ -326,20 +383,50 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                                        incY=None)
 
     def plotInitialise(self, theSvg, theDatumL, theTpt):
-        """Plot the histogram legend once only."""
+        """Plot the histogram legend once only.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         self.commentFunctionBegin(theSvg)
 #         self._plotHistogramLegend(theSvg, theTpt)
         self.commentFunctionEnd(theSvg)
 
     def plotFinalise(self, theSvg, theDatumL, theTpt):
-        """Finish the plot. In this case we write the text overlays.""" 
+        """Finish the plot. In this case we write the text overlays.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         # Plot all text elements so that they are on top
         self.commentFunctionBegin(theSvg, File=self._fileName)
         self._writeTriggers(theSvg)
         self.commentFunctionEnd(theSvg, File=self._fileName)
 
     def _writeTriggers(self, theSvg):
-        """Write the rectangles that trigger pop-up text last so that they are on top."""
+        """Write the rectangles that trigger pop-up text last so that they are on top.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :returns: ``NoneType``
+        """
         for aChild in self._children:
             aChild._writeTriggers(theSvg)
         for _pt, _box, _attrs in self._triggerS:
@@ -347,7 +434,25 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 pass
                 
     def _plotSelf(self, theSvg, theDatumL, theTpt, thePassNum, idStack):
-        """Plot me to a stream at the logical datum point"""
+        """Plot me to a stream at the logical datum point.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :param thePassNum: Pass number, if 1 then the histogram legend is written out.
+        :type thePassNum: ``int``
+
+        :param idStack: Stack of file IDs (paths).
+        :type idStack: ``list([int, str]), list([str])``
+
+        :returns: ``NoneType``
+        """
         assert(not self.isRoot)
         if thePassNum == 0:
             self.commentFunctionBegin(
@@ -385,12 +490,40 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                     Pass=thePassNum)
 
     def plotRoot(self, theSvg, theDatumL, theTpt, passNum):
+        """Plot the root.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :param passNum: Pass number, if 1 then the histogram legend is written out.
+        :type passNum: ``int``
+
+        :returns: ``NoneType``
+        """
         if passNum == 1:
             self._plotHistogramLegend(theSvg, theTpt)
 
     def _plotSelfToChildren(self, theSvg, theDatumL, theTpt):
         """Plot links from me to my children to a stream at the
-        (self) logical datum point."""
+        (self) logical datum point.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         assert(len(self._children) > 0)
         assert(not self.isRoot)
         #print 'TRACE: plotSelfToChildren()', theDatumL
@@ -452,7 +585,19 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 j += 1
     
     def _plotRootChildToChild(self, theSvg, theDatumL, theTpt):
-        """Join up children of root node with vertical lines."""
+        """Join up children of root node with vertical lines.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         assert(len(self._children) > 0)
         assert(self.isRoot)
         self.commentFunctionBegin(theSvg)
@@ -478,7 +623,19 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     
     def _plotSelfInternals(self, theSvg, theDl, theTpt):
         """Plot structures inside the box and the static text that is
-        the file name."""
+        the file name.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDl: Logical position.
+        :type theDl: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         # Histograms of token types
         if self.__mustPlotSelfHistogram():
             # First the histogram of just me
@@ -500,7 +657,22 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         We write the hidden objects first then the visible objects. This is
         because the hidden objects are controlled onmouseover/onmouseout on
         the visible objects and they have to be later in the SVG file for this
-        to work."""
+        to work.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :param idStack: Stack of file IDs (paths).
+        :type idStack: ``list([int, str]), list([str])``
+
+        :returns: ``NoneType``
+        """
         self.commentFunctionBegin(
                     theSvg,
                     File=self._fileName, Node=self.nodeName)
@@ -530,7 +702,19 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
 
     def _plotTextOverlayChildren(self, theSvg, theDatumL, theTpt):
         """Plot text associated with my children to a stream at the
-        (self) logical datum point."""
+        (self) logical datum point.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         assert(len(self._children) > 0)
         assert(not self.isRoot)
         self.commentFunctionBegin(theSvg, File=self._fileName)
@@ -540,7 +724,22 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     
     def _plotWhereWhyHow(self, theSvg, iChild, theDatumL, theTpt):
         """Plot description of Where/Why/How inclusion of a single child to a
-        stream at the (self) logical datum point."""
+        stream at the (self) logical datum point.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param iChild: Child ID.
+        :type iChild: ``int``
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         assert(not self.isRoot)
         assert(len(self._children) > 0)
         assert(iChild >=0 and iChild < len(self._children))
@@ -608,7 +807,19 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         self.commentFunctionEnd(theSvg, File=self._fileName)
     
     def _plotTextOverlayHistogram(self, theSvg, theHistDl, theTpt):
-        """Plot the text associated with a histogram."""
+        """Plot the text associated with a histogram.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theHistDl: Logical position.
+        :type theHistDl: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         myCentreL = Coord.newPt(
             theHistDl, self._bb.width.scale(0.5), self.HIST_DEPTH.scale(0.5))
         myPointP = theTpt.pt(myCentreL)
@@ -630,7 +841,17 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
             pass
     
     def _fileNamePoint(self, theDatumL, theTpt):
-        """Returns the point to plot the file name or None."""
+        """Returns the point to plot the file name or None.
+
+        :param theDatumL: Logical position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+            -- Physical position.
+        """
         if self._bb.hasSetArea:
             myDatumL = self._bb.plotPointSelf(theDatumL)
             textPointL = theTpt.tdcL(myDatumL, self._bb.box)
@@ -644,8 +865,14 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
 
     def _fileIdStackToListOfStr(self, theIdStack):
         """Given a list of alternating file names and line numbers such as:
-        ['root', 3, foo.h, 7, bar.h] this returns a list of strings thus:
-        ['root#3, 'foo.h#7, 'bar.h']"""
+        ``['root', 3, foo.h, 7, bar.h]`` this returns a list of strings thus:
+        ``['root#3, 'foo.h#7, 'bar.h']``
+
+        :param theIdStack: File ID stack.
+        :type theIdStack: ``list([int, str]), list([str])``
+
+        :returns: ``list([str])`` -- Merged file stack.
+        """
         # Create file stack
         myAltS = []
         i = 0
@@ -658,7 +885,19 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         return myAltS
 
     def _plotFileName(self, theSvg, theDatumL, theTpt):
-        """Writes out the file name adjacent to the file box as static text."""
+        """Writes out the file name adjacent to the file box as static text.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         self.commentFunctionBegin(theSvg, File=self._fileName)
         if self._bb.hasSetArea:
             textPointP = self._fileNamePoint(theDatumL, theTpt)
@@ -673,7 +912,22 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
 
     def _plotFileNameStackPopup(self, theSvg, theDatumL, theTpt, idStack):
         """Writes out the file name at the top with a pop-up with the
-        absolute path."""
+        absolute path.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :param idStack: Stack of file IDs (paths).
+        :type idStack: ``list([int, str]), list([str])``
+
+        :returns: ``NoneType``
+        """
         self.commentFunctionBegin(theSvg, File=self._fileName)
         if self._bb.hasSetArea:
             textPointP = self._fileNamePoint(theDatumL, theTpt)
@@ -700,7 +954,19 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         self.commentFunctionEnd(theSvg, File=self._fileName)
 
     def _plotTextOverlayTokenCountTable(self, theSvg, theDatumL, theTpt):
-        """Plots the token count table as text+alternate text."""
+        """Plots the token count table as text+alternate text.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDatumL: Position.
+        :type theDatumL: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         assert(not self.isRoot)
         self.commentFunctionBegin(theSvg, File=self._fileName)
         myDatumL = self._bb.plotPointSelf(theDatumL)
@@ -725,7 +991,10 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         self.commentFunctionEnd(theSvg, File=self._fileName)
     
     def _altTextsForTokenCount(self):
-        """Returns a list of strings that are the alternate text for token counts."""
+        """Returns a list of strings that are the alternate text for token counts.
+
+        :returns: ``list([str])`` -- Alternate text.
+        """
         assert(not self.isRoot)
         if len(self._children) > 0:
             myCounterTotal = PpTokenCount.PpTokenCount()
@@ -815,14 +1084,36 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
         return altTextS
     
     def __mustPlotSelfHistogram(self):
+        """
+        :returns: ``bool`` -- ``True`` if my histogram should be plotted.
+        """
         return self.tokenCounter.tokenCountNonWs(isAll=False) > 0
         
     def __mustPlotChildHistogram(self):
+        """
+        :returns: ``bool`` -- ``True`` if the child histogram should be plotted.
+        """
         return self.__mustPlotSelfHistogram() \
                 and len(self._children) > 0 \
                 and self._numChildSigTokens > 0
         
     def _plotHistogram(self, theSvg, theHistDl, theTpt, theTokCounter):
+        """Plots the histogram.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theHistDl: Position.
+        :type theHistDl: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :param theTokCounter: Token counter.
+        :type theTokCounter: :py:main`cpip.core.PpTokenCount.PpTokenCount`
+
+        :returns: ``NoneType``
+        """
         myTokCountTotal = theTokCounter.totalAllUnconditional
         # Avoid divide by zero errors
         assert(theTokCounter.tokenCountNonWs(isAll=False) > 0)
@@ -850,7 +1141,16 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 myHistDl = Coord.newPt(myHistDl, incX=myWidth, incY=None)
 
     def _plotHistogramLegend(self, theSvg, theTpt):
-        """Plot a standardised legend. This is plotted as a group within a defs."""
+        """Plot a standardised legend. This is plotted as a group within a defs.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
+        """
         myDatumP = Coord.Pt(
             Coord.Dim(0.0, self.COMMON_UNITS),
             Coord.Dim(0.0, self.COMMON_UNITS),
@@ -916,18 +1216,33 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
     def _plotChevron(self, theSvg, theDl, theTpt):
         """Plots a wedge to represent the relative number of tokens in me and
         my children.
-        D------------------.------------------|
-        |                                     |
-        |------------------.------------------|
-        |                                     |
-        A-----------B------.------D-----------|
-        |            \     .     /            |
-        |             \    .    /             |
-        |              \   .   /              |
-        |               \  .  /               |
-        |                \ . /                |
-        ------------------\C/------------------
-        We plot in the order D moveto A moveto B lineto C lineto D lineto B
+
+        .. code-block:: none
+
+            D------------------.------------------|
+            |                                     |
+            |------------------.------------------|
+            |                                     |
+            A-----------B------.------D-----------|
+            |            \     .     /            |
+            |             \    .    /             |
+            |              \   .   /              |
+            |               \  .  /               |
+            |                \ . /                |
+            ------------------\C/------------------
+
+        We plot in the order: D moveto A moveto B lineto C lineto D lineto B
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theDl: Position.
+        :type theDl: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTpt: Transformer of logical to physical points.
+        :type theTpt: :py:class:`cpip.plot.TreePlotTransform.TreePlotTransform`
+
+        :returns: ``NoneType``
         """
         mySelfTokCount = self.tokenCounter.tokenCountNonWs(isAll=False)
         if mySelfTokCount == 0 and self._numChildSigTokens == 0:
@@ -973,10 +1288,30 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                 pass
             j += 1
 
-    def writeAltTextAndMouseOverRect(
-                self, theSvg, theId, theAltPt, theAltS, theTrigPt, theTrigRect):
+    def writeAltTextAndMouseOverRect(self, theSvg, theId, theAltPt, theAltS, theTrigPt, theTrigRect):
         """Composes and writes the (pop-up) alternate text.
-        Also writes a trigger rectangle."""
+        Also writes a trigger rectangle.
+
+        :param theSvg: SVG stream.
+        :type theSvg: :py:class:`cpip.plot.SVGWriter.SVGWriter`
+
+        :param theId: The ID.
+        :type theId: ``str``
+
+        :param theAltPt: Position of alternate text.
+        :type theAltPt: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theAltS: Alternate text lines.
+        :type theAltS: ``list([str])``
+
+        :param theTrigPt: Trigger position.
+        :type theTrigPt: ``cpip.plot.Coord.Pt([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])])``
+
+        :param theTrigRect: Trigger area.
+        :type theTrigRect: ``cpip.plot.Coord.Box([cpip.plot.Coord.Dim([float, str]), cpip.plot.Coord.Dim([float, <class 'str'>])]), cpip.plot.Coord.Box([cpip.plot.Coord.Dim([int, str]), cpip.plot.Coord.Dim([int, <class 'str'>])])``
+
+        :returns: ``NoneType``
+        """
         # Write a grouping element and give it the alternate ID
         with SVGWriter.SVGGroup(theSvg, {'id' : 't%s%s' % (theId, self.ALT_ID_SUFFIX), 'opacity' : '0.0'}):
             altFontSize = self.ALT_FONT_PROPERTIES[self.ALT_FONT_FAMILY]['size']

@@ -3,12 +3,14 @@
 
 .. _cpip.ref.FileStatus:
 
-FileStatus
-================================
+FileStatus - Show the status of a group of source files.
+==========================================================
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
 .. automodule:: cpip.FileStatus
-   :members:
+    :members:
+    :special-members:
+    :private-members:
    
