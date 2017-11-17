@@ -19,6 +19,28 @@
 # Paul Ross: apaulross@gmail.com
 """Provides a command line tool for finding out information on files:
 
+
+Help:
+
+.. code-block:: console
+
+    $ python src/cpip/FileStatus.py --help
+    Cmd: src/cpip/FileStatus.py --help
+    Usage: FileStatus.py [options] dir
+    Counts files and sizes.
+
+    Options:
+      --version             show program's version number and exit
+      -h, --help            show this help message and exit
+      -g GLOB, --glob=GLOB  Space separated list of file match patterns. [default:
+                            *.py]
+      -l LOGLEVEL, --loglevel=LOGLEVEL
+                            Log Level (debug=10, info=20, warning=30, error=40,
+                            critical=50) [default: 30]
+      -r                    Recursive. [default: False]
+
+Example:
+
 .. code-block:: console
 
     $ python3 src/cpip/FileStatus.py -r src/cpip/
@@ -161,24 +183,7 @@ class FileInfoSet(object):
         theS.write('\n')
         
 def main():
-    """Prints out the status of files in a directory:
-
-    .. code-block:: console
-
-        $ python ../src/cpip/FileStatus.py --help
-        Cmd: ../src/cpip/FileStatus.py --help
-        Usage: FileStatus.py [options] dir
-        Counts files and sizes.
-
-        Options:
-          --version             show program's version number and exit
-          -h, --help            show this help message and exit
-          -g GLOB, --glob=GLOB  Space separated list of file match patterns. [default:
-                                *.py]
-          -l LOGLEVEL, --loglevel=LOGLEVEL
-                                Log Level (debug=10, info=20, warning=30, error=40,
-                                critical=50) [default: 30]
-          -r                    Recursive. [default: False]
+    """Main entry point.
     """
     usage = """usage: %prog [options] dir
 Counts files and sizes."""

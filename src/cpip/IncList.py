@@ -17,7 +17,51 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 # 
 # Paul Ross: apaulross@gmail.com
-"""Command line tool to list included file paths
+"""Command line tool to list included file paths.
+
+Help:
+
+.. code-block:: none
+
+    Usage: IncList.py [options] files...
+    Preprocess the files and lists included files.
+
+    Options:
+      --version             show program's version number and exit
+      -h, --help            show this help message and exit
+      -k                    Keep going. [default: False]
+      -l LOGLEVEL, --loglevel=LOGLEVEL
+                            Log Level (debug=10, info=20, warning=30, error=40,
+                            critical=50) [default: 30]
+      -n                    Nervous mode (do no harm). [default: False]
+      -p                    Ignore pragma statements. [default: False]
+      -I INCUSR, --usr=INCUSR
+                            Add user include search path. [default: []]
+      -J INCSYS, --sys=INCSYS
+                            Add system include search path. [default: []]
+      -P PREINC, --pre=PREINC
+                            Add pre-include file path. [default: []]
+      -D DEFINES, --define=DEFINES
+                            Add macro defintions of the form name<=defintion>.
+                            These are introduced into the environment before any
+                            pre-include. [default: []]
+
+Example from the CPIP directory:
+
+.. code-block:: console
+
+    (CPIP36) $ src/cpip/IncList.py -l20 -J demo/sys/ -I demo/usr/ demo/src/main.cpp
+    2017-11-17 11:24:40,597 INFO     Preprocessing TU: demo/src/main.cpp
+    2017-11-17 11:24:40,605 INFO     Preprocessing TU done.
+    2017-11-17 11:24:40,606 INFO     All done.
+    ---------------------------- Included files [3] ---------------------------
+    demo/src/main.cpp
+    demo/sys/system.h
+    demo/usr/user.h
+    ------------------------------ Included files -----------------------------
+    CPU time =    0.009 (S)
+    Bye, bye!
+
 """
 __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
@@ -90,30 +134,6 @@ def preProcessForIncludes(theItu, incUsr, incSys, theDefineS, preIncS, keepGoing
 def main():
     """Main command line entry point. Help:
 
-    .. code-block:: none
-
-        Usage: IncList.py [options] files...
-        Preprocess the files and lists included files.
-
-        Options:
-          --version             show program's version number and exit
-          -h, --help            show this help message and exit
-          -k                    Keep going. [default: False]
-          -l LOGLEVEL, --loglevel=LOGLEVEL
-                                Log Level (debug=10, info=20, warning=30, error=40,
-                                critical=50) [default: 30]
-          -n                    Nervous mode (do no harm). [default: False]
-          -p                    Ignore pragma statements. [default: False]
-          -I INCUSR, --usr=INCUSR
-                                Add user include search path. [default: []]
-          -J INCSYS, --sys=INCSYS
-                                Add system include search path. [default: []]
-          -P PREINC, --pre=PREINC
-                                Add pre-include file path. [default: []]
-          -D DEFINES, --define=DEFINES
-                                Add macro defintions of the form name<=defintion>.
-                                These are introduced into the environment before any
-                                pre-include. [default: []]
 
     """
     usage = """usage: %prog [options] files...

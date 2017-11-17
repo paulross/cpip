@@ -89,6 +89,31 @@ CPIPMain.py -- Preprocess the file or the files in a directory.
       -J INCSYS, --sys INCSYS
                             Add system include search path. [default: []]
 
+Example, from tthe CPIP directory:
+
+.. code-block:: console
+
+    (CPIP36) $ src/cpip/CPIPMain.py -l20 -j1 -o demo/output -J demo/sys/ -I demo/usr/ demo/src/main.cpp
+    2017-11-17 10:29:16,370 INFO     preprocessFileToOutput(): demo/src/main.cpp
+    2017-11-17 10:29:16,371 INFO     TU in HTML:
+    2017-11-17 10:29:16,372 INFO       tmp/output_normal_02/main.cpp.html
+    2017-11-17 10:29:16,391 INFO     preprocessFileToOutput(): Processing TU done.
+    2017-11-17 10:29:16,391 INFO     Macro history to:
+    2017-11-17 10:29:16,391 INFO       tmp/output_normal_02
+    2017-11-17 10:29:16,400 INFO     Include graph (SVG) to:
+    2017-11-17 10:29:16,401 INFO       tmp/output_normal_02/main.cpp.include.svg
+    2017-11-17 10:29:16,423 INFO     Writing include graph (TEXT) to:
+    2017-11-17 10:29:16,423 INFO       tmp/output_normal_02/main.cpp.include.svg
+    2017-11-17 10:29:16,424 INFO     Conditional compilation graph in HTML:
+    2017-11-17 10:29:16,424 INFO       tmp/output_normal_02/main.cpp.ccg.html
+    2017-11-17 10:29:16,431 INFO     Done: demo/src/main.cpp
+    2017-11-17 10:29:16,432 INFO     ITU in HTML: .../main.cpp
+    2017-11-17 10:29:16,448 INFO     ITU in HTML: .../system.h
+    2017-11-17 10:29:16,453 INFO     ITU in HTML: .../user.h
+    2017-11-17 10:29:16,462 INFO     preprocessFileToOutput(): demo/src/main.cpp DONE
+    CPU time =    0.087 (S)
+    Bye, bye!
+
 """
 __author__ = 'Paul Ross'
 __date__ = '2011-07-10'

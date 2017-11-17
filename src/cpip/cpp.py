@@ -19,7 +19,7 @@
 #
 # Paul Ross: apaulross@gmail.com
 """
-cpip.cpp -- Pretends to be like cpp, Will take options and a file (or stdin)
+cpp.py -- Pretends to be like cpp, Will take options and a file (or stdin)
 and process it.
 
 @author:     Paul Ross
@@ -75,6 +75,60 @@ and process it.
                             Add user include search path. [default: []]
       -J INCSYS, --sys INCSYS
                             Add system include search path. [default: []]
+
+Example:
+
+.. code-block:: console
+
+    (CPIP36) $ python src/cpip/cpp.py -E -J demo/sys/ -I demo/usr/ demo/src/main.cpp
+    ----------------------------- Translation unit ----------------------------
+
+    int main(char **argv, int argc)
+    {
+    printf("Bonjour tout le monde\\n");
+    return 1;
+    }
+    -------------------------- END: Translation unit --------------------------
+
+Using ``-t`` to show tokens:
+
+.. code-block:: console
+
+    (CPIP36) $ python src/cpip/cpp.py -t -E -J demo/sys/ -I demo/usr/ demo/src/main.cpp
+    ----------------------------- Translation unit ----------------------------
+    PpToken(t="\\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="main", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="char", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="argv", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=",", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="argc", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="{", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="printf", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=""Bonjour tout le monde\\n"", tt=string-literal, line=False, prev=False, ?=False)
+    PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="return", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="1", tt=pp-number, line=False, prev=False, ?=False)
+    PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="}", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="\\n", tt=whitespace, line=False, prev=False, ?=False)
+    -------------------------- END: Translation unit --------------------------
 
 """
 from __future__ import print_function

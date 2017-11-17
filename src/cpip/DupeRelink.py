@@ -17,12 +17,19 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # Paul Ross: apaulross@gmail.com
-"""
-DupeRelink.py -- Searches for HTML files that are the same, writes a single
+"""This can be used after CPIP has processed a directory of code.
+In that case there are usually multiple copies of the HTML for common header
+files which wastes a lot of disk space.
+
+DupeRelink.py searches for HTML files that are the same, writes a single
 file into a common area and deletes all the others. Then re-links all the
-remaining HTML files that linked to the original files to link to the file
+remaining HTML files that linked to the original file to link to the file
 in the common area. This is a space saving optimisation after CPIPMain.py
 has processed a directory of source files.
+
+Typically this can halve the disk space needed.
+
+It only needs a single argument, the output directory of CPIPMain.py.
 
 .. code-block:: console
 
