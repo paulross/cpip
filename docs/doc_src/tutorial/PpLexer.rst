@@ -20,43 +20,42 @@ Files to Pre-Process
 --------------------
 
 First let's get some demonstration code to pre-process. You can find this
-at *cpip/demo/* and the directory structure looks like this::
+at *<cpip>/demo/* and the directory structure looks like this:
 
-    \---demo/
-        |   cpip.py
-        |
-        \---proj/
-            +---src/
-            |       main.cpp
-            |
-            +---sys/
-            |       system.h
-            |
-            \---usr/
-                    user.h
+.. code-block:: none
 
-In :file:`proj/` is some source code that includes files from :file:`usr/` and :file:`sys/`. 
-This tutorial will take you through writing cpip.py to use PpLexer to
+    demo/
+    ├── python
+    │   ├── cpip.py
+    ├── src
+    │   ├── main.cpp
+    ├── sys
+    │   └── system.h
+    └── usr
+        └── user.h
+
+In :file:`src/main.cpp` is some source code that includes files from :file:`usr/` and :file:`sys/`. 
+This tutorial will take you through writing :file:`demo/python/cpip.py` to use PpLexer to
 pre-process them.
 
 First lets have a look at the source code that we are preprocessing.
 It is a pretty trivial variation of a common them, but beware,
 pre-processing directives abound!
 
-The file :file:`demo/proj/src/main.cpp` looks like this:
+The file :file:`demo/src/main.cpp` looks like this:
 
 .. highlight:: c
 
 .. literalinclude:: demo/proj/src/main.cpp
     :language: c
 
-That includes a file :file:`user.h` that can be found at :file:`demo/proj/usr/user.h`:
+That includes a file :file:`user.h` that can be found at :file:`demo/usr/user.h`:
 
 .. literalinclude:: demo/proj/usr/user.h
     :language: c
 
 In turn that includes a file :file:`system.h` that can be found at
-*demo/proj/sys/system.h*:
+*demo/sys/system.h*:
 
 .. literalinclude:: demo/proj/sys/system.h
     :language: c
@@ -66,7 +65,7 @@ is specifying French as their language of choice then you would not
 expect this to write out "Hello World", or would you?
 
 Well you are in the hands of the pre-processor and that is what
-CPIP knows all about. First we need to create a :class:`PpLexer`.
+CPIP knows all about. First we need to create a :py:class:`cpip.core.PpLexer.PpLexer`.
 
 Creating a PpLexer
 ------------------
@@ -83,20 +82,20 @@ Of course this doesn't do much yet, invoking it just gives::
     python cpip.py proj/src/main.cpp
     Processing: proj/src/main.cpp
 
-We now need to import and create and :class:`PpLexer.PpLexer` object, and this
-takes at least two arguments; firstly the file to pre-process, the secondly an
+We now need to import and create and :py:class:`cpip.core.PpLexer.PpLexer` object,
+and this takes at least two arguments; firstly the file to pre-process, the secondly an
 *include handler*. The latter is need because the C/C++ standards do not
 specify how an ``#include`` directive is to be processed as that is
 as an implementation issue. So we need to provide an defined implementation
 of something that can find ``#include'd`` files.
 
 CPIP provides several such implementations in the module
-:mod:`IncludeHandler` and the one that does what, I guess,
+:py:mod:`cpip.core.IncludeHandler` and the one that does what, I guess,
 most developers expect from a pre-processor is
-:class:`IncludeHandler.CppIncludeStdOs`. This class takes at least two
+:py:class:`cpip.core.IncludeHandler.CppIncludeStdOs`. This class takes at least two
 arguments; a list of search paths to the user include directories and a list of
 search paths to the system include directories. With this we can construct a
-:class:`PpLexer` object so our code now looks like this:
+:py:class:`cpip.core.PpLexer.PpLexer` object so our code now looks like this:
 
 .. literalinclude:: demo/cpip_01.py
     :language: python
@@ -108,12 +107,12 @@ This still doesn't do much yet, invoking it just gives::
     Processing: proj/src/main.cpp
 
 But, in the absence of error, shows that we can construct a
-:class:`PpLexer`.
+:py:class:`cpip.core.PpLexer.PpLexer`.
 
 Put the PpLexer to Work
 =======================
-To get :class:`PpLexer` to do something, we need to make the call
-to :func:`PpLexer.PpTokens()`. This function is a generator of preprocessing *tokens*.
+To get :py:class:`cpip.core.PpLexer.PpLexer` to do something, we need to make the call
+to :py:meth:`cpip.core.PpLexer.PpLexer.PpTokens`. This function is a generator of *preprocessing tokens*.
 
 Lets just print them out with this code:
 
@@ -206,7 +205,7 @@ And now for something Completely Different
 So far, so boring because any pre-processor can do the same, PpLexer
 can do far more than this.
 PpLexer keeps track of a large amount of significant pre-processing
-information and that is available to you through the :class:`PpLexer` APIs.
+information and that is available to you through the :py:class:`cpip.core.PpLexer.PpLexer` APIs.
 
 For a moment lets remove the ``minWs=True`` from ``myLex.ppTokens()``
 so that we can inspect the state of the PpLexer at every token (rather
@@ -352,7 +351,7 @@ Sub-classing this requires implementing the following methods :
 * ``def _searchFile(self, theCharSeq, theSearchPath):``
     Given an HcharSeq/Qcharseq and a searchpath this should return a class ``FilePathOrigin`` or None.
 
-As examples there are a couple of reference implementations in :file:`cpip.core.IncludeHandler`:
+As examples there are a couple of reference implementations in :py:mod:`cpip.core.IncludeHandler`:
 
 * :py:class:`cpip.core.IncludeHandler.CppIncludeStdOs` - An implementation that behaves as most developers think the ``#include`` mechanism works.
 * :py:class:`cpip.core.IncludeHandler.CppIncludeStringIO` - An implementation that recovers content from a dictionary of in-memory files. This is used a lot within CPIP for unit testing.
@@ -384,7 +383,7 @@ For example :file:`CPIPMain.py` can take a list of user defined macros on the co
 Diagnostic
 ----------
 
-You can pass in to ``PpLexer`` a diagnostic object, this controls how the lexer responds to various conditions such as warning error etc. The default is for the lexer to create a :class:`CppDiagnostic.PreprocessDiagnosticStd`.
+You can pass in to ``PpLexer`` a diagnostic object, this controls how the lexer responds to various conditions such as warning error etc. The default is for the lexer to create a :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticStd`.
 
 If you want to create your own then sub-class the :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticStd` class in the module :py:mod:`cpip.ref.CppDiagnostic`.
 
