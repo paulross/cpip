@@ -42,7 +42,7 @@ class ExceptionCppInclude(ExceptionCpip):
 #: * The file path of that object, wherever found.
 #: * The 'current place' of that file, wherever found. This will affect
 #:   subsequent calls.
-#: * The origin code, i.e. how it was found.
+#: * The origin code, i.e. how it was found. One of (None, 'TU', 'stdin', 'pre-include', 'usr', 'sys', 'CP')
 #:
 #: Any or all or these attributes may be None
 #: as the methods ``_searchFile()``, ``_includeQcharseq()`` and ``_includeHcharseq()`` return
