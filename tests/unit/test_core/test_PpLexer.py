@@ -79,7 +79,7 @@ class TestPpLexerCtor(TestPpLexer):
         self.assertEqual([], myToks)
         myLexer.finalise()
 
-    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.')
+    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.', strict=True)
     def test_02(self):
         """Simple construction and finalisation with two calls to ppTokens()."""
         myLexer = PpLexer.PpLexer(
@@ -1808,7 +1808,7 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
         sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
-    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.')
+    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.', strict=True)
     def testSimpleIncludeTwice(self):
         """TestIncludeHandler_UsrSys_MultipleDepth.testSimpleInclude(): Tests multiple depth #include statements that resolve to usr/sys invoked twice."""
         expectedResult = u"""Content of: system, include, spam.h\n\n\n\n\n"""
@@ -1923,7 +1923,7 @@ class TestIncludeNextHandler_Usr(TestIncludeNextHandlerBase):
 """
         super(TestIncludeNextHandler_Usr, self).__init__(*args)
 
-    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.')
+    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.', strict=True)
     def testSimpleIncludeNext(self):
         """TestIncludeNextHandler_UsrSys.testSimpleIncludeNext(): Tests #include_next statements that resolve to usr/include."""
         expectedResult = u"""Content of: user, signal.h\nContent of: user, include, signal.h\n\n\n"""
@@ -1956,7 +1956,7 @@ class TestIncludeNextHandler_Sys(TestIncludeNextHandlerBase):
 """
         super(TestIncludeNextHandler_Sys, self).__init__(*args)
 
-    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.')
+    @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.', strict=True)
     def testSimpleIncludeNext(self):
         """TestIncludeNextHandler_UsrSys.testSimpleIncludeNext(): Tests #include_next statements that resolve to usr/include."""
         expectedResult = u"""Content of: system, signal.h\nContent of: system, include, signal.h\n\n\n"""
@@ -5041,6 +5041,81 @@ not OK.
         #print myResult
         self.assertEqual(myResult, None)
 
+
+class TestPpLexer_UsrSys_With_annotateLineFile(TestIncludeHandlerBase):
+    """Tests annotateLineFile option that emulates GCC output."""
+    def __init__(self, *args):
+        self._pathsUsr = [
+                os.path.join('usr'),
+                os.path.join('usr', 'inc'),
+                ]
+        self._pathsSys = [
+                os.path.join('sys'),
+                os.path.join('sys', 'inc'),
+                ]
+        self._initialTuContents = u"""#include "spam.h"
+#include "inc/spam.h"
+#include <spam.h>
+#include <inc/spam.h>
+"""
+        self._incFileMap = {
+                os.path.join('usr', 'spam.h') : u"""Content of: user, spam.h
+""",
+                os.path.join('usr', 'inc', 'spam.h') : u"""Content of: user, include, spam.h
+""",
+                os.path.join('sys', 'spam.h') : u"""Content of: system, spam.h
+""",
+                os.path.join('sys', 'inc', 'spam.h') : u"""Content of: system, include, spam.h
+""",
+            }
+        super(TestPpLexer_UsrSys_With_annotateLineFile, self).__init__(*args)
+
+    def test_annotateLineFile_False(self):
+        """Tests annotateLineFile=False, compare with test_annotateLineFile_True below."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim, annotateLineFile=False)
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""Content of: user, spam.h
+
+Content of: user, include, spam.h
+
+Content of: system, spam.h
+
+Content of: system, include, spam.h
+
+"""
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+
+    def test_annotateLineFile_True(self):
+        """Tests annotateLineFile=True, compare with test_annotateLineFile_False above."""
+        myLexer = PpLexer.PpLexer('src/spam.c', self._incSim, annotateLineFile=True)
+        result = u''.join([t.t for t in myLexer.ppTokens()])
+        expectedResult = u"""# 1 "src/spam.c" 1
+# 1 "usr/spam.h" 1
+Content of: user, spam.h
+# 2 "src/spam.c" 2
+
+# 1 "usr/inc/spam.h" 1
+Content of: user, include, spam.h
+# 3 "src/spam.c" 2
+
+# 1 "sys/spam.h" 1 3
+Content of: system, spam.h
+# 4 "src/spam.c" 2
+
+# 1 "sys/inc/spam.h" 1 3
+Content of: system, include, spam.h
+# 5 "src/spam.c" 2
+
+"""
+        # print()
+        # print(result)
+        self._printDiff(self.stringToTokens(result), self.stringToTokens(expectedResult))
+        self.assertEqual(result, expectedResult)
+        myLexer.finalise()
+
+
 class TestLinux(TestPpLexer):
     """Various tests thrown up when processing the Linux Kernel."""
     FILE_STRINGIFY_H = u"""#ifndef __LINUX_STRINGIFY_H
@@ -5789,7 +5864,7 @@ BAR
 class TestFromCppInternalsTokenspacing(TestPpLexer):
     """Misc. tests on token spacing. This was originally (and wrongly in
     TestMacroEnv)."""
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_01(self):
         """TestFromCppInternalsTokenspacing.test_01 - Token spacing torture test #define PLUS +"""
         ##define PLUS +
@@ -5829,7 +5904,7 @@ class TestFromCppInternalsTokenspacing(TestPpLexer):
         self.assertEqual(self.stringToTokens(result), expTokS)
 
     # test_09 and test_10 have been moved from TestMacroEnv.py and widely modified
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_09(self):
         """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define PLUS +"""
         ##define f(x) =x=
@@ -5873,7 +5948,7 @@ f(=)
 #         self._printDiff(self.stringToTokens(result), expTokS)
 #         self.assertEqual(self.stringToTokens(result), expTokS)
 
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_10(self):
         """TestFromCppInternalsTokenspacing.test_10 - Token spacing torture test #define PLUS + only"""
         ##define PLUS +
@@ -5910,7 +5985,7 @@ f(=)
         self._printDiff(self.stringToTokens(result), expTokS)
         self.assertEqual(self.stringToTokens(result), expTokS)
 
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_11(self):
         """TestFromCppInternalsTokenspacing.test_11 - Token spacing torture test mixed object/function."""
         ##define EQ =

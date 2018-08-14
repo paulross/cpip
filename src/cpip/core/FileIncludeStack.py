@@ -58,6 +58,8 @@ class FileInclude(object):
             theDiagnostic=theDiag,
         )
         self.tokenCounter = PpTokenCount.PpTokenCount()
+        # Used when the PpLexer is run with annotateLineFile=True to give GCC like annotations.
+        self.origin = theFpo.origin
     
     def tokenCounterAdd(self, theC):
         """Add a token counter to my token counter (used when a macro is
@@ -86,21 +88,19 @@ class FileInclude(object):
         """
         self.tokenCounter.inc(tok, isUnCond, num)
 
+
 class FileIncludeStack(object):
     """This maintains information about the stack of file includes.
     This holds several stacks (or representations of them):
     
-    *self._ppts*
-        A stack of :py:class:`.PpTokeniser.PpTokeniser` objects.
+    *self._diagnostic*
+        The diagnostic object, for example :py:class:`cpip.core.CppDiagnostic.PreprocessDiagnosticStd`.
+        
+    *self._fincS*
+        A dynamic stack of FileInclude objects.
         
     *self._figr*
-        A :py:class:`.FileIncludeGraph.FileIncludeGraphRoot` for tracking the ``#include`` graph.
-        
-    *self._fns*
-        A stack of file IDs as strings (e.g. the file path).
-        
-    *self._tcs*
-        A :py:class:`.PpTokenCount.PpTokenCountStack` object for counting tokens.
+        A :py:class:`cpip.core.FileIncludeGraph.FileIncludeGraphRoot` for the file include graph.
     """
     def __init__(self, theDiagnostic):
         """Constructor, takes a CppDiagnostic object to give to the PpTokeniser.
@@ -166,6 +166,12 @@ class FileIncludeStack(object):
         :returns: :py:class:`cpip.core.FileLocation.FileLineCol` -- File location.
         """
         return self.ppt.fileLineCol
+
+    @property
+    def currentFileIsSystemFile(self):
+        """Used when the PpLexer is run with annotateLineFile=True to give GCC like annotations."""
+        assert len(self._fincS) > 0
+        return self._fincS[-1].origin == 'sys'
 
     def finalise(self):
         """Finalisation, may raise an ExceptionFileIncludeStack.
