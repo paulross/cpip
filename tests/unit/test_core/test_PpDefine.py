@@ -6134,7 +6134,7 @@ class TestPpDefineMisc(TestPpDefine):
 
 class TestFromCppInternalsTokenspacing(TestPpDefine):
     """Misc. tests on token spacing from CPP internals documentation."""
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_09(self):
         """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define f(x) =x="""
         ##define f(x) =x=

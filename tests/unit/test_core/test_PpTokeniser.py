@@ -46,35 +46,8 @@ except ImportError:
 
 class TestPpTokeniserBase(TestBase.TestCpipBase):
     """Base class for test classes that provides common functionality."""
-    def _printDiff(self, actual, expected):
-        actual, expected = self._extendPair(actual, expected)
-        if actual != expected:
-            print()
-#            print('Act:', actual)
-#            print('Exp:', expected)
-#            print('Map:', map)
-            i = 0
-            for t, e in map(lambda *args: args, actual, expected):
-                if t is not None and e is not None:
-                    if t != e:
-                        print('%d: %s, != %s' \
-                                          % (i,
-                                             self.__stringiseToken(t),
-                                             self.__stringiseToken(e)))
-                else:
-                    print('%d: %s, != %s' \
-                                      % (i,
-                                         self.__stringiseToken(t),
-                                         self.__stringiseToken(e)))
-                i += 1
-
-    def __stringiseToken(self, theTtt):
-        return str(theTtt).replace('\n', '\\n')
-
-    def pprintTokensAsCtors(self, theList):
-        """Pretty prints the list as PpToken constructors."""
-        for aTtt in theList:
-            print('PpToken.PpToken(\'%s\', \'%s\'),' % (aTtt.t.replace('\n', '\\n'), aTtt.tt))
+    # All this functionality is now in TestBase.TestCpipBase
+    pass
 
 class TestWordsFoundIn(TestPpTokeniserBase):
     """Tests PpTokeniser._wordFoundIn()."""
@@ -106,7 +79,7 @@ class TestWordsFoundIn(TestPpTokeniserBase):
         self.assertEqual(-1, myObj._wordsFoundInUpTo('Hello world', 11,
                                                 set(('', 'earth', 'worldly'))))
 
-    @pytest.mark.xfail(reason='Bug in search logic.')
+    @pytest.mark.xfail(reason='Bug in search logic.', strict=True)
     def testWordFoundIn_Overlap(self):
         myObj = PpTokeniser.PpTokeniser()
         # Found
@@ -1781,7 +1754,8 @@ class TestLexPhases_2(TestPpTokeniserBase):
             myLines)
 
     def testPhase_2_OneContinuation(self):
-        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, one continuation char."""
+        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases]
+        - Phase 2, one continuation char."""
         myObj = PpTokeniser.PpTokeniser()
         myLines = [
             'a\\\n',
@@ -1796,7 +1770,8 @@ class TestLexPhases_2(TestPpTokeniserBase):
             myLines)
 
     def testPhase_2_TwoContinuation(self):
-        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, two continuation char."""
+        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases]
+        - Phase 2, two continuation char."""
         myObj = PpTokeniser.PpTokeniser()
         myLines = [
             'a\\\n',
@@ -1825,7 +1800,8 @@ class TestLexPhases_2(TestPpTokeniserBase):
             )
 
     def testPhase_2_ContinuationMakesBadChar(self):
-        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, continuation char makes universal-character-name."""
+        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2,
+        continuation char makes universal-character-name."""
         # Need to check if the spliced line generates a universal-character-name
         # i.e.
         # \u hex-quad
@@ -1844,7 +1820,8 @@ class TestLexPhases_2(TestPpTokeniserBase):
             )
 
     def testPhase_2_LineContinuationLocation_00(self):
-        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, two continuation physical location."""
+        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2,
+        two continuation physical location."""
         myObj = PpTokeniser.PpTokeniser()
         myP = [
             'a\\\n',
@@ -1966,7 +1943,8 @@ class TestLexPptoken(TestPpTokeniserBase):
         self.assertEqual(myObj.cppTokType, None)
 
     def testLexCconEscapeSequence(self):
-        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon] - escape-sequence."""
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon]
+        - escape-sequence."""
         myObj = PpTokeniser.PpTokeniser()
         # Successes
         # Simple
@@ -1987,7 +1965,8 @@ class TestLexPptoken(TestPpTokeniserBase):
         self.assertNotEqual(myObj.cppTokType, 'character-literal')
 
     def testLexCconSimpleEscapeSequence(self):
-        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon] - simple-escape-sequence."""
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon]
+        - simple-escape-sequence."""
         myObj = PpTokeniser.PpTokeniser()
         # Successes
         myObj.resetTokType()
@@ -1999,7 +1978,8 @@ class TestLexPptoken(TestPpTokeniserBase):
         self.assertNotEqual(myObj.cppTokType, 'character-literal')
 
     def testLexCconOctalEscapeSequence(self):
-        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon] - octal-escape-sequence."""
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon]
+        - octal-escape-sequence."""
         myObj = PpTokeniser.PpTokeniser()
         # Successes
         myObj.resetTokType()
@@ -2031,7 +2011,8 @@ class TestLexPptoken(TestPpTokeniserBase):
         self.assertEqual(myObj.cppTokType, 'character-literal')
 
     def testLexCconHexadecimalEscapeSequence(self):
-        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon] - hexadecimal-escape-sequence."""
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - [lex.ccon]
+        - hexadecimal-escape-sequence."""
         myObj = PpTokeniser.PpTokeniser()
         # Successes
         myObj.resetTokType()
@@ -2113,6 +2094,11 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         # Check that all tokens have been consumed
         self.assertRaises(StopIteration, next, myGen)
         #
+
+    def testCommentReplacementC_trailing_newline(self):
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement, C style,
+        with a trailing newline."""
+        myObj = PpTokeniser.PpTokeniser()
         myGen = myObj.genLexPptokenAndSeqWs('/* */\n')
         myToks = [t for t in myGen]
         #print '\n', myToks
@@ -2128,6 +2114,11 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         #myGen = myObj.genLexPptokenAndSeqWs('(  )\n')
         #myToks = [t for t in myGen]
         #print '\nWTF?\n', myToks
+
+    def testCommentReplacementC_in_if_statement(self):
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement, C style,
+        with a trailing newline."""
+        myObj = PpTokeniser.PpTokeniser()
         myGen = myObj.genLexPptokenAndSeqWs('if /* */ (  )\n')
         myToks = [t for t in myGen]
         #print '\n', myToks
@@ -2147,7 +2138,8 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
         self.assertRaises(StopIteration, next, myGen)
 
     def testCommentReplacementC_unclosed(self):
-        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement, C style but unclosed."""
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement,
+        C style but unclosed."""
         myObj = PpTokeniser.PpTokeniser()
         myGen = myObj.genLexPptokenAndSeqWs('/* ')
         try:
@@ -2155,6 +2147,31 @@ class TestGenerateLexPpTokens(TestPpTokeniserBase):
             self.fail('CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream not raised')
         except CppDiagnostic.ExceptionCppDiagnosticPartialTokenStream:
             pass
+
+    def testCommentReplacementC_line_numbers(self):
+        """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement, C style,
+        with line numbers."""
+        myObj = PpTokeniser.PpTokeniser()
+        myGen = myObj.genLexPptokenAndSeqWs("""/* Line 1
+Line 2
+Line 3
+Line 4 */
+5
+""") # Ends at line 6, column 1.
+        myToks = [t for t in myGen]
+        eToks = [
+                PpToken.PpToken(' ',           'whitespace'),
+                PpToken.PpToken('\n',          'whitespace'),
+                PpToken.PpToken('5',           'pp-number'),
+                PpToken.PpToken('\n',          'whitespace'),
+                ]
+        if self._printDiff(myToks, eToks):
+            self.pprintTokensAsCtors(myToks)
+        self.assertEqual(myToks, eToks)
+        self.assertEqual(myObj.fileLocator.lineNum, 6)
+        self.assertEqual(myObj.fileLocator.colNum, 1)
+        # Check that all tokens have been consumed
+        self.assertRaises(StopIteration, next, myGen)
 
     def testCommentReplacementCplusplus(self):
         """ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken] - Comment replacement, C++ style."""
@@ -4403,7 +4420,7 @@ Options (debug):
 """)
 
 def main():
-    print('Pp.py script version "%s", dated %s' % (__version__, __date__))
+    print('Pp.py script dated %s' % (__date__))
     print('Author: %s' % __author__)
     print(__rights__)
     print()

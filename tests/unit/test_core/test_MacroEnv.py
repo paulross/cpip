@@ -3818,7 +3818,7 @@ class TestFromCppInternals(TestMacroEnv):
 
 class TestFromCppInternalsTokenspacing(TestMacroEnv):
     """Misc. tests on token spacing."""
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.')
+    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_01(self):
         """TestFromCppInternalsTokenspacing.test_01 - Token spacing torture test #define PLUS +"""
         ##define PLUS +

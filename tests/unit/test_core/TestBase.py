@@ -53,30 +53,34 @@ class TestCpipBase(unittest.TestCase):
 
     def _printDiff(self, actual, expected):
         """Prints out the differences between two lists of PpTokens."""
-        actual, expected = self._extendPair(actual, expected)
-        if actual != expected:
-            print()
-#             self.pprintReplacementList(actual)
-            i = 0
-            print('Diff: actual -> expected')
-            #m = map(None, actual, expected)
-            for t, e in zip(actual, expected):
-                if t is not None and e is not None:
-                    if t != e:
-                        print('%d: %s, != %s' \
-                                          % (i,
-                                             self.__stringiseToken(t),
-                                             self.__stringiseToken(e)))
-                else:
+        def _print_preamble(_has_diff):
+            if not _has_diff:
+                print()
+                print('Diff: actual -> expected')
+            return True
+
+        has_diff = False
+        for i, (t, e) in enumerate(zip(actual, expected)):
+            if t is not None and e is not None:
+                if t != e:
+                    has_diff = _print_preamble(has_diff)
                     print('%d: %s, != %s' \
                                       % (i,
                                          self.__stringiseToken(t),
                                          self.__stringiseToken(e)))
-                i += 1
-            if len(actual) > len(expected):
-                print('Actual has extra tokens: %s' % actual[len(expected):])
-            if len(actual) < len(expected):
-                print('Expect has extra tokens: %s' % expected[len(actual):])
+            else:
+                has_diff = _print_preamble(has_diff)
+                print('%d: %s, != %s' \
+                                  % (i,
+                                     self.__stringiseToken(t),
+                                     self.__stringiseToken(e)))
+        if len(actual) > len(expected):
+            has_diff = _print_preamble(has_diff)
+            print('Actual has extra tokens: %s' % actual[len(expected):])
+        if len(actual) < len(expected):
+            has_diff = _print_preamble(has_diff)
+            print('Expect has extra tokens: %s' % expected[len(actual):])
+        return has_diff
 
     def __stringiseToken(self, theTtt):
         return str(theTtt).replace('\n', '\\n')
