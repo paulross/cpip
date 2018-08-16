@@ -1003,7 +1003,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self.assertEqual(myLstrS[lLine-FileLocation.START_LINE][lCol-FileLocation.START_COLUMN],
                          myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubstMinimal(self):
         """LogicalPhysicalLineMap with single expanding substitution i.e. Physical < Logical.
         This test is as simple as possible"""
@@ -1059,7 +1058,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #                  myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
 
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst(self):
         """LogicalPhysicalLineMap with single expanding substitution i.e. Physical < Logical."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1113,7 +1111,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self.assertEqual(myLstrS[lLine-FileLocation.START_LINE][lCol-FileLocation.START_COLUMN],
                          myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubstSimple(self):
         """LogicalPhysicalLineMap with single, simple, expanding substitution i.e. Physical < Logical."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1149,7 +1146,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
             self.assertEqual(myLstrS[lLine-FileLocation.START_LINE][lCol-FileLocation.START_COLUMN],
                              myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_a_L_aaa(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "a" < Logical "aaa"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1185,7 +1181,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
                          myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_a_L_aaaa(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "a" < Logical "aaaa"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1230,7 +1225,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
                          myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_ab_L_aabb(self):
         """LogicalPhysicalLineMap with substitution i.e. Physical "ab" < Logical "aabb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1275,7 +1269,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
                          myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_ab_L_aaabbb(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "ab" < Logical "aaabbb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1335,7 +1328,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_ab_L_aaaabbbb(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "ab" < Logical "aaaabbbb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1350,7 +1342,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #self._pprintLogicalToPhysical(myObj, myLstrS, myPstrS)
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_abc_L_aaaabbbbcccc(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "abc" < Logical "aaaabbbbcccc"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1366,7 +1357,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #self._pprintLogicalToPhysical(myObj, myLstrS, myPstrS)
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_abcdef_L_aaaabbbbccccdef(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "abcdef" < Logical "aaaabbbbccccdef"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1407,7 +1397,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #self._pprintLogicalToPhysical(myObj, myLstrS, myPstrS)
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_bc_L_bbbccc(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "bc" < Logical "bbbccc" [c.f. testSinglePhase_00()]."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1422,7 +1411,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #self._pprintLogicalToPhysical(myObj, myLstrS, myPstrS)
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_adef_L_aaadef(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "adef" < Logical "aaadef"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1436,7 +1424,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #self._pprintLogicalToPhysical(myObj, myLstrS, myPstrS)
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSingleExpandingSubst_P_adefb_L_aaadefbbb(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "adefb" < Logical "aaadefbbb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
@@ -1613,7 +1600,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #print ' Logical:', myLstrS
         ##self._pprintLogicalToPhysical(myObj, myLstrS, myPstrS)
 
-    @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
     def testSpliceLine_00(self):
         """LogicalPhysicalLineMap with single line splice (line continuation)."""
         myObj = FileLocation.LogicalPhysicalLineMap()
