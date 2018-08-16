@@ -3413,7 +3413,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
                     charP = '\\n'
                 print('%s -> %s: "%s" -> "%s"' % (str((lineL, colL)), str((lineP, colP)), charL, charP))
          
-    def test_00(self):
+    def test_one_continuation(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, FileLocation, one continuation."""
         myPpt = PpTokeniser.PpTokeniser()
         myPlineS = ['a\\\n', 'b\n', 'c\n',]
@@ -3429,7 +3429,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         self._checkLogicalPhysicalLines(myPpt, myLlineS, myPlineS)
         # print()
 
-    def test_01(self):
+    def test_two_continuations(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, FileLocation, two continuations."""
         myPpt = PpTokeniser.PpTokeniser()
         myPlineS = ['a\\\n', 'b\\\n', 'c\n',]
@@ -3445,7 +3445,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         self._checkLogicalPhysicalLines(myPpt, myLlineS, myPlineS)
         # print()
 
-    def test_02(self):
+    def test_three_continuations(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, FileLocation, three continuations."""
         myPpt = PpTokeniser.PpTokeniser()
         myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
@@ -3462,7 +3462,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         self._checkLogicalPhysicalLines(myPpt, myLineS, myPstrS)
         print()
 
-    def test_10(self):
+    def test_PpTokeniser_pLineCol(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, PpTokeniser.pLineCol."""
         myPpt = PpTokeniser.PpTokeniser()
         myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]

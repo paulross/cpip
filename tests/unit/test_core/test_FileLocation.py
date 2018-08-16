@@ -201,8 +201,8 @@ class TestLogicalPhysicalLineMapLowLevelBase(unittest.TestCase):
 class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase):
     """Tests the low level functionality of the LogicalPhysicalLineMap."""
 
-    def test_00(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_00(): Constructor."""
+    def test_ctor(self):
+        """Constructor."""
         myLplm = FileLocation.LogicalPhysicalLineMap()
         #print
         #print myLplm
@@ -212,8 +212,8 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
             str(myLplm)
         )
     
-    def test_01(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_01(): _adjustPcol() simulating trigraph."""
+    def test_simulate_trigraph(self):
+        """_adjustPcol() simulating trigraph."""
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # Simulate 'a??=b??=cd' mapping to 'a#b#cd' with:
         # c=2, dl=0, dc=3
@@ -232,8 +232,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         self.assertEqual((1,9), myLplm.pLineCol(lLine=1, lCol=5))
         self.assertEqual((1,10), myLplm.pLineCol(lLine=1, lCol=6))
         
-    def test_02(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_02(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_single_6_6(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['abcdef\\\n', 'ghijkl\n']
         # myLstrS = ['abcdefghijkl\n', '\n', ]
@@ -262,8 +261,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((2,7), myLplm.pLineCol(lLine=2, lCol=1))
         
-    def test_03(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_03(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_single_2_6(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['ab\\\n', 'defghi\n']
         # myLstrS = ['abcdefghi\n', '\n', ]
@@ -289,8 +287,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((2,7), myLplm.pLineCol(lLine=2, lCol=1))
         
-    def test_04(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_04(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_3_3_3(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['abc\\\n', 'def\\\n', 'ghi\n']
         # myLstrS = ['abcdefghi\n', '\n', '\n', ]
@@ -323,8 +320,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((3,4), myLplm.pLineCol(lLine=3, lCol=1))
         
-    def test_04_01(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_04_01(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_4_2_3(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['abcd\\\n', 'ef\\\n', 'ghi\n']
         # myLstrS = ['abcdefghi\n', '\n', '\n', ]
@@ -355,8 +351,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((3,4), myLplm.pLineCol(lLine=3, lCol=1))
         
-    def test_04_02(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_04_02(): _addToIr() simulating line continuation."""
+    def testsimulate_line_continuation_double_2_4_3(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['ab\\\n', 'cdef\\\n', 'ghi\n']
         # myLstrS = ['abcdefghi\n', '\n', '\n', ]
@@ -387,8 +382,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((3,4), myLplm.pLineCol(lLine=3, lCol=1))
         
-    def test_04_03(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_04_03(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_1_2_3(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['ab\\\n', 'cdef\\\n', 'ghi\n']
         # myLstrS = ['abcdefghi\n', '\n', '\n', ]
@@ -420,11 +414,8 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         self.assertEqual((3,4), myLplm.pLineCol(lLine=2, lCol=1))
         # '\n'
         self.assertEqual((3,4), myLplm.pLineCol(lLine=3, lCol=1))
-        
 
-    
-    def test_05(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_05(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_single_0_6(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['\\\n', 'abcdef\n']
         # myLstrS = ['abcdef\n', '\n', ]
@@ -446,8 +437,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((2,7), myLplm.pLineCol(lLine=2, lCol=1))
         
-    def test_06(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_06(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_0_0_6(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         # myPstrS = ['\\\n', '\\\n', 'abcdef\n']
         # myLstrS = ['abcdef\n', '\n', '\n', ]
@@ -475,8 +465,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((3,7), myLplm.pLineCol(lLine=3, lCol=1))
 
-    def test_07(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_07(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_1_2_3(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['a\\\n', 'bc\\\n', 'def\n']
         myLstrS = ['abcdef\n', '\n', '\n', ]
@@ -501,8 +490,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((3,4), myLplm.pLineCol(lLine=3, lCol=1))
         
-    def test_08(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_08(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_treble_1_1_1_1(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['a\\\n', 'b\\\n', 'c\\\n', 'd\n',]
         myLstrS = ['abcd\n', '\n', '\n', '\n', ]
@@ -527,8 +515,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         # '\n'
         self.assertEqual((4,2), myLplm.pLineCol(lLine=4, lCol=1))
 
-    def test_10_02(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_02(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_single_6_6_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['abcdef\\\n', 'ghijkl\n']
         myLstrS = ['abcdefghijkl\n', '\n', ]
@@ -536,8 +523,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=2, theLogicalCol=1, dLine=0, dColumn=6)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_10_03(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_03(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_single_2_6_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['ab\\\n', 'cdefgh\n']
         myLstrS = ['abcdefgh\n', '\n', ]
@@ -545,8 +531,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=2, theLogicalCol=1, dLine=0, dColumn=6)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_10_04(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_04(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_3_3_3_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['abc\\\n', 'def\\\n', 'ghi\n']
         myLstrS = ['abcdefghi\n', '\n', '\n', ]
@@ -556,8 +541,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=3, theLogicalCol=1, dLine=0, dColumn=3)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
         
-    def test_10_04_01(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_04_01(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_4_2_3_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['abcd\\\n', 'ef\\\n', 'ghi\n']
         myLstrS = ['abcdefghi\n', '\n', '\n', ]
@@ -567,8 +551,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=3, theLogicalCol=1, dLine=0, dColumn=3)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
         
-    def test_10_04_02(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_04_02(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_2_4_3_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['ab\\\n', 'cdef\\\n', 'ghi\n']
         myLstrS = ['abcdefghi\n', '\n', '\n', ]
@@ -578,8 +561,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=3, theLogicalCol=1, dLine=0, dColumn=3)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
         
-    def test_10_04_03(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_04_03(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_1_2_3_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['a\\\n', 'bc\\\n', 'def\n']
         myLstrS = ['abcdef\n', '\n', '\n', ]
@@ -589,8 +571,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=3, theLogicalCol=1, dLine=0, dColumn=3)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
     
-    def test_10_05(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_05(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_single_0_6_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['\\\n', 'abcdef\n']
         myLstrS = ['abcdef\n', '\n', ]
@@ -598,8 +579,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=2, theLogicalCol=1, dLine=0, dColumn=6)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
         
-    def test_10_06(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_06(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_0_0_6_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['\\\n', '\\\n', 'abcdef\n']
         myLstrS = ['abcdef\n', '\n', '\n', ]
@@ -609,8 +589,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=3, theLogicalCol=1, dLine=0, dColumn=6)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_10_07(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_07(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_double_1_2_3_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['a\\\n', 'bc\\\n', 'def\n']
         myLstrS = ['abcdef\n', '\n', '\n', ]
@@ -620,8 +599,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=3, theLogicalCol=1, dLine=0, dColumn=3)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_10_08(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_08(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_treble_1_1_1_1_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['a\\\n', 'b\\\n', 'c\\\n', 'd\n',]
         myLstrS = ['abcd\n', '\n', '\n', '\n', ]
@@ -633,8 +611,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         myLplm._addToIr(theLogicalLine=4, theLogicalCol=1, dLine=0, dColumn=1)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_10_08_01(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_10_08_01(): _addToIr() simulating line continuation."""
+    def test_simulate_line_continuation_treble_1_1_1_1_check_observations(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['a\\\n', 'b\\\n', 'c\\\n', 'd\n',]
         myLstrS = ['abcd\n', '\n', '\n', '\n', ]
@@ -702,8 +679,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         #
         # In all the examples above f = 2
 
-    def test_20_00(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_20_00(): _addToIr() cannonical simulation of line continuation."""
+    def test_simulate_line_continuation_treble_3_0_1_2_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
         myLstrS = ['abcdef\n', '\n', '\n', '\n', ]
@@ -753,8 +729,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         #self._printLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
     
-    def test_20_00_00(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_20_00_00(): _addToIr() cannonical simulation of line continuation."""
+    def test_simulate_line_continuation_treble_3_1_0_2_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['abc\\\n', 'd\\\n', '\\\n', 'ef\n',]
         myLstrS = ['abcdef\n', '\n', '\n', '\n', ]
@@ -769,8 +744,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         #self._printLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_20_00_01(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_20_00_01(): _addToIr() cannonical simulation of line continuation."""
+    def test_simulate_line_continuation_treble_2_1_1_2_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]
         myLstrS = ['abcdef\n', '\n', '\n', '\n', ]
@@ -785,8 +759,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         #self._printLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_20_06(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_20_06(): _addToIr() cannonical simulation of line continuation."""
+    def test_simulate_line_continuation_double_0_0_6_check(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['\\\n', '\\\n', 'abcdef\n']
         myLstrS = ['abcdef\n', '\n', '\n', ]
@@ -832,8 +805,7 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         #print myLplm
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
 
-    def test_20_99(self):
-        """TestLogicalPhysicalLineMapLowLevel.test_20_99(): _addToIr() cannonical simulation of line continuation."""
+    def test_simulate_line_continuation_treble_3_0_1_2_check_multi(self):
         myLplm = FileLocation.LogicalPhysicalLineMap()
         N = 3
         myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
@@ -864,7 +836,8 @@ class TestLogicalPhysicalLineMapLowLevel(TestLogicalPhysicalLineMapLowLevelBase)
         for n in range(N):
             myLplm._addToIr(theLogicalLine=n+2, theLogicalCol=1, dLine=N-n-1, dColumn=2)
         self._checkLogicalPhysicalLines(myLplm, myLstrS, myPstrS)
-                
+
+
 class TestLogicalPhysicalLineMapSimLineSplice(TestLogicalPhysicalLineMapLowLevelBase):
     """Tests the algorithm to use for line splicing with the LogicalPhysicalLineMap."""
 
@@ -912,8 +885,7 @@ class TestLogicalPhysicalLineMapSimLineSplice(TestLogicalPhysicalLineMapLowLevel
             lineL += 1
         return (myLplm, myLstrS)
 
-    def test_00(self):
-        """TestLogicalPhysicalLineMapSimLineSplice.test_00(): simulation of line continuation."""
+    def test_simulate_line_continuation_treble_3_0_1_2_check(self):
         myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myLplm, myLstrS = self._simLineSplice(myPstrS)
@@ -922,8 +894,7 @@ class TestLogicalPhysicalLineMapSimLineSplice(TestLogicalPhysicalLineMapLowLevel
         self.assertEqual(myLstrS, myLstrSExp)
         self._checkLogicalPhysicalLines(myLplm, myLstrSExp, myPstrS)
     
-    def test_01(self):
-        """TestLogicalPhysicalLineMapSimLineSplice.test_01(): simulation of line continuation."""
+    def test_simulate_line_continuation_treble_3_1_0_2_check(self):
         myPstrS = ['abc\\\n', 'd\\\n', '\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myLplm, myLstrS = self._simLineSplice(myPstrS)
@@ -932,8 +903,7 @@ class TestLogicalPhysicalLineMapSimLineSplice(TestLogicalPhysicalLineMapLowLevel
         self.assertEqual(myLstrS, myLstrSExp)
         self._checkLogicalPhysicalLines(myLplm, myLstrSExp, myPstrS)
 
-    def test_02(self):
-        """TestLogicalPhysicalLineMapSimLineSplice.test_02(): simulation of line continuation."""
+    def test_simulate_line_continuation_treble_2_1_1_2_check(self):
         myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myLplm, myLstrS = self._simLineSplice(myPstrS)
@@ -1180,7 +1150,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
                              myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_40(self):
+    def testSingleExpandingSubst_P_a_L_aaa(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "a" < Logical "aaa"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
         myPstrS = ['a',]
@@ -1216,10 +1186,10 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_41(self):
+    def testSingleExpandingSubst_P_a_L_aaaa(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "a" < Logical "aaaa"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
-        # TODO: Exapnd this to 'abc'
+        # TODO: Expand this to 'abc'
         myPstrS = ['a',]
         # In the logical space each char is replace by three times the char
         myLstrS = ['aaaa', ]
@@ -1261,10 +1231,10 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_42(self):
+    def testSingleExpandingSubst_P_ab_L_aabb(self):
         """LogicalPhysicalLineMap with substitution i.e. Physical "ab" < Logical "aabb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
-        # TODO: Exapnd this to 'abc'
+        # TODO: Expand this to 'abc'
         myPstrS = ['ab',]
         # In the logical space each char is replace by three times the char
         myLstrS = ['aabb', ]
@@ -1306,10 +1276,10 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_45(self):
+    def testSingleExpandingSubst_P_ab_L_aaabbb(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "ab" < Logical "aaabbb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
-        # TODO: Exapnd this to 'abc'
+        # TODO: Expand this to 'abc'
         myPstrS = ['ab',]
         # In the logical space each char is replace by three times the char
         myLstrS = ['aaabbb', ]
@@ -1366,10 +1336,10 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
 
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_46(self):
+    def testSingleExpandingSubst_P_ab_L_aaaabbbb(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "ab" < Logical "aaaabbbb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
-        # TODO: Exapnd this to 'abc'
+        # TODO: Expand this to 'abc'
         myPstrS = ['ab',]
         # In the logical space each char is replace by three times the char
         myLstrS = ['aaaabbbb', ]
@@ -1381,10 +1351,10 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_47(self):
+    def testSingleExpandingSubst_P_abc_L_aaaabbbbcccc(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "abc" < Logical "aaaabbbbcccc"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
-        # TODO: Exapnd this to 'abc'
+        # TODO: Expand this to 'abc'
         myPstrS = ['abc',]
         # In the logical space each char is replace by three times the char
         myLstrS = ['aaaabbbbcccc', ]
@@ -1397,7 +1367,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_48(self):
+    def testSingleExpandingSubst_P_abcdef_L_aaaabbbbccccdef(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "abcdef" < Logical "aaaabbbbccccdef"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
         # TODO: Exapnd this to 'abc'
@@ -1422,7 +1392,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         #self._pprintLogicalToPhysical(myObj, myLstrS, myPstrS)
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
-    def testSingleExpandingSubst_49(self):
+    def testSingleExpandingSubst_P_abcdef_L_abcdef(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "abcdef" == Logical "abcdef"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
         # TODO: Exapnd this to 'abc'
@@ -1438,7 +1408,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_51(self):
+    def testSingleExpandingSubst_P_bc_L_bbbccc(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "bc" < Logical "bbbccc" [c.f. testSinglePhase_00()]."""
         myObj = FileLocation.LogicalPhysicalLineMap()
         # TODO: Exapnd this to 'abc'
@@ -1453,7 +1423,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_52(self):
+    def testSingleExpandingSubst_P_adef_L_aaadef(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "adef" < Logical "aaadef"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
         # TODO: Exapnd this to 'abc'
@@ -1467,7 +1437,7 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         self._testLogicalToPhysicalChars(myObj, myLstrS, myPstrS)
 
     @pytest.mark.xfail(reason='Need to fix FileLocation. See branch fixLineColumn.', strict=True)
-    def testSingleExpandingSubst_53(self):
+    def testSingleExpandingSubst_P_adefb_L_aaadefbbb(self):
         """LogicalPhysicalLineMap with single triple substitution i.e. Physical "adefb" < Logical "aaadefbbb"."""
         myObj = FileLocation.LogicalPhysicalLineMap()
         # TODO: Exapnd this to 'abc'
@@ -1853,8 +1823,7 @@ class TestFileLocationLineContinuation(TestFileLocationBase):
 #        print 'myLstrS end', myLstrS
         return myFl, myLstrS
 
-    def test_00(self):
-        """TestFileLocationLineContinuation.test_00(): Simulate line splicing for PpTokeniser."""
+    def test_simulate_line_splice_for_PpTokeniser_treble_3_0_1_2(self):
         myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myFl, myLstrS = self._processPhysical(myPstrS)
@@ -1867,8 +1836,7 @@ class TestFileLocationLineContinuation(TestFileLocationBase):
         self.assertEqual(myLstrS, myLstrSExp)
         self._checkLogicalPhysicalLines(myFl, myLstrS, myPstrS)
 
-    def test_01(self):
-        """TestFileLocationLineContinuation.test_01(): Simulate line splicing for PpTokeniser."""
+    def test_simulate_line_splice_for_PpTokeniser_treble_3_1_0_2(self):
         myPstrS = ['abc\\\n', 'd\\\n', '\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myFl, myLstrS = self._processPhysical(myPstrS)
@@ -1879,8 +1847,7 @@ class TestFileLocationLineContinuation(TestFileLocationBase):
         self.assertEqual(myLstrS, myLstrSExp)
         self._checkLogicalPhysicalLines(myFl, myLstrS, myPstrS)
 
-    def test_02(self):
-        """TestFileLocationLineContinuation.test_02(): Simulate line splicing for PpTokeniser."""
+    def test_simulate_line_splice_for_PpTokeniser_treble_2_1_1_2(self):
         myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myFl, myLstrS = self._processPhysical(myPstrS)
@@ -1903,8 +1870,7 @@ Map [0]:
 #        print 'actResult:\n', myFl
         self.assertEqual(expResult, str(myFl))        
 
-    def test_10(self):
-        """TestFileLocationLineContinuation.test_10(): Simulate line splicing for PpTokeniser."""
+    def test_simulate_line_splice_for_PpTokeniser_double_1_1_1(self):
         myPstrS = ['a\\\n', 'b\\\n', 'c\n', ]
         myLstrSExp = ['abc\n', '\n', '\n', ]
         myFl, myLstrS = self._processPhysical(myPstrS)
@@ -1941,8 +1907,7 @@ Map [0]:
             myFl.pformatLogicalToPhysical(myLstrS, myPstrS),
         )
 
-    def test_20(self):
-        """TestFileLocationLineContinuation.test_20(): Simulate line splicing for PpTokeniser."""
+    def test_simulate_line_splice_for_PpTokeniser_treble_3_0_1_2_pformat(self):
         myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myFl, myLstrS = self._processPhysical(myPstrS)
@@ -1968,8 +1933,7 @@ Map [0]:
             myFl.pformatLogicalToPhysical(myLstrS, myPstrS),
         )
 
-    def test_30(self):
-        """TestFileLocationLineContinuation.test_30(): Simulate line splicing for PpTokeniser."""
+    def test_simulate_line_splice_for_PpTokeniser_treble_multi_line(self):
         myPstrS = ['\n', '123 \\\n', '123 \\\n', '123 \\\n', '123\n', '\n']
         myLstrSExp = ['\n', '123 123 123 123\n', '\n', '\n', '\n', '\n', ]
         myFl, myLstrS = self._processPhysical(myPstrS)
