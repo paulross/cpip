@@ -3402,17 +3402,27 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
             
     def _printLogicalPhysicalLines(self, theFl, theL, theP):
         print('%s -> %s: "%s" -> "%s"' % (str(('lineL', 'colL')), str(('lineP', 'colP')), 'charL', 'charP'))
+        fail = []
         for lineL in range(1, len(theL)+1):
             for colL in range(1, len(theL[lineL-1])+1):
                 charL = theL[lineL-1][colL-1]
                 lineP, colP = theFl.logicalToPhysical(lineL, colL)
-                charP = theP[lineP-1][colP-1]
-                if charL == '\n':
-                    charL = '\\n'
-                if charP == '\n':
-                    charP = '\\n'
-                print('%s -> %s: "%s" -> "%s"' % (str((lineL, colL)), str((lineP, colP)), charL, charP))
-         
+                # print('L: ({:3d}, {:3d}) -> P: ({:3d}, {:3d})'.format(lineL, colL, lineP, colP))
+                print('%s -> %s:' % (str((lineL, colL)), str((lineP, colP))), end='')
+                # use tmp to see where the IndexError is.
+                try:
+                    tmp = theP[lineP-1]
+                    charP = tmp[colP-1]
+                    if charL == '\n':
+                        charL = '\\n'
+                    if charP == '\n':
+                        charP = '\\n'
+                    print(' "%s" -> "%s"' % (charL, charP))
+                except IndexError as err:
+                    # print(err)
+                    fail.append('P: ({}, {}) {}'.format(lineP, colP, err))
+        self.assertEqual(fail, [])
+
     def test_one_continuation(self):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, FileLocation, one continuation."""
         myPpt = PpTokeniser.PpTokeniser()
@@ -3470,11 +3480,11 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         self.assertEquals(None, myPpt.lexPhases_2(myLineS))
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         self.assertEqual(myLstrSExp, myLineS)
-        #print
-        #print 'Was:', myPstrS
-        #print 'Now:', myLineS
-        #print myPpt.fileLocator
-        #self._printLogicalPhysicalLines(myPpt.fileLocator, myLineS, myPstrS)
+        print()
+        print('Physical:', myPstrS)
+        print(' Logical:', myLineS)
+        print(myPpt.fileLocator)
+        self._printLogicalPhysicalLines(myPpt.fileLocator, myLineS, myPstrS)
         self._checkLogicalPhysicalLines(myPpt, myLineS, myPstrS)
 #        self.assertEqual((5, 1), myPpt.pLineCol)
         self.assertEqual((2, 3), myPpt.pLineCol)

@@ -234,14 +234,15 @@ class LogicalPhysicalLineMap(object):
             for lc, dl, dc in self._ir[lLine]:
                 if lCol >= lc:
                     pLine += dl
-                    if dc < 0:
-                        # Physical < logical
-                        # 'abc' -> 'aaabc'
-                        # So first three logical columns are the first physical column:
-                        # '123' -> '11123'
-                        pCol = max([lc, pCol + dc])
-                    else:
-                        pCol += dc
+                    pCol += dc
+                    # if dc < 0:
+                    #     # Physical < logical
+                    #     # 'abc' -> 'aaabc'
+                    #     # So first three logical columns are the first physical column:
+                    #     # '123' -> '11123'
+                    #     pCol = max([lc, pCol + dc])
+                    # else:
+                    #     pCol += dc
                 else:
                     break
         return pLine, pCol
