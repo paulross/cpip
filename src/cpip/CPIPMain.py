@@ -1477,7 +1477,7 @@ on it to create a SVG file. [default: %(default)s]""")
         # Multiprocessing
         logFormat = '%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
     else:
-        logFormat = '%(asctime)s %(levelname)-8s %(message)s'
+        logFormat = '%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
     logging.basicConfig(level=args.loglevel,
                     format=logFormat,
                     # datefmt='%y-%m-%d % %H:%M:%S',

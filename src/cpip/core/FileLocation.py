@@ -185,8 +185,13 @@ class LogicalPhysicalLineMap(object):
                     retList.append('%s%s' % (prefix, str(t)))
         return '\n'.join(retList)
 
-    def _addToIr(self, theLogicalLine, theLogicalCol, dLine, dColumn):
-        """Adds, or updates a record to the internal representation."""
+    def _addToIr(self, theLogicalLine: int, theLogicalCol: int, dLine: int, dColumn: int) -> int:
+        """Adds, or updates a record to the internal representation.
+        theLogicalLine - The logical line number starting from 1.
+        theLogicalCol - The logical column number starting from 1.
+        dLine - The difference to add to theLogicalLine to get the physical line.
+        dColumn - The difference to add to theLogicalCol to get the physical column.
+        """
         addTup = (theLogicalCol, dLine, dColumn)
         if theLogicalLine not in self._ir:
             self._ir[theLogicalLine] = [addTup]
@@ -214,7 +219,16 @@ class LogicalPhysicalLineMap(object):
 
     def substString(self, theLogicalLine, theLogicalCol, lenPhysical, lenLogical):
         """Records a string substitution."""
+        # TODO: This function is the cause of current test failures.
         self._addToIr(theLogicalLine, theLogicalCol, 0, lenPhysical-lenLogical)
+        # for lCol in range(theLogicalCol, theLogicalCol + lenLogical):
+        #     # This does an update but I don't think that is what we want.
+        #     # self._addToIr(theLogicalLine, theLogicalCol, 0, lCol)
+        #     addTup = (theLogicalCol, 0, lCol)
+        #     if theLogicalLine not in self._ir:
+        #         self._ir[theLogicalLine] = [addTup]
+        #     else:
+        #         self._ir[theLogicalLine].append(addTup)
 
     def pLineCol(self, lLine, lCol):
         """Returns the (physical line number, physical column number) from

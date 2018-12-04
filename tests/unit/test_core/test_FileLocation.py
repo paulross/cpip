@@ -1057,7 +1057,6 @@ class TestLogicalPhysicalLineMap(unittest.TestCase):
         # self.assertEqual(myLstrS[lLine-FileLocation.START_LINE][lCol-FileLocation.START_COLUMN],
         #                  myPstrS[pLine-FileLocation.START_LINE][pCol-FileLocation.START_COLUMN])
 
-
     def testSingleExpandingSubst(self):
         """LogicalPhysicalLineMap with single expanding substitution i.e. Physical < Logical."""
         myObj = FileLocation.LogicalPhysicalLineMap()

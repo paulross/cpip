@@ -3456,7 +3456,8 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         # print()
 
     def test_three_continuations(self):
-        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, FileLocation, three continuations."""
+        """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases]
+        - Phase 2, FileLocation, three continuations."""
         myPpt = PpTokeniser.PpTokeniser()
         myPstrS = ['abc\\\n', '\\\n', 'd\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
