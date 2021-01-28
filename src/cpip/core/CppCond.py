@@ -530,7 +530,6 @@ class CppCond(object):
 StateConstExprFileLine = collections.namedtuple(
     'StateConstExprLoc',
     'fileId lineNum tuIndex state const_expr',
-    verbose=False,
     )
 
 class CppCondGraphVisitorBase(object):
