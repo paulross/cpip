@@ -1001,9 +1001,10 @@ class PpLexer(object):
         :returns: ``int`` -- Count of non-whitespace tokens.
         """
         retCount = 0
-        for aTok in theTokS:
-            if not aTok.isWs():
-                retCount += 1
+        if theTokS is not None:
+            for aTok in theTokS:
+                if not aTok.isWs():
+                    retCount += 1
         return retCount
     
     def _retListReplacedTokens(self, theTokS):

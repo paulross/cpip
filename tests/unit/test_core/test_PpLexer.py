@@ -3462,11 +3462,14 @@ PASS
 PASS
 #endif
 # if /* every-
- where a comment */ BLAH""",
+ where a comment */ BLAH
+PASS
+#endif
+""",
                     {}),
                  )
         result = u''.join([t.t for t in myLexer.ppTokens()])
-        self.assertEqual(result, """\n\nPASS\n\n""")
+        self.assertEqual(result, """\n\nPASS\n\n\nPASS\n\n""")
         myLexer.finalise()
 
     def test_6_10_00_02(self):
