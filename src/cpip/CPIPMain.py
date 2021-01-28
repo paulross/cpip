@@ -1470,7 +1470,7 @@ on it to create a SVG file. [default: %(default)s]""")
     # print(args)
     # print(' END: ARGS '.center(75, '-'))
     # exit()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     inPath = args.path[0]
     if args.jobs != 1 and os.path.isdir(inPath):
@@ -1551,7 +1551,7 @@ on it to create a SVG file. [default: %(default)s]""")
         print('Dump of heap byrcs:')
         print(h.byrcs)
         print()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0
