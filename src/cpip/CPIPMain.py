@@ -63,7 +63,8 @@ CPIPMain.py -- Preprocess the file or the files in a directory.
       -p                    Ignore pragma statements. [default: False]
       -r, --recursive       Recursively process directories. [default: False]
       -t, --dot             Write an DOT include dependency table and execute DOT
-                            on it to create a SVG file. [default: False]
+                            on it to create a SVG file (for includes and macro
+                            dependencies). [default: False]
       -G                    Support GCC extensions. Currently only #include_next.
                             [default: False]
       -S PREDEFINES, --predefine PREDEFINES
@@ -316,20 +317,8 @@ class FigVisitorDot(FileIncludeGraph.FigVisitorBase):
             # Leaf node
             self._lineS.append('"%s";' % (myF))
 
-def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
-    logging.info('Creating include Graph for DOT...')
-    myFigr = theLexer.fileIncludeGraphRoot
-#    # Visitor to work out common prefix
-#    myVis = FigVisitorLargestCommanPrefix()
-#    myFigr.acceptVisitor(myVis)
-    # Visitor for the DOT file
-    myVis = FigVisitorDot()  # myVis.lenCommonPrefix())
-    myFigr.acceptVisitor(myVis)
-    dotPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotTxt(theItu)))
-    svgPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotSVG(theItu)))
-    f = open(dotPath, 'w')
-    f.write(str(myVis))
-    f.close()
+
+def invokeDot(dotPath, svgPath):
     result = False
     # Now make a system call to dot
     try:
@@ -343,8 +332,43 @@ def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
             logging.info("dot returned %d" % retcode)
     except OSError as e:
         logging.error("dot execution failed: %s" % str(e))
+    return result
+
+
+def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
+    logging.info('Creating include Graph for DOT...')
+    myFigr = theLexer.fileIncludeGraphRoot
+    # Visitor to work out common prefix
+    myVis = FigVisitorLargestCommanPrefix()
+    myFigr.acceptVisitor(myVis)
+    # Visitor for the DOT file
+    # myVis = FigVisitorDot()  # myVis.lenCommonPrefix())
+    myVis = FigVisitorDot(myVis.lenCommonPrefix())
+    myFigr.acceptVisitor(myVis)
+    dotPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotTxt(theItu)))
+    svgPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotSVG(theItu)))
+    with open(dotPath, 'w') as f:
+        f.write(str(myVis))
+    result = invokeDot(dotPath, svgPath)
     logging.info('Creating include Graph for DOT done.')
     return result
+
+
+def writeMacroDependencyGraphAsDot(theOutDir, theItu, theLexer):
+    logging.info('Creating macro dependency Graph for DOT...')
+    result = False
+    if _hasMacroDependencies(theLexer):
+        dotPath = os.path.abspath(os.path.join(theOutDir, macroDepencdencyFileNameDotTxt(theItu)))
+        svgPath = os.path.abspath(os.path.join(theOutDir, macroDepencdencyFileNameDotSVG(theItu)))
+        output = _macroDependenciesAsDot(theLexer)
+        with open(dotPath, 'w') as f:
+            f.write(output)
+        result = invokeDot(dotPath, svgPath)
+    else:
+        logging.info('No dependencies.')
+    logging.info('Creating macro dependency Graph for DOT done.')
+    return result
+
 
 def retFileCountMap(theLexer):
     """Visits the Lexers file include graph and returns a dict of::
@@ -420,19 +444,39 @@ def _dumpMacroEnv(theLexer):
     print(' END Macro Environment and History '.center(75, '-'))
     print()
 
-def _dumpMacroEnvDot(theLexer):
-    print()
-    print(' Macro dependencies as a DOT file '.center(75, '-'))
-    print('digraph MacroDependencyDot {')
+
+def _hasMacroDependencies(theLexer):
+    """Returns True if there are dependencies between macros."""
     myMacEnv = theLexer.macroEnvironment
     for aPpDef in myMacEnv.genMacros():
         if aPpDef.isReferenced:
             for aRtok in aPpDef.replacementTokens:
                 if aRtok.isIdentifier() and myMacEnv.hasMacro(aRtok.t):
-                    print('"%s" -> "%s";' % (aPpDef.identifier, aRtok.t))
-    print('}\n')
+                    return True
+    return False
+
+
+def _macroDependenciesAsDot(theLexer):
+    """Returns a string suitable for invoking DOT on."""
+    ret = ['digraph MacroDependencyDot {']
+    myMacEnv = theLexer.macroEnvironment
+    for aPpDef in myMacEnv.genMacros():
+        if aPpDef.isReferenced:
+            for aRtok in aPpDef.replacementTokens:
+                if aRtok.isIdentifier() and myMacEnv.hasMacro(aRtok.t):
+                    ret.append('"%s" -> "%s";' % (aPpDef.identifier, aRtok.t))
+    ret.append('}')
+    ret.append('')
+    return '\n'.join(ret)
+
+
+def _dumpMacroEnvDot(theLexer):
+    print(' Macro dependencies as a DOT file '.center(75, '-'))
+    if _hasMacroDependencies(theLexer):
+        print(_macroDependenciesAsDot(theLexer))
+    else:
+        print('No dependendies.')
     print(' END Macro dependencies as a DOT file '.center(75, '-'))
-    print()
 
 def tuIndexFileName(theTu):
     """Returns the path to the index output file.
@@ -507,6 +551,26 @@ def includeGraphFileNameDotSVG(theItu):
     """
     return os.path.basename(theItu) + '.include.dot.svg'
 
+def macroDepencdencyFileNameDotTxt(theItu):
+    """Returns the path to the DOT output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+
+    :returns: ``str`` -- path.
+    """
+    return os.path.basename(theItu) + '.macros.dot'
+
+def macroDepencdencyFileNameDotSVG(theItu):
+    """Returns the path to the SVG DOT output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+
+    :returns: ``str`` -- path.
+    """
+    return os.path.basename(theItu) + '.macros.dot.svg'
+
 def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
     """Writes out the include graph as plain text.
     
@@ -580,7 +644,7 @@ def _writeParagraphWithBreaks(theS, theParas):
             theS.characters(p)
             
 def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap,
-                     theTokenCntr, hasIncDot, macroHistoryIndexName):
+                     theTokenCntr, hasIncDot, macroHistoryIndexName, hasMacroDependencyGraphDot):
     """Write the index.html for a single TU.
 
     :param theOutDir: The output directory to write to.
@@ -600,12 +664,15 @@ def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap,
         counts.
     :type theTokenCntr: :py:class:`cpip.core.PpTokenCount.PpTokenCount`
     
-    :param hasIncDot: bool to emit graphviz .dot files.
+    :param hasIncDot: bool to emit graphviz .dot files of include dependencies.
     :type hasIncDot: ``bool``
     
     :param macroHistoryIndexName: String of the filename of the macro history.
     :type macroHistoryIndexName: ``str``
-    
+
+    :param hasMacroDependencyGraphDot: bool to emit graphviz .dot files of macro dependencies.
+    :type hasMacroDependencyGraphDot: ``bool``
+
     :returns: ``tuple([int, int, int])`` -- (total_files, total_lines, total_bytes) as integers.
     
     :raises: ``StopIteration``
@@ -686,6 +753,10 @@ pre-processing of this file.""")
                 myS.characters('The ')
                 with XmlWrite.Element(myS, 'a', {'href' : macroHistoryIndexName, }):
                     myS.characters('Macro Environment')
+                if hasMacroDependencyGraphDot:
+                    myS.characters(', ')
+                    with XmlWrite.Element(myS, 'a', {'href' : macroDepencdencyFileNameDotSVG(theTuPath), }):
+                        myS.characters('Macro dependencies [SVG]')
             # ##
             # Write out token counter as a table
             # ##
@@ -1345,8 +1416,10 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         logging.info('Writing include graph (DOT) to:')
         logging.info('  %s', outPath)
         hasIncGraphDot = writeIncludeGraphAsDot(outDir, ituPath, myLexer)
+        hasMacroDependencyGraphDot = writeMacroDependencyGraphAsDot(outDir, ituPath, myLexer)
     else:
         hasIncGraphDot = False
+        hasMacroDependencyGraphDot = False
     # Write Conditional compilation graph in HTML
     outPath = os.path.join(outDir, includeGraphFileNameCcg(ituPath))
     logging.info('Conditional compilation graph in HTML:')
@@ -1360,7 +1433,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
     # This is an index for the TU
     total_files, total_lines, total_bytes = writeTuIndexHtml(
         outDir, ituPath, myLexer, myFileCountMap, myTokCntr,
-        hasIncGraphDot, macroHistoryIndexName
+        hasIncGraphDot, macroHistoryIndexName, hasMacroDependencyGraphDot,
     )
     logging.info('Done: %s', ituPath)
     # Write ITU HTML i.e. HTMLise the original files
@@ -1459,7 +1532,7 @@ directories. Zero uses number of native CPUs [%d].
     parser.add_argument("-t", "--dot", action="store_true", dest="include_dot",
                          default=False,
                       help="""Write an DOT include dependency table and execute DOT
-on it to create a SVG file. [default: %(default)s]""")
+on it to create a SVG file (for includes and macro dependencies). [default: %(default)s]""")
     parser.add_argument("-G", action="store_true", dest="gcc_extensions",
                          default=False,
                       help="""Support GCC extensions. Currently only #include_next. [default: %(default)s]""")
