@@ -90,7 +90,7 @@ CPIPMain.py -- Preprocess the file or the files in a directory.
       -J INCSYS, --sys INCSYS
                             Add system include search path. [default: []]
 
-Example, from tthe CPIP directory:
+Example, from the CPIP directory:
 
 .. code-block:: console
 
@@ -1416,6 +1416,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         logging.info('Writing include graph (DOT) to:')
         logging.info('  %s', outPath)
         hasIncGraphDot = writeIncludeGraphAsDot(outDir, ituPath, myLexer)
+        logging.info('Writing macro dependency graph (DOT) to:')
+        logging.info('  %s', outPath)
         hasMacroDependencyGraphDot = writeMacroDependencyGraphAsDot(outDir, ituPath, myLexer)
     else:
         hasIncGraphDot = False
