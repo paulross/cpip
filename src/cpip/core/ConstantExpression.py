@@ -129,7 +129,7 @@ class ConstantExpression(object):
         """
         assert(self.RE_CONDITIONAL_EXPRESSION.match(self.translateTokensToString()) is None)
         try:
-            return eval(theStr)
+            return eval(theStr.replace('0(0)', '0'))
         except Exception as err:
             raise ExceptionEvaluateExpression(
                 'Evaluation of "%s" gives error: %s' % (theStr, str(err))
