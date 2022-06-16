@@ -107,7 +107,7 @@ class TestMaximalMunchText(unittest.TestCase):
                     )
         myResult = [aVal for aVal in myBg.gen()]
         myExpResult = []
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_01(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'a'."""
@@ -124,7 +124,7 @@ class TestMaximalMunchText(unittest.TestCase):
         myExpResult = [
             (['a', ],     'vowels'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_02(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'aeioubc123daaavfr'."""
@@ -146,7 +146,7 @@ class TestMaximalMunchText(unittest.TestCase):
             (['a', 'a', 'a'],               'vowels'),
             (['v', 'f', 'r'],               'consonants'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_03_00(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'wraexyz'."""
@@ -171,7 +171,7 @@ class TestMaximalMunchText(unittest.TestCase):
             (['a', 'e'], 'vowels'),
             (['x', 'y', 'z'], 'consonants'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_03_01(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and digits: 'wraexyz' with alternate function."""
@@ -196,7 +196,7 @@ class TestMaximalMunchText(unittest.TestCase):
             (['a', 'e'], 'vowels'),
             (['x', 'y', 'z'], 'consonants'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_04_00(self):
         """TestMaximalMunchText: Test parsing vowels, consonants, no whitespace: 'wrae xyz'."""
@@ -214,7 +214,7 @@ class TestMaximalMunchText(unittest.TestCase):
             (['a', 'e'], 'vowels'),
             #(['x', 'y', 'z'], 'consonants'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_04_01(self):
         """TestMaximalMunchText: Test parsing vowels, consonants and whitespace: 'wrae xyz'."""
@@ -234,7 +234,7 @@ class TestMaximalMunchText(unittest.TestCase):
             ([' ', ],           'whitespace'),
             (['x', 'y', 'z'],   'consonants'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_04_02(self):
         """TestMaximalMunchText: Test parsing vowels, consonants, whitespace as anyToken(): 'wrae xyz'."""
@@ -260,7 +260,7 @@ class TestMaximalMunchText(unittest.TestCase):
             ([' ', ],           None),
             (['x', 'y', 'z'],   'consonants'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
     def test_11(self):
         """TestMaximalMunchText: ambiguos result."""
@@ -335,7 +335,7 @@ class TestMaximalMunchReplace(unittest.TestCase):
             (['d'],             'nonwhitespace'),
             ([' '],             'whitespace'),
                        ]
-        self.assertEquals(myResult, myExpResult)
+        self.assertEqual(myResult, myExpResult)
 
 class TestMaximalMunchTrigraph(unittest.TestCase):
     """Simulates Trigraph replacement."""
@@ -420,7 +420,7 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         myResultStr = ''.join([''.join(v[0]) for v in myResult])
         #print
         #print myResultStr
-        self.assertEquals(myResultStr, myLStr)
+        self.assertEqual(myResultStr, myLStr)
 
     def test_01(self):
         """TestMaximalMunchTrigraph: universal-character-name replacemnt."""
@@ -444,7 +444,7 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
         myResultStr = ''.join([''.join(v[0]) for v in myResult])
         #print
         #print myResultStr
-        self.assertEquals(myResultStr, myLStr)
+        self.assertEqual(myResultStr, myLStr)
 
 class TestMaximalMunchLineContinuation(unittest.TestCase):
     """Simulates line continuation replacement."""
@@ -502,8 +502,8 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         myResultStr = ''.join([''.join(v[0]) for v in myResult])
         #print
         #print myResultStr
-        self.assertEquals(myResultStr, myStrOut)
-        self.assertEquals(0, self._cntrAddNewLinesAfterCont)
+        self.assertEqual(myResultStr, myStrOut)
+        self.assertEqual(0, self._cntrAddNewLinesAfterCont)
 
     def test_01(self):
         """TestMaximalMunchLineContinuation: Line continuation replacement [01]."""
@@ -527,8 +527,8 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
         myResultStr = ''.join([''.join(v[0]) for v in myResult])
         #print
         #print myResultStr
-        self.assertEquals(myResultStr, myStrOut)
-        self.assertEquals(0, self._cntrAddNewLinesAfterCont)
+        self.assertEqual(myResultStr, myStrOut)
+        self.assertEqual(0, self._cntrAddNewLinesAfterCont)
 
     def test_02(self):
         """TestMaximalMunchLineContinuation: Line continuation replacement - detection of one at EOF [02]."""
@@ -549,8 +549,8 @@ class TestMaximalMunchLineContinuation(unittest.TestCase):
 #        return
         myResult = [aVal for aVal in myBg.gen()]
         #print myResult
-        self.assertEquals(myResult, [(['a'], None), ([], 'lineContinuation')])
-        self.assertEquals(1, self._cntrAddNewLinesAfterCont)
+        self.assertEqual(myResult, [(['a'], None), ([], 'lineContinuation')])
+        self.assertEqual(1, self._cntrAddNewLinesAfterCont)
 
 class ExceptionTestMaximalMunchComment(ExceptionCpip):
     pass
@@ -647,7 +647,7 @@ class TestMaximalMunchComment(unittest.TestCase):
         myResultStr = ''.join([''.join(v[0]) for v in myResult])
         #print
         #print myResultStr
-        self.assertEquals(myResultStr, myStrOut)
+        self.assertEqual(myResultStr, myStrOut)
 
     def test_01(self):
         """TestMaximalMunchComment: Unclosed C Comment."""

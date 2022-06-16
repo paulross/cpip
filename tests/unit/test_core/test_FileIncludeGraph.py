@@ -1003,7 +1003,7 @@ class TestFileIncludeGraphRootVisitor(TestFileIncludeGraphRootVisitorBase):
         myVis = FileIncludeGraph.FigVisitorTree(MyVisitorTreeNode)
         self._figr.acceptVisitor(myVis)
         myTree = myVis.tree()
-        self.assertEquals(486, myTree._t)
+        self.assertEqual(486, myTree._t)
 
     def test_01(self):
         """TestFileIncludeGraphRootVisitor: No pre-includes and a graph."""
@@ -1011,7 +1011,7 @@ class TestFileIncludeGraphRootVisitor(TestFileIncludeGraphRootVisitorBase):
         myVis = FileIncludeGraph.FigVisitorTree(MyVisitorTreeNode)
         self._figr.acceptVisitor(myVis)
         myTree = myVis.tree()
-        self.assertEquals(366, myTree._t)
+        self.assertEqual(366, myTree._t)
 
     def test_02(self):
         """TestFileIncludeGraphRootVisitor: Creates a tree of VisitorTreeNode(s) - simulates PpLexer."""
@@ -1152,7 +1152,7 @@ ITU.h [140, 70]:  True "" ""
     0115 b.h
 """
         myActTree = myVis.tree()
-        self.assertEquals(myExpTree, str(myActTree))
+        self.assertEqual(myExpTree, str(myActTree))
 
     def test_03(self):
         """TestFileIncludeGraphRootVisitor: Creates a tree of VisitorTreeNode(s) - simulates PpLexer and checks token counters."""
@@ -1367,7 +1367,7 @@ ITU.h [140, 70]:  True "" "ITU"
         myVis = FileIncludeGraph.FigVisitorTree(MyVisitorTreeNode)
         myFigr.acceptVisitor(myVis)
         myVisTree = myVis.tree()
-        self.assertEquals(586, myVisTree._t)
+        self.assertEqual(586, myVisTree._t)
         myExpTree = """-001 None
   -001 PreInclude_00
   -001 PreInclude_01
@@ -1381,7 +1381,7 @@ ITU.h [140, 70]:  True "" "ITU"
           0117 aaba.h
     0115 b.h
 """
-        self.assertEquals(myExpTree, str(myVisTree))
+        self.assertEqual(myExpTree, str(myVisTree))
 
 class TestFileIncludeGraphRootVisitorFileSet(TestFileIncludeGraphRootVisitorBase):
     """Tests the visitor class that gathers file names."""

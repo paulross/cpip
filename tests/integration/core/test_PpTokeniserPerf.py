@@ -151,7 +151,7 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
 #        myTimStart = time.clock()
 #        c, s = self.sysCallCpp(myFobj, thePreIncS=None)
 #        print 'TRACE:', c, s
-#        self.assertEquals(0, c)
+#        self.assertEqual(0, c)
 #        myTime = time.clock() - myTimStart
 #        myCntr = len(s)
 #        sys.stderr.write('Bytes: %8d, Rate: %8.1f bytes/s ... ' % (myCntr, myCntr / myTime))

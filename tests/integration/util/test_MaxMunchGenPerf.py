@@ -364,7 +364,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_01(self):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines:  128"""
@@ -376,7 +376,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_02(self):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines: 1024"""
@@ -388,7 +388,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_10(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines:    1"""
@@ -400,7 +400,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_11(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines:  128"""
@@ -413,7 +413,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_12(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines: 1024"""
@@ -425,7 +425,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
 class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_00(self):

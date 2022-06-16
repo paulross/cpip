@@ -44,8 +44,8 @@ class TestTreeCtor(unittest.TestCase):
     def test_00(self):
         """TestTreeCtor: test_00(): constructor."""
         t = Tree.Tree('A')
-        self.assertEquals('A', t.obj)
-        self.assertEquals(0, len(t))
+        self.assertEqual('A', t.obj)
+        self.assertEqual(0, len(t))
                 
     def test_01(self):
         """TestTreeCtor: test_01(): constructor fails."""
@@ -54,7 +54,7 @@ class TestTreeCtor(unittest.TestCase):
     def test_02(self):
         """TestTreeCtor: test_00(): simple object has len == 0."""
         t = Tree.Tree('A')
-        self.assertEquals(0, len(t))
+        self.assertEqual(0, len(t))
                 
 class TestTreeAddChild(unittest.TestCase):
     """Tests Tree addChild() function."""
@@ -63,11 +63,11 @@ class TestTreeAddChild(unittest.TestCase):
         """TestTreeAdd: simple add."""
         t = Tree.Tree('A')
         t.addChild('B')
-        self.assertEquals(1, len(t))
+        self.assertEqual(1, len(t))
         t.addChild('B')
-        self.assertEquals(2, len(t))
+        self.assertEqual(2, len(t))
         t.addChild('C')
-        self.assertEquals(3, len(t))
+        self.assertEqual(3, len(t))
 
     def test_01(self):
         """TestTreeAdd: simple add and check .obj."""
@@ -97,7 +97,7 @@ class TestTreeBranches(unittest.TestCase):
         t.addChild('AB')
         t.youngestChild.addChild('ABA')
 #         print(t.branches())
-        self.assertEquals(
+        self.assertEqual(
             [['A'], ['A', 'AA'], ['A', 'AA', 'AAA'], ['A', 'AB'], ['A', 'AB', 'ABA']],
             t.branches()
         )
@@ -110,7 +110,7 @@ class TestTreeBranches(unittest.TestCase):
         t.addChild('AB')
         t.youngestChild.addChild('ABA')
 #         print(t.branches())
-        self.assertEquals(
+        self.assertEqual(
             [['A'], ['A', 'AA'], ['A', 'AA', 'AAA'], ['A', 'AB'], ['A', 'AB', 'ABA']],
             t.branches()
         )
@@ -138,7 +138,7 @@ class TestTreeBranches(unittest.TestCase):
         # print()
         # print(str(t))
         exp = "[['A'], ['A', 'AA'], ['A', 'AA', 'AAA'], ['A', 'AB'], ['A', 'AB', 'ABA']]"
-        self.assertEquals(exp,str(t))
+        self.assertEqual(exp,str(t))
 
 class TestDuplexAdjacencyList(unittest.TestCase):
     """Tests DuplexAdjacencyList."""

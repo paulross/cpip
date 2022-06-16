@@ -83,7 +83,7 @@ the macro page.</p>
   </body>
 </html>
 """
-        self.assertEquals(myOutput.getvalue(), expVal)
+        self.assertEqual(myOutput.getvalue(), expVal)
     
     def test_02(self):
         """TestItuToHtmlPhase3.test_02(): Macro."""
@@ -109,7 +109,7 @@ the macro page.</p>
   </body>
 </html>
 """
-        self.assertEquals(myOutput.getvalue(), expVal)
+        self.assertEqual(myOutput.getvalue(), expVal)
     
     def test_03(self):
         """TestItuToHtmlPhase3.test_03(): ISO/IEC 9899:1999 (E) 6.10.3.5-5 EXAMPLE 3"""
@@ -172,7 +172,7 @@ the macro page.</p>
   </body>
 </html>
 """
-        self.assertEquals(myOutput.getvalue(), expVal)
+        self.assertEqual(myOutput.getvalue(), expVal)
 
 class TestItuToHtmlTokenGen(unittest.TestCase):
     """Test the ItuToHtml token genreator."""
@@ -227,7 +227,7 @@ the macro page.</p>
   </body>
 </html>
 """
-        self.assertEquals(myOutput.getvalue(), expVal)
+        self.assertEqual(myOutput.getvalue(), expVal)
 
     def test_02(self):
         """TestItuToHtmlTokenGen.test_02(): Literals."""
@@ -266,7 +266,7 @@ the macro page.</p>
   </body>
 </html>
 """
-        self.assertEquals(myOutput.getvalue(), expVal)
+        self.assertEqual(myOutput.getvalue(), expVal)
 
 class NullClass(unittest.TestCase):
     pass

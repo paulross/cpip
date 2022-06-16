@@ -3650,7 +3650,7 @@ class TestMacroUndef(TestMacroEnv):
         myMap.define(myGen, 'obj.h', 1)
         self._checkMacroEnv(myGen, myMap, ['OBJ',])
         # undef something that is not there
-        self.assertEquals(
+        self.assertEqual(
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
@@ -3673,7 +3673,7 @@ class TestMacroUndef(TestMacroEnv):
 #===============================================================================
 #        myGen = myCpp.next()
 #        myMacro = PpDefine.PpDefine(myGen, '', 1)
-#        self.assertEquals(
+#        self.assertEqual(
 #            myMacro,
 #            myMap.undef(
 #                PpTokeniser.PpTokeniser(
@@ -3728,11 +3728,11 @@ class TestMacroUndef(TestMacroEnv):
                      ]
         myList = [str(m) for m in myEnv.genMacros()]
         #print myList
-        self.assertEquals(myExpList, myList)
+        self.assertEqual(myExpList, myList)
         myList = [str(m) for m in myEnv.genMacros('OBJ')]
-        self.assertEquals(myExpList, myList)
+        self.assertEqual(myExpList, myList)
         myList = [str(m) for m in myEnv.genMacros('NOTHING')]
-        self.assertEquals([], myList)
+        self.assertEqual([], myList)
 
     def testFunctionLikeUndef_00(self):
         """TestMacroUndef.testFunctionLikeUndef_00(): #defines then undefs an function like macro correctly."""
@@ -3744,7 +3744,7 @@ class TestMacroUndef(TestMacroEnv):
         myMap.define(myGen, 'F.h', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC_LIKE',])
         # undef something that is not there
-        self.assertEquals(
+        self.assertEqual(
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
@@ -3766,7 +3766,7 @@ class TestMacroUndef(TestMacroEnv):
 #===============================================================================
 #        myGen = myCpp.next()
 #        myMacro = PpDefine.PpDefine(myGen, '', 1)
-#        self.assertEquals(
+#        self.assertEqual(
 #            myMacro,
 #            myMap.undef(
 #                PpTokeniser.PpTokeniser(
@@ -5757,8 +5757,8 @@ EGGS 2
         myEnv.define(myGen, 'f.h', 2)
 #         print()
 #         print(myEnv._staticMacroDependencies('EGGS').branches())
-        self.assertEquals([], myEnv._staticMacroDependencies('SPAM'))
-        self.assertEquals([], myEnv._staticMacroDependencies('EGGS'))
+        self.assertEqual([], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual([], myEnv._staticMacroDependencies('EGGS'))
 
     def test_01(self):
         """TestMacroDependencies.test_01(): - Simple macro dependency."""
@@ -5772,12 +5772,12 @@ EGGS 2
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
         myEnv.define(myGen, 'f.h', 2)
-        self.assertEquals(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
-        self.assertEquals([], myEnv._staticMacroDependencies('EGGS'))
+        self.assertEqual(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual([], myEnv._staticMacroDependencies('EGGS'))
         myAdjList = myEnv.allStaticMacroDependencies()
-        self.assertEquals(['EGGS',], myAdjList.children('SPAM'))
+        self.assertEqual(['EGGS',], myAdjList.children('SPAM'))
         self.assertRaises(KeyError, myAdjList.children, 'EGGS')
-        self.assertEquals(['SPAM',], myAdjList.parents('EGGS'))
+        self.assertEqual(['SPAM',], myAdjList.parents('EGGS'))
         self.assertRaises(KeyError, myAdjList.parents, 'SPAM')
         
     def test_02(self):
@@ -5789,10 +5789,10 @@ EGGS 2
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
-        self.assertEquals(['SPAM',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual(['SPAM',], myEnv._staticMacroDependencies('SPAM'))
         myAdjList = myEnv.allStaticMacroDependencies()
-        self.assertEquals(['SPAM',], myAdjList.children('SPAM'))
-        self.assertEquals(['SPAM',], myAdjList.parents('SPAM'))
+        self.assertEqual(['SPAM',], myAdjList.children('SPAM'))
+        self.assertEqual(['SPAM',], myAdjList.parents('SPAM'))
 
     def test_03(self):
         """TestMacroDependencies.test_03(): - Macro cyclic dependency."""
@@ -5811,13 +5811,13 @@ EGGS SPAM
 #         print(myEnv.allStaticMacroDependencies())
 #         for k, v in myEnv.allStaticMacroDependencies().items():
 #             print(k, ':', v)
-        self.assertEquals(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
-        self.assertEquals(['SPAM',], myEnv._staticMacroDependencies('EGGS'))
+        self.assertEqual(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual(['SPAM',], myEnv._staticMacroDependencies('EGGS'))
         myAdjList = myEnv.allStaticMacroDependencies()
-        self.assertEquals(['EGGS',], myAdjList.children('SPAM'))
-        self.assertEquals(['SPAM',], myAdjList.children('EGGS'))
-        self.assertEquals(['SPAM',], myAdjList.parents('EGGS'))
-        self.assertEquals(['EGGS',], myAdjList.parents('SPAM'))
+        self.assertEqual(['EGGS',], myAdjList.children('SPAM'))
+        self.assertEqual(['SPAM',], myAdjList.children('EGGS'))
+        self.assertEqual(['SPAM',], myAdjList.parents('EGGS'))
+        self.assertEqual(['EGGS',], myAdjList.parents('SPAM'))
 
     def test_04(self):
         """TestMacroDependencies.test_04(): - Non-existent macro."""

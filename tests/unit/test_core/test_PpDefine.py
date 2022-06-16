@@ -2371,7 +2371,7 @@ END_F_2
         myArgTokens = myCppDef.retArgumentListTokens(myGen)
         # print
         # print 'TRACE:', myArgTokens
-        self.assertEquals(myExpArgTokens, myArgTokens)
+        self.assertEqual(myExpArgTokens, myArgTokens)
         # Check that all tokens have been consumed
         self.assertRaises(StopIteration, next, myGen)
         #myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
@@ -2459,7 +2459,7 @@ END_F_2
         myArgTokens = myCppDef.retArgumentListTokens(myGen)
         #print
         #print 'TRACE:', myArgTokens
-        self.assertEquals(myExpArgTokens, myArgTokens)
+        self.assertEqual(myExpArgTokens, myArgTokens)
         # Check that all tokens have been consumed
         self.assertRaises(StopIteration, next, myGen)
         myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
@@ -2499,7 +2499,7 @@ END_F_2
         myArgTokens = myCppDef.retArgumentListTokens(myGen)
         # print
         # print 'TRACE:', myArgTokens
-        self.assertEquals(myExpArgTokens, myArgTokens)
+        self.assertEqual(myExpArgTokens, myArgTokens)
         # Check that all tokens have been consumed
         self.assertRaises(StopIteration, next, myGen)
         #myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
@@ -2622,15 +2622,15 @@ END_F_2"""
             else:
                 myArgTokens = myCppDef.retArgumentListTokens(myGen)
                 #print 'TRACE: myArgTokens:', myArgTokens
-                self.assertEquals(expArgToks, myArgTokens)
+                self.assertEqual(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
                 self.assertRaises(StopIteration, next, myGen)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
-                self.assertEquals(expRepMap, myReplaceMap)
+                self.assertEqual(expRepMap, myReplaceMap)
                 myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
                 #print 'TRACE:  out:', myReplacements
-                self.assertEquals(expReprToks, myReplacements)
+                self.assertEqual(expReprToks, myReplacements)
 
     def test_F_1(self):
         """TestPpDefineFunctionLikeAcceptableArguments.test_F_1() - F_1(a)."""
@@ -2696,15 +2696,15 @@ END_F_2"""
             else:
                 myArgTokens = myCppDef.retArgumentListTokens(myGen)
                 #print 'TRACE: myArgTokens:', myArgTokens
-                self.assertEquals(expArgToks, myArgTokens)
+                self.assertEqual(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
                 self.assertRaises(StopIteration, next, myGen)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
-                self.assertEquals(expRepMap, myReplaceMap)
+                self.assertEqual(expRepMap, myReplaceMap)
                 myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
                 #print 'TRACE:  out:', myReplacements
-                self.assertEquals(expReprToks, myReplacements)
+                self.assertEqual(expReprToks, myReplacements)
 
     def test_F_2(self):
         """TestPpDefineFunctionLikeAcceptableArguments.test_F_2() - F_2(a,b)."""
@@ -2794,15 +2794,15 @@ END_F_2"""
             else:
                 myArgTokens = myCppDef.retArgumentListTokens(myGen)
                 #print 'TRACE: myArgTokens:', myArgTokens
-                self.assertEquals(expArgToks, myArgTokens)
+                self.assertEqual(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
                 self.assertRaises(StopIteration, next, myGen)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
-                self.assertEquals(expRepMap, myReplaceMap)
+                self.assertEqual(expRepMap, myReplaceMap)
                 myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
                 #print 'TRACE:  out:', myReplacements
-                self.assertEquals(expReprToks, myReplacements)
+                self.assertEqual(expReprToks, myReplacements)
 
     def test_F_2_errors(self):
         """TestPpDefineFunctionLikeAcceptableArguments.test_F_2() - F_2(a,b) error messages."""
@@ -2871,7 +2871,7 @@ END_F_2"""
                 myCppDef.retArgumentListTokens(myGen)
                 self.fail('PpDefine.ExceptionCpipDefineBadArguments not raised')
             except PpDefine.ExceptionCpipDefineBadArguments as err:
-                self.assertEquals(errMsg, str(err))
+                self.assertEqual(errMsg, str(err))
                 
 
 class TestConcatFunctionLikeMacro(TestPpDefine):
@@ -5098,13 +5098,13 @@ F0(,,,)         // |-| ,,, EOL
             #print 'TRACE: args:', args
             #print 'TRACE: toks:', myArgTokens
             self._printDiff(myArgTokens, expArgToks)
-            self.assertEquals(expArgToks, myArgTokens)
+            self.assertEqual(expArgToks, myArgTokens)
             myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
             #print 'TRACE:  map:', myReplaceMap
-            self.assertEquals(expMap, myReplaceMap)
+            self.assertEqual(expMap, myReplaceMap)
             myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
             #print 'TRACE:  out:', myReplacements
-            self.assertEquals(expRepl, myReplacements)
+            self.assertEqual(expRepl, myReplacements)
 
     def test_00_00(self):
         """TestPpDefineFunctionLikeAcceptableVariadicArguments.test_00_00() - F0(...) - special test."""
@@ -5170,13 +5170,13 @@ F0(,,,)         // |-| ,,, EOL
             #print 'TRACE: args:', args
             #print 'TRACE: toks:', myArgTokens
             self._printDiff(myArgTokens, expArgToks)
-            self.assertEquals(expArgToks, myArgTokens)
+            self.assertEqual(expArgToks, myArgTokens)
             myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
             #print 'TRACE:  map:', myReplaceMap
-            self.assertEquals(expMap, myReplaceMap)
+            self.assertEqual(expMap, myReplaceMap)
             myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
             #print 'TRACE:  out:', myReplacements
-            self.assertEquals(expRepl, myReplacements)
+            self.assertEqual(expRepl, myReplacements)
 
     def test_01(self):
         """TestPpDefineFunctionLikeAcceptableVariadicArguments.test_01() - F1(a,...)."""
@@ -5400,14 +5400,14 @@ F1(,,,)         // | | ,, EOL
             #print 'TRACE: toks:', myArgTokens
             #print 'TRACE:  exp:', expArgToks
             self._printDiff(myArgTokens, expArgToks)
-            self.assertEquals(expArgToks, myArgTokens)
+            self.assertEqual(expArgToks, myArgTokens)
             myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
             #print 'TRACE:  map:', myReplaceMap
-            self.assertEquals(expMap, myReplaceMap)
+            self.assertEqual(expMap, myReplaceMap)
             myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
             #print 'TRACE:  out:', myReplacements
             #print 'TRACE:  out:', self.tokensToString(myReplacements)
-            self.assertEquals(expRepl, myReplacements)
+            self.assertEqual(expRepl, myReplacements)
 
     def test_02(self):
         """TestPpDefineFunctionLikeAcceptableVariadicArguments.test_02() - F2(a,b,...)."""
@@ -5666,16 +5666,16 @@ F_2_END
                 #print
                 #print 'TRACE: myArgTokens:', myArgTokens
                 #print 'TRACE:         exp:', expArgToks
-                self.assertEquals(expArgToks, myArgTokens)
+                self.assertEqual(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
                 self.assertRaises(StopIteration, next, myGen)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
-                self.assertEquals(expRepMap, myReplaceMap)
+                self.assertEqual(expRepMap, myReplaceMap)
                 myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
                 #print 'TRACE:  out:', myReplacements
                 #print 'TRACE:  out:', self.tokensToString(myReplacements)
-                self.assertEquals(expReprToks, myReplacements)
+                self.assertEqual(expReprToks, myReplacements)
 
     def test_03(self):
         """TestPpDefineFunctionLikeAcceptableVariadicArguments.test_03() F3(a,b,c,...)."""
@@ -5953,16 +5953,16 @@ F_3_END
                 myArgTokens = myCppDef.retArgumentListTokens(myGen)
                 #print 'TRACE: myArgTokens:', myArgTokens
                 #print 'TRACE:         exp:', expArgToks
-                self.assertEquals(expArgToks, myArgTokens)
+                self.assertEqual(expArgToks, myArgTokens)
                 # Check that all tokens have been consumed
                 self.assertRaises(StopIteration, next, myGen)
                 myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
                 #print 'TRACE:  map:', myReplaceMap
-                self.assertEquals(expRepMap, myReplaceMap)
+                self.assertEqual(expRepMap, myReplaceMap)
                 myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
                 #print 'TRACE:  out:', myReplacements
                 #print 'TRACE:  out:', self.tokensToString(myReplacements)
-                self.assertEquals(expReprToks, myReplacements)
+                self.assertEqual(expReprToks, myReplacements)
         
 #===============================================================================
 #        for args, expArgToks, expMap, expRepl in myArgsExpToksAndReplMap:
@@ -5978,14 +5978,14 @@ F_3_END
 #            print 'TRACE: toks:', myArgTokens
 #            print 'TRACE:  exp:', expArgToks
 #            self._printDiff(myArgTokens, expArgToks)
-#            self.assertEquals(expArgToks, myArgTokens)
+#            self.assertEqual(expArgToks, myArgTokens)
 #            myReplaceMap = myCppDef._retReplacementMap(myArgTokens)
 #            print 'TRACE:  map:', myReplaceMap
-#            self.assertEquals(expMap, myReplaceMap)
+#            self.assertEqual(expMap, myReplaceMap)
 #            myReplacements = myCppDef._functionLikeReplacement(myReplaceMap)
 #            print 'TRACE:  out:', myReplacements
 #            print 'TRACE:  out:', self.tokensToString(myReplacements)
-#            self.assertEquals(expRepl, myReplacements)
+#            self.assertEqual(expRepl, myReplacements)
 #===============================================================================
 
 class TestPpDefineLinux(TestPpDefine):

@@ -1747,7 +1747,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, single new-line."""
         myObj = PpTokeniser.PpTokeniser()
         myLines = ['\n',]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(['\n',], myLines)
 
     def testPhase_2_TwoLines(self):
@@ -1757,7 +1757,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             '\n',
             '\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 '\n',
@@ -1772,7 +1772,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             '\\\n',
             '\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 '\n',
@@ -1787,7 +1787,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             'a\\\n',
             'b\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 'ab\n',
@@ -1803,7 +1803,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             'b\\\n',
             'c\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 'abc\n',
@@ -1853,7 +1853,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             'd\n',
             ]
         myL = myP[:]
-        self.assertEquals(None, myObj.lexPhases_2(myL))
+        self.assertEqual(None, myObj.lexPhases_2(myL))
         self.assertEqual(
             [
                 'abc\n',
@@ -3405,7 +3405,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         myPpt = PpTokeniser.PpTokeniser()
         myPstrS = ['a\\\n', 'b\n', 'c\n',]
         myLineS = myPstrS[:]
-        self.assertEquals(None, myPpt.lexPhases_2(myLineS))
+        self.assertEqual(None, myPpt.lexPhases_2(myLineS))
         self.assertEqual(['ab\n', '\n', 'c\n', ], myLineS)
         #print
         #print 'Was:', myPstrS
@@ -3419,7 +3419,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         myPpt = PpTokeniser.PpTokeniser()
         myPstrS = ['a\\\n', 'b\\\n', 'c\n',]
         myLineS = myPstrS[:]
-        self.assertEquals(None, myPpt.lexPhases_2(myLineS))
+        self.assertEqual(None, myPpt.lexPhases_2(myLineS))
         self.assertEqual(['abc\n', '\n', '\n', ], myLineS)
         #print
         #print 'Was:', myPstrS
@@ -3434,7 +3434,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         myLineS = myPstrS[:]
-        self.assertEquals(None, myPpt.lexPhases_2(myLineS))
+        self.assertEqual(None, myPpt.lexPhases_2(myLineS))
         self.assertEqual(myLstrSExp, myLineS)
         #print
         #print 'Was:', myPstrS
@@ -3448,7 +3448,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         myPpt = PpTokeniser.PpTokeniser()
         myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]
         myLineS = myPstrS[:]
-        self.assertEquals(None, myPpt.lexPhases_2(myLineS))
+        self.assertEqual(None, myPpt.lexPhases_2(myLineS))
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         self.assertEqual(myLstrSExp, myLineS)
         #print
@@ -4112,7 +4112,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
         print()
 #        for aLine in myLines:
 #            print '"%s"' % aLine
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         print()
 #        print '\n'.join(myLines)
         print()
@@ -4129,7 +4129,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
         print()
         for aLine in myLines:
             print('"%s"' % aLine)
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         print()
         print('\n'.join(myLines))
 #        print
@@ -4143,7 +4143,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
         myLines = [l+'\n' for l in myStr.split('\n')]
 #        print
 #        self._dumpLines(myLines)
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
 #        self._dumpLines(myLines)
         self.assertEqual(
             [
@@ -4162,7 +4162,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
         myLines = [l+'\n' for l in myStr.split('\n')]
 #        print
 #        self._dumpLines(myLines)
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
 #        self._dumpLines(myLines)
         self.assertEqual(
             [
@@ -4182,7 +4182,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
         myLines = [l+'\n' for l in myStr.split('\n')]
 #        print
 #        self._dumpLines(myLines)
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
 #        self._dumpLines(myLines)
         self.assertEqual(
             [
@@ -4203,7 +4203,7 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
         myLines = [l+'\n' for l in myStr.split('\n')]
 #        print
 #        self._dumpLines(myLines)
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
 #        self._dumpLines(myLines)
         self.assertEqual(
             [

@@ -47,7 +47,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(1, mySt.has('###'))
         self.assertEqual(1, mySt.has('####'))
         self.assertEqual(1, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_01(self):
@@ -61,7 +61,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(3, mySt.has('###'))
         self.assertEqual(3, mySt.has('####'))
         self.assertEqual(3, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_02(self):
@@ -76,7 +76,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(0, mySt.has('###'))
         self.assertEqual(0, mySt.has('####'))
         self.assertEqual(0, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_str(self):
@@ -118,7 +118,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(3, mySt.has('and_'))
         self.assertEqual(3, mySt.has('and_e'))
         self.assertEqual(6, mySt.has('and_eq'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
 
     def test_11(self):
         """StrTree: test_11(): keywords (three)."""
@@ -140,7 +140,7 @@ class TestStrTree(unittest.TestCase):
         # Not deterministic under Python3
 #         print()
 #         print(str(mySt))
-#         self.assertEquals("""False 0
+#         self.assertEqual("""False 0
 # "c"
 #  False 1
 #  "o"
@@ -171,7 +171,7 @@ class TestStrTree(unittest.TestCase):
 #        False 7
 #        "e"
 #         True 8""", str(mySt))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
 
     def test_12(self):
         """StrTree: test_12(): keywords (a few)."""
@@ -201,7 +201,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(2, mySt.has('doub'))
         self.assertEqual(2, mySt.has('doubl'))
         self.assertEqual(6, mySt.has('double'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         
     def test_13(self):
         """StrTree: test_13(): keywords (all)."""
@@ -229,7 +229,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(2, mySt.has('doub'))
         self.assertEqual(2, mySt.has('doubl'))
         self.assertEqual(6, mySt.has('double'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
                 
 class TestStrTreeHas(unittest.TestCase):
     """Tests StrTree.has()."""
@@ -244,7 +244,7 @@ class TestStrTreeHas(unittest.TestCase):
         self.assertEqual(1, mySt.has('###'))
         self.assertEqual(1, mySt.has('####'))
         self.assertEqual(1, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_01(self):
@@ -299,7 +299,7 @@ class TestStrTreePerf(unittest.TestCase):
                 'delete', 'goto', 'reinterpret_cast', 'try',
                 ]
         mySt = StrTree.StrTree(myV)
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         print()
         #print mySt.values()
         #print str(mySt)

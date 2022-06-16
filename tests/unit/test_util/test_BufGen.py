@@ -59,11 +59,11 @@ class TestBufGen(unittest.TestCase):
         for _a in myGen:
             pass
             #print a
-        self.assertEquals(3, myBg.lenBuf)
-        self.assertEquals("BufGen: ['a', 'b', 'c']", str(myBg))
-        self.assertEquals(['a', 'b', 'c'], myBg.slice(3))
-        self.assertEquals(0, myBg.lenBuf)
-        self.assertEquals('BufGen: []', str(myBg))
+        self.assertEqual(3, myBg.lenBuf)
+        self.assertEqual("BufGen: ['a', 'b', 'c']", str(myBg))
+        self.assertEqual(['a', 'b', 'c'], myBg.slice(3))
+        self.assertEqual(0, myBg.lenBuf)
+        self.assertEqual('BufGen: []', str(myBg))
 
     def test_01(self):
         """Tests exceeding available slice size."""
@@ -72,9 +72,9 @@ class TestBufGen(unittest.TestCase):
         for a in myBg.gen():
             pass
             #print a
-        self.assertEquals(3, myBg.lenBuf)
+        self.assertEqual(3, myBg.lenBuf)
         self.assertRaises(BufGen.ExceptionBufGen, myBg.slice, 99)
-        self.assertEquals(3, myBg.lenBuf)
+        self.assertEqual(3, myBg.lenBuf)
 
     def tearDown(self):
         pass
@@ -95,17 +95,17 @@ class TestBufGenReplace(unittest.TestCase):
         for a in myGen:
             pass
             #print a
-        self.assertEquals(9, myBg.lenBuf)
+        self.assertEqual(9, myBg.lenBuf)
         # Now replace 'bbb' with 'BBB'
         myBg.replace(3, 3, ['B', 'B', 'B'])
         # Inspect
-        self.assertEquals(9, myBg.lenBuf)
-        self.assertEquals(['a', 'a', 'a'], myBg.slice(3))
-        self.assertEquals(6, myBg.lenBuf)
-        self.assertEquals(['B', 'B', 'B'], myBg.slice(3))
-        self.assertEquals(3, myBg.lenBuf)
-        self.assertEquals(['c', 'c', 'c'], myBg.slice(3))
-        self.assertEquals(0, myBg.lenBuf)
+        self.assertEqual(9, myBg.lenBuf)
+        self.assertEqual(['a', 'a', 'a'], myBg.slice(3))
+        self.assertEqual(6, myBg.lenBuf)
+        self.assertEqual(['B', 'B', 'B'], myBg.slice(3))
+        self.assertEqual(3, myBg.lenBuf)
+        self.assertEqual(['c', 'c', 'c'], myBg.slice(3))
+        self.assertEqual(0, myBg.lenBuf)
 
     def test_01(self):
         """TestBufGenReplace: Test simple string replacement "aaabbbccc" - > "aaaccc"."""
@@ -115,15 +115,15 @@ class TestBufGenReplace(unittest.TestCase):
         for a in myGen:
             pass
             #print a
-        self.assertEquals(9, myBg.lenBuf)
+        self.assertEqual(9, myBg.lenBuf)
         # Now replace 'bbb' with nothing
         myBg.replace(3, 3, [])
         # Inspect
-        self.assertEquals(6, myBg.lenBuf)
-        self.assertEquals(['a', 'a', 'a'], myBg.slice(3))
-        self.assertEquals(3, myBg.lenBuf)
-        self.assertEquals(['c', 'c', 'c'], myBg.slice(3))
-        self.assertEquals(0, myBg.lenBuf)
+        self.assertEqual(6, myBg.lenBuf)
+        self.assertEqual(['a', 'a', 'a'], myBg.slice(3))
+        self.assertEqual(3, myBg.lenBuf)
+        self.assertEqual(['c', 'c', 'c'], myBg.slice(3))
+        self.assertEqual(0, myBg.lenBuf)
 
     def test_02(self):
         """TestBufGenReplace: Test simple string replacement "aaaccc" - > "aaaBBBccc"."""
@@ -133,17 +133,17 @@ class TestBufGenReplace(unittest.TestCase):
         for a in myGen:
             pass
             #print a
-        self.assertEquals(6, myBg.lenBuf)
+        self.assertEqual(6, myBg.lenBuf)
         # Now insert 'BBB'
         myBg.replace(3, 0, ['B', 'B', 'B'])
         # Inspect
-        self.assertEquals(9, myBg.lenBuf)
-        self.assertEquals(['a', 'a', 'a'], myBg.slice(3))
-        self.assertEquals(6, myBg.lenBuf)
-        self.assertEquals(['B', 'B', 'B'], myBg.slice(3))
-        self.assertEquals(3, myBg.lenBuf)
-        self.assertEquals(['c', 'c', 'c'], myBg.slice(3))
-        self.assertEquals(0, myBg.lenBuf)
+        self.assertEqual(9, myBg.lenBuf)
+        self.assertEqual(['a', 'a', 'a'], myBg.slice(3))
+        self.assertEqual(6, myBg.lenBuf)
+        self.assertEqual(['B', 'B', 'B'], myBg.slice(3))
+        self.assertEqual(3, myBg.lenBuf)
+        self.assertEqual(['c', 'c', 'c'], myBg.slice(3))
+        self.assertEqual(0, myBg.lenBuf)
 
     def test_03(self):
         """TestBufGenReplace: Test simple string replacement exceeds limits."""
@@ -153,7 +153,7 @@ class TestBufGenReplace(unittest.TestCase):
         for a in myGen:
             pass
             #print a
-        self.assertEquals(6, myBg.lenBuf)
+        self.assertEqual(6, myBg.lenBuf)
         self.assertRaises(BufGen.ExceptionBufGen, myBg.replace, -1, 0, [])
         self.assertRaises(BufGen.ExceptionBufGen, myBg.replace, 0, -1, [])
         self.assertRaises(BufGen.ExceptionBufGen, myBg.replace, 6, 0, [])
@@ -172,15 +172,15 @@ class TestBufGenIndex(unittest.TestCase):
         myStrGen = StrGen('abc')
         myBg = BufGen.BufGen(next(myStrGen))
         # Index into it provoking the generator
-        self.assertEquals('a', myBg[0])
-        self.assertEquals("BufGen: ['a']", str(myBg))
-        self.assertEquals(1, myBg.lenBuf)
-        self.assertEquals('b', myBg[1])
-        self.assertEquals("BufGen: ['a', 'b']", str(myBg))
-        self.assertEquals(2, myBg.lenBuf)
-        self.assertEquals('c', myBg[2])
-        self.assertEquals("BufGen: ['a', 'b', 'c']", str(myBg))
-        self.assertEquals(3, myBg.lenBuf)
+        self.assertEqual('a', myBg[0])
+        self.assertEqual("BufGen: ['a']", str(myBg))
+        self.assertEqual(1, myBg.lenBuf)
+        self.assertEqual('b', myBg[1])
+        self.assertEqual("BufGen: ['a', 'b']", str(myBg))
+        self.assertEqual(2, myBg.lenBuf)
+        self.assertEqual('c', myBg[2])
+        self.assertEqual("BufGen: ['a', 'b', 'c']", str(myBg))
+        self.assertEqual(3, myBg.lenBuf)
 
     def test_01(self):
         """Test string buffer indexing out of range."""
@@ -196,15 +196,15 @@ class TestBufGenIndex(unittest.TestCase):
             self.fail('IndexError not raised.')
         except IndexError:
             pass
-        self.assertEquals("BufGen: ['a', 'b', 'c']", str(myBg))
-        self.assertEquals(3, myBg.lenBuf)
+        self.assertEqual("BufGen: ['a', 'b', 'c']", str(myBg))
+        self.assertEqual(3, myBg.lenBuf)
         try:
             myBg[4]
             self.fail('IndexError not raised.')
         except IndexError:
             pass
-        self.assertEquals("BufGen: ['a', 'b', 'c']", str(myBg))
-        self.assertEquals(3, myBg.lenBuf)
+        self.assertEqual("BufGen: ['a', 'b', 'c']", str(myBg))
+        self.assertEqual(3, myBg.lenBuf)
 
     def test_02(self):
         """Test string buffer use of len() fails."""
@@ -221,10 +221,10 @@ class TestBufGenIndex(unittest.TestCase):
         myStrGen = StrGen('abcdef')
         myBg = BufGen.BufGen(next(myStrGen))
         # Index into it provoking the generator
-        self.assertEquals(['a', 'b', 'c'], myBg[0:3])
-        self.assertEquals("BufGen: ['a', 'b', 'c']", str(myBg))
-        self.assertEquals(['a', 'c', 'e'], myBg[0:6:2])
-        self.assertEquals("BufGen: ['a', 'b', 'c', 'd', 'e', 'f']", str(myBg))
+        self.assertEqual(['a', 'b', 'c'], myBg[0:3])
+        self.assertEqual("BufGen: ['a', 'b', 'c']", str(myBg))
+        self.assertEqual(['a', 'c', 'e'], myBg[0:6:2])
+        self.assertEqual("BufGen: ['a', 'b', 'c', 'd', 'e', 'f']", str(myBg))
 
     def test_04(self):
         """Test simple string buffer slicing out of range."""
