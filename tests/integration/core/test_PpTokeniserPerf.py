@@ -721,7 +721,7 @@ class TestPpTokeniserOverall(TestPpTokeniserOverallBase):
 
 class TestPpTokeniserRealCode(TestPpTokeniserPerfBase):
     """Test the time taken to process a 'real' code in test/PerfRealCode."""
-    REAL_PATH = os.path.join('tests', 'integration', 'core', 'PerfRealCode')
+    REAL_PATH = os.path.join(os.path.dirname(__file__), 'PerfRealCode')
     def test_00(self):
         """Test the time taken to process a 'real' code in test/PerfRealCode."""
         for aName in os.listdir(self.REAL_PATH):

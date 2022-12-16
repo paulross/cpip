@@ -590,7 +590,10 @@ class PpLexer(object):
             while 1:
                 # Take the position just before the token
                 myFlc = self.fileLineCol
-                myTtt = next(theGen)
+                try:
+                    myTtt = next(theGen)
+                except StopIteration:
+                    return
                 # Now we evaluate the token in our context
                 # 1. Is it a (potiential) directive?
                 # 2. Otherwise is it unconditional?
@@ -932,7 +935,10 @@ class PpLexer(object):
             -- Next non-whitespace token or whitespace that contains a newline.
         """
         while 1:
-            myTtt = next(theGen)
+            try:
+                myTtt = next(theGen)
+            except StopIteration:
+                return
             if not myTtt.isWs() \
             or self._wsHandler.isBreakingWhitespace(myTtt.t):
                 return myTtt
@@ -957,7 +963,10 @@ class PpLexer(object):
             # Take the position just before we read the token to give it
             # to self._macroEnv.replace(...)
             myFlc = self.fileLineCol
-            myTtt = next(theGen)
+            try:
+                myTtt = next(theGen)
+            except StopIteration:
+                return
             if self._wsHandler.isBreakingWhitespace(myTtt.t):
                 retList.append(myTtt)
                 break
@@ -992,9 +1001,10 @@ class PpLexer(object):
         :returns: ``int`` -- Count of non-whitespace tokens.
         """
         retCount = 0
-        for aTok in theTokS:
-            if not aTok.isWs():
-                retCount += 1
+        if theTokS is not None:
+            for aTok in theTokS:
+                if not aTok.isWs():
+                    retCount += 1
         return retCount
     
     def _retListReplacedTokens(self, theTokS):
@@ -1172,7 +1182,10 @@ class PpLexer(object):
             if len(macroReplacedTokS) > 0:
                 myTtt = macroReplacedTokS.pop(0)
             else:
-                myTtt = next(theGen)
+                try:
+                    myTtt = next(theGen)
+                except StopIteration:
+                    return
                 rawTokS.append(myTtt)
             logging.debug('_retDefinedSubstitution(): %s' % myTtt)
             if self._wsHandler.isBreakingWhitespace(myTtt.t):
