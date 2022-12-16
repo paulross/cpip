@@ -2,13 +2,24 @@
 History
 =======
 
+0.9.9 Beta Release (2022-12-16)
+--------------------------------
+
+* Add support for Python3 versions. Supported versions 3.6, 3.7, 3.8, 3.9, 3.10, 3.11.
+* Remove support for Python 2.7 (although it might still work).
+
+0.9.8 Beta Release (2021-01-28)
+--------------------------------
+
+* Minor fixes.
+
 0.9.7 Beta Release (2017-10-04)
 --------------------------------
 
 * Minor fixes.
 * Performance optimisations.
 * Builds the CPython source tree in 5 hours with 2 CPUs.
-* DOcumentation improvements.
+* Documentation improvements.
 
 0.9.5 Beta Release (2017-10-03)
 --------------------------------

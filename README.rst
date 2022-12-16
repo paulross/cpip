@@ -9,7 +9,7 @@ Features
 * Conformant C/C++ preprocessor.
 * Gives programatic access to every preprocessing token and the state of the preprocessor at any point during preprocessing.
 * Top level tools such as ``CPIPMain.py`` can generate preprocessor visualisations from the command line.
-* Requires only Python 2.7 or 3.3+
+* Requires only Python 3.6+
 * Fully documented: https://cpip.readthedocs.io.
 * Free software: GNU General Public License v2
 
