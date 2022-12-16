@@ -123,7 +123,9 @@ class MaxMunchGen(object):
                     if self._isExcl:
                         break 
             if mySize == 0:
-                raise StopIteration
+                # raise StopIteration
+                # break
+                return
             #print 'TRACE:', self._bufGen
             # Do any replacement necessary
             if myRepl is not None:
