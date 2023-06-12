@@ -97,8 +97,8 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
                 else:
                     #self._fileLocator.substString(1, 8)
                     r = '\\U%08X' % myOrd
-        except StopIteration:
-            pass
+        except (StopIteration, RuntimeError):
+            return
         return i, 'ucn', r
     
     def trigraph(self, theGen):
@@ -112,8 +112,8 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
                     i = self.TRIGRAPH_SIZE
                 except KeyError:
                     pass
-        except StopIteration:
-            pass
+        except (StopIteration, RuntimeError):
+            return
         #print 'TRACE:', i, 'trigraph', r
         return i, 'trigraph', r
     

@@ -84,7 +84,10 @@ class BufGen(object):
         i = 0
         while 1:
             if len(self._buf) <= i:
-                self._buf.append(next(self._gen))
+                try:
+                    self._buf.append(next(self._gen))
+                except (StopIteration, RuntimeError):
+                    return
             yield self._buf[i]
             i +=1
     

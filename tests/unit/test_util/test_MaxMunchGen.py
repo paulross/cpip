@@ -370,8 +370,8 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
                 else:
                     self._fileLocator.substString(1, 8)
                     r = '\\U%08X' % myOrd
-        except StopIteration:
-            pass
+        except (StopIteration, RuntimeError):
+            return
         return i, 'ucn', r
     def trigraph(self, theGen):
         i = 0
@@ -384,8 +384,8 @@ class TestMaximalMunchTrigraph(unittest.TestCase):
                     i = self.TRIGRAPH_SIZE
                 except KeyError:
                     pass
-        except StopIteration:
-            pass
+        except (StopIteration, RuntimeError):
+            return
         return i, 'trigraph', r
     
     def setUp(self):
