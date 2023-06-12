@@ -339,7 +339,7 @@ USAGE
         help="Path to source directory. WARNING: This will be rewritten in-place."
     )
     args = parser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     inPath = args.path[0]
     log_level = args.loglevel
@@ -369,7 +369,7 @@ USAGE
     else:
         logging.fatal('%s is neither a file or a directory!' % inPath)
         return 1
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0

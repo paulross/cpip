@@ -307,93 +307,93 @@ class TestStrTreePerf(unittest.TestCase):
         print('Loop count: %d' % count)
         FW = 32
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('do'):
                 cntrFound += 1
-        #sys.stderr.write('has("do"):     %8d, Time: %8.3f (s)s ... ' % (count, time.clock() - cStart))
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("do")', time.clock() - cStart))
+        #sys.stderr.write('has("do"):     %8d, Time: %8.3f (s)s ... ' % (count, time.perf_counter() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("do")', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'do' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in set:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'do' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in list:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('double'):
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("double"):', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("double"):', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'double' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in set:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'double' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in list:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         #'reinterpret_cast'
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('double'):
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("reinterpret_cast"):', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("reinterpret_cast"):', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'reinterpret_cast' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in set:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'reinterpret_cast' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in list:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         #'strubbish'
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('strubbish'):
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("strubbish"):', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("strubbish"):', time.perf_counter() - cStart))
         self.assertEqual(0, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'strubbish' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in set:', time.perf_counter() - cStart))
         self.assertEqual(0, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'strubbish' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in list:', time.perf_counter() - cStart))
         self.assertEqual(0, cntrFound)
 
 class NullClass(unittest.TestCase):
@@ -461,9 +461,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

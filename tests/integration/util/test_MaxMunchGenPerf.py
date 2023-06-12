@@ -198,7 +198,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         return i, 'cxxComment', r
 
     def _resetStart(self):
-        self._timStart = time.clock()
+        self._timStart = time.perf_counter()
         
     def setUp(self):
         self._resetStart()
@@ -209,7 +209,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         pass
 
     def tearDown(self):
-        myTime = time.clock() - self._timStart
+        myTime = time.perf_counter() - self._timStart
         sys.stderr.write('Bytes: %8d, time: %8.3f, rate: %8.1f kb/s ... ' \
                          % (self._size, myTime, (self._size / (myTime*1024))))
     
@@ -624,9 +624,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

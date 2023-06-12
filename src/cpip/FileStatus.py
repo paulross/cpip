@@ -201,7 +201,7 @@ Counts files and sizes."""
     optParser.add_option("-r", action="store_true", dest="recursive", default=False, 
                       help="Recursive. [default: %default]")
     opts, args = optParser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     #print opts
     # Initialise logging etc.
     logging.basicConfig(level=opts.loglevel,
@@ -215,7 +215,7 @@ Counts files and sizes."""
     # Your code here
     myFis = FileInfoSet(args[0], glob=opts.glob.split(), isRecursive=opts.recursive)
     myFis.write()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0

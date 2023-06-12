@@ -173,7 +173,7 @@ Preprocess the files and lists included files."""
                       help="""Add macro defintions of the form name<=defintion>.
                       These are introduced into the environment before any pre-include. [default: %default]""")
     opts, args = optParser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     logging.basicConfig(level=opts.loglevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -205,7 +205,7 @@ Preprocess the files and lists included files."""
         optParser.print_help()
         optParser.error("No arguments!")
         return 1
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0
@@ -213,4 +213,3 @@ Preprocess the files and lists included files."""
 if __name__ == '__main__':
     #multiprocessing.freeze_support()
     sys.exit(main())
-    

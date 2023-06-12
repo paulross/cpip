@@ -280,7 +280,7 @@ Converts a source code file to HTML in the output directory."""
             help="Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: %default]"
         )
     opts, args = optParser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     logging.basicConfig(level=opts.loglevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -291,7 +291,7 @@ Converts a source code file to HTML in the output directory."""
         return 1
     TokenCss.writeCssToDir(args[1])
     ItuToHtml(args[0], args[1])
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0

@@ -109,7 +109,7 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     siz = 1
     for s in range(8):
         print('Size: %8d' % siz)
@@ -123,13 +123,13 @@ def main():
                   gen_06,
                   ):
             myF = io.StringIO(u' ' * siz)
-            genClkStart = time.clock()
+            genClkStart = time.perf_counter()
             for b in func(myF):
                 pass
-            genClkExec = time.clock() - genClkStart
+            genClkExec = time.perf_counter() - genClkStart
             print('  %s  %10.3f (s)  %10.3f (kb/s)' % (func, genClkExec, siz/(1024*genClkExec)))
         siz *= 10
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

@@ -54,12 +54,12 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
     def runTokGen(self, thePpTok, incWs=True):
         """causes theLex to preprocess and returns:
         (tokens, time_in_seconds_as_a_float)."""
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         if incWs:
             myToks = [t for t in thePpTok.next()]
         else:
             myToks = [t for t in thePpTok.next() if not t.isWs()]
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         myCntr = len(myToks)
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
         return myToks, myTime
@@ -68,17 +68,17 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         """causes theLex to preprocess and returns:
         (number_of_tokens, time_in_seconds_as_a_float)."""
         myCntr = 0
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         for _t in thePpTok.next():
             myCntr += 1
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         sys.stderr.write('Count: %8d, Rate: %8.1f tokens/s ... ' % (myCntr, myCntr / myTime))
         return myCntr, myTime
 
     def run_lexPhases_0(self, thePpTok):
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         myLines = thePpTok.lexPhases_0()
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         c = 0
         for aLine in myLines:
             c += len(aLine)
@@ -88,9 +88,9 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         
     def run_lexPhases_01(self, thePpTok):
         myLines_0 = thePpTok.lexPhases_0()
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         thePpTok.lexPhases_1(myLines_0)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         c = 0
         for aLine in myLines_0:
             c += len(aLine)
@@ -99,10 +99,10 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
     
     def run__convertToLexCharset(self, thePpTok):
         """Part of phase 1."""
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         myLines_0 = thePpTok.lexPhases_0()
         thePpTok._convertToLexCharset(myLines_0)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         c = 0
         for aLine in myLines_0:
             c += len(aLine)
@@ -111,11 +111,11 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
 
     def run__translateTrigraphs(self, thePpTok):
         """Part of phase 1."""
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         myLines_0 = thePpTok.lexPhases_0()
         thePpTok._convertToLexCharset(myLines_0)
         thePpTok._translateTrigraphs(myLines_0)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         c = 0
         for aLine in myLines_0:
             c += len(aLine)
@@ -123,12 +123,12 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
         return myLines_0, myTime
 
     def run_lexPhases_012(self, thePpTok):
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         myLines_0 = thePpTok.lexPhases_0()
         thePpTok.lexPhases_1(myLines_0)
         #assert(0)
         #thePpTok.genLexPhase1(myLines_0)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         c = 0
         for aLine in myLines_0:
             c += len(aLine)
@@ -140,11 +140,11 @@ class TestPpTokeniserPerfBase(unittest.TestCase):
 #        """Sends the string to cpp and rturns
 #        (number_of_bytes, time_in_seconds_as_a_float)."""
 #        myFobj = StringIO.StringIO(theStr)
-#        myTimStart = time.clock()
+#        myTimStart = time.perf_counter()
 #        c, s = self.sysCallCpp(myFobj, thePreIncS=None)
 #        print 'TRACE:', c, s
 #        self.assertEqual(0, c)
-#        myTime = time.clock() - myTimStart
+#        myTime = time.perf_counter() - myTimStart
 #        myCntr = len(s)
 #        sys.stderr.write('Bytes: %8d, Rate: %8.1f bytes/s ... ' % (myCntr, myCntr / myTime))
 #        return myCntr, myTime
@@ -598,11 +598,11 @@ class TestPpTokeniserIsInCharSet(TestPpTokeniserPerfBase):
     def test_00(self):
         """TestPpTokeniserIsInCharSet: self._txt with using character set           ."""
         mySet = set(self._txtChrSet)
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         for i in range(self.CNTR_LOOP):
             for aChr in self._txt:
                 myBool = aChr in mySet
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         sys.stderr.write('Rate: %8.1f kchars/s ... ' % (i * 256 / (myTime*1024)))
 
     def test_01(self):
@@ -617,30 +617,30 @@ class TestPpTokeniserIsInCharSet(TestPpTokeniserPerfBase):
             or (o > 31 and o < 36):
                 return True
             return False
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         for i in range(self.CNTR_LOOP):
             for aChr in self._txt:
                 myBool = isInCharSet(aChr)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         sys.stderr.write('Rate: %8.1f kchars/s ... ' % (i * 256 / (myTime*1024)))
 
     def test_02(self):
         """TestPpTokeniserIsInCharSet: self._txt with using self.isInCharSet        ."""
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         for i in range(self.CNTR_LOOP):
             for aChr in self._txt:
                 myBool = self.isInCharSet(aChr)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         sys.stderr.write('Rate: %8.1f kchars/s ... ' % (i * 256 / (myTime*1024)))
 
     def test_10(self):
         """TestPpTokeniserIsInCharSet: self._txtChrSet with using character set     ."""
         mySet = set(self._txtChrSet)
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         for i in range(self.CNTR_LOOP):
             for aChr in self._txtChrSet:
                 myBool = aChr in mySet
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         sys.stderr.write('Rate: %8.1f kchars/s ... ' % (i * 256 / (myTime*1024)))
 
     def test_11(self):
@@ -655,20 +655,20 @@ class TestPpTokeniserIsInCharSet(TestPpTokeniserPerfBase):
             or (o > 31 and o < 36):
                 return True
             return False
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         for i in range(self.CNTR_LOOP):
             for aChr in self._txtChrSet:
                 myBool = isInCharSet(aChr)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         sys.stderr.write('Rate: %8.1f kchars/s ... ' % (i * 256 / (myTime*1024)))
 
     def test_12(self):
         """TestPpTokeniserIsInCharSet: self._txtChrSet with using self.isInCharSet()."""
-        myTimStart = time.clock()
+        myTimStart = time.perf_counter()
         for i in range(self.CNTR_LOOP):
             for aChr in self._txtChrSet:
                 myBool = self.isInCharSet(aChr)
-        myTime = time.clock() - myTimStart
+        myTime = time.perf_counter() - myTimStart
         sys.stderr.write('Rate: %8.1f kchars/s ... ' % (i * 256 / (myTime*1024)))
 
 class TestPpTokeniserOverallBase(TestPpTokeniserPerfBase):
@@ -796,9 +796,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 
