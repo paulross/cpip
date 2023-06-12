@@ -145,4 +145,3 @@ class MaxMunchGen(object):
                     yield self._bufGen.slice(mySize), myKind
                     #assert(0), 'This works but it needs to be done by the caller'
                     #yield ''.join(self._bufGen.slice(mySize)), myKind
-        
