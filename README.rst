@@ -29,6 +29,34 @@ This will give you access to the command line entry point ``cpipmain``, to check
     (CPIP) $ cpipmain --help
     ...
 
+You can check CPIP on some demonstration C code, for example, from the CPIP directory there is a ``demo`` directory.
+You can process this thus:
+
+.. code-block:: console
+
+    (CPIP) $ cpipmain -l20 -j1 -o demo/output -J demo/sys/ -I demo/usr/ demo/src/main.cpp
+    2017-11-17 10:29:16,370 INFO     preprocessFileToOutput(): demo/src/main.cpp
+    2017-11-17 10:29:16,371 INFO     TU in HTML:
+    2017-11-17 10:29:16,372 INFO       tmp/output_normal_02/main.cpp.html
+    2017-11-17 10:29:16,391 INFO     preprocessFileToOutput(): Processing TU done.
+    2017-11-17 10:29:16,391 INFO     Macro history to:
+    2017-11-17 10:29:16,391 INFO       tmp/output_normal_02
+    2017-11-17 10:29:16,400 INFO     Include graph (SVG) to:
+    2017-11-17 10:29:16,401 INFO       tmp/output_normal_02/main.cpp.include.svg
+    2017-11-17 10:29:16,423 INFO     Writing include graph (TEXT) to:
+    2017-11-17 10:29:16,423 INFO       tmp/output_normal_02/main.cpp.include.svg
+    2017-11-17 10:29:16,424 INFO     Conditional compilation graph in HTML:
+    2017-11-17 10:29:16,424 INFO       tmp/output_normal_02/main.cpp.ccg.html
+    2017-11-17 10:29:16,431 INFO     Done: demo/src/main.cpp
+    2017-11-17 10:29:16,432 INFO     ITU in HTML: .../main.cpp
+    2017-11-17 10:29:16,448 INFO     ITU in HTML: .../system.h
+    2017-11-17 10:29:16,453 INFO     ITU in HTML: .../user.h
+    2017-11-17 10:29:16,462 INFO     preprocessFileToOutput(): demo/src/main.cpp DONE
+    CPU time =    0.087 (S)
+    Bye, bye!
+
+The result will be in ``demo/output/index.html``.
+
 There are `other installation methods <https://github.com/paulross/cpip/blob/master/docs/doc_src/installation.rst>`_ including directly from source.
 
 Visualising Preprocessing
