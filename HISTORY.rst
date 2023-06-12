@@ -1,10 +1,10 @@
-=======
 History
 =======
 
 0.9.9 Beta Release (2022-12-16)
 --------------------------------
 
+* Add strip_comments.py
 * Add support for Python3 versions. Supported versions 3.6, 3.7, 3.8, 3.9, 3.10, 3.11.
 * Remove support for Python 2.7 (although it might still work).
 

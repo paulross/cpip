@@ -73,15 +73,15 @@ create_bdist_wheel() {
     python -VV
     echo "---> Installing everything via pip:"
     pip install -U pip setuptools wheel
-    pip install -r requirements.txt
+    pip install -r requirements_dev.txt
     echo "---> Result of pip install:"
     pip list
     echo "---> Running python setup.py develop:"
     MACOSX_DEPLOYMENT_TARGET=10.9 CC=clang CXX=clang++ python setup.py develop
     echo "---> Running tests:"
     # Fail fast with -x
-    # For some reason we need -s as our redirection of stdout is interfering with/being interfered by pytest.
-    pytest -s -x tests
+    pytest -x tests
+    echo "---> All tests pass for Python version ${version}"
     echo "---> Running setup for bdist_wheel:"
     python setup.py bdist_wheel
   done
@@ -137,6 +137,6 @@ create_virtual_environments
 create_bdist_wheel
 create_sdist
 report_all_versions_and_setups
+pip install twine
 show_results_of_dist
-#pip install twine
 echo "===> All done"
