@@ -11,7 +11,7 @@ set -o errexit  # abort on nonzero exitstatus
 set -o nounset  # abort on unbound variable
 set -o pipefail # don't hide errors within pipes
 
-PYTHON_VERSIONS=('3.6'  '3.7' '3.8' '3.9' '3.10' '3.11')
+PYTHON_VERSIONS=('3.7' '3.8' '3.9' '3.10' '3.11')
 PYTHON_VENV_ROOT="${HOME}/pyenvs"
 # Used for venvs
 PROJECT_NAME="cpip"
