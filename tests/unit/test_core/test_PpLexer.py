@@ -1388,14 +1388,14 @@ Content of: system, include, spam.h
 #        print('FileIncludeGraph:')
 #        print(myLexer.fileIncludeGraphRoot)
         expGraph = """src/spam.c [0, 0]:  True "" ""
-000001: #include usr\spam.h
-  usr\spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
-000002: #include usr\inc\spam.h
-  usr\inc\spam.h [15, 10]:  True "" "['"inc/spam.h"', 'CP=None', 'usr=usr']"
-000003: #include sys\spam.h
-  sys\spam.h [12, 8]:  True "" "['<spam.h>', 'sys=sys']"
-000004: #include sys\inc\spam.h
-  sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+000001: #include usr\\spam.h
+  usr\\spam.h [12, 8]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+000002: #include usr\\inc\\spam.h
+  usr\\inc\\spam.h [15, 10]:  True "" "['"inc/spam.h"', 'CP=None', 'usr=usr']"
+000003: #include sys\\spam.h
+  sys\\spam.h [12, 8]:  True "" "['<spam.h>', 'sys=sys']"
+000004: #include sys\\inc\\spam.h
+  sys\\inc\\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
 class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
@@ -1454,8 +1454,8 @@ class TestIncludeHandler_UsrSys_Conditional(TestIncludeHandlerBase):
         myLexer.finalise()
         expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
-000002: #include usr\spam.h
-  usr\spam.h [12, 8]:  True "INC == 0" "['"spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
+000002: #include usr\\spam.h
+  usr\\spam.h [12, 8]:  True "INC == 0" "['"spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
@@ -1483,8 +1483,8 @@ src/spam.c [0, 0]:  True "" ""
         #print myLexer.fileIncludeGraphRoot
         expGraph = """Unnamed Pre-include [9, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
-000004: #include usr\inc\spam.h
-  usr\inc\spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
+000004: #include usr\\inc\\spam.h
+  usr\\inc\\spam.h [15, 10]:  True "(!(INC == 0) && INC == 1)" "['"inc/spam.h"', 'CP=None', 'usr=usr']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def testSimpleInclude_02(self):
@@ -1512,8 +1512,8 @@ src/spam.c [0, 0]:  True "" ""
         #print myLexer.fileIncludeGraphRoot
         expGraph = """Unnamed Pre-include [11, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
-000006: #include sys\spam.h
-  sys\spam.h [12, 8]:  True "(!(INC == 0) && !(INC == 1) && INC == 2)" "['<spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+000006: #include sys\\spam.h
+  sys\\spam.h [12, 8]:  True "(!(INC == 0) && !(INC == 1) && INC == 2)" "['<spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     def testSimpleInclude_03(self):
@@ -1538,8 +1538,8 @@ src/spam.c [0, 0]:  True "" ""
         #print myLexer.fileIncludeGraphRoot
         expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
-000008: #include sys\inc\spam.h
-  sys\inc\spam.h [15, 10]:  True "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+000008: #include sys\\inc\\spam.h
+  sys\\inc\\spam.h [15, 10]:  True "(!(INC == 0) && !(INC == 1) && !(INC == 2) && INC == 3)" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
 class TestIncludeHandler_PreInclude_Includes(TestIncludeHandlerBase):
@@ -1597,8 +1597,8 @@ class TestIncludeHandler_PreInclude_Includes(TestIncludeHandlerBase):
         myLexer.finalise()
         expGraph = """Unnamed Pre-include [7, 4]:  True "" ""
 src/spam.c [0, 0]:  True "" ""
-000002: #include usr\spam.h
-        usr\spam.h [12, 8]:  True "INC == 0" "['"spam.h"', 'CP=None', 'usr=usr']\""""
+000002: #include usr\\spam.h
+        usr\\spam.h [12, 8]:  True "INC == 0" "['"spam.h"', 'CP=None', 'usr=usr']\""""
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
@@ -1798,14 +1798,14 @@ class TestIncludeHandler_UsrSys_MultipleDepth(TestIncludeHandlerBase):
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
         expGraph = """src/spam.c [0, 0]:  True "" ""
-000001: #include usr\spam.h
-  usr\spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
-  000001: #include usr\inc\spam.h
-    usr\inc\spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
-    000001: #include sys\spam.h
-      sys\spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
-      000001: #include sys\inc\spam.h
-        sys\inc\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
+000001: #include usr\\spam.h
+  usr\\spam.h [0, 0]:  True "" "['"spam.h"', 'CP=None', 'usr=usr']"
+  000001: #include usr\\inc\\spam.h
+    usr\\inc\\spam.h [0, 0]:  True "" "['"inc/spam.h"', 'CP=usr']"
+    000001: #include sys\\spam.h
+      sys\\spam.h [0, 0]:  True "" "['<spam.h>', 'sys=sys']"
+      000001: #include sys\\inc\\spam.h
+        sys\\inc\\spam.h [15, 10]:  True "" "['<inc/spam.h>', 'sys=sys']\"""".replace('\\', os.sep)
         self.assertEqual(expGraph, str(myLexer.fileIncludeGraphRoot))
 
     @pytest.mark.xfail(reason='Need to fix PpLexer re-entrancy.', strict=True)
@@ -4861,7 +4861,7 @@ EMPTY(x) #define NOT_EMPTY
 
 class TestPpLexerMacroLineContinuation(TestPpLexer):
     """Tests macro locations with line continuation.
-    S:\epoc32\include\platform\cpudefs.h line 352
+    S:\\epoc32\\include\\platform\\cpudefs.h line 352
     """
     def test_00(self):
         """TestPpLexerMacroLineContinuation.test_00() """
