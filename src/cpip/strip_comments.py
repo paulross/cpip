@@ -1,3 +1,16 @@
+"""Minimal usage:
+
+from cpip.core import ItuToTokens
+from cpip.core import PpTokeniser
+
+with open(input_file_path, 'rb') as file:
+    itu = ItuToTokens.ItuToTokens(file)
+    itu.translatePhases123()
+    for text, pp_type in itu.multiPassString.genWords():
+        if pp_type not in PpTokeniser.COMMENT_TYPES:
+            print(text)
+"""
+
 import argparse
 import io
 import logging
@@ -18,10 +31,10 @@ logger = logging.getLogger(__file__)
 
 
 def translate_phases_123_file(input_file: typing.TextIO, placeholder_comment: str) -> bytes:
-    ith = ItuToTokens.ItuToTokens(input_file)
-    ith.translatePhases123()
+    itu = ItuToTokens.ItuToTokens(input_file)
+    itu.translatePhases123()
     words = []
-    for text, pp_type in ith.multiPassString.genWords():
+    for text, pp_type in itu.multiPassString.genWords():
         if pp_type not in PpTokeniser.COMMENT_TYPES:
             words.append(bytes(text, 'ascii'))
         elif placeholder_comment:
@@ -35,14 +48,14 @@ def translate_phases_123_path(input_str: str, placeholder_comment: str) -> bytes
         return translate_phases_123_file(file, placeholder_comment)
 
 
-def write_bytes(out_path: str, out_bytes: bytes) -> None:
+def write_bytes(out_bytes: bytes, out_path: str) -> None:
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     with open(out_path, 'wb') as output_file:
         output_file.write(out_bytes)
 
 
-def process_dir_to_output(in_dir: str, out_dir: str, glob_match: str, recursive: bool, clang_format: bool,
-                          prefix_bytes: bytes, placeholder_comment: str) -> int:
+def process_dir_to_output(in_dir: str, glob_match: str, recursive: bool, clang_format: bool,
+                          prefix_bytes: bytes, placeholder_comment: str, out_dir: str) -> int:
     """Process all the files in a directory. Returns a count of the files."""
     assert os.path.isdir(in_dir)
     logger.info('Processing %s to %s', in_dir, out_dir)
@@ -55,7 +68,7 @@ def process_dir_to_output(in_dir: str, out_dir: str, glob_match: str, recursive:
             if clang_format:
                 output_bytes = run_clang_format(output_bytes)
             logger.info('Writing %s', t.filePathOut)
-            write_bytes(t.filePathOut, output_bytes)
+            write_bytes(output_bytes, t.filePathOut)
         else:
             output_bytes = prefix_bytes + translate_phases_123_path(t, placeholder_comment)
             if clang_format:
@@ -87,23 +100,48 @@ def pack_lines(bytes_in: bytes) -> bytes:
 
 def main():
     program_version = "v%s" % __version__
-    program_shortdesc = 'strip_comments.py - Strip comments from a file or the files in a directory.'
+    program_shortdesc = 'strip_comments.py - Strip C/C++ comments from a file or a directory.'
     program_license = """%s
       Created by Paul Ross on %s.
-      Copyright 2008-2017. All rights reserved.
+      Copyright 2023-2023. All rights reserved.
       Version: %s
       Licensed under GPL 2.0
-    USAGE
     """ % (program_shortdesc, str(__date__), program_version)
     parser = argparse.ArgumentParser(description=program_license,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--clang-format", action="store_true", dest="clang_format", default=False,
-                        help="Run clang-format on the result. [default: %(default)s]")
-    parser.add_argument("--placeholder-comment", type=str, default='',
-                        help="Replace a comment with a placeholder comment, for example --placeholder-comment='/* */'."
-                             " [default: %(default)s]")
+    parser.add_argument(dest="path", nargs=1, help="Path to source file or directory.")
+    parser.add_argument("-r", "--recursive", action="store_true", dest="recursive",
+                        default=False,
+                        help="Recursively process directories. [default: %(default)s]")
+    parser.add_argument("-o", "--output",
+                        type=str,
+                        dest="output",
+                        default="",
+                        help=(
+                            "Output file or directory."
+                            " If this resolves to the input path then the existing files will be overwritten."
+                            " If absent the output will be written to stdout."
+                            " [default: %(default)s]"
+                        ))
     parser.add_argument("-g", "--glob", action='append', default=[],
                         help="Pattern match to use when processing directories. [default: %(default)s] i.e. every file.")
+    parser.add_argument("--prefix",
+                        type=str,
+                        default="",
+                        help=(
+                            "Insert this file (such as a licence file) at the beginning of each output file."
+                            " [default: %(default)s]"
+                        )
+                        )
+    parser.add_argument("--placeholder-comment", type=str, default='',
+                        help=(
+                            "Replace a comment with a placeholder comment."
+                            "For example --placeholder-comment='/* REDACTED */'."
+                            " [default: %(default)s]"
+                        )
+                        )
+    parser.add_argument("--clang-format", action="store_true", dest="clang_format", default=False,
+                        help="Run clang-format on the result. [default: %(default)s]")
     parser.add_argument(
         "-l", "--loglevel",
         type=int,
@@ -112,22 +150,8 @@ def main():
         help="Log Level (debug=10, info=20, warning=30, error=40, critical=50)" \
              " [default: %(default)s]"
     )
-    parser.add_argument("-r", "--recursive", action="store_true", dest="recursive",
-                        default=False,
-                        help="Recursively process directories. [default: %(default)s]")
-    parser.add_argument("-o", "--output",
-                        type=str,
-                        dest="output",
-                        default="",
-                        help="Output directory. [default: %(default)s]")
-    parser.add_argument("--prefix",
-                        type=str,
-                        default="",
-                        help="Insert this file at the beginning of each output file. [default: %(default)s]")
-    parser.add_argument(dest="path", nargs=1, help="Path to source file or directory.")
     args = parser.parse_args()
     clk_start = time.perf_counter()
-    in_path = args.path[0]
     # Initialise logging etc.
     logging.basicConfig(level=args.loglevel,
                         format='%(asctime)s %(levelname)-8s %(message)s',
@@ -139,23 +163,23 @@ def main():
     else:
         prefix_bytes = b''
     count_file = 0
-    if os.path.isfile(in_path):
+    if os.path.isfile(args.path[0]):
         # Single file
-        result = prefix_bytes + translate_phases_123_path(sys.argv[1], args.placeholder_comment)
+        result = prefix_bytes + translate_phases_123_path(args.path[0], args.placeholder_comment)
         if args.clang_format:
             # result = pack_lines(result)
             result = run_clang_format(result)
         if args.output == '':
+            # Output to stdout.
             print(result.decode('ascii'))
         else:
-            file_path_out = os.path.abspath(os.path.join(args.output, os.path.basename(in_path)))
-            write_bytes(file_path_out, result)
+            write_bytes(result, args.output)
         count_file = 1
-    elif os.path.isdir(in_path):
-        count_file = process_dir_to_output(in_path, args.output, args.glob, args.recursive, args.clang_format,
-                                           prefix_bytes, args.placeholder_comment)
+    elif os.path.isdir(args.path[0]):
+        count_file = process_dir_to_output(args.path[0], args.glob, args.recursive, args.clang_format,
+                                           prefix_bytes, args.placeholder_comment, args.output)
     else:
-        logger.error('Can not understand path %s', in_path)
+        logger.error('Can not understand path %s', args.path[0])
     print(f'Processed {count_file} files in {time.perf_counter() - clk_start:.3} (s)')
     print('Bye, bye!')
     return 0
