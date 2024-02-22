@@ -5867,7 +5867,7 @@ BAR
 class TestFromCppInternalsTokenspacing(TestPpLexer):
     """Misc. tests on token spacing. This was originally (and wrongly in
     TestMacroEnv)."""
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
+    # @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_01(self):
         """TestFromCppInternalsTokenspacing.test_01 - Token spacing torture test #define PLUS +"""
         ##define PLUS +
@@ -5907,7 +5907,7 @@ class TestFromCppInternalsTokenspacing(TestPpLexer):
         self.assertEqual(self.stringToTokens(result), expTokS)
 
     # test_09 and test_10 have been moved from TestMacroEnv.py and widely modified
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
+    # @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_09(self):
         """TestFromCppInternalsTokenspacing.test_09 - Token spacing torture test #define PLUS +"""
         ##define f(x) =x=
@@ -5951,7 +5951,7 @@ f(=)
 #         self._printDiff(self.stringToTokens(result), expTokS)
 #         self.assertEqual(self.stringToTokens(result), expTokS)
 
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
+    # @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_10(self):
         """TestFromCppInternalsTokenspacing.test_10 - Token spacing torture test #define PLUS + only"""
         ##define PLUS +
@@ -5988,7 +5988,7 @@ f(=)
         self._printDiff(self.stringToTokens(result), expTokS)
         self.assertEqual(self.stringToTokens(result), expTokS)
 
-    @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
+    # @pytest.mark.xfail(reason='Need to fix accidental token pasting.', strict=True)
     def test_11(self):
         """TestFromCppInternalsTokenspacing.test_11 - Token spacing torture test mixed object/function."""
         ##define EQ =

@@ -1317,7 +1317,7 @@ class PpDefine(object):
                     # Otherwise ignore whitespace after '##'
                 else:
                     # Normal, no '#' or '##' involved
-#                     _avoidTokenPasting(retReplList, myTtt)
+                    _avoidTokenPasting(retReplList, myTtt)
                     retReplList.append(myTtt)
         #assert(not flagStringize), 'Trailing # has crept through the constructor'
         #assert(not flagConcatSeen), 'Trailing ## has crept through the constructor'
