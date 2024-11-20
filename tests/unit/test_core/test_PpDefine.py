@@ -50,7 +50,7 @@ except ImportError:
 
 # Define unit test classes
 
-"""Using cpp.exe to help with test cases:
+r"""Using cpp.exe to help with test cases:
 
 Suppose you have a file with the expected expansion in a comment thus:
 #define x 2

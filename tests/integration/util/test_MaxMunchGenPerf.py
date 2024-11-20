@@ -262,7 +262,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
             yield ''.join(aVal[0])
  
     def genPhase2(self):
-        """Phase 2. Each instance of a backslash character (\) immediately followed by
+        r"""Phase 2. Each instance of a backslash character (\) immediately followed by
         a new-line character is deleted, splicing physical source lines to form
         logical source lines. Only the last backslash on any physical source line
         shall be eligible for being part of such a splice. A source file that is

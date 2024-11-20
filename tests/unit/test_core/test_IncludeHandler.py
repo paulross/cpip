@@ -186,7 +186,7 @@ class TestCppIncludeLookup(unittest.TestCase):
 class TestCppIncludeLookupVanilla(TestCppIncludeLookup):
     """Tests the CppIncludeStd by calling a general function."""
     # Simulate the following
-    """#include <spam.h>
+    r"""#include <spam.h>
 #include <inc\spam.h>
 #include "spam.h"
 #include "inc\spam.h"

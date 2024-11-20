@@ -162,7 +162,7 @@ VA(1,,3)
         myLexer.finalise()
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
-        expGraph = """src/spam.c [20, 10]:  True ""
+        expGraph = r"""src/spam.c [20, 10]:  True ""
 000002: #include usr\spam.h
         usr\spam.h [0, 0]:  True ""
         000001: #include usr\inc\spam.h

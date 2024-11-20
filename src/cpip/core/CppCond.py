@@ -20,7 +20,7 @@
 
 """Provides a state stack of booleans to facilitate conditional compilation as:
 :title-reference:`ISO/IEC 9899:1999(E) section 6.10.1` ('C') and
-:title-reference:`ISO/IEC 14882:1998(E) section 16.1 ('C++') \[cpp.cond\]`
+:title-reference:`ISO/IEC 14882:1998(E) section 16.1 ('C++') [cpp.cond]`
 
 This does not interpret any semantics of either standard but instead provides
 a state class that callers that do interpret the language semantics can use.

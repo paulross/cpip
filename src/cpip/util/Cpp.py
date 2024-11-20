@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 def invokeCppForPlatformMacros(*args):
-    """Invoke the pre-processor as a sub-process with \*args and return a list of macro
+    r"""Invoke the pre-processor as a sub-process with \*args and return a list of macro
     definition strings.
     
     By default the preprocessor is ``cpp`` but this is overridden if ``$CPP`` is set in

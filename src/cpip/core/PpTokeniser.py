@@ -18,7 +18,7 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
-"""Performs translation phases 0, 1, 2, 3 on C/C++ source code.
+r"""Performs translation phases 0, 1, 2, 3 on C/C++ source code.
 
 Translation phases from :title-reference:`ISO/IEC 9899:1999 (E)`:
 
@@ -859,7 +859,7 @@ class PpTokeniser(object):
                 # with the iteration...
 
     def genLexPptokenAndSeqWs(self, theCharS):
-        """Generates a sequence of PpToken objects. Either:
+        r"""Generates a sequence of PpToken objects. Either:
         
             * a sequence of whitespace (comments are replaces with a single whitespace).
             * a pre-processing token.

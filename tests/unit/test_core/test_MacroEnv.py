@@ -18,7 +18,7 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
-"""Test the MacroEnv module.
+r"""Test the MacroEnv module.
 
 Using cpp.exe to help with test cases:
 
