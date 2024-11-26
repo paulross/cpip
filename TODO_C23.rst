@@ -1,18 +1,55 @@
+
+==============
 Supporting C23
 ==============
 
-The C23 standard makes several changes to to preprocessor.
-
-A summary is here on
+The C23 standard makes several changes to to preprocessor,
+a summary is here on
 `Wikipedia <https://en.wikipedia.org/wiki/C23_(C_standard_revision)#Preprocessor>`_
-
-The C23 standard can be found in as open access draft form
+The C23 standard can be found as open access draft from
 `www.open-std.org <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3220.pdf>`_
 
-This document describes the impact on CPIP.
+This document describes the impact on CPIP version 0.9.9.
+
+
+General
+====================
+
+CPIP is based on C99 (ISO/IEC 9899:1999 (E)) that is invariant.
+
+The move to C23 suggests that CPIP should have a global configuration such that C23 is supported, and perhaps at a more
+granular level, such as:
+
+.. code-block::  python
+
+    {
+        'c23' : {
+            'N2940'  : ('Trigraphs', True),
+            'N3017'  : ('#embed', False),
+        }
+    }
+
+
+Removing Trigraphs
+==================
+
+The proposal to remove Trigraphs is here, with examples,
+`WG14-N2940 (archived) <https://web.archive.org/web/20221026005747/https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2940.pdf>`_.
+
+Also relevant: `N2701 <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2701.htm>`_ and
+`N4086 <https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4086.html>`_.
+
+Solution and Impact
+^^^^^^^^^^^^^^^^^^^^^^
+
+Trigraphs are processed here: ``cpip.core.ItuToTokens.ItuToTokens._translatePhase_1()`` and
+``cpip.core.PpTokeniser.PpTokeniser._translateTrigraphs()``
+
+This seems like a candidate for a configurable parser when the PpTokeniser takes a configuration option (or class).
+
 
 ``#elifdef`` and ``#elifndef`` directives
--------------------------------------------
+=========================================
 
 The proposal is here, with examples,
 `WG14-N2645 (archived) <https://web.archive.org/web/20221128133337/https://open-std.org/JTC1/SC22/WG14/www/docs/n2645.pdf>`_.
@@ -23,13 +60,19 @@ Solution and Impact
 This can be supported (fully?) in ``cpip/core/CppCond.py`` with appropriate tests.
 
 ``#embed``
------------
+==========
 
 This includes binary files such as images:
-`Wikipedia <https://en.wikipedia.org/wiki/C_preprocessor#Binary_resource_inclusion>`_.
+`Wikipedia on #embed <https://en.wikipedia.org/wiki/C_preprocessor#Binary_resource_inclusion>`_.
 
 As the Wikipedia page describes, the binary resource gets included in the manner of ``xxd -i``.
-For example ``cpip git:(C23) ✗ xxd -i dist/cpip-0.9.9-py2.py3-none-any.whl``:
+For example:
+
+.. code-block:: bash
+
+    xxd -i dist/cpip-0.9.9-py2.py3-none-any.whl
+
+Gives:
 
 .. code-block:: c
 
@@ -51,6 +94,11 @@ For example ``cpip git:(C23) ✗ xxd -i dist/cpip-0.9.9-py2.py3-none-any.whl``:
 The proposal is here, with examples,
 `WG14-N3017 (archived) <https://web.archive.org/web/20221224045304/https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3017.htm>`_.
 
+Other information:
+
+* `Commentary on StackOverflow <https://stackoverflow.com/questions/74621610/what-is-the-purpose-of-the-new-c23-embed-directive>`_.
+* Clang status (needs clang 19+) `here <https://stackoverflow.com/questions/74621610/what-is-the-purpose-of-the-new-c23-embed-directive>`_.
+
 Solution and Impact
 ^^^^^^^^^^^^^^^^^^^^^^
 
@@ -58,27 +106,65 @@ Perhaps needs an ``EmbedHandler.py`` similar to ``cpip/core/IncludeHandler.py``
 with appropriate tests?
 
 ``#warning``
--------------
+============
 
 Adds warning messages, similar to ``#error``.
 
-The proposal is here, with examples,
+The proposal is here:
 `WG14-N2686 (archived) <https://web.archive.org/web/20221128133337/https://open-std.org/JTC1/SC22/WG14/www/docs/n2686.pdf>`_.
-
 
 Solution and Impact
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Already supported in ``cpip/core/CppDiagnostic.py``.
+Little, as already supported in ``cpip/core/CppDiagnostic.py``.
 See also ``cpip.core.PpLexer.PpLexer._cppWarning``.
 
-Check this.
+Check this code and tests.
 
 Check appropriate tests should be in ``tests/unit/test_core/test_CppDiagnostic.py`` and
 ``tests/unit/test_core/test_PpLexer.py``.
 
-TODO:
 
-* ``__has_include``
-* ``__has_c_attribute``
-* ``__VA_OPT__``
+``__has_include``
+=================
+
+The proposal is here, with examples,
+`WG14-N2799 (archived) <https://web.archive.org/web/20221128133337/https://open-std.org/JTC1/SC22/WG14/www/docs/n2686.pdf>`_.
+
+Solution and Impact
+^^^^^^^^^^^^^^^^^^^^^^
+
+Affects:
+
+* Predefined macros as ``__has_include`` is a predefined, function like, macro.
+* The Include handler that needs an API to handle the query.
+  Looks like ``cpip.core.IncludeHandler.CppIncludeStd.canInclude()`` is interesting, or is that post-include?
+
+
+``__has_c_attribute``
+=========================
+
+The proposal is here, with examples,
+`WG14-N2553 (archived) <https://web.archive.org/web/20221014221314/https://open-std.org/JTC1/SC22/WG14/www/docs/n2553.pdf>`_.
+
+Solution and Impact
+^^^^^^^^^^^^^^^^^^^^^^
+
+Affects:
+
+* Predefined macros as ``__has_c_attribute`` is a predefined, function like, macro.
+* Probably several other places as this macro queries the preprocessing environment.
+
+
+``__VA_OPT__``
+==============
+
+The proposal is here, with examples,
+`WG14-N3033 (archived) <https://web.archive.org/web/20221227031727/https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3033.htm>`_.
+
+Solution and Impact
+^^^^^^^^^^^^^^^^^^^^^^
+
+This mainly affects ``cpip.core.PpDefine.PpDefine`` and the appropriate tests.
+The change should be contained by that class as it is really to use a different set of rules for macro expansion.
+And, of course, the appropriate tests.
