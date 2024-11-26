@@ -3,13 +3,12 @@
 Supporting C23
 ==============
 
-The C23 standard makes several changes to to preprocessor,
-a summary is here on
+The C23 standard makes several changes to to preprocessor, a summary is here on
 `Wikipedia <https://en.wikipedia.org/wiki/C23_(C_standard_revision)#Preprocessor>`_
-The C23 standard can be found as open access draft from
+The C23 standard can be found as an open access draft from
 `www.open-std.org <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3220.pdf>`_
 
-This document describes the impact on CPIP version 0.9.9.
+This document describes the impact on CPIP version 0.9.9, and moving to a superior version.
 
 
 General
@@ -18,17 +17,29 @@ General
 CPIP is based on C99 (ISO/IEC 9899:1999 (E)) that is invariant.
 
 The move to C23 suggests that CPIP should have a global configuration such that C23 is supported, and perhaps at a more
-granular level, such as:
+granular level.
+
+Internally this could be represented as a class representing a tree such as:
 
 .. code-block::  python
 
     {
-        'c23' : {
+        'C23' : {
             'N2940'  : ('Trigraphs', True),
             'N3017'  : ('#embed', False),
+            'XXXXX'  : ('XXXXX', 42),
         }
     }
 
+An API would be to retrieve this information from, for example: ``get('C23.N2940')``.
+
+For ``cpip/CPIPMain.py`` this could be implemented as an option ``--cfg C23.N2940=True`` which will be additive.
+Could specify ``--cfg C23`` to apply all C23 defaults.
+
+This has to become general across the CPIP landscape, for example from ``cpip/CPIPMain.py`` through to
+``cpip.core.PpTokeniser.PpTokeniser``.
+
+Effort: High.
 
 Removing Trigraphs
 ==================
@@ -47,6 +58,7 @@ Trigraphs are processed here: ``cpip.core.ItuToTokens.ItuToTokens._translatePhas
 
 This seems like a candidate for a configurable parser when the PpTokeniser takes a configuration option (or class).
 
+Effort: Low.
 
 ``#elifdef`` and ``#elifndef`` directives
 =========================================
@@ -58,6 +70,8 @@ Solution and Impact
 ^^^^^^^^^^^^^^^^^^^^^^
 
 This can be supported (fully?) in ``cpip/core/CppCond.py`` with appropriate tests.
+
+Effort: Medium.
 
 ``#embed``
 ==========
@@ -77,6 +91,7 @@ Gives:
 .. code-block:: c
 
     unsigned char dist_cpip_0_9_9_py2_py3_none_any_whl[] = {
+    /* This is what #embed expands to. */
       0x50, 0x4b, 0x03, 0x04, 0x14, 0x00, 0x00, 0x00, 0x08, 0x00, 0x30, 0x98,
       0x48, 0x58, 0xc2, 0x2f, 0xc7, 0x97, 0x2e, 0x3b, 0x00, 0x00, 0xf1, 0x08,
       0x01, 0x00, 0x10, 0x00, 0x00, 0x00, 0x63, 0x70, 0x69, 0x70, 0x2f, 0x43,
@@ -88,6 +103,7 @@ Gives:
       0x45, 0x43, 0x4f, 0x52, 0x44, 0x50, 0x4b, 0x05, 0x06, 0x00, 0x00, 0x00,
       0x00, 0x19, 0x00, 0x19, 0x00, 0x96, 0x06, 0x00, 0x00, 0x5f, 0x59, 0x01,
       0x00, 0x00, 0x00
+    /* End of #embed expansion. */
     };
     unsigned int dist_cpip_0_9_9_py2_py3_none_any_whl_len = 90123;
 
@@ -96,14 +112,30 @@ The proposal is here, with examples,
 
 Other information:
 
-* `Commentary on StackOverflow <https://stackoverflow.com/questions/74621610/what-is-the-purpose-of-the-new-c23-embed-directive>`_.
-* Clang status (needs clang 19+) `here <https://stackoverflow.com/questions/74621610/what-is-the-purpose-of-the-new-c23-embed-directive>`_.
+* `Commentary on StackOverflow <https://stackoverflow.com/questions/74621610/what-is-the-purpose-of-the-new-C23-embed-directive>`_.
+* Clang status (needs clang 19+) `here <https://stackoverflow.com/questions/74621610/what-is-the-purpose-of-the-new-C23-embed-directive>`_.
 
 Solution and Impact
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Perhaps needs an ``EmbedHandler.py`` similar to ``cpip/core/IncludeHandler.py``
 with appropriate tests?
+
+.. note::
+
+    From the `standard <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3220.pdf>`_
+    6.10.4.1 Description note 14: "A mechanism similar to, but distinct from, the implementation-defined search paths
+    used for source file inclusion (6.10.3) is encouraged."
+
+Other notes:
+
+* ``#embed``: See 6.10.4.1 #embed preprocessing directive.
+* ``__has_embed`` is in the standard. See 6.10.2 Conditional inclusion.
+* ``__STDC_EMBED_NOT_FOUND__``, ``__STDC_EMBED_FOUND__``, ``__STDC_EMBED_EMPTY__`` must be respected.
+   See 6.10.2 Conditional inclusion.
+
+Effort: High+. We don't (yet) have a compiler that supports this for testing.
+See 6.10.4.1 #embed preprocessing directive which is complex.
 
 ``#warning``
 ============
@@ -124,6 +156,8 @@ Check this code and tests.
 Check appropriate tests should be in ``tests/unit/test_core/test_CppDiagnostic.py`` and
 ``tests/unit/test_core/test_PpLexer.py``.
 
+Effort: Low.
+
 
 ``__has_include``
 =================
@@ -136,10 +170,11 @@ Solution and Impact
 
 Affects:
 
-* Predefined macros as ``__has_include`` is a predefined, function like, macro.
+* Predefined macros since ``__has_include`` is a predefined, function like, macro.
 * The Include handler that needs an API to handle the query.
   Looks like ``cpip.core.IncludeHandler.CppIncludeStd.canInclude()`` is interesting, or is that post-include?
 
+Effort: Medium.
 
 ``__has_c_attribute``
 =========================
@@ -152,9 +187,10 @@ Solution and Impact
 
 Affects:
 
-* Predefined macros as ``__has_c_attribute`` is a predefined, function like, macro.
+* Predefined macros since ``__has_c_attribute`` is a predefined, function like, macro.
 * Probably several other places as this macro queries the preprocessing environment.
 
+Effort: Medium to high.
 
 ``__VA_OPT__``
 ==============
@@ -168,3 +204,8 @@ Solution and Impact
 This mainly affects ``cpip.core.PpDefine.PpDefine`` and the appropriate tests.
 The change should be contained by that class as it is really to use a different set of rules for macro expansion.
 And, of course, the appropriate tests.
+
+Effort: Medium.
+
+Other
+===============
