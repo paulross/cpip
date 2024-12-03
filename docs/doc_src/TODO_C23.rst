@@ -244,7 +244,10 @@ Notable preprocessor changes:
 * Comments starting with ``//`` are **not** supported.
 * ``__VA_ARGS__`` not supported.
 
-``--std=k&r``
+``--std=`` supported
+^^^^^^^^^^^^^^^^^^^^
+
+* ``--std=k&r``
 
 ANSI C
 ------
@@ -254,12 +257,16 @@ Notable preprocessor changes:
 * Comments starting with ``//`` are **not** supported.
 * ``__VA_ARGS__`` added???
 
-``--std=ansi``
-``--std=c89``
-``--std=c90``
-``--std=iso9899:1990``
-``--std=iso9899:199409``
+``--std=`` supported
+^^^^^^^^^^^^^^^^^^^^
 
+* ``--std=ansi``
+* ``--std=c89``
+* ``--std=c90``
+* ``--std=iso9899:1990``
+* ``--std=iso9899:199409``
+
+ANSI: ANSI X3.159-1989
 ISO: ISO/IEC 9899:1990
 
 
@@ -272,9 +279,14 @@ Notable preprocessor changes:
 * Added digraphs.
 * Added ``and`` for ``&&``.  See ``WORD_REPLACE_MAP`` in ``src/cpip/core/PpToken.py:168``.
 
+Looks like much of this is supported by ``src/cpip/core/PpTokeniser.py DIGRAPH_TABLE``.
+
 Not specified by `GCC -std <https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html>`_.
 
-``--std=c95``
+``--std=`` supported
+^^^^^^^^^^^^^^^^^^^^
+
+* ``--std=c95``
 
 ISO: ISO/IEC 9899:1990/AMD1:1995
 
@@ -285,10 +297,13 @@ Notable preprocessor changes:
 
 * Comments starting with ``//`` are supported from hereon.
 
-``--std=c99``
-``--std=c9x``
-``--std=iso9899:1999``
-``--std=iso9899:199x``
+``--std=`` supported
+^^^^^^^^^^^^^^^^^^^^
+
+* ``--std=c99``
+* ``--std=c9x``
+* ``--std=iso9899:1999``
+* ``--std=iso9899:199x``
 
 ISO: ISO/IEC 9899:1999
 
@@ -299,9 +314,12 @@ Notable preprocessor changes:
 
 * None?
 
-``--std=c11``
-``--std=c1x``
-``--std=iso9899:2011``
+``--std=`` supported
+^^^^^^^^^^^^^^^^^^^^
+
+* ``--std=c11``
+* ``--std=c1x``
+* ``--std=iso9899:2011``
 
 ISO: ISO/IEC 9899:2011
 
@@ -312,10 +330,13 @@ Notable preprocessor changes:
 
 * None?
 
-``--std=c17``
-``--std=c18``
-``--std=iso9899:2017``
-``--std=iso9899:2018``
+``--std=`` supported
+^^^^^^^^^^^^^^^^^^^^
+
+* ``--std=c17``
+* ``--std=c18``
+* ``--std=iso9899:2017``
+* ``--std=iso9899:2018``
 
 ISO: ISO/IEC 9899:2018
 
@@ -324,7 +345,10 @@ C23
 
 See above, this is the subject of this document.
 
-``--std=C23``
+``--std=`` supported
+^^^^^^^^^^^^^^^^^^^^
+
+* ``--std=c23``
 
 ISO: ISO/IEC 9899:2024
 
@@ -395,6 +419,36 @@ Open Questions
 
 Effort: Medium to High.
 
+Other
+-----
+
+Useful:
+
+```bash
+(cpip_3.12)
+engun@Pauls-MBP  ~/Documents/workspace/cpip (C23)
+$ cpp --version
+Apple clang version 15.0.0 (clang-1500.0.40.1)
+Target: x86_64-apple-darwin22.6.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+(cpip_3.12)
+engun@Pauls-MBP  ~/Documents/workspace/cpip (C23)
+$ cpp -dM -std=k
+error: invalid value 'k' in '-std=k'
+note: use 'c89', 'c90', or 'iso9899:1990' for 'ISO C 1990' standard
+note: use 'iso9899:199409' for 'ISO C 1990 with amendment 1' standard
+note: use 'gnu89' or 'gnu90' for 'ISO C 1990 with GNU extensions' standard
+note: use 'c99' or 'iso9899:1999' for 'ISO C 1999' standard
+note: use 'gnu99' for 'ISO C 1999 with GNU extensions' standard
+note: use 'c11' or 'iso9899:2011' for 'ISO C 2011' standard
+note: use 'gnu11' for 'ISO C 2011 with GNU extensions' standard
+note: use 'c17', 'iso9899:2017', 'c18', or 'iso9899:2018' for 'ISO C 2017' standard
+note: use 'gnu17' or 'gnu18' for 'ISO C 2017 with GNU extensions' standard
+note: use 'c2x' for 'Working Draft for ISO C2x' standard
+note: use 'gnu2x' for 'Working Draft for ISO C2x with GNU extensions' standard
+```
+
 Sources
 -------
 
@@ -424,7 +478,8 @@ Other
 * Definition of `__STDC_VERSION__ and __STDC__ <https://sourceforge.net/p/predef/wiki/Standards/>`_ for various
   standards.
 * CPP reference on the `C Preprocessor <https://en.cppreference.com/w/c/preprocessor>`_.
-
+* CPP reference on the `C history <https://en.cppreference.com/w/c/preprocessor>`_ with links to standards documents.
+* The `rationale <https://www.open-std.org/jtc1/sc22/wg14/www/C99RationaleV5.10.pdf>`_ for the C99 standard.
 
 Other
 ===============
