@@ -179,22 +179,24 @@ Each link on the page takes you to a description of the macro containing:
     :alt: Macro BITMAP_LAST_WORD_MASK details: definition, where defined, where used and two way dependencies.
     :width: 640
 
-Status
-------
+.. only:: html
 
-.. image:: https://img.shields.io/pypi/v/cpip.svg
-        :target: https://pypi.python.org/pypi/cpip
+    Status
+    ------
 
-.. image:: https://img.shields.io/travis/paulross/cpip.svg
-        :target: https://travis-ci.org/paulross/cpip
+    .. image:: https://img.shields.io/pypi/v/cpip.svg
+            :target: https://pypi.python.org/pypi/cpip
 
-.. image:: https://readthedocs.org/projects/cpip/badge/?version=latest
-        :target: https://cpip.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
+    .. image:: https://img.shields.io/travis/paulross/cpip.svg
+            :target: https://travis-ci.org/paulross/cpip
 
-.. image:: https://pyup.io/repos/github/paulross/cpip/shield.svg
-     :target: https://pyup.io/repos/github/paulross/cpip/
-     :alt: Updates
+    .. image:: https://readthedocs.org/projects/cpip/badge/?version=latest
+            :target: https://cpip.readthedocs.io/en/latest/?badge=latest
+            :alt: Documentation Status
+
+    .. image:: https://pyup.io/repos/github/paulross/cpip/shield.svg
+         :target: https://pyup.io/repos/github/paulross/cpip/
+         :alt: Updates
 
 Licence
 -------
