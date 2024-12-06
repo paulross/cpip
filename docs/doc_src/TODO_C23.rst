@@ -34,8 +34,8 @@ Notable preprocessor changes:
 * Comments starting with ``//`` are **not** supported.
 * ``__VA_ARGS__`` not supported.
 
-``--std=`` supported
-^^^^^^^^^^^^^^^^^^^^
+Supported ``--std=`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``--std=k&r``
 
@@ -47,8 +47,8 @@ Notable preprocessor changes:
 * Comments starting with ``//`` are **not** supported.
 * ``__VA_ARGS__`` added???
 
-``--std=`` supported
-^^^^^^^^^^^^^^^^^^^^
+Supported ``--std=`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``--std=ansi``
 * ``--std=c89``
@@ -73,8 +73,8 @@ Looks like much of this is supported by ``src/cpip/core/PpTokeniser.py DIGRAPH_T
 
 Not specified by `GCC -std <https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html>`_.
 
-``--std=`` supported
-^^^^^^^^^^^^^^^^^^^^
+Supported ``--std=`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``--std=c95``
 
@@ -83,12 +83,21 @@ ISO: ISO/IEC 9899:1990/AMD1:1995
 C99
 ------
 
-Notable preprocessor changes:
+Preprocessor changes (from `nsz c9x changes <https://port70.net/~nsz/c/c89/c9x_changes.html#Preprocessor>`_):
 
-* Comments starting with ``//`` are supported from hereon.
+* The #pragma directive has three reserved forms, all starting with the pp-token STDC right after "pragma". These are used to specify certain characteristics of the floating point support to comply with IEC 559.
+* The _Pragma unary operator allows the construction of pragmas through macro expansion.
+* Predefined macro __STDC_VERSION__ has now the value 199901L. (In C94, it's value was 199409L, C89 didn't have it at all.) I suppose this value will be fixed in the final version of the new standard to reflect the date of its actual acceptance by ISO.
+* There are two conditionally defined macros, __STDC_IEC_559__ and __STDC_IEC_559_COMPLEX__, indicating IEC 559 conformance for floating point and complex arithmetic, respectively. If defined, they're defined to the decimal constant 1. A third conditionally defined macro called __STDC_ISO_10646__ shall indicate that wchar_t is in accordance with ISO/IEC 10646. If defined, this macro has a value of the form yyyymmL.
+* Macro expansion: empty arguments are explicitly allowed. (In C89, this resulted in undefined behavior.) Stringification (the # operator) of an empty argument yields the empty string, concatenation (##) of an empty argument with a non-empty argument produces the non-empty argument, and concatenation of two empty arguments produces nothing at all.
+* Function-like macros with variable arguments, uses the ellipsis (...) notation. For replacement, the variable arguments (including the separating commas) are "collected" into one single extra argument that can be referenced as __VA_ARGS__ within the macro's replacement list. __VA_ARGS__ may occur only within the replacement list of a function-like macro having a variable argument list. It's possible to have only variable arguments, as in
+  #define My_Macro(...) __VA_ARGS__
+* The #line directive allows the specification of a line number up to 2**31-1. (In C89, the limit was 2**15-1, i.e. 32767.)
+* The syntax of preprocessing numbers has been changed to allow for the new binary exponents present in hexadecimal floating point constants.
+* Line-comments (starting with the pp-token "//" and extending up to the end of the line). As with normal comments, it's not possible to construct a comment as the result of macro replacement.
 
-``--std=`` supported
-^^^^^^^^^^^^^^^^^^^^
+Supported ``--std=`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``--std=c99``
 * ``--std=c9x``
@@ -102,10 +111,37 @@ C11
 
 Notable preprocessor changes:
 
-* None?
+Diff:
 
-``--std=`` supported
-^^^^^^^^^^^^^^^^^^^^
+/Users/engun/Documents/standards/C_CPP_ProgrammingLanguage/nsz/c/port70.net/~nsz/c/c99/n1256.txt
+
+/Users/engun/Documents/standards/C_CPP_ProgrammingLanguage/nsz/c/port70.net/~nsz/c/c11/n1570.txt
+
+The latter has:
+
+.. code-block:: text
+
+    4   EXAMPLE There are cases where it is not clear whether a replacement is nested or not. For example,
+        given the following macro definitions:
+                #define f(a) a*g
+                #define g(a) f(a)
+        the invocation
+                f(2)(9)
+        may expand to either
+                2*f(9)
+        or
+                2*9*g
+        Strictly conforming programs are not permitted to depend on such unspecified behavior.
+
+Other differences:
+
+* 6.10.8 Predefined macro names
+* 6.10.8.2 Environment macros
+* 6.10.8.3 Conditional feature macros
+
+
+Supported ``--std=`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``--std=c11``
 * ``--std=c1x``
@@ -120,8 +156,8 @@ Notable preprocessor changes:
 
 * None?
 
-``--std=`` supported
-^^^^^^^^^^^^^^^^^^^^
+Supported ``--std=`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``--std=c17``
 * ``--std=c18``
@@ -135,10 +171,11 @@ C23
 
 See above, this is the subject of this document.
 
-``--std=`` supported
-^^^^^^^^^^^^^^^^^^^^
+Supported ``--std=`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``--std=c23``
+* ``--std=iso9899:2024``
 
 ISO: ISO/IEC 9899:2024
 
@@ -151,12 +188,12 @@ From `__STDC_VERSION__ and __STDC__ on Sourceforge <https://sourceforge.net/p/pr
 standards documents and Wikipedia.
 
 
-======= =================================== =======================
-C       ``__STDC__``                        Standard
-======= =================================== =======================
-C89     ``__STDC__``                        ANSI X3.159-1989
-C90     ``__STDC__``                        ISO/IEC 9899:1990
-======= =================================== =======================
+=========== =================================== =======================
+C           ``__STDC__``                        Standard
+=========== =================================== =======================
+C89/ANSI    ``__STDC__``                        ANSI X3.159-1989
+C90         ``__STDC__``                        ISO/IEC 9899:1990
+=========== =================================== =======================
 
 
 ======= =================================== ================================================
@@ -369,6 +406,10 @@ Effort: Medium.
 The proposal is here, with examples,
 `WG14-N2553 (archived) <https://web.archive.org/web/20221014221314/https://open-std.org/JTC1/SC22/WG14/www/docs/n2553.pdf>`_.
 
+See annex M of ISO/IEC 9899:2024 (en) — N3220 working draft.
+
+For full C23 support this macro is defined as ``#define __has_c_attribute(attribute) 202311L``
+
 Solution and Impact
 -------------------
 
@@ -427,10 +468,11 @@ Useful:
 Sources
 -------
 
-GCC
+GNU/GCC
 ^^^^^^^^^^^
 
 * `Standard support <https://gcc.gnu.org/onlinedocs/gcc/Standards.html>`_
+* `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_
 * `GCC C options <https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html>`_
 
 
@@ -456,10 +498,22 @@ Other
 * CPP reference on the `C history <https://en.cppreference.com/w/c/preprocessor>`_ with links to standards documents.
 * The `rationale <https://www.open-std.org/jtc1/sc22/wg14/www/C99RationaleV5.10.pdf>`_ for the C99 standard.
 * `nsz <https://port70.net/~nsz/c/>`_ has a great collated set of standards that can be obtained by
-  ``wget -r -np -k -e robots=off https://port70.net/\~nsz/c/``
+  ``wget -r -np -k -e robots=off https://port70.net/\~nsz/c/``.
+  This also has text versions of the standard which can be handy for diffing and copy/pasting since some PDFs prevent
+  copying without the owners password.
 
 Miscellaneous
 ===============
+
+Source Code References to Standards
+-----------------------------------
+
+Within the CPIP source code there are many references to ISO/IEC 14882:1998(E), the C++98 standard but none to
+ISO/IEC 9899:1999(E) the C99 standard.
+This is probably as when CPIP was originally written we were targeting C++98.
+Another reason is that the C++98 standard has useful section markers such as ``cpp.cond`` which are a bit more readable
+than section numbers.
+Since it is probably better that we default to C99 we should include the appropriate references to that standard.
 
 ``#pragma``
 -----------
@@ -472,6 +526,7 @@ Is CPIP compliant?
 
 We are not conforming to C99/C23 with ``_Pragma``.
 See section 5.1.1.2 translation phase 4 in both standards.
+See also C99 specification "6.10.9 Pragma operator".
 
 Predefined Macros
 -----------------
@@ -485,6 +540,18 @@ Are we complying with these
 Do we support this since C++20: https://en.cppreference.com/w/cpp/language/modules
 
 No, there is no mention of ``import`` or ``export`` in the C23 standard.
+
+Support GNU Extensions
+----------------------
+
+Do we support `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ ?
+
+Move this Document
+------------------
+
+This document contains a lot of useful information about standards and CPIP's compliance.
+This information should moved to a specific chapter in the documentation.
+
 
 Effort Summary
 ==============
