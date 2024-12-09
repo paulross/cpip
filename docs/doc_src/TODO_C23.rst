@@ -13,8 +13,8 @@ The C23 standard can be found as an open access draft from
 
 This document describes the impact on CPIP version 0.9.9, and moving to a superior version (1.0.0?).
 
-Standard Support
-================
+Standard Support Class
+======================
 
 The move to C23 suggests that CPIP should have a global configuration such that C23 is supported.
 
@@ -355,8 +355,9 @@ Other notes:
    See ISO/IEC 9899:2024 6.10.2 Conditional inclusion.
    Also See ISO/IEC 9899:2024 6.10.2 paras 7, 21, 22 and 23 #embed preprocessing directive.
 
-Effort: High+. We don't (yet) have a compiler that supports this for testing.
 See ISO/IEC 9899:2024 6.10.4.1 ``#embed`` preprocessing directive which is complex.
+
+Effort: High+. We don't (yet) have a compiler that supports this for testing.
 
 ``#warning``
 ============
@@ -435,7 +436,163 @@ And, of course, the appropriate tests.
 
 Effort: Medium.
 
-Other
+Miscellaneous
+===============
+
+This also covers non-C23 compliance.
+
+Source Code References to Standards
+-----------------------------------
+
+Within the CPIP source code there are many references to ISO/IEC 14882:1998(E), the C++98 standard but none to
+ISO/IEC 9899:1999(E) the C99 standard.
+This is probably as when CPIP was originally written we were targeting C++98.
+Another reason is that the C++98 standard has useful section markers such as ``cpp.cond`` which are a bit more readable
+than section numbers.
+Since it is probably better that we default to C99 we should include the appropriate references to that standard.
+
+Effort: Low.
+
+``#pragma``
+-----------
+
+Review ISO/IEC 9899:1999 6.10.6 and ISO/IEC 9899:2024 6.10.8 "Pragma directive".
+Is CPIP compliant?
+
+See GNU extensions below.
+
+Effort: Low.
+
+``_Pragma``
+-----------
+
+Introduced in C99.
+We are not conforming to C99/C23 with ``_Pragma``.
+See section 5.1.1.2 translation phase 4 in both standards.
+See also C99 specification "6.10.9 Pragma operator".
+
+See also `GCC Pragmas <https://gcc.gnu.org/onlinedocs/cpp/Pragmas.html>`_
+
+See GNU extensions below.
+
+.. code-block:: bash
+
+    (cpip_3.13_dev)  cpip git:(C23) $ cpp -E
+    _Pragma("GCC dependency \"parse.y\"")
+    # 1 "<stdin>"
+    # 1 "<built-in>" 1
+    # 1 "<built-in>" 3
+    # 383 "<built-in>" 3
+    # 1 "<command line>" 1
+    # 1 "<built-in>" 2
+    # 1 "<stdin>" 2
+    #pragma  GCC dependency "parse.y"
+    # 1 "<stdin>"
+
+Note: This fails with a space after ``_Pragma``:
+
+.. code-block:: bash
+
+    (cpip_3.13_dev)  cpip git:(C23) $ cpp -E
+    _Pragma ("GCC dependency \"parse.y\"")
+    # 1 "<stdin>"
+    # 1 "<built-in>" 1
+    # 1 "<built-in>" 3
+    # 383 "<built-in>" 3
+    # 1 "<command line>" 1
+    # 1 "<built-in>" 2
+    # 1 "<stdin>" 2
+    <stdin>:1:1: error: _Pragma takes a parenthesized string literal
+    _Pragma ("GCC dependency \"parse.y\"")
+    ^
+     ("GCC dependency \"parse.y\"")
+
+    1 error generated.
+
+Effort: Medium.
+
+Predefined Macros
+-----------------
+
+Are we complying with these
+`predefined macros <https://en.cppreference.com/w/c/preprocessor/replace#Predefined_macros>`_ ?
+
+Effort: Low.
+
+``import`` and ``export``
+-------------------------
+
+Do we support this since C++20: https://en.cppreference.com/w/cpp/language/modules
+
+No, there is no mention of ``import`` or ``export`` in the C23 standard.
+
+Effort: None.
+
+Support GNU Extensions
+----------------------
+
+Do we support `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ ?
+
+Currently only `#include_next <https://gcc.gnu.org/onlinedocs/cpp/Wrapper-Headers.html>`_ is supported.
+
+It would be extremely tedious to tie our support to specific GCC versions.
+Instead support all the latest GNU extensions regardless of the C standard specified.
+
+GNU `extensions <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ that affect the pre-processor.
+
+* 6.23 `Macros with a Variable Number of Arguments <https://gcc.gnu.org/onlinedocs/gcc/Variadic-Macros.html>`_
+* 6.24 `Slightly Looser Rules for Escaped Newlines <https://gcc.gnu.org/onlinedocs/gcc/Escaped-Newlines.html>`_
+* 6.43 `C++ Style Comments <https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Comments.html>`_
+* 6.45 `The Character ESC in Constants <https://gcc.gnu.org/onlinedocs/gcc/Character-Escapes.html>`_ ?
+* How far do we go with 6.67 `Pragmas Accepted by GCC <https://gcc.gnu.org/onlinedocs/gcc/Pragmas.html>`_ ?
+* 6.70 `Binary Constants using the ‘0b’ Prefix <https://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html>`_
+
+Effort: Medium.
+
+Move this Document
+------------------
+
+This document contains a lot of useful information about standards and CPIP's compliance.
+This information should moved to a specific chapter in the documentation.
+
+Effort: Low.
+
+Effort Summary
+==============
+
+=================================================================== ============
+Item                                                                Effort
+=================================================================== ============
+Standard Support Class                                              High
+Removing Trigraphs                                                  Low
+``#elifdef`` and ``#elifndef`` directives                           Medium
+``#embed``                                                          High+
+``#warning``                                                        Low
+``__has_include``                                                   Medium
+``__has_c_attribute``                                               Medium/High
+``__VA_OPT__``                                                      Medium
+Miscellaneous/Source Code References to Standards                   Low
+Miscellaneous/``#pragma``                                           Low
+Miscellaneous/``_Pragma``                                           Medium
+Miscellaneous/Predefined Macros                                     Low
+Miscellaneous/``import`` and ``export``                             None
+Miscellaneous/Support GNU Extensions                                Medium
+Miscellaneous/Move this Document                                    Low
+=================================================================== ============
+
+Totals:
+
+=========   ======
+Effort      Items
+=========   ======
+Low         6
+Medium      5.5
+High        1.5
+High+       1
+=========   ======
+
+
+Notes
 =====
 
 Useful:
@@ -475,6 +632,17 @@ GNU/GCC
 * `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_
 * `GCC C options <https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html>`_
 
+Clang
+^^^^^^^^^^^
+
+* `C Support in Clang <https://clang.llvm.org/c_status.html>`_
+* `Language standards <https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/LangStandards.def>`_
+
+Microsoft Visual Studio
+^^^^^^^^^^^^^^^^^^^^^^^
+
+* `C/C++ Support <https://learn.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance?view=msvc-170>`_
+* `/std: values <https://learn.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version?view=msvc-170>`_
 
 Wikipedia
 ^^^^^^^^^
@@ -501,73 +669,3 @@ Other
   ``wget -r -np -k -e robots=off https://port70.net/\~nsz/c/``.
   This also has text versions of the standard which can be handy for diffing and copy/pasting since some PDFs prevent
   copying without the owners password.
-
-Miscellaneous
-===============
-
-Source Code References to Standards
------------------------------------
-
-Within the CPIP source code there are many references to ISO/IEC 14882:1998(E), the C++98 standard but none to
-ISO/IEC 9899:1999(E) the C99 standard.
-This is probably as when CPIP was originally written we were targeting C++98.
-Another reason is that the C++98 standard has useful section markers such as ``cpp.cond`` which are a bit more readable
-than section numbers.
-Since it is probably better that we default to C99 we should include the appropriate references to that standard.
-
-``#pragma``
------------
-
-Review ISO/IEC 9899:1999 6.10.6 and ISO/IEC 9899:2024 6.10.8 "Pragma directive".
-Is CPIP compliant?
-
-``_Pragma``
------------
-
-We are not conforming to C99/C23 with ``_Pragma``.
-See section 5.1.1.2 translation phase 4 in both standards.
-See also C99 specification "6.10.9 Pragma operator".
-
-Predefined Macros
------------------
-
-Are we complying with these
-`predefined macros <https://en.cppreference.com/w/c/preprocessor/replace#Predefined_macros>`_ ?
-
-``import`` and ``export``
--------------------------
-
-Do we support this since C++20: https://en.cppreference.com/w/cpp/language/modules
-
-No, there is no mention of ``import`` or ``export`` in the C23 standard.
-
-Support GNU Extensions
-----------------------
-
-Do we support `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ ?
-
-It would be extremely tedious to tie our support to specific GCC versions.
-Instead support all the latest GNU extensions regardless of the C standard specified.
-
-GNU `extensions <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ that affect the pre-processor.
-
-
-
-Move this Document
-------------------
-
-This document contains a lot of useful information about standards and CPIP's compliance.
-This information should moved to a specific chapter in the documentation.
-
-
-Effort Summary
-==============
-
-=========   ======
-Effort      Items
-=========   ======
-Low         2
-Medium      4
-High        2
-High+       1
-=========   ======
