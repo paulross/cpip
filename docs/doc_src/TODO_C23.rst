@@ -477,7 +477,12 @@ See GNU extensions below.
 
 .. code-block:: bash
 
-    (cpip_3.13_dev)  cpip git:(C23) $ cpp -E
+    $ cpp --version
+    Apple clang version 15.0.0 (clang-1500.0.40.1)
+    Target: x86_64-apple-darwin22.6.0
+    Thread model: posix
+    InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+    $ cpp -E
     _Pragma("GCC dependency \"parse.y\"")
     # 1 "<stdin>"
     # 1 "<built-in>" 1
@@ -493,7 +498,7 @@ Note: This fails with a space after ``_Pragma``:
 
 .. code-block:: bash
 
-    (cpip_3.13_dev)  cpip git:(C23) $ cpp -E
+    $ cpp -E
     _Pragma ("GCC dependency \"parse.y\"")
     # 1 "<stdin>"
     # 1 "<built-in>" 1
@@ -508,6 +513,8 @@ Note: This fails with a space after ``_Pragma``:
      ("GCC dependency \"parse.y\"")
 
     1 error generated.
+
+Although running that code in `godbolt <https://www.godbolt.org>`_ with clang 15.0.0 does not give that error.
 
 Effort: Medium.
 
@@ -549,6 +556,37 @@ GNU `extensions <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ that af
 
 Effort: Medium.
 
+Macro Replacement Bug
+---------------------
+
+Given this:
+
+.. code-block:: c
+
+    #define f(a) a*g
+    #define g(a) f(a)
+    f(2)(9)
+
+The steps are:
+
+# ``f(2)`` expands to ``2*g`` and ``g`` is a *possible* macro replacement.
+# Now consume and append ``(9)`` which is a certain macro replacement so we have ``g(9)``.
+# Reevaluate ``g(9)`` which expands to ``f(9)``
+# Reevaluate ``f(9)`` which expands to ``9*g``
+* The evaluation halts at token ``g`` as that can not be expanded as ``g`` requires a function like macro.
+
+We get ``2*f(9)``, which is legal, but GCC/Clang/MSVC produce ``2*9*g``.
+So we are missing step 4.
+
+There is one test for this in ``tests.unit.test_core.test_MacroEnv.TestFromStandardMisc.test_ambiguos_01()`` and
+another in ``tests.unit.test_core.test_PpLexer.TestC99Rationale.test_6_10_3_4_01()``.
+
+The relevant code is ``cpip.core.MacroEnv.MacroEnv._expand()`` and the recursive call here
+``reexTokS += self._expand(next(myGen), myGen, theFileLineCol)`` at ``src/cpip/core/MacroEnv.py:599`` which is failing
+to expand ``f()`` a second time.
+
+Effort: Medium.
+
 Move this Document
 ------------------
 
@@ -577,6 +615,7 @@ Miscellaneous/``_Pragma``                                           Medium
 Miscellaneous/Predefined Macros                                     Low
 Miscellaneous/``import`` and ``export``                             None
 Miscellaneous/Support GNU Extensions                                Medium
+Miscellaneous/Macro Replacement Bug                                 Medium
 Miscellaneous/Move this Document                                    Low
 =================================================================== ============
 
@@ -586,7 +625,7 @@ Totals:
 Effort      Items
 =========   ======
 Low         6
-Medium      5.5
+Medium      6.5
 High        1.5
 High+       1
 =========   ======
@@ -631,6 +670,7 @@ GNU/GCC
 * `Standard support <https://gcc.gnu.org/onlinedocs/gcc/Standards.html>`_
 * `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_
 * `GCC C options <https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html>`_
+* `Status of C99 features in GCC <https://gcc.gnu.org/c99status.html>`_
 
 Clang
 ^^^^^^^^^^^
@@ -643,6 +683,12 @@ Microsoft Visual Studio
 
 * `C/C++ Support <https://learn.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance?view=msvc-170>`_
 * `/std: values <https://learn.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version?view=msvc-170>`_
+
+godbolt.org
+^^^^^^^^^^^
+
+* `Online compiler <https://www.godbolt.org>`_ . Set the compiler flag ``-E`` (or ``/E`` for Visual Studio) for the
+  preprocessor output.
 
 Wikipedia
 ^^^^^^^^^

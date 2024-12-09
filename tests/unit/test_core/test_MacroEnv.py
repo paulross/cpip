@@ -4179,6 +4179,7 @@ g f
             #    % (myIn, repString, myOut, repString==myOut)
             self.assertEqual(repString, myOut)
 
+    @pytest.mark.xfail(reason='Ambiguous expansion is stopping short of full expansion.')
     def test_ambiguos_01(self):
         """TestFromStandardMisc.test_ambiguos_01 - ambiguos."""
         """#define f(a) a*g
@@ -4187,7 +4188,7 @@ f(2)(9)
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
         myStr = u"""f(a) a*g
-g f
+g(a) f(a)
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4203,8 +4204,8 @@ g f
             ['f', 'g',]
             )
         myInOut = (
-            (u'f(2)(9)', '2*f(9)',),
-            #(u'f(2)(9)', '2*9*g',),
+            # (u'f(2)(9)', '2*f(9)',),
+            (u'f(2)(9)', '2*9*g',),
             )
         #print
         for myIn, myOut in myInOut:
