@@ -1,0 +1,212 @@
+.. moduleauthor:: Paul Ross <apaulross@gmail.com>
+.. sectionauthor:: Paul Ross <apaulross@gmail.com>
+
+.. _cpip.C_Standards:
+
+Supported C Standards
+=====================
+
+This describes the C/C++ standards that are supported by CPIP.
+
+K&R
+---
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+The C Programming Language, Kernighan and Ritchie, First Edition, ISBN 9780131101630.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Not defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Not defined.
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=k&r``.
+
+ANSI
+----
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+ANSI X3.159-1989.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Not defined.
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=ansi``, ``--std=c89``.
+
+C90
+---
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+ISO/IEC 9899:1990.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Not defined.
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=c90``, ``--std=iso9899:1990``, ``--std=iso9899:199409``.
+
+C95
+---
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+ISO/IEC 9899-1:1994, ISO/IEC 9899:1990/AMD1:1995.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Not defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``#define __STDC_VERSION__ 199409L``
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=c95``.
+
+C99
+---
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+ISO/IEC 9899:1999.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Not defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``#define __STDC_VERSION__ 199901L``
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=c99``, ``--std=c9x``, ``--std=iso9899:1999``, ``--std=iso9899:199x``.
+
+C11
+---
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+ISO/IEC 9899:2011.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Not defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``#define __STDC_VERSION__ 201112L``
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=c11``, ``--std=c1x``, ``--std=iso9899:2011``.
+
+C17/C18
+-------
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+ISO/IEC 9899:2018.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Not defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``#define __STDC_VERSION__ 201710L``
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=c17``, ``--std=c18``, ``--std=iso9899:2017``, ``--std=iso9899:2018``.
+
+C23
+---
+
+Standards Document
+^^^^^^^^^^^^^^^^^^
+
+ISO/IEC 9899:2024.
+
+``__STDC__``
+^^^^^^^^^^^^
+
+Not defined.
+
+``__STDC_VERSION__`` Value
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``#define __STDC_VERSION__ 202311L``
+
+``--std=`` Options
+^^^^^^^^^^^^^^^^^^
+
+``--std=c23``, ``--std=c2x``, ``--std=iso9899:2024``.
+
+Summary of Attributes
+---------------------
+
+===================== === ==== === === === === ======= ===
+Attribute             K&R ANSI C90 C95 C99 C11 C17/C18 C23
+===================== === ==== === === === === ======= ===
+C++ style comments    No  No   Yes No  Yes Yes Yes     Yes
+Digraphs              No  No   Yes Yes Yes Yes Yes     Yes
+Trigraphs             Yes Yes  Yes Yes Yes Yes Yes     No
+``#elifdef``          No  No   No  No  No  No  No      Yes
+``#elifndef``         No  No   No  No  No  No  No      Yes
+``#embed``            No  No   No  No  No  No  No      Yes
+``#warning``          No  No   No  No  No  No  No      Yes
+``__VA_ARGS__``       No  Yes  Yes Yes Yes Yes Yes     Yes
+``__VA_OPT__``        No  No   No  No  No  No  No      Yes
+``__has_c_attribute`` No  No   No  No  No  No  No      Yes
+``__has_include``     No  No   No  No  No  No  No      Yes
+===================== === ==== === === === === ======= ===

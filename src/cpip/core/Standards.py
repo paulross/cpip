@@ -26,13 +26,13 @@ import typing
 
 
 class Standards:
-    # These are our 'generic' standards in historical order.
-    # This allows selecting future support.
-    # For example trigraphs were discontinued from C23 onwards so has_trigraphs(self) can be implemented as:
-    # self.GENERIC_STANDARDS.index(self.generic_standard_name) < self.GENERIC_STANDARDS.index('C23')
+    #: These are our 'generic' standards in historical order.
+    #: This allows selecting future support.
+    #: For example trigraphs were discontinued from C23 onwards so has_trigraphs(self) can be implemented as:
+    #: self.GENERIC_STANDARDS.index(self.generic_standard_name) < self.GENERIC_STANDARDS.index('C23')
     GENERIC_STANDARDS = ['K&R', 'ANSI', 'C90', 'C95', 'C99', 'C11', 'C17/C18', 'C23', ]
-    # This allows the caller to construct an instance of this class with a generic standard and then
-    # query that instance for has_... methods for example when generating a .rst file.
+    #: This allows the caller to construct an instance of this class with a generic standard and then
+    #: query that instance for has_... methods for example when generating a .rst file.
     GENERIC_STANDARD_ARGUMENT = {
         'K&R': 'k&r',
         'ANSI': 'ansi',
@@ -43,7 +43,7 @@ class Standards:
         'C17/C18': 'c17',
         'C23': 'c23',
     }
-    # {--std : generic_standard, ...}
+    #: Dict of ``{--std : generic_standard, ...}``
     C_STANDARDS_SUPPORTED = {
         # Original K&R
         'k&r': 'K&R',
@@ -75,7 +75,7 @@ class Standards:
         'c2x': 'C23',
         'iso9899:2024': 'C23',
     }
-    # Is __STDC__ pre-defined.
+    #: Is ``__STDC__`` pre-defined.
     STDC = {
         'K&R': False,
         'ANSI': True,
@@ -86,7 +86,7 @@ class Standards:
         'C17/C18': False,
         'C23': False,
     }
-    # {generic_standard : __STDC_VERSION__, ...}
+    #: Dict of ``{generic_standard : __STDC_VERSION__, ...}``
     STDC_VERSION = {
         'K&R': '',
         'ANSI': '',
@@ -97,7 +97,10 @@ class Standards:
         'C17/C18': '201710L',
         'C23': '202311L',
     }
-    # {generic_standard : document_reference, ...}
+    #: Dict of ``{__STDC_VERSION__ : generic_standard, ...}``
+    #: This allows specifying the ``__STDC_VERSION__`` on construction.
+    STD_VERSION_REVERSED = {_v: _k for _k, _v in STDC_VERSION.items() if _v}
+    #: Dict of ``{generic_standard : document_reference, ...}``
     C_STANDARDS_DOCUMENT = {
         'K&R': 'The C Programming Language, Kernighan and Ritchie, First Edition, ISBN 9780131101630',
         'ANSI': 'ANSI X3.159-1989',
@@ -110,19 +113,32 @@ class Standards:
         'C17/C18': 'ISO/IEC 9899:2018',
         'C23': 'ISO/IEC 9899:2024',
     }
+    #: Dict of ``{generic_standard : text, ...}``
+    C_STANDARDS_NOTES = {
+        'ANSI': 'This is really no different from C90.',
+        'C90': 'This is really no different from ANSI C.',
+    }
 
     def __init__(self, standard: str, gnu_extensions: bool):
         """Constructor.
 
-        :param standard: The C standard to use, for example 'c99'.
+        :param standard: The C standard to use as standard code or the ``__STDC_VERSION__``.
+            For example 'c99' or '199901L'.
         :param gnu_extensions: See Extensions to the C Language Family
             https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
         """
         # Check and raise ValueError if appropriate.
-        if standard not in self.C_STANDARDS_SUPPORTED:
-            raise ValueError(f'Unknown standard {standard}')
-        self.standard = standard
+        if standard in self.STD_VERSION_REVERSED:
+            generic_standard = self.STD_VERSION_REVERSED[standard]
+            self.standard = self.GENERIC_STANDARD_ARGUMENT[generic_standard]
+        else:
+            if standard not in self.C_STANDARDS_SUPPORTED:
+                raise ValueError(f'Unknown standard {standard}')
+            self.standard = standard
         self.gnu_extensions = gnu_extensions
+
+    def __str__(self) -> str:
+        return f'{self.__class__}: Std: {self.standard} GNU: {self.gnu_extensions}'
 
     @property
     def generic_standard_name(self) -> str:
@@ -136,12 +152,12 @@ class Standards:
         return self.generic_standard_name not in {'K&R', 'ANSI', }
 
     def has_va_args(self) -> bool:
-        """__VA_ARGS__ supported"""
+        """``__VA_ARGS__`` supported"""
         return self.generic_standard_name not in {'K&R', }
 
     def has_cpp_style_comments(self) -> bool:
         """C++ style comments supported"""
-        return self.generic_standard_name not in {'K&R', 'ANSI', 'C95'}
+        return self.generic_standard_name not in {'K&R', 'ANSI', 'C90'}
 
     # C23 onwards.
     def _is_c23_onwards(self) -> bool:
@@ -153,31 +169,31 @@ class Standards:
         return not self._is_c23_onwards()
 
     def has_elifdef(self) -> bool:
-        """#elifdef supported"""
+        """``#elifdef`` supported"""
         return self._is_c23_onwards()
 
     def has_elifndef(self) -> bool:
-        """#elifndef supported"""
+        """``#elifndef`` supported"""
         return self._is_c23_onwards()
 
     def has_embed(self) -> bool:
-        """#embed supported"""
+        """``#embed`` supported"""
         return self._is_c23_onwards()
 
     def has_warning(self) -> bool:
-        """#warning supported"""
+        """``#warning`` supported"""
         return self._is_c23_onwards()
 
     def has_has_include(self) -> bool:
-        """__has_include supported"""
+        """``__has_include`` supported"""
         return self._is_c23_onwards()
 
     def has_has_c_attribute(self) -> bool:
-        """__has_c_attribute supported"""
+        """``__has_c_attribute`` supported"""
         return self._is_c23_onwards()
 
     def has_va_opt(self) -> bool:
-        """__VA_OPT__ supported"""
+        """``__VA_OPT__`` supported"""
         return self._is_c23_onwards()
 
     @classmethod
@@ -211,39 +227,77 @@ class Standards:
         return ret
 
 
-def print_rst_heading(text: str, underline: str):
+def print_rst_heading(text: str, overline: str, underline: str):
     """Print a rst heading."""
+    if overline:
+        print(f'{f"{overline}" * len(text)}')
     print(f'{text}')
     print(f'{f"{underline}" * len(text)}')
     print()
 
 
+def print_rst_simple_table(table: typing.List[typing.List[str]]):
+    """Print a rst simple table. The first row contains the headings."""
+    assert len(table) >= 2
+    widths = [0] * len(table[0])
+    for row in table:
+        for c, col in enumerate(row):
+            widths[c] = max(widths[c], len(col))
+    delimeter_line = ' '.join(['=' * width for width in widths])
+    print(delimeter_line)
+    for c, col in enumerate(table[0]):
+        if c > 0:
+            print(' ', end='')
+        print(f'{table[0][c]:<{widths[c]}}', end='')
+    print()
+    print(delimeter_line)
+    for r, row in enumerate(table):
+        if r:
+            for c, col in enumerate(row):
+                if c > 0:
+                    print(' ', end='')
+                print(f'{table[r][c]:<{widths[c]}}', end='')
+            print()
+    print(delimeter_line)
+
+
 def main():
     """Generate a .rst file of standards compliance/support."""
+    print('.. moduleauthor:: Paul Ross <apaulross@gmail.com>')
+    print('.. sectionauthor:: Paul Ross <apaulross@gmail.com>')
+    print()
+    print('.. _cpip.C_Standards:')
+    print()
+    print_rst_heading('Supported C Standards', '', '=')
+    print('This describes the C/C++ standards that are supported by CPIP.')
+    print()
+
     # TODO:
+    # Dict of {attribute : {generic_standard : support, ...}, ...}
+    attributes_dict = {}
     for generic_standard in Standards.GENERIC_STANDARDS:
-        print_rst_heading(generic_standard, '-')
+        print_rst_heading(generic_standard, '', '-')
         std = Standards(Standards.GENERIC_STANDARD_ARGUMENT[generic_standard], False)
 
-        print_rst_heading('Standards Document', '^')
+        print_rst_heading('Standards Document', '', '^')
         print(f'{std.C_STANDARDS_DOCUMENT[generic_standard]}.')
         print()
 
-        print_rst_heading('``__STDC__``', '^')
+        print_rst_heading('``__STDC__``', '', '^')
         if std.STDC[generic_standard]:
             print(f'Defined.')
         else:
             print('Not defined.')
         print()
 
-        print_rst_heading('``__STDC_VERSION__`` Value', '^')
+        print_rst_heading('``__STDC_VERSION__`` Value', '', '^')
         if std.STDC_VERSION[generic_standard]:
             print(f'``#define __STDC_VERSION__ {std.STDC_VERSION[generic_standard]}``')
         else:
             print('Not defined.')
         print()
 
-        print_rst_heading('``--std=`` Options', '^')
+        print_rst_heading('``--std=`` Options', '', '^')
         c_standards = std.c_standards()
         temp = []
         for c_std in c_standards[generic_standard]:
@@ -253,12 +307,48 @@ def main():
 
         # Build a table of getattr(std, 'has...')
         function_dict = {getattr(std, f).__doc__: f for f in dir(std) if f.startswith('has_')}
-        # print(function_dict)
-        for doc in sorted(function_dict.keys()):
-            result = getattr(std, function_dict[doc])()
-            print(f'{doc}? {result}')
+        # Remove ' supported' from the key.
+        for k in function_dict:
+            if k.endswith(' supported'):
+                new_key = k[:-len(' supported')]
+                new_value = function_dict[k]
+                del function_dict[k]
+                function_dict[new_key] = new_value
 
-        print()
+        # print(function_dict)
+        for doc, v in function_dict.items():
+            result = getattr(std, function_dict[doc])()
+            if doc not in attributes_dict:
+                attributes_dict[doc] = {}
+            attributes_dict[doc][generic_standard] = 'Yes' if result else 'No'
+
+        # for doc in sorted(function_dict.keys()):
+        #     result = getattr(std, function_dict[doc])()
+        #     print(f'{doc}? {result}')
+
+        # print_rst_heading('C Attributes Supported', '-', '-')
+        # table = [
+        #     ['Attribute', 'Supported', ]
+        # ]
+        # for doc in sorted(function_dict.keys()):
+        #     result = getattr(std, function_dict[doc])()
+        #     table.append([f'{doc}', f'{"Yes" if result else "No"}', ])
+        # print_rst_simple_table(table)
+        # print()
+
+    # Print summary table
+    table = [
+        ['Attribute', ] + Standards.GENERIC_STANDARDS,
+    ]
+    for row_name in sorted(attributes_dict.keys()):
+        row = [row_name, ]
+        for std in attributes_dict[row_name]:
+            row.append(attributes_dict[row_name][std])
+        table.append(row)
+    print_rst_heading('Summary of Attributes', '', '-')
+    print_rst_simple_table(table)
+    print()
+
     return 0
 
 

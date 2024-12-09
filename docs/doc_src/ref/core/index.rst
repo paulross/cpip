@@ -26,3 +26,4 @@ CPIP Core contains the core code for pre-processing. The architecture is describ
     PpTokeniser
     PpWhitespace
     PragmaHandler
+    Standards

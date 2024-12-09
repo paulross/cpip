@@ -546,6 +546,13 @@ Support GNU Extensions
 
 Do we support `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ ?
 
+It would be extremely tedious to tie our support to specific GCC versions.
+Instead support all the latest GNU extensions regardless of the C standard specified.
+
+GNU `extensions <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ that affect the pre-processor.
+
+
+
 Move this Document
 ------------------
 

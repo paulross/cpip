@@ -11,6 +11,37 @@ def test_generic_standard_argument():
     assert set(Standards.Standards.GENERIC_STANDARD_ARGUMENT.keys()) == set(Standards.Standards.GENERIC_STANDARDS)
 
 
+@pytest.mark.parametrize(
+    'standard, expected',
+    (
+        ('k&r', "<class 'cpip.core.Standards.Standards'>: Std: k&r GNU: False"),
+        ('ansi', "<class 'cpip.core.Standards.Standards'>: Std: ansi GNU: False"),
+    )
+)
+def test_ctor(standard, expected):
+    std = Standards.Standards(standard, False)
+    assert str(std) == expected
+
+
+@pytest.mark.parametrize(
+    'standard, expected',
+    (
+        ('k&r', False),
+        ('ansi', False),
+        ('c90', True),
+        ('c95', True),
+        ('c99', True),
+        ('c11', True),
+        ('c17', True),
+        ('c18', True),
+        ('c23', True),
+    )
+)
+def test_has_digraphs(standard, expected):
+    std = Standards.Standards(standard, False)
+    assert std.has_digraphs() == expected
+
+
 def test_help_text():
     help_text = Standards.Standards.help_text()
     print()
