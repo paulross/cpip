@@ -569,11 +569,11 @@ Given this:
 
 The steps are:
 
-# ``f(2)`` expands to ``2*g`` and ``g`` is a *possible* macro replacement.
-# Now consume and append ``(9)`` which is a certain macro replacement so we have ``g(9)``.
-# Reevaluate ``g(9)`` which expands to ``f(9)``
-# Reevaluate ``f(9)`` which expands to ``9*g``
-* The evaluation halts at token ``g`` as that can not be expanded as ``g`` requires a function like macro.
+1. ``f(2)`` expands to ``2*g`` and ``g`` is a *possible* macro replacement.
+2. Now consume and append ``(9)`` which is a certain macro replacement so we have ``g(9)``.
+3. Reevaluate ``g(9)`` which expands to ``f(9)``
+4. Reevaluate ``f(9)`` which expands to ``9*g``
+5. The evaluation halts at token ``g`` as that can not be expanded as ``g`` requires a function like macro.
 
 We get ``2*f(9)``, which is legal, but GCC/Clang/MSVC produce ``2*9*g``.
 So we are missing step 4.
@@ -584,6 +584,27 @@ another in ``tests.unit.test_core.test_PpLexer.TestC99Rationale.test_6_10_3_4_01
 The relevant code is ``cpip.core.MacroEnv.MacroEnv._expand()`` and the recursive call here
 ``reexTokS += self._expand(next(myGen), myGen, theFileLineCol)`` at ``src/cpip/core/MacroEnv.py:599`` which is failing
 to expand ``f()`` a second time.
+
+Also how well do we do with recursion?:
+
+.. code-block:: bash
+
+    $ cpp -E
+    #define A(x) B(x)
+    #define B(x) A(x)
+    A(8)
+    # 1 "<stdin>"
+    # 1 "<built-in>" 1
+    # 1 "<built-in>" 3
+    # 384 "<built-in>" 3
+    # 1 "<command line>" 1
+    # 1 "<built-in>" 2
+    # 1 "<stdin>" 2
+
+
+    A(8)
+
+There are tests for *object* like macros in ``tests.unit.test_core.test_MacroEnv.TestMacroEnvCycles``.
 
 Effort: Medium.
 
