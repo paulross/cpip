@@ -5,7 +5,8 @@ import time
 import typing
 
 
-def capture_cpp_stdin_output(stdin: typing.ByteString, filter_output: bool) -> typing.List[str]:
+def capture_cpp_stdin_output(stdin: typing.ByteString, remove_comments: bool, remove_blank_lines: bool) -> typing.List[
+    str]:
     """Send stdin to ``cpp -E`` and return the result as a list of strings.
     If ``filter_output`` is True than empty lines and lines starting with ``'#'`` are omitted."""
     try:
@@ -15,12 +16,14 @@ def capture_cpp_stdin_output(stdin: typing.ByteString, filter_output: bool) -> t
     cmds.append('-E')
     sub_process = subprocess.run(cmds, capture_output=True, input=stdin)
     if sub_process.returncode:
-        raise IOError(f'cpp returned error code {sp.returncode}. stderr: {sp.stderr}')
+        raise IOError(f'cpp returned error code {sub_process.returncode}. stderr: {sub_process.stderr}')
     lines = sub_process.stdout.decode().splitlines()
-    if filter_output:
+    if remove_comments or remove_blank_lines:
         ret = []
         for line in lines:
-            if len(line) == 0 or line.startswith('#'):
+            if len(line) == 0 and remove_blank_lines:
+                continue
+            if line.startswith('#') and remove_comments:
                 continue
             ret.append(line)
         return ret
