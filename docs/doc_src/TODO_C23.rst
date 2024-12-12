@@ -465,10 +465,15 @@ Special ``#pragma`` Values
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-* Push and Pop: `GNU <https://gcc.gnu.org/onlinedocs/gcc/Push_002fPop-Macro-Pragmas.html>`_,
+* Push and Pop: ``#pragma push_macro("X")`` and ``#pragma pop_macro("X")``.
+  See `GNU <https://gcc.gnu.org/onlinedocs/gcc/Push_002fPop-Macro-Pragmas.html>`_,
   `MSVC <https://learn.microsoft.com/en-us/cpp/preprocessor/push-macro?view=msvc-170>`_.
   See also `GNU/MSVC compatibility <https://www.typeerror.org/docs/gcc~5/push_002fpop-macro-pragmas>`_
   and `Stack Overflow <https://stackoverflow.com/questions/45419020/what-will-happen-if-pragma-push-macro-without-pragma-pop-macro>`_ .
+
+  This can be done at ``cpip.core.PpLexer.PpLexer._cppPragma`` which calls the pragma handler.
+  Perhaps need a new pragma handler ``class PragmaHandlerGNU(PragmaHandlerSTDC)`` that handles these extensions?
+  Need to and a pushed map to ``cpip.core.MacroEnv.MacroEnv`` and an API ``push_macro()`` and ``pop_macro()``.
 
 
 See GNU extensions below.
