@@ -11,6 +11,8 @@ The C23 standard can be found as an open access draft from
 `www.open-std.org <https://www.open-std.org>`_ as
 `"ISO/IEC 9899:2024 (en) — N3220 working draft" <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3220.pdf>`_.
 
+This document also describes non-C23 improvements to CPIP.
+
 This document describes the impact on CPIP version 0.9.9, and moving to a superior version (1.0.0?).
 
 Standard Support Class
@@ -459,9 +461,19 @@ Effort: Low.
 Review ISO/IEC 9899:1999 6.10.6 and ISO/IEC 9899:2024 6.10.8 "Pragma directive".
 Is CPIP compliant?
 
+Special ``#pragma`` Values
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+* Push and Pop: `GNU <https://gcc.gnu.org/onlinedocs/gcc/Push_002fPop-Macro-Pragmas.html>`_,
+  `MSVC <https://learn.microsoft.com/en-us/cpp/preprocessor/push-macro?view=msvc-170>`_.
+  See also `GNU/MSVC compatibility <https://www.typeerror.org/docs/gcc~5/push_002fpop-macro-pragmas>`_
+  and `Stack Overflow <https://stackoverflow.com/questions/45419020/what-will-happen-if-pragma-push-macro-without-pragma-pop-macro>`_ .
+
+
 See GNU extensions below.
 
-Effort: Low.
+Effort: Low/Medium.
 
 ``_Pragma``
 -----------
@@ -631,7 +643,7 @@ Removing Trigraphs                                                  Low
 ``__has_c_attribute``                                               Medium/High
 ``__VA_OPT__``                                                      Medium
 Miscellaneous/Source Code References to Standards                   Low
-Miscellaneous/``#pragma``                                           Low
+Miscellaneous/``#pragma``                                           Low/Medium
 Miscellaneous/``_Pragma``                                           Medium
 Miscellaneous/Predefined Macros                                     Low
 Miscellaneous/``import`` and ``export``                             None
@@ -645,8 +657,8 @@ Totals:
 =========   ======
 Effort      Items
 =========   ======
-Low         6
-Medium      6.5
+Low         5.5
+Medium      7
 High        1.5
 High+       1
 =========   ======
