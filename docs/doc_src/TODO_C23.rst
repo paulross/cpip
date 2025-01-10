@@ -668,6 +668,8 @@ High        1.5
 High+       1
 =========   ======
 
+If Medium = 2 * Low, High = 2 * Medium, High+ = 2 * High then we have: 5.5 + 14 + 6 + 8 Low values = 33.5
+
 
 Notes
 =====
