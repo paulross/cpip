@@ -21,6 +21,10 @@ Standards Document
 
 The C Programming Language, Kernighan and Ritchie, First Edition, ISBN 9780131101630.
 
+.. note::
+
+    Not an internationally recognised standard.
+
 ``__STDC__``
 ^^^^^^^^^^^^
 
@@ -97,6 +101,10 @@ Standards Document
 ^^^^^^^^^^^^^^^^^^
 
 ISO/IEC 9899-1:1994, ISO/IEC 9899:1990/AMD1:1995.
+
+.. note::
+
+    C90 unamended by ISO/IEC 9899:1990/AMD1:1995.
 
 ``__STDC__``
 ^^^^^^^^^^^^

@@ -116,8 +116,10 @@ class Standards:
     }
     #: Dict of ``{generic_standard : text, ...}``
     C_STANDARDS_NOTES = {
+        'K&R': 'Not an internationally recognised standard.',
         'ANSI': 'This is really no different from C90.',
         'C90': 'This is really no different from ANSI C.',
+        'C95': 'C90 unamended by ISO/IEC 9899:1990/AMD1:1995.',
     }
 
     def __init__(self, standard: str, gnu_extensions: bool):
