@@ -219,13 +219,13 @@ class Standards:
         ret = []
         c_standards = cls.c_standards()
         for generic_standard in cls.GENERIC_STANDARDS:
-            temp = [f'{generic_standard}']
+            temp = [f'For {generic_standard}']
             if cls.C_STANDARDS_DOCUMENT[generic_standard]:
                 temp.append(f'({cls.C_STANDARDS_DOCUMENT[generic_standard]})')
             temp2 = []
             for c_std in c_standards[generic_standard]:
                 temp2.append(f'--std={c_std}')
-            temp.append(f'{", ".join(temp2)}.')
+            temp.append(f'Use: {", ".join(temp2)}.')
             ret.append(' '.join(temp))
         return ret
 
