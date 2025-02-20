@@ -50,7 +50,7 @@ ANSI X3.159-1989.
 
 .. note::
 
-    This is really no different from C90.
+    This is really no different from C89 and C90.
 
 ``__STDC__``
 ^^^^^^^^^^^^
@@ -92,7 +92,7 @@ Not defined.
 ``--std=`` Options
 ^^^^^^^^^^^^^^^^^^
 
-``--std=c90``, ``--std=iso9899:1990``, ``--std=iso9899:199409``.
+``--std=c90``, ``--std=iso9899:1990``.
 
 C95
 ---
@@ -119,7 +119,7 @@ Not defined.
 ``--std=`` Options
 ^^^^^^^^^^^^^^^^^^
 
-``--std=c95``.
+``--std=c95``, ``--std=iso9899:199409``.
 
 C99
 ---

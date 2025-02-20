@@ -54,7 +54,7 @@ class Standards:
         # C90 is really no different to ANSI but we make the distinction here as the standards document is different.
         'c90': 'C90',
         'iso9899:1990': 'C90',
-        'iso9899:199409': 'C90',
+        'iso9899:199409': 'C95',
         # C95
         'c95': 'C95',
         # C99
@@ -117,7 +117,7 @@ class Standards:
     #: Dict of ``{generic_standard : text, ...}``
     C_STANDARDS_NOTES = {
         'K&R': 'Not an internationally recognised standard.',
-        'ANSI': 'This is really no different from C90.',
+        'ANSI': 'This is really no different from C89 and C90.',
         'C90': 'This is really no different from ANSI C.',
         'C95': 'C90 unamended by ISO/IEC 9899:1990/AMD1:1995.',
     }
@@ -432,6 +432,8 @@ def main() -> int:
             f.write(line)
             f.write('\n')
     print(f'DONE Writing {len(doc_lines)} lines to {file_path}')
+    print('Help text:')
+    print('\n'.join(Standards.help_text()))
     return 0
 
 
