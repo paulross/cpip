@@ -19,7 +19,7 @@ CPIP is not designed to be a replacement for ``cpp`` (or any other established p
 clarity and understanding as more important than speed of processing.
 
 CPIP takes its standard as C99 or, more formally, ISO/IEC 9899:1999 (E) [#]_.
-Other standards are considered, particularly C11, C++, C++11, C++14 and so on [#]_.
+Other standards are considered, particularly C11, C17/C18, C23, C++, C++11, C++14 and so on [#]_.
 
 ************************
 Pre-processing C and C++

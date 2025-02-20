@@ -216,18 +216,115 @@ Not defined.
 Summary of Attributes
 ---------------------
 
-===================== === ==== === === === === ======= ===
-Attribute             K&R ANSI C90 C95 C99 C11 C17/C18 C23
-===================== === ==== === === === === ======= ===
-C++ style comments    No  No   No  Yes Yes Yes Yes     Yes
-Digraphs              No  No   Yes Yes Yes Yes Yes     Yes
-Trigraphs             Yes Yes  Yes Yes Yes Yes Yes     No 
-``#elifdef``          No  No   No  No  No  No  No      Yes
-``#elifndef``         No  No   No  No  No  No  No      Yes
-``#embed``            No  No   No  No  No  No  No      Yes
-``#warning``          No  No   No  No  No  No  No      Yes
-``__VA_ARGS__``       No  Yes  Yes Yes Yes Yes Yes     Yes
-``__VA_OPT__``        No  No   No  No  No  No  No      Yes
-``__has_c_attribute`` No  No   No  No  No  No  No      Yes
-``__has_include``     No  No   No  No  No  No  No      Yes
-===================== === ==== === === === === ======= ===
+.. list-table:: Summary of Attributes
+   :widths: 20 12 12 12 12 12 12 12 12
+   :header-rows: 1
+
+   * - Attribute
+     - K&R
+     - ANSI
+     - C90
+     - C95
+     - C99
+     - C11
+     - C17/C18
+     - C23
+   * - C++ style comments
+     - No
+     - No
+     - No
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+   * - Digraphs
+     - No
+     - No
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+   * - Trigraphs
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - No
+   * - ``#elifdef``
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - Yes
+   * - ``#elifndef``
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - Yes
+   * - ``#embed``
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - Yes
+   * - ``#warning``
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - Yes
+   * - ``__VA_ARGS__``
+     - No
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+     - Yes
+   * - ``__VA_OPT__``
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - Yes
+   * - ``__has_c_attribute``
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - Yes
+   * - ``__has_include``
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - No
+     - Yes

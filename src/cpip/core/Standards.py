@@ -270,6 +270,46 @@ def rst_simple_table(table: typing.List[typing.List[str]]) -> typing.List[str]:
     return ret
 
 
+def rst_list_table(title: str, widths: typing.List[int], table: typing.List[typing.List[str]]) -> typing.List[str]:
+    """Create a rst list-table. The first row contains the headings.
+    Example:
+
+    .. list-table:: Recommended Code Directories
+       :widths: 10 10 10 10 10 30
+       :header-rows: 1
+
+       * - Category
+         - Language
+         - ``#include <Python.h>``?
+         - Testable?
+         - Where?
+         - Description
+       * - Pure Python
+         - Python
+         - No
+         - Yes
+         - ``py/``
+         - Regular Python code tested by pytest or similar.
+
+    """
+    ret = [
+        f'.. list-table:: {title}',
+        f'   :widths: {" ".join(str(w) for w in widths)}',
+        '   :header-rows: 1',
+        '',
+    ]
+    assert len(table) >= 2
+    assert len(widths) == len(table[0])
+    assert all(len(row) == len(table[0]) for row in table)
+    for row in table:
+        for c, col in enumerate(row):
+            if c == 0:
+                ret.append(f'   * - {col}')
+            else:
+                ret.append(f'     - {col}')
+    return ret
+
+
 def get_rst() -> typing.List[str]:
     """Generate a .rst file of standards compliance/support."""
     doc_lines = []
@@ -368,7 +408,9 @@ def get_rst() -> typing.List[str]:
             row.append(attributes_dict[row_name][std])
         table.append(row)
     doc_lines.extend(rst_heading('Summary of Attributes', '', '-'))
-    doc_lines.extend(rst_simple_table(table))
+    # doc_lines.extend(rst_simple_table(table))
+    widths = [20, ] + ([12,] * len(Standards.GENERIC_STANDARDS))
+    doc_lines.extend(rst_list_table('Summary of Attributes', widths, table))
     # doc_lines.append('')
     return doc_lines
 

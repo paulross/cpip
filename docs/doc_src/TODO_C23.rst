@@ -1,7 +1,7 @@
 
-==============
-Supporting C23
-==============
+========================================
+Supporting Different C standards and C23
+========================================
 
 CPIP is based on C99 (ISO/IEC 9899:1999) and C++98 ISO/IEC 14882:1998(E).
 
@@ -15,7 +15,7 @@ This document also describes non-C23 improvements to CPIP.
 
 This document describes the impact on CPIP version 0.9.9, and moving to a superior version (1.0.0?).
 
-Standard Support Class
+C Standards
 ======================
 
 The move to C23 suggests that CPIP should have a global configuration such that C23 is supported.
@@ -28,6 +28,7 @@ Values are lower case.
 
 Have a command line option ``--std=c23`` where the options are ``c99``, ``c23`` with the default ``c99``.
 
+-----
 K&R C
 -----
 
@@ -37,10 +38,11 @@ Notable preprocessor changes:
 * ``__VA_ARGS__`` not supported.
 
 Supported ``--std=`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 * ``--std=k&r``
 
+------
 ANSI C
 ------
 
@@ -50,18 +52,18 @@ Notable preprocessor changes:
 * ``__VA_ARGS__`` added???
 
 Supported ``--std=`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 * ``--std=ansi``
 * ``--std=c89``
 * ``--std=c90``
 * ``--std=iso9899:1990``
-* ``--std=iso9899:199409``
 
 ANSI: ANSI X3.159-1989
 ISO: ISO/IEC 9899:1990
 
 
+------
 C95
 ------
 
@@ -76,12 +78,14 @@ Looks like much of this is supported by ``src/cpip/core/PpTokeniser.py DIGRAPH_T
 Not specified by `GCC -std <https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html>`_.
 
 Supported ``--std=`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 * ``--std=c95``
+* ``--std=iso9899:199409``
 
 ISO: ISO/IEC 9899:1990/AMD1:1995
 
+------
 C99
 ------
 
@@ -99,7 +103,7 @@ Preprocessor changes (from `nsz c9x changes <https://port70.net/~nsz/c/c89/c9x_c
 * Line-comments (starting with the pp-token "//" and extending up to the end of the line). As with normal comments, it's not possible to construct a comment as the result of macro replacement.
 
 Supported ``--std=`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 * ``--std=c99``
 * ``--std=c9x``
@@ -108,6 +112,7 @@ Supported ``--std=`` Values
 
 ISO: ISO/IEC 9899:1999
 
+------
 C11
 ------
 
@@ -143,7 +148,7 @@ Other differences:
 
 
 Supported ``--std=`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 * ``--std=c11``
 * ``--std=c1x``
@@ -151,6 +156,7 @@ Supported ``--std=`` Values
 
 ISO: ISO/IEC 9899:2011
 
+--------
 C17/C18
 --------
 
@@ -159,7 +165,7 @@ Notable preprocessor changes:
 * None?
 
 Supported ``--std=`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 * ``--std=c17``
 * ``--std=c18``
@@ -168,13 +174,14 @@ Supported ``--std=`` Values
 
 ISO: ISO/IEC 9899:2018
 
+------
 C23
 ------
 
-See above, this is the subject of this document.
+This has a large number of changes.
 
 Supported ``--std=`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+---------------------------
 
 * ``--std=c23``
 * ``--std=iso9899:2024``
@@ -182,88 +189,11 @@ Supported ``--std=`` Values
 ISO: ISO/IEC 9899:2024
 
 
-
-Macros ``__STDC__`` and ``__STDC_VERSION__``
-----------------------------------------------
-
-From `__STDC_VERSION__ and __STDC__ on Sourceforge <https://sourceforge.net/p/predef/wiki/Standards/>`_,
-standards documents and Wikipedia.
-
-
-=========== =================================== =======================
-C           ``__STDC__``                        Standard
-=========== =================================== =======================
-C89/ANSI    ``__STDC__``                        ANSI X3.159-1989
-C90         ``__STDC__``                        ISO/IEC 9899:1990
-=========== =================================== =======================
-
-
-======= =================================== ================================================
-C       ``__STDC_VERSION__``                Standard
-======= =================================== ================================================
-C95     ``__STDC_VERSION__ = 199409L``      ISO/IEC 9899-1:1994, ISO/IEC 9899:1990/AMD1:1995
-C99     ``__STDC_VERSION__ = 199901L``      ISO/IEC 9899:1999
-C11     ``__STDC_VERSION__ = 201112L``      ISO/IEC 9899:2011
-C17/C18 ``__STDC_VERSION__ = 201710L``      ISO/IEC 9899:2018
-C23     ``__STDC_VERSION__ = 202311L``      ISO/IEC 9899:2024
-======= =================================== ================================================
-
-Solution and Impact
--------------------
-
-In ``cpip.core.standards.py`` something like:
-
-.. code-block:: python
-
-    class CStandard:
-        # {std : generic_standard, ...}
-        C_STANDARDS_SUPPORTED = {
-            'ansi' : 'ANSI',
-            'c11' : 'C11',
-            # ...
-        }
-        # {generic_standard : __STDC_VERSION__, ...}
-        STDC_VERSION = {
-            'C11' : '201112L',
-            # Etc.
-        }
-
-        def __init__(self, standard: str):
-            # Check and raise ValueError if appropriate.
-            pass
-
-        def stdc_version(self) -> str:
-            return self.STDC_VERSION.get(self.std, '')
-
-        def has_digraphs(self) -> bool:
-            pass
-
-        def has_cpp_style_comments(self) -> bool:
-            pass
-
-
-Add a required argument of type CStandard to ``cpip.core.PpLexer.PpLexer`` constructor and propagate from there.
-And, of course, the appropriate tests.
-
-Open Questions
-^^^^^^^^^^^^^^
-
-* What default value to use for the standard?
-* When non compliance is detected warn or error? Simulate ``-Wpedantic``?
-
-Effort: Medium to High.
-
-
-Impact
-------
-
-This has to become general across the CPIP landscape, for example from ``cpip/CPIPMain.py`` through to
-``cpip.core.PpTokeniser.PpTokeniser``.
-
-Effort: High.
+Specific Changes
+---------------------------
 
 Removing Trigraphs
-==================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The proposal to remove Trigraphs is here, with examples,
 `WG14-N2940 (archived) <https://web.archive.org/web/20221026005747/https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2940.pdf>`_.
@@ -272,7 +202,7 @@ Also relevant: `N2701 <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2701.ht
 `N4086 <https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2014/n4086.html>`_.
 
 Solution and Impact
--------------------
+"""""""""""""""""""
 
 Trigraphs are processed here: ``cpip.core.ItuToTokens.ItuToTokens._translatePhase_1()`` and
 ``cpip.core.PpTokeniser.PpTokeniser._translateTrigraphs()``
@@ -282,20 +212,20 @@ This seems like a candidate for a configurable parser when the PpTokeniser takes
 Effort: Low.
 
 ``#elifdef`` and ``#elifndef`` directives
-=========================================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The proposal is here, with examples,
 `WG14-N2645 (archived) <https://web.archive.org/web/20221128133337/https://open-std.org/JTC1/SC22/WG14/www/docs/n2645.pdf>`_.
 
 Solution and Impact
--------------------
+"""""""""""""""""""
 
 This can be supported (fully?) in ``cpip/core/CppCond.py`` with appropriate tests.
 
 Effort: Medium.
 
 ``#embed``
-==========
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This includes binary files such as images:
 `Wikipedia on #embed <https://en.wikipedia.org/wiki/C_preprocessor#Binary_resource_inclusion>`_.
@@ -338,7 +268,7 @@ Other information:
 * Clang status (needs clang 19+) `here <https://stackoverflow.com/questions/74621610/what-is-the-purpose-of-the-new-C23-embed-directive>`_.
 
 Solution and Impact
--------------------
+"""""""""""""""""""
 
 Perhaps needs an ``EmbedHandler.py`` similar to (or sub-class) ``cpip/core/IncludeHandler.py``
 within that file and with appropriate tests?
@@ -351,6 +281,8 @@ within that file and with appropriate tests?
 
 Other notes:
 
+* Do we invent another CLI argument equivalent to ``-I`` and ``-J``  to specify the search directories. Say ``-K`` and ``-L``?
+  If not given then revert to ``-I`` and ``-J``.
 * ``#embed``: See ISO/IEC 9899:2024 6.10.4.1 #embed preprocessing directive.
 * ``__has_embed`` is in the standard. See ISO/IEC 9899:2024 6.10.2 Conditional inclusion.
 * ``__STDC_EMBED_NOT_FOUND__``, ``__STDC_EMBED_FOUND__``, ``__STDC_EMBED_EMPTY__`` must be respected.
@@ -362,15 +294,17 @@ See ISO/IEC 9899:2024 6.10.4.1 ``#embed`` preprocessing directive which is compl
 Effort: High+. We don't (yet) have a compiler that supports this for testing.
 
 ``#warning``
-============
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ISO/IEC 9899:2024 6.10.7 "Diagnostic directives" adds warning messages, similar to ``#error``.
 
 The proposal is here:
 `WG14-N2686 (archived) <https://web.archive.org/web/20221128133337/https://open-std.org/JTC1/SC22/WG14/www/docs/n2686.pdf>`_.
 
+Do we want to forbid this prior to C23?
+
 Solution and Impact
--------------------
+"""""""""""""""""""
 
 Little, as already supported in ``cpip/core/CppDiagnostic.py``.
 
@@ -385,7 +319,7 @@ Effort: Low.
 
 
 ``__has_include``
-=================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The proposal is here, with examples,
 `WG14-N2799 (archived) <https://web.archive.org/web/20221128133337/https://open-std.org/JTC1/SC22/WG14/www/docs/n2686.pdf>`_.
@@ -393,7 +327,7 @@ The proposal is here, with examples,
 Check ISO/IEC 9899:2024 6.10.10 "Predefined macro names".
 
 Solution and Impact
--------------------
+"""""""""""""""""""
 
 Affects:
 
@@ -404,7 +338,7 @@ Affects:
 Effort: Medium.
 
 ``__has_c_attribute``
-=========================
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The proposal is here, with examples,
 `WG14-N2553 (archived) <https://web.archive.org/web/20221014221314/https://open-std.org/JTC1/SC22/WG14/www/docs/n2553.pdf>`_.
@@ -414,7 +348,7 @@ See annex M of ISO/IEC 9899:2024 (en) — N3220 working draft.
 For full C23 support this macro is defined as ``#define __has_c_attribute(attribute) 202311L``
 
 Solution and Impact
--------------------
+"""""""""""""""""""
 
 Affects:
 
@@ -424,13 +358,13 @@ Affects:
 Effort: Medium to high.
 
 ``__VA_OPT__``
-==============
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The proposal is here, with examples,
 `WG14-N3033 (archived) <https://web.archive.org/web/20221227031727/https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3033.htm>`_.
 
 Solution and Impact
--------------------
+"""""""""""""""""""
 
 This mainly affects ``cpip.core.PpDefine.PpDefine`` and the appropriate tests.
 The change should be contained by that class as it is really to use a different set of rules for macro expansion.
@@ -438,11 +372,105 @@ And, of course, the appropriate tests.
 
 Effort: Medium.
 
+Macros ``__STDC__`` and ``__STDC_VERSION__``
+============================================
+
+From `__STDC_VERSION__ and __STDC__ on Sourceforge <https://sourceforge.net/p/predef/wiki/Standards/>`_,
+standards documents and Wikipedia.
+
+
+=========== =================================== =======================
+C           ``__STDC__``                        Standard
+=========== =================================== =======================
+C89/ANSI    ``__STDC__``                        ANSI X3.159-1989
+C90         ``__STDC__``                        ISO/IEC 9899:1990
+=========== =================================== =======================
+
+
+======= =================================== ================================================
+C       ``__STDC_VERSION__``                Standard
+======= =================================== ================================================
+C95     ``__STDC_VERSION__ = 199409L``      ISO/IEC 9899-1:1994, ISO/IEC 9899:1990/AMD1:1995
+C99     ``__STDC_VERSION__ = 199901L``      ISO/IEC 9899:1999
+C11     ``__STDC_VERSION__ = 201112L``      ISO/IEC 9899:2011
+C17/C18 ``__STDC_VERSION__ = 201710L``      ISO/IEC 9899:2018
+C23     ``__STDC_VERSION__ = 202311L``      ISO/IEC 9899:2024
+======= =================================== ================================================
+
+The CStandards Class
+====================
+
+We need to create a new class ``CStandard`` that handles all of this.
+
+-------------------
+Solution and Impact
+-------------------
+
+In ``cpip.core.standards.py`` something like:
+
+.. code-block:: python
+
+    class CStandard:
+        # {std : generic_standard, ...}
+        C_STANDARDS_SUPPORTED = {
+            'ansi' : 'ANSI',
+            'c11' : 'C11',
+            # ...
+        }
+        # {generic_standard : __STDC_VERSION__, ...}
+        STDC_VERSION = {
+            'C11' : '201112L',
+            # Etc.
+        }
+
+        def __init__(self, standard: str):
+            # Check and raise ValueError if appropriate.
+            pass
+
+        def stdc_version(self) -> str:
+            return self.STDC_VERSION.get(self.std, '')
+
+        def has_digraphs(self) -> bool:
+            pass
+
+        def has_cpp_style_comments(self) -> bool:
+            pass
+
+
+Add a required argument of type CStandard to ``cpip.core.PpLexer.PpLexer`` constructor and propagate from there.
+And, of course, the appropriate tests.
+
+This class could also:
+
+* Return a list of predefined macros and their definitions such as ``__STDC_VERSION__``.
+* Generate the ``--std=...`` help text for ``CPIPMain.py``.
+* Generate a ``c_standards.rst`` documentation chapter rather like this one.
+* Pick up platform defined macros, for example, with ``$ cpp -dM -std=c99``.
+
+Open Questions
+--------------
+
+* What default value to use for the standard?
+* When non compliance is detected warn or error? Simulate ``-Wpedantic``?
+
+Effort: Medium to High.
+
+
+Impact
+------
+
+This has to become general across the CPIP landscape, for example from ``cpip/CPIPMain.py`` through to
+``cpip.core.PpTokeniser.PpTokeniser``.
+
+Effort: High.
+
+
 Miscellaneous
 ===============
 
 This also covers non-C23 compliance.
 
+-----------------------------------
 Source Code References to Standards
 -----------------------------------
 
@@ -455,6 +483,7 @@ Since it is probably better that we default to C99 we should include the appropr
 
 Effort: Low.
 
+-----------
 ``#pragma``
 -----------
 
@@ -462,8 +491,7 @@ Review ISO/IEC 9899:1999 6.10.6 and ISO/IEC 9899:2024 6.10.8 "Pragma directive".
 Is CPIP compliant?
 
 Special ``#pragma`` Values
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+--------------------------
 
 * Push and Pop: ``#pragma push_macro("X")`` and ``#pragma pop_macro("X")``.
   See `GNU <https://gcc.gnu.org/onlinedocs/gcc/Push_002fPop-Macro-Pragmas.html>`_,
@@ -480,6 +508,7 @@ See GNU extensions below.
 
 Effort: Low/Medium.
 
+-----------
 ``_Pragma``
 -----------
 
@@ -535,6 +564,7 @@ Although running that code in `godbolt <https://www.godbolt.org>`_ with clang 15
 
 Effort: Medium.
 
+-----------------
 Predefined Macros
 -----------------
 
@@ -543,6 +573,7 @@ Are we complying with these
 
 Effort: Low.
 
+-------------------------
 ``import`` and ``export``
 -------------------------
 
@@ -552,6 +583,7 @@ No, there is no mention of ``import`` or ``export`` in the C23 standard.
 
 Effort: None.
 
+----------------------
 Support GNU Extensions
 ----------------------
 
@@ -567,12 +599,15 @@ GNU `extensions <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_ that af
 * 6.23 `Macros with a Variable Number of Arguments <https://gcc.gnu.org/onlinedocs/gcc/Variadic-Macros.html>`_
 * 6.24 `Slightly Looser Rules for Escaped Newlines <https://gcc.gnu.org/onlinedocs/gcc/Escaped-Newlines.html>`_
 * 6.43 `C++ Style Comments <https://gcc.gnu.org/onlinedocs/gcc/C_002b_002b-Comments.html>`_
+  C99 onwards.
 * 6.45 `The Character ESC in Constants <https://gcc.gnu.org/onlinedocs/gcc/Character-Escapes.html>`_ ?
 * How far do we go with 6.67 `Pragmas Accepted by GCC <https://gcc.gnu.org/onlinedocs/gcc/Pragmas.html>`_ ?
 * 6.70 `Binary Constants using the ‘0b’ Prefix <https://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html>`_
+  C99 onwards.
 
 Effort: Medium.
 
+---------------------
 Macro Replacement Bug
 ---------------------
 
@@ -625,6 +660,7 @@ There are tests for *object* like macros in ``tests.unit.test_core.test_MacroEnv
 
 Effort: Medium.
 
+------------------
 Move this Document
 ------------------
 
@@ -632,6 +668,14 @@ This document contains a lot of useful information about standards and CPIP's co
 This information should moved to a specific chapter in the documentation.
 
 Effort: Low.
+
+------------------
+Indexing
+------------------
+
+Hand index essential information, not just the reference section.
+
+Effort: Medium.
 
 Effort Summary
 ==============
@@ -655,6 +699,7 @@ Miscellaneous/``import`` and ``export``                             None
 Miscellaneous/Support GNU Extensions                                Medium
 Miscellaneous/Macro Replacement Bug                                 Medium
 Miscellaneous/Move this Document                                    Low
+Indexing                                                            Medium
 =================================================================== ============
 
 Totals:
@@ -663,12 +708,12 @@ Totals:
 Effort      Items
 =========   ======
 Low         5.5
-Medium      7
+Medium      8
 High        1.5
 High+       1
 =========   ======
 
-If Medium = 2 * Low, High = 2 * Medium, High+ = 2 * High then we have: 5.5 + 14 + 6 + 8 Low values = 33.5
+If Medium = 2 * Low, High = 2 * Medium, High+ = 2 * High then we have: 5.5 + 16 + 6 + 8 Low values = 35.5
 
 
 Notes
@@ -701,11 +746,12 @@ Useful:
     note: use 'c2x' for 'Working Draft for ISO C2x' standard
     note: use 'gnu2x' for 'Working Draft for ISO C2x with GNU extensions' standard
 
+-------
 Sources
 -------
 
 GNU/GCC
-^^^^^^^^^^^
+----------------
 
 * `Standard support <https://gcc.gnu.org/onlinedocs/gcc/Standards.html>`_
 * `Extensions to the C Language Family <https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html>`_
@@ -713,25 +759,25 @@ GNU/GCC
 * `Status of C99 features in GCC <https://gcc.gnu.org/c99status.html>`_
 
 Clang
-^^^^^^^^^^^
+-----------
 
 * `C Support in Clang <https://clang.llvm.org/c_status.html>`_
 * `Language standards <https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/LangStandards.def>`_
 
 Microsoft Visual Studio
-^^^^^^^^^^^^^^^^^^^^^^^
+------------------------
 
 * `C/C++ Support <https://learn.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance?view=msvc-170>`_
 * `/std: values <https://learn.microsoft.com/en-us/cpp/build/reference/std-specify-language-standard-version?view=msvc-170>`_
 
 godbolt.org
-^^^^^^^^^^^
+----------------------
 
 * `Online compiler <https://www.godbolt.org>`_ . Set the compiler flag ``-E`` (or ``/E`` for Visual Studio) for the
   preprocessor output.
 
 Wikipedia
-^^^^^^^^^
+---------------------
 
 * `General C <https://en.wikipedia.org/wiki/C_(programming_language)>`_
 * `K&R C <https://en.wikipedia.org/wiki/K%26R_C>`_
@@ -744,7 +790,7 @@ Wikipedia
 
 
 Other
-^^^^^
+-----------
 
 * Definition of `__STDC_VERSION__ and __STDC__ <https://sourceforge.net/p/predef/wiki/Standards/>`_ for various
   standards.
@@ -757,3 +803,107 @@ Other
 
   This also has text versions of the standard which can be handy for diffing and copy/pasting since some PDFs prevent
   copying without the owners password.
+
+nsz Tree
+^^^^^^^^^^^^^^^^^^^
+
+This is the file tree of `nsz <https://port70.net/~nsz/c/>`_:
+
+.. code-block:: text
+
+    $ tree ~/Documents/standards/C_CPP_ProgrammingLanguage/nsz/c/port70.net/~nsz/c
+    Documents/standards/C_CPP_ProgrammingLanguage/nsz/c/port70.net/~nsz/c
+    ├── c++
+    │   ├── c++03_final.pdf
+    │   ├── c++03_final.txt
+    │   ├── c++03_n1804.pdf
+    │   ├── c++03_n1804.txt
+    │   ├── c++11_n3337.pdf
+    │   ├── c++11_n3337.txt
+    │   ├── c++14_n3797.pdf
+    │   ├── c++14_n3797.txt
+    │   ├── c++14_n3936.pdf
+    │   ├── c++14_n3936.txt
+    │   ├── c++14_n3936.txt.gz
+    │   ├── c++98.pdf
+    │   ├── c++98.txt
+    │   ├── cdiffs.htm
+    │   ├── index.html
+    │   ├── keywords.txt
+    │   ├── limits.txt
+    │   ├── siblings_short.pdf
+    │   └── turing.pdf
+    ├── c11
+    │   ├── ctypes.pdf
+    │   ├── index.html
+    │   ├── n1570.html
+    │   ├── n1570.pdf
+    │   ├── n1570.pre.html
+    │   └── n1570.txt
+    ├── c1x
+    │   ├── index.html
+    │   └── n1548.html
+    ├── c23
+    │   ├── index.html
+    │   ├── n3096.pdf
+    │   └── n3220.pdf
+    ├── c2x
+    │   ├── html.txt
+    │   ├── index.html
+    │   ├── n2434.pdf
+    │   └── n3047.pdf
+    ├── c89
+    │   ├── c89-draft.html
+    │   ├── c89-draft.txt
+    │   ├── c94_na1.html
+    │   ├── c9x_changes.html
+    │   ├── dmr-on-noalias.html
+    │   ├── dmr_the_development_of_the_c_language.pdf
+    │   ├── index.html
+    │   ├── longlong.html
+    │   ├── rationale
+    │   │   ├── a.html
+    │   │   ├── b.html
+    │   │   ├── c1.html
+    │   │   ├── c2.html
+    │   │   ├── c3.html
+    │   │   ├── c4.html
+    │   │   ├── c5.html
+    │   │   ├── c6.html
+    │   │   ├── c7.html
+    │   │   ├── c8.html
+    │   │   ├── c9.html
+    │   │   ├── d1.html
+    │   │   ├── d10.html
+    │   │   ├── d11.html
+    │   │   ├── d12.html
+    │   │   ├── d13.html
+    │   │   ├── d2.html
+    │   │   ├── d3.html
+    │   │   ├── d4.html
+    │   │   ├── d5.html
+    │   │   ├── d6.html
+    │   │   ├── d7.html
+    │   │   ├── d8.html
+    │   │   ├── d9.html
+    │   │   ├── e.html
+    │   │   ├── index.html
+    │   │   └── title.html
+    │   ├── rationale.dvi
+    │   ├── rationale.latex.tar.Z
+    │   └── rationale.pdf
+    ├── c99
+    │   ├── C99RationaleV5.10.pdf
+    │   ├── index.html
+    │   ├── n1256.html
+    │   ├── n1256.pdf
+    │   ├── n1256.pre.html
+    │   └── n1256.txt
+    ├── index.html
+    └── posix
+        ├── README
+        ├── README.txt
+        ├── headers.txt
+        ├── includes.txt
+        ├── index.html
+        └── reserved.txt

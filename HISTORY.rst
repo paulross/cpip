@@ -1,6 +1,21 @@
 History
 =======
 
+1.0.0 First Production Release (TODO)
+----------------------------------------
+
+* Development Status :: 5 - Production/Stable
+* Add support for C23.
+* Add selectable support for the following C standards: K&R, ANSI, C89, C95, C99, C11, C17/C18, C23.
+* Add selectable support for GNU extensions.
+* Fix line/column counts (issue https://github.com/paulross/cpip/issues/1 ).
+* Fix accidental token pasting (issue https://github.com/paulross/cpip/issues/2 ).
+* Fix SVG zoom (issue https://github.com/paulross/cpip/issues/7 ).
+* Fix macro replacement re-scanning issue to be conformant with other implementations (GCC, Clang) (issue TODO).
+* Support for Python versions 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13.
+* Drop explicit support for Python 3.6 (but it will probably work).
+* Drop support for Python 2.7.
+
 0.9.9 Beta Release (2022-12-16)
 --------------------------------
 
