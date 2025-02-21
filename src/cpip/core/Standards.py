@@ -81,11 +81,11 @@ class Standards:
         'K&R': False,
         'ANSI': True,
         'C90': True,
-        'C95': False,
-        'C99': False,
-        'C11': False,
-        'C17/C18': False,
-        'C23': False,
+        'C95': True,
+        'C99': True,
+        'C11': True,
+        'C17/C18': True,
+        'C23': True,
     }
     #: Dict of ``{generic_standard : __STDC_VERSION__, ...}``
     STDC_VERSION = {
@@ -117,9 +117,189 @@ class Standards:
     #: Dict of ``{generic_standard : text, ...}``
     C_STANDARDS_NOTES = {
         'K&R': 'Not an internationally recognised standard.',
-        'ANSI': 'This is really no different from C89 and C90.',
-        'C90': 'This is really no different from ANSI C.',
+        'ANSI': 'This is really no different to C89 and C90.',
+        'C90': 'This is really no different to ANSI C.',
         'C95': 'C90 unamended by ISO/IEC 9899:1990/AMD1:1995.',
+    }
+    # This declares some conditional macros that are mentioned in the standard and that user might want to use.
+    # The CLI help and the documentation could use this.
+    CONDITIONALLY_DEFINED_FEATURE_MACROS = {
+        # K&R: Nothing
+
+        # ANSI (C89)
+        # From nsz/c/port70.net/~nsz/c/c89/
+        # "3.8.8 Predefined macro names" there is nothing except __FILE__ etc.
+        # Otherwise, nothing.
+
+        # C90: Nothing
+
+        # From n1256.pdf 6.10.8 Predefined macro names
+        'C99': {
+            '__STDC_HOSTED__': 'The integer constant 1 if the implementation is a hosted implementation or the'
+                               ' integer constant 0 if it is not.',
+            '__STDC_MB_MIGHT_NEQ_WC__': 'The integer constant 1, intended to indicate that, in the encoding for'
+                                        ' wchar_t, a member of the basic character set need not have a code value equal'
+                                        ' to its value when used as the lone character in an integer character'
+                                        ' constant.',
+            # "The following macro names are conditionally defined by the implementation:"
+            '__STDC_IEC_559__': 'The integer constant 1, intended to indicate conformance to the specifications in'
+                                ' annex F (IEC 60559 floating-point arithmetic).',
+            '__STDC_IEC_559_COMPLEX__': 'The integer constant 1, intended to indicate adherence to the specifications'
+                                        ' in informative annex G (IEC 60559 compatible complex arithmetic).',
+            '__STDC_ISO_10646__': 'An integer constant of the form yyyymmL (for example, 199712L).'
+                                  'If this symbol is defined, then every character in the Unicode required set, when'
+                                  ' stored in an object of type wchar_t, has the same value as the short identifier of'
+                                  ' that character.'
+                                  ' The Unicode required set consists of all the characters that are defined by'
+                                  ' ISO/IEC 10646, along with all amendments and technical corrigenda, as of the'
+                                  ' specified year and month.',
+        },
+
+        # C11
+        # From "N1570 Committee Draft — April 12, 2011 ISO/IEC 9899:201x" section "6.10.8 Predefined macro names"
+        'C11': {
+            # "The following macro names shall be defined by the implementation:"
+            '__STDC_HOSTED__': 'The integer constant 1 if the implementation is a hosted implementation or the'
+                               ' integer constant 0 if it is not.',
+            '__STDC_ISO_10646__': 'An integer constant of the form yyyymmL (for example,'
+                                  ' 199712L). If this symbol is defined, then every character in the Unicode'
+                                  ' required set, when stored in an object of type wchar_t, has the same'
+                                  ' value as the short identifier of that character. The Unicode required set'
+                                  ' consists of all the characters that are defined by ISO/IEC 10646, along with'
+                                  ' all amendments and technical corrigenda, as of the specified year and'
+                                  ' month. If some other encoding is used, the macro shall not be defined and'
+                                  ' the actual encoding used is implementation-defined.',
+            '__STDC_MB_MIGHT_NEQ_WC__': 'The integer constant 1, intended to indicate that, in'
+                                        ' the encoding for wchar_t, a member of the basic character set need not'
+                                        ' have a code value equal to its value when used as the lone character in an'
+                                        ' integer character constant.',
+            '__STDC_UTF_16__': 'The integer constant 1, intended to indicate that values of type'
+                               ' char16_t are UTF-16 encoded. If some other encoding is used, the'
+                               ' macro shall not be defined and the actual encoding used is implementation-'
+                               ' defined.',
+            '__STDC_UTF_32__': 'The integer constant 1, intended to indicate that values of type'
+                               ' char32_t are UTF-32 encoded. If some other encoding is used, the'
+                               ' macro shall not be defined and the actual encoding used is implementation-'
+                               ' defined.',
+            # "The following macro names are conditionally defined by the implementation:"
+            '__STDC_ANALYZABLE__': 'The integer constant 1, intended to indicate conformance to'
+                                   ' the specifications in annex L (Analyzability).',
+            '__STDC_IEC_559__': 'The integer constant 1, intended to indicate conformance to the'
+                                ' specifications in annex F (IEC 60559 floating-point arithmetic).',
+            '__STDC_IEC_559_COMPLEX__': 'The integer constant 1, intended to indicate'
+                                        ' adherence to the specifications in annex G (IEC 60559 compatible complex'
+                                        ' arithmetic).',
+            '__STDC_LIB_EXT1__': 'The integer constant 201ymmL, intended to indicate support'
+                                 ' for the extensions defined in annex K (Bounds-checking interfaces).179)',
+            '__STDC_NO_ATOMICS__': 'The integer constant 1, intended to indicate that the'
+                                   ' implementation does not support atomic types (including the _Atomic'
+                                   ' type qualifier) and the <stdatomic.h> header.',
+            '__STDC_NO_COMPLEX__': 'The integer constant 1, intended to indicate that the'
+                                   ' implementation does not support complex types or the <complex.h>'
+                                   ' header.',
+            '__STDC_NO_THREADS__': 'The integer constant 1, intended to indicate that the'
+                                   ' implementation does not support the <threads.h> header.',
+            '__STDC_NO_VLA__': 'The integer constant 1, intended to indicate that the'
+                               ' implementation does not support variable length arrays or variably'
+                               ' modified types.',
+            None: 'An implementation that defines ``__STDC_NO_COMPLEX__`` shall not define'
+                  ' ``__STDC_IEC_559_COMPLEX__``.',
+        },
+        # From ISO/IEC 9899:2017 C17 ballot N2176
+        'C17/C18': {
+            # 6.10.8.1 Mandatory macros
+            # "The following macro names shall be defined by the implementation:"
+            '__STDC_HOSTED__': 'The integer constant 1 if the implementation is a hosted implementation or the'
+                               ' integer constant 0 if it is not.',
+            # 6.10.8.2 Environment macros
+            # "The following macro names are conditionally defined by the implementation:"
+            '__STDC_ISO_10646__': 'An integer constant of the form yyyymmL (for example,'
+                                  ' 199712L). If this symbol is defined, then every character in the Unicode'
+                                  ' required set, when stored in an object of type wchar_t, has the same'
+                                  ' value as the short identifier of that character. The Unicode required set'
+                                  ' consists of all the characters that are defined by ISO/IEC 10646, along with'
+                                  ' all amendments and technical corrigenda, as of the specified year and'
+                                  ' month. If some other encoding is used, the macro shall not be defined and'
+                                  ' the actual encoding used is implementation-defined.',
+            '__STDC_MB_MIGHT_NEQ_WC__': 'The integer constant 1, intended to indicate that, in'
+                                        ' the encoding for wchar_t, a member of the basic character set need not'
+                                        ' have a code value equal to its value when used as the lone character in an'
+                                        ' integer character constant.',
+            '__STDC_UTF_16__': 'The integer constant 1, intended to indicate that values of type'
+                               ' char16_t are UTF-16 encoded. If some other encoding is used, the'
+                               ' macro shall not be defined and the actual encoding used is implementation-'
+                               ' defined.',
+            '__STDC_UTF_32__': 'The integer constant 1, intended to indicate that values of type'
+                               ' char32_t are UTF-32 encoded. If some other encoding is used, the'
+                               ' macro shall not be defined and the actual encoding used is implementation-'
+                               ' defined.',
+            # 6.10.8.3 Conditional feature macros
+            # "The following macro names are conditionally defined by the implementation:"
+            '__STDC_ANALYZABLE__': 'The integer constant 1, intended to indicate conformance to'
+                                   ' the specifications in annex L (Analyzability).',
+            '__STDC_IEC_559__': 'The integer constant 1, intended to indicate conformance to the'
+                                ' specifications in annex F (IEC 60559 floating-point arithmetic).',
+            '__STDC_IEC_559_COMPLEX__': 'The integer constant 1, intended to indicate'
+                                        ' adherence to the specifications in annex G (IEC 60559 compatible complex'
+                                        ' arithmetic).',
+            '__STDC_LIB_EXT1__': 'The integer constant 201ymmL, intended to indicate support'
+                                 ' for the extensions defined in annex K (Bounds-checking interfaces).179)',
+            '__STDC_NO_ATOMICS__': 'The integer constant 1, intended to indicate that the'
+                                   ' implementation does not support atomic types (including the _Atomic'
+                                   ' type qualifier) and the <stdatomic.h> header.',
+            '__STDC_NO_COMPLEX__': 'The integer constant 1, intended to indicate that the'
+                                   ' implementation does not support complex types or the <complex.h>'
+                                   ' header.',
+            '__STDC_NO_THREADS__': 'The integer constant 1, intended to indicate that the'
+                                   ' implementation does not support the <threads.h> header.',
+            '__STDC_NO_VLA__': 'The integer constant 1, intended to indicate that the'
+                               ' implementation does not support variable length arrays or variably'
+                               ' modified types.',
+            None: 'An implementation that defines ``__STDC_NO_COMPLEX__`` shall not define'
+                  ' ``__STDC_IEC_559_COMPLEX__``.',
+        },
+
+        # From n3220.pdf 6.10.10.4 Conditional feature macros
+        'C23': {
+            '__STDC_ANALYZABLE__': 'The integer constant 1, if the implementation conforms to the specifications'
+                                   ' in Annex L (Analyzability).',
+            '__STDC_IEC_60559_BFP__': 'The integer constant 202311L, intended to indicate conformance to Annex F'
+                                      ' (ISO/IEC 60559 floating-point arithmetic) for binary floating-point'
+                                      ' arithmetic.',
+            '__STDC_IEC_559__': 'The integer constant 1, intended to indicate conformance to the specifications in'
+                                ' Annex F (ISO/IEC 60559 floating-point arithmetic) for binary floating-point arithmetic.'
+                                ' Use of this macro is an obsolescent feature.',
+            '__STDC_IEC_60559_DFP__': 'The integer constant 202311L, intended to indicate support of decimal floating'
+                                      ' types and conformance to Annex F (ISO/IEC 60559 floating-point arithmetic) for'
+                                      ' decimal floating-point arithmetic.',
+            '__STDC_IEC_60559_COMPLEX__': 'The integer constant 202311L, intended to indicate conformance to the'
+                                          ' specifications in Annex G (ISO/IEC 60559 compatible complex arithmetic).',
+            '__STDC_IEC_60559_TYPES__': 'The integer constant 202311L, intended to indicate conformance to the'
+                                        ' specification in Annex H (ISO/IEC 60559 interchange and extended types).',
+            '__STDC_IEC_559_COMPLEX__': 'The integer constant 1, intended to indicate adherence to the specifications'
+                                        ' in Annex G (ISO/IEC 60559 compatible complex arithmetic).'
+                                        ' Use of this macro is an obsolescent feature.',
+            '__STDC_LIB_EXT1__': 'The integer constant 202311L, intended to indicate support for the extensions'
+                                 ' defined in Annex K (Bounds-checking interfaces).',
+            '__STDC_NO_ATOMICS__': 'The integer constant 1, intended to indicate that the implementation does not'
+                                   ' support atomic types (including the _Atomic type qualifier) and the <stdatomic.h>'
+                                   ' header.',
+            '__STDC_NO_COMPLEX__': 'The integer constant 1, intended to indicate that the implementation does not'
+                                   ' support complex types or the <complex.h> header.',
+            '__STDC_NO_THREADS__': 'The integer constant 1,intended to indicate that the implementation does not'
+                                   ' support the <threads.h> header.',
+            '__STDC_NO_VLA__': 'The integer constant 1, intended to indicate that the implementation does not support'
+                               ' variable length arrays with automatic storage duration.'
+                               ' Parameters declared with variable length array types are adjusted and then define'
+                               ' objects of automatic storage duration with pointer types.'
+                               ' Thus, support for such declarations is mandatory.',
+            None: 'The intention for the macros ``__STDC_LIB_EXT1__``, ``__STDC_IEC_60559_BFP__``,'
+                  ' ``__STDC_IEC_60559_DFP__``, ``__STDC_IEC_60559_COMPLEX__``, and ``__STDC_IEC_60559_TYPES__``,'
+                  ' with the value 202311L, is that this will remain an integer constant of type long int that is'
+                  ' increased with each revision of this document.'
+                  ' An implementation that defines ``__STDC_NO_COMPLEX__`` shall not define'
+                  ' ``__STDC_IEC_60559_COMPLEX__`` or ``__STDC_IEC_559_COMPLEX__``.'
+        },
     }
 
     def __init__(self, standard: str, gnu_extensions: bool):
@@ -321,7 +501,9 @@ def get_rst() -> typing.List[str]:
     doc_lines.append('')
     doc_lines.append('.. _cpip.C_Standards:')
     doc_lines.append('')
-    doc_lines.extend(rst_heading('Supported C Standards', '', '='))
+    doc_lines.append('.. index:: single: C Standards')
+    doc_lines.append('')
+    doc_lines.extend(rst_heading('C Standards', '', '='))
     doc_lines.append('This describes the C/C++ standards that are supported by CPIP.')
     doc_lines.append('This chapter is auto-generated by ``cpip/core/Standards.py`` function ``main()``.')
     doc_lines.append('Heading titles are the internal *generic* standard names.')
@@ -331,9 +513,15 @@ def get_rst() -> typing.List[str]:
     # Dict of {attribute : {generic_standard : support, ...}, ...}
     attributes_dict = {}
     for generic_standard in Standards.GENERIC_STANDARDS:
+        doc_lines.append(f'.. index::')
+        doc_lines.append(f'   single: {generic_standard}')
+        doc_lines.append(f'   single: C Standards; {generic_standard}')
+        doc_lines.append('')
         doc_lines.extend(rst_heading(generic_standard, '', '-'))
         std = Standards(Standards.GENERIC_STANDARD_ARGUMENT[generic_standard], False)
 
+        doc_lines.append(f'.. index:: single: {generic_standard}; Standards Document')
+        doc_lines.append('')
         doc_lines.extend(rst_heading('Standards Document', '', '^'))
         doc_lines.append(f'{std.C_STANDARDS_DOCUMENT[generic_standard]}.')
         doc_lines.append('')
@@ -345,6 +533,22 @@ def get_rst() -> typing.List[str]:
                 doc_lines.append(f'    {line}')
             doc_lines.append('')
 
+        c_standards = std.c_standards()
+        doc_lines.append(f'.. index::')
+        doc_lines.append(f'   pair: {generic_standard}; --std=')
+        for c_std in c_standards[generic_standard]:
+            doc_lines.append(f'   pair: {generic_standard}; --std={c_std}')
+        doc_lines.append('')
+        doc_lines.extend(rst_heading('``--std=`` Options', '', '^'))
+        temp = []
+        for c_std in c_standards[generic_standard]:
+            temp.append(f'``--std={c_std}``')
+        doc_lines.append(f'{", ".join(temp)}.')
+        doc_lines.append('')
+
+        doc_lines.append(f'.. index::')
+        doc_lines.append(f'   pair: {generic_standard}; __STDC__')
+        doc_lines.append('')
         doc_lines.extend(rst_heading('``__STDC__``', '', '^'))
         if std.STDC[generic_standard]:
             doc_lines.append(f'Defined.')
@@ -352,6 +556,9 @@ def get_rst() -> typing.List[str]:
             doc_lines.append('Not defined.')
         doc_lines.append('')
 
+        doc_lines.append(f'.. index::')
+        doc_lines.append(f'   pair: {generic_standard}; __STDC_VERSION__')
+        doc_lines.append('')
         doc_lines.extend(rst_heading('``__STDC_VERSION__`` Value', '', '^'))
         if std.STDC_VERSION[generic_standard]:
             doc_lines.append(f'``#define __STDC_VERSION__ {std.STDC_VERSION[generic_standard]}``')
@@ -359,13 +566,42 @@ def get_rst() -> typing.List[str]:
             doc_lines.append('Not defined.')
         doc_lines.append('')
 
-        doc_lines.extend(rst_heading('``--std=`` Options', '', '^'))
-        c_standards = std.c_standards()
-        temp = []
-        for c_std in c_standards[generic_standard]:
-            temp.append(f'``--std={c_std}``')
-        doc_lines.append(f'{", ".join(temp)}.')
-        doc_lines.append('')
+        # Conditionally defined macros
+        if generic_standard in Standards.CONDITIONALLY_DEFINED_FEATURE_MACROS:
+            # First the index.
+            doc_lines.append(f'.. index::')
+            for macro_name in Standards.CONDITIONALLY_DEFINED_FEATURE_MACROS[generic_standard]:
+                if macro_name is not None:
+                    doc_lines.append(f'   pair: {generic_standard}; {macro_name}')
+            doc_lines.append('')
+            # Heading
+            doc_lines.extend(rst_heading('Conditionally Defined Macros', '', '^'))
+            doc_lines.append(
+                f'These are macros that the user might want to define according to the standard'
+                f' {std.C_STANDARDS_DOCUMENT[generic_standard]}.'
+            )
+            doc_lines.append('')
+            # Make a table of the macro/description
+            table = [
+                ['Macro', 'Description', ],
+            ]
+            for macro_name in Standards.CONDITIONALLY_DEFINED_FEATURE_MACROS[generic_standard]:
+                if macro_name is not None:
+                    table.append(
+                        [
+                            f'``{macro_name}``',
+                            Standards.CONDITIONALLY_DEFINED_FEATURE_MACROS[generic_standard][macro_name],
+                        ],
+                    )
+            doc_lines.extend(rst_list_table('Conditionally Defined Macros', [30, 70, ], table))
+            doc_lines.append('')
+            for macro_name in Standards.CONDITIONALLY_DEFINED_FEATURE_MACROS[generic_standard]:
+                if macro_name is None:
+                    doc_lines.append('.. note::')
+                    doc_lines.append(
+                        f'   {Standards.CONDITIONALLY_DEFINED_FEATURE_MACROS[generic_standard][macro_name]}'
+                    )
+                    doc_lines.append('')
 
         # Build a table of getattr(std, 'has...')
         function_dict = {getattr(std, f).__doc__: f for f in dir(std) if f.startswith('has_')}
@@ -407,9 +643,11 @@ def get_rst() -> typing.List[str]:
         for std in attributes_dict[row_name]:
             row.append(attributes_dict[row_name][std])
         table.append(row)
+    doc_lines.append('.. index:: single: C Standards; Summary of Attributes')
+    doc_lines.append('')
     doc_lines.extend(rst_heading('Summary of Attributes', '', '-'))
     # doc_lines.extend(rst_simple_table(table))
-    widths = [20, ] + ([12,] * len(Standards.GENERIC_STANDARDS))
+    widths = [20, ] + ([12, ] * len(Standards.GENERIC_STANDARDS))
     doc_lines.extend(rst_list_table('Summary of Attributes', widths, table))
     # doc_lines.append('')
     return doc_lines
