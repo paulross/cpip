@@ -6,7 +6,7 @@ History
 
 * Development Status :: 5 - Production/Stable
 * Add support for C23.
-* Add selectable support for the following C standards: K&R, ANSI, C89, C95, C99, C11, C17/C18, C23.
+* Add selectable support for the following C standards: K&R, ANSI/C89/C90, C95, C99, C11, C17/C18, C23.
 * Add selectable support for GNU extensions.
 * Fix line/column counts (issue https://github.com/paulross/cpip/issues/1 ).
 * Fix accidental token pasting (issue https://github.com/paulross/cpip/issues/2 ).

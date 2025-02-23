@@ -14,6 +14,7 @@ cpip.util
 	DictTree
 	DirWalk
 	HtmlUtils
+    InvokeCpp
 	ListGen
 	MatrixRep
 	MaxMunchGen

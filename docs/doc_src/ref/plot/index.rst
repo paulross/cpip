@@ -9,10 +9,6 @@ cpip.plot
     :maxdepth: 2
 
     Coord
-    
     PlotNode
-    
     SVGWriter
-    
     TreePlotTransform
-    

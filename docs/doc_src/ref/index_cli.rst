@@ -9,9 +9,6 @@
 CPIP Reference (Command Line Interface)
 ***************************************
 
-.. contents:: Table of Contents
-    :depth: 4
-
 .. toctree::
     :maxdepth: 3
 

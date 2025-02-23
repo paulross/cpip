@@ -9,9 +9,6 @@
 CPIP Reference (Library)
 ************************
 
-.. contents:: Table of Contents
-    :depth: 4
-
 .. toctree::
     :maxdepth: 3
 
