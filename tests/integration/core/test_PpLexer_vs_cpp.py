@@ -75,6 +75,26 @@ def pplexer_preprocess(stdin: bytes) -> typing.List[str]:
     return tokens_as_text
 
 
+def compare_ignoring_whitespace_runs(text_a: str, text_b: str) -> bool:
+    """Compares two strings ignoring whitespace runs."""
+    return text_a.split() == text_b.split()
+
+
+@pytest.mark.parametrize(
+    'text_a, text_b, expected',
+    (
+        ('', '', True,),
+        ('', 'a', False,),
+        ('foo  ', 'foo', True,),
+        ('foo  ', ' foo', True,),
+        ('foo  bar   ', 'foo bar', True,),
+        ('  foo  bar   ', 'foo      bar', True,),
+    ),
+)
+def test_compare_ignoring_whitespace_runs(text_a, text_b, expected):
+    assert compare_ignoring_whitespace_runs(text_a, text_b) == expected
+
+
 @pytest.mark.xfail(reason="FIXME")
 @pytest.mark.parametrize(
     'stdin, expected',
@@ -134,7 +154,7 @@ def test_pplexer_vs_cpp(stdin, expected):
     assert lines_pplexer == expected
 
 
-@pytest.mark.xfail(reason="FIXME")
+# @pytest.mark.xfail(reason="FIXME")
 @pytest.mark.parametrize(
     'stdin, expected',
     (
@@ -146,12 +166,17 @@ def test_pplexer_vs_cpp(stdin, expected):
                     b'EGGS(2, 9)',
                 ]
             ),
-            ['2 + 9', ],
+            ['2 +  9', ],
         ),
     )
 )
 def test_pplexer_vs_cpp_debug(stdin, expected):
     lines_cpp = InvokeCpp.capture_cpp_stdin_output(stdin, remove_comments=True, remove_blank_lines=True)
+    print()
+    print(f'    lines_cpp: {lines_cpp}')
+    print(f'     expected: {expected}')
     assert lines_cpp == expected
     lines_pplexer = pplexer_preprocess(stdin)
+    print(f'lines_pplexer: {lines_pplexer}')
+    print(f'     expected: {expected}')
     assert lines_pplexer == expected
