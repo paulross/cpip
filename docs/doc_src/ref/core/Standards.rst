@@ -10,3 +10,8 @@ Standards
     :members:
     :special-members:
     :private-members:
+
+.. autoclass:: cpip.core.Standards.Standards
+    :members:
+    :special-members:
+    :private-members:

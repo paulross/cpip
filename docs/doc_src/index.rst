@@ -9,7 +9,7 @@ CPIP's documentation
 Contents:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     readme
     installation
@@ -21,7 +21,8 @@ Contents:
     TODO_C23
     c_standards
     contributing
-    ref/index
+    ref/index_cli
+    ref/index_lib
     authors
     history
 

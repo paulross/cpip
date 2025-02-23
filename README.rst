@@ -9,7 +9,7 @@ Features
 * Conformant C/C++ preprocessor.
 * Gives programatic access to every preprocessing token and the state of the preprocessor at any point during preprocessing.
 * Top level tools such as ``CPIPMain.py`` can generate preprocessor visualisations from the command line.
-* Requires only Python 3.6+
+* Requires only Python 3.9+
 * Fully documented: https://cpip.readthedocs.io.
 * Free software: GNU General Public License v2
 
@@ -179,24 +179,22 @@ Each link on the page takes you to a description of the macro containing:
     :alt: Macro BITMAP_LAST_WORD_MASK details: definition, where defined, where used and two way dependencies.
     :width: 640
 
-.. only:: html
+Status
+------
 
-    Status
-    ------
+.. image:: https://img.shields.io/pypi/v/cpip.svg
+        :target: https://pypi.python.org/pypi/cpip
 
-    .. image:: https://img.shields.io/pypi/v/cpip.svg
-            :target: https://pypi.python.org/pypi/cpip
+.. image:: https://img.shields.io/travis/paulross/cpip.svg
+        :target: https://travis-ci.org/paulross/cpip
 
-    .. image:: https://img.shields.io/travis/paulross/cpip.svg
-            :target: https://travis-ci.org/paulross/cpip
+.. image:: https://readthedocs.org/projects/cpip/badge/?version=latest
+        :target: https://cpip.readthedocs.io/en/latest/?badge=latest
+        :alt: Documentation Status
 
-    .. image:: https://readthedocs.org/projects/cpip/badge/?version=latest
-            :target: https://cpip.readthedocs.io/en/latest/?badge=latest
-            :alt: Documentation Status
-
-    .. image:: https://pyup.io/repos/github/paulross/cpip/shield.svg
-         :target: https://pyup.io/repos/github/paulross/cpip/
-         :alt: Updates
+.. image:: https://pyup.io/repos/github/paulross/cpip/shield.svg
+     :target: https://pyup.io/repos/github/paulross/cpip/
+     :alt: Updates
 
 Licence
 -------

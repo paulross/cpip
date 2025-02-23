@@ -12,9 +12,8 @@ History
 * Fix accidental token pasting (issue https://github.com/paulross/cpip/issues/2 ).
 * Fix SVG zoom (issue https://github.com/paulross/cpip/issues/7 ).
 * Fix macro replacement re-scanning issue to be conformant with other implementations (GCC, Clang) (issue TODO).
-* Support for Python versions 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13.
-* Drop explicit support for Python 3.6 (but it will probably work).
-* Drop support for Python 2.7.
+* Support for Python versions 3.9, 3.10, 3.11, 3.12, 3.13.
+* Drop explicit support for Python 3.6, 3.7, 3.8
 
 0.9.9 Beta Release (2022-12-16)
 --------------------------------
