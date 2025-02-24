@@ -106,7 +106,6 @@ class TestWordsFoundIn(TestPpTokeniserBase):
         self.assertEqual(-1, myObj._wordsFoundInUpTo('Hello world', 11,
                                                 set(('', 'earth', 'worldly'))))
 
-    @pytest.mark.xfail(reason='Bug in search logic.')
     def testWordFoundIn_Overlap(self):
         myObj = PpTokeniser.PpTokeniser()
         # Found
