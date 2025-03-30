@@ -76,14 +76,16 @@ class Standards:
         'iso9899:2024': 'C23',
     }
     #: Is ``__STDC__`` pre-defined.
+    # TODO: Check standards documents for this.
+    # cpp -E -dM on the mac does not show __STDC__
     STDC = {
         'K&R': False,
         'ANSI': True,
-        'C95': True,
-        'C99': True,
-        'C11': True,
-        'C17/C18': True,
-        'C23': True,
+        'C95': True, # ?
+        'C99': True, # Section 6.10.8 of the standard n1256.pdf
+        'C11': True, # ?
+        'C17/C18': True, # ?
+        'C23': True, # Section 6.10.9.1 of the standard n3047.pdf
     }
     #: Dict of ``{generic_standard : __STDC_VERSION__, ...}``
     STDC_VERSION = {

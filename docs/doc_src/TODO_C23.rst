@@ -637,6 +637,32 @@ The relevant code is ``cpip.core.MacroEnv.MacroEnv._expand()`` and the recursive
 ``reexTokS += self._expand(next(myGen), myGen, theFileLineCol)`` at ``src/cpip/core/MacroEnv.py:599`` which is failing
 to expand ``f()`` a second time.
 
+Also:
+
+.. code-block:: bash
+
+    #define f(a) a*g
+    #define g(a) f(a)
+    f(2)(9)
+    f(2)(9)(11)
+
+    $ cpp -E
+    #define f(a) a*g
+    #define g(a) f(a)
+    f(2)(9)
+    f(2)(9)(11)
+    # 1 "<stdin>"
+    # 1 "<built-in>" 1
+    # 1 "<built-in>" 3
+    # 384 "<built-in>" 3
+    # 1 "<command line>" 1
+    # 1 "<built-in>" 2
+    # 1 "<stdin>" 2
+
+
+    2*9*g
+    2*9*g(11)
+
 Also how well do we do with recursion?:
 
 .. code-block:: bash
