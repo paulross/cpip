@@ -822,6 +822,7 @@ Other
   standards.
 * CPP reference on the `C Preprocessor <https://en.cppreference.com/w/c/preprocessor>`_.
 * CPP reference on the `C history <https://en.cppreference.com/w/c/preprocessor>`_ with links to standards documents.
+* `www.open-std.org <https://www.open-std.org/JTC1/SC22/WG14/www/projects#9899>`_ for the C standards.
 * The `rationale <https://www.open-std.org/jtc1/sc22/wg14/www/C99RationaleV5.10.pdf>`_ for the C99 standard.
 * `nsz <https://port70.net/~nsz/c/>`_ has a great collated set of standards that can be obtained by:
 

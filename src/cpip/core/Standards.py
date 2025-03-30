@@ -293,7 +293,6 @@ implementation-defined valid time shall be supplied.''',
     }
     #: Sentinel for a note about macros for the standard.
     MACRO_MAP_SENTINEL_NOTE = ''
-    #: Dict of conditional feature macros ``{generic standard : (title, {macro_name : text, ...}, ), ...}``
     #: This declares some conditional macros that are mentioned in the standard and that user might want to use.
     #: The CLI help and the documentation could use this.
     CONDITIONAL_FEATURE_MACROS: typing.Dict[str, typing.Tuple[str, typing.Dict[str, str]]] = {
