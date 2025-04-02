@@ -85,6 +85,9 @@ Supported ``--std=`` Values
 
 ISO: ISO/IEC 9899:1990/AMD1:1995
 
+I can't find a copy of the complete standard online but a summary of
+`changes is here <http://www.lysator.liu.se/c/na1.html>`_.
+
 ------
 C99
 ------
