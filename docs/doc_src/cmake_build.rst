@@ -221,5 +221,5 @@ Which produces:
         ├── user.h.include.svg
         ├── user.h.include.txt.html
         └── user.h_be48f2c223a53b941527a89bb3998255.html
-    
+
     3 directories, 74 files
