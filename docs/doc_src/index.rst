@@ -20,6 +20,8 @@ Contents:
     tutorial/index
     TODO_C23
     c_standards
+    cmake_build
+    usage
     contributing
     ref/index_cli
     ref/index_lib
