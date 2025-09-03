@@ -18,6 +18,7 @@ Contents:
     cmd_line_tools/index
     tutorial/index
     TODO_C23
+    cmake_build.rst
     c_standards
     cmake_build
     usage
