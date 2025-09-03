@@ -17,6 +17,7 @@ Contents:
     examples/examples
     cmd_line_tools/index
     tutorial/index
+    cmake_build.rst
     ref/index
     usage
     contributing
