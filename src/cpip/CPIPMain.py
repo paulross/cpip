@@ -1288,6 +1288,10 @@ def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
     This uses multiprocessing where possible.
     Any Exception (such as a KeyboardInterupt) will terminate this function but
     write out an index of what has been achieved so far."""
+    # TODO: If the inDir is a CMake build directory (see cpip.util.CMakeBuild.is_cmake_directory())
+    # TODO: then create a with cpip.util.CMakeBuild.cmake_reply_target_file_from_build_directory() and extract
+    # TODO: all the defines, includes and sources from the CMakeTarget.
+    # TODO: Use cpip.util.Cpp.macroDefinitionDict() to split the CMakeTarget defines.
     assert os.path.isdir(inDir)
     time_start = time.time()
     try:
