@@ -115,9 +115,9 @@ CPIPMain and CMake
 
 This is an example of creating a demonstratoin project with CMake and CPIP.
 
----------------------------
-Example
----------------------------
+################################
+CPIP Building From a Cmake Build
+################################
 
 In the directory ``CMake`` there is an example CMake project at ``CMake/CPIPDemo``.
 This contains a CMake version of the demonstration C project at ``demo/``.
