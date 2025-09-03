@@ -1,0 +1,213 @@
+"""Provides an interface to the CMake build system information.
+
+See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
+"""
+#!/usr/bin/env python
+# CPIP is a C/C++ Preprocessor implemented in Python.
+# Copyright (C) 2008-2017 Paul Ross
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Paul Ross: apaulross@gmail.com
+
+import dataclasses
+import fnmatch
+import json
+import os
+
+
+class CMakeBuildException(Exception):
+    """Specialised exception for this module."""
+    pass
+
+
+def cmake_reply_directory(cmake_build_directory: str) -> str:
+    """Returns the cmake reply directory inside the build directory."""
+    return os.path.join(cmake_build_directory, '.cmake', 'api', 'v1', 'reply')
+
+
+def cmake_reply_index_file_path(cmake_build_directory: str) -> str:
+    """Returns the cmake reply index file, this is the staring point of the CMake information.
+
+    See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
+
+    File name is index-<unspecified>.json
+    There may be multiple index files, from the documentation:
+    "the one with the largest name in lexicographic order is the current index file"
+    """
+    if not os.path.isdir(cmake_build_directory):
+        raise CMakeBuildException(
+            f'CMake build directory {cmake_build_directory} does not exist.'
+        )
+    cmake_reply_dir = cmake_reply_directory(cmake_build_directory)
+    if not os.path.isdir(cmake_reply_dir):
+        raise CMakeBuildException(
+            f'CMake build directory {cmake_reply_dir} does not contain an .cmake/api/v1/reply directory.'
+        )
+    index_files = []
+    for file_name in os.listdir(cmake_reply_dir):
+        if fnmatch.fnmatch(file_name, 'index-*.json'):
+            index_files.append(file_name)
+    index_files.sort()
+    if len(index_files) == 0:
+        raise CMakeBuildException('No CMake build index JSON file found.')
+    return os.path.join(cmake_reply_dir, index_files[-1])
+
+
+@dataclasses.dataclass
+class CMakeIndex:
+    """Contains data extracted from the CMake index JSON file."""
+    cmake_build_directory: str
+    cmake_version_str: str
+    codemodel_file_name: str
+
+
+def cmake_reply_index_from_json(cmake_build_directory: str, json_str: str) -> CMakeIndex:
+    """Returns a CMakeIndex instance from a JSON string from the reply/index file.
+
+    See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#v1-reply-index-file
+    """
+    index_json = json.loads(json_str)
+    cmake_version_str = index_json['cmake']['version']['string']
+    object_kind_file = {}
+    for obj in index_json['objects']:
+        object_kind_file[obj['kind']] = obj['jsonFile']
+    # reply_kind_file = {}
+    # for key in index_json['reply']:
+    #     obj = index_json['reply'][key]
+    #     reply_kind_file[obj['kind']] = obj['jsonFile']
+    code_model_filename = object_kind_file['codemodel']
+    return CMakeIndex(cmake_build_directory, cmake_version_str, code_model_filename)
+
+
+def cmake_reply_index_from_build_directory(cmake_build_directory: str) -> CMakeIndex:
+    """Returns the cmake reply index file, this is the staring point of the CMake information."""
+    with open(cmake_reply_index_file_path(cmake_build_directory)) as index_file:
+        return cmake_reply_index_from_json(cmake_build_directory, index_file.read())
+
+
+@dataclasses.dataclass
+class CMakeCodeModel:
+    """Contains data extracted from the CMake codemodel JSON file."""
+    cmake_build_directory: str
+    codemodel_file_name: str
+    name: str
+    target_file_name: str
+
+
+def cmake_reply_codemodel_from_json(cmake_build_directory: str, codemodel_file_name: str, json_str: str) -> CMakeCodeModel:
+    """Returns a CMakeCodeModel from a codemodel JSON string.
+
+    See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
+    """
+    codemodel_json = json.loads(json_str)
+    configurations = codemodel_json['configurations']
+    if len(configurations) != 1:
+        raise CMakeBuildException(
+            'No unique CMake configuration found, instead %d found.',
+            len(configurations)
+        )
+    configuration = configurations[0]
+    targets = configuration['targets']
+    if len(targets) != 1:
+        raise CMakeBuildException(
+            'No unique CMake targets found, instead %d found.',
+            len(targets)
+        )
+    return CMakeCodeModel(
+        cmake_build_directory, codemodel_file_name, targets[0]['name'], targets[0]['jsonFile'],
+    )
+
+
+def cmake_reply_codemodel_from_cmake_index(cmake_index: CMakeIndex) -> CMakeCodeModel:
+    """Returns a CMakeCodeModel from a CMakeIndex."""
+    file_path = os.path.join(
+        cmake_reply_directory(cmake_index.cmake_build_directory),
+        cmake_index.codemodel_file_name,
+    )
+    with open(file_path) as file:
+        return cmake_reply_codemodel_from_json(
+            cmake_index.cmake_build_directory,
+            cmake_index.codemodel_file_name,
+            file.read()
+        )
+
+
+@dataclasses.dataclass
+class CMakeTarget:
+    """Contains data extracted from the CMake target JSON file."""
+    cmake_build_directory: str
+    target_file_name: str
+    name: str
+    defines: list[str]
+    includes: list[str]
+    sources: list[str]
+
+
+def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: str, json_str: str) -> CMakeTarget:
+    """Returns a CMakeCodeModel from a target JSON string.
+
+    See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#codemodel-version-2-target-object
+    """
+    sources_json = json.loads(json_str)
+    compile_groups = sources_json['compileGroups']
+    if len(compile_groups) != 1:
+        raise CMakeBuildException(
+            'No unique CMake compileGroups found, instead %d found.',
+            len(compile_groups)
+        )
+    compile_group = compile_groups[0]
+    # Example:
+    # {
+    #     "backtrace" : 7,
+    #     "define" : "RAPIVOT_MEMORY_TRACE=1"
+    # },
+    defines = [d['define'] for d in compile_group['defines']]
+    includes = [d['path'] for d in compile_group['includes']]
+    sources = []
+    for source_node in sources_json['sources']:
+        sources.append(source_node['path'])
+    return CMakeTarget(
+        cmake_build_directory, target_file_name, sources_json['name'], defines, includes, sources,
+    )
+
+
+def cmake_reply_target_from_codemodel(codemodel: CMakeCodeModel) -> CMakeTarget:
+    """Return a CMakeTarget from a CMakeCodeModel object."""
+    file_path = os.path.join(cmake_reply_directory(codemodel.cmake_build_directory), codemodel.target_file_name)
+    with open(file_path) as file:
+        return cmake_reply_target_from_json(
+            codemodel.cmake_build_directory, codemodel.target_file_name, file.read(),
+        )
+
+
+def cmake_reply_target_file_from_build_directory(cmake_build_directory: str) -> CMakeTarget:
+    """Return a CMakeTarget from a CMake build directory."""
+    cmake_index = cmake_reply_index_from_build_directory(cmake_build_directory)
+    cmake_codemodel = cmake_reply_codemodel_from_cmake_index(cmake_index)
+    cmake_target = cmake_reply_target_from_codemodel(cmake_codemodel)
+    return cmake_target
+
+
+def is_cmake_directory(cmake_build_directory: str) -> bool:
+    """Returns True if this is a CMaake build directory and a CMakeTarget can be constructed."""
+    ret = True
+    try:
+        cmake_target = cmake_reply_target_file_from_build_directory(cmake_build_directory)
+        if cmake_target is None:
+            ret = False
+    except CMakeBuildException:
+        ret = False
+    return ret
