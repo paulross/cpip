@@ -124,6 +124,7 @@ __rights__ = 'Copyright (c) 2008-2017 Paul Ross'
 import argparse
 import collections
 import datetime
+import hashlib
 import io
 import logging
 import multiprocessing
@@ -132,6 +133,7 @@ import pprint
 import subprocess
 import sys
 import time
+import typing
 
 from cpip import CppCondGraphToHtml
 from cpip import ExceptionCpip
@@ -148,6 +150,7 @@ from cpip.core import FileIncludeGraph
 from cpip.core import IncludeHandler
 from cpip.core import PpLexer
 from cpip.core import PragmaHandler
+from cpip.util import CMakeBuild
 from cpip.util import CommonPrefix
 from cpip.util import Cpp
 from cpip.util import DirWalk
@@ -1152,14 +1155,14 @@ def retOptionMap(theOptParser, theOpts):
 # Section: Multiprocessing code.
 ################################
 def preProcessFilesMP(dIn, dOut, jobSpec, glob, recursive, jobs):
-    """Multiprocessing code to preprocess directories. Returns a count of ITUs
-    processed."""
+    """Multiprocessing code to preprocess directories.
+    Returns a list of PpProcessResult, one for each ITU processed."""
     if jobs < 0:
         raise ValueError('preProcessFilesMP(): can not run with negative number of jobs: %d' % jobs)
     if jobs == 0:
         jobs = multiprocessing.cpu_count()
     assert jobs > 1, 'preProcessFilesMP(): number of jobs: %d???' % jobs
-    logging.info('plotLogPassesMP(): Setting multi-processing jobs to %d' % jobs)
+    logging.info('preProcessFilesMP(): Setting multi-processing jobs to %d' % jobs)
     myTaskS = [
         (t.filePathIn, t.filePathOut, jobSpec) \
             for t in DirWalk.dirWalk(dIn, dOut, glob, recursive, bigFirst=True)
@@ -1175,15 +1178,39 @@ def preProcessFilesMP(dIn, dOut, jobSpec, glob, recursive, jobs):
             ]
         ]
     return myResults
-#     count = 0
-#     for r in myResults:
-#         count += 1
-#     # TODO: Return titles and paths for caller to write the root index HTML.
-#     return count
+
+
+def preProcessTheseFilesMP(source_file_paths, dOut, jobSpec, glob, jobs):
+    """Multiprocessing code to preprocess a list of source files.
+    Returns a list of PpProcessResult, one for each ITU processed."""
+    if len(source_file_paths) == 0:
+        return []
+    if jobs < 0:
+        raise ValueError('preProcessTheseFilesMP(): can not run with negative number of jobs: %d' % jobs)
+    if jobs == 0:
+        jobs = multiprocessing.cpu_count()
+    jobs = min(jobs, len(source_file_paths))
+    logging.info('preProcessTheseFilesMP(): Setting multi-processing jobs to %d' % jobs)
+    myTaskS = []
+    for source_file_path in source_file_paths:
+        task = (source_file_path, source_file_path_sub_directory(source_file_path, dOut), jobSpec)
+        myTaskS.append(task)
+    with multiprocessing.Pool(processes=jobs) as myPool:
+        if jobSpec.keepGoing:
+            fn = preprocessFileToOutputNoExcept
+        else:
+            fn = preprocessFileToOutput
+        myResults = [
+            r.get() for r in [
+                myPool.apply_async(fn, t) for t in myTaskS
+            ]
+        ]
+    return myResults
 
 ################################
 # End: Multiprocessing code.
 ################################
+
 def _removeCommonPrefixFromResults(titlePathTupleS):
     """Given a list of:
     ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath), total_files, total_lines, total_bytes)``
@@ -1283,32 +1310,83 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
             )
         _writeIndexHtmlTrailer(myS, time_start)
 
+
+def fix_job_spec_for_cmake_build_directory(
+    cmake_build_directory: str,
+    job_spec: MainJobSpec,
+    glob_match: typing.List[str]) -> typing.List[str]:
+    """Adapts the MainJobSpec to the contents of the CMake build directory metadata.
+
+    This returns a list of sources that match the glob_match(s)
+    """
+    cmake_target = CMakeBuild.cmake_reply_target_file_from_build_directory(cmake_build_directory)
+    # cmake_target has defines, include_paths and sources.
+    # First defines, update (overwrite) the predefined macros in the job spec.:
+    define_dict = split_defines_into_simple_dict(cmake_target.defines)
+    for k in define_dict.keys():
+        job_spec.preDefMacros[k] = define_dict[k]
+    # Now the include paths.
+    for inc_path in cmake_target.include_paths:
+        # Put them in the user paths as they will be retired with the system paths. TODO: Correct?
+        job_spec.incHandler._usr.append(inc_path)
+    ret = []
+    for source in cmake_target.sources:
+        if DirWalk.file_path_matches(source, glob_match):
+            ret.append(os.path.join(cmake_target.project_path, source))
+    return ret
+
+
+def source_file_path_sub_directory(source_file_path: str, out_dir: str) -> str:
+    """Returns a sub-directory suitable to represent the contents of source file.
+
+    For example 'src/cpp/SkipList.cpp' and output directory 'foo/bar' might produce:
+
+    'foo/bar/SkipList.cpp_e6f3eadf0e3f426caf04c3cacc319c96'
+
+    The sub directory is not created.
+
+    See also HtmlUtils.py
+    """
+    path_hash = hashlib.md5(source_file_path.encode('ascii')).hexdigest()
+    sub_dir_name = '%s_%s' % (os.path.basename(source_file_path), path_hash)
+    return os.path.join(out_dir, sub_dir_name)
+
+
 def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs):
     """Pre-process all the files in a directory. Returns a count of the TUs.
     This uses multiprocessing where possible.
     Any Exception (such as a KeyboardInterupt) will terminate this function but
     write out an index of what has been achieved so far."""
-    # TODO: If the inDir is a CMake build directory (see cpip.util.CMakeBuild.is_cmake_directory())
-    # TODO: then create a with cpip.util.CMakeBuild.cmake_reply_target_file_from_build_directory() and extract
-    # TODO: all the defines, includes and sources from the CMakeTarget.
-    # TODO: Use cpip.util.Cpp.macroDefinitionDict() to split the CMakeTarget defines.
     assert os.path.isdir(inDir)
     time_start = time.time()
+    results = []
+    if jobSpec.keepGoing:
+        single_file_function = preprocessFileToOutputNoExcept
+    else:
+        single_file_function = preprocessFileToOutput
     try:
-        if numJobs != 1:
-            results = preProcessFilesMP(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
+        if CMakeBuild.is_cmake_build_directory(inDir):
+            source_file_paths = fix_job_spec_for_cmake_build_directory(inDir, jobSpec, globMatch)
+            if numJobs != 1:
+                results = preProcessTheseFilesMP(source_file_paths, outDir, jobSpec, globMatch, numJobs)
+            else:
+                results = []
+                for source_file_path in source_file_paths:
+                    out_dir_path = source_file_path_sub_directory(source_file_path, outDir)
+                    results.append(
+                        single_file_function(source_file_path, out_dir_path, jobSpec)
+                    )
         else:
-            results = []
-            for t in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False):
-                if jobSpec.keepGoing:
-                    fn = preprocessFileToOutputNoExcept
-                else:
-                    fn = preprocessFileToOutput
-                results.append(
-                    fn(t.filePathIn, t.filePathOut, jobSpec)
-                )
-        # Write the linking HTML from the title and file paths.
-#         print('results', results)
+            if numJobs != 1:
+                results = preProcessFilesMP(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
+            else:
+                results = []
+                for t in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False):
+                    results.append(
+                        single_file_function(t.filePathIn, t.filePathOut, jobSpec)
+                    )
+            # Write the linking HTML from the title and file paths.
+            # print('results', results)
     finally:
         _writeDirectoryIndexHTML(inDir, outDir, results, jobSpec, time_start)
 
@@ -1472,6 +1550,20 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         total_files, total_lines, total_bytes
     )
 
+
+def split_defines_into_simple_dict(defines: typing.List[str]) -> typing.Dict[str, str]:
+    ret = {}
+    for d in defines:
+        define_split = d.split('=')
+        if len(define_split) == 2:
+            ret[define_split[0]] = define_split[1] + '\n'
+        elif len(define_split) == 1:
+            ret[define_split[0]] = '\n'
+        else:
+            raise ValueError('Can not read macro definition: %s' % d)
+    return ret
+
+
 def main():
     """Processes command line to preprocess a file or a directory.
     
@@ -1581,16 +1673,7 @@ on it to create a SVG file (for includes and macro dependencies). [default: %(de
                     theUsrDirs=args.incUsr or [],
                     theSysDirs=args.incSys or [],
     )
-    preDefMacros = {}
-    if args.predefines:
-        for d in args.predefines:
-            _tup = d.split('=')
-            if len(_tup) == 2:
-                preDefMacros[_tup[0]] = _tup[1] + '\n'
-            elif len(_tup) == 1:
-                preDefMacros[_tup[0]] = '\n'
-            else:
-                raise ValueError('Can not read macro definition: %s' % d)
+    preDefMacros = split_defines_into_simple_dict(args.predefines)
     # Create the job specification
     jobSpec = MainJobSpec(
         incHandler=myIncH,

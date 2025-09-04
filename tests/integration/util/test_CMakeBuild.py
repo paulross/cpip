@@ -17,7 +17,8 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # Paul Ross: apaulross@gmail.com
-import os.path
+import os
+import pwd
 
 import pytest
 
@@ -27,6 +28,9 @@ EXAMPLE_CMAKE_BUILD_DIRECTORY = os.path.normpath(
     os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'cmake-build-debug')
 )
 
+
+# Thanks to https://stackoverflow.com/questions/842059/is-there-a-portable-way-to-get-the-current-username-in-python
+USERNAME = pwd.getpwuid(os.getuid()).pw_name
 
 @pytest.mark.parametrize(
     'cmake_build_directory, expected',
@@ -93,9 +97,10 @@ def test_cmake_reply_codemodel_from_cmake_index(cmake_build_directory, expected)
             CMakeBuild.CMakeTarget(
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
                 name='SkipList',
                 defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
-                includes=['/Users/USER/CLionProjects/skiplist/src/cpp',
+                include_paths=['/Users/USER/CLionProjects/skiplist/src/cpp',
                           '/Users/USER/CLionProjects/skiplist/src/cpp/test',
                           '/Users/USER/CLionProjects/skiplist/src/cpy',
                           '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
@@ -146,9 +151,10 @@ def test_cmake_reply_target_from_codemodel(cmake_build_directory, expected):
             CMakeBuild.CMakeTarget(
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
                 name='SkipList',
                 defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
-                includes=['/Users/USER/CLionProjects/skiplist/src/cpp',
+                include_paths=['/Users/USER/CLionProjects/skiplist/src/cpp',
                           '/Users/USER/CLionProjects/skiplist/src/cpp/test',
                           '/Users/USER/CLionProjects/skiplist/src/cpy',
                           '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
