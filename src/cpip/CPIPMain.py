@@ -1310,6 +1310,49 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
             )
         _writeIndexHtmlTrailer(myS, time_start)
 
+
+def fix_job_spec_for_cmake_build_directory(
+    cmake_build_directory: str,
+    job_spec: MainJobSpec,
+    glob_match: typing.List[str]) -> typing.List[str]:
+    """Adapts the MainJobSpec to the contents of the CMake build directory metadata.
+
+    This returns a list of sources that match the glob_match(s)
+    """
+    cmake_target = CMakeBuild.cmake_reply_target_file_from_build_directory(cmake_build_directory)
+    # cmake_target has defines, include_paths and sources.
+    # First defines, update (overwrite) the predefined macros in the job spec.:
+    define_dict = split_defines_into_simple_dict(cmake_target.defines)
+    for k in define_dict.keys():
+        job_spec.preDefMacros[k] = define_dict[k]
+    # Now the include paths.
+    for inc_path in cmake_target.include_paths:
+        # Put them in the user and system paths as CMake does not seem to distinguish between them.
+        job_spec.incHandler._usr.append(inc_path)
+        job_spec.incHandler._sys.append(inc_path)
+    ret = []
+    for source in cmake_target.sources:
+        if DirWalk.file_path_matches(source, glob_match):
+            ret.append(os.path.join(cmake_target.project_path, source))
+    return ret
+
+
+def source_file_path_sub_directory(source_file_path: str, out_dir: str) -> str:
+    """Returns a sub-directory suitable to represent the contents of source file.
+
+    For example 'src/cpp/SkipList.cpp' and output directory 'foo/bar' might produce:
+
+    'foo/bar/SkipList.cpp_e6f3eadf0e3f426caf04c3cacc319c96'
+
+    The sub directory is not created.
+
+    See also HtmlUtils.py
+    """
+    path_hash = hashlib.md5(source_file_path.encode('ascii')).hexdigest()
+    sub_dir_name = '%s_%s' % (os.path.basename(source_file_path), path_hash)
+    return os.path.join(out_dir, sub_dir_name)
+
+
 def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs):
     """Pre-process all the files in a directory. Returns a count of the TUs.
     This uses multiprocessing where possible.
