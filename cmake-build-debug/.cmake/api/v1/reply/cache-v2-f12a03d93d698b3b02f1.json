@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/engun/CLionProjects/skiplist/cmake-build-debug"
+			"value" : "/Users/USER/CLionProjects/skiplist/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -115,7 +115,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cmake"
+			"value" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cmake"
 		},
 		{
 			"name" : "CMAKE_CPACK_COMMAND",
@@ -127,7 +127,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cpack"
+			"value" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cpack"
 		},
 		{
 			"name" : "CMAKE_CTEST_COMMAND",
@@ -139,7 +139,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/ctest"
+			"value" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/ctest"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER",
@@ -479,7 +479,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/engun/CLionProjects/skiplist/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/Users/USER/CLionProjects/skiplist/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -539,7 +539,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/engun/CLionProjects/skiplist"
+			"value" : "/Users/USER/CLionProjects/skiplist"
 		},
 		{
 			"name" : "CMAKE_INSTALL_NAME_TOOL",
@@ -595,7 +595,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/ninja/mac/ninja"
+			"value" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/ninja/mac/ninja"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS",
@@ -863,7 +863,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.24"
+			"value" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.24"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1215,7 +1215,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/engun/CLionProjects/skiplist/cmake-build-debug"
+			"value" : "/Users/USER/CLionProjects/skiplist/cmake-build-debug"
 		},
 		{
 			"name" : "SkipList_IS_TOP_LEVEL",
@@ -1239,7 +1239,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/engun/CLionProjects/skiplist"
+			"value" : "/Users/USER/CLionProjects/skiplist"
 		},
 		{
 			"name" : "_Python3_DEVELOPMENT_EMBED_SIGNATURE",
