@@ -1319,24 +1319,20 @@ def fix_job_spec_for_cmake_build_directory(
 
     This returns a list of sources that match the glob_match(s)
     """
-    cmake_metadata = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
-    # cmake_metadata.target has defines, include_paths and sources.
+    cmake_target = CMakeBuild.cmake_reply_target_file_from_build_directory(cmake_build_directory)
+    # cmake_target has defines, include_paths and sources.
     # First defines, update (overwrite) the predefined macros in the job spec.:
-    define_dict = split_defines_into_simple_dict(cmake_metadata.target.defines)
+    define_dict = split_defines_into_simple_dict(cmake_target.defines)
     for k in define_dict.keys():
         job_spec.preDefMacros[k] = define_dict[k]
     # Now the include paths.
-    for inc_path in cmake_metadata.target.include_paths:
-        # Put them in the user and system paths as CMake does not seem to distinguish between them.
-        job_spec.incHandler.add_user_search_path(inc_path)
-        job_spec.incHandler.add_system_search_path(inc_path)
-    # Add platform system includes from the CMake toolchain.
-    for inc_path in cmake_metadata.system_include_directories:
-        job_spec.incHandler.add_system_search_path(inc_path)
+    for inc_path in cmake_target.include_paths:
+        # Put them in the user paths as they will be retired with the system paths. TODO: Correct?
+        job_spec.incHandler._usr.append(inc_path)
     ret = []
-    for source in cmake_metadata.target.sources:
+    for source in cmake_target.sources:
         if DirWalk.file_path_matches(source, glob_match):
-            ret.append(os.path.join(cmake_metadata.target.project_path, source))
+            ret.append(os.path.join(cmake_target.project_path, source))
     return ret
 
 
@@ -1361,10 +1357,6 @@ def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
     This uses multiprocessing where possible.
     Any Exception (such as a KeyboardInterupt) will terminate this function but
     write out an index of what has been achieved so far."""
-    # TODO: If the inDir is a CMake build directory (see cpip.util.CMakeBuild.is_cmake_directory())
-    # TODO: then create a with cpip.util.CMakeBuild.cmake_reply_target_file_from_build_directory() and extract
-    # TODO: all the defines, includes and sources from the CMakeTarget.
-    # TODO: Use cpip.util.Cpp.macroDefinitionDict() to split the CMakeTarget defines.
     assert os.path.isdir(inDir)
     time_start = time.time()
     results = []
