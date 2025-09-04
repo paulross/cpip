@@ -185,11 +185,18 @@ def cmake_reply_target_from_json(
     #     "backtrace" : 7,
     #     "define" : "RAPIVOT_MEMORY_TRACE=1"
     # },
-    defines = [d['define'] for d in compile_group['defines']]
-    includes = [d['path'] for d in compile_group['includes']]
+    if 'defines' in compile_group:
+        defines = [d['define'] for d in compile_group['defines']]
+    else:
+        defines = []
+    if 'includes' in compile_group:
+        includes = [d['path'] for d in compile_group['includes']]
+    else:
+        includes = []
     sources = []
-    for source_node in sources_json['sources']:
-        sources.append(source_node['path'])
+    if 'sources' in sources_json:
+        for source_node in sources_json['sources']:
+            sources.append(source_node['path'])
     return CMakeTarget(
         cmake_build_directory, target_file_name, project_path, sources_json['name'], defines, includes, sources,
     )
