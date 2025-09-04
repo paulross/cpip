@@ -4,7 +4,7 @@ See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
 """
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2017 Paul Ross
+# Copyright (C) 2008-2025 Paul Ross
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -103,6 +103,8 @@ class CMakeCodeModel:
     """Contains data extracted from the CMake codemodel JSON file."""
     cmake_build_directory: str
     codemodel_file_name: str
+    # This comes from configurations[0].paths.source
+    project_path:str
     name: str
     target_file_name: str
 
@@ -126,8 +128,10 @@ def cmake_reply_codemodel_from_json(cmake_build_directory: str, codemodel_file_n
             'No unique CMake targets found, instead %d found.',
             len(targets)
         )
+    project_path = codemodel_json['paths']['source']
     return CMakeCodeModel(
-        cmake_build_directory, codemodel_file_name, targets[0]['name'], targets[0]['jsonFile'],
+        cmake_build_directory, codemodel_file_name, project_path,
+        targets[0]['name'], targets[0]['jsonFile'],
     )
 
 
@@ -201,7 +205,7 @@ def cmake_reply_target_file_from_build_directory(cmake_build_directory: str) -> 
     return cmake_target
 
 
-def is_cmake_directory(cmake_build_directory: str) -> bool:
+def is_cmake_build_directory(cmake_build_directory: str) -> bool:
     """Returns True if this is a CMaake build directory and a CMakeTarget can be constructed."""
     ret = True
     try:

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
-# Copyright (C) 2008-2017 Paul Ross
+# Copyright (C) 2008-2025 Paul Ross
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ EXAMPLE_JSON_INDEX = """{
         },
         "paths" : 
         {
-            "cmake" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cmake",
-            "cpack" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cpack",
-            "ctest" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/ctest",
-            "root" : "/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.24"
+            "cmake" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cmake",
+            "cpack" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cpack",
+            "ctest" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/ctest",
+            "root" : "/Users/USER/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.24"
         },
         "version" : 
         {
@@ -201,8 +201,8 @@ EXAMPLE_JSON_CODEMODEL = """{
     "kind" : "codemodel",
     "paths" : 
     {
-        "build" : "/Users/engun/CLionProjects/skiplist/cmake-build-debug",
-        "source" : "/Users/engun/CLionProjects/skiplist"
+        "build" : "/Users/USER/CLionProjects/skiplist/cmake-build-debug",
+        "source" : "/Users/USER/CLionProjects/skiplist"
     },
     "version" : 
     {
@@ -222,6 +222,7 @@ EXAMPLE_JSON_CODEMODEL = """{
             CMakeBuild.CMakeCodeModel(
                 cmake_build_directory='cmake-build-debug',
                 codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
                 name='SkipList',
                 target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json'),
         ),
@@ -383,15 +384,15 @@ EXAMPLE_JSON_TARGET = """{
             [
                 {
                     "backtrace" : 8,
-                    "path" : "/Users/engun/CLionProjects/skiplist/src/cpp"
+                    "path" : "/Users/USER/CLionProjects/skiplist/src/cpp"
                 },
                 {
                     "backtrace" : 8,
-                    "path" : "/Users/engun/CLionProjects/skiplist/src/cpp/test"
+                    "path" : "/Users/USER/CLionProjects/skiplist/src/cpp/test"
                 },
                 {
                     "backtrace" : 8,
-                    "path" : "/Users/engun/CLionProjects/skiplist/src/cpy"
+                    "path" : "/Users/USER/CLionProjects/skiplist/src/cpy"
                 },
                 {
                     "backtrace" : 9,
@@ -679,9 +680,9 @@ EXAMPLE_JSON_TARGET = """{
                     'SKIPLIST_THREAD_SUPPORT=1',
                 ],
                 includes=[
-                    '/Users/engun/CLionProjects/skiplist/src/cpp',
-                    '/Users/engun/CLionProjects/skiplist/src/cpp/test',
-                    '/Users/engun/CLionProjects/skiplist/src/cpy',
+                    '/Users/USER/CLionProjects/skiplist/src/cpp',
+                    '/Users/USER/CLionProjects/skiplist/src/cpp/test',
+                    '/Users/USER/CLionProjects/skiplist/src/cpy',
                     '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12',
                 ],
                 sources=[
