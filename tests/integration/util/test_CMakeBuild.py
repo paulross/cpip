@@ -35,7 +35,6 @@ EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO = os.path.normpath(
 # Thanks to https://stackoverflow.com/questions/842059/is-there-a-portable-way-to-get-the-current-username-in-python
 USERNAME = pwd.getpwuid(os.getuid()).pw_name
 
-
 @pytest.mark.parametrize(
     'cmake_build_directory, expected',
     (
@@ -140,7 +139,6 @@ def test_cmake_reply_toolchains_from_cmake_index(cmake_build_directory, expected
             CMakeBuild.CMakeTarget(
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
-                project_path='/Users/USER/CLionProjects/skiplist',
                 name='SkipList',
                 defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
                 include_paths=['/Users/USER/CLionProjects/skiplist/src/cpp',
