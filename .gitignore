@@ -79,3 +79,9 @@ archive/
 
 stubs/
 
+# git's arcane exclude include black magic.
+CMake/CPIPDemo/cmake-build-debug/*
+!CMake/CPIPDemo/cmake-build-debug/**/
+CMake/CPIPDemo/cmake-build-debug/CMakeFiles
+!CMake/CPIPDemo/cmake-build-debug/.cmake/**/
+CMake/CPIPDemo/cmake-build-debug/.cmake/api/v1/query
