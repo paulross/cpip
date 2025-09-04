@@ -4,6 +4,7 @@ See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html
 """
 #!/usr/bin/env python
 # CPIP is a C/C++ Preprocessor implemented in Python.
+# Copyright (C) 2008-2025 Paul Ross
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -88,6 +89,8 @@ def cmake_reply_index_from_json(cmake_build_directory: str, json_str: str) -> CM
     # for key in index_json['reply']:
     #     obj = index_json['reply'][key]
     #     reply_kind_file[obj['kind']] = obj['jsonFile']
+    code_model_filename = object_kind_file['codemodel']
+    return CMakeIndex(cmake_build_directory, cmake_version_str, code_model_filename)
 
 
 def cmake_reply_index_from_build_directory(cmake_build_directory: str) -> CMakeIndex:
@@ -101,6 +104,8 @@ class CMakeCodeModel:
     """Contains data extracted from the CMake codemodel JSON file."""
     cmake_build_directory: str
     codemodel_file_name: str
+    # This comes from configurations[0].paths.source
+    project_path:str
     name: str
     target_file_name: str
 
@@ -123,7 +128,10 @@ class CMakeCodeModel:
             'No unique CMake targets found, instead %d found.',
             len(targets)
         )
+    project_path = codemodel_json['paths']['source']
     return CMakeCodeModel(
+        cmake_build_directory, codemodel_file_name, project_path,
+        targets[0]['name'], targets[0]['jsonFile'],
     )
 
 
@@ -148,9 +156,11 @@ class CMakeTarget:
     target_file_name: str
     name: str
     defines: list[str]
+    includes: list[str]
     sources: list[str]
 
 
+def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: str, json_str: str) -> CMakeTarget:
     """Returns a CMakeCodeModel from a target JSON string.
 
     See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#codemodel-version-2-target-object
@@ -174,6 +184,7 @@ class CMakeTarget:
     for source_node in sources_json['sources']:
         sources.append(source_node['path'])
     return CMakeTarget(
+        cmake_build_directory, target_file_name, sources_json['name'], defines, includes, sources,
     )
 
 
