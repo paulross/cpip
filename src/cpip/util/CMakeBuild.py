@@ -105,11 +105,12 @@ class CMakeCodeModel:
     cmake_build_directory: str
     codemodel_file_name: str
     # This comes from configurations[0].paths.source
-    project_path:str
+    project_path: str
     name: str
     target_file_name: str
 
 
+def cmake_reply_codemodel_from_json(cmake_build_directory: str, codemodel_file_name: str, json_str: str) -> CMakeCodeModel:
     """Returns a CMakeCodeModel from a codemodel JSON string.
 
     See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
@@ -184,7 +185,7 @@ def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: s
     for source_node in sources_json['sources']:
         sources.append(source_node['path'])
     return CMakeTarget(
-        cmake_build_directory, target_file_name, sources_json['name'], defines, includes, sources,
+        cmake_build_directory, target_file_name, project_path, sources_json['name'], defines, includes, sources,
     )
 
 
@@ -193,6 +194,8 @@ def cmake_reply_target_from_codemodel(codemodel: CMakeCodeModel) -> CMakeTarget:
     file_path = os.path.join(cmake_reply_directory(codemodel.cmake_build_directory), codemodel.target_file_name)
     with open(file_path) as file:
         return cmake_reply_target_from_json(
+            codemodel.cmake_build_directory, codemodel.target_file_name,
+            codemodel.project_path, file.read(),
         )
 
 
@@ -204,6 +207,7 @@ def cmake_reply_target_file_from_build_directory(cmake_build_directory: str) -> 
     return cmake_target
 
 
+def is_cmake_build_directory(cmake_build_directory: str) -> bool:
     """Returns True if this is a CMaake build directory and a CMakeTarget can be constructed."""
     ret = True
     try:

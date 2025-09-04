@@ -835,6 +835,7 @@ EXAMPLE_JSON_TARGET = """{
 )
 def test_cmake_reply_target_from_json(example, file_name, expected):
     result = CMakeBuild.cmake_reply_target_from_json(
-        'cmake-build-debug', file_name, example,
+        'cmake-build-debug',
+        file_name, '/Users/USER/CLionProjects/skiplist', example,
     )
     assert result == expected
