@@ -45,7 +45,6 @@ USERNAME = pwd.getpwuid(os.getuid()).pw_name
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 cmake_version_str='3.24.2',
                 codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
-                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
             ),
         ),
     )
@@ -64,7 +63,6 @@ def test_cmake_reply_index_from_build_directory(cmake_build_directory, expected)
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 cmake_version_str='3.24.2',
                 codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
-                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
             ),
         ),
     )
@@ -93,43 +91,6 @@ def test_cmake_reply_codemodel_from_cmake_index(cmake_build_directory, expected)
     cmake_index = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
     result = CMakeBuild.cmake_reply_codemodel_from_cmake_index(cmake_index)
     assert result == expected
-
-
-@pytest.mark.parametrize(
-    'cmake_build_directory, expected',
-    (
-        (
-            EXAMPLE_CMAKE_BUILD_DIRECTORY,
-            CMakeBuild.CMakeToolChains(
-                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
-                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
-                language_dict={
-                    'C': CMakeBuild.CMakeToolChainLanguageInformation(
-                        system_include_directories=[
-                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
-                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
-                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
-                        ],
-                    ),
-                    'CXX': CMakeBuild.CMakeToolChainLanguageInformation(
-                        system_include_directories=[
-                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
-                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
-                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
-                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
-                        ],
-                    ),
-                },
-            ),
-        ),
-    )
-)
-def test_cmake_reply_toolchains_from_cmake_index(cmake_build_directory, expected):
-    cmake_index = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
-    result = CMakeBuild.cmake_reply_toolchains_from_cmake_index(cmake_index)
-    assert result.cmake_build_directory == expected.cmake_build_directory
-    assert result.toolchains_file_name == expected.toolchains_file_name
-    assert result.language_dict == expected.language_dict
 
 
 @pytest.mark.parametrize(
@@ -253,64 +214,3 @@ def test_cmake_reply_target_file_from_build_directory(cmake_build_directory, exp
 def test_is_cmake_build_directory(cmake_build_directory, expected):
     result = CMakeBuild.is_cmake_build_directory(cmake_build_directory)
     assert result == expected
-
-
-@pytest.mark.parametrize(
-    'cmake_build_directory, expected',
-    (
-        (
-            EXAMPLE_CMAKE_BUILD_DIRECTORY,
-            None
-        ),
-    )
-)
-def test_cmake_reply_metadata_from_build_directory(cmake_build_directory, expected):
-    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
-    assert result is not None
-
-
-@pytest.mark.parametrize(
-    'cmake_build_directory, expected',
-    (
-        (
-            EXAMPLE_CMAKE_BUILD_DIRECTORY,
-            'CXX',
-        ),
-        (
-            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
-            'C',
-        ),
-    )
-)
-def test_cmake_reply_metadata_from_build_directory_target_language(cmake_build_directory, expected):
-    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
-    assert result.target.language == expected
-
-
-@pytest.mark.parametrize(
-    'cmake_build_directory, expected',
-    (
-        (
-            EXAMPLE_CMAKE_BUILD_DIRECTORY,
-            [
-                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
-                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
-                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
-                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
-            ],
-        ),
-        (
-            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
-            [
-                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
-                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
-                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
-            ],
-        ),
-    )
-)
-def test_cmake_reply_metadata_from_build_directory_system_include_directories(cmake_build_directory, expected):
-    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
-    assert result.system_include_directories == expected
-
-
