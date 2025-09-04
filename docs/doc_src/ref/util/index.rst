@@ -9,6 +9,7 @@ cpip.util
 	:maxdepth: 2
 
 	BufGen
+    CMakeBuild
 	CommonPrefix
 	Cpp
 	DictTree
