@@ -674,12 +674,13 @@ EXAMPLE_JSON_TARGET = """{
             CMakeBuild.CMakeTarget(
                 cmake_build_directory='cmake-build-debug',
                 target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
                 name='SkipList',
                 defines=[
                     'DEBUG',
                     'SKIPLIST_THREAD_SUPPORT=1',
                 ],
-                includes=[
+                include_paths=[
                     '/Users/USER/CLionProjects/skiplist/src/cpp',
                     '/Users/USER/CLionProjects/skiplist/src/cpp/test',
                     '/Users/USER/CLionProjects/skiplist/src/cpy',
@@ -721,6 +722,7 @@ EXAMPLE_JSON_TARGET = """{
 )
 def test_cmake_reply_target_from_json(example, file_name, expected):
     result = CMakeBuild.cmake_reply_target_from_json(
-        'cmake-build-debug', file_name, example,
+        'cmake-build-debug',
+        file_name, '/Users/USER/CLionProjects/skiplist', example,
     )
     assert result == expected

@@ -104,7 +104,7 @@ class CMakeCodeModel:
     cmake_build_directory: str
     codemodel_file_name: str
     # This comes from configurations[0].paths.source
-    project_path:str
+    project_path: str
     name: str
     target_file_name: str
 
@@ -154,13 +154,20 @@ class CMakeTarget:
     """Contains data extracted from the CMake target JSON file."""
     cmake_build_directory: str
     target_file_name: str
+    # This is the path to the project, the source files in 'sources' are relative to this.
+    project_path: str
     name: str
     defines: list[str]
-    includes: list[str]
+    include_paths: list[str]
     sources: list[str]
 
 
-def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: str, json_str: str) -> CMakeTarget:
+def cmake_reply_target_from_json(
+    cmake_build_directory: str,
+    target_file_name: str,
+    project_path: str,
+    json_str: str,
+) -> CMakeTarget:
     """Returns a CMakeCodeModel from a target JSON string.
 
     See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#codemodel-version-2-target-object
@@ -184,7 +191,7 @@ def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: s
     for source_node in sources_json['sources']:
         sources.append(source_node['path'])
     return CMakeTarget(
-        cmake_build_directory, target_file_name, sources_json['name'], defines, includes, sources,
+        cmake_build_directory, target_file_name, project_path, sources_json['name'], defines, includes, sources,
     )
 
 
@@ -193,7 +200,8 @@ def cmake_reply_target_from_codemodel(codemodel: CMakeCodeModel) -> CMakeTarget:
     file_path = os.path.join(cmake_reply_directory(codemodel.cmake_build_directory), codemodel.target_file_name)
     with open(file_path) as file:
         return cmake_reply_target_from_json(
-            codemodel.cmake_build_directory, codemodel.target_file_name, file.read(),
+            codemodel.cmake_build_directory, codemodel.target_file_name,
+            codemodel.project_path, file.read(),
         )
 
 
