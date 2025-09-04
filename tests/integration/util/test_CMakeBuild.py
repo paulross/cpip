@@ -25,7 +25,7 @@ import pytest
 from cpip.util import CMakeBuild
 
 EXAMPLE_CMAKE_BUILD_DIRECTORY = os.path.normpath(
-    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'cmake-build-debug')
+    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'CMake', 'cmake-build-debug')
 )
 
 
