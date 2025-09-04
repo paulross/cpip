@@ -1327,8 +1327,9 @@ def fix_job_spec_for_cmake_build_directory(
         job_spec.preDefMacros[k] = define_dict[k]
     # Now the include paths.
     for inc_path in cmake_target.include_paths:
-        # Put them in the user paths as they will be retired with the system paths. TODO: Correct?
+        # Put them in the user and system paths as CMake does not seem to distinguish between them.
         job_spec.incHandler._usr.append(inc_path)
+        job_spec.incHandler._sys.append(inc_path)
     ret = []
     for source in cmake_target.sources:
         if DirWalk.file_path_matches(source, glob_match):

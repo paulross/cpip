@@ -230,6 +230,7 @@ class CMakeTarget:
     """Contains data extracted from the CMake target JSON file."""
     cmake_build_directory: str
     target_file_name: str
+    # This is the path to the project, the source files in 'sources' are relative to this.
     project_path: str
     name: str
     defines: list[str]
@@ -238,7 +239,6 @@ class CMakeTarget:
     language: str
 
 
-def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: str, project_path: str, json_str: str) -> CMakeTarget:
 def cmake_reply_target_from_json(
     cmake_build_directory: str,
     target_file_name: str,
@@ -309,27 +309,3 @@ def is_cmake_build_directory(cmake_build_directory: str) -> bool:
     except CMakeBuildException:
         ret = False
     return ret
-
-
-@dataclasses.dataclass
-class CMakeMetadata:
-    """An aggregate class that holds index, codemodel, toolchains and target classes."""
-    index: CMakeIndex
-    codemodel: CMakeCodeModel
-    toolchains: CMakeToolChains
-    target: CMakeTarget
-
-    @property
-    def system_include_directories(self) -> typing.List[str]:
-        language = self.target.language
-        ret = self.toolchains.language_dict[language].system_include_directories
-        return ret
-
-
-def cmake_reply_metadata_from_build_directory(cmake_build_directory: str) -> CMakeMetadata:
-    """Return a CMakeMetadata from a CMake build directory."""
-    cmake_index = cmake_reply_index_from_build_directory(cmake_build_directory)
-    cmake_codemodel = cmake_reply_codemodel_from_cmake_index(cmake_index)
-    cmake_toolchains = cmake_reply_toolchains_from_cmake_index(cmake_index)
-    cmake_target = cmake_reply_target_from_codemodel(cmake_codemodel)
-    return CMakeMetadata(cmake_index, cmake_codemodel, cmake_toolchains, cmake_target)
