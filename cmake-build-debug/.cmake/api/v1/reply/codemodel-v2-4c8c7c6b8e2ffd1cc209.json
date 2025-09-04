@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/engun/CLionProjects/skiplist/cmake-build-debug",
-		"source" : "/Users/engun/CLionProjects/skiplist"
+		"build" : "/Users/USER/CLionProjects/skiplist/cmake-build-debug",
+		"source" : "/Users/USER/CLionProjects/skiplist"
 	},
 	"version" : 
 	{
