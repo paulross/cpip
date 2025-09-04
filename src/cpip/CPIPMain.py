@@ -1310,61 +1310,11 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
             )
         _writeIndexHtmlTrailer(myS, time_start)
 
-
-def fix_job_spec_for_cmake_build_directory(
-    cmake_build_directory: str,
-    job_spec: MainJobSpec,
-    glob_match: typing.List[str]) -> typing.List[str]:
-    """Adapts the MainJobSpec to the contents of the CMake build directory metadata.
-
-    This returns a list of sources that match the glob_match(s)
-    """
-    cmake_metadata = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
-    # cmake_metadata.target has defines, include_paths and sources.
-    # First defines, update (overwrite) the predefined macros in the job spec.:
-    define_dict = split_defines_into_simple_dict(cmake_metadata.target.defines)
-    for k in define_dict.keys():
-        job_spec.preDefMacros[k] = define_dict[k]
-    # Now the include paths.
-    for inc_path in cmake_metadata.target.include_paths:
-        # Put them in the user and system paths as CMake does not seem to distinguish between them.
-        job_spec.incHandler.add_user_search_path(inc_path)
-        job_spec.incHandler.add_system_search_path(inc_path)
-    # Add platform system includes from the CMake toolchain.
-    for inc_path in cmake_metadata.system_include_directories:
-        job_spec.incHandler.add_system_search_path(inc_path)
-    ret = []
-    for source in cmake_metadata.target.sources:
-        if DirWalk.file_path_matches(source, glob_match):
-            ret.append(os.path.join(cmake_metadata.target.project_path, source))
-    return ret
-
-
-def source_file_path_sub_directory(source_file_path: str, out_dir: str) -> str:
-    """Returns a sub-directory suitable to represent the contents of source file.
-
-    For example 'src/cpp/SkipList.cpp' and output directory 'foo/bar' might produce:
-
-    'foo/bar/SkipList.cpp_e6f3eadf0e3f426caf04c3cacc319c96'
-
-    The sub directory is not created.
-
-    See also HtmlUtils.py
-    """
-    path_hash = hashlib.md5(source_file_path.encode('ascii')).hexdigest()
-    sub_dir_name = '%s_%s' % (os.path.basename(source_file_path), path_hash)
-    return os.path.join(out_dir, sub_dir_name)
-
-
 def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs):
     """Pre-process all the files in a directory. Returns a count of the TUs.
     This uses multiprocessing where possible.
     Any Exception (such as a KeyboardInterupt) will terminate this function but
     write out an index of what has been achieved so far."""
-    # TODO: If the inDir is a CMake build directory (see cpip.util.CMakeBuild.is_cmake_directory())
-    # TODO: then create a with cpip.util.CMakeBuild.cmake_reply_target_file_from_build_directory() and extract
-    # TODO: all the defines, includes and sources from the CMakeTarget.
-    # TODO: Use cpip.util.Cpp.macroDefinitionDict() to split the CMakeTarget defines.
     assert os.path.isdir(inDir)
     time_start = time.time()
     results = []
