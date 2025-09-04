@@ -1,8 +1,7 @@
-#include <stdio.h>
-
 #include "user.h"
 
-int main(int argc, char **argv) {
+int main(char **argv, int argc)
+{
 #if defined(LANG_SUPPORT) && defined(FRENCH)
 	printf("Bonjour tout le monde\n");
 #elif defined(LANG_SUPPORT) && defined(AUSTRALIAN)
