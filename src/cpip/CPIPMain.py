@@ -1319,21 +1319,24 @@ def fix_job_spec_for_cmake_build_directory(
 
     This returns a list of sources that match the glob_match(s)
     """
-    cmake_target = CMakeBuild.cmake_reply_target_file_from_build_directory(cmake_build_directory)
-    # cmake_target has defines, include_paths and sources.
+    cmake_metadata = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    # cmake_metadata.target has defines, include_paths and sources.
     # First defines, update (overwrite) the predefined macros in the job spec.:
-    define_dict = split_defines_into_simple_dict(cmake_target.defines)
+    define_dict = split_defines_into_simple_dict(cmake_metadata.target.defines)
     for k in define_dict.keys():
         job_spec.preDefMacros[k] = define_dict[k]
     # Now the include paths.
-    for inc_path in cmake_target.include_paths:
+    for inc_path in cmake_metadata.target.include_paths:
         # Put them in the user and system paths as CMake does not seem to distinguish between them.
         job_spec.incHandler._usr.append(inc_path)
         job_spec.incHandler._sys.append(inc_path)
+    # Add platform system includes from the CMake toolchain.
+    for inc_path in cmake_metadata.system_include_directories:
+        job_spec.incHandler._sys.append(inc_path)
     ret = []
-    for source in cmake_target.sources:
+    for source in cmake_metadata.target.sources:
         if DirWalk.file_path_matches(source, glob_match):
-            ret.append(os.path.join(cmake_target.project_path, source))
+            ret.append(os.path.join(cmake_metadata.target.project_path, source))
     return ret
 
 
