@@ -829,6 +829,7 @@ EXAMPLE_JSON_TARGET = """{
                     'src/cpy/OrderedStructs.cpp',
                     'src/cpy/OrderedStructs.h',
                 ],
+                language='CXX',
             ),
         ),
     )
