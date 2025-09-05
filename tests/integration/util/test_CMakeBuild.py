@@ -28,9 +28,13 @@ EXAMPLE_CMAKE_BUILD_DIRECTORY = os.path.normpath(
     os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'CMake', 'cmake-build-debug')
 )
 
+EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'CMake', 'CPIPDemo', 'cmake-build-debug')
+)
 
 # Thanks to https://stackoverflow.com/questions/842059/is-there-a-portable-way-to-get-the-current-username-in-python
 USERNAME = pwd.getpwuid(os.getuid()).pw_name
+
 
 @pytest.mark.parametrize(
     'cmake_build_directory, expected',
@@ -41,6 +45,7 @@ USERNAME = pwd.getpwuid(os.getuid()).pw_name
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 cmake_version_str='3.24.2',
                 codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
             ),
         ),
     )
@@ -59,6 +64,7 @@ def test_cmake_reply_index_from_build_directory(cmake_build_directory, expected)
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 cmake_version_str='3.24.2',
                 codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
             ),
         ),
     )
@@ -94,6 +100,43 @@ def test_cmake_reply_codemodel_from_cmake_index(cmake_build_directory, expected)
     (
         (
             EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            CMakeBuild.CMakeToolChains(
+                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
+                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
+                language_dict={
+                    'C': CMakeBuild.CMakeToolChainLanguageInformation(
+                        system_include_directories=[
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+                        ],
+                    ),
+                    'CXX': CMakeBuild.CMakeToolChainLanguageInformation(
+                        system_include_directories=[
+                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+                        ],
+                    ),
+                },
+            ),
+        ),
+    )
+)
+def test_cmake_reply_toolchains_from_cmake_index(cmake_build_directory, expected):
+    cmake_index = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
+    result = CMakeBuild.cmake_reply_toolchains_from_cmake_index(cmake_index)
+    assert result.cmake_build_directory == expected.cmake_build_directory
+    assert result.toolchains_file_name == expected.toolchains_file_name
+    assert result.language_dict == expected.language_dict
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
             CMakeBuild.CMakeTarget(
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
@@ -101,37 +144,40 @@ def test_cmake_reply_codemodel_from_cmake_index(cmake_build_directory, expected)
                 name='SkipList',
                 defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
                 include_paths=['/Users/USER/CLionProjects/skiplist/src/cpp',
-                          '/Users/USER/CLionProjects/skiplist/src/cpp/test',
-                          '/Users/USER/CLionProjects/skiplist/src/cpy',
-                          '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
-                sources=['src/cpp/HeadNode.h',
-                         'src/cpp/IntegrityEnums.h',
-                         'src/cpp/main.cpp',
-                         'src/cpp/Node.h',
-                         'src/cpp/NodeRefs.h',
-                         'src/cpp/RollingMedian.h',
-                         'src/cpp/SkipList.cpp',
-                         'src/cpp/SkipList.h',
-                         'src/cpp/test/test_concurrent.cpp',
-                         'src/cpp/test/test_concurrent.h',
-                         'src/cpp/test/test_documentation.cpp',
-                         'src/cpp/test/test_documentation.h',
-                         'src/cpp/test/test_functional.cpp',
-                         'src/cpp/test/test_functional.h',
-                         'src/cpp/test/test_performance.cpp',
-                         'src/cpp/test/test_performance.h',
-                         'src/cpp/test/test_print.cpp',
-                         'src/cpp/test/test_print.h',
-                         'src/cpp/test/test_rolling_median.cpp',
-                         'src/cpp/test/test_rolling_median.h',
-                         'src/cpy/cmpPyObject.cpp',
-                         'src/cpy/cmpPyObject.h',
-                         'src/cpy/cOrderedStructs.cpp',
-                         'src/cpy/cOrderedStructs.h',
-                         'src/cpy/cSkipList.cpp',
-                         'src/cpy/cSkipList.h',
-                         'src/cpy/OrderedStructs.cpp',
-                         'src/cpy/OrderedStructs.h'],
+                               '/Users/USER/CLionProjects/skiplist/src/cpp/test',
+                               '/Users/USER/CLionProjects/skiplist/src/cpy',
+                               '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
+                sources=[
+                    'src/cpp/HeadNode.h',
+                    'src/cpp/IntegrityEnums.h',
+                    'src/cpp/main.cpp',
+                    'src/cpp/Node.h',
+                    'src/cpp/NodeRefs.h',
+                    'src/cpp/RollingMedian.h',
+                    'src/cpp/SkipList.cpp',
+                    'src/cpp/SkipList.h',
+                    'src/cpp/test/test_concurrent.cpp',
+                    'src/cpp/test/test_concurrent.h',
+                    'src/cpp/test/test_documentation.cpp',
+                    'src/cpp/test/test_documentation.h',
+                    'src/cpp/test/test_functional.cpp',
+                    'src/cpp/test/test_functional.h',
+                    'src/cpp/test/test_performance.cpp',
+                    'src/cpp/test/test_performance.h',
+                    'src/cpp/test/test_print.cpp',
+                    'src/cpp/test/test_print.h',
+                    'src/cpp/test/test_rolling_median.cpp',
+                    'src/cpp/test/test_rolling_median.h',
+                    'src/cpy/cmpPyObject.cpp',
+                    'src/cpy/cmpPyObject.h',
+                    'src/cpy/cOrderedStructs.cpp',
+                    'src/cpy/cOrderedStructs.h',
+                    'src/cpy/cSkipList.cpp',
+                    'src/cpy/cSkipList.h',
+                    'src/cpy/OrderedStructs.cpp',
+                    'src/cpy/OrderedStructs.h',
+                ],
+                language='CXX',
             ),
         ),
     )
@@ -155,37 +201,40 @@ def test_cmake_reply_target_from_codemodel(cmake_build_directory, expected):
                 name='SkipList',
                 defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
                 include_paths=['/Users/USER/CLionProjects/skiplist/src/cpp',
-                          '/Users/USER/CLionProjects/skiplist/src/cpp/test',
-                          '/Users/USER/CLionProjects/skiplist/src/cpy',
-                          '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
-                sources=['src/cpp/HeadNode.h',
-                         'src/cpp/IntegrityEnums.h',
-                         'src/cpp/main.cpp',
-                         'src/cpp/Node.h',
-                         'src/cpp/NodeRefs.h',
-                         'src/cpp/RollingMedian.h',
-                         'src/cpp/SkipList.cpp',
-                         'src/cpp/SkipList.h',
-                         'src/cpp/test/test_concurrent.cpp',
-                         'src/cpp/test/test_concurrent.h',
-                         'src/cpp/test/test_documentation.cpp',
-                         'src/cpp/test/test_documentation.h',
-                         'src/cpp/test/test_functional.cpp',
-                         'src/cpp/test/test_functional.h',
-                         'src/cpp/test/test_performance.cpp',
-                         'src/cpp/test/test_performance.h',
-                         'src/cpp/test/test_print.cpp',
-                         'src/cpp/test/test_print.h',
-                         'src/cpp/test/test_rolling_median.cpp',
-                         'src/cpp/test/test_rolling_median.h',
-                         'src/cpy/cmpPyObject.cpp',
-                         'src/cpy/cmpPyObject.h',
-                         'src/cpy/cOrderedStructs.cpp',
-                         'src/cpy/cOrderedStructs.h',
-                         'src/cpy/cSkipList.cpp',
-                         'src/cpy/cSkipList.h',
-                         'src/cpy/OrderedStructs.cpp',
-                         'src/cpy/OrderedStructs.h'],
+                               '/Users/USER/CLionProjects/skiplist/src/cpp/test',
+                               '/Users/USER/CLionProjects/skiplist/src/cpy',
+                               '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
+                sources=[
+                    'src/cpp/HeadNode.h',
+                    'src/cpp/IntegrityEnums.h',
+                    'src/cpp/main.cpp',
+                    'src/cpp/Node.h',
+                    'src/cpp/NodeRefs.h',
+                    'src/cpp/RollingMedian.h',
+                    'src/cpp/SkipList.cpp',
+                    'src/cpp/SkipList.h',
+                    'src/cpp/test/test_concurrent.cpp',
+                    'src/cpp/test/test_concurrent.h',
+                    'src/cpp/test/test_documentation.cpp',
+                    'src/cpp/test/test_documentation.h',
+                    'src/cpp/test/test_functional.cpp',
+                    'src/cpp/test/test_functional.h',
+                    'src/cpp/test/test_performance.cpp',
+                    'src/cpp/test/test_performance.h',
+                    'src/cpp/test/test_print.cpp',
+                    'src/cpp/test/test_print.h',
+                    'src/cpp/test/test_rolling_median.cpp',
+                    'src/cpp/test/test_rolling_median.h',
+                    'src/cpy/cmpPyObject.cpp',
+                    'src/cpy/cmpPyObject.h',
+                    'src/cpy/cOrderedStructs.cpp',
+                    'src/cpy/cOrderedStructs.h',
+                    'src/cpy/cSkipList.cpp',
+                    'src/cpy/cSkipList.h',
+                    'src/cpy/OrderedStructs.cpp',
+                    'src/cpy/OrderedStructs.h',
+                ],
+                language='CXX',
             ),
         ),
     )
@@ -205,3 +254,64 @@ def test_cmake_reply_target_file_from_build_directory(cmake_build_directory, exp
 def test_is_cmake_build_directory(cmake_build_directory, expected):
     result = CMakeBuild.is_cmake_build_directory(cmake_build_directory)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            None
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result is not None
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            'CXX',
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            'C',
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory_target_language(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result.target.language == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            [
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+            ],
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            [
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+            ],
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory_system_include_directories(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result.system_include_directories == expected
+
+

@@ -26,6 +26,7 @@ import dataclasses
 import fnmatch
 import json
 import os
+import typing
 
 
 class CMakeBuildException(Exception):
@@ -72,6 +73,7 @@ class CMakeIndex:
     cmake_build_directory: str
     cmake_version_str: str
     codemodel_file_name: str
+    toolchains_file_name: str
 
 
 def cmake_reply_index_from_json(cmake_build_directory: str, json_str: str) -> CMakeIndex:
@@ -81,15 +83,21 @@ def cmake_reply_index_from_json(cmake_build_directory: str, json_str: str) -> CM
     """
     index_json = json.loads(json_str)
     cmake_version_str = index_json['cmake']['version']['string']
+    # Make a temporary dict of all the 'kind' elements'
     object_kind_file = {}
     for obj in index_json['objects']:
+        if obj['kind'] in object_kind_file:
+            raise ValueError(f'Duplicate kind="{obj["kind"]}"')
         object_kind_file[obj['kind']] = obj['jsonFile']
     # reply_kind_file = {}
     # for key in index_json['reply']:
     #     obj = index_json['reply'][key]
     #     reply_kind_file[obj['kind']] = obj['jsonFile']
-    code_model_filename = object_kind_file['codemodel']
-    return CMakeIndex(cmake_build_directory, cmake_version_str, code_model_filename)
+    codemodel_filename = object_kind_file['codemodel']
+    toolchains_filename = object_kind_file['toolchains']
+    return CMakeIndex(
+        cmake_build_directory, cmake_version_str, codemodel_filename, toolchains_filename,
+    )
 
 
 def cmake_reply_index_from_build_directory(cmake_build_directory: str) -> CMakeIndex:
@@ -109,7 +117,8 @@ class CMakeCodeModel:
     target_file_name: str
 
 
-def cmake_reply_codemodel_from_json(cmake_build_directory: str, codemodel_file_name: str, json_str: str) -> CMakeCodeModel:
+def cmake_reply_codemodel_from_json(cmake_build_directory: str, codemodel_file_name: str,
+                                    json_str: str) -> CMakeCodeModel:
     """Returns a CMakeCodeModel from a codemodel JSON string.
 
     See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-codemodel
@@ -150,6 +159,73 @@ def cmake_reply_codemodel_from_cmake_index(cmake_index: CMakeIndex) -> CMakeCode
 
 
 @dataclasses.dataclass
+class CMakeToolChainLanguageInformation:
+    # These are system include directories
+    system_include_directories: typing.List[str]
+
+
+class CMakeToolChains:
+    """Contains data extracted from the CMake toolchains JSON file."""
+
+    def __init__(self, cmake_build_directory: str, toolchains_file_name: str, language_dict=None):
+        self.cmake_build_directory = cmake_build_directory
+        self.toolchains_file_name = toolchains_file_name
+        self.language_dict: typing.Dict[str, CMakeToolChainLanguageInformation] = {}
+        if language_dict is not None:
+            self.language_dict = language_dict.copy()
+
+    def add_language(self, json_node: dict) -> None:
+        language = json_node['language']
+        if language in self.language_dict:
+            raise ValueError(f'Duplicate language {language}')
+        compiler = json_node['compiler']
+        include_directories = compiler['implicit']['includeDirectories']
+        self.language_dict[language] = CMakeToolChainLanguageInformation(include_directories)
+
+    # def __eq__(self, other):
+    #     if self.__class__ != other.__class__:
+    #         return False
+    #     eq_list = []
+    #     for attr in ('cmake_build_directory', 'toolchains_file_name', 'language_dict'):
+    #         eq_list.append(getattr(self, attr) == getattr(other, attr))
+    #     return all(eq_list)
+
+
+def cmake_reply_toolchains_from_json(
+    cmake_build_directory: str,
+    toolchains_file_name: str,
+    json_str: str,
+) -> CMakeToolChains:
+    """Returns a CMakeToolChains from a toolchains JSON string.
+
+    See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains
+    """
+    toolchains_json = json.loads(json_str)
+    if 'kind' not in toolchains_json:
+        raise ValueError(f'toolchains JSON does not have "kind" attribute')
+    if toolchains_json['kind'] != 'toolchains':
+        raise ValueError(f'toolchains JSON does not have "kind"="toolchains" but "kind"="{toolchains_json["kind"]}"')
+    ret = CMakeToolChains(cmake_build_directory, toolchains_file_name)
+    for toolchain_node in toolchains_json['toolchains']:
+        ret.add_language(toolchain_node)
+    return ret
+
+
+def cmake_reply_toolchains_from_cmake_index(cmake_index: CMakeIndex) -> CMakeToolChains:
+    """Returns a CMakeToolChains from a CMakeIndex."""
+    file_path = os.path.join(
+        cmake_reply_directory(cmake_index.cmake_build_directory),
+        cmake_index.toolchains_file_name,
+    )
+    with open(file_path) as file:
+        return cmake_reply_toolchains_from_json(
+            cmake_index.cmake_build_directory,
+            cmake_index.toolchains_file_name,
+            file.read()
+        )
+
+
+@dataclasses.dataclass
 class CMakeTarget:
     """Contains data extracted from the CMake target JSON file."""
     cmake_build_directory: str
@@ -160,6 +236,7 @@ class CMakeTarget:
     defines: list[str]
     include_paths: list[str]
     sources: list[str]
+    language: str
 
 
 def cmake_reply_target_from_json(
@@ -197,8 +274,10 @@ def cmake_reply_target_from_json(
     if 'sources' in sources_json:
         for source_node in sources_json['sources']:
             sources.append(source_node['path'])
+    language = compile_group['language']
     return CMakeTarget(
-        cmake_build_directory, target_file_name, project_path, sources_json['name'], defines, includes, sources,
+        cmake_build_directory, target_file_name, project_path, sources_json['name'],
+        defines, includes, sources, language,
     )
 
 
@@ -230,3 +309,27 @@ def is_cmake_build_directory(cmake_build_directory: str) -> bool:
     except CMakeBuildException:
         ret = False
     return ret
+
+
+@dataclasses.dataclass
+class CMakeMetadata:
+    """An aggregate class that holds index, codemodel, toolchains and target classes."""
+    index: CMakeIndex
+    codemodel: CMakeCodeModel
+    toolchains: CMakeToolChains
+    target: CMakeTarget
+
+    @property
+    def system_include_directories(self) -> typing.List[str]:
+        language = self.target.language
+        ret = self.toolchains.language_dict[language].system_include_directories
+        return ret
+
+
+def cmake_reply_metadata_from_build_directory(cmake_build_directory: str) -> CMakeMetadata:
+    """Return a CMakeMetadata from a CMake build directory."""
+    cmake_index = cmake_reply_index_from_build_directory(cmake_build_directory)
+    cmake_codemodel = cmake_reply_codemodel_from_cmake_index(cmake_index)
+    cmake_toolchains = cmake_reply_toolchains_from_cmake_index(cmake_index)
+    cmake_target = cmake_reply_target_from_codemodel(cmake_codemodel)
+    return CMakeMetadata(cmake_index, cmake_codemodel, cmake_toolchains, cmake_target)
