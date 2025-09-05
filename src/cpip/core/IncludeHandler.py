@@ -107,6 +107,14 @@ class CppIncludeStd(object):
         # The intermediate ones are various tries in order
         self._findLogic = []
 
+    def add_user_search_path(self, search_path:  str) -> None:
+        """Adds a search path to the user paths to search."""
+        self._usr.append(search_path)
+
+    def add_system_search_path(self, search_path:  str) -> None:
+        """Adds a search path to the system paths to search."""
+        self._sys.append(search_path)
+
     def clearHistory(self):
         """Clears the CP stack. This needed if you use this class as a
         persistent one and it encounters an exception. You need to call this
