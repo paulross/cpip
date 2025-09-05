@@ -1328,11 +1328,11 @@ def fix_job_spec_for_cmake_build_directory(
     # Now the include paths.
     for inc_path in cmake_metadata.target.include_paths:
         # Put them in the user and system paths as CMake does not seem to distinguish between them.
-        job_spec.incHandler._usr.append(inc_path)
-        job_spec.incHandler._sys.append(inc_path)
+        job_spec.incHandler.add_user_search_path(inc_path)
+        job_spec.incHandler.add_system_search_path(inc_path)
     # Add platform system includes from the CMake toolchain.
     for inc_path in cmake_metadata.system_include_directories:
-        job_spec.incHandler._sys.append(inc_path)
+        job_spec.incHandler.add_system_search_path(inc_path)
     ret = []
     for source in cmake_metadata.target.sources:
         if DirWalk.file_path_matches(source, glob_match):
