@@ -35,6 +35,7 @@ EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO = os.path.normpath(
 # Thanks to https://stackoverflow.com/questions/842059/is-there-a-portable-way-to-get-the-current-username-in-python
 USERNAME = pwd.getpwuid(os.getuid()).pw_name
 
+
 @pytest.mark.parametrize(
     'cmake_build_directory, expected',
     (
@@ -252,3 +253,64 @@ def test_cmake_reply_target_file_from_build_directory(cmake_build_directory, exp
 def test_is_cmake_build_directory(cmake_build_directory, expected):
     result = CMakeBuild.is_cmake_build_directory(cmake_build_directory)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            None
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result is not None
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            'CXX',
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            'C',
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory_target_language(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result.target.language == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            [
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+            ],
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            [
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+            ],
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory_system_include_directories(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result.system_include_directories == expected
+
+
