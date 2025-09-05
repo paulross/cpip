@@ -1638,16 +1638,7 @@ on it to create a SVG file (for includes and macro dependencies). [default: %(de
     parser.add_argument("-G", action="store_true", dest="gcc_extensions",
                          default=False,
                       help="""Support GCC extensions. Currently only #include_next. [default: %(default)s]""")
-    parser.add_argument(
-        dest="path",
-        nargs=1,
-        help="Path to source file or directory."
-             " This can be a local directory in which case --recursive controls recursion."
-             " Or this can be a CMake build directory, for example \".../cmake-build-debug/\""
-             " in which case the CMake metadata will be used to determine the source files,"
-             " defines and include paths."
-             " See the CPIP documentation about CMake builds for more information."
-    )
+    parser.add_argument(dest="path", nargs=1, help="Path to source file or directory.")
     Cpp.addStandardArguments(parser)
     args = parser.parse_args()
     args.output = os.path.abspath(args.output)
