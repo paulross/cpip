@@ -5,7 +5,7 @@ from cpip import ExceptionCpip
 
 def main():
     try:
-        print 'Processing:', sys.argv[1]
+        print('Processing:', sys.argv[1])
         myH = IncludeHandler.CppIncludeStdOs(
             theUsrDirs=['../usr',],
             theSysDirs=['../sys',],
@@ -23,14 +23,14 @@ def main():
         #print myLex.fileIncludeGraphRoot
         #print
         #print myLex.definedMacros
-        print
-        print myLex.macroEnvironment.macroHistory(onlyRef=False)
-        print
-        print 'Checksum is: %s' % m.hexdigest()
-        print
-        print myLex._tokCountStk
-    except ExceptionCpip, err:
-        print 'Ooops: %s' % err
+        print()
+        print(myLex.macroEnvironment.macroHistory(onlyRef=False))
+        print()
+        print('Checksum is: %s' % m.hexdigest())
+        print()
+        print(myLex._tokCountStk)
+    except ExceptionCpip as err:
+        print('Ooops: %s' % err)
 
 
 if __name__ == "__main__":
