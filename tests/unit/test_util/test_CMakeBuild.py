@@ -141,6 +141,7 @@ EXAMPLE_JSON_INDEX = """{
                 cmake_build_directory='cmake-build-debug',
                 cmake_version_str='3.24.2',
                 codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
             ),
         ),
     )
@@ -233,6 +234,118 @@ def test_cmake_reply_codemodel_from_json(example, file_name, expected):
         'cmake-build-debug', file_name, example,
     )
     assert result == expected
+
+
+EXAMPLE_JSON_TOOLCHAINS = """{
+    "kind" : "toolchains",
+    "toolchains" : 
+    [
+        {
+            "compiler" : 
+            {
+                "id" : "AppleClang",
+                "implicit" : 
+                {
+                    "includeDirectories" : 
+                    [
+                        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include",
+                        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include",
+                        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+                    ],
+                    "linkDirectories" : [],
+                    "linkFrameworkDirectories" : [],
+                    "linkLibraries" : []
+                },
+                "path" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc",
+                "version" : "15.0.0.15000040"
+            },
+            "language" : "C",
+            "sourceFileExtensions" : 
+            [
+                "c",
+                "m"
+            ]
+        },
+        {
+            "compiler" : 
+            {
+                "id" : "AppleClang",
+                "implicit" : 
+                {
+                    "includeDirectories" : 
+                    [
+                        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1",
+                        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include",
+                        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include",
+                        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"
+                    ],
+                    "linkDirectories" : [],
+                    "linkFrameworkDirectories" : [],
+                    "linkLibraries" : 
+                    [
+                        "c++"
+                    ]
+                },
+                "path" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++",
+                "version" : "15.0.0.15000040"
+            },
+            "language" : "CXX",
+            "sourceFileExtensions" : 
+            [
+                "C",
+                "M",
+                "c++",
+                "cc",
+                "cpp",
+                "cxx",
+                "mm",
+                "mpp",
+                "CPP",
+                "ixx",
+                "cppm"
+            ]
+        }
+    ],
+    "version" : 
+    {
+        "major" : 1,
+        "minor" : 0
+    }
+}
+"""
+
+
+@pytest.mark.parametrize(
+    'example, file_name, expected_language_dict',
+    (
+        (
+            EXAMPLE_JSON_TOOLCHAINS,
+            'toolchains-v1-9f362175f2e3b763898b.json',
+            {
+                'C': CMakeBuild.CMakeToolChainLanguageInformation(
+                    system_include_directories=[
+                        '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                        '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                        '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include'],
+                ),
+                'CXX': CMakeBuild.CMakeToolChainLanguageInformation(
+                    system_include_directories=[
+                        '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
+                        '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                        '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                        '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+                    ],
+                ),
+            },
+        ),
+    )
+)
+def test_cmake_reply_toolchains_from_json(example, file_name, expected_language_dict):
+    result = CMakeBuild.cmake_reply_toolchains_from_json(
+        'cmake-build-debug', file_name, example,
+    )
+    assert result.toolchains_file_name == file_name
+    assert result.language_dict == expected_language_dict
 
 
 EXAMPLE_JSON_TARGET = """{
@@ -716,6 +829,7 @@ EXAMPLE_JSON_TARGET = """{
                     'src/cpy/OrderedStructs.cpp',
                     'src/cpy/OrderedStructs.h',
                 ],
+                language='CXX',
             ),
         ),
     )
