@@ -309,3 +309,27 @@ def is_cmake_build_directory(cmake_build_directory: str) -> bool:
     except CMakeBuildException:
         ret = False
     return ret
+
+
+@dataclasses.dataclass
+class CMakeMetadata:
+    """An aggregate class that holds index, codemodel, toolchains and target classes."""
+    index: CMakeIndex
+    codemodel: CMakeCodeModel
+    toolchains: CMakeToolChains
+    target: CMakeTarget
+
+    @property
+    def system_include_directories(self) -> typing.List[str]:
+        language = self.target.language
+        ret = self.toolchains.language_dict[language].system_include_directories
+        return ret
+
+
+def cmake_reply_metadata_from_build_directory(cmake_build_directory: str) -> CMakeMetadata:
+    """Return a CMakeMetadata from a CMake build directory."""
+    cmake_index = cmake_reply_index_from_build_directory(cmake_build_directory)
+    cmake_codemodel = cmake_reply_codemodel_from_cmake_index(cmake_index)
+    cmake_toolchains = cmake_reply_toolchains_from_cmake_index(cmake_index)
+    cmake_target = cmake_reply_target_from_codemodel(cmake_codemodel)
+    return CMakeMetadata(cmake_index, cmake_codemodel, cmake_toolchains, cmake_target)
