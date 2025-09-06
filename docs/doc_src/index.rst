@@ -13,7 +13,6 @@ Contents:
 
     readme
     installation
-    usage
     intro
     examples/examples
     cmd_line_tools/index
