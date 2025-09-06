@@ -1,6 +1,12 @@
 History
 =======
 
+1.0.0 Beta Release (TODO)
+--------------------------------
+
+* Add CMake support. CPIP builds can be done using the existing CMake build metadata fro a project.
+
+
 0.9.9 Beta Release (2022-12-16)
 --------------------------------
 
