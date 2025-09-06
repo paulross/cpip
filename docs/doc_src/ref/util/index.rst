@@ -6,21 +6,20 @@ cpip.util
 ***********************************
 
 .. toctree::
-	:maxdepth: 2
+    :maxdepth: 2
 
-	BufGen
+    BufGen
     CMakeBuild
-	CommonPrefix
-	Cpp
-	DictTree
-	DirWalk
-	HtmlUtils
-    InvokeCpp
-	ListGen
-	MatrixRep
-	MaxMunchGen
-	MultiPassString
-	OaS
-	StrTree
-	Tree
-	XmlWrite
+    CommonPrefix
+    Cpp
+    DictTree
+    DirWalk
+    HtmlUtils
+    ListGen
+    MatrixRep
+    MaxMunchGen
+    MultiPassString
+    OaS
+    StrTree
+    Tree
+    XmlWrite

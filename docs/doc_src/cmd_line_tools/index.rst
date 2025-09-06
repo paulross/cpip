@@ -37,7 +37,13 @@ Usage
     USAGE
 
     positional arguments:
-      path                  Path to source file or directory.
+      path                  Path to source file or directory. This can be a
+                            local directory in which case --recursive controls
+                            recursion. Or this can be a CMake build directory,
+                            for example ".../cmake-build-debug/" in which case
+                            the CMake metadata will be used to determine the
+                            source files, defines and include paths. See the CPIP
+                            documentation about CMake builds for more information.
 
     optional arguments:
       -h, --help            show this help message and exit
