@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to CPIP’s documentation!
+CPIP's documentation
 ======================================
 
 Contents:
@@ -17,7 +17,9 @@ Contents:
     examples/examples
     cmd_line_tools/index
     tutorial/index
-    ref/index
+    TODO_C23
+    c_standards
+    cmake_build
     usage
     contributing
     authors
