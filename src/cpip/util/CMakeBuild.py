@@ -266,9 +266,9 @@ def cmake_reply_target_from_json(
     else:
         defines = []
     if 'include_paths' in compile_group:
-        includes = [d['path'] for d in compile_group['include_paths']]
+        include_paths = [d['path'] for d in compile_group['include_paths']]
     else:
-        includes = []
+        include_paths = []
     sources = []
     if 'sources' in sources_json:
         for source_node in sources_json['sources']:
@@ -276,7 +276,7 @@ def cmake_reply_target_from_json(
     language = compile_group['language']
     return CMakeTarget(
         cmake_build_directory, target_file_name, project_path, sources_json['name'],
-        defines, includes, sources, language,
+        defines, include_paths, sources, language,
     )
 
 
