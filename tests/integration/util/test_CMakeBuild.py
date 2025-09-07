@@ -140,6 +140,7 @@ def test_cmake_reply_toolchains_from_cmake_index(cmake_build_directory, expected
             CMakeBuild.CMakeTarget(
                 cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
                 target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
                 name='SkipList',
                 defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
                 includes=['/Users/USER/CLionProjects/skiplist/src/cpp',
