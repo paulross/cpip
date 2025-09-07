@@ -265,8 +265,8 @@ def cmake_reply_target_from_json(
         defines = [d['define'] for d in compile_group['defines']]
     else:
         defines = []
-    if 'include_paths' in compile_group:
-        include_paths = [d['path'] for d in compile_group['include_paths']]
+    if 'includes' in compile_group:
+        include_paths = [d['path'] for d in compile_group['includes']]
     else:
         include_paths = []
     sources = []

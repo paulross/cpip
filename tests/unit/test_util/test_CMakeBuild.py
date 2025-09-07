@@ -493,7 +493,7 @@ EXAMPLE_JSON_TARGET = """{
                     "define" : "SKIPLIST_THREAD_SUPPORT=1"
                 }
             ],
-            "include_paths" : 
+            "includes" : 
             [
                 {
                     "backtrace" : 8,
