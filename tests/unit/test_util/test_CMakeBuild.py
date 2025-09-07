@@ -793,7 +793,7 @@ EXAMPLE_JSON_TARGET = """{
                     'DEBUG',
                     'SKIPLIST_THREAD_SUPPORT=1',
                 ],
-                include_paths=[
+                includes=[
                     '/Users/USER/CLionProjects/skiplist/src/cpp',
                     '/Users/USER/CLionProjects/skiplist/src/cpp/test',
                     '/Users/USER/CLionProjects/skiplist/src/cpy',

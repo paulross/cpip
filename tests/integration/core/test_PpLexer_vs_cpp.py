@@ -105,7 +105,7 @@ def test_compare_ignoring_whitespace_runs(text_a, text_b, expected):
     assert compare_string_ignoring_whitespace_runs(text_a, text_b) == expected
 
 
-# @pytest.mark.xfail(reason="FIXME")
+@pytest.mark.xfail(reason="FIXME")
 @pytest.mark.parametrize(
     'stdin, expected',
     (

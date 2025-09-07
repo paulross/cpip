@@ -230,6 +230,7 @@ class CMakeTarget:
     """Contains data extracted from the CMake target JSON file."""
     cmake_build_directory: str
     target_file_name: str
+    project_path: str
     name: str
     defines: list[str]
     includes: list[str]
@@ -237,7 +238,7 @@ class CMakeTarget:
     language: str
 
 
-def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: str, json_str: str) -> CMakeTarget:
+def cmake_reply_target_from_json(cmake_build_directory: str, target_file_name: str, project_path: str, json_str: str) -> CMakeTarget:
     """Returns a CMakeCodeModel from a target JSON string.
 
     See: https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#codemodel-version-2-target-object
