@@ -8,7 +8,7 @@ CPIP is based on C99 (ISO/IEC 9899:1999) and C++98 ISO/IEC 14882:1998(E).
 The C23 standard (ISO/IEC 9899:2024) makes several changes to to preprocessor, a summary is here on
 `Wikipedia <https://en.wikipedia.org/wiki/C23_(C_standard_revision)#Preprocessor>`_.
 The C23 standard can be found as an open access draft from
-`www.open-std.org <https://www.open-std.org>`_ as
+`www.open-std.org C`_ as
 `"ISO/IEC 9899:2024 (en) — N3220 working draft" <https://www.open-std.org/jtc1/sc22/wg14/www/docs/n3220.pdf>`_.
 
 This document also describes non-C23 improvements to CPIP.
@@ -821,11 +821,13 @@ Wikipedia
 Other
 -----------
 
+.. _www.open-std.org C: https://www.open-std.org/JTC1/SC22/WG14/www/projects#9899
+
 * Definition of `__STDC_VERSION__ and __STDC__ <https://sourceforge.net/p/predef/wiki/Standards/>`_ for various
   standards.
 * CPP reference on the `C Preprocessor <https://en.cppreference.com/w/c/preprocessor>`_.
 * CPP reference on the `C history <https://en.cppreference.com/w/c/preprocessor>`_ with links to standards documents.
-* `www.open-std.org <https://www.open-std.org/JTC1/SC22/WG14/www/projects#9899>`_ for the C standards.
+* `www.open-std.org C`_ for the C standards.
 * The `rationale <https://www.open-std.org/jtc1/sc22/wg14/www/C99RationaleV5.10.pdf>`_ for the C99 standard.
 * `nsz <https://port70.net/~nsz/c/>`_ has a great collated set of standards that can be obtained by:
 

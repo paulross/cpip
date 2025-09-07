@@ -20,6 +20,7 @@ Contents:
     TODO_C23
     c_standards
     cmake_build
+    IncrementalBuild
     usage
     contributing
     ref/index_cli

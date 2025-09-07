@@ -23,19 +23,27 @@ Stored State
 
 In the output directory we need to store a couple of files in a directory, say ``.cpip``:
 
+* The command line used for the build.
+  If this changes then the build must be rebuilt from scratch.
+* The project root.
+  If this changes then the build must be rebuilt from scratch.
 * History of the builds of the output directory.
   This can be a simple text file with one line per record latest last. Format: CSV. Name: ``git_history.txt``. Fields:
-    * Git SHA this was built from.
-    * Git timestamp, UTC, format YYYY-MM-DDTHH:MM:SS (RFC3339).
-    * CPIP start build time, UTC, format YYYY-MM-DDTHH:MM:SS
-      (`RFC3339 <https://www.rfc-editor.org/rfc/rfc3339>`_,
-      `RFC9557 <https://datatracker.ietf.org/doc/html/rfc9557>`_
-      or `ISO8601 <http://en.wikipedia.org/wiki/ISO_8601>`_).
+
+  * Git SHA this was built from.
+  * Git timestamp, UTC, format YYYY-MM-DDTHH:MM:SS (RFC3339).
+  * CPIP start build time, UTC, format YYYY-MM-DDTHH:MM:SS
+    (`RFC3339 <https://www.rfc-editor.org/rfc/rfc3339>`_,
+    `RFC9557 <https://datatracker.ietf.org/doc/html/rfc9557>`_
+    or `ISO8601 <http://en.wikipedia.org/wiki/ISO_8601>`_.
+    `This is useful <https://ijmacd.github.io/rfc3339-iso8601/>`_).
+
 * Dependencies.
   This will be a flattened dependency tree:
   ``{ITU : [set(included_files)], ...}``. Format: JSON. Name: ``file_dependencies.json``
-	* Git SHA this was built from.
-	* Git timestamp, UTC, format YYYY-MM-DDTHH:MM:SS (RFC3339).
+
+  * Git SHA this was built from.
+  * Git timestamp, UTC, format YYYY-MM-DDTHH:MM:SS (RFC3339).
 
 -------------
 History
@@ -43,20 +51,31 @@ History
 
 Note: ``git show --format=oneline <SHA> does not work, it dumps complete diff``
 
-``git show HEAD`` gives the following first three lines:
+.. code-block:: shell
 
-commit 153dddf037f6ac5eb48e48601698ee742e34fb0e
-Author: Paul Ross <apaulross@gmail.com>
-Date:   Sun Oct 8 12:16:06 2017 +0100
+    git show HEAD
+
+Gives the following first three lines:
+
+.. code-block:: shell
+
+    commit 153dddf037f6ac5eb48e48601698ee742e34fb0e
+    Author: Paul Ross <apaulross@gmail.com>
+    Date:   Sun Oct 8 12:16:06 2017 +0100
 
 Date is in format (hopefully this works for all locales):
 
-
 .. code-block:: python
 
+    >>> s = 'Sun Oct 8 12:16:06 2017 +0100'
     >>> d = datetime.datetime.strptime(s, '%c %z') # Gives a fixed offset, aware datetime.
+    >>> d
+    datetime.datetime(2017, 10, 8, 12, 16, 6, tzinfo=datetime.timezone(datetime.timedelta(seconds=3600)))
     >>> d.utctimetuple() # Components of UTC
-    >>> u = dt.datetime(*d.utctimetuple()[:6])
+    time.struct_time(tm_year=2017, tm_mon=10, tm_mday=8, tm_hour=11, tm_min=16, tm_sec=6, tm_wday=6, tm_yday=281, tm_isdst=0)
+    >>> u = datetime.datetime(*d.utctimetuple()[:6])
+    >>> u
+    datetime.datetime(2017, 10, 8, 11, 16, 6)
 
 Output:
 
@@ -65,26 +84,25 @@ Output:
     >>> u.strftime('%Y-%m-%dT%H:%M:%S')
     '2017-10-08T11:16:06'
 
-``git diff <SHA> <SHA or 'HEAD'> --name-only``
+.. code-block:: shell
+
+    git diff <SHA> <SHA or 'HEAD'> --name-only
 
 Gives list of files. What about deleted files?
 
-``git log --name-status --diff-filter=D``
+.. code-block:: python
+
+    git log --name-status --diff-filter=D
 
 Or all files:
 
 .. code-block:: shell
 
     git log -n 1 --name-status <SHA>
-git log -n 1 --name-status <SHA>
 
     commit 58e0e67392234b91b514d246fb23a0dc8c2a92d3
     Author: Paul Ross <apaulross@gmail.com>
     Date:   Wed Oct 4 11:01:41 2017 +0100
-commit 58e0e67392234b91b514d246fb23a0dc8c2a92d3
-Author: Paul Ross <apaulross@gmail.com>
-Date:   Wed Oct 4 11:01:41 2017 +0100
-
 
 --------------
 Dependencies
@@ -106,7 +124,6 @@ list of jobs to do then remove unnecessary jobs where the file and its dependenc
 .. code-block:: python
 
     all_files = [t.filePathIn for job in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False)]
-all_files = [t.filePathIn for job in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False)]
 
 Find list of files that have been added or modified from git (see history above).
 Read the dependencies from the previous build.
