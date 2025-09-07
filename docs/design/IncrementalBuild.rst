@@ -64,7 +64,6 @@ Output:
 
     >>> u.strftime('%Y-%m-%dT%H:%M:%S')
     '2017-10-08T11:16:06'
-'2017-10-08T11:16:06'
 
 ``git diff <SHA> <SHA or 'HEAD'> --name-only``
 
