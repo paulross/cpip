@@ -610,6 +610,8 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
         # 1 "<command line>" 1
         # 1 "<built-in>" 2
         # 1 "<stdin>" 2
+
+    Thanks to: https://www.baeldung.com/linux/gcc-default-include-directories
     """
     if language == 'C':
         cmd = ['cpp', '-v', '-E', '-xc']
