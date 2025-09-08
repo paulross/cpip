@@ -157,6 +157,10 @@ from cpip.util import DirWalk
 from cpip.util import HtmlUtils
 from cpip.util import XmlWrite
 
+
+logger = logging.getLogger(__file__)
+
+
 # POD class that contains the arguments for processing a file or directory
 MainJobSpec = collections.namedtuple('MainJobSpec',
     [
@@ -327,19 +331,19 @@ def invokeDot(dotPath, svgPath):
     try:
         retcode = subprocess.call("dot -Tsvg %s -o %s" % (dotPath, svgPath), shell=True)
         if retcode < 0:
-            logging.error("dot was terminated by signal %d" % retcode)
+            logger.error("dot was terminated by signal %d" % retcode)
         elif retcode > 0:
-            logging.error("dot returned error code %d" % retcode)
+            logger.error("dot returned error code %d" % retcode)
         elif retcode == 0:
             result = True
-            logging.info("dot returned %d" % retcode)
+            logger.info("dot returned %d" % retcode)
     except OSError as e:
-        logging.error("dot execution failed: %s" % str(e))
+        logger.error("dot execution failed: %s" % str(e))
     return result
 
 
 def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
-    logging.info('Creating include Graph for DOT...')
+    logger.info('Creating include Graph for DOT...')
     myFigr = theLexer.fileIncludeGraphRoot
     # Visitor to work out common prefix
     myVis = FigVisitorLargestCommanPrefix()
@@ -353,12 +357,12 @@ def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
     with open(dotPath, 'w') as f:
         f.write(str(myVis))
     result = invokeDot(dotPath, svgPath)
-    logging.info('Creating include Graph for DOT done.')
+    logger.info('Creating include Graph for DOT done.')
     return result
 
 
 def writeMacroDependencyGraphAsDot(theOutDir, theItu, theLexer):
-    logging.info('Creating macro dependency Graph for DOT...')
+    logger.info('Creating macro dependency Graph for DOT...')
     result = False
     if _hasMacroDependencies(theLexer):
         dotPath = os.path.abspath(os.path.join(theOutDir, macroDepencdencyFileNameDotTxt(theItu)))
@@ -368,8 +372,8 @@ def writeMacroDependencyGraphAsDot(theOutDir, theItu, theLexer):
             f.write(output)
         result = invokeDot(dotPath, svgPath)
     else:
-        logging.info('No dependencies.')
-    logging.info('Creating macro dependency Graph for DOT done.')
+        logger.info('No dependencies.')
+    logger.info('Creating macro dependency Graph for DOT done.')
     return result
 
 
@@ -1162,7 +1166,7 @@ def preProcessFilesMP(dIn, dOut, jobSpec, glob, recursive, jobs):
     if jobs == 0:
         jobs = multiprocessing.cpu_count()
     assert jobs > 1, 'preProcessFilesMP(): number of jobs: %d???' % jobs
-    logging.info('preProcessFilesMP(): Setting multi-processing jobs to %d' % jobs)
+    logger.info('preProcessFilesMP(): Setting multi-processing jobs to %d' % jobs)
     myTaskS = [
         (t.filePathIn, t.filePathOut, jobSpec) \
             for t in DirWalk.dirWalk(dIn, dOut, glob, recursive, bigFirst=True)
@@ -1190,7 +1194,7 @@ def preProcessTheseFilesMP(source_file_paths, dOut, jobSpec, glob, jobs):
     if jobs == 0:
         jobs = multiprocessing.cpu_count()
     jobs = min(jobs, len(source_file_paths))
-    logging.info('preProcessTheseFilesMP(): Setting multi-processing jobs to %d' % jobs)
+    logger.info('preProcessTheseFilesMP(): Setting multi-processing jobs to %d' % jobs)
     myTaskS = []
     for source_file_path in source_file_paths:
         task = (source_file_path, source_file_path_sub_directory(source_file_path, dOut), jobSpec)
@@ -1400,7 +1404,7 @@ def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
     try:
         return preprocessFileToOutput(ituPath, *args, **kwargs)
     except ExceptionCpip as err:
-        logging.critical('preprocessFileToOutputNoExcept(): "%s" %s' % (err, ituPath))
+        logger.critical('preprocessFileToOutputNoExcept(): "%s" %s' % (err, ituPath))
     return PpProcessResult(ituPath, None, None, 0, 0, 0)
 
 def preprocessFileToOutput(ituPath, outDir, jobSpec):
@@ -1421,7 +1425,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
     """
     assert os.path.isfile(ituPath)
     time_start = time.time()
-    logging.info('preprocessFileToOutput(): %s' % ituPath)
+    logger.info('preprocessFileToOutput(): %s' % ituPath)
     if not os.path.exists(outDir):
         try:
             os.makedirs(outDir)
@@ -1439,8 +1443,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                     gccExtensions=jobSpec.gccExtensions
                     )
     myDestFile = os.path.join(outDir, tuFileName(ituPath))
-    logging.info('TU in HTML:')
-    logging.info('  %s', myDestFile)
+    logger.info('TU in HTML:')
+    logger.info('  %s', myDestFile)
     myTokCntr, mySetItuLines = Tu2Html.processTuToHtml(
                             myLexer,
                             myDestFile,
@@ -1449,7 +1453,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                             tuIndexFileName(ituPath),  # Path back to the index
                             incItuAnchors=True,
                         )
-    logging.info('preprocessFileToOutput(): Processing TU done.')
+    logger.info('preprocessFileToOutput(): Processing TU done.')
     myFileCountMap = retFileCountMap(myLexer)
     # Write out the HTML for each source file
     for aSrc in sorted(myFileCountMap.keys()):
@@ -1474,8 +1478,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         _dumpMacroEnvDot(myLexer)
     # Macro environment and history
 #     outPath = os.path.join(outDir, macroHistoryFileName(ituPath))
-    logging.info('Macro history to:')
-    logging.info('  %s', outDir)
+    logger.info('Macro history to:')
+    logger.info('  %s', outDir)
     myMacroRefMap, macroHistoryIndexName = MacroHistoryHtml.processMacroHistoryToHtml(
             myLexer,
             outDir,
@@ -1484,8 +1488,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         )
     # Write Include graph in SVG
     outPath = os.path.join(outDir, includeGraphFileNameSVG(ituPath))
-    logging.info('Include graph (SVG) to:')
-    logging.info('  %s', outPath)
+    logger.info('Include graph (SVG) to:')
+    logger.info('  %s', outPath)
     IncGraphSVGBase.processIncGraphToSvg(
             myLexer,
             outPath,
@@ -1494,24 +1498,24 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
             '+',
         )
     # Write Include graph in Text
-    logging.info('Writing include graph (TEXT) to:')
-    logging.info('  %s', outPath)
+    logger.info('Writing include graph (TEXT) to:')
+    logger.info('  %s', outPath)
     writeIncludeGraphAsText(outDir, ituPath, myLexer)
     # Include graph as a dot file
     if jobSpec.includeDOT:
-        logging.info('Writing include graph (DOT) to:')
-        logging.info('  %s', outPath)
+        logger.info('Writing include graph (DOT) to:')
+        logger.info('  %s', outPath)
         hasIncGraphDot = writeIncludeGraphAsDot(outDir, ituPath, myLexer)
-        logging.info('Writing macro dependency graph (DOT) to:')
-        logging.info('  %s', outPath)
+        logger.info('Writing macro dependency graph (DOT) to:')
+        logger.info('  %s', outPath)
         hasMacroDependencyGraphDot = writeMacroDependencyGraphAsDot(outDir, ituPath, myLexer)
     else:
         hasIncGraphDot = False
         hasMacroDependencyGraphDot = False
     # Write Conditional compilation graph in HTML
     outPath = os.path.join(outDir, includeGraphFileNameCcg(ituPath))
-    logging.info('Conditional compilation graph in HTML:')
-    logging.info('  %s', outPath)
+    logger.info('Conditional compilation graph in HTML:')
+    logger.info('  %s', outPath)
     CppCondGraphToHtml.processCppCondGrphToHtml(
             myLexer,
             outPath,
@@ -1523,7 +1527,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         outDir, ituPath, myLexer, myFileCountMap, myTokCntr,
         hasIncGraphDot, macroHistoryIndexName, hasMacroDependencyGraphDot,
     )
-    logging.info('Done: %s', ituPath)
+    logger.info('Done: %s', ituPath)
     # Write ITU HTML i.e. HTMLise the original files
     # Create a CppCondGraphVisitorConditionalLines
     myCcgvcl = CppCond.CppCondGraphVisitorConditionalLines()
@@ -1532,7 +1536,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         try:
             # Could be 'Unnamed Pre-include'
             if aSrc != PpLexer.UNNAMED_FILE_NAME:
-                logging.info('ITU in HTML: .../%s', os.path.basename(aSrc))
+                logger.info('ITU in HTML: .../%s', os.path.basename(aSrc))
                 ItuToHtml.ItuToHtml(
                     aSrc,
                     outDir,
@@ -1542,11 +1546,11 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                     ituToTuLineSet=mySetItuLines if aSrc == ituPath else None,
                 )
         except ItuToHtml.ExceptionItuToHTML as err:
-            logging.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
+            logger.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
     indexPath = writeIndexHtml(
         [ituPath, ], outDir, jobSpec,
         time_start, total_files, total_lines, total_bytes)
-    logging.info('preprocessFileToOutput(): %s DONE' % ituPath)
+    logger.info('preprocessFileToOutput(): %s DONE' % ituPath)
     # Return the path to the ITU and to the index.html path for consolidation
     # by the caller - to be used in multiprocessing.
     return PpProcessResult(
@@ -1649,11 +1653,12 @@ on it to create a SVG file (for includes and macro dependencies). [default: %(de
     clkStart = time.perf_counter()
     # Initialise logging etc.
     inPath = args.path[0]
+
     if args.jobs != 1 and os.path.isdir(inPath):
         # Multiprocessing
-        logFormat = '%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
+        logFormat = '%(asctime)s - %(filename)24s#%(lineno)-4d - %(levelname)-8s [%(process)5d] %(message)s'
     else:
-        logFormat = '%(asctime)s %(levelname)-8s %(message)s'
+        logFormat = '%(asctime)s - %(filename)24s#%(lineno)-4d - %(levelname)-8s %(message)s'
     logging.basicConfig(level=args.loglevel,
                     format=logFormat,
                     # datefmt='%y-%m-%d % %H:%M:%S',
@@ -1708,7 +1713,7 @@ on it to create a SVG file (for includes and macro dependencies). [default: %(de
             numJobs=args.jobs,
             )
     else:
-        logging.fatal('%s is neither a file or a directory!' % inPath)
+        logger.fatal('%s is neither a file or a directory!' % inPath)
         return 1
     if args.heap and myHeap is not None:
         print('Dump of heap:')

@@ -28,6 +28,8 @@ import logging
 
 from cpip import ExceptionCpip
 
+logger = logging.getLogger(__file__)
+
 class ExceptionCppDiagnostic(ExceptionCpip):
     """Exception class for representing CppDiagnostic."""
     pass
@@ -145,7 +147,7 @@ class PreprocessDiagnosticStd(object):
             The file locator e.g. :py:class:`FileLocation.FileLineCol`.
             If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrImplDefined += 1
-        logging.warning(
+        logger.warning(
                         self._prepareMsg(
                                          'implementation defined',
                                          msg,
@@ -163,7 +165,7 @@ class PreprocessDiagnosticStd(object):
             The file locator e.g. :py:class:`FileLocation.FileLineCol`.
             If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrError += 1
-        logging.error(self._prepareMsg(
+        logger.error(self._prepareMsg(
                                        'error',
                                        msg, 
                                        theLoc
@@ -180,7 +182,7 @@ class PreprocessDiagnosticStd(object):
             The file locator e.g. :py:class:`FileLocation.FileLineCol`.
             If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrWarning += 1
-        logging.warning(self._prepareMsg(
+        logger.warning(self._prepareMsg(
                                          'warning',
                                          msg,
                                          theLoc
@@ -209,7 +211,7 @@ class PreprocessDiagnosticStd(object):
             The file locator e.g. :py:class:`FileLocation.FileLineCol`.
             If present it must have: ``(fileId, lineNum colNum)`` attributes."""
         self._cntrUnspecified += 1
-        logging.info(self._prepareMsg(
+        logger.info(self._prepareMsg(
                                       'unspecified',
                                       msg,
                                       theLoc
@@ -233,7 +235,7 @@ class PreprocessDiagnosticStd(object):
 
         :returns: ``NoneType``
         """
-        logging.debug(self._prepareMsg(None, msg, theLoc))
+        logger.debug(self._prepareMsg(None, msg, theLoc))
 
 class PreprocessDiagnosticKeepGoing(PreprocessDiagnosticStd):
     """Sub-class that does not raise exceptions."""

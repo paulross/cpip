@@ -32,6 +32,8 @@ from cpip.core import PpTokenCount
 from cpip.core import FileIncludeGraph
 from cpip.util import CommonPrefix
 
+logger = logging.getLogger(__file__)
+
 class ExceptionFileIncludeStack(ExceptionCpip):
     """Exception for FileIncludeStack object."""
     pass
@@ -208,7 +210,7 @@ class FileIncludeStack(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('FileIncludeStack.includeStart(): %s line=%d', theFpo.filePath, theLineNum)
+        logger.debug('FileIncludeStack.includeStart(): %s line=%d', theFpo.filePath, theLineNum)
 #        print 'FileIncludeStack.includeStart(): new file %s included from line=%s' % (theFpo.filePath, str(theLineNum))
         assert(len(self._fincS) == 0 and theLineNum is None or theLineNum == self._fincS[-1].ppt.pLineCol[0])
 #        import traceback
@@ -267,7 +269,7 @@ class FileIncludeStack(object):
 #        print
 #        print
 #        print 'includeFinish(): self._figr\n', self._figr
-        logging.debug('FileIncludeStack.includeFinish(): %s', self._fincS[-1].fileName)
+        logger.debug('FileIncludeStack.includeFinish(): %s', self._fincS[-1].fileName)
         # Can pop so update the token count of the parent
         #print 'TRACE: includeFinish() myFileStack', myFileStack
         myFinc = self._fincS.pop()
@@ -275,11 +277,11 @@ class FileIncludeStack(object):
 #            try:
 #                self._figr.graph.retLatestNode(myFileStack).setTokenCounter(myFi.tokenCounter)
 #            except FileIncludeGraph.ExceptionFileIncludeGraph, err:
-#                logging.error('FileIncludeStack.incFinish(): failed with "%s"', str(err))
+#                logger.error('FileIncludeStack.incFinish(): failed with "%s"', str(err))
         if self.depth > 0:
-            logging.debug('FileIncludeStack.includeFinish(): passing control back to %s', self._fincS[-1].fileName)
+            logger.debug('FileIncludeStack.includeFinish(): passing control back to %s', self._fincS[-1].fileName)
         else:
-            logging.debug('FileIncludeStack.includeFinish(): passing control back to NONE')
+            logger.debug('FileIncludeStack.includeFinish(): passing control back to NONE')
         return myFinc.fileName
     
     #===============================

@@ -39,6 +39,8 @@ from cpip.core import PpWhitespace
 from cpip.util.ListGen import ListAsGenerator
 from cpip.util.Tree import DuplexAdjacencyList
 
+logger = logging.getLogger(__file__)
+
 class ExceptionMacroEnv(ExceptionCpip):
     """Exception when handling MacroEnv object."""
     pass
@@ -232,7 +234,7 @@ class MacroEnv(object):
         return self._expandedSet.issubset(set(self._defineMap.keys()))
 
     def _debugTokenStream(self, thePrefix, theArg=''):
-        """Writes to logging.debug() an interpretation of the token stream
+        """Writes to logger.debug() an interpretation of the token stream
         provided by theList. It will be preceded by the debugMarker value
         (if set) and that will always be cleared."""
         assert(self._enableTrace)
@@ -249,10 +251,10 @@ class MacroEnv(object):
                 'Unknown argument type %s, %s passed to _debugTokenStream()' \
                             % (type(theArg), theArg))
         if self.debugMarker is not None:
-            logging.debug(self.debugMarker)
+            logger.debug(self.debugMarker)
         self.debugMarker = None
         stackPrefix = ' ' * len(traceback.extract_stack())
-        logging.debug('[%2d]%s%s: %s' \
+        logger.debug('[%2d]%s%s: %s' \
                       % (len(stackPrefix), stackPrefix, thePrefix, debugStr))
 
     ###############

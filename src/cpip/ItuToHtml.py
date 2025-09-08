@@ -38,6 +38,8 @@ from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip import TokenCss
 
+logger = logging.getLogger(__file__)
+
 class ExceptionItuToHTML(ExceptionCpip):
     pass
     
@@ -159,7 +161,7 @@ the macro page.""")
 
         :returns: ``NoneType``
         """
-        logging.debug('_handleToken(): "%s", %s', t, tt)
+        logger.debug('_handleToken(): "%s", %s', t, tt)
         if tt == 'whitespace':
             self._writeTextWithNewlines(theS, t, None)
         elif tt in ('C comment', 'C++ comment'):
@@ -228,7 +230,7 @@ the macro page.""")
             try:
                 lineIsCompiled = self._cppCondMap.isCompiled(self._fpIn, self._lineNum)
             except KeyError:
-                logging.error('_incAndWriteLine(): Ambiguous compilation: path: "{!r:s}" Line: {!r:s}'.format(self._fpIn, self._lineNum))
+                logger.error('_incAndWriteLine(): Ambiguous compilation: path: "{!r:s}" Line: {!r:s}'.format(self._fpIn, self._lineNum))
                 pass
             else:
                 classAttr = self._condCompClassMap[lineIsCompiled]

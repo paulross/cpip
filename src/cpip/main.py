@@ -31,6 +31,8 @@ from optparse import OptionParser#, check_choice
 #import subprocess
 import multiprocessing
 
+logger = logging.getLogger(__file__)
+
 __version__ = '0.1.0'
 
 def unitTest():
@@ -76,9 +78,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    logging.critical('Test logging message')
-    logging.critical('opts: %s' % opts)
-    logging.critical('args: %s' % args)
+    logger.critical('Test logging message')
+    logger.critical('opts: %s' % opts)
+    logger.critical('args: %s' % args)
     if opts.unit_test:
         unitTest()
     if len(args) > 0:

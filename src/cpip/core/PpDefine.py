@@ -42,6 +42,8 @@ from cpip.core import PpWhitespace
 from cpip.core import FileLocation
 #from ListGen import ListAsGenerator
 
+logger = logging.getLogger(__file__)
+
 class ExceptionCpipDefine(ExceptionCpip):
     """Exception when handling PpDefine object."""
     pass
@@ -1325,7 +1327,7 @@ class PpDefine(object):
 
     def __logWarningHashHashHash(self):
         """Emit a warning to the log that # and ## are dangerous together."""
-        logging.warning(
+        logger.warning(
             "Using both '#' and '##' gives rise to unspecified behaviour."
         )
 

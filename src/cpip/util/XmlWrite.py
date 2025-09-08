@@ -30,12 +30,14 @@ import sys
 import base64
 from cpip import ExceptionCpip
 
+logger = logging.getLogger(__file__)
+
 #: Global flag that sets the error behaviour
 #:
 #: If ``True`` then this module may raise an ``ExceptionXml`` and that might mask other
 #: exceptions.
 #:
-#: If ``False`` no ExceptionXml will be raised but a ``logging.error(...)``
+#: If ``False`` no ExceptionXml will be raised but a ``logger.error(...)``
 #: will be written. These will not mask other Exceptions. 
 RAISE_ON_ERROR = True
 
@@ -91,7 +93,7 @@ def encodeString(theS, theCharPrefix='_'):
         errMsg = 'Prefix for encoding string must be a single character, not "%s"' % theCharPrefix
         if RAISE_ON_ERROR:
             raise ExceptionXml(errMsg)
-        logging.error(errMsg)
+        logger.error(errMsg)
 
     if sys.version_info[0] == 2:
         myBy = bytes(theS)
@@ -232,7 +234,7 @@ class XmlStream(object):
             errMsg = 'xmlSpacePreserve() on empty stack.'
             if RAISE_ON_ERROR:
                 raise ExceptionXml(errMsg)
-            logging.error(errMsg)
+            logger.error(errMsg)
         self._flipIndent(False)
     
     def startElement(self, name, attrs):
@@ -318,13 +320,13 @@ class XmlStream(object):
             errMsg = 'endElement() on empty stack'
             if RAISE_ON_ERROR:
                 raise ExceptionXmlEndElement(errMsg)
-            logging.error(errMsg)
+            logger.error(errMsg)
         if name != self._elemStk[-1]:
             errMsg = 'endElement("%s") does not match "%s"' \
                                          % (name, self._elemStk[-1])
             if RAISE_ON_ERROR:
                 raise ExceptionXmlEndElement(errMsg)
-            logging.error(errMsg)
+            logger.error(errMsg)
         myName = self._elemStk.pop()
         if self._inElem:
             self._file.write(u' />')

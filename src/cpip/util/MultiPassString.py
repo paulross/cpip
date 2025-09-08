@@ -30,6 +30,8 @@ import collections
 
 from cpip import ExceptionCpip
 
+logger = logging.getLogger(__file__)
+
 class ExceptionMultiPass(ExceptionCpip):
     pass
 
@@ -126,7 +128,7 @@ class MultiPassString(object):
         """Sets a mark at this point in the input.
 
         :returns: ``NoneType``"""
-        logging.debug('MultiPassString.setMarker() at %d', self._idxGenChar)
+        logger.debug('MultiPassString.setMarker() at %d', self._idxGenChar)
         self._idxMarker = self._idxGenChar
 
     def clearMarker(self):
@@ -162,7 +164,7 @@ class MultiPassString(object):
         :type isTerm: ``bool``
 
         :returns: ``NoneType``"""
-        logging.debug('MultiPassString.setWordType() "%s", isTerm=%s', theType, isTerm)
+        logger.debug('MultiPassString.setWordType() "%s", isTerm=%s', theType, isTerm)
         if self._idxMarker == self.MARKER_CLEAR:
             raise ExceptionMultiPass('setWordType(): when no marker present.')
 #        if self._idxMarker in self._idxTypeMap:
@@ -202,7 +204,7 @@ class MultiPassString(object):
             myLen += 1
         if myLen <= 0:
             raise ExceptionMultiPass('removeMarkedWord() with illegal length: %s' % myLen)
-        logging.debug(
+        logger.debug(
             'MultiPassString.removeMarkedWord() removing "%s" length=%d',
             self._current[self._idxMarker:self._idxMarker+myLen],
             myLen,
@@ -296,7 +298,7 @@ class MultiPassString(object):
         k = 0
         for k in sorted(self._idxTypeMap.keys()):
             if k > idx:
-                logging.debug(
+                logger.debug(
                     'MultiPassString.genWords() 0: k=%d, idx=%d, str="%s" type="%s"',
                     k,
                     idx,
@@ -309,7 +311,7 @@ class MultiPassString(object):
             w = self._idxTypeMap[k]
             assert(w.wordLen > 0)
             idx = k + w.wordLen
-            logging.debug(
+            logger.debug(
                 'MultiPassString.genWords() 1: k=%d, idx=%d, str="%s" type="%s"',
                 k,
                 idx,
@@ -319,7 +321,7 @@ class MultiPassString(object):
             yield self._origStr[k:idx], w.wordType
         # Finally the tail
         if k+idx < len(self._origStr):
-            logging.debug(
+            logger.debug(
                 'MultiPassString.genWords() 2: k=%d, idx=%d, str="%s" type="%s"',
                 k,
                 idx,

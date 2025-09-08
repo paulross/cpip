@@ -85,6 +85,8 @@ from cpip.core import CppDiagnostic
 from cpip.core import FileIncludeGraph
 from cpip.core import PragmaHandler
 
+logger = logging.getLogger(__file__)
+
 def retIncludedFileSet(theLexer):
     """Returns a set of included file paths from a lexer."""
     myFigr = theLexer.fileIncludeGraphRoot
@@ -118,10 +120,10 @@ def preProcessForIncludes(theItu, incUsr, incSys, theDefineS, preIncS, keepGoing
                     diagnostic=myDiag,
                     pragmaHandler=myPh,
                     )
-    logging.info('Preprocessing TU: %s' % theItu)
+    logger.info('Preprocessing TU: %s' % theItu)
     for t in myLexer.ppTokens():
         pass
-    logging.info('Preprocessing TU done.')
+    logger.info('Preprocessing TU done.')
     retVal = retIncludedFileSet(myLexer)
     # Remove any artificial files
     try:
@@ -194,7 +196,7 @@ Preprocess the files and lists included files."""
                     opts.ignore_pragma,
                 )
             )
-        logging.info('All done.')
+        logger.info('All done.')
         myFileS = list(myFileSet)
         myFileS.sort()
         message = ' Included files [%d] ' % len(myFileS)

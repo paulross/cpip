@@ -32,6 +32,8 @@ import re
 
 from cpip import ExceptionCpip 
 
+logger = logging.getLogger(__file__)
+
 class ExceptionConstantExpression(ExceptionCpip):
     """Simple specialisation of an exception class for the ConstantExpression classes."""
     pass
@@ -114,7 +116,7 @@ class ConstantExpression(object):
             exec(c, {}, _locals)
             return _locals['result']
         except Exception as err:
-            logging.error('ConstantExpression._evaluateConditionalExpression() can not evaluate: "%s"' % compileString)
+            logger.error('ConstantExpression._evaluateConditionalExpression() can not evaluate: "%s"' % compileString)
             raise ExceptionConditionalExpression(str(err))
 
     def _evaluateExpression(self, theStr):
