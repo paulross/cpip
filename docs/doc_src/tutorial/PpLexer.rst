@@ -26,11 +26,11 @@ at *<cpip>/demo/* and the directory structure looks like this:
 
     demo/
     ├── python
-    │   ├── cpip.py
+    │   ├── cpip.py
     ├── src
-    │   ├── main.cpp
+    │   ├── main.cpp
     ├── sys
-    │   └── system.h
+    │   └── system.h
     └── usr
         └── user.h
 

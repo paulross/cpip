@@ -210,7 +210,7 @@ class FileIncludeStack(object):
 
         :returns: ``NoneType``
         """
-        logger.debug('FileIncludeStack.includeStart(): %s line=%d', theFpo.filePath, theLineNum)
+        logger.debug('FileIncludeStack.includeStart(): %s line=%s', theFpo.filePath, theLineNum)
 #        print 'FileIncludeStack.includeStart(): new file %s included from line=%s' % (theFpo.filePath, str(theLineNum))
         assert(len(self._fincS) == 0 and theLineNum is None or theLineNum == self._fincS[-1].ppt.pLineCol[0])
 #        import traceback

@@ -7,7 +7,7 @@
 CPIP Tutorials
 **************
 
-Various Tutorials on how to use CPIP.
+This describes various tutorials on how to use CPIP.
 
 Contents:
 

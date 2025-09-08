@@ -24,7 +24,9 @@ __author__  = 'Paul Ross'
 __date__    = '2011-07-10'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
+import logging
 import os
+import subprocess
 import sys
 import collections
 import io
@@ -33,6 +35,10 @@ import typing
 #import time
 #import logging
 from cpip import ExceptionCpip
+
+
+logger = logging.getLogger(__file__)
+
 
 class ExceptionCppInclude(ExceptionCpip):
     """Simple specialisation of an exception class for the CppInclude."""
@@ -541,9 +547,10 @@ class CppIncludeStringIO(CppIncludeStd):
 
 def get_platform_system_include_paths(language: str) -> typing.List[str]:
     """Query the platform for system includes.
-    C::
+    Theses work for C::
 
         cc -xc -E -v - < /dev/null
+        cpp -v -E -xc
 
     Gives::
 
@@ -572,9 +579,10 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
         # 1 "<stdin>" 2
 
 
-    C++::
+    These work for C++::
 
         c++ -xc++ -E -v - < /dev/null
+        cpp -v -E -xc++
 
     Gives::
 
@@ -603,7 +611,35 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
         # 1 "<built-in>" 2
         # 1 "<stdin>" 2
     """
-    return []
+    if language == 'C':
+        cmd = ['cpp', '-v', '-E', '-xc']
+    elif language == 'C++':
+        cmd = ['cpp', '-v', '-E', '-xc++']
+    else:
+        raise ValueError(f'Unknown language "{language}"')
+    logger.info('Running command %s', cmd)
+    result = subprocess.run(cmd, capture_output=True, timeout=1.0, stdin=subprocess.DEVNULL)
+    logger.info(
+        'Command %s returned error code %d and %d bytes',
+        cmd, result.returncode, len(result.stderr),
+    )
+    if result.returncode != 0:
+        raise IOError(f'Sub-process command {cmd} returned error code of {result.returncode}')
+    in_sys_path_block = False
+    ret = []
+    lines = result.stderr.split(b'\n')
+    for line in lines:
+        if line == b'#include <...> search starts here:':
+            in_sys_path_block = True
+        elif line == b'End of search list.':
+            in_sys_path_block = False
+        elif in_sys_path_block:
+            path = line.strip().decode('ascii')
+            # A bit hacky this...
+            if path.endswith(' (framework directory)'):
+                path = path[:-len(' (framework directory)')]
+            ret.append(path)
+    return ret
 
 
 
