@@ -15,7 +15,12 @@ def main() -> int:
     )
     lexer = PpLexer.PpLexer(sys.argv[1], include_handler)
     for _tok in lexer.ppTokens(condLevel=2):
-        print(f'{lexer.fileName} {lexer.lineNum:4d} {lexer.colNum:2d} {lexer.condState}')
+        # For clarity, we just print out the basename of the files.
+        print(
+            f'{os.path.basename(lexer.fileName):10}'
+            f' {lexer.lineNum:4d} {lexer.colNum:2d}'
+            f' {lexer.condState}'
+        )
     return 0
 
 

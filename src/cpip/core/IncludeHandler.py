@@ -624,7 +624,7 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
     else:
         raise ValueError(f'Unknown language "{language}"')
     logger.info('Running command %s', cmd)
-    result = subprocess.run(cmd, capture_output=True, timeout=1.0, stdin=subprocess.DEVNULL)
+    result = subprocess.run(cmd, capture_output=True, timeout=10.0, stdin=subprocess.DEVNULL)
     logger.info(
         'Command %s returned error code %d and %d bytes',
         cmd, result.returncode, len(result.stderr),

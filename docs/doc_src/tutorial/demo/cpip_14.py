@@ -22,8 +22,11 @@ def main() -> int:
         '__x86_64__': '\n',
     }
     lexer = PpLexer.PpLexer(sys.argv[1], include_handler, stdPredefMacros=predefined_macros)
-    for tok in lexer.ppTokens(minWs=True):
-        print(tok.t, end='')
+    for _tok in lexer.ppTokens():
+        # For clarity, we just print out the basename of the files.
+        file_stack = [os.path.basename(f) for f in lexer.fileStack]
+        file_name = os.path.basename(lexer.fileName)
+        print(f'{file_name:10} {lexer.lineNum:4d} {lexer.colNum:2d} {file_stack}')
     return 0
 
 

@@ -184,7 +184,7 @@ class PpLexer(object):
     ###########################################    
     def __init__(self,
                  tuFileId,
-                 includeHandler,
+                 includeHandler: IncludeHandler.CppIncludeStd,
                  preIncFiles=None,
                  diagnostic=None,
                  pragmaHandler=None,

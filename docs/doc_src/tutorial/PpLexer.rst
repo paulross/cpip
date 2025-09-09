@@ -262,7 +262,94 @@ Invoking it now gives:
 .. literalinclude:: demo/cpip_05.out.txt
     :language: text
 
+However we now see for error messages about the architecture and compiler toolchain.
 
+The first reads
+``"Unsupported compiler detected" at line=81, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 78
+
+    /* This SDK is designed to work with clang and specific versions of
+    * gcc >= 4.0 with Apple's patch sets */
+    #if !defined(__GNUC__) || __GNUC__ < 4
+    #warning "Unsupported compiler detected"
+    #endif
+
+The second reads:
+``Unsupported architecture at line=925, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 917
+
+    /*
+     * Architecture validation for current SDK
+     */
+    #if !defined(__sys_cdefs_arch_unknown__) && defined(__i386__)
+    #elif !defined(__sys_cdefs_arch_unknown__) && defined(__x86_64__)
+    #elif !defined(__sys_cdefs_arch_unknown__) && defined(__arm__)
+    #elif !defined(__sys_cdefs_arch_unknown__) && defined(__arm64__)
+    #else
+    #error Unsupported architecture
+    #endif
+
+The third reads:
+``architecture not supported at line=36, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/machine/_types.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 31
+
+    #if defined (__i386__) || defined(__x86_64__)
+    #include "i386/_types.h"
+    #elif defined (__arm__) || defined (__arm64__)
+    #include "arm/_types.h"
+    #else
+    #error architecture not supported
+    #endif
+
+
+The fourth reads:
+``architecture not supported at line=39, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/machine/types.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 34
+
+    #if defined (__i386__) || defined(__x86_64__)
+    #include "i386/types.h"
+    #elif defined (__arm__) || defined (__arm64__)
+    #include "arm/types.h"
+    #else
+    #error architecture not supported
+    #endif
+
+From this we can see that we need to do the equivalent of invoking the compiler with ``-D __GNUC__=4 -D __x86_64__``.
+
+This can be fixed by giving the lexer the necesary macro definition with ``stdPredefMacros=``,
+the code is in *demo/cpip_06.py*:
+
+.. literalinclude:: demo/cpip_06.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 19-24
+
+Invoking it now gives:
+
+.. literalinclude:: demo/cpip_06.out.txt
+    :language: text
+
+And there are no error messages.
 
 And now for something Completely Different
 ==========================================
@@ -279,41 +366,43 @@ directives).
 File Include Stack
 ------------------
 Changing the code to this shows the ``include`` file
-hierarchy every step of the way::
+hierarchy every step of the way.
+The code is in *demo/cpip_14.py*:
 
-    for tok in myLex.ppTokens():
-        print myLex.fileStack
+.. literalinclude:: demo/cpip_14.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 26-29
 
-Gives the following output:
+The include tack is a list of file paths, the last item is the current file and the previous values are how we got here.
 
-.. code-block:: console
+So ``['main.c', 'user.h', 'system.h']`` means we are currently processing ``system.h`` which was included from
+``user.h`` which, in turn, was included from ``main.c``
 
-    $ python cpip.py proj/src/main.c
-    Processing: proj/src/main.c
-    ['proj/src/main.c', 'proj/usr/user.h']
-    ['proj/src/main.c', 'proj/usr/user.h']
-    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.c', 'proj/usr/user.h']
-    ['proj/src/main.c', 'proj/usr/user.h']
-    ['proj/src/main.c', 'proj/usr/user.h']
-    ['proj/src/main.c']
-    ...
+Invoking *demo/cpip_14.py* now gives:
+
+.. literalinclude:: demo/cpip_14.out.txt
+    :language: text
 
 Conditional State
 -----------------
 
-Changing the code to this::
+This can be revealed for every preprocessing token by setting the flag ``condLevel=2``.
+The conditional state can be accessed with ``lexer.condState``.
+The code is in *demo/cpip_15.py*:
 
-    for tok in myLex.ppTokens(condLevel=1):
-        print myLex.condState
+.. literalinclude:: demo/cpip_15.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 18-23
 
-Produces this output:
+The conditional state is a pair, the first value being a bool that states whether this preprocessing token is part
+of the output. The second value is macro expression that, when evaluated, resolves to the boolean value.
 
-.. literalinclude:: demo/cpip_05.out.txt
-    :language: sh
+Invoking *demo/cpip_15.py* now gives:
+
+.. literalinclude:: demo/cpip_15.out.txt
+    :language: text
 
 State of the ``PpLexer`` After Pre-processing
 ===============================================
@@ -326,24 +415,28 @@ A more common use case is to query the ``PpLexer`` after processing the file. Th
 * Print out a text representation of the macro environment as it exists at the end of processing the Translation Unit [lines 28-31].
 * Print out a text representation of the macro history for all macros, whether referenced or not, as it exists at the end of processing the Translation Unit [lines 33-36].
 
-Here is the code, named :file:`cpip_07.py`:
+Here is the code, named :file:`cpip_17.py`:
 
-.. literalinclude:: demo/cpip_07.py
-    :language: python
+.. literalinclude:: demo/cpip_17.py
     :linenos:
+    :language: python
+    :emphasize-lines: 17-42
 
-Invoking this code thus:
+Invoking *demo/cpip_17.py* now gives the following output.
+There are four blocks of information:
 
-.. code-block:: console
+* "Translation Unit" is the translation unit with minimal whitespace.
+* "File Include Graph" is a textural representation of the file include graph.
+  Each line describes the currently processed file.
+  It is followed by a line number of that file and the ``#include`` statement that leads to included file, with indent.
+* "Conditional Compilation Graph" shows the tree of conditional compilation directives.
+* "Macro Environment" describes each macro, its value and where it was defined.
+* "Macro History" describes each macros history, where it was defined and where it was used.
 
-    $ python3 cpip_07.py ../src/main.c
+.. literalinclude:: demo/cpip_17.out.txt
+    :language: text
 
-Gives this output:
-
-.. literalinclude:: demo/cpip_07.out.txt
-    :language: sh
-
-This is simple to the point of crude as the ``PpLexer`` supplies a far richer data seam than just text.
+The ``PpLexer`` can supply a far richer data seam than just text.
 
 File Include Graph interface is described here: :ref:`cpip.tutorial.FileIncludeGraph`
 
