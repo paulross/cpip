@@ -21,7 +21,11 @@ def main() -> int:
         '__GNUC__': '4\n',
         '__x86_64__': '\n',
     }
-    lexer = PpLexer.PpLexer(sys.argv[1], include_handler, stdPredefMacros=predefined_macros)
+    lexer = PpLexer.PpLexer(
+        sys.argv[1],
+        include_handler,
+        stdPredefMacros=predefined_macros,
+    )
     for _tok in lexer.ppTokens():
         # For clarity, we just print out the basename of the files.
         file_stack = [os.path.basename(f) for f in lexer.fileStack]

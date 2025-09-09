@@ -9,12 +9,8 @@ CPIP Tutorials
 
 This describes various tutorials on how to use CPIP.
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
 
    PpLexer.rst
    FileIncGraph.rst
-
-

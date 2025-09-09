@@ -67,7 +67,10 @@ There are a number of visitor examples in the ``FileIncludeGraph`` test code.
 Example Visitor
 -----------------
 
-Here we create a simple visitor [lines 6-9]. After processing the Translation Unit [line 18] we create a visitor and traverse the include graph [lines 19-20]. At each node in the graph the visitor merely prints out the file (node) name and the findLogic string i.e. how this file was found for inclusion [line 9].
+Here we create a simple visitor [lines 11-15].
+After processing the Translation Unit [line 25] we create a visitor and traverse the include graph [line 26].
+At each node in the graph the visitor merely prints out the file (node) name and the findLogic string
+i.e. how this file was found for inclusion [line 27].
 
 .. literalinclude:: demo/cpip_19.py
     :language: python
@@ -85,8 +88,8 @@ Gives this output:
     Processing: docs/doc_src/tutorial/demo/proj/src/main.c
     <stdio.h>: No such file or directory at line=3, col=1 of file "docs/doc_src/tutorial/demo/proj/src/main.c"
     main.c
-    user.h ['"user.h"', 'CP=None', 'usr=/Users/paulross/GitHub/paulross/cpip/docs/doc_src/tutorial/demo/proj/usr']
-    system.h ['<system.h>', 'sys=/Users/paulross/GitHub/paulross/cpip/docs/doc_src/tutorial/demo/proj/sys']
+    user.h ['"user.h"', 'CP=None', 'usr=cpip/docs/doc_src/tutorial/demo/proj/usr']
+    system.h ['<system.h>', 'sys=cpip/docs/doc_src/tutorial/demo/proj/sys']
 
 For example, in line 3, this means that the file :file:`../usr/user.h` was included with a ``#include "user.h"``
 statement, first the "Current Place" (``CP``) was searched (unsuccessfully so result None),
@@ -110,9 +113,9 @@ include graph node.
 The other requirement is to implement finalise at the the end of tree construction that updates the token count with
 those of the nodes children. Finally it suplies some string representation of itself.
 
-The special code is on lines 40-43 where the ``FileIncludeGraph.FigVisitorTree`` visitor is created with a cls
+The special code is on lines 11-36 where the ``FileIncludeGraph.FigVisitorTree`` visitor is created with a cls
 specification of ``MyVisitorTreeNode``.
-The file include graph is then presented with the visitor (line 41).
+The file include graph is then presented with the visitor (line 47).
 Finally a tree of ``MyVisitorTreeNode`` objects is retrieved with a call to ``tree()``.
 The code is in *docs/doc_src/tutorial/demo/cpip_30.py*:
 

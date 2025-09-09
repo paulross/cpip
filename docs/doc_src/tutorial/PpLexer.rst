@@ -28,17 +28,7 @@ at *<cpip>/docs/doc_src/tutorial/demo* and the directory structure looks like th
     ├── cpip_00.py
     ├── cpip_01.py
     ├── cpip_02.py
-    ├── cpip_03.out.txt
-    ├── cpip_03.py
-    ├── cpip_04.out.txt
-    ├── cpip_04.py
-    ├── cpip_05.out.txt
-    ├── cpip_05.py
-    ├── cpip_06.py
-    ├── cpip_07.out.txt
-    ├── cpip_07.py
-    ├── cpip_08.py
-    ├── cpip_09.py
+    8<---- Snip ---->8
     ├── cpip_10.py
     ├── cpip_99.py
     └── proj
@@ -54,7 +44,7 @@ This tutorial will take you through writing :file:`demo/python/cpip.py` to use P
 pre-process them.
 
 First lets have a look at the source code that we are preprocessing.
-It is a pretty trivial variation of a common theme, but beware,
+It is a pretty simple variation of a common theme, but beware,
 pre-processing directives abound!
 
 The file :file:`demo/src/main.c` looks like this:
@@ -262,7 +252,7 @@ Invoking it now gives:
 .. literalinclude:: demo/cpip_05.out.txt
     :language: text
 
-However we now see for error messages about the architecture and compiler toolchain.
+However we now see four error messages about the architecture and compiler toolchain.
 
 The first reads
 ``"Unsupported compiler detected" at line=81, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h"``
@@ -372,9 +362,10 @@ The code is in *demo/cpip_14.py*:
 .. literalinclude:: demo/cpip_14.py
     :linenos:
     :language: python
-    :emphasize-lines: 26-29
+    :emphasize-lines: 30-33
 
-The include tack is a list of file paths, the last item is the current file and the previous values are how we got here.
+The include stack is a list of file paths, the last item is the current file and the previous values are how we
+got here.
 
 So ``['main.c', 'user.h', 'system.h']`` means we are currently processing ``system.h`` which was included from
 ``user.h`` which, in turn, was included from ``main.c``
@@ -409,18 +400,20 @@ State of the ``PpLexer`` After Pre-processing
 
 A more common use case is to query the ``PpLexer`` after processing the file. The following code example will:
 
-* Capture all tokens as a Translation Unit and write it out with minimal whitespace [lines 11-16].
-* Print out a text representation of the file include graph [lines 18-21].
-* Print out a text representation of the conditional compilation graph [lines 23-26].
-* Print out a text representation of the macro environment as it exists at the end of processing the Translation Unit [lines 28-31].
-* Print out a text representation of the macro history for all macros, whether referenced or not, as it exists at the end of processing the Translation Unit [lines 33-36].
+* Capture all tokens as a Translation Unit and write it out with minimal whitespace [lines 19-22].
+* Print out a text representation of the file include graph [lines 24-27].
+* Print out a text representation of the conditional compilation graph [lines 29-32].
+* Print out a text representation of the macro environment as it exists at the end of processing the
+  Translation Unit [lines 28-31].
+* Print out a text representation of the macro history for all macros, whether referenced or not,
+  as it exists at the end of processing the Translation Unit [lines 39-42].
 
-Here is the code, named :file:`cpip_17.py`:
+Here is the code in  :file:`demo/cpip_17.py`:
 
 .. literalinclude:: demo/cpip_17.py
     :linenos:
     :language: python
-    :emphasize-lines: 17-42
+    :emphasize-lines: 19-42
 
 Invoking *demo/cpip_17.py* now gives the following output.
 There are four blocks of information:
@@ -445,8 +438,8 @@ Summary
 
 There are several ways that you can inspect pre-processing with PpLexer:
 
-* Supplying arguments to ``PpLexer.ppTokens()`` with arguments such as ``minWs`` or ``incCond``.
-* Accessing the state of each token as it is generated such as ``tok.tt`` or ``tok.isCond``.
+* Supplying arguments to ``PpLexer.ppTokens()`` with arguments such as ``minWs`` or ``condLevel``.
+* Accessing the state of each token as it is generated such as ``tok.tt``.
 * Accessing the state of PpLexer as each token as it is generated or once all tokens have been generated such as PpLexer.condState.
 * Creating PpLexer with a user specified behaviour. This is the subject of the next section.
 

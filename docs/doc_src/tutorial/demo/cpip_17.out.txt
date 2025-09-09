@@ -12,17 +12,17 @@ return 0;
 
 ============================ File Include Graph ===========================
 docs/doc_src/tutorial/demo/proj/src/main.c [45, 21]:  True "" ""
-000004: #include /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h
-  /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h [10, 6]:  True "" "['"user.h"', 'CP=None', 'usr=/Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr']"
-  000005: #include /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h
-    /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h [10, 6]:  True "!def __USER_H__" "['<system.h>', 'sys=/Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys']"
+000004: #include cpip/docs/doc_src/tutorial/demo/proj/usr/user.h
+  cpip/docs/doc_src/tutorial/demo/proj/usr/user.h [10, 6]:  True "" "['"user.h"', 'CP=None', 'usr=cpip/docs/doc_src/tutorial/demo/proj/usr']"
+  000005: #include cpip/docs/doc_src/tutorial/demo/proj/sys/system.h
+    cpip/docs/doc_src/tutorial/demo/proj/sys/system.h [10, 6]:  True "!def __USER_H__" "['<system.h>', 'sys=cpip/docs/doc_src/tutorial/demo/proj/sys']"
 ========================== File Include Graph END =========================
 
 ====================== Conditional Compilation Graph ======================
-#ifndef __USER_H__ /* True "/Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h" 1 2 */
-    #ifndef __SYSTEM_H__ /* True "/Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h" 1 6 */
-    #endif /* True "/Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h" 6 15 */
-#endif /* True "/Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h" 8 22 */
+#ifndef __USER_H__ /* True "cpip/docs/doc_src/tutorial/demo/proj/usr/user.h" 1 2 */
+    #ifndef __SYSTEM_H__ /* True "cpip/docs/doc_src/tutorial/demo/proj/sys/system.h" 1 6 */
+    #endif /* True "cpip/docs/doc_src/tutorial/demo/proj/sys/system.h" 6 15 */
+#endif /* True "cpip/docs/doc_src/tutorial/demo/proj/usr/user.h" 8 22 */
 #if defined(LANG_SUPPORT) && defined(FRENCH) /* True "docs/doc_src/tutorial/demo/proj/src/main.c" 6 71 */
 #elif defined(LANG_SUPPORT) && defined(AUSTRALIAN) /* False "docs/doc_src/tutorial/demo/proj/src/main.c" 8 112 */
 #else /* False "docs/doc_src/tutorial/demo/proj/src/main.c" 10 119 */
@@ -30,23 +30,23 @@ docs/doc_src/tutorial/demo/proj/src/main.c [45, 21]:  True "" ""
 ==================== Conditional Compilation Graph END ====================
 
 ============================ Macro Environment ============================
-#define FRENCH /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#6 Ref: 1 True */
-#define LANG_SUPPORT /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#4 Ref: 1 True */
+#define FRENCH /* cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#6 Ref: 1 True */
+#define LANG_SUPPORT /* cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#4 Ref: 1 True */
 #define __DATE__ Sep 9 2025 /* #1 Ref: 0 True */
-#define __SYSTEM_H__ /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#2 Ref: 0 True */
+#define __SYSTEM_H__ /* cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#2 Ref: 0 True */
 #define __TIME__ 13:32:13 /* #1 Ref: 0 True */
-#define __USER_H__ /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#2 Ref: 0 True */
+#define __USER_H__ /* cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#2 Ref: 0 True */
 ========================== Macro Environment END ==========================
 
 ============================== Macro History ==============================
 Macro History (all macros):
 In scope:
-#define FRENCH /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#6 Ref: 1 True */
+#define FRENCH /* cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#6 Ref: 1 True */
     docs/doc_src/tutorial/demo/proj/src/main.c 6 38
-#define LANG_SUPPORT /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#4 Ref: 1 True */
+#define LANG_SUPPORT /* cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#4 Ref: 1 True */
     docs/doc_src/tutorial/demo/proj/src/main.c 6 13
 #define __DATE__ Sep 9 2025 /* #1 Ref: 0 True */
-#define __SYSTEM_H__ /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#2 Ref: 0 True */
+#define __SYSTEM_H__ /* cpip/docs/doc_src/tutorial/demo/proj/sys/system.h#2 Ref: 0 True */
 #define __TIME__ 13:32:13 /* #1 Ref: 0 True */
-#define __USER_H__ /* /Users/engun/Documents/workspace/cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#2 Ref: 0 True */
+#define __USER_H__ /* cpip/docs/doc_src/tutorial/demo/proj/usr/user.h#2 Ref: 0 True */
 ============================ Macro History END ============================
