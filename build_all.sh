@@ -54,6 +54,38 @@ remove_virtual_environments() {
   done
 }
 
+run_demonstration_code_in_documentation_tree() {
+  # This runs all the demo code in the documentation tree to check that it does not error.
+  echo "---> run_demonstration_code_in_documentation_tree..."
+  echo "---> cpip_00.py"
+  python docs/doc_src/tutorial/demo/cpip_00.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_01.py"
+  python docs/doc_src/tutorial/demo/cpip_01.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_02.py"
+  python docs/doc_src/tutorial/demo/cpip_02.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_03.py"
+  python docs/doc_src/tutorial/demo/cpip_03.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_04.py"
+  python docs/doc_src/tutorial/demo/cpip_04.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_05.py"
+  python docs/doc_src/tutorial/demo/cpip_05.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_06.py"
+  python docs/doc_src/tutorial/demo/cpip_06.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_14.py"
+  python docs/doc_src/tutorial/demo/cpip_14.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_15.py"
+  python docs/doc_src/tutorial/demo/cpip_15.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_17.py"
+  python docs/doc_src/tutorial/demo/cpip_17.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_18.py"
+  python docs/doc_src/tutorial/demo/cpip_18.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_19.py"
+  python docs/doc_src/tutorial/demo/cpip_19.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> cpip_30.py"
+  python docs/doc_src/tutorial/demo/cpip_30.py docs/doc_src/tutorial/demo/proj/src/main.c
+  echo "---> run_demonstration_code_in_documentation_tree DONE"
+}
+
 create_bdist_wheel() {
   echo "---> Creating bdist_wheel for all versions..."
   for version in ${PYTHON_VERSIONS[*]}; do
@@ -83,6 +115,7 @@ create_bdist_wheel() {
     # Fail fast with -x
     pytest -x tests
     echo "---> All tests pass for Python version ${version}"
+    run_demonstration_code_in_documentation_tree
     echo "---> Running setup for bdist_wheel:"
     python setup.py bdist_wheel
   done

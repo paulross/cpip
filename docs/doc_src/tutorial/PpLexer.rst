@@ -54,7 +54,7 @@ This tutorial will take you through writing :file:`demo/python/cpip.py` to use P
 pre-process them.
 
 First lets have a look at the source code that we are preprocessing.
-It is a pretty trivial variation of a common them, but beware,
+It is a pretty trivial variation of a common theme, but beware,
 pre-processing directives abound!
 
 The file :file:`demo/src/main.c` looks like this:
