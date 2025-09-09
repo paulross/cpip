@@ -547,12 +547,14 @@ class CppIncludeStringIO(CppIncludeStd):
 
 def get_platform_system_include_paths(language: str) -> typing.List[str]:
     """Query the platform for system includes.
-    Theses work for C::
+    Either of these work for C:
+
+    .. code-block:: text
 
         cc -xc -E -v - < /dev/null
         cpp -v -E -xc
 
-    Gives::
+    .. code-block:: text
 
         Apple clang version 14.0.3 (clang-1403.0.22.14.1)
         Target: x86_64-apple-darwin22.6.0
@@ -579,12 +581,14 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
         # 1 "<stdin>" 2
 
 
-    These work for C++::
+    Either of these work for C++:
+
+    .. code-block:: text
 
         c++ -xc++ -E -v - < /dev/null
         cpp -v -E -xc++
 
-    Gives::
+    .. code-block:: text
 
         Apple clang version 14.0.3 (clang-1403.0.22.14.1)
         Target: x86_64-apple-darwin22.6.0

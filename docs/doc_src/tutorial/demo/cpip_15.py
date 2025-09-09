@@ -11,14 +11,11 @@ def main() -> int:
     print('Processing:', sys.argv[1])
     include_handler = IncludeHandler.CppIncludeStdOs(
         theUsrDirs=[os.path.join(PROJECT_DIRECTORY, 'proj/usr'), ],
-        theSysDirs=(
-            IncludeHandler.get_platform_system_include_paths('C')
-            + [os.path.join(PROJECT_DIRECTORY, 'proj/sys'), ]
-        ),
+        theSysDirs=[os.path.join(PROJECT_DIRECTORY, 'proj/sys'), ],
     )
     lexer = PpLexer.PpLexer(sys.argv[1], include_handler)
-    for tok in lexer.ppTokens(minWs=True):
-        print(tok.t, end='')
+    for _tok in lexer.ppTokens(condLevel=2):
+        print(f'{lexer.fileName} {lexer.lineNum:4d} {lexer.colNum:2d} {lexer.condState}')
     return 0
 
 

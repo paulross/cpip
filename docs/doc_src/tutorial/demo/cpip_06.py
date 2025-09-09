@@ -1,16 +1,27 @@
+import os
 import sys
-from cpip.core import PpLexer, IncludeHandler
 
-def main():
+from cpip.core import IncludeHandler
+from cpip.core import PpLexer
+
+PROJECT_DIRECTORY = os.path.abspath(os.path.dirname(__file__))
+
+
+def main() -> int:
     print('Processing:', sys.argv[1])
-    myH = IncludeHandler.CppIncludeStdOs(
-        theUsrDirs=['proj/usr',],
-        theSysDirs=['proj/sys',],
-        )
-    myLex = PpLexer.PpLexer(sys.argv[1], myH)
-    for tok in myLex.ppTokens():
-        pass
-    print(myLex.fileIncludeGraphRoot)
+    include_handler = IncludeHandler.CppIncludeStdOs(
+        theUsrDirs=[os.path.join(PROJECT_DIRECTORY, 'proj/usr'), ],
+        theSysDirs=(
+            IncludeHandler.get_platform_system_include_paths('C')
+            + [os.path.join(PROJECT_DIRECTORY, 'proj/sys'), ]
+        ),
+    )
+    #  We need to add the equivalent of -D __GNUC__=4 -D __x86_64__
+    lexer = PpLexer.PpLexer(sys.argv[1], include_handler)
+    for tok in lexer.ppTokens(minWs=True):
+        print(tok.t, end='')
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    exit(main())

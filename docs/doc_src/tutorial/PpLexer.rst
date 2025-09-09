@@ -20,21 +20,36 @@ Files to Pre-Process
 --------------------
 
 First let's get some demonstration code to pre-process. You can find this
-at *<cpip>/demo/* and the directory structure looks like this:
+at *<cpip>/docs/doc_src/tutorial/demo* and the directory structure looks like this:
 
 .. code-block:: none
 
-    demo/
-    ├── python
-    │   ├── cpip.py
-    ├── src
-    │   ├── main.cpp
-    ├── sys
-    │   └── system.h
-    └── usr
-        └── user.h
+    demo
+    ├── cpip_00.py
+    ├── cpip_01.py
+    ├── cpip_02.py
+    ├── cpip_03.out.txt
+    ├── cpip_03.py
+    ├── cpip_04.out.txt
+    ├── cpip_04.py
+    ├── cpip_05.out.txt
+    ├── cpip_05.py
+    ├── cpip_06.py
+    ├── cpip_07.out.txt
+    ├── cpip_07.py
+    ├── cpip_08.py
+    ├── cpip_09.py
+    ├── cpip_10.py
+    ├── cpip_99.py
+    └── proj
+        ├── src
+        │   ├── main.c
+        ├── sys
+        │   └── system.h
+        └── usr
+            └── user.h
 
-In :file:`src/main.cpp` is some source code that includes files from :file:`usr/` and :file:`sys/`. 
+In :file:`src/main.c` is some source code that includes files from :file:`usr/` and :file:`sys/`.
 This tutorial will take you through writing :file:`demo/python/cpip.py` to use PpLexer to
 pre-process them.
 
@@ -42,11 +57,11 @@ First lets have a look at the source code that we are preprocessing.
 It is a pretty trivial variation of a common them, but beware,
 pre-processing directives abound!
 
-The file :file:`demo/src/main.cpp` looks like this:
+The file :file:`demo/src/main.c` looks like this:
 
 .. highlight:: c
 
-.. literalinclude:: demo/proj/src/main.cpp
+.. literalinclude:: demo/proj/src/main.c
     :language: c
 
 That includes a file :file:`user.h` that can be found at :file:`demo/usr/user.h`:
@@ -71,16 +86,19 @@ Creating a PpLexer
 ------------------
 
 This is the template that we will use for the tutorial, it just takes a
-single argument from the command line ``sys.argv[1]``:
+single argument from the command line ``sys.argv[1]``.
+The code (*demo/cpip_00.py*) looks like this:
 
 .. literalinclude:: demo/cpip_00.py
     :linenos:
     :language: python
 
-Of course this doesn't do much yet, invoking it just gives::
+Of course this doesn't do much yet, invoking it (from the CPIP project root) just gives:
 
-    python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
+.. code-block:: console
+
+    $ python docs/doc_src/tutorial/demo/cpip_00.py docs/doc_src/tutorial/demo/proj/src/main.c
+    Processing: docs/doc_src/tutorial/demo/proj/src/main.c
 
 We now need to import and create and :py:class:`cpip.core.PpLexer.PpLexer` object,
 and this takes at least two arguments; firstly the file to pre-process, the secondly an
@@ -95,19 +113,22 @@ most developers expect from a pre-processor is
 :py:class:`cpip.core.IncludeHandler.CppIncludeStdOs`. This class takes at least two
 arguments; a list of search paths to the user include directories and a list of
 search paths to the system include directories. With this we can construct a
-:py:class:`cpip.core.PpLexer.PpLexer` object so our code now looks like this:
+:py:class:`cpip.core.PpLexer.PpLexer` object so our code (*demo/cpip_01.py*) now looks like this:
 
 .. literalinclude:: demo/cpip_01.py
+    :linenos:
     :language: python
-    :emphasize-lines: 6-10
+    :emphasize-lines: 12-17
 
-This still doesn't do much yet, invoking it just gives::
+This still doesn't do much yet, invoking it just gives:
 
-    python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
+.. code-block:: console
 
-But, in the absence of error, shows that we can construct a
-:py:class:`cpip.core.PpLexer.PpLexer`.
+    $ python docs/doc_src/tutorial/demo/cpip_01.py docs/doc_src/tutorial/demo/proj/src/main.c
+    Processing: docs/doc_src/tutorial/demo/proj/src/main.c
+    <cpip.core.PpLexer.PpLexer object at 0x10d1f0ec0>
+
+But, in the absence of error, shows that we can construct a :py:class:`cpip.core.PpLexer.PpLexer`.
 
 Put the PpLexer to Work
 =======================
@@ -117,33 +138,44 @@ to :py:meth:`cpip.core.PpLexer.PpLexer.PpTokens`. This function is a generator o
 Lets just print them out with this code:
 
 .. literalinclude:: demo/cpip_02.py
+    :linenos:
     :language: python
-    :emphasize-lines: 11,12
+    :emphasize-lines: 17,18
 
 Invoking it now gives:
 
 .. code-block:: console
 
-    $ python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
+    $ python docs/doc_src/tutorial/demo/cpip_02.py docs/doc_src/tutorial/demo/proj/src/main.c
+    Processing: docs/doc_src/tutorial/demo/proj/src/main.c
+    <stdio.h>: No such file or directory at line=3, col=1 of file "docs/doc_src/tutorial/demo/proj/src/main.c"
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-    ...
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="main", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="argc", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=",", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="char", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="argv", tt=identifier, line=True, prev=False, ?=False)
-    PpToken(t=",", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
-    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-    PpToken(t="argc", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="{", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
@@ -156,7 +188,7 @@ Invoking it now gives:
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="return", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-    PpToken(t="1", tt=pp-number, line=False, prev=False, ?=False)
+    PpToken(t="0", tt=pp-number, line=False, prev=False, ?=False)
     PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="}", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
@@ -165,40 +197,72 @@ Invoking it now gives:
 The PpLexer is yielding PpToken objects that are interesting in
 themselves because they not only have content but the type of content
 (whitespace, punctuation, literals etc.). A simplification is to change the
-code to print out the token *value* by changing a line in the code from::
+code to print out the token *value* by changing line 11 in the code from:
 
-    print tok
+.. code-block:: python
 
-To::
+    print(tok)
 
-    print tok.t
+To:
 
-To give:
+.. code-block:: python
+
+    print(tok.t, end='')
+
+To give (code is in *demo/cpip_03.py*):
 
 .. literalinclude:: demo/cpip_03.out.txt
-    :language: c
+    :language: text
 
-It is definately pre-processed and although the output is correct it is
+It is definitely pre-processed and although the output is correct it is
 rather verbose because of all the whitespace generated by the pre-processing
 (newlines are always the consequence of pre-processing directives).
 
 We can clean this whitespace up very simply by invoking
 :func:`PpTokens.ppTokens()` with a suitable argument to reduce spurious
 whitespace thus: ``myLex.ppTokens(minWs=True)``. This minimises the whitespace
-runs to a single space or newline. Our code now
+runs to a single space or newline. Our code (in *demo/cpip_04.py*) now
 looks like this:
 
 .. literalinclude:: demo/cpip_04.py
+    :linenos:
     :language: python
-    :emphasize-lines: 11
+    :emphasize-lines: 17
 
 Invoking it now gives:
 
 .. literalinclude:: demo/cpip_04.out.txt
-    :language: c
+    :language: text
 
 This is exactly the result that one would expect from pre-processing the
 original source code.
+
+Fixing Missing System Includes
+------------------------------
+
+You may have noticed the following error message in these examples:
+
+
+.. code-block:: console
+
+    <stdio.h>: No such file or directory at line=3, col=1 of file "docs/doc_src/tutorial/demo/proj/src/main.c"
+
+This is because that include is necessary for ``main()`` to access ``printf()`` however our lexer can not
+find that file on the platform.
+This can be fixed by giving the ``IncludeHandler`` the necessary system paths,
+the code is in *demo/cpip_05.py*:
+
+.. literalinclude:: demo/cpip_05.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 14-17
+
+Invoking it now gives:
+
+.. literalinclude:: demo/cpip_05.out.txt
+    :language: text
+
+
 
 And now for something Completely Different
 ==========================================
@@ -224,18 +288,18 @@ Gives the following output:
 
 .. code-block:: console
 
-    $ python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp']
+    $ python cpip.py proj/src/main.c
+    Processing: proj/src/main.c
+    ['proj/src/main.c', 'proj/usr/user.h']
+    ['proj/src/main.c', 'proj/usr/user.h']
+    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.c', 'proj/usr/user.h', 'proj/sys/system.h']
+    ['proj/src/main.c', 'proj/usr/user.h']
+    ['proj/src/main.c', 'proj/usr/user.h']
+    ['proj/src/main.c', 'proj/usr/user.h']
+    ['proj/src/main.c']
     ...
 
 Conditional State
@@ -272,7 +336,7 @@ Invoking this code thus:
 
 .. code-block:: console
 
-    $ python3 cpip_07.py ../src/main.cpp
+    $ python3 cpip_07.py ../src/main.c
 
 Gives this output:
 
