@@ -8,7 +8,7 @@ History
 * Add support for C23.
 * Add selectable support for the following C standards: K&R, ANSI/C89/C90, C95, C99, C11, C17/C18, C23.
 * Add selectable support for GNU extensions.
-* Add CMake support. CPIP builds can be done using the existing CMake build metadata fro a project.
+* Add CMake support. CPIP builds can be done using the existing CMake build metadata from a project.
 * Fix line/column counts (issue https://github.com/paulross/cpip/issues/1 ).
 * Fix accidental token pasting (issue https://github.com/paulross/cpip/issues/2 ).
 * Fix SVG zoom (issue https://github.com/paulross/cpip/issues/7 ).
