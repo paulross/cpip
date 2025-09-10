@@ -113,7 +113,7 @@ Given that the ``PROJECT_DIRECTORY`` is one that contains a ``CMakeLists.txt``.
 CPIPMain and CMake
 ====================
 
-This is an example of creating a demonstratoin project with CMake and CPIP.
+This is an example of creating a demonstration project with CMake and CPIP.
 
 ---------------------------
 Example
