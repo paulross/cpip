@@ -2,6 +2,10 @@
 .. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
 
+.. Usage: See the :ref:`introduction-label` chapter
+
+.. _introduction-label:
+
 ####################################
 An Introduction To Pre-processing
 ####################################

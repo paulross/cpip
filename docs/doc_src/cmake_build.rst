@@ -1,6 +1,13 @@
 .. moduleauthor:: Paul Ross <apaulross@gmail.com>
 .. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
+.. Usage: See the :ref:`cmake_build-label` chapter
+
+.. _cmake_build-label:
+
+.. index::
+   single: CMake
+
 #######################################
 Building CPIP Output From a CMake Build
 #######################################
@@ -16,6 +23,9 @@ The metadata gives:
 * Search paths for included files. CMake does not distinguish between user and system search paths.
 * The source files (ITUs) that make up the project.
 * The system search paths for the toolchain.
+
+.. index::
+   single: CMake; Metadata
 
 ====================
 CMake Build Metadata
@@ -45,6 +55,9 @@ It is arranged like this:
 
 Of particular interest is ``/api/v1/reply/``, for example ``cmake-build-debug/.cmake/api/v1/reply/``.
 
+.. index::
+   single: CMake; Index File
+
 -------------------
 The Index File
 -------------------
@@ -71,6 +84,9 @@ This leads to these files:
      - The tool chains file gives various information for the toolchain for a specific language (C, CXX etc.).
        In particular the toolchain identifies the location of the system headers.
        See the CMake documentation for `toolchains-v1-....json <https://cmake.org/cmake/help/latest/manual/cmake-file-api.7.html#object-kind-toolchains>`_.
+
+.. index::
+   single: CMake; Target File
 
 -------------------
 The Target File
@@ -99,6 +115,9 @@ This is identified by the ``target`` file and contains
      - ``["sources"][n]["path"]``
      - These are the source files (ITUs) that make up the project.
 
+.. index::
+   single: CMake; Metadata, building
+
 ---------------------------
 Building the CMake Metadata
 ---------------------------
@@ -109,11 +128,17 @@ Given that the ``PROJECT_DIRECTORY`` is one that contains a ``CMakeLists.txt``.
 
     cmake -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=ninja" -G Ninja -S <PROJECT_DIRECTORY> -B <PROJECT_DIRECTORY>/cmake-build-debug
 
+.. index::
+   single: CMake; CPIPMain and
+
 ====================
 CPIPMain and CMake
 ====================
 
 This is an example of creating a demonstration project with CMake and CPIP.
+
+.. index::
+   single: CMake; Build example
 
 ---------------------------
 Example
