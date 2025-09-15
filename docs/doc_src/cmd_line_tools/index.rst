@@ -17,7 +17,8 @@ On installation the command line tool ``cpipmain`` is created which just calls `
 CPIPMain
 ***********************************
 
-:file:`CPIPMain.py` acts very much like a normal pre-processor but, instead of writing out a Translation Unit as test it emits a host of HTML and SVG pages about each file to be pre-processed. Here are :ref:`cpip-examples-real`.
+:file:`CPIPMain.py` acts very much like a normal pre-processor but, instead of writing out a Translation Unit as test
+it emits a host of HTML and SVG pages about each file to be pre-processed. Here are :ref:`cpip-examples-real`.
 
 Usage
 =======================
@@ -91,13 +92,19 @@ Usage
                             Add pre-include file path, this file precedes the
                             initial translation unit. [default: []]
       -I INCUSR, --usr INCUSR
-                            Add user include search path. [default: []]
+                            Add user include search path (additive). [default: []]
       -J INCSYS, --sys INCSYS
-                            Add system include search path. [default: []]
+                            Add system include search path (additive). [default: []]
+      --sys-auto-lang SYS_AUTO_LANG
+                            Get the system include search paths from the installed
+                            compiler for this language ("C" or "C++"). [default: ""]
 
 .. note::
     
-    Multiprocessing: The pre-processor, and information derived from it, can only be run as a single process but writing individual source files can take advantage of multiple processes. As the latter constitutes the bulk of the time :file:`CPIPMain.py` takes then using the ``-j`` option on multi-processor machines can save a lot of time.
+    Multiprocessing: The pre-processor, and information derived from it, can only be run as a single process but
+    writing individual source files can take advantage of multiple processes.
+    As the latter constitutes the bulk of the time :file:`CPIPMain.py` takes then using the ``-j`` option on
+    multi-processor machines can save a lot of time.
 
 Options
 ----------------
@@ -146,7 +153,12 @@ Options
 |                                      | This option can be repeated [default: []]                                       |
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-J INCSYS, --sys=INCSYS``          | Add system include search path (additive).                                      |
-|                                      | This option can be repeated [default: []]                                       |
+|                                      | This option can be repeated [default: []].                                      |
+|                                      | See also ``--sys-auto-lang`` below.                                             |
++--------------------------------------+---------------------------------------------------------------------------------+
+| ``--sys-auto-lang=<LANGUAGE>``       | This queries the installed compiler for the system include search paths for     |
+|                                      | the given LANGUAGE ("C" or "C++") [default: ""].                                |
+|                                      | These files paths are searched first.                                           |
 +--------------------------------------+---------------------------------------------------------------------------------+
 | ``-S PREDEFINES,``                   | Add standard predefined macro defintions of the form ``name<=defintion>``.      |
 | ``--predefine=PREDEFINES``           | These are introduced into the environment before anything else. These macros    |
@@ -190,7 +202,8 @@ One or more paths of file(s) to be preprocessed.
 Examples
 =======================
 
-Here is a simple example of processing the demo code that is in the ``PpLexer`` tutorial here: :ref:`pplexer.tutorial.files`.
+Here is a simple example of processing the demo code that is in the ``PpLexer`` tutorial here:
+:ref:`pplexer.tutorial.files`.
 
 Here we set:
 
@@ -247,7 +260,9 @@ Multiple outputs are obtained with, for example, ``-dC -dF``
 ``-d`` C
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Conditional compilation graph::
+Conditional compilation graph:
+
+.. code-block:: text
 
     ---------------------- Conditional Compilation Graph ----------------------
     #ifndef __USER_H__ /* True "../../demo/usr/user.h" 1 0 */
@@ -263,7 +278,9 @@ Conditional compilation graph::
 ``-d`` F
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Files encountered and how many times processed::
+Files encountered and how many times processed:
+
+.. code-block:: text
 
     ------------------------ Count of files encountered -----------------------
        1  ../../demo/src/main.cpp
@@ -274,7 +291,9 @@ Files encountered and how many times processed::
 ``-d`` I
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The include graph::
+The include graph:
+
+.. code-block:: text
 
     ------------------------------ Include Graph ------------------------------
     ../../demo/src/main.cpp [43, 21]:  True "" ""
@@ -287,7 +306,9 @@ The include graph::
 ``-d`` M
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The macro environment and history::
+The macro environment and history:
+
+.. code-block:: text
 
     ---------------------- Macro Environment and History ----------------------
     Macro Environment:
@@ -308,7 +329,9 @@ The macro environment and history::
 ``-d`` T
 ^^^^^^^^^^^^^^^^^^^^^^
 
-The token count::
+The token count:
+
+.. code-block:: text
 
     ------------------------------- Token count -------------------------------
            0  header-name
@@ -331,7 +354,7 @@ Internally in ``cpip`` there are some fairly agressive integrity checks such as
 ``_assertDefineMapIntegrity()`` in :py:class:`cpip.core.MacroEnv.MacroEnv`.
 These integrity checks are invoked as asserts, for example::
 
-    assert(self._assertDefineMapIntegrity())
+    assert self._assertDefineMapIntegrity()
 
 So that they can be turned off by using optimisation level 1.
 

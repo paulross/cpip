@@ -1678,9 +1678,14 @@ on it to create a SVG file (for includes and macro dependencies). [default: %(de
     else:
         myHeap = None
     # Create objects to pass to pre-processor
+    # System include paths
+    sys_inc_paths = []
+    if args.sys_auto_lang:
+        sys_inc_paths = IncludeHandler.get_platform_system_include_paths(args.sys_auto_lang)
+    sys_inc_paths.extend(args.incSys)
     myIncH = IncludeHandler.CppIncludeStdOs(
         theUsrDirs=args.incUsr or [],
-        theSysDirs=args.incSys or [],
+        theSysDirs=sys_inc_paths,
     )
     preDefMacros = split_defines_into_simple_dict(args.predefines)
     # Create the job specification
