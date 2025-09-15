@@ -20,22 +20,21 @@
 
 """Provides handlers for #including files."""
 
-__author__  = 'Paul Ross'
-__date__    = '2011-07-10'
-__rights__  = 'Copyright (c) 2008-2017 Paul Ross'
+__author__ = 'Paul Ross'
+__date__ = '2011-07-10'
+__rights__ = 'Copyright (c) 2008-2017 Paul Ross'
 
+import collections
+import io
 import logging
 import os
 import subprocess
 import sys
-import collections
-import io
 import typing
 
-#import time
-#import logging
+# import time
+# import logging
 from cpip import ExceptionCpip
-
 
 logger = logging.getLogger(__file__)
 
@@ -43,6 +42,7 @@ logger = logging.getLogger(__file__)
 class ExceptionCppInclude(ExceptionCpip):
     """Simple specialisation of an exception class for the CppInclude."""
     pass
+
 
 #: FilePathOrigin is a class used externally to collect:
 #:
@@ -58,7 +58,8 @@ class ExceptionCppInclude(ExceptionCpip):
 FilePathOrigin = collections.namedtuple(
     'FilePathOrigin',
     'fileObj filePath currentPlace origin',
-    )
+)
+
 
 class CppIncludeStd(object):
     """Class that applies search rules for #include statements.
@@ -85,13 +86,14 @@ class CppIncludeStd(object):
     """
     #: Codes for the results of a search for an include
     INCLUDE_ORIGIN_CODES = {
-        None    : 'Not found',
-        'comp'  : 'Compiler specific directories',
-        'sys'   : 'System include directories',
-        'usr'   : 'User include directories',
-        'CP'    : 'Current Place',
-        'TU'    : 'Translation unit',
+        None: 'Not found',
+        'comp': 'Compiler specific directories',
+        'sys': 'System include directories',
+        'usr': 'User include directories',
+        'CP': 'Current Place',
+        'TU': 'Translation unit',
     }
+
     def __init__(self, theUsrDirs, theSysDirs):
         """Constructor.
 
@@ -115,11 +117,11 @@ class CppIncludeStd(object):
         # The intermediate ones are various tries in order
         self._findLogic = []
 
-    def add_user_search_path(self, search_path:  str) -> None:
+    def add_user_search_path(self, search_path: str) -> None:
         """Adds a search path to the user paths to search."""
         self._usr.append(search_path)
 
-    def add_system_search_path(self, search_path:  str) -> None:
+    def add_system_search_path(self, search_path: str) -> None:
         """Adds a search path to the system paths to search."""
         self._sys.append(search_path)
 
@@ -129,11 +131,11 @@ class CppIncludeStd(object):
         function before you can reuse it."""
         self._cpStack = []
         self.clearFindLogic()
-        
+
     def clearFindLogic(self):
         """Clears the list of find results for a single #include statement."""
         self._findLogic = []
-        
+
     def cpStackPush(self, theFpo):
         """Appends the CP from the FilePathOrigin to the current place stack.
         This is public so that the PpLexer can use it when processing
@@ -148,7 +150,7 @@ class CppIncludeStd(object):
             self._cpStack.append(None)
         else:
             self._cpStack.append(theFpo.currentPlace)
-        
+
     def cpStackPop(self):
         """Pops and returns the CP string off the current place stack.
         This is public so that the PpLexer can use it when processing
@@ -157,7 +159,7 @@ class CppIncludeStd(object):
         :returns: ``NoneType``
         """
         return self.endInclude()
-        
+
     def validateCpStack(self):
         """Tests the coherence of the CP stack. A None can not be followed by
         a non-None.
@@ -166,7 +168,7 @@ class CppIncludeStd(object):
         """
         for i in range(len(self._cpStack)):
             if self._cpStack[i] is None \
-            and i != (len(self._cpStack)-1):
+                and i != (len(self._cpStack) - 1):
                 return False
         return True
 
@@ -241,7 +243,7 @@ class CppIncludeStd(object):
         :returns: ``list([]),list([str])`` -- How the file was found.
         """
         return self._findLogic[:]
-    
+
     def _includeHcharseq(self, theHstr, include_next=False):
         """Return the file location of a ``#include <...>`` as a FilePathOrigin
         object or ``None`` on failure.
@@ -335,14 +337,14 @@ class CppIncludeStd(object):
         :returns: ``cpip.core.IncludeHandler.FilePathOrigin([_io.TextIOWrapper, str, str, str])``
             -- File path of the included file.
         """
-        self._findLogic = [theStr,]
+        self._findLogic = [theStr, ]
         if theStr.startswith('<') and theStr.endswith('>'):
             return self._includeHcharseq(theStr[1:-1])
         if theStr.startswith('"') and theStr.endswith('"'):
             return self._includeQcharseq(theStr[1:-1])
         else:
             raise ExceptionCppInclude('includeHeaderName() unrecognised string %s with CP stack: %s' \
-                                      % ( theStr, self._cpStack))
+                                      % (theStr, self._cpStack))
 
     def includeNextHeaderName(self, theStr):
         """Return the file location of a #include_next header-name where the
@@ -352,14 +354,14 @@ class CppIncludeStd(object):
         This is a GCC extension, see: https://gcc.gnu.org/onlinedocs/cpp/Wrapper-Headers.html
         
         This never records the CP for the found file (if any)."""
-        self._findLogic = [theStr,]
+        self._findLogic = [theStr, ]
         if theStr.startswith('<') and theStr.endswith('>'):
             return self._includeHcharseq(theStr[1:-1], include_next=True)
         if theStr.startswith('"') and theStr.endswith('"'):
             return self._includeQcharseq(theStr[1:-1], include_next=True)
         else:
             raise ExceptionCppInclude('includeNextHeaderName() unrecognised string %s with CP stack: %s' \
-                                      % ( theStr, self._cpStack))
+                                      % (theStr, self._cpStack))
 
     def endInclude(self):
         """Notify end of #include'd file. This pops the CP stack.
@@ -423,8 +425,10 @@ class CppIncludeStd(object):
     # End: Methods to be implemented by child classes
     #################################################
 
+
 class CppIncludeStdOs(CppIncludeStd):
     """This implements _searchFile() based on an OS file system call."""
+
     def _searchFile(self, theCharSeq, theSearchPath):
         """Given an HcharSeq/Qcharseq and a searchpath this tries the
         file system for the file and returns a FilePathOrigin object or None
@@ -447,7 +451,7 @@ class CppIncludeStdOs(CppIncludeStd):
                 myPath,
                 self._currentPlaceFromFile(myPath),
                 None,
-                )
+            )
         except Exception as _err:
             pass
         return None
@@ -470,14 +474,16 @@ class CppIncludeStdOs(CppIncludeStd):
                 theTuPath,
                 self._currentPlaceFromFile(theTuPath),
                 'TU',
-                )
+            )
             self.cpStackPush(retVal)
         except Exception as _err:
             pass
         return retVal
 
+
 class CppIncludeStdin(CppIncludeStdOs):
     """This reads stdin for the ITU but delegates _searchFile() to the OS file system call."""
+
     def initialTu(self, theTuPath):
         """Given an path as a string this returns the
         class FilePathOrigin or None for the initial translation unit"""
@@ -490,15 +496,17 @@ class CppIncludeStdin(CppIncludeStdOs):
                 theTuPath,
                 self._currentPlaceFromFile(theTuPath),
                 'stdin',
-                )
+            )
             self.cpStackPush(retVal)
         except Exception as _err:
             pass
         return retVal
 
+
 class CppIncludeStringIO(CppIncludeStd):
     """This implements _searchFile() based on a lookup of stings that
     returns StringIO file-like object."""
+
     def __init__(self, theUsrDirs, theSysDirs, theInitialTuContent, theFilePathToContent):
         """Acts like a IncludeHandler but looks up in theFilePathToContent
         map that is a {path_string : content_string, ...}.
@@ -507,7 +515,7 @@ class CppIncludeStringIO(CppIncludeStd):
         # io.StringIO expects Unicode
         if sys.version_info.major == 2:
             self._initialTuContent = theInitialTuContent.decode('ascii')
-            self._filePathToContent = {k : v.decode('ascii')
+            self._filePathToContent = {k: v.decode('ascii')
                                        for k, v in theFilePathToContent.items()}
         else:
             self._initialTuContent = theInitialTuContent
@@ -517,7 +525,7 @@ class CppIncludeStringIO(CppIncludeStd):
         """Given an HcharSeq/Qcharseq and a searchpath this tries the
         file system for the file."""
         myPath = os.path.join(theSearchPath, self._fixDirsep(theCharSeq))
-#        print '_searchFile():', theCharSeq, theSearchPath, myPath, self._filePathToContent
+        #        print '_searchFile():', theCharSeq, theSearchPath, myPath, self._filePathToContent
         try:
             myContent = self._filePathToContent[myPath]
             return FilePathOrigin(
@@ -525,7 +533,7 @@ class CppIncludeStringIO(CppIncludeStd):
                 myPath,
                 self._currentPlaceFromFile(myPath),
                 None
-                )
+            )
         except KeyError:
             pass
         return None
@@ -540,9 +548,29 @@ class CppIncludeStringIO(CppIncludeStd):
             theTuIdentifier,
             self._currentPlaceFromFile(theTuIdentifier),
             'TU',
-            )
+        )
         self.cpStackPush(retVal)
         return retVal
+
+
+def parse_platform_system_include_paths(compiler_output: bytes) -> typing.List[str]:
+    """Takes the compiler output and returns a list of strings that are system includes.
+    Stand alone for testing."""
+    in_sys_path_block = False
+    ret = []
+    lines = compiler_output.split(b'\n')
+    for line in lines:
+        if line == b'#include <...> search starts here:':
+            in_sys_path_block = True
+        elif line == b'End of search list.':
+            in_sys_path_block = False
+        elif in_sys_path_block:
+            path = line.strip().decode('ascii')
+            # A bit hacky this...
+            if path.endswith(' (framework directory)'):
+                path = path[:-len(' (framework directory)')]
+            ret.append(path)
+    return ret
 
 
 def get_platform_system_include_paths(language: str) -> typing.List[str]:
@@ -616,6 +644,61 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
         # 1 "<stdin>" 2
 
     Thanks to: https://www.baeldung.com/linux/gcc-default-include-directories
+
+    On Godbolt: https://www.godbolt.org
+    x86-64 gcc 15.2
+    Options: -v -E -xc
+
+    Gives:
+
+    .. code-block:: text
+
+        Using built-in specs.
+        COLLECT_GCC=/opt/compiler-explorer/gcc-15.2.0/bin/g++
+        Target: x86_64-linux-gnu
+        Configured with: ../gcc-15.2.0/configure --prefix=/opt/compiler-explorer/gcc-build/staging --enable-libstdcxx-backtrace=yes --build=x86_64-linux-gnu --host=x86_64-linux-gnu --target=x86_64-linux-gnu --disable-bootstrap --enable-multiarch --with-abi=m64 --with-multilib-list=m32,m64,mx32 --enable-multilib --enable-clocale=gnu --enable-languages=c,c++,fortran,ada,objc,obj-c++,go,d,m2,rust,cobol --enable-ld=yes --enable-gold=yes --enable-libstdcxx-debug --enable-libstdcxx-time=yes --enable-linker-build-id --enable-lto --enable-plugins --enable-threads=posix --with-pkgversion=Compiler-Explorer-Build-gcc--binutils-2.44
+        Thread model: posix
+        Supported LTO compression algorithms: zlib
+        gcc version 15.2.0 (Compiler-Explorer-Build-gcc--binutils-2.44)
+        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-g' '-o' '/app/output.s' '-fverbose-asm' '-S' '-v' '-E' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' '/app/'
+         /cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../libexec/gcc/x86_64-linux-gnu/15.2.0/cc1 -E -quiet -v -imultiarch x86_64-linux-gnu -iprefix /cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/ <source> -o /app/output.s -mtune=generic -march=x86-64 -fdiagnostics-color=always -fverbose-asm -g -fworking-directory -dumpdir /app/ -dumpbase output.cpp -dumpbase-ext .cpp
+        ignoring nonexistent directory "/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/../../../../x86_64-linux-gnu/include"
+        ignoring duplicate directory "/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-linux-gnu/15.2.0/include"
+        ignoring nonexistent directory "/usr/local/include/x86_64-linux-gnu"
+        ignoring duplicate directory "/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-linux-gnu/15.2.0/include-fixed/x86_64-linux-gnu"
+        ignoring duplicate directory "/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-linux-gnu/15.2.0/include-fixed"
+        ignoring nonexistent directory "/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/../../lib/gcc/x86_64-linux-gnu/15.2.0/../../../../x86_64-linux-gnu/include"
+        #include "..." search starts here:
+        #include <...> search starts here:
+         /cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/include
+         /cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/include-fixed/x86_64-linux-gnu
+         /cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/include-fixed
+         /usr/local/include
+         /cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/../../include
+         /usr/include/x86_64-linux-gnu
+         /usr/include
+        End of search list.
+        COMPILER_PATH=/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../libexec/gcc/x86_64-linux-gnu/15.2.0/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../libexec/gcc/x86_64-linux-gnu/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../libexec/gcc/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/../../../../x86_64-linux-gnu/bin/
+        LIBRARY_PATH=/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/../../../../lib64/:/lib/x86_64-linux-gnu/:/lib/../lib64/:/usr/lib/x86_64-linux-gnu/:/usr/lib/../lib64/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/../../../../x86_64-linux-gnu/lib/:/cefs/22/22e6cdc013c8541ce3d1548e_consolidated/compilers_c++_x86_gcc_15.2.0/bin/../lib/gcc/x86_64-linux-gnu/15.2.0/../../../:/lib/:/usr/lib/
+        COLLECT_GCC_OPTIONS='-fdiagnostics-color=always' '-g' '-o' '/app/output.s' '-fverbose-asm' '-S' '-v' '-E' '-shared-libgcc' '-mtune=generic' '-march=x86-64' '-dumpdir' '/app/output.'
+        Compiler returned: 0
+
+    From Godbolt with MSVC. Uses the /showIncludes option and #include <stdio.h> gives the output:
+
+    .. code-block:: text
+
+        example.cpp
+        Note: including file: Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\stdio.h
+        Note: including file:  Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\corecrt.h
+        Note: including file:   Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\vcruntime.h
+        Note: including file:    Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\sal.h
+        Note: including file:     Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\concurrencysal.h
+        Note: including file:    Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\vadefs.h
+        Note: including file:  Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\corecrt_wstdio.h
+        Note: including file:   Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\corecrt_stdio_config.h
+        Compiler returned: 0
+
+    Note weird '\\' at the end of the file path.
     """
     if language == 'C':
         cmd = ['cpp', '-v', '-E', '-xc']
@@ -631,21 +714,4 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
     )
     if result.returncode != 0:
         raise IOError(f'Sub-process command {cmd} returned error code of {result.returncode}')
-    in_sys_path_block = False
-    ret = []
-    lines = result.stderr.split(b'\n')
-    for line in lines:
-        if line == b'#include <...> search starts here:':
-            in_sys_path_block = True
-        elif line == b'End of search list.':
-            in_sys_path_block = False
-        elif in_sys_path_block:
-            path = line.strip().decode('ascii')
-            # A bit hacky this...
-            if path.endswith(' (framework directory)'):
-                path = path[:-len(' (framework directory)')]
-            ret.append(path)
-    return ret
-
-
-
+    return parse_platform_system_include_paths(result.stderr)
