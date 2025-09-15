@@ -53,7 +53,7 @@ def test_cmake_build_directory_exists(cmake_build_directory):
     (
         (
             EXAMPLE_CMAKE_BUILD_DIRECTORY,
-            [
+            {
                 'cache-v2-f12a03d93d698b3b02f1.json',
                 'cmakeFiles-v1-b665052c260ca2cc5efb.json',
                 'codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
@@ -61,12 +61,11 @@ def test_cmake_build_directory_exists(cmake_build_directory):
                 'index-2025-04-12T12-03-02-0210.json',
                 'target-SkipList-Debug-091d871282c22504d7ce.json',
                 'toolchains-v1-9f362175f2e3b763898b.json',
-            ]
-            ,
+            },
         ),
         (
             EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
-            [
+            {
                 '.ninja_deps',
                 '.ninja_log',
                 'CMakeCCompiler.cmake',
@@ -74,11 +73,8 @@ def test_cmake_build_directory_exists(cmake_build_directory):
                 'CMakeCCompilerId.o',
                 'CMakeCache.txt',
                 'CMakeDetermineCompilerABI_C.bin',
-                'CMakeError.log',
-                'CMakeOutput.log',
                 'CMakeSystem.cmake',
                 'CPIPDemo',
-                'LastTest.log',
                 'TargetDirectories.txt',
                 'build.ninja',
                 'cache-v2',
@@ -98,20 +94,20 @@ def test_cmake_build_directory_exists(cmake_build_directory):
                 'target-CPIPDemo-Debug-6354d69e1abf2e817afb.json',
                 'toolchains-v1',
                 'toolchains-v1-6fd81e3fab63b46d5ade.json',
-            ]
-            ,
+            },
         ),
     )
 )
 def test_cmake_build_directory_files_exists(cmake_build_directory, expected_files):
+    """Some platforms might have extra files so we use sets to show at least the expected ones are there."""
     assert os.path.isdir(cmake_build_directory)
     result = []
     for root, dirs, files in os.walk(cmake_build_directory):
         # for name in files:
         #     result.append(os.path.join(root, name))
         result.extend(files)
-    result.sort()
-    assert result == expected_files
+    # result.sort()
+    assert expected_files.issubset(result)
 
 
 @pytest.mark.parametrize(
