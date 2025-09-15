@@ -1,9 +1,9 @@
 .. moduleauthor:: Paul Ross <apaulross@gmail.com>
 .. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
-.. Usage: See the :ref:`cmake_build-label` chapter
+.. Usage: See the :ref:`cpip.cmake_build-label` chapter
 
-.. _cmake_build-label:
+.. _cpip.cmake_build-label:
 
 .. index::
    single: CMake

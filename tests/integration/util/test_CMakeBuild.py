@@ -37,6 +37,84 @@ USERNAME = pwd.getpwuid(os.getuid()).pw_name
 
 
 @pytest.mark.parametrize(
+    'cmake_build_directory',
+    (
+        EXAMPLE_CMAKE_BUILD_DIRECTORY,
+        EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+    )
+)
+def test_cmake_build_directory_exists(cmake_build_directory):
+    result = os.path.isdir(cmake_build_directory)
+    assert result
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected_files',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            [
+                'cache-v2-f12a03d93d698b3b02f1.json',
+                'cmakeFiles-v1-b665052c260ca2cc5efb.json',
+                'codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                'directory-.-Debug-f5ebdc15457944623624.json',
+                'index-2025-04-12T12-03-02-0210.json',
+                'target-SkipList-Debug-091d871282c22504d7ce.json',
+                'toolchains-v1-9f362175f2e3b763898b.json',
+            ]
+            ,
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            [
+                '.ninja_deps',
+                '.ninja_log',
+                'CMakeCCompiler.cmake',
+                'CMakeCCompilerId.c',
+                'CMakeCCompilerId.o',
+                'CMakeCache.txt',
+                'CMakeDetermineCompilerABI_C.bin',
+                'CMakeError.log',
+                'CMakeOutput.log',
+                'CMakeSystem.cmake',
+                'CPIPDemo',
+                'LastTest.log',
+                'TargetDirectories.txt',
+                'build.ninja',
+                'cache-v2',
+                'cache-v2-849e6059f55d78b15468.json',
+                'clion-Debug-log.txt',
+                'clion-environment.txt',
+                'cmake.check_cache',
+                'cmakeFiles-v1',
+                'cmakeFiles-v1-2592f079569bad70298b.json',
+                'cmake_install.cmake',
+                'codemodel-v2',
+                'codemodel-v2-456473262521f32c0361.json',
+                'directory-.-Debug-f5ebdc15457944623624.json',
+                'index-2025-09-04T20-17-55-0941.json',
+                'main.c.o',
+                'rules.ninja',
+                'target-CPIPDemo-Debug-6354d69e1abf2e817afb.json',
+                'toolchains-v1',
+                'toolchains-v1-6fd81e3fab63b46d5ade.json',
+            ]
+            ,
+        ),
+    )
+)
+def test_cmake_build_directory_files_exists(cmake_build_directory, expected_files):
+    assert os.path.isdir(cmake_build_directory)
+    result = []
+    for root, dirs, files in os.walk(cmake_build_directory):
+        # for name in files:
+        #     result.append(os.path.join(root, name))
+        result.extend(files)
+    result.sort()
+    assert result == expected_files
+
+
+@pytest.mark.parametrize(
     'cmake_build_directory, expected',
     (
         (
@@ -313,5 +391,3 @@ def test_cmake_reply_metadata_from_build_directory_target_language(cmake_build_d
 def test_cmake_reply_metadata_from_build_directory_system_include_directories(cmake_build_directory, expected):
     result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
     assert result.system_include_directories == expected
-
-
