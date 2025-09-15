@@ -5,6 +5,9 @@
 
 .. _cpip-examples:
 
+.. index::
+   single: CPIPMain; Examples
+
 #######################################
 :file:`CPIPMain.py` Examples
 #######################################
@@ -15,7 +18,9 @@ Screenshots
 
 This section shows some screenshots of :file:`CPIPMain.py`'s output. :ref:`cpip-examples-real` are shown below.
 
-:file:`CPIPMain.py` produces a set of HTML and SVG pages for each source file preprocessed. As well as the *Translation Unit* :file:`CPIPMain.py` generates information about the three important tasks for a preprocessor: file inclusion, conditional compilation and macro replacement.
+:file:`CPIPMain.py` produces a set of HTML and SVG pages for each source file preprocessed.
+As well as the *Translation Unit* :file:`CPIPMain.py` generates information about the three important tasks for a
+preprocessor: file inclusion, conditional compilation and macro replacement.
 
 =======================================
 Home Page
@@ -23,7 +28,8 @@ Home Page
 
 The :file:`index.html` shows the list of files preprocessed in this pass (linked to file specific pages).
 
-It also shows the command line used and an explanation from the :file:`CPIPMain.py` help system as to what each option means.
+It also shows the command line used and an explanation from the :file:`CPIPMain.py` help system as to what each
+option means.
 
 For example:
 
@@ -72,7 +78,8 @@ Original  File
 
 All processed source code (original file and and included files) is presented as syntax highlighted HTML.
 
-The syntax is the C pre-preprocessor language. Macro names are linked to their definition in the :ref:`cpip_macro_page_example` page.
+The syntax is the C pre-preprocessor language. Macro names are linked to their definition in the
+:ref:`cpip_macro_page_example` page.
 
 .. image:: images/HTMLLinux_cpu.c_ITU_edit.png
    :alt: A individual file in HTML.
@@ -81,13 +88,18 @@ The syntax is the C pre-preprocessor language. Macro names are linked to their d
 Translation Unit
 ----------------------
 
-The preprocessed file and all its ``#include``'s become a *Translation Unit* which :file:`CPIPMain.py` represents as an HTML page.
+The preprocessed file and all its ``#include``'s become a *Translation Unit* which :file:`CPIPMain.py`
+represents as an HTML page.
 
-Each ``#include`` statement is represented in a nested fashion, any source code in the translation unit is presented syntax highlighted. The syntax is, of course, the C pre-processor language thus both ``typedef`` and ``char`` are pre-processor *identifiers* even if later on ``typedef`` is seen as a C keyword.
+Each ``#include`` statement is represented in a nested fashion, any source code in the translation unit
+is presented syntax highlighted.
+The syntax is, of course, the C pre-processor language thus both ``typedef`` and ``char`` are pre-processor
+*identifiers* even if later on ``typedef`` is seen as a C keyword.
 
 The numbered links thus ``[       19]`` are to an HTML representation of the orignal source code file/line.
 
-The other navigational element present is when the file path is the file being pre-processed a forward link is there to to the next part of this file, thus skipping over intermediate ``#include``'d code.
+The other navigational element present is when the file path is the file being pre-processed a forward link is
+there to to the next part of this file, thus skipping over intermediate ``#include``'d code.
 
 .. image:: images/HTMLLinux_cpu.c_TU_edit.png
    :alt: The complete translation unit represented in HTML.
@@ -107,9 +119,13 @@ The file specific page offers a link to an SVG visualisation of the file include
 The Overall Picture
 -----------------------
 
-The diagram represents a tree with the root (the file being preprocessed) at center left. Each node represents a file and each edge represents an ``#include`` directive. Increasing include depth is left-to-right and source code order (i.e. order of the ``#include`` directives) is top to bottom.
+The diagram represents a tree with the root (the file being preprocessed) at center left.
+Each node represents a file and each edge represents an ``#include`` directive.
+Increasing include depth is left-to-right and source code order (i.e. order of the ``#include`` directives) is top
+to bottom.
 
-At the top are various zoom factors that you can use to view the graph, initially the page opens at the smallest scale factor to give you an impression of what is going on:
+At the top are various zoom factors that you can use to view the graph, initially the page opens at the
+smallest scale factor to give you an impression of what is going on:
 
 .. image:: images/SVG_CPU_OpeningPage.png
    :alt: The overall SVG diagram for cpu.c.
@@ -118,15 +134,24 @@ At the top are various zoom factors that you can use to view the graph, initiall
 A Detailed Look
 -----------------------
 
-Zooming in to 100% on one part of the graph gives a wealth of information. In this picture the :file:`processor.h` file is represented on the left and the files that it ``#include``'s to its right.:
+Zooming in to 100% on one part of the graph gives a wealth of information.
+In this picture the :file:`processor.h` file is represented on the left and the files that it ``#include``'s
+to its right.:
 
 .. image:: images/SVG_CPU_FileDetail.png
    :alt: The overall SVG diagram for cpu.c.
    :align: center
 
-Each file is represented by a fixed width block, the height is proportional to the number of preprocessing tokens produced by a file (and its ``#include``'s) [#]_. Cyan coloured blocks represent files that are included but contain no effective content, usually because it has already been included and the header guards use conditional compilation to prevent preprocessing more than once (``types.h`` for example).
+Each file is represented by a fixed width block, the height is proportional to the number of preprocessing tokens
+produced by a file (and its ``#include``'s) [#]_.
+Cyan coloured blocks represent files that are included but contain no effective content, usually because it has
+already been included and the header guards use conditional compilation to prevent preprocessing more than once
+(``types.h`` for example).
 
-The 'V' symbol in the block represents the relative size of the file and its descendants, if the 'V' touches top and bottom then all the tokens come from this file (``personality.h`` for example). Where the 'V' is closed, or almost so, it means the bulk of the tokens are coming from the descendent includes (``msr.h`` for example).
+The 'V' symbol in the block represents the relative size of the file and its descendants, if the 'V' touches
+top and bottom then all the tokens come from this file (``personality.h`` for example).
+Where the 'V' is closed, or almost so, it means the bulk of the tokens are coming from the descendent
+includes (``msr.h`` for example).
 
 The coloured bars on the left represent the count of different token types, the left bar being the current file, the right bar being the total of the descendants. See below for which :ref:`token_types` corespond to each colour.
 

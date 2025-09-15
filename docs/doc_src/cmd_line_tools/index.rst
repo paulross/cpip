@@ -5,6 +5,9 @@
 
 .. _cpip.cmd_line_tools:
 
+.. index::
+   single: Command Line Tools
+
 ###################################
 Command Line Tools
 ###################################
@@ -12,6 +15,9 @@ Command Line Tools
 CPIP has a number of tools run from the command line that can analyse source code.
 The main one is :file:`CPIPMain.py`.
 On installation the command line tool ``cpipmain`` is created which just calls ``main()`` in  :file:`CPIPMain.py`.
+
+.. index::
+   single: Command Line Tools; CPIPMain
 
 ***********************************
 CPIPMain
@@ -105,6 +111,9 @@ Usage
     writing individual source files can take advantage of multiple processes.
     As the latter constitutes the bulk of the time :file:`CPIPMain.py` takes then using the ``-j`` option on
     multi-processor machines can save a lot of time.
+
+.. index::
+   single: Command Line Tools; CPIPMain; Options
 
 Options
 ----------------
@@ -345,6 +354,9 @@ The token count:
            0  concat
           32  TOTAL
     ----------------------------- END Token count -----------------------------
+
+.. index::
+   single: Command Line Tools; CPIPMain; Performance
 
 Performance
 =======================
