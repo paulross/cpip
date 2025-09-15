@@ -3,10 +3,10 @@
 
 .. Description of CPIP command line tools
 
-.. _cpip.cmd_line_tools:
-
 .. index::
    single: Command Line Tools
+
+.. _cpip.cmd_line_tools:
 
 ###################################
 Command Line Tools

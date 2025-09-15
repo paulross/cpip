@@ -3,14 +3,15 @@
 
 .. Examples of CPIP output
 
-.. _cpip-examples:
-
 .. index::
    single: CPIPMain; Examples
+
+.. _cpip-examples:
 
 #######################################
 :file:`CPIPMain.py` Examples
 #######################################
+
 
 ***************************************
 Screenshots
@@ -21,6 +22,9 @@ This section shows some screenshots of :file:`CPIPMain.py`'s output. :ref:`cpip-
 :file:`CPIPMain.py` produces a set of HTML and SVG pages for each source file preprocessed.
 As well as the *Translation Unit* :file:`CPIPMain.py` generates information about the three important tasks for a
 preprocessor: file inclusion, conditional compilation and macro replacement.
+
+.. index::
+   single: CPIPMain; Examples; Home Page
 
 =======================================
 Home Page
@@ -38,6 +42,9 @@ For example:
    :align: center
 
 Each in the list of files preprocessed in this pass is linked to file specific page.
+
+.. index::
+   single: CPIPMain; Examples; File
 
 =======================================
 Preprocessed File Specific Page
@@ -69,6 +76,9 @@ Here is an explanation for the table:
 .. image:: images/HTMLLinux_cpu.c_Home_Lower_Lower_edit.png
    :alt: Files used.
    :align: center
+
+.. index::
+   single: CPIPMain; Examples; Translation Unit
 
 Original File and the Translation Unit
 =======================================
@@ -110,6 +120,9 @@ Further down you can see the actual code from ``cpu.c``, notice the macro expans
 .. image:: images/HTMLLinux_cpu.c_TU_Lower.png
    :alt: The complete translation unit represented in HTML.
    :align: center
+
+.. index::
+   single: CPIPMain; Examples; Includes (SVG)
 
 The SVG Include Graph
 =================================
@@ -153,14 +166,17 @@ top and bottom then all the tokens come from this file (``personality.h`` for ex
 Where the 'V' is closed, or almost so, it means the bulk of the tokens are coming from the descendent
 includes (``msr.h`` for example).
 
-The coloured bars on the left represent the count of different token types, the left bar being the current file, the right bar being the total of the descendants. See below for which :ref:`token_types` corespond to each colour.
+The coloured bars on the left represent the count of different token types, the left bar being the current file,
+the right bar being the total of the descendants. See below for which :ref:`token_types` corespond to each colour.
 
 Many parts of this diagram can display additional information when moving the mouse over various bits of the file block. 
 
 File Path
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For example mousing over the file name above the box shows the the absolute path of the file stack as a pop-up yellow block. At the top of this list is the file we are preprocessing, then the stack of included files downwards to ``processor.h``:
+For example mousing over the file name above the box shows the the absolute path of the file stack as a pop-up yellow
+block.
+At the top of this list is the file we are preprocessing, then the stack of included files downwards to ``processor.h``:
 
 .. image:: images/SVG_CPU_FileDetail_FileStack.png
    :alt: The result of mousing over the file name.
@@ -177,22 +193,40 @@ Moving the mouse over to the left of the block reveals a host of information abo
 
 This pop-up yellow block contains the following:
 
-* ``Where:`` *Where* this was included from. This file is included from line 22 of the :file:`arch/x86/include/asm/thread_info.h` file.
+* ``Where:`` *Where* this was included from. This file is included from line 22 of the
+  :file:`arch/x86/include/asm/thread_info.h` file.
 * ``Why:`` *Why* it was included. This is the current state of the conditional compilation stack.
-* ``How:`` *How* this file was included. This string starts with the text that follows the ``#include`` statement, in this case ``#include <asm/processor.h>``. This is followed by the search results, in this case this file was found by searching the system includes (``sys=``) and was found in :file:`arch/x86/include`. There may be more than one search made as fallback mechanisms are used and a failure will be shown with ``None``. For example ``usr=None sys=spam/eggs`` means that the user include directories were searched first and nothing came up, then the system include directories were searched and the file was found in :file:`spam/eggs`. A special case; ``CP:`` means 'the current place'.
+* ``How:`` *How* this file was included. This string starts with the text that follows the ``#include`` statement,
+  in this case ``#include <asm/processor.h>``.
+  This is followed by the search results, in this case this file was found by searching the system includes (``sys=``)
+  and was found in :file:`arch/x86/include`.
+  There may be more than one search made as fallback mechanisms are used and a failure will be shown with ``None``.
+  For example ``usr=None sys=spam/eggs`` means that the user include directories were searched first and nothing came
+  up, then the system include directories were searched and the file was found in :file:`spam/eggs`.
+  A special case; ``CP:`` means 'the current place'.
+
+.. index::
+   single: CPIPMain; Examples; Token Types
 
 .. _token_types:
 
 Token Types
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you are interested in what types of preprocessor tokens were encountered than there is a host of information available to you. On the left hand side of each file block is a colour coded histogram of token types. If the file includes others then there will be two, the left hand one is for the file, the right hand one is for all the files it includes. Hovering over either histogram pops up the legend thus:
+If you are interested in what types of preprocessor tokens were encountered than there is a host of information
+available to you.
+On the left hand side of each file block is a colour coded histogram of token types.
+If the file includes others then there will be two, the left hand one is for the file, the right hand one is for all
+the files it includes.
+Hovering over either histogram pops up the legend thus:
 
 .. image:: images/SVG_CPU_FileDetail_HistLegend.png
    :alt: The legend for the histogram bars.
    :align: center
 
-The actual count of tokens is seen when moving the mouse over the centre of the box. There are three sets of two columns, the left column of the set is total tokens, the right column is for *significant* tokens, that is those that are not conditionally excluded by ``#if`` etc. statements.
+The actual count of tokens is seen when moving the mouse over the centre of the box.
+There are three sets of two columns, the left column of the set is total tokens, the right column is for
+*significant* tokens, that is those that are not conditionally excluded by ``#if`` etc. statements.
 
 The first set is for the specific file, the second set is the descendents and the third set is the total.
 
@@ -200,12 +234,20 @@ The first set is for the specific file, the second set is the descendents and th
    :alt: Token counts.
    :align: center
 
+.. index::
+   single: CPIPMain; Examples; Conditional Compilation
+
 Conditional Compilation
 =================================
 
-One tricky area for comprehending source code is understanding what code is conditionally compiled. Looking at a source file it is not immediately obvious which ``#if`` etc. statements are actually being processed.
+One tricky area for comprehending source code is understanding what code is conditionally compiled.
+Looking at a source file it is not immediately obvious which ``#if`` etc. statements are actually being processed.
 
-As an aid CPIP produces an HTML page that is the translation unit with *only* the conditional compilation statements, what is more they are nested according to their logical execution condition and colour coded according to the resolved state; green means code will be part of the translation unit and red means those statements will be ignored. The links in the (artificial) comment following the statement are to the HTML representation of the file where the statement occurs.
+As an aid CPIP produces an HTML page that is the translation unit with *only* the conditional compilation statements,
+what is more they are nested according to their logical execution condition and colour coded according to the
+resolved state; green means code will be part of the translation unit and red means those statements will be ignored.
+The links in the (artificial) comment following the statement are to the HTML representation of the file where the
+statement occurs.
 
 Here is an example:
 
@@ -213,18 +255,24 @@ Here is an example:
    :alt: Conditional compilation.
    :align: center
 
+.. index::
+   single: CPIPMain; Examples; Macro Definitions
+
 .. _cpip_macro_page_example:
 
 Macro Definitions
 =================================
 
-CPIP retains all information about marcos during preprocessing and the file specific page containing macro information starts like this:
+CPIP retains all information about marcos during preprocessing and the file specific page containing macro information
+starts like this:
 
 .. image:: images/HTMLLinux_cpu.c_Macro_Top.png
    :alt: Macro information.
    :align: center
 
-The contents starts with a list of links to macro information further down the page; the first set of links is alphabetical to all macros that are declared, even if they are not used. The second set is to any macros that are actually used in pre-processing this file.
+The contents starts with a list of links to macro information further down the page; the first set of links is
+alphabetical to all macros that are declared, even if they are not used.
+The second set is to any macros that are actually used in pre-processing this file.
 
 These are all linked to the macro details that looks like this, for example ``BITMAP_LAST_WORD_MASK``:
 
@@ -234,18 +282,29 @@ These are all linked to the macro details that looks like this, for example ``BI
 
 Each macro description has the following:
 
-* The macro name followed by the reference count for the macro i.e. how many times the pre-processor was required to invoke the definition. This line ends with whether it is still defined at the end of preprocessing (True in this case).
+* The macro name followed by the reference count for the macro i.e. how many times the pre-processor was required to
+  invoke the definition. This line ends with whether it is still defined at the end of preprocessing
+  (True in this case).
 * The macro definition (this is artificially wrapped for clarity).
 * Following ``defined @`` is where the macro was defined and a link to the source file where the the macro is defined.
-* Then follows a table of locations that the macro was used. In this case it was referenced by ``include/linux/bitmap.h`` on line 176, column 20, then line 228, column 20 and so on. Each of these references is a link to the source file representation where the macro is used. NOTE: Where macros are defined in terms of other macros then this location will not necessarily have the literal macro name, it is implicit because of macro dependencies. For example if you look at the last entry ``kernel/cpu.c`` line 653, column 47 then you do not see ``BITMAP_LAST_WORD_MASK``, instead you see ``CPU_BITS_ALL`` however ``CPU_BITS_ALL`` is defined in terms of ``BITMAP_LAST_WORD_MASK``.
-* After "I depend on these macros" is a table (a tree actually) of other macros (with links) that ``BITMAP_LAST_WORD_MASK`` depend on, in this case only one, ``BITS_PER_LONG`` as you can see in the definition.
-* After "These macros depend on me" is another table (a tree) of other macros (with links) that depend on ``BITMAP_LAST_WORD_MASK``.
+* Then follows a table of locations that the macro was used. In this case it was referenced by
+  ``include/linux/bitmap.h`` on line 176, column 20, then line 228, column 20 and so on.
+  Each of these references is a link to the source file representation where the macro is used.
+  NOTE: Where macros are defined in terms of other macros then this location will not necessarily have the literal
+  macro name, it is implicit because of macro dependencies.
+  For example if you look at the last entry ``kernel/cpu.c`` line 653, column 47 then you do not see
+  ``BITMAP_LAST_WORD_MASK``, instead you see ``CPU_BITS_ALL`` however ``CPU_BITS_ALL`` is defined in terms of
+  ``BITMAP_LAST_WORD_MASK``.
+* After "I depend on these macros" is a table (a tree actually) of other macros (with links) that
+  ``BITMAP_LAST_WORD_MASK`` depend on, in this case only one, ``BITS_PER_LONG`` as you can see in the definition.
+* After "These macros depend on me" is another table (a tree) of other macros (with links) that depend on
+  ``BITMAP_LAST_WORD_MASK``.
 
 A Most Powerful Feature
 ============================
 
-CPIP's knowledge about macros and its ability to generate linked documents provides an especially powerful feature for understanding macros.
-
+CPIP's knowledge about macros and its ability to generate linked documents provides an especially powerful feature
+for understanding macros.
 
 .. _cpip-examples-real:
 
@@ -253,7 +312,13 @@ CPIP's knowledge about macros and its ability to generate linked documents provi
 Some Real Examples
 *******************************
 
-CPIPMain is a command line tool that you can invoke very much like your favorite pre-processor. CPIPMain produces a number of HTML pages and SVG files that make it easier to understand what is happening during preprocessing. This section shows some examples of the kind of thing that CPIP can do.
+CPIPMain is a command line tool that you can invoke very much like your favorite pre-processor.
+CPIPMain produces a number of HTML pages and SVG files that make it easier to understand what is happening during
+preprocessing.
+This section shows some examples of the kind of thing that CPIP can do.
+
+.. index::
+   single: CPIPMain; Examples; Linux
 
 =======================================
 From the Linux Kernel
@@ -261,12 +326,18 @@ From the Linux Kernel
 
 Here is :file:`CPIPMain.py` pre-processing the `cpu.c <../_static/cpu/index.html>`_ file from the Linux Kernel.
 
+.. index::
+   single: CPIPMain; Examples; CPython
+
 =======================================
 From the CPython Interpreter
 =======================================
 
-Here is :file:`CPIPMain.py` pre-processing the `dictobject.c <../_static/dictobject.c/index.html>`_ file which implements the Python 3.6.2 dictionary.
+Here is :file:`CPIPMain.py` pre-processing the `dictobject.c <../_static/dictobject.c/index.html>`_
+file which implements the Python 3.6.2 dictionary.
 
 .. rubric:: Footnotes
 
-.. [#] A special case is that the may be a file ``"Unnamed Pre-Include"`` at the top left and joined to the preprocessed file with a thick light grey line. This 'virtual' file contains the macro declarations made on the :file:`CPIPMain.py` command line.
+.. [#] A special case is that the may be a file ``"Unnamed Pre-Include"`` at the top left and joined to the
+    preprocessed file with a thick light grey line.
+    This 'virtual' file contains the macro declarations made on the :file:`CPIPMain.py` command line.

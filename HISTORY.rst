@@ -1,5 +1,12 @@
+
+.. index::
+   single: History
+
 History
 =======
+
+.. index::
+   single: History; 1.0.0 (TODO)
 
 1.0.0 First Production Release (TODO)
 ----------------------------------------
@@ -16,6 +23,9 @@ History
 * Support for Python versions 3.9, 3.10, 3.11, 3.12, 3.13.
 * Drop explicit support for Python 3.6, 3.7, 3.8
 
+.. index::
+   single: History; 0.9.9 (2022-12-16)
+
 0.9.9 Beta Release (2022-12-16)
 --------------------------------
 
@@ -23,10 +33,16 @@ History
 * Add support for Python3 versions. Supported versions 3.6, 3.7, 3.8, 3.9, 3.10, 3.11.
 * Remove support for Python 2.7 (although it might still work).
 
+.. index::
+   single: History; 0.9.8 (2021-01-28)
+
 0.9.8 Beta Release (2021-01-28)
 --------------------------------
 
 * Minor fixes.
+
+.. index::
+   single: History; 0.9.7 (2017-10-04)
 
 0.9.7 Beta Release (2017-10-04)
 --------------------------------
@@ -36,25 +52,40 @@ History
 * Builds the CPython source tree in 5 hours with 2 CPUs.
 * Documentation improvements.
 
+.. index::
+   single: History; 0.9.5 (2017-10-03)
+
 0.9.5 Beta Release (2017-10-03)
 --------------------------------
 
 * Migrate from sourceforge to GitHub.
+
+.. index::
+   single: History; 0.9.1 (2014-09-03)
 
 0.9.1 (2014-09-03)
 ------------------
 
 Version 0.9.1, various minor fixes. Tested on Python 2.7 and 3.3.
 
+.. index::
+   single: History; Alpha+ (2014-09-04)
+
 Alpha Plus Release (2014-09-04)
 -------------------------------
 
 Fairly thorough refactor. CPIP now tested on Python 2.7, 3.3. Version 0.9.1. Updated documentation.
 
+.. index::
+   single: History; Alpha (2012-03-25)
+
 Alpha Release (2012-03-25)
 ---------------------------
 
 Very little functional change. CPIP now tested on Python 2.6, 2.7, 3.2. Added loads of documentation.
+
+.. index::
+   single: History; Alpha (2011-07-14)
 
 Alpha Release (2011-07-14)
 ---------------------------
@@ -62,4 +93,3 @@ Alpha Release (2011-07-14)
 This is a pre-release of CPIP. It is tested on BSD/Linux, it will probably work on Windows (although some unit tests will fail on that platform).
 
 Project started in 2008.
-

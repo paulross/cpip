@@ -1,6 +1,11 @@
 .. moduleauthor:: Paul Ross <apaulross@gmail.com>
 .. sectionauthor:: Paul Ross <apaulross@gmail.com>
 
+.. index::
+   single: Incremental Build (idea)
+
+.. _cpip-incremental_build:
+
 #######################################
 Incremental Build
 #######################################
