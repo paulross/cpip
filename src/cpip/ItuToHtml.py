@@ -174,6 +174,7 @@ the macro page.""")
         elif False and tt == 'preprocessing-op-or-punc':
             theS.characters(t)
         else:
+            # TODO: With #include files (class="n") link to their page as we do with macros.
             if tt == 'identifier' and t in self._macroRefMap:
                 # As we can not definitively determine which particular
                 # definition of the macro is relevant for this source file
