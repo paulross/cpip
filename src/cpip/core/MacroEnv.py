@@ -598,7 +598,12 @@ class MacroEnv(object):
         myListAsGen = ListAsGenerator(rTokS, theGen)
         myGen = next(myListAsGen)
         while not myListAsGen.listIsEmpty:
-            reexTokS += self._expand(next(myGen), myGen, theFileLineCol)
+            # Python 3.7 turned StopIteration into a RuntimeError.
+            # https://stackoverflow.com/questions/51700960/runtimeerror-generator-raised-stopiteration-every-time-i-try-to-run-app
+            try:
+                reexTokS += self._expand(next(myGen), myGen, theFileLineCol)
+            except StopIteration:
+                break
         self._expandedSet.remove(theTtt.t)
         if self._enableTrace:
             self._debugTokenStream(
