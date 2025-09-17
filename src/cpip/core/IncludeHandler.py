@@ -714,4 +714,6 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
     )
     if result.returncode != 0:
         raise IOError(f'Sub-process command {cmd} returned error code of {result.returncode}')
-    return parse_platform_system_include_paths(result.stderr)
+    ret = parse_platform_system_include_paths(result.stderr)
+    logger.info('Command %s found %d system paths',cmd, len(ret))
+    return ret
