@@ -420,7 +420,12 @@ class PpLexer(object):
 
         :raises: ``Exception`` - Any exception."""
         self._includeHandler.finalise()
-        self._condStack.close()
+        try:
+            self._condStack.close()
+        except CppCond.ExceptionCppCond as err:
+            # TODO: Fix this which is needed when processing Linux cpu.c.
+            # TODO: The conditional stack should always close gracefully.
+            logger.exception('Conditional closure failure: %s', err)
         # Note: We don't do any closure/finalisation on self._condCompGraph
         # as we rely on self._condStack to complain if the conditional
         # directives are incomplete
@@ -1787,7 +1792,7 @@ class PpLexer(object):
         if self._condStack.isTrue():
             myErrMsg = ''.join([t.t for t in myTokS])
             myErrMsg = myErrMsg.strip()
-            self._diagnostic.error(myErrMsg, theFlc)
+            self._diagnostic.error(f'#error {myErrMsg}', theFlc)
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppWarning(self, theGen, theFlc):
