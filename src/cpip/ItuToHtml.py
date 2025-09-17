@@ -138,9 +138,14 @@ the macro page.""")
                         self._incAndWriteLine(myS)
                         for t, tt in myItt.genTokensKeywordPpDirective():
                             self._handleToken(myS, t, tt)
-        except (IOError) as err:
-            raise ExceptionItuToHTML('%s line=%d, col=%d' \
+        # TODO: Rather than catching an IOError we catch all exceptions because of the off-by one error
+        # TODO: causing a ExceptionMultiPass:
+        # TODO: "/Users/engun/GitHub/torvalds/linux/tools/include/asm/alternative.h" to HTML:
+        # TODO: Type: <class 'cpip.util.MultiPassString.ExceptionMultiPass'> Overlap: from 206 to 207 line=8, col=4
+        except (Exception) as err:
+            raise ExceptionItuToHTML('Type: %s %s line=%d, col=%d' \
                         % (
+                            type(err),
                             str(err),
                             myItt.fileLocator.lineNum,
                             myItt.fileLocator.colNum,
