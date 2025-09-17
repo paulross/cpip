@@ -11,17 +11,36 @@ History
 1.0.0 First Production Release (TODO)
 ----------------------------------------
 
-* Development Status :: 5 - Production/Stable
-* Add support for C23.
-* Add selectable support for the following C standards: K&R, ANSI/C89/C90, C95, C99, C11, C17/C18, C23.
-* Add selectable support for GNU extensions.
+TODO
+^^^^
+
+* TODO: Add support for C23. See ``docs/doc_src/TODO_C23.rst`` and annotations in the notebook.
+* TODO: Add selectable support for the following C standards: K&R, ANSI/C89/C90, C95, C99, C11, C17/C18, C23.
+* TODO: Add selectable support for GNU extensions.
+* TODO: Fix Conditional stack closure failure when processing Linux cpu.c.
+* TODO: Build Linux cpu.c using the Linux configure/build system without error, probably on a virtual machine.
+* TODO: Fix MultiPassString off by one (or more) error.
+* TODO: Add link to file HTML representation when showing a #include directive.
+* TODO: Fix line/column counts (issue https://github.com/paulross/cpip/issues/1 ).
+* TODO: Fix accidental token pasting (issue https://github.com/paulross/cpip/issues/2 ).
+* TODO: Fix SVG zoom (issue https://github.com/paulross/cpip/issues/7 ).
+* TODO: Fix macro replacement re-scanning issue to be conformant with other implementations (GCC, Clang) (issue TODO).
+* TODO: Fix all xfailing tests.
+* TODO: Clear any remaining issues: https://github.com/paulross/cpip/issues
+
+DONE
+^^^^
+
 * Add CMake support. CPIP builds can be done using the existing CMake build metadata from a project.
-* Fix line/column counts (issue https://github.com/paulross/cpip/issues/1 ).
-* Fix accidental token pasting (issue https://github.com/paulross/cpip/issues/2 ).
-* Fix SVG zoom (issue https://github.com/paulross/cpip/issues/7 ).
-* Fix macro replacement re-scanning issue to be conformant with other implementations (GCC, Clang) (issue TODO).
+* Add ``--sys-auto-lang=C`` and ``--sys-auto-lang=C++`` option to pick up platform system includes
+  (not supported in Windows yet).
+* Brought the tutorial for ``PpLexer.py`` and ``FileIncludeGraph.py`` up to date.
+* Add test for tutorial code in ``build_all.sh`` for all Python versions
+* Add per-module logging.
+* Add a proposal for incremental builds (``docs/doc_src/IncrementalBuild.rst``).
 * Support for Python versions 3.9, 3.10, 3.11, 3.12, 3.13.
 * Drop explicit support for Python 3.6, 3.7, 3.8
+* Development Status :: 5 - Production/Stable
 
 .. index::
    single: History; 0.9.9 (2022-12-16)
