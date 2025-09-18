@@ -608,6 +608,7 @@ class MacroEnv(object):
         if self._enableTrace:
             self._debugTokenStream(
                             '_expand("%s") reexamined' % theTtt, reexTokS)
+        # One last heave at re-examination, but how do we do that without infinite recursion?
         return reexTokS
 
     ############################

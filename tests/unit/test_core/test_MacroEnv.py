@@ -5877,6 +5877,42 @@ class TestLibCello(TestMacroEnv):
 class TestNullClass(TestMacroEnv):
     pass
 
+
+# @pytest.mark.xfail(reason='Ambiguous expansion is stopping short of full expansion.')
+@pytest.mark.parametrize(
+    'source_itu, c_input, c_output',
+    (
+        (
+            "f(a) a*g\ng(a) f(a)\n", 'f(2)(9)', '2*9*g',
+        ),
+    ),
+)
+def test_ambiguous_01(source_itu, c_input, c_output):
+    """TestFromStandardMisc.test_ambiguous_01 - ambiguous."""
+    """#define f(a) a*g
+#define g(a) f(a)
+f(2)(9)
+"""
+    macro_environment = MacroEnv.MacroEnv(enableTrace=True)
+    pp_tokeniser = PpTokeniser.PpTokeniser(
+        theFileObj=io.StringIO(source_itu)
+        )
+    pp_generator = pp_tokeniser.next()
+    i = 0
+    while i < 2:
+        macro_environment.define(pp_generator, '', 1)
+        i += 1
+    pp_tokeniser = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(c_input))
+    replacement_list = []
+    pp_generator = pp_tokeniser.next()
+    macro_environment.debugMarker = 'test_ambiguous_01()'
+    for ttt in pp_generator:
+        replacements = macro_environment.replace(ttt, pp_generator)
+        replacement_list += replacements
+    result = ''.join([t_tt.t for t_tt in replacement_list])
+    assert result == c_output
+
+
 def unitTest(theVerbosity=2):
     # - OK
     suite = unittest.TestLoader().loadTestsFromTestCase(TestNullClass)
