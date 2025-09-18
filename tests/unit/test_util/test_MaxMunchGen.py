@@ -263,7 +263,7 @@ class TestMaximalMunchText(unittest.TestCase):
         self.assertEqual(myResult, myExpResult)
 
     def test_11(self):
-        """TestMaximalMunchText: ambiguos result."""
+        """TestMaximalMunchText: ambiguous result."""
         myStrGen = test_BufGen.StrGen('aeiou')
         myBg = MaxMunchGen.MaxMunchGen(
                     next(myStrGen),

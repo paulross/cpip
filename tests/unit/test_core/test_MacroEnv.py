@@ -4131,8 +4131,8 @@ f(a) f(a)
             #    % (myIn, repString, myOut, repString==myOut)
             self.assertEqual(repString, myOut)
 
-    def test_ambiguos_00(self):
-        """TestFromStandardMisc.test_ambiguos_00 - not ambiguos."""
+    def test_ambiguous_00(self):
+        """TestFromStandardMisc.test_ambiguous_00 - not ambiguous."""
         """#define f(a) a*g
 #define g f
 """
@@ -4163,7 +4163,7 @@ g f
                 )
             repList = []
             myGen = myCpp.next()
-            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguos_00()'
+            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguous_00()'
             for ttt in myGen:
                 myReplacements = myMap.replace(ttt, myGen)
                 repList += myReplacements
@@ -4180,8 +4180,8 @@ g f
             self.assertEqual(repString, myOut)
 
     @pytest.mark.xfail(reason='Ambiguous expansion is stopping short of full expansion.')
-    def test_ambiguos_01(self):
-        """TestFromStandardMisc.test_ambiguos_01 - ambiguos."""
+    def test_ambiguous_01(self):
+        """TestFromStandardMisc.test_ambiguous_01 - ambiguous."""
         """#define f(a) a*g
 #define g(a) f(a)
 f(2)(9)
@@ -4214,7 +4214,7 @@ g(a) f(a)
                 )
             repList = []
             myGen = myCpp.next()
-            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguos_01()'
+            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguous_01()'
             for ttt in myGen:
                 myReplacements = myMap.replace(ttt, myGen)
                 repList += myReplacements

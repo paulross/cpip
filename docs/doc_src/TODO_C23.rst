@@ -633,7 +633,7 @@ The steps are:
 We get ``2*f(9)``, which is legal, but GCC/Clang/MSVC produce ``2*9*g``.
 So we are missing step 4.
 
-There is one test for this in ``tests.unit.test_core.test_MacroEnv.TestFromStandardMisc.test_ambiguos_01()`` and
+There is one test for this in ``tests.unit.test_core.test_MacroEnv.TestFromStandardMisc.test_ambiguous_01()`` and
 another in ``tests.unit.test_core.test_PpLexer.TestC99Rationale.test_6_10_3_4_01()``.
 
 The relevant code is ``cpip.core.MacroEnv.MacroEnv._expand()`` and the recursive call here
