@@ -61,13 +61,13 @@ class TestPpLexerPerfBase(test_PpDefine.TestPpDefine):
             repeatNum -= 1
         myTimS = []
         for i in range(repeatNum):
-            myTimStart = time.clock()
+            myTimStart = time.perf_counter()
             if incWs:
                 myToks = [t for t in theLex.ppTokens()]
             else:
                 myToks = [t for t in theLex.ppTokens() if not t.isWs()]
             theLex.finalise()
-            myTime = time.clock() - myTimStart
+            myTime = time.perf_counter() - myTimStart
             if repeatNum > 1:
                 myTimS.append(myTime)
         if repeatNum > 1:
@@ -532,9 +532,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

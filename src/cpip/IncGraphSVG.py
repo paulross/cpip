@@ -1214,7 +1214,7 @@ class SVGTreeNodeMain(IncGraphSVGBase.SVGTreeNodeBase):
                     incY=self.HIST_DEPTH)
         
     def _plotChevron(self, theSvg, theDl, theTpt):
-        """Plots a wedge to represent the relative number of tokens in me and
+        r"""Plots a wedge to represent the relative number of tokens in me and
         my children.
 
         .. code-block:: none

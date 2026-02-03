@@ -47,7 +47,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(1, mySt.has('###'))
         self.assertEqual(1, mySt.has('####'))
         self.assertEqual(1, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_01(self):
@@ -61,7 +61,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(3, mySt.has('###'))
         self.assertEqual(3, mySt.has('####'))
         self.assertEqual(3, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_02(self):
@@ -76,7 +76,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(0, mySt.has('###'))
         self.assertEqual(0, mySt.has('####'))
         self.assertEqual(0, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_str(self):
@@ -118,7 +118,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(3, mySt.has('and_'))
         self.assertEqual(3, mySt.has('and_e'))
         self.assertEqual(6, mySt.has('and_eq'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
 
     def test_11(self):
         """StrTree: test_11(): keywords (three)."""
@@ -140,7 +140,7 @@ class TestStrTree(unittest.TestCase):
         # Not deterministic under Python3
 #         print()
 #         print(str(mySt))
-#         self.assertEquals("""False 0
+#         self.assertEqual("""False 0
 # "c"
 #  False 1
 #  "o"
@@ -171,7 +171,7 @@ class TestStrTree(unittest.TestCase):
 #        False 7
 #        "e"
 #         True 8""", str(mySt))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
 
     def test_12(self):
         """StrTree: test_12(): keywords (a few)."""
@@ -201,7 +201,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(2, mySt.has('doub'))
         self.assertEqual(2, mySt.has('doubl'))
         self.assertEqual(6, mySt.has('double'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         
     def test_13(self):
         """StrTree: test_13(): keywords (all)."""
@@ -229,7 +229,7 @@ class TestStrTree(unittest.TestCase):
         self.assertEqual(2, mySt.has('doub'))
         self.assertEqual(2, mySt.has('doubl'))
         self.assertEqual(6, mySt.has('double'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
                 
 class TestStrTreeHas(unittest.TestCase):
     """Tests StrTree.has()."""
@@ -244,7 +244,7 @@ class TestStrTreeHas(unittest.TestCase):
         self.assertEqual(1, mySt.has('###'))
         self.assertEqual(1, mySt.has('####'))
         self.assertEqual(1, mySt.has('#####'))
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         #self.assertRaises(StopIteration, myG.next)
 
     def test_01(self):
@@ -299,7 +299,7 @@ class TestStrTreePerf(unittest.TestCase):
                 'delete', 'goto', 'reinterpret_cast', 'try',
                 ]
         mySt = StrTree.StrTree(myV)
-        self.assertEquals(myV, set(mySt.values()))
+        self.assertEqual(myV, set(mySt.values()))
         print()
         #print mySt.values()
         #print str(mySt)
@@ -307,93 +307,93 @@ class TestStrTreePerf(unittest.TestCase):
         print('Loop count: %d' % count)
         FW = 32
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('do'):
                 cntrFound += 1
-        #sys.stderr.write('has("do"):     %8d, Time: %8.3f (s)s ... ' % (count, time.clock() - cStart))
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("do")', time.clock() - cStart))
+        #sys.stderr.write('has("do"):     %8d, Time: %8.3f (s)s ... ' % (count, time.perf_counter() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("do")', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'do' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in set:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'do' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"do" in list:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('double'):
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("double"):', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("double"):', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'double' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in set:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'double' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"double" in list:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         #'reinterpret_cast'
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('double'):
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("reinterpret_cast"):', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("reinterpret_cast"):', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'reinterpret_cast' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in set:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'reinterpret_cast' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"reinterpret_cast" in list:', time.perf_counter() - cStart))
         self.assertEqual(count, cntrFound)
         #'strubbish'
         self.assertEqual(count, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if mySt.has('strubbish'):
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("strubbish"):', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, 'has("strubbish"):', time.perf_counter() - cStart))
         self.assertEqual(0, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'strubbish' in myV:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in set:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in set:', time.perf_counter() - cStart))
         self.assertEqual(0, cntrFound)
         cntrFound = 0
-        cStart = time.clock()
+        cStart = time.perf_counter()
         for i in range(count):
             if 'strubbish' in myVList:
                 cntrFound += 1
-        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in list:', time.clock() - cStart))
+        print('%-*s Time: %8.3f (s)s ... ' % (FW, '"strubbish" in list:', time.perf_counter() - cStart))
         self.assertEqual(0, cntrFound)
 
 class NullClass(unittest.TestCase):
@@ -461,9 +461,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

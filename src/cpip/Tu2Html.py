@@ -40,6 +40,8 @@ from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip import TokenCss
 
+logger = logging.getLogger(__file__)
+
 #: State changes
 FILE_SHIFT_ACTIONS = ('Starting', 'Holding', 'Back in', 'Ending')
 FILE_SHIFT_ACTION_WIDTH = max([len(a) for a in FILE_SHIFT_ACTIONS])
@@ -233,7 +235,7 @@ next occasion in the include graph of the file being pre-processed, in this case
                 colNum = 1
                 for t in theLex.ppTokens(incWs=True, minWs=True, condLevel=theCondLevel):
                     #print t
-                    logging.debug('Token: %s', str(t))
+                    logger.debug('Token: %s', str(t))
                     myTokCntr.inc(t, isUnCond=t.isUnCond, num=1)
                     if t.isUnCond:
                         # Adjust the prefix depending on how deep we are in the file stack

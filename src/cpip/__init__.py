@@ -18,9 +18,10 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
+from .__version__ import __version__
+
 __author__  = 'Paul Ross'
 __date__    = '2014-03-03'
-__version__ = '0.9.8rc0'
 __rights__  = 'Copyright (c) 2008-2017 Paul Ross'
 
 __all__ = ['core', 'util', 'plot']

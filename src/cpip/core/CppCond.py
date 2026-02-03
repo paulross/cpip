@@ -20,7 +20,7 @@
 
 """Provides a state stack of booleans to facilitate conditional compilation as:
 :title-reference:`ISO/IEC 9899:1999(E) section 6.10.1` ('C') and
-:title-reference:`ISO/IEC 14882:1998(E) section 16.1 ('C++') \[cpp.cond\]`
+:title-reference:`ISO/IEC 14882:1998(E) section 16.1 ('C++') [cpp.cond]`
 
 This does not interpret any semantics of either standard but instead provides
 a state class that callers that do interpret the language semantics can use.
@@ -113,6 +113,8 @@ import bisect
 
 from cpip import ExceptionCpip
 from cpip.core.FileLocation import START_LINE
+
+logger = logging.getLogger(__file__)
 
 #: Conditional directives.
 CPP_COND_DIRECTIVES = ('if', 'ifdef', 'ifndef', 'elif', 'else', 'endif')
@@ -530,7 +532,6 @@ class CppCond(object):
 StateConstExprFileLine = collections.namedtuple(
     'StateConstExprLoc',
     'fileId lineNum tuIndex state const_expr',
-    verbose=False,
     )
 
 class CppCondGraphVisitorBase(object):
@@ -581,7 +582,7 @@ class CppCondGraph(object):
 
         :returns: ``bool`` -- True if complete.
         """
-        logging.debug('CppCondGraph.isComplete(): %s', str(self._ifSectS))
+        logger.debug('CppCondGraph.isComplete(): %s', str(self._ifSectS))
         return len(self._ifSectS) == 0 or self._ifSectS[-1].isSectionComplete 
 
     def _raiseIfComplete(self, theCppD):
@@ -624,12 +625,12 @@ class CppCondGraph(object):
         assert(theCppD in CPP_COND_IF_DIRECTIVES)
         if self.isComplete:
             # Append a new sibling if section
-            logging.debug('CppCondGraph._oIfIfDefIfndef(): adding new sibling "%s" %s %s %s', 
+            logger.debug('CppCondGraph._oIfIfDefIfndef(): adding new sibling "%s" %s %s %s',
                           theFlc, theTuIdx, theBool, theCe)
             self._ifSectS.append(CppCondGraphIfSection(theCppD, theFlc, theTuIdx, theBool, theCe))
         else:
             # Pass to child in list
-            logging.debug('CppCondGraph._oIfIfDefIfndef(): passing "%s" to child %s %s %s', 
+            logger.debug('CppCondGraph._oIfIfDefIfndef(): passing "%s" to child %s %s %s',
                           theFlc, theTuIdx, theBool, theCe)
             if theCppD == 'if':
                 self._ifSectS[-1].oIf(theFlc, theTuIdx, theBool, theCe)
@@ -656,7 +657,7 @@ class CppCondGraph(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraph.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraph.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('if', theFlc, theTuIdx, theBool, theCe)
 
     def oIfdef(self, theFlc, theTuIdx, theBool, theCe):
@@ -677,7 +678,7 @@ class CppCondGraph(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraph.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraph.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifdef', theFlc, theTuIdx, theBool, theCe)
 
     def oIfndef(self, theFlc, theTuIdx, theBool, theCe):
@@ -698,7 +699,7 @@ class CppCondGraph(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraph.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraph.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifndef', theFlc, theTuIdx, theBool, theCe)
 
     def oElif(self, theFlc, theTuIdx, theBool, theCe):
@@ -719,7 +720,7 @@ class CppCondGraph(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraph.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraph.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._raiseIfComplete('elif')
         assert(len(self._ifSectS) > 0)
         self._ifSectS[-1].oElif(theFlc, theTuIdx, theBool, theCe)
@@ -739,7 +740,7 @@ class CppCondGraph(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraph.oElse():   %s %s', theFlc, theTuIdx)
+        logger.debug('CppCondGraph.oElse():   %s %s', theFlc, theTuIdx)
         self._raiseIfComplete('else')
         assert(len(self._ifSectS) > 0)
         self._ifSectS[-1].oElse(theFlc, theTuIdx, theBool)
@@ -759,7 +760,7 @@ class CppCondGraph(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraph.oEndif():  %s %s', theFlc, theTuIdx)
+        logger.debug('CppCondGraph.oEndif():  %s %s', theFlc, theTuIdx)
         self._raiseIfComplete('endif')
         assert(len(self._ifSectS) > 0)
         self._ifSectS[-1].oEndif(theFlc, theTuIdx, theBool)
@@ -970,7 +971,7 @@ class CppCondGraphNode(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphNode.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphNode.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('if', theFlc, theTuIdx, theBool, theCe)
 
     def oIfdef(self, theFlc, theTuIdx, theBool, theCe):
@@ -990,7 +991,7 @@ class CppCondGraphNode(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphNode.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphNode.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifdef', theFlc, theTuIdx, theBool, theCe)
 
     def oIfndef(self, theFlc, theTuIdx, theBool, theCe):
@@ -1010,7 +1011,7 @@ class CppCondGraphNode(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphNode.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphNode.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifndef', theFlc, theTuIdx, theBool, theCe)
 
     def oElif(self, theFlc, theTuIdx, theBool, theCe):
@@ -1030,7 +1031,7 @@ class CppCondGraphNode(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphNode.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphNode.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._raiseIfCanNotAccept('elif')
         # Pass to child in list
         assert(len(self._childIfSectS) > 0)
@@ -1050,7 +1051,7 @@ class CppCondGraphNode(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphNode.oElse():   %s %s', theFlc, theTuIdx)
+        logger.debug('CppCondGraphNode.oElse():   %s %s', theFlc, theTuIdx)
         self._raiseIfCanNotAccept('else')
         # Pass to child in list
         assert(len(self._childIfSectS) > 0)
@@ -1070,7 +1071,7 @@ class CppCondGraphNode(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphNode.oEndif():  %s %s', theFlc, theTuIdx)
+        logger.debug('CppCondGraphNode.oEndif():  %s %s', theFlc, theTuIdx)
         self._raiseIfCanNotAccept('endif')
         # Pass to child in list
         assert(len(self._childIfSectS) > 0)
@@ -1141,7 +1142,7 @@ class CppCondGraphIfSection(object):
         """
         assert(len(self._siblingNodeS) > 0)
         retVal = self._siblingNodeS[-1].cppDirective == 'endif'
-        logging.debug(
+        logger.debug(
                 'CppCondGraphIfSection.isSectionComplete(): %s %s',
                 retVal,
                 str(self._siblingNodeS)
@@ -1210,7 +1211,7 @@ class CppCondGraphIfSection(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphIfSection.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphIfSection.oIf():     %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('if', theFlc, theTuIdx, theBool, theCe)
 
     def oIfdef(self, theFlc, theTuIdx, theBool, theCe):
@@ -1230,7 +1231,7 @@ class CppCondGraphIfSection(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphIfSection.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphIfSection.oIfdef():  %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifdef', theFlc, theTuIdx, theBool, theCe)
 
     def oIfndef(self, theFlc, theTuIdx, theBool, theCe):
@@ -1250,7 +1251,7 @@ class CppCondGraphIfSection(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphIfSection.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphIfSection.oIfndef(): %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         self._oIfIfDefIfndef('ifndef', theFlc, theTuIdx, theBool, theCe)
 
     def oElif(self, theFlc, theTuIdx, theBool, theCe):
@@ -1270,7 +1271,7 @@ class CppCondGraphIfSection(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphIfSection.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
+        logger.debug('CppCondGraphIfSection.oElif():   %s %s %s "%s"', theFlc, theTuIdx, theBool, theCe)
         assert(len(self._siblingNodeS) > 0)
         self._raiseIfSectionComplete('elif')
         if self._siblingNodeS[-1].canAccept('elif'):
@@ -1300,7 +1301,7 @@ class CppCondGraphIfSection(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphIfSection.oElse():   %s %s', theFlc, theTuIdx)
+        logger.debug('CppCondGraphIfSection.oElse():   %s %s', theFlc, theTuIdx)
         assert(len(self._siblingNodeS) > 0)
         self._raiseIfSectionComplete('else')
         if self._siblingNodeS[-1].canAccept('else'):
@@ -1330,7 +1331,7 @@ class CppCondGraphIfSection(object):
 
         :returns: ``NoneType``
         """
-        logging.debug('CppCondGraphIfSection.oEndif():  %s %s', theFlc, theTuIdx)
+        logger.debug('CppCondGraphIfSection.oEndif():  %s %s', theFlc, theTuIdx)
         assert(len(self._siblingNodeS) > 0)
         self._raiseIfSectionComplete('endif')
         if self._siblingNodeS[-1].canAccept('endif'):

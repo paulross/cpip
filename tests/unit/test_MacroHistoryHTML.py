@@ -60,7 +60,7 @@ class TestSplitLine(unittest.TestCase):
 
     def test_00(self):
         """TestSplitLine.test_00(): Multi line."""
-        myS = '_INIT_SECURITY_POLICY_C7(c1,c2,c3,c4,c5,c6,c7) { FOUR_TUINT8( (TUint8)TSecurityPolicy::ETypeC7, CAPABILITY_AS_TUINT8(c1), CAPABILITY_AS_TUINT8(c2), CAPABILITY_AS_TUINT8(c3) ), FOUR_TUINT8( CAPABILITY_AS_TUINT8(c4), CAPABILITY_AS_TUINT8(c5), CAPABILITY_AS_TUINT8(c6), CAPABILITY_AS_TUINT8(c7) ) } /* s:/epoc32/include\e32cmn.h#3997 Ref: 0 True */'
+        myS = r'_INIT_SECURITY_POLICY_C7(c1,c2,c3,c4,c5,c6,c7) { FOUR_TUINT8( (TUint8)TSecurityPolicy::ETypeC7, CAPABILITY_AS_TUINT8(c1), CAPABILITY_AS_TUINT8(c2), CAPABILITY_AS_TUINT8(c3) ), FOUR_TUINT8( CAPABILITY_AS_TUINT8(c4), CAPABILITY_AS_TUINT8(c5), CAPABILITY_AS_TUINT8(c6), CAPABILITY_AS_TUINT8(c7) ) } /* s:/epoc32/include\e32cmn.h#3997 Ref: 0 True */'
         #pprint.pprint(myS)
         #print
         #pprint.pprint(splitLineToList(myS))
@@ -187,9 +187,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

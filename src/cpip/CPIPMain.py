@@ -63,7 +63,8 @@ CPIPMain.py -- Preprocess the file or the files in a directory.
       -p                    Ignore pragma statements. [default: False]
       -r, --recursive       Recursively process directories. [default: False]
       -t, --dot             Write an DOT include dependency table and execute DOT
-                            on it to create a SVG file. [default: False]
+                            on it to create a SVG file (for includes and macro
+                            dependencies). [default: False]
       -G                    Support GCC extensions. Currently only #include_next.
                             [default: False]
       -S PREDEFINES, --predefine PREDEFINES
@@ -89,7 +90,7 @@ CPIPMain.py -- Preprocess the file or the files in a directory.
       -J INCSYS, --sys INCSYS
                             Add system include search path. [default: []]
 
-Example, from tthe CPIP directory:
+Example, from the CPIP directory:
 
 .. code-block:: console
 
@@ -123,6 +124,7 @@ __rights__ = 'Copyright (c) 2008-2017 Paul Ross'
 import argparse
 import collections
 import datetime
+import hashlib
 import io
 import logging
 import multiprocessing
@@ -131,6 +133,7 @@ import pprint
 import subprocess
 import sys
 import time
+import typing
 
 from cpip import CppCondGraphToHtml
 from cpip import ExceptionCpip
@@ -147,11 +150,16 @@ from cpip.core import FileIncludeGraph
 from cpip.core import IncludeHandler
 from cpip.core import PpLexer
 from cpip.core import PragmaHandler
+from cpip.util import CMakeBuild
 from cpip.util import CommonPrefix
 from cpip.util import Cpp
 from cpip.util import DirWalk
 from cpip.util import HtmlUtils
 from cpip.util import XmlWrite
+
+
+logger = logging.getLogger(__file__)
+
 
 # POD class that contains the arguments for processing a file or directory
 MainJobSpec = collections.namedtuple('MainJobSpec',
@@ -316,35 +324,58 @@ class FigVisitorDot(FileIncludeGraph.FigVisitorBase):
             # Leaf node
             self._lineS.append('"%s";' % (myF))
 
-def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
-    logging.info('Creating include Graph for DOT...')
-    myFigr = theLexer.fileIncludeGraphRoot
-#    # Visitor to work out common prefix
-#    myVis = FigVisitorLargestCommanPrefix()
-#    myFigr.acceptVisitor(myVis)
-    # Visitor for the DOT file
-    myVis = FigVisitorDot()  # myVis.lenCommonPrefix())
-    myFigr.acceptVisitor(myVis)
-    dotPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotTxt(theItu)))
-    svgPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotSVG(theItu)))
-    f = open(dotPath, 'w')
-    f.write(str(myVis))
-    f.close()
+
+def invokeDot(dotPath, svgPath):
     result = False
     # Now make a system call to dot
     try:
         retcode = subprocess.call("dot -Tsvg %s -o %s" % (dotPath, svgPath), shell=True)
         if retcode < 0:
-            logging.error("dot was terminated by signal %d" % retcode)
+            logger.error("dot was terminated by signal %d" % retcode)
         elif retcode > 0:
-            logging.error("dot returned error code %d" % retcode)
+            logger.error("dot returned error code %d" % retcode)
         elif retcode == 0:
             result = True
-            logging.info("dot returned %d" % retcode)
+            logger.info("dot returned %d" % retcode)
     except OSError as e:
-        logging.error("dot execution failed: %s" % str(e))
-    logging.info('Creating include Graph for DOT done.')
+        logger.error("dot execution failed: %s" % str(e))
     return result
+
+
+def writeIncludeGraphAsDot(theOutDir, theItu, theLexer):
+    logger.info('Creating include Graph for DOT...')
+    myFigr = theLexer.fileIncludeGraphRoot
+    # Visitor to work out common prefix
+    myVis = FigVisitorLargestCommanPrefix()
+    myFigr.acceptVisitor(myVis)
+    # Visitor for the DOT file
+    # myVis = FigVisitorDot()  # myVis.lenCommonPrefix())
+    myVis = FigVisitorDot(myVis.lenCommonPrefix())
+    myFigr.acceptVisitor(myVis)
+    dotPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotTxt(theItu)))
+    svgPath = os.path.abspath(os.path.join(theOutDir, includeGraphFileNameDotSVG(theItu)))
+    with open(dotPath, 'w') as f:
+        f.write(str(myVis))
+    result = invokeDot(dotPath, svgPath)
+    logger.info('Creating include Graph for DOT done.')
+    return result
+
+
+def writeMacroDependencyGraphAsDot(theOutDir, theItu, theLexer):
+    logger.info('Creating macro dependency Graph for DOT...')
+    result = False
+    if _hasMacroDependencies(theLexer):
+        dotPath = os.path.abspath(os.path.join(theOutDir, macroDepencdencyFileNameDotTxt(theItu)))
+        svgPath = os.path.abspath(os.path.join(theOutDir, macroDepencdencyFileNameDotSVG(theItu)))
+        output = _macroDependenciesAsDot(theLexer)
+        with open(dotPath, 'w') as f:
+            f.write(output)
+        result = invokeDot(dotPath, svgPath)
+    else:
+        logger.info('No dependencies.')
+    logger.info('Creating macro dependency Graph for DOT done.')
+    return result
+
 
 def retFileCountMap(theLexer):
     """Visits the Lexers file include graph and returns a dict of::
@@ -420,19 +451,39 @@ def _dumpMacroEnv(theLexer):
     print(' END Macro Environment and History '.center(75, '-'))
     print()
 
-def _dumpMacroEnvDot(theLexer):
-    print()
-    print(' Macro dependencies as a DOT file '.center(75, '-'))
-    print('digraph MacroDependencyDot {')
+
+def _hasMacroDependencies(theLexer):
+    """Returns True if there are dependencies between macros."""
     myMacEnv = theLexer.macroEnvironment
     for aPpDef in myMacEnv.genMacros():
         if aPpDef.isReferenced:
             for aRtok in aPpDef.replacementTokens:
                 if aRtok.isIdentifier() and myMacEnv.hasMacro(aRtok.t):
-                    print('"%s" -> "%s";' % (aPpDef.identifier, aRtok.t))
-    print('}\n')
+                    return True
+    return False
+
+
+def _macroDependenciesAsDot(theLexer):
+    """Returns a string suitable for invoking DOT on."""
+    ret = ['digraph MacroDependencyDot {']
+    myMacEnv = theLexer.macroEnvironment
+    for aPpDef in myMacEnv.genMacros():
+        if aPpDef.isReferenced:
+            for aRtok in aPpDef.replacementTokens:
+                if aRtok.isIdentifier() and myMacEnv.hasMacro(aRtok.t):
+                    ret.append('"%s" -> "%s";' % (aPpDef.identifier, aRtok.t))
+    ret.append('}')
+    ret.append('')
+    return '\n'.join(ret)
+
+
+def _dumpMacroEnvDot(theLexer):
+    print(' Macro dependencies as a DOT file '.center(75, '-'))
+    if _hasMacroDependencies(theLexer):
+        print(_macroDependenciesAsDot(theLexer))
+    else:
+        print('No dependendies.')
     print(' END Macro dependencies as a DOT file '.center(75, '-'))
-    print()
 
 def tuIndexFileName(theTu):
     """Returns the path to the index output file.
@@ -507,6 +558,26 @@ def includeGraphFileNameDotSVG(theItu):
     """
     return os.path.basename(theItu) + '.include.dot.svg'
 
+def macroDepencdencyFileNameDotTxt(theItu):
+    """Returns the path to the DOT output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+
+    :returns: ``str`` -- path.
+    """
+    return os.path.basename(theItu) + '.macros.dot'
+
+def macroDepencdencyFileNameDotSVG(theItu):
+    """Returns the path to the SVG DOT output file.
+
+    :param theItu: Path to the ITU.
+    :type theItu: ``str``
+
+    :returns: ``str`` -- path.
+    """
+    return os.path.basename(theItu) + '.macros.dot.svg'
+
 def writeIncludeGraphAsText(theOutDir, theItu, theLexer):
     """Writes out the include graph as plain text.
     
@@ -580,7 +651,7 @@ def _writeParagraphWithBreaks(theS, theParas):
             theS.characters(p)
             
 def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap,
-                     theTokenCntr, hasIncDot, macroHistoryIndexName):
+                     theTokenCntr, hasIncDot, macroHistoryIndexName, hasMacroDependencyGraphDot):
     """Write the index.html for a single TU.
 
     :param theOutDir: The output directory to write to.
@@ -600,12 +671,15 @@ def writeTuIndexHtml(theOutDir, theTuPath, theLexer, theFileCountMap,
         counts.
     :type theTokenCntr: :py:class:`cpip.core.PpTokenCount.PpTokenCount`
     
-    :param hasIncDot: bool to emit graphviz .dot files.
+    :param hasIncDot: bool to emit graphviz .dot files of include dependencies.
     :type hasIncDot: ``bool``
     
     :param macroHistoryIndexName: String of the filename of the macro history.
     :type macroHistoryIndexName: ``str``
-    
+
+    :param hasMacroDependencyGraphDot: bool to emit graphviz .dot files of macro dependencies.
+    :type hasMacroDependencyGraphDot: ``bool``
+
     :returns: ``tuple([int, int, int])`` -- (total_files, total_lines, total_bytes) as integers.
     
     :raises: ``StopIteration``
@@ -686,6 +760,10 @@ pre-processing of this file.""")
                 myS.characters('The ')
                 with XmlWrite.Element(myS, 'a', {'href' : macroHistoryIndexName, }):
                     myS.characters('Macro Environment')
+                if hasMacroDependencyGraphDot:
+                    myS.characters(', ')
+                    with XmlWrite.Element(myS, 'a', {'href' : macroDepencdencyFileNameDotSVG(theTuPath), }):
+                        myS.characters('Macro dependencies [SVG]')
             # ##
             # Write out token counter as a table
             # ##
@@ -1081,14 +1159,14 @@ def retOptionMap(theOptParser, theOpts):
 # Section: Multiprocessing code.
 ################################
 def preProcessFilesMP(dIn, dOut, jobSpec, glob, recursive, jobs):
-    """Multiprocessing code to preprocess directories. Returns a count of ITUs
-    processed."""
+    """Multiprocessing code to preprocess directories.
+    Returns a list of PpProcessResult, one for each ITU processed."""
     if jobs < 0:
         raise ValueError('preProcessFilesMP(): can not run with negative number of jobs: %d' % jobs)
     if jobs == 0:
         jobs = multiprocessing.cpu_count()
     assert jobs > 1, 'preProcessFilesMP(): number of jobs: %d???' % jobs
-    logging.info('plotLogPassesMP(): Setting multi-processing jobs to %d' % jobs)
+    logger.info('preProcessFilesMP(): Setting multi-processing jobs to %d' % jobs)
     myTaskS = [
         (t.filePathIn, t.filePathOut, jobSpec) \
             for t in DirWalk.dirWalk(dIn, dOut, glob, recursive, bigFirst=True)
@@ -1104,15 +1182,39 @@ def preProcessFilesMP(dIn, dOut, jobSpec, glob, recursive, jobs):
             ]
         ]
     return myResults
-#     count = 0
-#     for r in myResults:
-#         count += 1
-#     # TODO: Return titles and paths for caller to write the root index HTML.
-#     return count
+
+
+def preProcessTheseFilesMP(source_file_paths, dOut, jobSpec, glob, jobs):
+    """Multiprocessing code to preprocess a list of source files.
+    Returns a list of PpProcessResult, one for each ITU processed."""
+    if len(source_file_paths) == 0:
+        return []
+    if jobs < 0:
+        raise ValueError('preProcessTheseFilesMP(): can not run with negative number of jobs: %d' % jobs)
+    if jobs == 0:
+        jobs = multiprocessing.cpu_count()
+    jobs = min(jobs, len(source_file_paths))
+    logger.info('preProcessTheseFilesMP(): Setting multi-processing jobs to %d' % jobs)
+    myTaskS = []
+    for source_file_path in source_file_paths:
+        task = (source_file_path, source_file_path_sub_directory(source_file_path, dOut), jobSpec)
+        myTaskS.append(task)
+    with multiprocessing.Pool(processes=jobs) as myPool:
+        if jobSpec.keepGoing:
+            fn = preprocessFileToOutputNoExcept
+        else:
+            fn = preprocessFileToOutput
+        myResults = [
+            r.get() for r in [
+                myPool.apply_async(fn, t) for t in myTaskS
+            ]
+        ]
+    return myResults
 
 ################################
 # End: Multiprocessing code.
 ################################
+
 def _removeCommonPrefixFromResults(titlePathTupleS):
     """Given a list of:
     ``PpProcessResult(ituPath, indexPath, tuIndexFileName(ituPath), total_files, total_lines, total_bytes)``
@@ -1212,6 +1314,52 @@ def _writeDirectoryIndexHTML(theInDir, theOutDir,
             )
         _writeIndexHtmlTrailer(myS, time_start)
 
+
+def fix_job_spec_for_cmake_build_directory(
+    cmake_build_directory: str,
+    job_spec: MainJobSpec,
+    glob_match: typing.List[str]) -> typing.List[str]:
+    """Adapts the MainJobSpec to the contents of the CMake build directory metadata.
+
+    This returns a list of sources that match the glob_match(s)
+    """
+    cmake_metadata = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    # cmake_metadata.target has defines, include_paths and sources.
+    # First defines, update (overwrite) the predefined macros in the job spec.:
+    define_dict = split_defines_into_simple_dict(cmake_metadata.target.defines)
+    for k in define_dict.keys():
+        job_spec.preDefMacros[k] = define_dict[k]
+    # Now the include paths.
+    for inc_path in cmake_metadata.target.include_paths:
+        # Put them in the user and system paths as CMake does not seem to distinguish between them.
+        job_spec.incHandler.add_user_search_path(inc_path)
+        job_spec.incHandler.add_system_search_path(inc_path)
+    # Add platform system includes from the CMake toolchain.
+    for inc_path in cmake_metadata.system_include_directories:
+        job_spec.incHandler.add_system_search_path(inc_path)
+    ret = []
+    for source in cmake_metadata.target.sources:
+        if DirWalk.file_path_matches(source, glob_match):
+            ret.append(os.path.join(cmake_metadata.target.project_path, source))
+    return ret
+
+
+def source_file_path_sub_directory(source_file_path: str, out_dir: str) -> str:
+    """Returns a sub-directory suitable to represent the contents of source file.
+
+    For example 'src/cpp/SkipList.cpp' and output directory 'foo/bar' might produce:
+
+    'foo/bar/SkipList.cpp_e6f3eadf0e3f426caf04c3cacc319c96'
+
+    The sub directory is not created.
+
+    See also HtmlUtils.py
+    """
+    path_hash = hashlib.md5(source_file_path.encode('ascii')).hexdigest()
+    sub_dir_name = '%s_%s' % (os.path.basename(source_file_path), path_hash)
+    return os.path.join(out_dir, sub_dir_name)
+
+
 def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs):
     """Pre-process all the files in a directory. Returns a count of the TUs.
     This uses multiprocessing where possible.
@@ -1219,21 +1367,34 @@ def preprocessDirToOutput(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
     write out an index of what has been achieved so far."""
     assert os.path.isdir(inDir)
     time_start = time.time()
+    results = []
+    if jobSpec.keepGoing:
+        single_file_function = preprocessFileToOutputNoExcept
+    else:
+        single_file_function = preprocessFileToOutput
     try:
-        if numJobs != 1:
-            results = preProcessFilesMP(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
+        if CMakeBuild.is_cmake_build_directory(inDir):
+            source_file_paths = fix_job_spec_for_cmake_build_directory(inDir, jobSpec, globMatch)
+            if numJobs != 1:
+                results = preProcessTheseFilesMP(source_file_paths, outDir, jobSpec, globMatch, numJobs)
+            else:
+                results = []
+                for source_file_path in source_file_paths:
+                    out_dir_path = source_file_path_sub_directory(source_file_path, outDir)
+                    results.append(
+                        single_file_function(source_file_path, out_dir_path, jobSpec)
+                    )
         else:
-            results = []
-            for t in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False):
-                if jobSpec.keepGoing:
-                    fn = preprocessFileToOutputNoExcept
-                else:
-                    fn = preprocessFileToOutput
-                results.append(
-                    fn(t.filePathIn, t.filePathOut, jobSpec)
-                )
-        # Write the linking HTML from the title and file paths.
-#         print('results', results)
+            if numJobs != 1:
+                results = preProcessFilesMP(inDir, outDir, jobSpec, globMatch, recursive, numJobs)
+            else:
+                results = []
+                for t in DirWalk.dirWalk(inDir, outDir, globMatch, recursive, bigFirst=False):
+                    results.append(
+                        single_file_function(t.filePathIn, t.filePathOut, jobSpec)
+                    )
+            # Write the linking HTML from the title and file paths.
+            # print('results', results)
     finally:
         _writeDirectoryIndexHTML(inDir, outDir, results, jobSpec, time_start)
 
@@ -1243,7 +1404,7 @@ def preprocessFileToOutputNoExcept(ituPath, *args, **kwargs):
     try:
         return preprocessFileToOutput(ituPath, *args, **kwargs)
     except ExceptionCpip as err:
-        logging.critical('preprocessFileToOutputNoExcept(): "%s" %s' % (err, ituPath))
+        logger.critical('preprocessFileToOutputNoExcept(): "%s" %s' % (err, ituPath))
     return PpProcessResult(ituPath, None, None, 0, 0, 0)
 
 def preprocessFileToOutput(ituPath, outDir, jobSpec):
@@ -1264,7 +1425,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
     """
     assert os.path.isfile(ituPath)
     time_start = time.time()
-    logging.info('preprocessFileToOutput(): %s' % ituPath)
+    logger.info('preprocessFileToOutput(): %s' % ituPath)
     if not os.path.exists(outDir):
         try:
             os.makedirs(outDir)
@@ -1282,8 +1443,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                     gccExtensions=jobSpec.gccExtensions
                     )
     myDestFile = os.path.join(outDir, tuFileName(ituPath))
-    logging.info('TU in HTML:')
-    logging.info('  %s', myDestFile)
+    logger.info('TU in HTML:')
+    logger.info('  %s', myDestFile)
     myTokCntr, mySetItuLines = Tu2Html.processTuToHtml(
                             myLexer,
                             myDestFile,
@@ -1292,7 +1453,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                             tuIndexFileName(ituPath),  # Path back to the index
                             incItuAnchors=True,
                         )
-    logging.info('preprocessFileToOutput(): Processing TU done.')
+    logger.info('preprocessFileToOutput(): Processing TU done.')
     myFileCountMap = retFileCountMap(myLexer)
     # Write out the HTML for each source file
     for aSrc in sorted(myFileCountMap.keys()):
@@ -1317,8 +1478,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         _dumpMacroEnvDot(myLexer)
     # Macro environment and history
 #     outPath = os.path.join(outDir, macroHistoryFileName(ituPath))
-    logging.info('Macro history to:')
-    logging.info('  %s', outDir)
+    logger.info('Macro history to:')
+    logger.info('  %s', outDir)
     myMacroRefMap, macroHistoryIndexName = MacroHistoryHtml.processMacroHistoryToHtml(
             myLexer,
             outDir,
@@ -1327,8 +1488,8 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         )
     # Write Include graph in SVG
     outPath = os.path.join(outDir, includeGraphFileNameSVG(ituPath))
-    logging.info('Include graph (SVG) to:')
-    logging.info('  %s', outPath)
+    logger.info('Include graph (SVG) to:')
+    logger.info('  %s', outPath)
     IncGraphSVGBase.processIncGraphToSvg(
             myLexer,
             outPath,
@@ -1337,20 +1498,24 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
             '+',
         )
     # Write Include graph in Text
-    logging.info('Writing include graph (TEXT) to:')
-    logging.info('  %s', outPath)
+    logger.info('Writing include graph (TEXT) to:')
+    logger.info('  %s', outPath)
     writeIncludeGraphAsText(outDir, ituPath, myLexer)
     # Include graph as a dot file
     if jobSpec.includeDOT:
-        logging.info('Writing include graph (DOT) to:')
-        logging.info('  %s', outPath)
+        logger.info('Writing include graph (DOT) to:')
+        logger.info('  %s', outPath)
         hasIncGraphDot = writeIncludeGraphAsDot(outDir, ituPath, myLexer)
+        logger.info('Writing macro dependency graph (DOT) to:')
+        logger.info('  %s', outPath)
+        hasMacroDependencyGraphDot = writeMacroDependencyGraphAsDot(outDir, ituPath, myLexer)
     else:
         hasIncGraphDot = False
+        hasMacroDependencyGraphDot = False
     # Write Conditional compilation graph in HTML
     outPath = os.path.join(outDir, includeGraphFileNameCcg(ituPath))
-    logging.info('Conditional compilation graph in HTML:')
-    logging.info('  %s', outPath)
+    logger.info('Conditional compilation graph in HTML:')
+    logger.info('  %s', outPath)
     CppCondGraphToHtml.processCppCondGrphToHtml(
             myLexer,
             outPath,
@@ -1360,9 +1525,9 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
     # This is an index for the TU
     total_files, total_lines, total_bytes = writeTuIndexHtml(
         outDir, ituPath, myLexer, myFileCountMap, myTokCntr,
-        hasIncGraphDot, macroHistoryIndexName
+        hasIncGraphDot, macroHistoryIndexName, hasMacroDependencyGraphDot,
     )
-    logging.info('Done: %s', ituPath)
+    logger.info('Done: %s', ituPath)
     # Write ITU HTML i.e. HTMLise the original files
     # Create a CppCondGraphVisitorConditionalLines
     myCcgvcl = CppCond.CppCondGraphVisitorConditionalLines()
@@ -1371,7 +1536,7 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
         try:
             # Could be 'Unnamed Pre-include'
             if aSrc != PpLexer.UNNAMED_FILE_NAME:
-                logging.info('ITU in HTML: .../%s', os.path.basename(aSrc))
+                logger.info('ITU in HTML: .../%s', os.path.basename(aSrc))
                 ItuToHtml.ItuToHtml(
                     aSrc,
                     outDir,
@@ -1381,17 +1546,31 @@ def preprocessFileToOutput(ituPath, outDir, jobSpec):
                     ituToTuLineSet=mySetItuLines if aSrc == ituPath else None,
                 )
         except ItuToHtml.ExceptionItuToHTML as err:
-            logging.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
+            logger.error('Can not write ITU "%s" to HTML: %s', aSrc, str(err))
     indexPath = writeIndexHtml(
         [ituPath, ], outDir, jobSpec,
         time_start, total_files, total_lines, total_bytes)
-    logging.info('preprocessFileToOutput(): %s DONE' % ituPath)
+    logger.info('preprocessFileToOutput(): %s DONE' % ituPath)
     # Return the path to the ITU and to the index.html path for consolidation
     # by the caller - to be used in multiprocessing.
     return PpProcessResult(
         ituPath, indexPath, tuIndexFileName(ituPath),
         total_files, total_lines, total_bytes
     )
+
+
+def split_defines_into_simple_dict(defines: typing.List[str]) -> typing.Dict[str, str]:
+    ret = {}
+    for d in defines:
+        define_split = d.split('=')
+        if len(define_split) == 2:
+            ret[define_split[0]] = define_split[1] + '\n'
+        elif len(define_split) == 1:
+            ret[define_split[0]] = '\n'
+        else:
+            raise ValueError('Can not read macro definition: %s' % d)
+    return ret
+
 
 def main():
     """Processes command line to preprocess a file or a directory.
@@ -1459,25 +1638,27 @@ directories. Zero uses number of native CPUs [%d].
     parser.add_argument("-t", "--dot", action="store_true", dest="include_dot",
                          default=False,
                       help="""Write an DOT include dependency table and execute DOT
-on it to create a SVG file. [default: %(default)s]""")
+on it to create a SVG file (for includes and macro dependencies). [default: %(default)s]""")
     parser.add_argument("-G", action="store_true", dest="gcc_extensions",
                          default=False,
                       help="""Support GCC extensions. Currently only #include_next. [default: %(default)s]""")
     parser.add_argument(dest="path", nargs=1, help="Path to source file or directory.")
     Cpp.addStandardArguments(parser)
     args = parser.parse_args()
+    args.output = os.path.abspath(args.output)
     # print(' ARGS '.center(75, '-'))
     # print(args)
     # print(' END: ARGS '.center(75, '-'))
     # exit()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     inPath = args.path[0]
+
     if args.jobs != 1 and os.path.isdir(inPath):
         # Multiprocessing
-        logFormat = '%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
+        logFormat = '%(asctime)s - %(filename)24s#%(lineno)-4d - %(levelname)-8s [%(process)5d] %(message)s'
     else:
-        logFormat = '%(asctime)s %(levelname)-8s [%(process)5d] %(message)s'
+        logFormat = '%(asctime)s - %(filename)24s#%(lineno)-4d - %(levelname)-8s %(message)s'
     logging.basicConfig(level=args.loglevel,
                     format=logFormat,
                     # datefmt='%y-%m-%d % %H:%M:%S',
@@ -1497,20 +1678,16 @@ on it to create a SVG file. [default: %(default)s]""")
     else:
         myHeap = None
     # Create objects to pass to pre-processor
+    # System include paths
+    sys_inc_paths = []
+    if args.sys_auto_lang:
+        sys_inc_paths = IncludeHandler.get_platform_system_include_paths(args.sys_auto_lang)
+    sys_inc_paths.extend(args.incSys)
     myIncH = IncludeHandler.CppIncludeStdOs(
-                    theUsrDirs=args.incUsr or [],
-                    theSysDirs=args.incSys or [],
+        theUsrDirs=args.incUsr or [],
+        theSysDirs=sys_inc_paths,
     )
-    preDefMacros = {}
-    if args.predefines:
-        for d in args.predefines:
-            _tup = d.split('=')
-            if len(_tup) == 2:
-                preDefMacros[_tup[0]] = _tup[1] + '\n'
-            elif len(_tup) == 1:
-                preDefMacros[_tup[0]] = '\n'
-            else:
-                raise ValueError('Can not read macro definition: %s' % d)
+    preDefMacros = split_defines_into_simple_dict(args.predefines)
     # Create the job specification
     jobSpec = MainJobSpec(
         incHandler=myIncH,
@@ -1541,7 +1718,7 @@ on it to create a SVG file. [default: %(default)s]""")
             numJobs=args.jobs,
             )
     else:
-        logging.fatal('%s is neither a file or a directory!' % inPath)
+        logger.fatal('%s is neither a file or a directory!' % inPath)
         return 1
     if args.heap and myHeap is not None:
         print('Dump of heap:')
@@ -1551,7 +1728,7 @@ on it to create a SVG file. [default: %(default)s]""")
         print('Dump of heap byrcs:')
         print(h.byrcs)
         print()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0

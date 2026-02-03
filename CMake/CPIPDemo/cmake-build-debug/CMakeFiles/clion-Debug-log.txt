@@ -1,0 +1,4 @@
+"/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=/Users/engun/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-1/223.8836.42/CLion.app/Contents/bin/ninja/mac/ninja" -G Ninja -S /Users/engun/Documents/workspace/cpip/CMake/CPIPDemo -B /Users/engun/Documents/workspace/cpip/CMake/CPIPDemo/cmake-build-debug
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/engun/Documents/workspace/cpip/CMake/CPIPDemo/cmake-build-debug

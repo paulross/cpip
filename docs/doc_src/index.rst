@@ -3,13 +3,13 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to CPIP's documentation!
+CPIP's Documentation
 ======================================
 
 Contents:
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     readme
     installation
@@ -17,9 +17,14 @@ Contents:
     examples/examples
     cmd_line_tools/index
     tutorial/index
-    ref/index
+    TODO_C23
+    c_standards
+    cmake_build
+    IncrementalBuild
     usage
     contributing
+    ref/index_cli
+    ref/index_lib
     authors
     history
 

@@ -18,7 +18,7 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
-"""Provides a means of re-interpreting the coordinate system when plotting
+r"""Provides a means of re-interpreting the coordinate system when plotting
 trees so that the the tree root can be top/left/bottom/right and the child
 order plotted anti-clockwise or clockwise.
 

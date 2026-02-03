@@ -148,13 +148,11 @@ START_COLUMN = 1
 FileLine = collections.namedtuple(
     'FileLine',
     'fileId lineNum',
-    verbose=False,
     )
 
 FileLineCol = collections.namedtuple(
     'FileLineCol',
     FileLine._fields + ('colNum',),
-    verbose=False,
     )
 
 class LogicalPhysicalLineMap(object):

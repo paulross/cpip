@@ -120,7 +120,10 @@ class ListAsGenerator(object):
         # Optional continuation
         if self._gen is not None:
             while 1:
-                r = yield next(self._gen)
+                try:
+                    r = yield next(self._gen)
+                except (StopIteration, RuntimeError):
+                    return
                 # See comments above for the handling of r
                 if r is not None:
                     yield None

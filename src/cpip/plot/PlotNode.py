@@ -18,7 +18,7 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
-"""Bounding Boxes
+r"""Bounding Boxes
 =========================
 
 Legend for the drawing below: ::

@@ -1,25 +1,29 @@
-Processing: proj/src/main.cpp
-(True, '')
-...
-(True, '')
-(True, 'defined(LANG_SUPPORT) && defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) && defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) && defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) && defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) && defined(FRENCH)')
-(True, 'defined(LANG_SUPPORT) && defined(FRENCH)')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && defined(LANG_SUPPORT) && defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && defined(LANG_SUPPORT) && defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && defined(LANG_SUPPORT) && defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && defined(LANG_SUPPORT) && defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && defined(LANG_SUPPORT) && defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && defined(LANG_SUPPORT) && defined(AUSTRALIAN))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && !(defined(LANG_SUPPORT) && defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && !(defined(LANG_SUPPORT) && defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && !(defined(LANG_SUPPORT) && defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && !(defined(LANG_SUPPORT) && defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && !(defined(LANG_SUPPORT) && defined(AUSTRALIAN)))')
-(False, '(!(defined(LANG_SUPPORT) && defined(FRENCH)) && !(defined(LANG_SUPPORT) && defined(AUSTRALIAN)))')
-(True, '')
-...
-(True, '')
+$ python docs/doc_src/tutorial/demo/cpip_05.py docs/doc_src/tutorial/demo/proj/src/main.c
+Processing: docs/doc_src/tutorial/demo/proj/src/main.c
+"Unsupported compiler detected" at line=81, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h"
+Unsupported architecture at line=913, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h"
+architecture not supported at line=36, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/machine/_types.h"
+
+typedef __int64_t __darwin_blkcnt_t;
+typedef __int32_t __darwin_blksize_t;
+typedef __int32_t __darwin_dev_t;
+typedef unsigned int __darwin_fsblkcnt_t;
+typedef unsigned int __darwin_fsfilcnt_t;
+typedef __uint32_t __darwin_gid_t;
+typedef __uint32_t __darwin_id_t;
+typedef __uint64_t __darwin_ino64_t;
+
+8<---- Snip ---->8
+
+typedef int __darwin_nl_item;
+typedef int __darwin_wctrans_t;
+architecture not supported at line=39, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/machine/types.h"
+typedef unsigned long __darwin_wctype_t;
+typedef __darwin_va_list va_list;
+
+8<---- Snip ---->8
+
+int main(int argc, char **argv) {
+printf("Bonjour tout le monde\n");
+return 0;
+}

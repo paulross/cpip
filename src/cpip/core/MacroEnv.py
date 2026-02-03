@@ -39,6 +39,8 @@ from cpip.core import PpWhitespace
 from cpip.util.ListGen import ListAsGenerator
 from cpip.util.Tree import DuplexAdjacencyList
 
+logger = logging.getLogger(__file__)
+
 class ExceptionMacroEnv(ExceptionCpip):
     """Exception when handling MacroEnv object."""
     pass
@@ -232,7 +234,7 @@ class MacroEnv(object):
         return self._expandedSet.issubset(set(self._defineMap.keys()))
 
     def _debugTokenStream(self, thePrefix, theArg=''):
-        """Writes to logging.debug() an interpretation of the token stream
+        """Writes to logger.debug() an interpretation of the token stream
         provided by theList. It will be preceded by the debugMarker value
         (if set) and that will always be cleared."""
         assert(self._enableTrace)
@@ -249,10 +251,10 @@ class MacroEnv(object):
                 'Unknown argument type %s, %s passed to _debugTokenStream()' \
                             % (type(theArg), theArg))
         if self.debugMarker is not None:
-            logging.debug(self.debugMarker)
+            logger.debug(self.debugMarker)
         self.debugMarker = None
         stackPrefix = ' ' * len(traceback.extract_stack())
-        logging.debug('[%2d]%s%s: %s' \
+        logger.debug('[%2d]%s%s: %s' \
                       % (len(stackPrefix), stackPrefix, thePrefix, debugStr))
 
     ###############
@@ -489,14 +491,33 @@ class MacroEnv(object):
         *theFileLineCol*
             Is a :py:class:`.FileLocation.FileLineCol object`.
         """
-        assert(len(self._expandedSet) == 0)
+        assert len(self._expandedSet) == 0
         try:
-            retVal = self._expand(theTtt, theGen, theFileLineCol)
+            result_initial = self._expand(theTtt, theGen, theFileLineCol)
         finally:
             # Zap the expanded set so that the next replace() call will not assert
             self._expandedSet = set()
-        assert(len(self._expandedSet) == 0)
-        return retVal
+        assert len(self._expandedSet) == 0
+        return result_initial
+        # # One last heave at re-examination.
+        # # This solves the re-examination problem identified in the
+        # # C99 Rationale 6.10.3.4 "Rescanning and further replacement"
+        # # But fails on many other tests as it does over-expansion.
+        # for tok in result_initial:
+        #     if tok.isIdentifier():
+        #         tok._canReplace = True
+        # list_as_gen = ListAsGenerator(result_initial, None)
+        # token_generator = next(list_as_gen)
+        # result = []
+        # for tok in token_generator:
+        #     try:
+        #         expanded_tokens = self._expand(tok, token_generator, theFileLineCol)
+        #         result.extend(expanded_tokens)
+        #     finally:
+        #         # Zap the expanded set so that the next replace() call will not assert
+        #         self._expandedSet = set()
+        #     assert(len(self._expandedSet) == 0)
+        # return result
 
     def _expand(self, theTtt, theGen, theFileLineCol):
         """Recursive call to expand macro symbols.
@@ -596,7 +617,12 @@ class MacroEnv(object):
         myListAsGen = ListAsGenerator(rTokS, theGen)
         myGen = next(myListAsGen)
         while not myListAsGen.listIsEmpty:
-            reexTokS += self._expand(next(myGen), myGen, theFileLineCol)
+            # Python 3.7 turned StopIteration into a RuntimeError.
+            # https://stackoverflow.com/questions/51700960/runtimeerror-generator-raised-stopiteration-every-time-i-try-to-run-app
+            try:
+                reexTokS += self._expand(next(myGen), myGen, theFileLineCol)
+            except StopIteration:
+                break
         self._expandedSet.remove(theTtt.t)
         if self._enableTrace:
             self._debugTokenStream(

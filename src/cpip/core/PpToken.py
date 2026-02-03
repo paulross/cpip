@@ -61,15 +61,18 @@ class ExceptionCpipTokenIllegalMerge(
 #: Types of preprocessing-token
 #: From: :title-reference:`ISO/IEC 14882:1998(E) 2.4 Preprocessing tokens [lex.pptoken]`
 #: and :title-reference:`ISO/IEC 9899:1999 (E) 6.4.7 Header names`
+#:
 #: .. note::
-#: 
+#:
 #:    Para 3 of the latter says that: "A header name preprocessing token is
 #:    recognized only within a ``#include`` preprocessing directive."
 #:
 #:    So in other contexts a header-name that is a q-char-sequence should be treated
 #:    as a string-literal
 #:
-#: This produces interesting issues in this case::
+#: This produces interesting issues in this case:
+#:
+#: .. code-block:: c
 #:
 #:     #define str(s) # s
 #:     #include str(foo.h)

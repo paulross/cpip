@@ -49,6 +49,8 @@ from cpip.core import PragmaHandler
 
 from cpip.util import ListGen
 
+logger = logging.getLogger(__file__)
+
 ######################
 # Section: Exceptions.
 ######################
@@ -182,7 +184,7 @@ class PpLexer(object):
     ###########################################    
     def __init__(self,
                  tuFileId,
-                 includeHandler,
+                 includeHandler: IncludeHandler.CppIncludeStd,
                  preIncFiles=None,
                  diagnostic=None,
                  pragmaHandler=None,
@@ -344,7 +346,7 @@ class PpLexer(object):
         :raises: ``AttributeError, StopIteration``
         """
         for i, aFileObj in enumerate(self._preIncFiles):
-            logging.debug('PpLexer._initialisePreIncludes() [%d] %s', i, aFileObj) 
+            logger.debug('PpLexer._initialisePreIncludes() [%d] %s', i, aFileObj)
             aFileObj.seek(0)
             try:
                 fileId = aFileObj.name
@@ -409,7 +411,7 @@ class PpLexer(object):
 #                    #self._diagnostic.error(str(err))
 #                    raise ExceptionPpLexerPreInclude('Failed to process pre-include "%s"' % myFpo.filePath)
 #===============================================================================
-            logging.debug('PpLexer._initialisePreIncludes() [%d] - Done', i) 
+            logger.debug('PpLexer._initialisePreIncludes() [%d] - Done', i)
             
     def finalise(self):
         """Finalisation, may raise any Exception.
@@ -418,7 +420,12 @@ class PpLexer(object):
 
         :raises: ``Exception`` - Any exception."""
         self._includeHandler.finalise()
-        self._condStack.close()
+        try:
+            self._condStack.close()
+        except CppCond.ExceptionCppCond as err:
+            # TODO: Fix this which is needed when processing Linux cpu.c.
+            # TODO: The conditional stack should always close gracefully.
+            logger.exception('Conditional closure failure: %s', err)
         # Note: We don't do any closure/finalisation on self._condCompGraph
         # as we rely on self._condStack to complain if the conditional
         # directives are incomplete
@@ -549,7 +556,7 @@ class PpLexer(object):
                 for optionalLineFileToken in self._pptPostPop():
                     yield optionalLineFileToken
             except Exception as err:
-                logging.fatal('PpLexer.ppTokens(): Encountered exception in finally clause: %s' % str(err))
+                logger.fatal('PpLexer.ppTokens(): Encountered exception in finally clause: %s' % str(err))
                 pass
         # TODO: should finalise be within the finally?
         self.finalise()
@@ -590,7 +597,10 @@ class PpLexer(object):
             while 1:
                 # Take the position just before the token
                 myFlc = self.fileLineCol
-                myTtt = next(theGen)
+                try:
+                    myTtt = next(theGen)
+                except StopIteration:
+                    return
                 # Now we evaluate the token in our context
                 # 1. Is it a (potiential) directive?
                 # 2. Otherwise is it unconditional?
@@ -667,7 +677,7 @@ class PpLexer(object):
                 # Update the FileIncludeStack
                 self._diagnosticDebugMessage('_genPpTokens() END')
             except Exception as err:
-                logging.fatal('PpLexer._genPpTokensRecursive(): Encountered exception in finally clause: %s' % str(err))
+                logger.fatal('PpLexer._genPpTokensRecursive(): Encountered exception in finally clause: %s' % str(err))
                 pass
 
     #=========================================
@@ -932,7 +942,10 @@ class PpLexer(object):
             -- Next non-whitespace token or whitespace that contains a newline.
         """
         while 1:
-            myTtt = next(theGen)
+            try:
+                myTtt = next(theGen)
+            except StopIteration:
+                return
             if not myTtt.isWs() \
             or self._wsHandler.isBreakingWhitespace(myTtt.t):
                 return myTtt
@@ -957,7 +970,10 @@ class PpLexer(object):
             # Take the position just before we read the token to give it
             # to self._macroEnv.replace(...)
             myFlc = self.fileLineCol
-            myTtt = next(theGen)
+            try:
+                myTtt = next(theGen)
+            except StopIteration:
+                return
             if self._wsHandler.isBreakingWhitespace(myTtt.t):
                 retList.append(myTtt)
                 break
@@ -992,9 +1008,10 @@ class PpLexer(object):
         :returns: ``int`` -- Count of non-whitespace tokens.
         """
         retCount = 0
-        for aTok in theTokS:
-            if not aTok.isWs():
-                retCount += 1
+        if theTokS is not None:
+            for aTok in theTokS:
+                if not aTok.isWs():
+                    retCount += 1
         return retCount
     
     def _retListReplacedTokens(self, theTokS):
@@ -1172,9 +1189,12 @@ class PpLexer(object):
             if len(macroReplacedTokS) > 0:
                 myTtt = macroReplacedTokS.pop(0)
             else:
-                myTtt = next(theGen)
+                try:
+                    myTtt = next(theGen)
+                except StopIteration:
+                    return
                 rawTokS.append(myTtt)
-            logging.debug('_retDefinedSubstitution(): %s' % myTtt)
+            logger.debug('_retDefinedSubstitution(): %s' % myTtt)
             if self._wsHandler.isBreakingWhitespace(myTtt.t):
                 self._appendTokenMergingWhitespace(repTokS, myTtt)
                 break
@@ -1247,7 +1267,7 @@ class PpLexer(object):
                             % (myTokStr, str(err)),
                         self._fis.fileLineCol)
             except CppDiagnostic.ExceptionCppDiagnostic as diag_err:
-                logging.error('Trapping diagnostic exception: %s' % str(diag_err))
+                logger.error('Trapping diagnostic exception: %s' % str(diag_err))
             # We need to raise here as we can not know the state of the conditional stack.
             # Say we have and if/else then within the else that is another if/else and _that_ if fails, for example
             # if 1 && FOO when FOO is defined but not ascribed a value the eval() will fail since eval('1 and ') will
@@ -1476,7 +1496,7 @@ class PpLexer(object):
                 self._condCompGraph.oEndif(theFlc, self._tuIndex, myEndifState)
                 yield PpToken.PpToken('\n', 'whitespace')
             except Exception as err:
-                logging.fatal('PpLexer._cppEndif(): Encountered exception in finally clause: %s' % str(err))
+                logger.fatal('PpLexer._cppEndif(): Encountered exception in finally clause: %s' % str(err))
                 pass
     #======================================
     # End: Handling conditional processing.
@@ -1544,7 +1564,7 @@ class PpLexer(object):
         # NOTE: Error on #include\n
         # <stdin>:1:13: #include expects "FILENAME" or <FILENAME>
         myHeaderNameTok = self._retHeaderName(theGen)
-        logging.debug('#include %s START', myHeaderNameTok)
+        logger.debug('#include %s START', myHeaderNameTok)
         # We have to process the #include statement no matter what however
         # we only act on it (including errors) if we are conditionally
         # required to
@@ -1558,7 +1578,7 @@ class PpLexer(object):
                 if self._condStack.isTrue() or self._condLevel > 1:
                     try:
                         myFpo = theFileIncludeFunction(myHeaderNameTok.t)
-                        logging.debug('Include search for %s finds %s', myHeaderNameTok.t, myFpo)
+                        logger.debug('Include search for %s finds %s', myHeaderNameTok.t, myFpo)
                         if myFpo is not None:
                             # Note: This call also handles self._fileStack.append()
                             myGen = self._pptPush(myFpo)
@@ -1576,7 +1596,7 @@ class PpLexer(object):
                                     for optionalLineFileToken in self._pptPostPop():
                                         yield optionalLineFileToken
                                 except Exception as err:
-                                    logging.fatal('PpLexer._cppInclude(): [0] Encountered exception in finally clause : %s' % str(err))
+                                    logger.fatal('PpLexer._cppInclude(): [0] Encountered exception in finally clause : %s' % str(err))
                         else:
                             # Failure to find #included file
                             # <stdin>:1:24: asdsadasda.h: No such file or directory
@@ -1584,7 +1604,7 @@ class PpLexer(object):
                                 '%s: No such file or directory' % myHeaderNameTok.t
                                 )
                     except IncludeHandler.ExceptionCppInclude as err:
-                        logging.error('Include failed with %s', str(err))
+                        logger.error('Include failed with %s', str(err))
                     finally:
                         # Trap any exception in the finally block otherwise that
                         # may displace an exception generated in the try block above.
@@ -1598,11 +1618,11 @@ class PpLexer(object):
                             #print '    Line number now:', self._fileLocator.lineNum
                             #print '_genPpTokens() exit'
                         except Exception as err:
-                            logging.fatal('PpLexer._cppInclude(): [1] Encountered exception in finally clause : %s' % str(err))
-        #logging.debug('#include %s END' % str(myHeaderNameTok))#.t)
-        #logging.debug('self._fileStack now:\n    %s' % str('\n    '.join(self._fileStack)))
-        #logging.debug('File node    : %s' % self._figr.graph.retLatestNode(self._fileStack))
-        #logging.debug('File location: %s' % str(self._fileLocator))
+                            logger.fatal('PpLexer._cppInclude(): [1] Encountered exception in finally clause : %s' % str(err))
+        #logger.debug('#include %s END' % str(myHeaderNameTok))#.t)
+        #logger.debug('self._fileStack now:\n    %s' % str('\n    '.join(self._fileStack)))
+        #logger.debug('File node    : %s' % self._figr.graph.retLatestNode(self._fileStack))
+        #logger.debug('File location: %s' % str(self._fileLocator))
         self._diagnosticDebugMessage('#include %s END' % str(myHeaderNameTok))
         yield PpToken.PpToken('\n', 'whitespace')
 
@@ -1772,7 +1792,7 @@ class PpLexer(object):
         if self._condStack.isTrue():
             myErrMsg = ''.join([t.t for t in myTokS])
             myErrMsg = myErrMsg.strip()
-            self._diagnostic.error(myErrMsg, theFlc)
+            self._diagnostic.error(f'#error {myErrMsg}', theFlc)
         yield PpToken.PpToken('\n', 'whitespace')
 
     def _cppWarning(self, theGen, theFlc):
@@ -1843,7 +1863,7 @@ class PpLexer(object):
                             for optionalLineFileToken in self._pptPostPop():
                                 yield optionalLineFileToken
                         except Exception as err:
-                            logging.fatal('PpLexer._cppPragma(): Encountered exception in finally clause: %s' % str(err))
+                            logger.fatal('PpLexer._cppPragma(): Encountered exception in finally clause: %s' % str(err))
                             pass
             except PragmaHandler.ExceptionPragmaHandler as err:
                 self._diagnostic.undefined(str(err), theFlc)

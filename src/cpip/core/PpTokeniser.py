@@ -18,7 +18,7 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
-"""Performs translation phases 0, 1, 2, 3 on C/C++ source code.
+r"""Performs translation phases 0, 1, 2, 3 on C/C++ source code.
 
 Translation phases from :title-reference:`ISO/IEC 9899:1999 (E)`:
 
@@ -128,23 +128,28 @@ COMMENT_REPLACEMENT = ' '
 #: Map of Digraph alternates
 DIGRAPH_TABLE = {
     '<%'        : '{',
-    'and'       : '&&',
-    'and_eq'    : '&=',
     '%>'        : '}',
-    'bitor'     : '|',
-    'or_eq'     : '|=',
     '<:'        : '[',
-    'or'        : '||',
-    'xor_eq'    : '^=',
     ':>'        : ']',
-    'xor'       : '^',
-    'not'       : '!',
     '%:'        : '#',
-    'compl'     : '~',
-    'not_eq'    : '!=',
     '%:%:'      : '##',
-    'bitand'    : '&',
 }
+#: Imitate the contents of 7.9 Alternative spellings <iso646.h>
+#: SO/IEC 9899:TC3 Committee Draft — September 7, 2007 WG14/N1256 Section 7.9
+ISO646_TABLE = {
+    'and': '&&',
+    'and_eq': '&=',
+    'bitor': '|',
+    'or_eq': '|=',
+    'or': '||',
+    'xor_eq': '^=',
+    'xor': '^',
+    'not': '!',
+    'compl': '~',
+    'not_eq': '!=',
+    'bitand': '&',
+}
+
 #: Map of Trigraph alternates after the ?? prefix
 TRIGRAPH_TABLE = {
     '='       : '#',
@@ -350,6 +355,10 @@ assert(len(CHAR_SET_MAP['lex.charset']['source character set']) == LEN_SOURCE_CH
 for k in DIGRAPH_TABLE.keys():
     assert(k in CHAR_SET_MAP['lex.op']['operators']), \
         "Digraph %s not in CHAR_SET_MAP['lex.op']['operators']" % k 
+
+for k in ISO646_TABLE.keys():
+    assert(k in CHAR_SET_MAP['lex.op']['operators']), \
+        "Digraph %s not in CHAR_SET_MAP['lex.op']['operators']" % k
 
 #: Create StrTree objects for fast look up for words
 CHAR_SET_STR_TREE_MAP = {
@@ -780,10 +789,12 @@ class PpTokeniser(object):
 
         There are no side effects on self.
         """
-        if tok.tt in ('identifier', 'preprocessing-op-or-punc') \
-        and tok.t in DIGRAPH_TABLE:
-            tok.subst(DIGRAPH_TABLE[tok.t], 'preprocessing-op-or-punc')
-        return tok 
+        if tok.tt in ('identifier', 'preprocessing-op-or-punc'):
+            if tok.t in DIGRAPH_TABLE:
+                tok.subst(DIGRAPH_TABLE[tok.t], 'preprocessing-op-or-punc')
+            elif tok.t in ISO646_TABLE:
+                tok.subst(ISO646_TABLE[tok.t], 'preprocessing-op-or-punc')
+        return tok
            
 #===============================================================================
 #    def _translateDigraphs(self, theLineS):
@@ -809,6 +820,12 @@ class PpTokeniser(object):
 #                    #print 'TRACE: _translateDigraphs() mySlice %s' % mySlice
 #                    if DIGRAPH_TABLE.has_key(mySlice):
 #                        theRepl = DIGRAPH_TABLE[mySlice]
+#                        #print 'TRACE: digraph replacement was: "%s" now: "%s"' \
+#                        #    % (mySlice, theRepl)
+#                        myMr.addLineColRep(lineNum, i, mySlice, theRepl)
+#                        self._fileLocator.substString(len(mySlice), len(theRepl))
+#                    elif ISO646_TABLE.has_key(mySlice):
+#                        theRepl = ISO646_TABLE[mySlice]
 #                        #print 'TRACE: digraph replacement was: "%s" now: "%s"' \
 #                        #    % (mySlice, theRepl)
 #                        myMr.addLineColRep(lineNum, i, mySlice, theRepl)
@@ -860,7 +877,7 @@ class PpTokeniser(object):
                 # with the iteration...
 
     def genLexPptokenAndSeqWs(self, theCharS):
-        """Generates a sequence of PpToken objects. Either:
+        r"""Generates a sequence of PpToken objects. Either:
         
             * a sequence of whitespace (comments are replaces with a single whitespace).
             * a pre-processing token.
@@ -1073,28 +1090,15 @@ class PpTokeniser(object):
 
         :returns: ``int`` -- The index of the find or -1 if none found.
         """
+        if isinstance(theBuf, (list, tuple)):
+            theBuf = ''.join(theBuf)
         if len(theWord) > 0:
-            i = 0
-            # Find first letter
-            while i < theLen:
-                if theBuf[i] != theWord[0]:
-                    i += 1
-                else:
-                    break
-            # If found then find rest of letters
-            if i < theLen and theBuf[i] == theWord[0]:
-                j = 0
-                while i+j < theLen \
-                and j < len(theWord) \
-                and theBuf[i+j] == theWord[j]:
-                    j += 1
-                if j == len(theWord):
-                    return i
+            return theBuf[:theLen].find(theWord)
         return -1
 
-    #========================
-    # End: Utiltity functions
-    #========================
+    #=======================
+    # End: Utility functions
+    #=======================
 
     """ Generic slice function:
     def _slice...(self, theBuf, theOfs):

@@ -1,0 +1,15 @@
+$ python docs/doc_src/tutorial/demo/cpip_06.py docs/doc_src/tutorial/demo/proj/src/main.c
+Processing: docs/doc_src/tutorial/demo/proj/src/main.c
+
+typedef __signed char __int8_t;
+typedef unsigned char __uint8_t;
+typedef short __int16_t;
+typedef unsigned short __uint16_t;
+typedef int __int32_t;
+
+8<---- Snip ---->8
+
+int main(int argc, char **argv) {
+printf("Bonjour tout le monde\n");
+return 0;
+}

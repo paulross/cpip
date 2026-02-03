@@ -38,6 +38,8 @@ from cpip.util import XmlWrite
 from cpip.util import HtmlUtils
 from cpip import TokenCss
 
+logger = logging.getLogger(__file__)
+
 class ExceptionItuToHTML(ExceptionCpip):
     pass
     
@@ -136,9 +138,14 @@ the macro page.""")
                         self._incAndWriteLine(myS)
                         for t, tt in myItt.genTokensKeywordPpDirective():
                             self._handleToken(myS, t, tt)
-        except (IOError) as err:
-            raise ExceptionItuToHTML('%s line=%d, col=%d' \
+        # TODO: Rather than catching an IOError we catch all exceptions because of the off-by one error
+        # TODO: causing a ExceptionMultiPass:
+        # TODO: "/Users/engun/GitHub/torvalds/linux/tools/include/asm/alternative.h" to HTML:
+        # TODO: Type: <class 'cpip.util.MultiPassString.ExceptionMultiPass'> Overlap: from 206 to 207 line=8, col=4
+        except (Exception) as err:
+            raise ExceptionItuToHTML('Type: %s %s line=%d, col=%d' \
                         % (
+                            type(err),
                             str(err),
                             myItt.fileLocator.lineNum,
                             myItt.fileLocator.colNum,
@@ -159,7 +166,7 @@ the macro page.""")
 
         :returns: ``NoneType``
         """
-        logging.debug('_handleToken(): "%s", %s', t, tt)
+        logger.debug('_handleToken(): "%s", %s', t, tt)
         if tt == 'whitespace':
             self._writeTextWithNewlines(theS, t, None)
         elif tt in ('C comment', 'C++ comment'):
@@ -167,6 +174,7 @@ the macro page.""")
         elif False and tt == 'preprocessing-op-or-punc':
             theS.characters(t)
         else:
+            # TODO: With #include files (class="n") link to their page as we do with macros.
             if tt == 'identifier' and t in self._macroRefMap:
                 # As we can not definitively determine which particular
                 # definition of the macro is relevant for this source file
@@ -228,7 +236,7 @@ the macro page.""")
             try:
                 lineIsCompiled = self._cppCondMap.isCompiled(self._fpIn, self._lineNum)
             except KeyError:
-                logging.error('_incAndWriteLine(): Ambiguous compilation: path: "{!r:s}" Line: {!r:s}'.format(self._fpIn, self._lineNum))
+                logger.error('_incAndWriteLine(): Ambiguous compilation: path: "{!r:s}" Line: {!r:s}'.format(self._fpIn, self._lineNum))
                 pass
             else:
                 classAttr = self._condCompClassMap[lineIsCompiled]
@@ -280,7 +288,7 @@ Converts a source code file to HTML in the output directory."""
             help="Log Level (debug=10, info=20, warning=30, error=40, critical=50) [default: %default]"
         )
     opts, args = optParser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     logging.basicConfig(level=opts.loglevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -291,7 +299,7 @@ Converts a source code file to HTML in the output directory."""
         return 1
     TokenCss.writeCssToDir(args[1])
     ItuToHtml(args[0], args[1])
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0

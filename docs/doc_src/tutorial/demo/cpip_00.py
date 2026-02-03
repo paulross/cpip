@@ -1,8 +1,11 @@
 import sys
 
-def main():
+
+def main() -> int:
     print('Processing:', sys.argv[1])
     # Your code here
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    exit(main())

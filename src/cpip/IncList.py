@@ -85,6 +85,8 @@ from cpip.core import CppDiagnostic
 from cpip.core import FileIncludeGraph
 from cpip.core import PragmaHandler
 
+logger = logging.getLogger(__file__)
+
 def retIncludedFileSet(theLexer):
     """Returns a set of included file paths from a lexer."""
     myFigr = theLexer.fileIncludeGraphRoot
@@ -118,10 +120,10 @@ def preProcessForIncludes(theItu, incUsr, incSys, theDefineS, preIncS, keepGoing
                     diagnostic=myDiag,
                     pragmaHandler=myPh,
                     )
-    logging.info('Preprocessing TU: %s' % theItu)
+    logger.info('Preprocessing TU: %s' % theItu)
     for t in myLexer.ppTokens():
         pass
-    logging.info('Preprocessing TU done.')
+    logger.info('Preprocessing TU done.')
     retVal = retIncludedFileSet(myLexer)
     # Remove any artificial files
     try:
@@ -173,7 +175,7 @@ Preprocess the files and lists included files."""
                       help="""Add macro defintions of the form name<=defintion>.
                       These are introduced into the environment before any pre-include. [default: %default]""")
     opts, args = optParser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     logging.basicConfig(level=opts.loglevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
@@ -194,7 +196,7 @@ Preprocess the files and lists included files."""
                     opts.ignore_pragma,
                 )
             )
-        logging.info('All done.')
+        logger.info('All done.')
         myFileS = list(myFileSet)
         myFileS.sort()
         message = ' Included files [%d] ' % len(myFileS)
@@ -205,7 +207,7 @@ Preprocess the files and lists included files."""
         optParser.print_help()
         optParser.error("No arguments!")
         return 1
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0
@@ -213,4 +215,3 @@ Preprocess the files and lists included files."""
 if __name__ == '__main__':
     #multiprocessing.freeze_support()
     sys.exit(main())
-    

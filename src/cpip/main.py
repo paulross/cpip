@@ -31,6 +31,8 @@ from optparse import OptionParser#, check_choice
 #import subprocess
 import multiprocessing
 
+logger = logging.getLogger(__file__)
+
 __version__ = '0.1.0'
 
 def unitTest():
@@ -70,15 +72,15 @@ def main():
     optParser.add_option("-P", "--pre", action="append", dest="incPre",
                       help="Add pre-include file path. [default: %default]")
     opts, args = optParser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     logging.basicConfig(level=opts.loglevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    logging.critical('Test logging message')
-    logging.critical('opts: %s' % opts)
-    logging.critical('args: %s' % args)
+    logger.critical('Test logging message')
+    logger.critical('opts: %s' % opts)
+    logger.critical('args: %s' % args)
     if opts.unit_test:
         unitTest()
     if len(args) > 0:
@@ -89,7 +91,7 @@ def main():
         optParser.print_help()
         optParser.error("No arguments!")
         return 1
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0
@@ -97,4 +99,3 @@ def main():
 if __name__ == '__main__':
     #multiprocessing.freeze_support()
     sys.exit(main())
-    

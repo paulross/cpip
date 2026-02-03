@@ -97,8 +97,8 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
                 else:
                     #self._fileLocator.substString(1, 8)
                     r = '\\U%08X' % myOrd
-        except StopIteration:
-            pass
+        except (StopIteration, RuntimeError):
+            return
         return i, 'ucn', r
     
     def trigraph(self, theGen):
@@ -112,8 +112,8 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
                     i = self.TRIGRAPH_SIZE
                 except KeyError:
                     pass
-        except StopIteration:
-            pass
+        except (StopIteration, RuntimeError):
+            return
         #print 'TRACE:', i, 'trigraph', r
         return i, 'trigraph', r
     
@@ -198,7 +198,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         return i, 'cxxComment', r
 
     def _resetStart(self):
-        self._timStart = time.clock()
+        self._timStart = time.perf_counter()
         
     def setUp(self):
         self._resetStart()
@@ -209,7 +209,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
         pass
 
     def tearDown(self):
-        myTime = time.clock() - self._timStart
+        myTime = time.perf_counter() - self._timStart
         sys.stderr.write('Bytes: %8d, time: %8.3f, rate: %8.1f kb/s ... ' \
                          % (self._size, myTime, (self._size / (myTime*1024))))
     
@@ -262,7 +262,7 @@ class TestMaximalMunchSimulPpTokeniserBase(unittest.TestCase):
             yield ''.join(aVal[0])
  
     def genPhase2(self):
-        """Phase 2. Each instance of a backslash character (\) immediately followed by
+        r"""Phase 2. Each instance of a backslash character (\) immediately followed by
         a new-line character is deleted, splicing physical source lines to form
         logical source lines. Only the last backslash on any physical source line
         shall be eligible for being part of such a splice. A source file that is
@@ -364,7 +364,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_01(self):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines:  128"""
@@ -376,7 +376,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_02(self):
         """TestMaximalMunchSimulPpTokeniser_00: Trigraph replacemnt, lines: 1024"""
@@ -388,7 +388,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_10(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines:    1"""
@@ -400,7 +400,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_11(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines:  128"""
@@ -413,7 +413,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
     def test_12(self):
         """TestMaximalMunchSimulPpTokeniser_00:          whitespace, lines: 1024"""
@@ -425,7 +425,7 @@ class TestMaximalMunchSimulPpTokeniser_00(TestMaximalMunchSimulPpTokeniserBase):
         #myResultStr = ''.join([''.join(v[0]) for v in myResult])
         ##print
         ##print myResultStr
-        #self.assertEquals(myResultStr, myLStr)
+        #self.assertEqual(myResultStr, myLStr)
 
 class TestMaximalMunchSimulPpTokeniser_01(TestMaximalMunchSimulPpTokeniserBase):
     def test_00(self):
@@ -624,9 +624,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

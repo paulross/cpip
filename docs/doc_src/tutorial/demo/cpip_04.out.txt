@@ -1,7 +1,8 @@
-Processing: proj/src/main.cpp
+$ python docs/doc_src/tutorial/demo/cpip_04.py docs/doc_src/tutorial/demo/proj/src/main.c
+Processing: docs/doc_src/tutorial/demo/proj/src/main.c
+<stdio.h>: No such file or directory at line=3, col=1 of file "docs/doc_src/tutorial/demo/proj/src/main.c"
 
-int   main ( char   * * argv ,   int   argc ) 
-{ 
-printf ( "Bonjour tout le monde\n" ) ; 
-return   1 ; 
-} 
+int main(int argc, char **argv) {
+printf("Bonjour tout le monde\n");
+return 0;
+}

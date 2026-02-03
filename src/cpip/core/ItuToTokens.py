@@ -34,6 +34,8 @@ from cpip.core import PpTokeniser
 from cpip.util import BufGen
 from cpip.util import MultiPassString
 
+logger = logging.getLogger(__file__)
+
 class ExceptionItuToTokens(ExceptionCpip):
     pass
 
@@ -87,7 +89,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
         prevNonWs = ''
         for t, tt in self.multiPassString.genWords():
             assert(tt in ITU_TOKEN_TYPES), '%s not in %s' % (tt, str(ITU_TOKEN_TYPES))
-            logging.debug('genTokensKeywordPpDirective() "%s", "%s"', t, tt)
+            logger.debug('genTokensKeywordPpDirective() "%s", "%s"', t, tt)
             if tt == 'identifier':
                 # This could be a keyword or a pre-processing directive,
                 # if so then change its type
@@ -125,7 +127,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
 
         :raises: ``IndexError``
         """
-        logging.debug('ItuToTokens._translatePhase_1(): start.')
+        logger.debug('ItuToTokens._translatePhase_1(): start.')
         # Construct a buffer generator
         myBg = BufGen.BufGen(self._mps.genChars())
         self._fileLocator.startNewPhase()
@@ -155,7 +157,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                     self._fileLocator.update(myBg[i])
         except IndexError:
             pass
-        logging.debug('ItuToTokens._translatePhase_1(): end.')
+        logger.debug('ItuToTokens._translatePhase_1(): end.')
 
     def _translatePhase_2(self):
         """Performs translation phase two. This does line continuation markers
@@ -165,7 +167,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
 
         :raises: ``IndexError``
         """
-        logging.debug('ItuToTokens._translatePhase_2(): start.')
+        logger.debug('ItuToTokens._translatePhase_2(): start.')
         # Construct a buffer generator
         myBg = BufGen.BufGen(self._mps.genChars())
         self._fileLocator.startNewPhase()
@@ -190,7 +192,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                     self._fileLocator.update(myBg[i])
         except IndexError:
             pass
-        logging.debug('ItuToTokens._translatePhase_2(): end.')
+        logger.debug('ItuToTokens._translatePhase_2(): end.')
 
     def _translatePhase_3(self):
         """Performs translation phase three. Replaces comments and decomposes
@@ -200,7 +202,7 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
 
         :raises: ``IndexError``
         """
-        logging.debug('ItuToTokens._translatePhase_3(): start.')
+        logger.debug('ItuToTokens._translatePhase_3(): start.')
         # Note this is similar to the code in self.genLexPptokenAndSeqWs()
         ofsIdx = 0
         myBg = BufGen.BufGen(self._mps.genChars())
@@ -248,4 +250,4 @@ class ItuToTokens(PpTokeniser.PpTokeniser):
                 self.fileLocator)
         except IndexError:
             pass
-        logging.debug('ItuToTokens._translatePhase_3(): end.')
+        logger.debug('ItuToTokens._translatePhase_3(): end.')

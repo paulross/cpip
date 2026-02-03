@@ -77,6 +77,8 @@ __author__ = 'Paul Ross'
 __date__ = '2017-09-26'
 __rights__ = 'Copyright (c) 2017 Paul Ross'
 
+logger = logging.getLogger(__file__)
+
 SUB_DIR_FOR_COMMON_FILES = '_common_html'
 FILE_GLOB = '*.html'
 LINK_FORMAT_STR = '<a href="{:s}'
@@ -111,13 +113,13 @@ def _replace_in_file(fpath, text_find, text_repl, nervous_mode, len_root_dir):
     """Reads the contents of the file at fpath, replaces text_from with
     text_repl and writes it back out to the same fpath."""
     if nervous_mode:
-        logging.info(
+        logger.info(
             'Would replace links in "{:s}" swap: "{:s}" for: "{:s}"'.format(
                 fpath[len_root_dir:], text_find, text_repl
             )
         )
     else:
-        logging.debug(
+        logger.debug(
             'Replacing links in "{:s}" swap: "{:s}" for: "{:s}"'.format(
                 fpath[len_root_dir:], text_find, text_repl
             )
@@ -130,22 +132,22 @@ def _replace_in_file(fpath, text_find, text_repl, nervous_mode, len_root_dir):
 
 def _prepare_to_process(root_dir, file_glob):
     """Create a dict {hash : [file_paths, ...], ...} for duplicated files"""
-    logging.info(' Searching '.center(75, "="))
+    logger.info(' Searching '.center(75, "="))
     hash_result = _get_hash_result(root_dir, file_glob)
-    logging.info(
+    logger.info(
         'Hash result: hashes={:d}, files={:d}'.format(
             len(hash_result),
             sum([len(v) for v in hash_result.values()])
         )
     )
     _prune_hash_result(hash_result)
-    logging.info(
+    logger.info(
         'Hash result: hashes={:d}, duplicate files={:d}'.format(
             len(hash_result),
             sum([len(v) for v in hash_result.values()])
         )
     )
-    logging.info(' DONE Searching '.center(75, "="))
+    logger.info(' DONE Searching '.center(75, "="))
     return hash_result
 
 
@@ -158,20 +160,20 @@ def _copy_delete_duplicates_fix_links(hash_result,
     count_deleted = 0
     count_bytes_saved = 0
     # Copy one file and delete all others
-    logging.info(' Copying and deleting '.center(75, "="))
+    logger.info(' Copying and deleting '.center(75, "="))
     for k, v in hash_result.items():
         assert len(v) > 1, '_pruneHashResult(hash_result) not called or failed.'
         # Copy one file
         copy_from = v[0]
         copy_to = os.path.join(common_dir, os.path.basename(v[0]))
         if nervous_mode:
-            logging.info(
+            logger.info(
                 'Would copy "{:s}" to "{:s}"'.format(
                     copy_from[len_root_dir:], copy_to[len_root_dir:]
                 )
             )
         else:
-            logging.debug(
+            logger.debug(
                 'Copying "{:s}" to "{:s}"'.format(
                     copy_from[len_root_dir:], copy_to[len_root_dir:]
                 )
@@ -197,14 +199,14 @@ def _copy_delete_duplicates_fix_links(hash_result,
         # Delete all original files
         for dupe_file_path in v:
             if nervous_mode:
-                logging.info(
+                logger.info(
                     'Would delete "{:s}"'.format(dupe_file_path[len_root_dir:])
                 )
             else:
-                logging.debug('Remove:', dupe_file_path[len_root_dir:])
+                logger.debug('Remove:', dupe_file_path[len_root_dir:])
                 os.remove(dupe_file_path)
             count_deleted += 1
-    logging.info(' DONE Copying and deleting '.center(75, "="))
+    logger.info(' DONE Copying and deleting '.center(75, "="))
     return count_deleted, count_bytes_saved
 
 
@@ -215,13 +217,13 @@ def _rewrite_links_where_files_deleted(root_dir,
                                        len_root_dir):
     """In the directories where we have deleted files rewrite the links to the
     common directory."""
-    logging.info(' Rewriting links '.center(75, "="))
+    logger.info(' Rewriting links '.center(75, "="))
     root_depth = root_dir.count(os.sep)
     count = 1
     for k, v in hash_result.items():
         assert len(v) > 1
         count_str = '[{:d}/{:d}]'.format(count, len(hash_result))
-        logging.info('{:16s} Rewriting links to "{:s}"'.format(count_str, os.path.basename(v[0])))
+        logger.info('{:16s} Rewriting links to "{:s}"'.format(count_str, os.path.basename(v[0])))
         for dupe_file_path in v:
             # Look at all HTML files in this directory and relink them to the
             # common_dir/file
@@ -247,7 +249,7 @@ def _rewrite_links_where_files_deleted(root_dir,
                                          nervous_mode,
                                          len_root_dir)
         count += 1
-    logging.info(' DONE: Rewriting links '.center(75, "="))
+    logger.info(' DONE: Rewriting links '.center(75, "="))
 
 
 def process(root_dir, sub_dir_for_common_files=SUB_DIR_FOR_COMMON_FILES,
@@ -260,14 +262,14 @@ def process(root_dir, sub_dir_for_common_files=SUB_DIR_FOR_COMMON_FILES,
         )
     root_dir = os.path.normpath(root_dir)
     len_root_dir = len(root_dir) + 1  # To get rid of the '/'
-    logging.info('Root directory "{:s}" '.format(root_dir))
+    logger.info('Root directory "{:s}" '.format(root_dir))
     # Get the hash of duplicates
     hash_result = _prepare_to_process(root_dir, file_glob)
     common_dir = os.path.join(root_dir, sub_dir_for_common_files)
     if len(hash_result):
         if not os.path.exists(common_dir):
             if nervous_mode:
-                logging.info('Would create "{:s}"'.format(common_dir))
+                logger.info('Would create "{:s}"'.format(common_dir))
             else:
                 os.mkdir(common_dir)
                 # Write CSS file
@@ -339,7 +341,7 @@ USAGE
         help="Path to source directory. WARNING: This will be rewritten in-place."
     )
     args = parser.parse_args()
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     inPath = args.path[0]
     log_level = args.loglevel
@@ -351,7 +353,7 @@ USAGE
                     # datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
     if os.path.isfile(inPath):
-        logging.fatal('Path "{:s}" must be a directory.'.format(inPath))
+        logger.fatal('Path "{:s}" must be a directory.'.format(inPath))
         return 1
     elif os.path.isdir(inPath):
         print('Procesing: "{:s}" '.format(inPath))
@@ -367,9 +369,9 @@ USAGE
             count_bytes_saved, count_bytes_saved / 1024**2)
         )
     else:
-        logging.fatal('%s is neither a file or a directory!' % inPath)
+        logger.fatal('%s is neither a file or a directory!' % inPath)
         return 1
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
     return 0

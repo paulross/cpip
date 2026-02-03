@@ -1,0 +1,52 @@
+These files are work in progress. Contributions can be sent to
+breese@users.sourceforge.net
+
+The include directory and subdirectories contains predef wrappers
+for common system header files.
+
+The wrappers must be included as normal header files. They define
+macros for each function provided by the individual system header
+file, and include the associated system header file. For example,
+instead of including <stdio.h>, you should include <predef/stdio.h>
+which will include <stdio.h> and set various macros.
+
+All wrapper files depends on the <predef/predef.h> file. If single
+files are copied into the distribution of an application, then
+<predef/predef.h> must be copied as well.
+
+Example of use
+--------------
+
+Using autoconf type:
+
+  #include <config.h>
+  #if defined(HAVE_INTTYPES_H)
+  #include <inttypes.h> /* strtoimax */
+  #else
+  #include <stdlib.h> /* strtol */
+  #endif
+
+  intmax_t my_atoimax(const char *text)
+  {
+  #if defined(HAVE_STRTOIMAX)
+    return strtoimax(text, 0, 10);
+  #else
+    return strtol(text, 0, 10);
+  #endif
+  }
+
+Using predef type:
+
+  #include <predef/inttypes.h> /* strtoimax */
+  #if !defined(PREDEF_HEADER_INTTYPES)
+  #include <stdlib.h> /* strtol */
+  #endif
+
+  intmax_t my_atoimax(const char *text)
+  {
+  #if defined(PREDEF_FUNC_STRTOIMAX)
+    return strtoimax(text, 0, 10);
+  #else
+    return strtol(text, 0, 10);
+  #endif
+  }

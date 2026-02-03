@@ -111,19 +111,23 @@ class MaxMunchGen(object):
             #print 'TRACE: self._bufGen.lenBuf is %d: %s' % (self._bufGen.lenBuf, self._bufGen._buf)
             assert(myBufIdx <= 1), 'self._bufGen.lenBuf is %d: %s' % (self._bufGen.lenBuf, self._bufGen._buf)  
             for aFn in self._fnS:
-                s, k, r = aFn(self._bufGen.gen())
-                #print 'TRACE aFn, s,k,r', aFn, s, k, r
-                if s > 0:
-                    if s == mySize:
-                        raise ExceptionMaxMunchGen('Ambiguous result [%d] for munch.' % s)
-                    elif s > mySize:
-                        mySize = s
-                        myKind = k
-                        myRepl = r
-                    if self._isExcl:
-                        break 
+                value = aFn(self._bufGen.gen())
+                if value is not None:
+                    s, k, r = value
+                    #print 'TRACE aFn, s,k,r', aFn, s, k, r
+                    if s > 0:
+                        if s == mySize:
+                            raise ExceptionMaxMunchGen('Ambiguous result [%d] for munch.' % s)
+                        elif s > mySize:
+                            mySize = s
+                            myKind = k
+                            myRepl = r
+                        if self._isExcl:
+                            break
             if mySize == 0:
-                raise StopIteration
+                # raise StopIteration
+                # break
+                return
             #print 'TRACE:', self._bufGen
             # Do any replacement necessary
             if myRepl is not None:
@@ -143,4 +147,3 @@ class MaxMunchGen(object):
                     yield self._bufGen.slice(mySize), myKind
                     #assert(0), 'This works but it needs to be done by the caller'
                     #yield ''.join(self._bufGen.slice(mySize)), myKind
-        

@@ -1,0 +1,389 @@
+#!/usr/bin/env python
+# CPIP is a C/C++ Preprocessor implemented in Python.
+# Copyright (C) 2008-2025 Paul Ross
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Paul Ross: apaulross@gmail.com
+import os
+import pwd
+
+import pytest
+
+from cpip.util import CMakeBuild
+
+EXAMPLE_CMAKE_BUILD_DIRECTORY = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'CMake', 'cmake-build-debug')
+)
+
+EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO = os.path.normpath(
+    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'CMake', 'CPIPDemo', 'cmake-build-debug')
+)
+
+# Thanks to https://stackoverflow.com/questions/842059/is-there-a-portable-way-to-get-the-current-username-in-python
+USERNAME = pwd.getpwuid(os.getuid()).pw_name
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory',
+    (
+        EXAMPLE_CMAKE_BUILD_DIRECTORY,
+        EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+    )
+)
+def test_cmake_build_directory_exists(cmake_build_directory):
+    result = os.path.isdir(cmake_build_directory)
+    assert result
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected_files',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            {
+                'cache-v2-f12a03d93d698b3b02f1.json',
+                'cmakeFiles-v1-b665052c260ca2cc5efb.json',
+                'codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                'directory-.-Debug-f5ebdc15457944623624.json',
+                'index-2025-04-12T12-03-02-0210.json',
+                'target-SkipList-Debug-091d871282c22504d7ce.json',
+                'toolchains-v1-9f362175f2e3b763898b.json',
+            },
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            {
+                '.ninja_deps',
+                '.ninja_log',
+                'CMakeCCompiler.cmake',
+                'CMakeCCompilerId.c',
+                'CMakeCCompilerId.o',
+                'CMakeCache.txt',
+                'CMakeDetermineCompilerABI_C.bin',
+                'CMakeSystem.cmake',
+                'CPIPDemo',
+                'TargetDirectories.txt',
+                'build.ninja',
+                'cache-v2',
+                'cache-v2-849e6059f55d78b15468.json',
+                'clion-Debug-log.txt',
+                'clion-environment.txt',
+                'cmake.check_cache',
+                'cmakeFiles-v1',
+                'cmakeFiles-v1-2592f079569bad70298b.json',
+                'cmake_install.cmake',
+                'codemodel-v2',
+                'codemodel-v2-456473262521f32c0361.json',
+                'directory-.-Debug-f5ebdc15457944623624.json',
+                'index-2025-09-04T20-17-55-0941.json',
+                'main.c.o',
+                'rules.ninja',
+                'target-CPIPDemo-Debug-6354d69e1abf2e817afb.json',
+                'toolchains-v1',
+                'toolchains-v1-6fd81e3fab63b46d5ade.json',
+            },
+        ),
+    )
+)
+def test_cmake_build_directory_files_exists(cmake_build_directory, expected_files):
+    """Some platforms might have extra files so we use sets to show at least the expected ones are there."""
+    assert os.path.isdir(cmake_build_directory)
+    result = []
+    for root, dirs, files in os.walk(cmake_build_directory):
+        # for name in files:
+        #     result.append(os.path.join(root, name))
+        result.extend(files)
+    # result.sort()
+    assert expected_files.issubset(result)
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            CMakeBuild.CMakeIndex(
+                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
+                cmake_version_str='3.24.2',
+                codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
+            ),
+        ),
+    )
+)
+def test_cmake_reply_index_from_build_directory(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            CMakeBuild.CMakeIndex(
+                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
+                cmake_version_str='3.24.2',
+                codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
+            ),
+        ),
+    )
+)
+def test_cmake_reply_index_from_build_directory(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            CMakeBuild.CMakeCodeModel(
+                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
+                codemodel_file_name='codemodel-v2-4c8c7c6b8e2ffd1cc209.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
+                name='SkipList',
+                target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
+            ),
+        ),
+    )
+)
+def test_cmake_reply_codemodel_from_cmake_index(cmake_build_directory, expected):
+    cmake_index = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
+    result = CMakeBuild.cmake_reply_codemodel_from_cmake_index(cmake_index)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            CMakeBuild.CMakeToolChains(
+                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
+                toolchains_file_name='toolchains-v1-9f362175f2e3b763898b.json',
+                language_dict={
+                    'C': CMakeBuild.CMakeToolChainLanguageInformation(
+                        system_include_directories=[
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+                        ],
+                    ),
+                    'CXX': CMakeBuild.CMakeToolChainLanguageInformation(
+                        system_include_directories=[
+                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                            '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                            '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+                        ],
+                    ),
+                },
+            ),
+        ),
+    )
+)
+def test_cmake_reply_toolchains_from_cmake_index(cmake_build_directory, expected):
+    cmake_index = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
+    result = CMakeBuild.cmake_reply_toolchains_from_cmake_index(cmake_index)
+    assert result.cmake_build_directory == expected.cmake_build_directory
+    assert result.toolchains_file_name == expected.toolchains_file_name
+    assert result.language_dict == expected.language_dict
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            CMakeBuild.CMakeTarget(
+                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
+                target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
+                name='SkipList',
+                defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
+                include_paths=['/Users/USER/CLionProjects/skiplist/src/cpp',
+                               '/Users/USER/CLionProjects/skiplist/src/cpp/test',
+                               '/Users/USER/CLionProjects/skiplist/src/cpy',
+                               '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
+                sources=[
+                    'src/cpp/HeadNode.h',
+                    'src/cpp/IntegrityEnums.h',
+                    'src/cpp/main.cpp',
+                    'src/cpp/Node.h',
+                    'src/cpp/NodeRefs.h',
+                    'src/cpp/RollingMedian.h',
+                    'src/cpp/SkipList.cpp',
+                    'src/cpp/SkipList.h',
+                    'src/cpp/test/test_concurrent.cpp',
+                    'src/cpp/test/test_concurrent.h',
+                    'src/cpp/test/test_documentation.cpp',
+                    'src/cpp/test/test_documentation.h',
+                    'src/cpp/test/test_functional.cpp',
+                    'src/cpp/test/test_functional.h',
+                    'src/cpp/test/test_performance.cpp',
+                    'src/cpp/test/test_performance.h',
+                    'src/cpp/test/test_print.cpp',
+                    'src/cpp/test/test_print.h',
+                    'src/cpp/test/test_rolling_median.cpp',
+                    'src/cpp/test/test_rolling_median.h',
+                    'src/cpy/cmpPyObject.cpp',
+                    'src/cpy/cmpPyObject.h',
+                    'src/cpy/cOrderedStructs.cpp',
+                    'src/cpy/cOrderedStructs.h',
+                    'src/cpy/cSkipList.cpp',
+                    'src/cpy/cSkipList.h',
+                    'src/cpy/OrderedStructs.cpp',
+                    'src/cpy/OrderedStructs.h',
+                ],
+                language='CXX',
+            ),
+        ),
+    )
+)
+def test_cmake_reply_target_from_codemodel(cmake_build_directory, expected):
+    cmake_index = CMakeBuild.cmake_reply_index_from_build_directory(cmake_build_directory)
+    cmake_codemodel = CMakeBuild.cmake_reply_codemodel_from_cmake_index(cmake_index)
+    result = CMakeBuild.cmake_reply_target_from_codemodel(cmake_codemodel)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            CMakeBuild.CMakeTarget(
+                cmake_build_directory=EXAMPLE_CMAKE_BUILD_DIRECTORY,
+                target_file_name='target-SkipList-Debug-091d871282c22504d7ce.json',
+                project_path='/Users/USER/CLionProjects/skiplist',
+                name='SkipList',
+                defines=['DEBUG', 'SKIPLIST_THREAD_SUPPORT=1'],
+                include_paths=['/Users/USER/CLionProjects/skiplist/src/cpp',
+                               '/Users/USER/CLionProjects/skiplist/src/cpp/test',
+                               '/Users/USER/CLionProjects/skiplist/src/cpy',
+                               '/Library/Frameworks/Python.framework/Versions/3.12/include/python3.12'],
+                sources=[
+                    'src/cpp/HeadNode.h',
+                    'src/cpp/IntegrityEnums.h',
+                    'src/cpp/main.cpp',
+                    'src/cpp/Node.h',
+                    'src/cpp/NodeRefs.h',
+                    'src/cpp/RollingMedian.h',
+                    'src/cpp/SkipList.cpp',
+                    'src/cpp/SkipList.h',
+                    'src/cpp/test/test_concurrent.cpp',
+                    'src/cpp/test/test_concurrent.h',
+                    'src/cpp/test/test_documentation.cpp',
+                    'src/cpp/test/test_documentation.h',
+                    'src/cpp/test/test_functional.cpp',
+                    'src/cpp/test/test_functional.h',
+                    'src/cpp/test/test_performance.cpp',
+                    'src/cpp/test/test_performance.h',
+                    'src/cpp/test/test_print.cpp',
+                    'src/cpp/test/test_print.h',
+                    'src/cpp/test/test_rolling_median.cpp',
+                    'src/cpp/test/test_rolling_median.h',
+                    'src/cpy/cmpPyObject.cpp',
+                    'src/cpy/cmpPyObject.h',
+                    'src/cpy/cOrderedStructs.cpp',
+                    'src/cpy/cOrderedStructs.h',
+                    'src/cpy/cSkipList.cpp',
+                    'src/cpy/cSkipList.h',
+                    'src/cpy/OrderedStructs.cpp',
+                    'src/cpy/OrderedStructs.h',
+                ],
+                language='CXX',
+            ),
+        ),
+    )
+)
+def test_cmake_reply_target_file_from_build_directory(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_target_file_from_build_directory(cmake_build_directory)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (EXAMPLE_CMAKE_BUILD_DIRECTORY, True,),
+        ('foo', False,),
+    )
+)
+def test_is_cmake_build_directory(cmake_build_directory, expected):
+    result = CMakeBuild.is_cmake_build_directory(cmake_build_directory)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            None
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result is not None
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            'CXX',
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            'C',
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory_target_language(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result.target.language == expected
+
+
+@pytest.mark.parametrize(
+    'cmake_build_directory, expected',
+    (
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY,
+            [
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include/c++/v1',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+            ],
+        ),
+        (
+            EXAMPLE_CMAKE_BUILD_DIRECTORY_CPIP_DEMO,
+            [
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',
+                '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/usr/include',
+                '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include',
+            ],
+        ),
+    )
+)
+def test_cmake_reply_metadata_from_build_directory_system_include_directories(cmake_build_directory, expected):
+    result = CMakeBuild.cmake_reply_metadata_from_build_directory(cmake_build_directory)
+    assert result.system_include_directories == expected

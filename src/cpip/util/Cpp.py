@@ -12,7 +12,7 @@ import subprocess
 import sys
 
 def invokeCppForPlatformMacros(*args):
-    """Invoke the pre-processor as a sub-process with \*args and return a list of macro
+    r"""Invoke the pre-processor as a sub-process with \*args and return a list of macro
     definition strings.
     
     By default the preprocessor is ``cpp`` but this is overridden if ``$CPP`` is set in
@@ -64,9 +64,14 @@ any pre-include. [default: %(default)s]""")
 initial translation unit. [default: %(default)s]""")
     # Include handling
     parser.add_argument("-I", "--usr", action="append", dest="incUsr", default=[],
-                      help="Add user include search path. [default: %(default)s]")
+                      help="Add user include search path (additive). [default: %(default)s]")
     parser.add_argument("-J", "--sys", action="append", dest="incSys", default=[],
-                      help="Add system include search path. [default: %(default)s]")
+                      help="Add system include search path (additive). [default: %(default)s]")
+    parser.add_argument(
+        "--sys-auto-lang", dest="sys_auto_lang", type=str, default='',
+        help="Get the system include search paths from the compiler for this language (\"C\" or \"C++\")."
+             " [default: \"%(default)s\"]"
+    )
 
 def macroDefinitionDict(cmdLineArgS):
     """Given a list of command line arguments of the form n<=d> where n is the

@@ -20,33 +20,38 @@ Files to Pre-Process
 --------------------
 
 First let's get some demonstration code to pre-process. You can find this
-at *<cpip>/demo/* and the directory structure looks like this:
+at *<cpip>/docs/doc_src/tutorial/demo* and the directory structure looks like this:
 
 .. code-block:: none
 
-    demo/
-    ├── python
-    │   ├── cpip.py
-    ├── src
-    │   ├── main.cpp
-    ├── sys
-    │   └── system.h
-    └── usr
-        └── user.h
+    demo
+    ├── cpip_00.py
+    ├── cpip_01.py
+    ├── cpip_02.py
+    8<---- Snip ---->8
+    ├── cpip_10.py
+    ├── cpip_99.py
+    └── proj
+        ├── src
+        │   ├── main.c
+        ├── sys
+        │   └── system.h
+        └── usr
+            └── user.h
 
-In :file:`src/main.cpp` is some source code that includes files from :file:`usr/` and :file:`sys/`. 
+In :file:`src/main.c` is some source code that includes files from :file:`usr/` and :file:`sys/`.
 This tutorial will take you through writing :file:`demo/python/cpip.py` to use PpLexer to
 pre-process them.
 
 First lets have a look at the source code that we are preprocessing.
-It is a pretty trivial variation of a common them, but beware,
+It is a pretty simple variation of a common theme, but beware,
 pre-processing directives abound!
 
-The file :file:`demo/src/main.cpp` looks like this:
+The file :file:`demo/src/main.c` looks like this:
 
 .. highlight:: c
 
-.. literalinclude:: demo/proj/src/main.cpp
+.. literalinclude:: demo/proj/src/main.c
     :language: c
 
 That includes a file :file:`user.h` that can be found at :file:`demo/usr/user.h`:
@@ -71,16 +76,19 @@ Creating a PpLexer
 ------------------
 
 This is the template that we will use for the tutorial, it just takes a
-single argument from the command line ``sys.argv[1]``:
+single argument from the command line ``sys.argv[1]``.
+The code (*demo/cpip_00.py*) looks like this:
 
 .. literalinclude:: demo/cpip_00.py
     :linenos:
     :language: python
 
-Of course this doesn't do much yet, invoking it just gives::
+Of course this doesn't do much yet, invoking it (from the CPIP project root) just gives:
 
-    python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
+.. code-block:: console
+
+    $ python docs/doc_src/tutorial/demo/cpip_00.py docs/doc_src/tutorial/demo/proj/src/main.c
+    Processing: docs/doc_src/tutorial/demo/proj/src/main.c
 
 We now need to import and create and :py:class:`cpip.core.PpLexer.PpLexer` object,
 and this takes at least two arguments; firstly the file to pre-process, the secondly an
@@ -95,19 +103,22 @@ most developers expect from a pre-processor is
 :py:class:`cpip.core.IncludeHandler.CppIncludeStdOs`. This class takes at least two
 arguments; a list of search paths to the user include directories and a list of
 search paths to the system include directories. With this we can construct a
-:py:class:`cpip.core.PpLexer.PpLexer` object so our code now looks like this:
+:py:class:`cpip.core.PpLexer.PpLexer` object so our code (*demo/cpip_01.py*) now looks like this:
 
 .. literalinclude:: demo/cpip_01.py
+    :linenos:
     :language: python
-    :emphasize-lines: 6-10
+    :emphasize-lines: 12-17
 
-This still doesn't do much yet, invoking it just gives::
+This still doesn't do much yet, invoking it just gives:
 
-    python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
+.. code-block:: console
 
-But, in the absence of error, shows that we can construct a
-:py:class:`cpip.core.PpLexer.PpLexer`.
+    $ python docs/doc_src/tutorial/demo/cpip_01.py docs/doc_src/tutorial/demo/proj/src/main.c
+    Processing: docs/doc_src/tutorial/demo/proj/src/main.c
+    <cpip.core.PpLexer.PpLexer object at 0x10d1f0ec0>
+
+But, in the absence of error, shows that we can construct a :py:class:`cpip.core.PpLexer.PpLexer`.
 
 Put the PpLexer to Work
 =======================
@@ -117,33 +128,44 @@ to :py:meth:`cpip.core.PpLexer.PpLexer.PpTokens`. This function is a generator o
 Lets just print them out with this code:
 
 .. literalinclude:: demo/cpip_02.py
+    :linenos:
     :language: python
-    :emphasize-lines: 11,12
+    :emphasize-lines: 17,18
 
 Invoking it now gives:
 
 .. code-block:: console
 
-    $ python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
+    $ python docs/doc_src/tutorial/demo/cpip_02.py docs/doc_src/tutorial/demo/proj/src/main.c
+    Processing: docs/doc_src/tutorial/demo/proj/src/main.c
+    <stdio.h>: No such file or directory at line=3, col=1 of file "docs/doc_src/tutorial/demo/proj/src/main.c"
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
-    ...
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="main", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t="(", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t="argc", tt=identifier, line=True, prev=False, ?=False)
+    PpToken(t=",", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="char", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="*", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="argv", tt=identifier, line=True, prev=False, ?=False)
-    PpToken(t=",", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-    PpToken(t="int", tt=identifier, line=True, prev=False, ?=False)
-    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-    PpToken(t="argc", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=")", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
-    PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
+    PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="{", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
@@ -156,7 +178,7 @@ Invoking it now gives:
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="return", tt=identifier, line=True, prev=False, ?=False)
     PpToken(t=" ", tt=whitespace, line=False, prev=False, ?=False)
-    PpToken(t="1", tt=pp-number, line=False, prev=False, ?=False)
+    PpToken(t="0", tt=pp-number, line=False, prev=False, ?=False)
     PpToken(t=";", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
     PpToken(t="\n", tt=whitespace, line=False, prev=False, ?=False)
     PpToken(t="}", tt=preprocessing-op-or-punc, line=False, prev=False, ?=False)
@@ -165,40 +187,159 @@ Invoking it now gives:
 The PpLexer is yielding PpToken objects that are interesting in
 themselves because they not only have content but the type of content
 (whitespace, punctuation, literals etc.). A simplification is to change the
-code to print out the token *value* by changing a line in the code from::
+code to print out the token *value* by changing line 11 in the code from:
 
-    print tok
+.. code-block:: python
 
-To::
+    print(tok)
 
-    print tok.t
+To:
 
-To give:
+.. code-block:: python
+
+    print(tok.t, end='')
+
+To give (code is in *demo/cpip_03.py*):
 
 .. literalinclude:: demo/cpip_03.out.txt
-    :language: c
+    :language: text
 
-It is definately pre-processed and although the output is correct it is
+It is definitely pre-processed and although the output is correct it is
 rather verbose because of all the whitespace generated by the pre-processing
 (newlines are always the consequence of pre-processing directives).
 
 We can clean this whitespace up very simply by invoking
 :func:`PpTokens.ppTokens()` with a suitable argument to reduce spurious
 whitespace thus: ``myLex.ppTokens(minWs=True)``. This minimises the whitespace
-runs to a single space or newline. Our code now
+runs to a single space or newline. Our code (in *demo/cpip_04.py*) now
 looks like this:
 
 .. literalinclude:: demo/cpip_04.py
+    :linenos:
     :language: python
-    :emphasize-lines: 11
+    :emphasize-lines: 17
 
 Invoking it now gives:
 
 .. literalinclude:: demo/cpip_04.out.txt
-    :language: c
+    :language: text
 
 This is exactly the result that one would expect from pre-processing the
 original source code.
+
+Fixing Missing System Includes
+------------------------------
+
+You may have noticed the following error message in these examples:
+
+
+.. code-block:: console
+
+    <stdio.h>: No such file or directory at line=3, col=1 of file "docs/doc_src/tutorial/demo/proj/src/main.c"
+
+This is because that include is necessary for ``main()`` to access ``printf()`` however our lexer can not
+find that file on the platform.
+This can be fixed by giving the ``IncludeHandler`` the necessary system paths,
+the code is in *demo/cpip_05.py*:
+
+.. literalinclude:: demo/cpip_05.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 14-17
+
+Invoking it now gives:
+
+.. literalinclude:: demo/cpip_05.out.txt
+    :language: text
+
+However we now see four error messages about the architecture and compiler toolchain.
+
+The first reads
+``"Unsupported compiler detected" at line=81, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 78
+
+    /* This SDK is designed to work with clang and specific versions of
+    * gcc >= 4.0 with Apple's patch sets */
+    #if !defined(__GNUC__) || __GNUC__ < 4
+    #warning "Unsupported compiler detected"
+    #endif
+
+The second reads:
+``Unsupported architecture at line=925, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/cdefs.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 917
+
+    /*
+     * Architecture validation for current SDK
+     */
+    #if !defined(__sys_cdefs_arch_unknown__) && defined(__i386__)
+    #elif !defined(__sys_cdefs_arch_unknown__) && defined(__x86_64__)
+    #elif !defined(__sys_cdefs_arch_unknown__) && defined(__arm__)
+    #elif !defined(__sys_cdefs_arch_unknown__) && defined(__arm64__)
+    #else
+    #error Unsupported architecture
+    #endif
+
+The third reads:
+``architecture not supported at line=36, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/machine/_types.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 31
+
+    #if defined (__i386__) || defined(__x86_64__)
+    #include "i386/_types.h"
+    #elif defined (__arm__) || defined (__arm64__)
+    #include "arm/_types.h"
+    #else
+    #error architecture not supported
+    #endif
+
+
+The fourth reads:
+``architecture not supported at line=39, col=2 of file "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/machine/types.h"``
+
+Which refers to this code:
+
+.. code-block:: c
+    :linenos:
+    :lineno-start: 34
+
+    #if defined (__i386__) || defined(__x86_64__)
+    #include "i386/types.h"
+    #elif defined (__arm__) || defined (__arm64__)
+    #include "arm/types.h"
+    #else
+    #error architecture not supported
+    #endif
+
+From this we can see that we need to do the equivalent of invoking the compiler with ``-D __GNUC__=4 -D __x86_64__``.
+
+This can be fixed by giving the lexer the necesary macro definition with ``stdPredefMacros=``,
+the code is in *demo/cpip_06.py*:
+
+.. literalinclude:: demo/cpip_06.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 19-24
+
+Invoking it now gives:
+
+.. literalinclude:: demo/cpip_06.out.txt
+    :language: text
+
+And there are no error messages.
 
 And now for something Completely Different
 ==========================================
@@ -215,71 +356,80 @@ directives).
 File Include Stack
 ------------------
 Changing the code to this shows the ``include`` file
-hierarchy every step of the way::
+hierarchy every step of the way.
+The code is in *demo/cpip_14.py*:
 
-    for tok in myLex.ppTokens():
-        print myLex.fileStack
+.. literalinclude:: demo/cpip_14.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 30-33
 
-Gives the following output:
+The include stack is a list of file paths, the last item is the current file and the previous values are how we
+got here.
 
-.. code-block:: console
+So ``['main.c', 'user.h', 'system.h']`` means we are currently processing ``system.h`` which was included from
+``user.h`` which, in turn, was included from ``main.c``
 
-    $ python cpip.py proj/src/main.cpp
-    Processing: proj/src/main.cpp
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h', 'proj/sys/system.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp', 'proj/usr/user.h']
-    ['proj/src/main.cpp']
-    ...
+Invoking *demo/cpip_14.py* now gives:
+
+.. literalinclude:: demo/cpip_14.out.txt
+    :language: text
 
 Conditional State
 -----------------
 
-Changing the code to this::
+This can be revealed for every preprocessing token by setting the flag ``condLevel=2``.
+The conditional state can be accessed with ``lexer.condState``.
+The code is in *demo/cpip_15.py*:
 
-    for tok in myLex.ppTokens(condLevel=1):
-        print myLex.condState
+.. literalinclude:: demo/cpip_15.py
+    :linenos:
+    :language: python
+    :emphasize-lines: 18-23
 
-Produces this output:
+The conditional state is a pair, the first value being a bool that states whether this preprocessing token is part
+of the output. The second value is macro expression that, when evaluated, resolves to the boolean value.
 
-.. literalinclude:: demo/cpip_05.out.txt
-    :language: sh
+Invoking *demo/cpip_15.py* now gives:
+
+.. literalinclude:: demo/cpip_15.out.txt
+    :language: text
 
 State of the ``PpLexer`` After Pre-processing
 ===============================================
 
 A more common use case is to query the ``PpLexer`` after processing the file. The following code example will:
 
-* Capture all tokens as a Translation Unit and write it out with minimal whitespace [lines 11-16].
-* Print out a text representation of the file include graph [lines 18-21].
-* Print out a text representation of the conditional compilation graph [lines 23-26].
-* Print out a text representation of the macro environment as it exists at the end of processing the Translation Unit [lines 28-31].
-* Print out a text representation of the macro history for all macros, whether referenced or not, as it exists at the end of processing the Translation Unit [lines 33-36].
+* Capture all tokens as a Translation Unit and write it out with minimal whitespace [lines 19-22].
+* Print out a text representation of the file include graph [lines 24-27].
+* Print out a text representation of the conditional compilation graph [lines 29-32].
+* Print out a text representation of the macro environment as it exists at the end of processing the
+  Translation Unit [lines 28-31].
+* Print out a text representation of the macro history for all macros, whether referenced or not,
+  as it exists at the end of processing the Translation Unit [lines 39-42].
 
-Here is the code, named :file:`cpip_07.py`:
+Here is the code in  :file:`demo/cpip_17.py`:
 
-.. literalinclude:: demo/cpip_07.py
-    :language: python
+.. literalinclude:: demo/cpip_17.py
     :linenos:
+    :language: python
+    :emphasize-lines: 19-42
 
-Invoking this code thus:
+Invoking *demo/cpip_17.py* now gives the following output.
+There are four blocks of information:
 
-.. code-block:: console
+* "Translation Unit" is the translation unit with minimal whitespace.
+* "File Include Graph" is a textural representation of the file include graph.
+  Each line describes the currently processed file.
+  It is followed by a line number of that file and the ``#include`` statement that leads to included file, with indent.
+* "Conditional Compilation Graph" shows the tree of conditional compilation directives.
+* "Macro Environment" describes each macro, its value and where it was defined.
+* "Macro History" describes each macros history, where it was defined and where it was used.
 
-    $ python3 cpip_07.py ../src/main.cpp
+.. literalinclude:: demo/cpip_17.out.txt
+    :language: text
 
-Gives this output:
-
-.. literalinclude:: demo/cpip_07.out.txt
-    :language: sh
-
-This is simple to the point of crude as the ``PpLexer`` supplies a far richer data seam than just text.
+The ``PpLexer`` can supply a far richer data seam than just text.
 
 File Include Graph interface is described here: :ref:`cpip.tutorial.FileIncludeGraph`
 
@@ -288,8 +438,8 @@ Summary
 
 There are several ways that you can inspect pre-processing with PpLexer:
 
-* Supplying arguments to ``PpLexer.ppTokens()`` with arguments such as ``minWs`` or ``incCond``.
-* Accessing the state of each token as it is generated such as ``tok.tt`` or ``tok.isCond``.
+* Supplying arguments to ``PpLexer.ppTokens()`` with arguments such as ``minWs`` or ``condLevel``.
+* Accessing the state of each token as it is generated such as ``tok.tt``.
 * Accessing the state of PpLexer as each token as it is generated or once all tokens have been generated such as PpLexer.condState.
 * Creating PpLexer with a user specified behaviour. This is the subject of the next section.
 

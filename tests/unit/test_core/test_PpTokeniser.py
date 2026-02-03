@@ -1720,7 +1720,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
         """ISO/IEC 14882:1998(E) 2.1 Phases of translation [lex.phases] - Phase 2, single new-line."""
         myObj = PpTokeniser.PpTokeniser()
         myLines = ['\n',]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(['\n',], myLines)
 
     def testPhase_2_TwoLines(self):
@@ -1730,7 +1730,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             '\n',
             '\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 '\n',
@@ -1745,7 +1745,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             '\\\n',
             '\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 '\n',
@@ -1761,7 +1761,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             'a\\\n',
             'b\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 'ab\n',
@@ -1778,7 +1778,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             'b\\\n',
             'c\n',
             ]
-        self.assertEquals(None, myObj.lexPhases_2(myLines))
+        self.assertEqual(None, myObj.lexPhases_2(myLines))
         self.assertEqual(
             [
                 'abc\n',
@@ -1830,7 +1830,7 @@ class TestLexPhases_2(TestPpTokeniserBase):
             'd\n',
             ]
         myL = myP[:]
-        self.assertEquals(None, myObj.lexPhases_2(myL))
+        self.assertEqual(None, myObj.lexPhases_2(myL))
         self.assertEqual(
             [
                 'abc\n',
@@ -3478,7 +3478,7 @@ class TestPpTokeniserFileLocator(TestPpTokeniserBase):
         myPpt = PpTokeniser.PpTokeniser()
         myPstrS = ['ab\\\n', 'c\\\n', 'd\\\n', 'ef\n',]
         myLineS = myPstrS[:]
-        self.assertEquals(None, myPpt.lexPhases_2(myLineS))
+        self.assertEqual(None, myPpt.lexPhases_2(myLineS))
         myLstrSExp = ['abcdef\n', '\n', '\n', '\n', ]
         self.assertEqual(myLstrSExp, myLineS)
         print()

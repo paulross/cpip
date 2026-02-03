@@ -50,6 +50,17 @@ def genBigFirst(d):
     for _s, n in reversed(sorted(fileSizeS)):
         yield n
 
+
+def file_path_matches(file_path, fn_match):
+    if fn_match is None:
+        return True
+    if isinstance(fn_match, str):
+        return fnmatch.fnmatch(file_path, fn_match)
+    if isinstance(fn_match, list):
+        return len(fn_match) == 0 or any([fnmatch.fnmatch(file_path, v) for v in fn_match])
+    raise ValueError('Can not process fn_match: {!r:s} of type {!r:s}'.format(fn_match, type(fn_match)))
+
+
 def dirWalk(theIn, theOut=None, theFnMatch=None, recursive=False, bigFirst=False):
     """Walks a directory tree generating file paths.
 
@@ -73,22 +84,13 @@ def dirWalk(theIn, theOut=None, theFnMatch=None, recursive=False, bigFirst=False
     *bigFirst*
         If True then the largest files in  directory are given first. If False it is alphabetical.
     """
-    def _matches(file_path, fn_match):
-        if fn_match is None:
-            return True
-        if isinstance(fn_match, str):
-            return fnmatch.fnmatch(file_path, fn_match)
-        if isinstance(fn_match, list):
-            return len(fn_match) == 0 or any([fnmatch.fnmatch(file_path, v) for v in fn_match])
-        raise ValueError('Can not process fn_match: {!r:s} of type {!r:s}'.format(fn_match, type(fn_match)))
-
     if not os.path.isdir(theIn):
         raise ExceptionDirWalk('{:s} is not a directory.'.format(theIn))
     if bigFirst:
         # First files
         for fn in genBigFirst(theIn):
             fp = os.path.join(theIn, fn)
-            if _matches(fp, theFnMatch):
+            if file_path_matches(fp, theFnMatch):
                 if theOut is None:
                     yield fp
                 else:
@@ -109,7 +111,7 @@ def dirWalk(theIn, theOut=None, theFnMatch=None, recursive=False, bigFirst=False
         for fn in os.listdir(theIn):
             fp = os.path.join(theIn, fn)
             if os.path.isfile(fp) \
-            and _matches(fp, theFnMatch):
+            and file_path_matches(fp, theFnMatch):
                 if theOut is None:
                     yield fp
                 else:

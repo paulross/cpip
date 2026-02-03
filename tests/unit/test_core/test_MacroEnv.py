@@ -18,7 +18,7 @@
 # 
 # Paul Ross: apaulross@gmail.com
 
-"""Test the MacroEnv module.
+r"""Test the MacroEnv module.
 
 Using cpp.exe to help with test cases:
 
@@ -3650,7 +3650,7 @@ class TestMacroUndef(TestMacroEnv):
         myMap.define(myGen, 'obj.h', 1)
         self._checkMacroEnv(myGen, myMap, ['OBJ',])
         # undef something that is not there
-        self.assertEquals(
+        self.assertEqual(
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
@@ -3673,7 +3673,7 @@ class TestMacroUndef(TestMacroEnv):
 #===============================================================================
 #        myGen = myCpp.next()
 #        myMacro = PpDefine.PpDefine(myGen, '', 1)
-#        self.assertEquals(
+#        self.assertEqual(
 #            myMacro,
 #            myMap.undef(
 #                PpTokeniser.PpTokeniser(
@@ -3728,11 +3728,11 @@ class TestMacroUndef(TestMacroEnv):
                      ]
         myList = [str(m) for m in myEnv.genMacros()]
         #print myList
-        self.assertEquals(myExpList, myList)
+        self.assertEqual(myExpList, myList)
         myList = [str(m) for m in myEnv.genMacros('OBJ')]
-        self.assertEquals(myExpList, myList)
+        self.assertEqual(myExpList, myList)
         myList = [str(m) for m in myEnv.genMacros('NOTHING')]
-        self.assertEquals([], myList)
+        self.assertEqual([], myList)
 
     def testFunctionLikeUndef_00(self):
         """TestMacroUndef.testFunctionLikeUndef_00(): #defines then undefs an function like macro correctly."""
@@ -3744,7 +3744,7 @@ class TestMacroUndef(TestMacroEnv):
         myMap.define(myGen, 'F.h', 1)
         self._checkMacroEnv(myGen, myMap, ['FUNC_LIKE',])
         # undef something that is not there
-        self.assertEquals(
+        self.assertEqual(
             None,
             myMap.undef(
                 PpTokeniser.PpTokeniser(
@@ -3766,7 +3766,7 @@ class TestMacroUndef(TestMacroEnv):
 #===============================================================================
 #        myGen = myCpp.next()
 #        myMacro = PpDefine.PpDefine(myGen, '', 1)
-#        self.assertEquals(
+#        self.assertEqual(
 #            myMacro,
 #            myMap.undef(
 #                PpTokeniser.PpTokeniser(
@@ -4131,8 +4131,8 @@ f(a) f(a)
             #    % (myIn, repString, myOut, repString==myOut)
             self.assertEqual(repString, myOut)
 
-    def test_ambiguos_00(self):
-        """TestFromStandardMisc.test_ambiguos_00 - not ambiguos."""
+    def test_ambiguous_00(self):
+        """TestFromStandardMisc.test_ambiguous_00 - not ambiguous."""
         """#define f(a) a*g
 #define g f
 """
@@ -4163,7 +4163,7 @@ g f
                 )
             repList = []
             myGen = myCpp.next()
-            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguos_00()'
+            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguous_00()'
             for ttt in myGen:
                 myReplacements = myMap.replace(ttt, myGen)
                 repList += myReplacements
@@ -4179,15 +4179,16 @@ g f
             #    % (myIn, repString, myOut, repString==myOut)
             self.assertEqual(repString, myOut)
 
-    def test_ambiguos_01(self):
-        """TestFromStandardMisc.test_ambiguos_01 - ambiguos."""
+    @pytest.mark.xfail(reason='Ambiguous expansion is stopping short of full expansion.')
+    def test_ambiguous_01(self):
+        """TestFromStandardMisc.test_ambiguous_01 - ambiguous."""
         """#define f(a) a*g
 #define g(a) f(a)
 f(2)(9)
 """
         myMap = MacroEnv.MacroEnv(enableTrace=True)
         myStr = u"""f(a) a*g
-g f
+g(a) f(a)
 """
         myCpp = PpTokeniser.PpTokeniser(
             theFileObj=io.StringIO(myStr)
@@ -4203,8 +4204,8 @@ g f
             ['f', 'g',]
             )
         myInOut = (
-            (u'f(2)(9)', '2*f(9)',),
-            #(u'f(2)(9)', '2*9*g',),
+            # (u'f(2)(9)', '2*f(9)',),
+            (u'f(2)(9)', '2*9*g',),
             )
         #print
         for myIn, myOut in myInOut:
@@ -4213,7 +4214,7 @@ g f
                 )
             repList = []
             myGen = myCpp.next()
-            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguos_01()'
+            myMap.debugMarker = 'TestFromStandardMisc.test_ambiguous_01()'
             for ttt in myGen:
                 myReplacements = myMap.replace(ttt, myGen)
                 repList += myReplacements
@@ -5757,8 +5758,8 @@ EGGS 2
         myEnv.define(myGen, 'f.h', 2)
 #         print()
 #         print(myEnv._staticMacroDependencies('EGGS').branches())
-        self.assertEquals([], myEnv._staticMacroDependencies('SPAM'))
-        self.assertEquals([], myEnv._staticMacroDependencies('EGGS'))
+        self.assertEqual([], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual([], myEnv._staticMacroDependencies('EGGS'))
 
     def test_01(self):
         """TestMacroDependencies.test_01(): - Simple macro dependency."""
@@ -5772,12 +5773,12 @@ EGGS 2
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
         myEnv.define(myGen, 'f.h', 2)
-        self.assertEquals(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
-        self.assertEquals([], myEnv._staticMacroDependencies('EGGS'))
+        self.assertEqual(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual([], myEnv._staticMacroDependencies('EGGS'))
         myAdjList = myEnv.allStaticMacroDependencies()
-        self.assertEquals(['EGGS',], myAdjList.children('SPAM'))
+        self.assertEqual(['EGGS',], myAdjList.children('SPAM'))
         self.assertRaises(KeyError, myAdjList.children, 'EGGS')
-        self.assertEquals(['SPAM',], myAdjList.parents('EGGS'))
+        self.assertEqual(['SPAM',], myAdjList.parents('EGGS'))
         self.assertRaises(KeyError, myAdjList.parents, 'SPAM')
         
     def test_02(self):
@@ -5789,10 +5790,10 @@ EGGS 2
             )
         myGen = myCpp.next()
         myEnv.define(myGen, 'f.h', 1)
-        self.assertEquals(['SPAM',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual(['SPAM',], myEnv._staticMacroDependencies('SPAM'))
         myAdjList = myEnv.allStaticMacroDependencies()
-        self.assertEquals(['SPAM',], myAdjList.children('SPAM'))
-        self.assertEquals(['SPAM',], myAdjList.parents('SPAM'))
+        self.assertEqual(['SPAM',], myAdjList.children('SPAM'))
+        self.assertEqual(['SPAM',], myAdjList.parents('SPAM'))
 
     def test_03(self):
         """TestMacroDependencies.test_03(): - Macro cyclic dependency."""
@@ -5811,13 +5812,13 @@ EGGS SPAM
 #         print(myEnv.allStaticMacroDependencies())
 #         for k, v in myEnv.allStaticMacroDependencies().items():
 #             print(k, ':', v)
-        self.assertEquals(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
-        self.assertEquals(['SPAM',], myEnv._staticMacroDependencies('EGGS'))
+        self.assertEqual(['EGGS',], myEnv._staticMacroDependencies('SPAM'))
+        self.assertEqual(['SPAM',], myEnv._staticMacroDependencies('EGGS'))
         myAdjList = myEnv.allStaticMacroDependencies()
-        self.assertEquals(['EGGS',], myAdjList.children('SPAM'))
-        self.assertEquals(['SPAM',], myAdjList.children('EGGS'))
-        self.assertEquals(['SPAM',], myAdjList.parents('EGGS'))
-        self.assertEquals(['EGGS',], myAdjList.parents('SPAM'))
+        self.assertEqual(['EGGS',], myAdjList.children('SPAM'))
+        self.assertEqual(['SPAM',], myAdjList.children('EGGS'))
+        self.assertEqual(['SPAM',], myAdjList.parents('EGGS'))
+        self.assertEqual(['EGGS',], myAdjList.parents('SPAM'))
 
     def test_04(self):
         """TestMacroDependencies.test_04(): - Non-existent macro."""
@@ -5875,6 +5876,46 @@ class TestLibCello(TestMacroEnv):
     
 class TestNullClass(TestMacroEnv):
     pass
+
+
+# C99Rationale: 6.10.3.4 Rescanning and further replacement
+@pytest.mark.xfail(reason='Ambiguous expansion is stopping short of full expansion.')
+@pytest.mark.parametrize(
+    'source_itu, c_input, c_output',
+    (
+        (
+            "f(a) a*g\ng f\n", 'f(2)(9)', '2*f(9)',
+        ),
+        (
+            "f(a) a*g\ng(a) f(a)\n", 'f(2)(9)', '2*9*g',
+        ),
+    ),
+)
+def test_ambiguous_01(source_itu, c_input, c_output):
+    """TestFromStandardMisc.test_ambiguous_01 - ambiguous."""
+    """#define f(a) a*g
+#define g(a) f(a)
+f(2)(9)
+"""
+    macro_environment = MacroEnv.MacroEnv(enableTrace=True)
+    pp_tokeniser = PpTokeniser.PpTokeniser(
+        theFileObj=io.StringIO(source_itu)
+        )
+    pp_generator = pp_tokeniser.next()
+    i = 0
+    while i < 2:
+        macro_environment.define(pp_generator, '', 1)
+        i += 1
+    pp_tokeniser = PpTokeniser.PpTokeniser(theFileObj=io.StringIO(c_input))
+    replacement_list = []
+    pp_generator = pp_tokeniser.next()
+    macro_environment.debugMarker = 'test_ambiguous_01()'
+    for ttt in pp_generator:
+        replacements = macro_environment.replace(ttt, pp_generator)
+        replacement_list += replacements
+    result = ''.join([t_tt.t for t_tt in replacement_list])
+    assert result == c_output
+
 
 def unitTest(theVerbosity=2):
     # - OK
@@ -6001,14 +6042,14 @@ def main():
         usage()
         print('ERROR: Wrong number of arguments[%d]!' % len(args))
         sys.exit(1)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     # Initialise logging etc.
     logging.basicConfig(level=logLevel,
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 

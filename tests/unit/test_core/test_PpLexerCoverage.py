@@ -162,7 +162,7 @@ VA(1,,3)
         myLexer.finalise()
         #print 'FileIncludeGraph:'
         #print myLexer.fileIncludeGraphRoot
-        expGraph = """src/spam.c [20, 10]:  True ""
+        expGraph = r"""src/spam.c [20, 10]:  True ""
 000002: #include usr\spam.h
         usr\spam.h [0, 0]:  True ""
         000001: #include usr\inc\spam.h
@@ -613,9 +613,9 @@ def main():
                     format='%(asctime)s %(levelname)-8s %(message)s',
                     #datefmt='%y-%m-%d % %H:%M:%S',
                     stream=sys.stdout)
-    clkStart = time.clock()
+    clkStart = time.perf_counter()
     unitTest()
-    clkExec = time.clock() - clkStart
+    clkExec = time.perf_counter() - clkStart
     print('CPU time = %8.3f (S)' % clkExec)
     print('Bye, bye!')
 
