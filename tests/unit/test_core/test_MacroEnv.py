@@ -5878,10 +5878,14 @@ class TestNullClass(TestMacroEnv):
     pass
 
 
-# @pytest.mark.xfail(reason='Ambiguous expansion is stopping short of full expansion.')
+# C99Rationale: 6.10.3.4 Rescanning and further replacement
+@pytest.mark.xfail(reason='Ambiguous expansion is stopping short of full expansion.')
 @pytest.mark.parametrize(
     'source_itu, c_input, c_output',
     (
+        (
+            "f(a) a*g\ng f\n", 'f(2)(9)', '2*f(9)',
+        ),
         (
             "f(a) a*g\ng(a) f(a)\n", 'f(2)(9)', '2*9*g',
         ),

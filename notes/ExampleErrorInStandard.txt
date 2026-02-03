@@ -1,0 +1,242 @@
+c89 draft
+3.8.3.5 Scope of macro definitions
+
+
+#define x    3
+#define f(a) f(x * (a))
+#undef  x
+#define x    2
+#define g    f
+#define z    z[0]
+#define h    g(~
+#define m(a) a(w)
+#define w    0,1
+#define t(a) a
+
+f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+g(x+(3,4)-w) | h 5) & m
+      (f)^m(m);
+
+
+C89 says:
+
+f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
+
+
+cpp -E gives:
+
+f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+f(2 * (2 +(3,4)-0,1)) | f(2 * (~ 5)) & m
+      (f)^m(0,1);
+
+
+So quite different. Try removing the line break:
+
+#define x    3
+#define f(a) f(x * (a))
+#undef  x
+#define x    2
+#define g    f
+#define z    z[0]
+#define h    g(~
+#define m(a) a(w)
+#define w    0,1
+#define t(a) a
+
+f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+g(x+(3,4)-w) | h 5) & m(f)^m(m);
+
+cpp -E gives:
+
+f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+f(2 * (2 +(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
+        ^ Although note the extra space
+
+So it looks like the standard has a formatting error?
+
+Incidentally Godbolt for GCC 15.2 gives:
+
+# 0 "/app/example.cpp"
+# 1 "/app//"
+# 0 "<built-in>"
+# 0 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 0 "<command-line>" 2
+# 1 "/app/example.cpp"
+# 14 "/app/example.cpp"
+f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+f(2 * (2 +(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))
+         ^m(0,1);
+
+So correct to the standard.
+
+C99
+===
+
+
+6.10.3.5 Scope of macro definitions
+...
+
+[page 155]
+
+5   EXAMPLE 3     To illustrate the rules for redefinition and reexamination, the sequence
+             #define   x         3
+             #define   f(a)      f(x * (a))
+             #undef    x
+             #define   x         2
+             #define   g         f
+             #define   z         z[0]
+             #define   h         g(~
+             #define   m(a)      a(w)
+             #define   w         0,1
+             #define   t(a)      a
+             #define   p()       int
+             #define   q(x)      x
+             #define   r(x,y)    x ## y
+             #define   str(x)    # x
+             f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+             g(x+(3,4)-w) | h 5) & m
+                   (f)^m(m);
+             p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
+             char c[2][6] = { str(hello), str() };
+    results in
+             f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+             f(2 * (2+(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
+             int i[] = { 1, 23, 4, 5, };
+             char c[2][6] = { "hello", "" };
+
+cpp -E produces
+
+$ cpp -E -std=c99
+#define   x         3
+#define   f(a)      f(x * (a))
+#undef    x
+#define   x         2
+#define   g         f
+#define   z         z[0]
+#define   h         g(~
+#define   m(a)      a(w)
+#define   w         0,1
+#define   t(a)      a
+#define   p()       int
+#define   q(x)      x
+#define   r(x,y)    x ## y
+#define   str(x)    # x
+f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+g(x+(3,4)-w) | h 5) & m
+   (f)^m(m);
+p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
+char c[2][6] = { str(hello), str() };
+# 1 "<stdin>"
+# 1 "<built-in>" 1
+# 1 "<built-in>" 3
+# 385 "<built-in>" 3
+# 1 "<command line>" 1
+# 1 "<built-in>" 2
+# 1 "<stdin>" 2
+# 15 "<stdin>"
+f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+f(2 * (2 +(3,4)-0,1)) | f(2 * (~ 5)) & m
+   (f)^m(0,1);
+int i[] = { 1, 2 ## 3, 4 ## , ## 5, ##  };
+char c[2][6] = { # hello, #  };
+
+
+Hmmm.
+
+#define     mkstr(a) # a
+#define     str(a) mkstr(a)
+str(hello)
+
+That fails to stringify hello.
+What is going on?
+
+$ cpp -E -std=c99
+#define str(s) #s
+str(foo)
+str(p = "foo\n";)
+# 1 "<stdin>"
+# 1 "<built-in>" 1
+# 1 "<built-in>" 3
+# 385 "<built-in>" 3
+# 1 "<command line>" 1
+# 1 "<built-in>" 2
+# 1 "<stdin>" 2
+
+#foo
+#p = "foo\n";
+
+Godbolt is correct.
+
+
+This is getting weirder.
+
+On my Mac:
+
+engun@Pauls-MBP  ~/GitHub/torvalds/linux (master)
+$ cpp --version
+Apple clang version 15.0.0 (clang-1500.0.40.1)
+Target: x86_64-apple-darwin22.6.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+
+engun@Pauls-MBP  ~/GitHub/torvalds/linux (master)
+$ cpp -E
+#define x    3
+#define f(a) f(x * (a))
+#undef  x
+#define x    2
+#define g    f
+#define z    z[0]
+#define h    g(~
+#define m(a) a(w)
+#define w    0,1
+#define t(a) a
+
+f(y+1) + f(f(z)) % t(t(g)(0) + t)(1);
+g(x+(3,4)-w) | h 5) & m
+      (f)^m(m);
+# 1 "<stdin>"
+# 1 "<built-in>" 1
+# 1 "<built-in>" 3
+# 384 "<built-in>" 3
+# 1 "<command line>" 1
+# 1 "<built-in>" 2
+# 1 "<stdin>" 2
+# 11 "<stdin>"
+
+f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+f(2 * (2 +(3,4)-0,1)) | f(2 * (~ 5)) & m
+      (f)^m(0,1);
+
+Godbolt for x86-64 Clang 15.0.0:
+
+# 1 "/app/example.cpp"
+# 1 "<built-in>" 1
+# 1 "<built-in>" 3
+# 417 "<built-in>" 3
+# 1 "<command line>" 1
+# 1 "<built-in>" 2
+# 1 "/app/example.cpp" 2
+# 14 "/app/example.cpp"
+f(2 * (y+1)) + f(2 * (f(2 * (z[0])))) % f(2 * (0)) + t(1);
+f(2 * (2 +(3,4)-0,1)) | f(2 * (~ 5)) & f(2 * (0,1))^m(0,1);
+
+That is what the standard says.
+What is wrong with cpp -E on my machine?
+
+$ cpp -E
+#define concat(x, y) x ## y
+concat(hello, world)
+# 1 "<stdin>"
+# 1 "<built-in>" 1
+# 1 "<built-in>" 3
+# 384 "<built-in>" 3
+# 1 "<command line>" 1
+# 1 "<built-in>" 2
+# 1 "<stdin>" 2
+
+hello ##  world
+
+I give up for the moment.

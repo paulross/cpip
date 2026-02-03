@@ -491,14 +491,33 @@ class MacroEnv(object):
         *theFileLineCol*
             Is a :py:class:`.FileLocation.FileLineCol object`.
         """
-        assert(len(self._expandedSet) == 0)
+        assert len(self._expandedSet) == 0
         try:
-            retVal = self._expand(theTtt, theGen, theFileLineCol)
+            result_initial = self._expand(theTtt, theGen, theFileLineCol)
         finally:
             # Zap the expanded set so that the next replace() call will not assert
             self._expandedSet = set()
-        assert(len(self._expandedSet) == 0)
-        return retVal
+        assert len(self._expandedSet) == 0
+        return result_initial
+        # # One last heave at re-examination.
+        # # This solves the re-examination problem identified in the
+        # # C99 Rationale 6.10.3.4 "Rescanning and further replacement"
+        # # But fails on many other tests as it does over-expansion.
+        # for tok in result_initial:
+        #     if tok.isIdentifier():
+        #         tok._canReplace = True
+        # list_as_gen = ListAsGenerator(result_initial, None)
+        # token_generator = next(list_as_gen)
+        # result = []
+        # for tok in token_generator:
+        #     try:
+        #         expanded_tokens = self._expand(tok, token_generator, theFileLineCol)
+        #         result.extend(expanded_tokens)
+        #     finally:
+        #         # Zap the expanded set so that the next replace() call will not assert
+        #         self._expandedSet = set()
+        #     assert(len(self._expandedSet) == 0)
+        # return result
 
     def _expand(self, theTtt, theGen, theFileLineCol):
         """Recursive call to expand macro symbols.
@@ -608,7 +627,6 @@ class MacroEnv(object):
         if self._enableTrace:
             self._debugTokenStream(
                             '_expand("%s") reexamined' % theTtt, reexTokS)
-        # One last heave at re-examination, but how do we do that without infinite recursion?
         return reexTokS
 
     ############################
