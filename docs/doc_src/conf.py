@@ -203,7 +203,7 @@ htmlhelp_basename = 'CPIPdoc'
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
+    'papersize': 'a4paper',
 
     # The font size ('10pt', '11pt' or '12pt').
     #'pointsize': '10pt',
@@ -262,12 +262,14 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    ('index', 'cpip',
-     u'CPIP Documentation',
-     u'Paul Ross',
-     'cpip',
-     'One line description of project.',
-     'Miscellaneous'),
+    (
+        'index', 'cpip',
+         u'CPIP Documentation',
+         u'Paul Ross',
+         'cpip',
+         'CPIP is a C/C++ Preprocessor implemented in Python.',
+         'Miscellaneous',
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
