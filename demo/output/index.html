@@ -6,17 +6,17 @@
     <title>CPIP Processing</title>
   </head>
   <body>
-    <h1>CPIP Processing in output location: ../../demo/output</h1>
+    <h1>CPIP Processing in output location: /Users/paulross/PycharmProjects/cpip/demo/output</h1>
     <h2>Files Processed as Translation Units:</h2>
     <ul>
       <li>
         <tt>
-          <a href="index_main.cpp_d1a72b07dd5fc43d17f6c1e50fabed76.html">../../demo/src/main.cpp</a>
+          <a href="index_main.c_17ff0dbeb15d1d572212de15af3ad1f8.html">demo/src/main.c</a>
         </tt>
       </li>
     </ul>
     <h2>CPIP Command line:</h2>
-    <pre>CPIPMain.py -l20 -o ../../demo/output -J ../../demo/sys/ -I ../../demo/usr/ ../../demo/src/main.cpp</pre>
+    <pre>/Users/paulross/pyenvs/CPIP_3.14_A/bin/cpipmain -l 20 -o demo/output/ -J demo/sys -I demo/usr demo/src/main.c</pre>
     <table border="1">
       <tr>
         <th style="padding: 2px 6px 2px 6px">Option</th>
@@ -31,6 +31,15 @@
           <tt>False</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Profile memory usage.</td>
+      </tr>
+      <tr>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt>--sys-auto-lang</tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">
+          <tt></tt>
+        </td>
+        <td style="padding: 2px 6px 2px 6px">Get the system include search paths from the compiler for this language (&quot;C&quot; or &quot;C++&quot;). [default: &quot;%(default)s&quot;]</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -64,18 +73,18 @@
           <tt>-I/--usr</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>../../demo/usr/</tt>
+          <tt>demo/usr</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Add user include search path.</td>
+        <td style="padding: 2px 6px 2px 6px">Add user include search path (additive).</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
           <tt>-J/--sys</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>../../demo/sys/</tt>
+          <tt>demo/sys</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Add system include search path.</td>
+        <td style="padding: 2px 6px 2px 6px">Add system include search path (additive).</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -118,9 +127,9 @@
           <tt>-g/--glob</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>*.*</tt>
+          <tt>&nbsp;</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Pattern match to use when processing directories.</td>
+        <td style="padding: 2px 6px 2px 6px">Pattern match to use when processing directories.  i.e. every file.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -129,7 +138,7 @@
         <td style="padding: 2px 6px 2px 6px">
           <tt>0</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Max simultaneous processes when pre-processing<br />directories. Zero uses number of native CPUs [4].<br />1 means no multiprocessing.</td>
+        <td style="padding: 2px 6px 2px 6px">Max simultaneous processes when pre-processing<br />directories. Zero uses number of native CPUs [16].<br />1 means no multiprocessing.</td>
       </tr>
       <tr>
         <td style="padding: 2px 6px 2px 6px">
@@ -154,7 +163,7 @@
           <tt>-o/--output</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">
-          <tt>../../demo/output</tt>
+          <tt>/Users/paulross/PycharmProjects/cpip/demo/output</tt>
         </td>
         <td style="padding: 2px 6px 2px 6px">Output directory.</td>
       </tr>
@@ -183,8 +192,15 @@
         <td style="padding: 2px 6px 2px 6px">
           <tt>False</tt>
         </td>
-        <td style="padding: 2px 6px 2px 6px">Write an DOT include dependency table and execute DOT<br />on it to create a SVG file.</td>
+        <td style="padding: 2px 6px 2px 6px">Write an DOT include dependency table and execute DOT<br />on it to create a SVG file (for includes and macro dependencies).</td>
       </tr>
     </table>
   </body>
+  <p>Total number of files processed: 4</p>
+  <p>Total number of lines processed: 30</p>
+  <p>Total number of bytes processed: 490</p>
+  <p>Time start: Thu Sep 24 12:35:57 2026</p>
+  <p> Time finish: Thu Sep 24 12:35:57 2026</p>
+  <p> Duration: 0.046 seconds.</p>
+  <p> CPIP version: 0.9.8rc0</p>
 </html>

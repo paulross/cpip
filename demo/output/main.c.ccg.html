@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <link href="cpip.css" rel="stylesheet" type="text/css" />
+    <title>Conditional Compilation Graph</title>
+  </head>
+  <body>
+    <h1>Preprocessing Conditional Compilation Graph: demo/src/main.c</h1>
+    <p>The conditional compilation statements as green (i.e. evaluates as True)
+and red (evaluates as False). Each statement is linked to the source code it came from.
+</p>
+    <p>Return to <a href="index_main.c_17ff0dbeb15d1d572212de15af3ad1f8.html">Index</a></p>
+    <pre><span class="CcgNodeTrue">#ifndef __USER_H__</span>  /* <a href="user.h_25214729de9fa26dd6eea66ac947c592.html#1">user.h</a> */
+  <span class="CcgNodeTrue">#ifndef __SYSTEM_H__</span>  /* <a href="system.h_88c2e88857a3834ee7cf15f70c205990.html#1">system.h</a> */
+  <span class="CcgNodeTrue">#endif</span>  /* <a href="system.h_88c2e88857a3834ee7cf15f70c205990.html#6">system.h</a> */
+<span class="CcgNodeTrue">#endif</span>  /* <a href="user.h_25214729de9fa26dd6eea66ac947c592.html#10">user.h</a> */
+<span class="CcgNodeTrue">#if defined(LANG_SUPPORT) &amp;&amp; defined(FRENCH)</span>  /* <a href="main.c_17ff0dbeb15d1d572212de15af3ad1f8.html#6">main.c</a> */
+<span class="CcgNodeFalse">#elif defined(LANG_SUPPORT) &amp;&amp; defined(AUSTRALIAN)</span>  /* <a href="main.c_17ff0dbeb15d1d572212de15af3ad1f8.html#8">main.c</a> */
+<span class="CcgNodeFalse">#else</span>  /* <a href="main.c_17ff0dbeb15d1d572212de15af3ad1f8.html#10">main.c</a> */
+<span class="CcgNodeTrue">#endif</span>  /* <a href="main.c_17ff0dbeb15d1d572212de15af3ad1f8.html#12">main.c</a> */
+</pre>
+  </body>
+</html>

@@ -981,12 +981,16 @@ def _writeIndexHtmlTrailer(theS, time_start):
         time_bits.append('{:.3f} seconds'.format(seconds))
         with XmlWrite.Element(theS, 'p'):
             theS.characters('Time start: {:s}'.format(dt_start.strftime('%c')))
+        with XmlWrite.Element(theS, 'p'):
             theS.characters(' Time finish: {:s}'.format(dt_finish.strftime('%c')))
+        with XmlWrite.Element(theS, 'p'):
             theS.characters(' Duration: {:s}.'.format(', '.join(time_bits)))
+        with XmlWrite.Element(theS, 'p'):
             theS.characters(' CPIP version: {:s}'.format(__version__))
     else:
         with XmlWrite.Element(theS, 'p'):
             theS.characters(' Completion time: {:s}'.format(dt_finish.strftime('%c')))
+        with XmlWrite.Element(theS, 'p'):
             theS.characters(' CPIP version: {:s}'.format(__version__))
 
 def writeIndexHtml(theItuS, theOutDir, theJobSpec,
