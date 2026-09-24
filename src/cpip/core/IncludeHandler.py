@@ -688,17 +688,17 @@ def get_platform_system_include_paths(language: str) -> typing.List[str]:
     .. code-block:: text
 
         example.cpp
-        Note: including file: Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\stdio.h
-        Note: including file:  Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\corecrt.h
-        Note: including file:   Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\vcruntime.h
-        Note: including file:    Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\sal.h
-        Note: including file:     Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\concurrencysal.h
-        Note: including file:    Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\vadefs.h
-        Note: including file:  Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\corecrt_wstdio.h
-        Note: including file:   Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\corecrt_stdio_config.h
+        Note: including file: Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\\stdio.h
+        Note: including file:  Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\\corecrt.h
+        Note: including file:   Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\\vcruntime.h
+        Note: including file:    Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\\sal.h
+        Note: including file:     Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\\concurrencysal.h
+        Note: including file:    Z:/compilers/msvc/14.43.34808-14.43.34810.0/include\\vadefs.h
+        Note: including file:  Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\\corecrt_wstdio.h
+        Note: including file:   Z:/compilers/windows-kits-10/include/10.0.22621.0/ucrt\\corecrt_stdio_config.h
         Compiler returned: 0
 
-    Note weird '\\' at the end of the file path.
+    Note the weird '\\\\' at the end of the file path.
     """
     if language == 'C':
         cmd = ['cpp', '-v', '-E', '-xc']
